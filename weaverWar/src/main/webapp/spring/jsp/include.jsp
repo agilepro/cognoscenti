@@ -65,7 +65,6 @@
 %><%@page import="com.purplehillsbooks.weaver.WikiConverter"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.dms.RemoteLinkCombo"
-%><%@page import="com.purplehillsbooks.weaver.dms.ResourceEntity"
 %><%@page import="com.purplehillsbooks.weaver.exception.NGException"
 %><%@page import="com.purplehillsbooks.weaver.exception.ProgramLogicError"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"

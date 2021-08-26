@@ -28,11 +28,6 @@ import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.SectionAttachments;
-import com.purplehillsbooks.weaver.UserPage;
-import com.purplehillsbooks.weaver.dms.ConnectionType;
-import com.purplehillsbooks.weaver.dms.RemoteLinkCombo;
-import com.purplehillsbooks.weaver.dms.ResourceEntity;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import org.springframework.web.multipart.MultipartFile;
@@ -147,7 +142,7 @@ public class AttachmentHelper {
         }
     }
 
-    public static String assureExtension(String dName, String fName) {
+    private static String assureExtension(String dName, String fName) {
         if (dName == null || dName.length() == 0) {
             return fName;
         }
@@ -230,79 +225,5 @@ public class AttachmentHelper {
         attachment.setDisplayName(trialName);
     }
 
-    /**
-     * This is a method to find a file, and output the file as a
-     * stream of bytes to the request output stream.
-     */
-    public static void serveUpFileNewUI(AuthRequest ar, NGWorkspace ngp, String fileName, int version)
-            throws Exception {
-        SectionAttachments.serveUpFileNewUI(ar,ngp,fileName,version);
-    }
 
-    public static void updateRemoteAttachment(
-            AuthRequest ar,
-            NGWorkspace ngp, String comment, String rpath, String id,
-            String name, String visibility) throws Exception {
-
-        String aid = ar.reqParam("aid");
-
-        AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
-        UserPage up = ar.getUserPage();
-        ConnectionType cType = up.getConnectionOrFail(id);
-
-        attachment.setType("FILE");
-        String readonly  = ar.defParam("readOnly","off");
-        attachment.setReadOnlyType(readonly);
-        if(comment!=null) {
-            attachment.setDescription(comment);
-        }
-
-        AttachmentHelper.setDisplayName(ngp, attachment, name);
-
-        if((id!=null)&&(rpath != null)){
-            String userKey = ar.getUserProfile().getKey();
-            RemoteLinkCombo comboSymbol = new RemoteLinkCombo(userKey, id, rpath);
-            attachment.setRemoteCombo(comboSymbol);
-        }
-
-        attachment.setModifiedDate(ar.nowTime);
-        attachment.setModifiedBy(ar.getBestUserId());
-        attachment.setAttachTime(ar.nowTime);
-
-        ResourceEntity re = cType.getResourceEntity(rpath, false);
-        attachment.setFormerRemoteTime(re.getLastModifed());
-
-
-        HistoryRecord.createHistoryRecord(ngp, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
-        ar.nowTime, HistoryRecord.EVENT_DOC_UPDATED, ar, "");
-
-        ngp.setLastModify(ar);
-        ngp.saveFile(ar, "Updatd remote attachments");
-    }
-
-    public static void unlinkDocFromRepository(AuthRequest ar, String aid, NGWorkspace ngp) throws Exception{
-        AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
-        attachment.setRemoteCombo(null);
-        ngp.saveFile(ar, "Unlinked attachment from repository");
-    }
-
-    public static void linkToRemoteFile( AuthRequest ar, NGWorkspace ngp, String aid,
-                ResourceEntity remoteFile) throws Exception {
-        AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
-        if (remoteFile!=null) {
-            attachment.setRemoteCombo(remoteFile.getCombo());
-            remoteFile.fillInDetails(false);
-            attachment.setFormerRemoteTime(remoteFile.getLastModifed());
-        }
-        else {
-            attachment.setRemoteCombo(null);
-            attachment.setFormerRemoteTime(0);
-        }
-
-        HistoryRecord.createHistoryRecord(ngp, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
-            ar.nowTime, HistoryRecord.EVENT_DOC_UPDATED, ar, "");
-
-        ngp.setLastModify(ar);
-        ngp.saveFile(ar, "Modified attachments");
-    }
 }

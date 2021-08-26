@@ -255,30 +255,6 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value="/{siteId}/{pageId}/f/{docId}.{ext}", method = RequestMethod.GET)
-    public void loadRemoteDocument(
-            @PathVariable String siteId,
-            @PathVariable String pageId,
-            @PathVariable String docId,
-            @PathVariable String ext,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar  = AuthRequest.getOrCreate(request, response);
-
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId );
-
-            String symbol = ar.reqParam("fid");
-
-            FolderAccessHelper fah = new FolderAccessHelper(ar);
-            fah.serveUpRemoteFile(symbol);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
-        }
-    }
-*/
 
     /**
     * note that the docid in the path is not needed, but it will be different for

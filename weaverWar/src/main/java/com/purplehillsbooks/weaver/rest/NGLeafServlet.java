@@ -381,7 +381,8 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void handleRERequest(AuthRequest ar) throws Exception {
-        ResourceLocater.handleRestRequest(ar);
+        throw new Exception("Resource locator requests are no longer supported");
+        //ResourceLocater.handleRestRequest(ar);
     }
 
 }

@@ -153,24 +153,17 @@ public class ConnectionSettings extends DOMFace {
     }
 
     public String getFolderUserId() {
+        /*
         if (fuid == null) {
             fuid = getAttribute(ATT_FOLDER_UID);
         }
         return fuid;
+        */
+        throw new RuntimeException("getFolderUserId not implemented");
     }
 
-    public void setFolderUserId(String uid) {
-        setAttribute(ATT_FOLDER_UID, uid);
-        fuid = uid;
-    }
-
-    public void setLocalRoot(String localRoot){
-        setAttribute("localRoot", localRoot);
-    }
-    public String getLocalRoot() {
-        return getAttribute("localRoot");
-    }
     public String getFolderPassword() throws Exception {
+        /*
         if (fpwd == null) {
             String tmpPwd = getAttribute(ATT_FOLDER_PWD);
             if (tmpPwd != null && tmpPwd.length() > 0) {
@@ -183,27 +176,10 @@ public class ConnectionSettings extends DOMFace {
         }
 
         return fpwd;
+        */
+        throw new Exception("Folder passwords not supported");
     }
 
-    public void setFolderPassword(String pwd) throws Exception {
-        if (pwd != null && pwd.length() > 0) {
-            TextEncrypter te = new TextEncrypter(
-                    TextEncrypter.DESEDE_ENCRYPTION_SCHEME);
-            pwd = te.encrypt(pwd);
-        } else {
-            pwd = "";
-        }
-        setAttribute(ATT_FOLDER_PWD, pwd);
-        fpwd = pwd;
-    }
-
-    public long getLastModified() {
-        return safeConvertLong(getAttribute("lmodified"));
-    }
-
-    public void setLastModified(long lmodified) {
-        setAttribute("lmodified", Long.toString(lmodified));
-    }
 
     public boolean isDeleted(){
         String isDeleted = getAttribute(ATT_IS_DELETED);

@@ -47,11 +47,9 @@ public class Page {
 
     private static Log log = LogFactory.getLog(Page.class.getName());
 
-    private final static String defaultEncoding = Configurations
-            .getStringProperty("crawler.default_encoding", "UTF-8");
+    private final static String defaultEncoding = "UTF-8";
 
-    public static final int MAX_DOWNLOAD_SIZE = Configurations
-            .getIntProperty("fetcher.max_download_size", 1048576);
+    public static final int MAX_DOWNLOAD_SIZE = 1048576;
 
     public boolean load(final InputStream in, final int totalsize,
             final boolean isBinary) {

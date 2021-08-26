@@ -70,15 +70,6 @@ public class RemoteLinkCombo
         return new RemoteLinkCombo(userKey, folderId, rpath);
     }
 
-    public static RemoteLinkCombo fromFullPath(String _userKey, String _folderId, String fullPath)
-        throws Exception
-    {
-        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(_userKey);
-        ConnectionType cType = uPage.getConnectionOrFail(_folderId);
-        String internalPath = cType.getInternalPathOrFail(fullPath);
-        return new RemoteLinkCombo(_userKey, _folderId, internalPath);
-    }
-
     public RemoteLinkCombo(String _userKey, String _folderId, String _rpath)
     {
         if (_userKey==null) {
@@ -121,7 +112,7 @@ public class RemoteLinkCombo
     /**
     * Returns the resource entity that represents the remote file that
     * this combo points to.
-    */
+    *
     public ResourceEntity getResource() throws Exception
     {
         UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
@@ -138,6 +129,7 @@ public class RemoteLinkCombo
             return null;
         }
     }
+    */
 
     public UserPage getUserPage() throws Exception
     {

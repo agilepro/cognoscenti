@@ -350,32 +350,6 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    private void deleteAttachments(NGWorkspace ngp) throws Exception {
-        lar.assertAdmin("");
-        NGSection ngs = ngp.getSectionOrFail(lname);
-        List<String> attchList = UtilityMethods.splitString(lid,',');
-        SectionAttachments.removeAttachments(lar, ngs, attchList);
-    }
-    private void deleteTasks(NGWorkspace ngp) throws Exception {
-        lar.assertAdmin("");
-        NGSection ngs = ngp.getSectionOrFail(lname);
-        SectionTask taskForm = (SectionTask) ngs.getFormat();
-        List<String> taskList = UtilityMethods.splitString(lid,',');
-        for(String oneTask : taskList) {
-            taskForm.removeTask(oneTask, ngs);
-        }
-    }
-    private void deleteNotes(NGWorkspace ngp) throws Exception {
-        NGSection ngs = ngp.getSectionOrFail(lname);
-        List<String> cmtList = UtilityMethods.splitString(lid,',');
-        for(String oneCmt : cmtList) {
-            TopicRecord ei = SectionForNotes.getLeaflet(oneCmt, ngs);
-            if (ei != null) {
-                ngs.removeChild(ei);
-            }
-        }
-    }
-
     public void loadSubprocess() throws Exception {
     }
 

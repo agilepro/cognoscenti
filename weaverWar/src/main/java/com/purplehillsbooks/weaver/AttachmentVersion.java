@@ -167,7 +167,6 @@ public class AttachmentVersion {
 
     public static AttachmentVersion fillListReturnHighestInternalVersion(
             List<AttachmentVersion> list, File projectfolder, AttachmentRecord att ) {
-        String attachName = att.getNiceName();
         String attachmentId = att.getId();
         File cogfolder = new File(projectfolder, ".cog");
         if (!cogfolder.exists()) {

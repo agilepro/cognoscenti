@@ -53,7 +53,6 @@ public class UserPage extends ContainerCommon
     private List<StatusReport> statusRepList = null;
     private DOMFace profileRefs = null;
     private List<ProfileRef> profileList = null;
-    private DOMFace agentRules = null;
 
 
     public UserPage(File file, Document newDoc, String userKey)
@@ -127,9 +126,6 @@ public class UserPage extends ContainerCommon
             // walk through all sections and find current ids
             for (StatusReport stat : getStatusReports()) {
                 existingIds.add(stat.getId());
-            }
-            for (ConnectionSettings cs : getAllConnectionSettings()) {
-                existingIds.add(cs.getId());
             }
         }
         return IdGenerator.generateFourDigit(existingIds);
@@ -216,14 +212,7 @@ public class UserPage extends ContainerCommon
         throw new ProgramLogicError("You can not set the container names of a user page");
     }
 
-    public ConnectionSettings createConnectionSettings()throws Exception
-    {
-        ConnectionSettings cSet = createChildWithID("folder",
-                ConnectionSettings.class, ConnectionSettings.ATT_ID, getUniqueOnPage());
-        cSet.setOwnerKey(key);  //TODO: this should be internal/automatic
-        return cSet;
-    }
-
+/*
     public List<ConnectionSettings> getAllConnectionSettings()throws Exception {
          return getChildren("folder", ConnectionSettings.class);
     }
@@ -287,6 +276,7 @@ public class UserPage extends ContainerCommon
         }
         return found;
     }
+    */
 
 
     /**
@@ -296,7 +286,7 @@ public class UserPage extends ContainerCommon
     * the relative path ALWAYS starts with a slash.  This method returns the
     * ResourceEntity that represents that remote file (which may not exist.
     * Throws an exception if the connection does not exist, or is deleted.
-    */
+    *
     public ResourceEntity getResourceFromSymbol(String symbolicLink) throws Exception
     {
         int slashPos = symbolicLink.indexOf("/");
@@ -321,7 +311,7 @@ public class UserPage extends ContainerCommon
     * represents it.
     *
     * Throws exceptions if the combo link is not correctly formed.
-    */
+    *
     public static ResourceEntity getResourceFromCombo(String comboLink) throws Exception
     {
         int atPos = comboLink.indexOf("@");
@@ -338,7 +328,7 @@ public class UserPage extends ContainerCommon
     * returns a ResourceEntity that represents the remote file/folder given
     * a connection id and a relative path within that connection.
     * Throws an exception if the connection does not exist, or is deleted.
-    */
+    *
     public ResourceEntity getResource(String connId, String relPath) throws Exception
     {
         ConnectionType cType = getConnectionOrFail(connId);
@@ -349,7 +339,7 @@ public class UserPage extends ContainerCommon
     * returns a ResourceEntity that represents the remote file/folder given
     * a connection id and a relative path within that connection.
     * Throws an exception if the connection does not exist, or is deleted.
-    */
+    *
     public ResourceEntity getResourceFromFullpath(String connId, String fullPath) throws Exception
     {
         ConnectionType cType = getConnectionOrFail(connId);
@@ -360,7 +350,7 @@ public class UserPage extends ContainerCommon
      * returns a ResourceEntity that represents the remote file/folder given
      * a connection id and a relative path within that connection.
      * Throws an exception if the connection does not exist, or is deleted.
-     */
+     *
      public ResourceEntity getResourceOrNull(String connId, String relPath) throws Exception
      {
          ConnectionType cType = getConnectionOrNull(connId);
@@ -369,6 +359,7 @@ public class UserPage extends ContainerCommon
          }
          return cType.getResourceInternal(relPath);
      }
+     */
 
     public boolean isFrozen() throws Exception {
         return false;

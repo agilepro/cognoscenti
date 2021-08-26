@@ -315,49 +315,6 @@ public class UploadFileController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/remoteAttachmentAction.form", method = RequestMethod.POST)
-    protected void remoteAttachmentAction(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.attachment");
-            ar.req = request;
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
-            ar.assertNotFrozen(ngw);
-            ar.assertMember("Unable to create attachments.");
-
-            String action   = ar.reqParam("action");
-            String symbol   =  ar.reqParam("symbol");
-            String visibility = ar.defParam("visibility","*MEM*");
-            String comment = ar.defParam("comment","");
-            String attachmentDisplayName = ar.defParam("name","");
-            String isNewUpload = ar.defParam("isNewUpload", "yes");
-            String readonly  = ar.defParam("readOnly","off");
-
-            UserPage uPage    = ar.getUserPage();
-            ResourceEntity ent = uPage.getResourceFromSymbol(symbol);
-
-            if ("Link Document".equalsIgnoreCase(action))
-            {
-                FolderAccessHelper fah = new FolderAccessHelper(ar);
-                if(isNewUpload.equals("yes"))
-                {
-                    fah.attachDocument(ent, ngw, comment, attachmentDisplayName, visibility, readonly);
-                }else
-                {
-                    AttachmentHelper.updateRemoteAttachment(ar, ngw, comment, ent.getPath(), ent.getFolderId(), attachmentDisplayName, visibility);
-                }
-
-            }else{
-                throw new ProgramLogicError("Don't understand the operation: "+ action);
-            }
-
-            ngw.saveFile(ar, "Modified attachments");
-            response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.remote.attachment", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
 
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)

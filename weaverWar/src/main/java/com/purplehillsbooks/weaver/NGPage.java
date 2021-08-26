@@ -22,8 +22,6 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.StringCounter;
@@ -418,9 +416,6 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    private static String[] strArr = {"abc", "def", "ghi", "jkl"};
-    private static HashSet<String> accptableName = new HashSet<String>(Arrays.asList(strArr));
-
     /**
     * Get a section, creating it if it does not exist yet
     */
@@ -428,9 +423,6 @@ public abstract class NGPage extends ContainerCommon {
         if (secName==null) {
             throw new RuntimeException("getRequiredSection was passed a null secName parameter.");
         }
-        //if (!accptableName.contains(secName)) {
-        //    throw new Exception("This name is not acceptable for a section: "+ secName);
-        //}
         NGSection sec = internalScanForSection(secName);
         if (sec==null) {
             sec = createSection(secName, null);
@@ -466,6 +458,17 @@ public abstract class NGPage extends ContainerCommon {
             fEle.removeChild(found);
         }
     }
+    /**
+    * To create a new, empty, section, call this method.
+    */
+    private NGSection createSection(String secName, AuthRequest ar) throws Exception {
+        SectionDef sd = SectionDef.getDefByName(secName);
+        if (sd==null) {
+            throw new NGException("nugen.exception.no.section.with.given.name", new Object[]{secName});
+        }
+        return createSection(sd, ar);
+    }
+
 
     
     
@@ -494,17 +497,6 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-
-    /**
-    * To create a new, empty, section, call this method.
-    */
-    private NGSection createSection(String secName, AuthRequest ar) throws Exception {
-        SectionDef sd = SectionDef.getDefByName(secName);
-        if (sd==null) {
-            throw new NGException("nugen.exception.no.section.with.given.name", new Object[]{secName});
-        }
-        return createSection(sd, ar);
-    }
 
 
     /**
@@ -545,18 +537,6 @@ public abstract class NGPage extends ContainerCommon {
         return sectionElements;
     }
 
-    public boolean hasSection(String secName)
-        throws Exception
-    {
-        for (NGSection sec : getAllSections())
-        {
-            if (secName.equals(sec.getName()))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
     /**
