@@ -80,19 +80,6 @@ public class CapturePage {
     }
 
     
-    private void createPointerPage(String contentType, String path) {
-        CapturePageBlock spb = new CapturePageBlock(this, CapturePageBlock.TEXTBLOCK);
-        blockItems.add(spb);
-        CapturePageText cpt = spb.addStyle("h1");
-        cpt.addPlainText("Non-HTML Page");
-        
-        cpt = spb.addStyle("div");
-        cpt.addPlainText("Sorry, this attachment is "
-            +contentType+", not HTML text.   Can only show the text only version of HTML pages.   Click ");
-        cpt.addLink("THIS LINK", path);
-        cpt.addPlainText(" to visit the original web address.");
-    }
-    
     public static void writeCapturePageStyle(Writer w) throws Exception {
         w.write("\n<head>");
         w.write("\n<link href=\"../../../jscript/bootstrap.css\" rel=\"styleSheet\" type=\"text/css\"/>");
@@ -104,7 +91,7 @@ public class CapturePage {
         w.write("\n</head>");
     }
     
-    public static HttpClient getGoodClient() {
+    private static HttpClient getGoodClient() {
         try { 
             /*
             HttpClient base = new DefaultHttpClient();

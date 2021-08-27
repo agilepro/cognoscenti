@@ -48,7 +48,6 @@ public class RestHandler {
     public void doAuthenticatedGet()  throws Exception {
 
         findResource();
-        //CaseExchange.sendCaseFormat(ar, ngp);
 
     }
 
