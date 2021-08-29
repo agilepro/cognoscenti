@@ -886,14 +886,14 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <span class="h2">Meeting Participants: </span> 
           <span ng-hide="editMeetingPart=='participants'">
               <button 
-                      ng-click="editMeetingPart='participants'"
-                      title="Post this topic but don't send any email">
+                      ng-click="startParticipantEdit()"
+                      title="Edit the list of participants of the meeting">
               Edit </button>
           </span>
       </div>
       <div class="well" ng-show="editMeetingPart=='participants'">
           <div>
-              <tags-input ng-model="meeting.participants" 
+              <tags-input ng-model="participantEditCopy" 
                           placeholder="Enter users to send notification email to"
                           display-property="name" key-property="uid"
                           replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
@@ -905,8 +905,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <div>
           <span class="dropdown">
               <button class="btn btn-default btn-primary btn-raised" type="button" 
-                      ng-click="savePendingEdits()"
-                      title="Post this topic but don't send any email">
+                      ng-click="saveParticipantEdit()"
+                      title="Put this list to the list of participants">
               Save </button>
               <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" 
                       ng-hide="roleEqualsParticipants">

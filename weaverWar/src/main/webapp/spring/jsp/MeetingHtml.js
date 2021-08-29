@@ -752,14 +752,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         for (var i=0; i<theRole.players.length; i++) {
             var rolePerson = theRole.players[i];
             var found = false;
-            for (var j=0; j<$scope.meeting.participants.length; j++) {
-                var participant = $scope.meeting.participants[j];
+            for (var j=0; j<$scope.participantEditCopy.length; j++) {
+                var participant = $scope.participantEditCopy[j];
                 if (participant.uid == rolePerson.uid) {
                     found = true;
                 }
             }
             if (!found) {
-                $scope.meeting.participants.push(rolePerson);
+                $scope.participantEditCopy.push(rolePerson);
             }
         }
     }
@@ -2172,7 +2172,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             //cancel action - nothing really to do
         });
     };
-    
+    $scope.startParticipantEdit = function() {
+        $scope.participantEditCopy = $scope.meeting.participants
+        $scope.editMeetingPart='participants';
+    }
+    $scope.saveParticipantEdit = function() {
+        $scope.meeting.participants = $scope.participantEditCopy;
+        $scope.savePendingEdits();
+    }
     
 });
 
