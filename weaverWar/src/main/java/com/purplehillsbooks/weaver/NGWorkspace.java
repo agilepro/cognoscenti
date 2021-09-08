@@ -828,5 +828,86 @@ public class NGWorkspace extends NGPage {
 
     }
 
+    
+    public JSONObject getPersonalWorkspaceSettings(UserProfile user) throws Exception {
+        File cogFolder = new File(containingFolder, ".cog");
+        File personalFile = new File(cogFolder, "personal-"+user.getKey()+".json");
+        
+        if (personalFile.exists()) {
+            return JSONObject.readFromFile(personalFile);
+        }
+        
+        //the old way was in these specific settings.
+        //pull them out (if there) convert to JSON object
+        //and eliminate the old settings.
+        JSONObject personalSettings = new JSONObject();
+        String combo = this.getCombinedKey();
+        personalSettings.put("isWatching", user.isWatch(combo));
+        personalSettings.put("reviewTime", user.watchTime(combo));
 
+        personalSettings.put("isTemplate", user.isTemplate(combo));
+        personalSettings.put("isNotify", user.isNotifiedForProject(combo));
+        user.clearNotification(combo);
+        if (getMuteRole().isPlayer(user)) {
+            personalSettings.put("isMute", true);
+            getMuteRole().removePlayerCompletely(user);
+        }
+        personalSettings.writeToFile(personalFile);
+        return personalSettings;
+    }
+    
+    public JSONObject updatePersonalWorkspaceSettings(UserProfile user, JSONObject newVals) throws Exception {
+        File cogFolder = new File(containingFolder, ".cog");
+        File personalFile = new File(cogFolder, "personal-"+user.getKey()+".json");
+        JSONObject personal = getPersonalWorkspaceSettings(user);
+        String combo = getCombinedKey();
+        
+        for (String key : newVals.keySet()) {
+            personal.put(key, newVals.get(key));
+            if ("isWatching".equals(key)) {
+                boolean bval = newVals.getBoolean(key);
+                if (bval) {
+                    user.setWatch(combo);
+                }
+                else {
+                    user.clearWatch(combo);
+                }
+            }
+            if ("isTemplate".equals(key)) {
+                user.setProjectAsTemplate(combo, newVals.getBoolean(key));
+            }
+        }
+
+        personal.writeToFile(personalFile);
+        return personal;
+    }
+    
+    public boolean isWatching(UserProfile user) throws Exception {
+        JSONObject personal = getPersonalWorkspaceSettings(user);
+        if (!personal.has("isWatching")) {
+            return false;
+        }
+        return personal.getBoolean("isWatching");
+    }
+    public void setWatching(UserProfile user, boolean val) throws Exception {
+        JSONObject newVal = new JSONObject();
+        newVal.put("isWatching", val);
+        updatePersonalWorkspaceSettings(user, newVal);
+    }
+
+    
+    
+    public boolean isTemplate(UserProfile user) throws Exception {
+        JSONObject personal = getPersonalWorkspaceSettings(user);
+        if (!personal.has("isTemplate")) {
+            return false;
+        }
+        return personal.getBoolean("isTemplate");
+    }
+    public void setTemplate(UserProfile user, boolean val) throws Exception {
+        JSONObject newVal = new JSONObject();
+        newVal.put("isTemplate", val);
+        updatePersonalWorkspaceSettings(user, newVal);
+    }
+    
 }

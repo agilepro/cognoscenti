@@ -688,6 +688,7 @@ public class UserProfile implements UserRef
     public void clearWatch(String siteWorkspaceCombo)  throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
         setting.remove("isWatching");
+        setting.remove("reviewTime");
     }
 
 
@@ -713,20 +714,6 @@ public class UserProfile implements UserRef
      * The long value is the time of "last seen" which will be
      * used to determine if the page has changed since that time.
      */
-    public void setNotification(String siteWorkspaceCombo) throws Exception {
-        JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isNotify", true);
-    }
-
-     /**
-      * Get rid of any notification of the specified page.
-      */
-    public void clearNotification(String siteWorkspaceCombo) throws Exception {
-        JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.remove("isNotify");
-    }
-
-
     public boolean isNotifiedForProject(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
         if (setting.has("isNotify")) {
@@ -734,12 +721,28 @@ public class UserProfile implements UserRef
         }
         return false;
     }
-
-    public void setProjectAsTemplate(String siteWorkspaceCombo) throws Exception {
+    public void setNotification(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isTemplate", true);
+        setting.put("isNotify", true);
+    }
+    public void clearNotification(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.remove("isNotify");
+    }
+    public void setNotification(String siteWorkspaceCombo, boolean val) throws Exception {
+        if (val) {
+            setNotification(siteWorkspaceCombo);
+        }
+        else {
+            clearNotification(siteWorkspaceCombo);
+        }
     }
 
+    
+    /**
+     * Templates are workspaces that can be easily copied into a new workspace
+     * to make it easier to created workspaces of particular styles
+     */
     public boolean isTemplate(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
         if (setting.has("isTemplate")) {
@@ -747,11 +750,21 @@ public class UserProfile implements UserRef
         }
         return false;
     }
-
-
+    public void setProjectAsTemplate(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isTemplate", true);
+    }
     public void removeTemplateRecord(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
         setting.remove("isTemplate");
+    }
+    public void setProjectAsTemplate(String siteWorkspaceCombo, boolean val) throws Exception {
+        if (val) {
+            setProjectAsTemplate(siteWorkspaceCombo);
+        }
+        else {
+            removeTemplateRecord(siteWorkspaceCombo);
+        }
     }
 
     /**
