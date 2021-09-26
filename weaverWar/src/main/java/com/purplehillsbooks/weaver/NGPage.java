@@ -426,7 +426,10 @@ public abstract class NGPage extends ContainerCommon {
         NGSection sec = internalScanForSection(secName);
         if (sec==null) {
             sec = createSection(secName, null);
-            sectionElements.add(sec);
+            if (sec == null) {
+                throw new Exception("Unable to create a section named: "+secName);
+            }
+            getAllSections().add(sec);
         }
         return sec;
     }
