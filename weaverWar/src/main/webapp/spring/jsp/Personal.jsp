@@ -27,6 +27,14 @@
         jObj.put("reqPending", (rrr!=null && !rrr.isCompleted()));
         roleList.put(jObj);
     }
+    
+    JSONObject personalSettings = ngp.getPersonalWorkspaceSettings(uProf);
+    /*new JSONObject();
+    personalSettings.put("isWatching", uProf.isWatch(siteId+"|"+pageId));
+    personalSettings.put("reviewTime", uProf.watchTime(siteId+"|"+pageId));
+    personalSettings.put("isTemplate", uProf.isTemplate(siteId+"|"+pageId));
+    personalSettings.put("isNotify", uProf.isNotifiedForProject(siteId+"|"+pageId));
+    personalSettings.put("isMute", ngp.getMuteRole().isPlayer(uProf));*/
 
 %>
 <script type="text/javascript">
@@ -35,12 +43,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Personal Settings");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.pSettings = {};
-    $scope.pSettings.isWatching = <%=uProf.isWatch(siteId+"|"+pageId)%>;
-    $scope.pSettings.reviewTime = <%=uProf.watchTime(siteId+"|"+pageId)%>;
-    $scope.pSettings.isTemplate = <%=uProf.isTemplate(siteId+"|"+pageId)%>;
-    $scope.pSettings.isNotify   = <%=uProf.isNotifiedForProject(siteId+"|"+pageId)%>;
-    $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
+    $scope.pSettings = <%personalSettings.write(out,2,4);%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;
     $scope.preferred  = "<%=uProf.getPreferredEmail()%>"
     
@@ -52,25 +55,17 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.userOp = function(op) {
+    $scope.setPersonal = function(op) {
         var data = {};
-        data.op = op;
-        var postURL = "personalUpdate.json";
+        data[op] = $scope.pSettings[op];
+        var postURL = "setPersonal.json";
         var postdata = angular.toJson(data);
         console.log("POST", postURL, data);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             console.log("RESPONSE", data);
-            if (data.wsSettings) {
-                $scope.pSettings = data.wsSettings;
-            }
-            if ("SetEmailMute" == op) {
-                $scope.isMute = true;
-            }
-            else if ("ClearEmailMute" == op) {
-                $scope.isMute = false;
-            }
+            $scope.pSettings = data;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -124,6 +119,36 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+
+    $scope.toggle = function(key) {
+        var item = $scope.metadata[key];
+        if ("boolean"==item.type) {
+            $scope.pSettings[key] = !$scope.pSettings[key];
+            $scope.setPersonal(key);
+        }
+    }
+    $scope.metadata = {
+        "isMute": {
+            "title": "Mute Emails",
+            "type": "boolean",
+            "help": "Normally all members will receive an email when a new topic is created. This option allows you to disable that so that you will not receive any email when a new discussion topic is created."
+        },
+        "isTemplate": {
+            "title": "Template",
+            "type": "boolean",
+            "help": "A template workspace is used at the time that you create a new workspace, and all of the roles and action items will be copied from the template to the newly created workspace (but without any users assigned to them). List your templates by choosing \"Workspaces > Templates\" from the navigation bar at the top of the screen. "
+        },
+        "isNotify": {
+            "title": "Digest",
+            "type": "boolean",
+            "help": "If you request to receive the digest of changes, then a summary of the changes to this workspace will be included in the period email (daily, weekly, or monthly) that you receive. Set the notification period in your personal settings. "
+        },
+        "isWatching": {
+            "title": "Watch workspace",
+            "type": "boolean",
+            "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion topic) will automatically add the workspace to your watched list."
+        }         
+    };
 });
 
 </script>
@@ -156,186 +181,27 @@ app.controller('myCtrl', function($scope, $http) {
 
         <table class="table">
             <col width="150px">
-            <col width="250px">
+            <col width="50px">
             <col width="400px">
-            <tr>
-                <td><b>Watch workspace:</b></td>
+            <tr ng-repeat="(key,item) in metadata">
+                <td><b>{{item.title}}:</b></td>
                 <td>
-                    <button ng-show="pSettings.isWatching" class="btn " ng-click="userOp('ClearWatch')"><i class="fa  fa-check-square-o"></i> Watch List</button>
-                    <button ng-hide="pSettings.isWatching" class="btn " ng-click="userOp('SetWatch')"><i class="fa  fa-square-o"></i> Watch List</button>
+                    <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
+                    <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
                 </td>
-                <td ng-hide="openWatch">
-                    <button class="btn" ng-click="openWatch=!openWatch">?</button>
+                <td ng-hide="exposed[key]">
+                    <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
                 </td>
-                <td ng-show="openWatch" ng-click="openWatch=!openWatch" >
+                <td ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
                   <div class="guideVocal">
-                    <span ng-hide="pSettings.isWatching"><b>You are not watching this workspace</b></span>
-                    <span ng-show="pSettings.isWatching"><b>You are watching this workspace</b></span>
-                    <br/>
-                    <br/>
-                    Watching a workspace means simply that that workspace name
-                    will appear in the list of "<b>Watched Workspaces</b>" on your personal home page.<br/>
-                    <br/>
-                    You can add and remove workspaces from the list at any time with immediate effect.  
-                    Performing some operations in the workspace (such as creating a discussion topic) 
-                    will automatically add the workspace to your watched list.
-                    <br/>
-                    Every time you review the workspace, you can mark it as having been 
-                    reviewed at the current date and time.
+                  {{item.help}}
                   </div>
                 </td>
             </tr>
-            <tr ng-show="pSettings.isWatching">
-                <td><b>Last Reviewed:</b></td>
-                <td>
-                    <span class="btn">{{pSettings.reviewTime|cdate}}</span>
-                    <button class="btn " ng-click="userOp('SetReviewTime')">Update Review Date</button>
-                </td>
-                <td ng-hide="openReview">
-                    <button class="btn" ng-click="openReview=true">?</button>
-                </td>
-                <td ng-show="openReview" ng-click="openReview=false" >
-                  <div class="guideVocal">
-                    If you are watching this workspace, you can also keep track of 
-                    the last time you reviewed the workspace.<br/><br/>
-                    Every time you review the workspace, you can <b>update</b> the review time 
-                    to the current date and time.
-                  </div>
-                </td> 
-            </tr>            <tr>
-                <td><b>Template:</b></td>
-                <td>
-                    <button ng-show="pSettings.isTemplate" class="btn" ng-click="userOp('ClearTemplate')"><i class="fa  fa-check-square-o"></i> Template</button>
-                    <button ng-hide="pSettings.isTemplate" class="btn" ng-click="userOp('SetTemplate')"><i class="fa  fa-square-o"></i> Template</button>
-                </td>
-                <td ng-hide="openTemplate">
-                    <button class="btn" ng-click="openTemplate=!openTemplate">?</button>
-                </td>
-                <td ng-show="openTemplate" ng-click="openTemplate=!openTemplate">
-                  <div class="guideVocal">
-                    <span ng-hide="pSettings.isTemplate"><b>This workspace is not one of your templates</b></span>
-                    <span ng-show="pSettings.isTemplate"><b>This workspace is one of your templates</b></span>
-                    <br/>
-                    <br/>
-                    A template workspace is used at the time that you create a new workspace, 
-                    and all of the roles and action items will be copied from the template to the 
-                    newly created workspace (but without any users assigned to them).  
-                    List your templates by choosing "Workspaces &gt; Templates" from the 
-                    navigation bar at the top of the screen. 
-                  </div>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Digest:</b></td>
-                <td>
-                    <button ng-show="pSettings.isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i>
-                    Receive Digest</button>
-                    <button ng-hide="pSettings.isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> 
-                    Receive Digest</button>
-                </td>
-                <td ng-hide="openNotify">
-                    <button class="btn" ng-click="openNotify=!openNotify">?</button>
-                </td>
-                <td ng-show="openNotify" ng-click="openNotify=!openNotify">
-                  <div class="guideVocal">
-                    <span ng-hide="pSettings.isNotify"><b>You are not receiving the digest for this workspace</b></span>
-                    <span ng-show="pSettings.isNotify"><b>You are receiving the digest for this workspace</b></span>
-                    <br/>
-                    <br/>
-                    If you request to receive the digest of changes, then a summary of the changes to this workspace will
-                    be included in the period email (daily, weekly, or monthly) that you receive.  Set the notification period in your personal settings.
-                   </div>
-                </td>
-            </tr>
-            <tr>
-                <td><b>Mute Emails:</b></td>
-                <td>
-                    <button ng-show="isMute" class="btn" ng-click="userOp('ClearEmailMute')"><i class="fa  fa-check-square-o"></i>
-                    Mute Email Notifications</button>
-                    <button ng-hide="isMute" class="btn" ng-click="userOp('SetEmailMute')"><i class="fa  fa-square-o"></i> 
-                    Mute Email Notifications</button>
-                </td>
-                <td ng-hide="openMute">
-                    <button class="btn" ng-click="openMute=!openMute">?</button>
-                </td>
-                <td ng-show="openMute" ng-click="openMute=!openMute">
-                  <div class="guideVocal">
-                    <span ng-hide="isMute"><b>You will receive email notification when new Topics are created</b></span>
-                    <span ng-show="isMute"><b>You will not receive email notification when new Topics are created</b></span>
-                    <br/>
-                    <br/>
-                    Normally all members will receive an email when a new topic is created.  
-                    This option allows you to disable that so that you will not receive any email
-                    when a new discussion topic is created.
-                  </div>
-                </td>
-            </tr>
+            
         </table>
 
 
-        <table class="table" style="margin-top:50px;">
-            <col width="150px"/>
-            <col width="60px"/>
-            <col width="60px"/>
-            <col width="60px"/>
-            <col width="60px"/>
-            <col width="400px"/>
-            <tr>
-                <th>
-                    Roles in Workspace
-                </th>
-                <th style="width:60px;text-align:center">
-                    Playing
-                </th>
-                <th style="width:60px;text-align:center">
-                    Pending
-                </th>
-                <th style="width:60px;text-align:center">
-                    Not Playing
-                </th>
-                <th style="width:60px;text-align:center">
-                </th>
-                <th>
-                    Role Description
-                </th>
-            </tr>
-            <tr ng-repeat="role in roleList">
-                <td>
-                    <button class="labelButton" style="background-color:{{role.color}};">{{role.name}}</button>
-                </td>
-                <td style="width:60px;text-align:center">
-                    <span ng-show="role.player"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="role.player"><i class="fa  fa-square-o"></i></span>
-                </td>
-                <td style="width:60px;text-align:center">
-                    <span ng-show="!role.player && role.reqPending"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="!role.player && role.reqPending"><i class="fa  fa-square-o"></i></span>
-                </td>
-                <td style="width:60px;text-align:center">
-                    <span ng-show="!role.player && !role.reqPending"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="!role.player && !role.reqPending"><i class="fa  fa-square-o"></i></span>
-                </td>
-                <td style="width:60px;text-align:center">
-                    <button class="btn btn-primary btn-raised" ng-hide="role.player || role.reqPending" ng-click="roleChange(role, 'Join')">Join</button>
-                    <button class="btn btn-primary btn-raised" ng-show="role.player || role.reqPending" ng-click="roleChange(role, 'Leave')">Leave</button>
-                </td>
-                <td>
-                    <div ng-hide="role.show">
-                        <button class="btn" ng-click="role.show=!role.show">?</button>
-                    </div>
-                    <div ng-show="role.show"  ng-click="role.show=!role.show">
-                      <div class="guideVocal">
-                        <b>Description</b><br/>
-                        {{role.description}}
-                        <br/>
-                        <br/>
-                        <b>Requirements</b><br/>
-                        {{role.requirements}}
-                      </div>
-                    </div>
-                </td>
-           </tr>
-        </table>
     <div style="height:100px"></div>
 
 </div>

@@ -67,7 +67,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar,siteId,pageId, "Personal");
+        showJSPMembers(ar,siteId,pageId, "Personal");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleManagement.htm", method = RequestMethod.GET)
@@ -301,6 +301,28 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/setPersonal.json", method = RequestMethod.POST)
+    public void setPersonal(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertLoggedIn("Must be logged in to set personal settings.");
+            JSONObject personalInfo = getPostedObject(ar);
+            UserProfile up = ar.getUserProfile();
+            
+            ngw.updatePersonalWorkspaceSettings(up, personalInfo);
+
+            JSONObject repo = ngw.getPersonalWorkspaceSettings(up);
+            sendJson(ar, repo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update user setting for workspace "+pageId, ex);
+            streamException(ee, ar);
+        }
+    }    
 
     @RequestMapping(value = "/{siteId}/{pageId}/rolePlayerUpdate.json", method = RequestMethod.POST)
     public void rolePlayerUpdate(@PathVariable String siteId,@PathVariable String pageId,

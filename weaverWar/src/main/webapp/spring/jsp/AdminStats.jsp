@@ -65,6 +65,14 @@
         }
         recentWorkspaces.put(sibling.getJSON4List());
     }
+    
+    JSONObject nextActionDate = new JSONObject();
+    for (NGPageIndex p : ar.getCogInstance().getAllContainers()) {
+        if (p.nextScheduledAction>0 && p.nextScheduledAction<ar.nowTime) {
+            nextActionDate.put(p.containerName, p.nextScheduledAction);
+        }
+    }
+
 
     /*
     Data from the server is the workspace config structure
@@ -104,11 +112,14 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.workspaceInfo = <%ngpi.getJSON4List().write(out,2,4);%>;
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
     $scope.editName = false;
     $scope.editInfo = false;
     $scope.stats = <%statsObj.write(out,2,4);%>;
+    $scope.nextActionDate = <%nextActionDate.write(out,2,4);%>;
+    $scope.userFilter = "";
 
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
@@ -276,6 +287,21 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    
+    $scope.getUserStats = function() {
+        if ($scope.userFilter.length==0 && false) {
+            return $scope.stats.anythingPerUser;
+        }
+        var filterLC = $scope.userFilter.toLowerCase();
+        var coll = {};
+        Object.keys($scope.stats.anythingPerUser).forEach(function(item) {
+            if (item.toLowerCase().indexOf(filterLC)>=0) {
+                coll[item] = $scope.stats.anythingPerUser[item];
+            }
+        });
+        console.log("User Stats: ",coll);
+        return coll;
+    }
 
 });
 app.filter('escape', function() {
@@ -320,6 +346,10 @@ editBoxStyle {
 
         <table class="spaceyTable">
         <tr>
+           <td>Last Change:</td>
+           <td style="text-align:center;">{{workspaceInfo.changed|cdate}}</td>
+        </tr>
+        <tr>
            <td>Number of Topics:</td>
            <td style="text-align:center;">{{stats.numTopics}}</td>
         </tr>
@@ -353,19 +383,20 @@ editBoxStyle {
         </tr>
     </table>
 
+<h1>User Counts</h1>
 <table class="spaceyTable">
 
-<tr>
-<td></td>
+<tr style="background-color:#EEF">
+<td>Filter: <input ng-model="userFilter"></td>
 <td style="text-align:center;">Comments</td>
-<td style="text-align:center;background-color:#fefefe;">Docs</td>
+<td style="text-align:center;">Docs</td>
 <td style="text-align:center;">Meetings</td>
-<td style="text-align:center;background-color:#fefefe;">Proposals</td>
+<td style="text-align:center;">Proposals</td>
 <td style="text-align:center;">Responses</td>
-<td style="text-align:center;background-color:#fefefe;">Unresponded</td>
+<td style="text-align:center;">Unresponded</td>
 </tr>
 
-<tr ng-repeat="(user,val) in stats.anythingPerUser">
+<tr ng-repeat="(user,val) in getUserStats()">
 <td>{{user}}</td>
 <td style="text-align:center;">{{stats['commentsPerUser'][user]}}</td>
 <td style="text-align:center;background-color:#fefefe;">{{stats['docsPerUser'][user]}}</td>
@@ -377,6 +408,7 @@ editBoxStyle {
 
 </table>
 
+<h1>Events</h1>
 
     <div class="generalContent">
         <div class="generalSubHeading paddingTop">Future Scheduled Actions</div>
@@ -389,7 +421,9 @@ editBoxStyle {
         <div>
             OVERDUE:
             <ul>
-            <%findOverdueContainer(ar);%>
+            <li ng-repeat="(key,val) in nextActionDate">
+            {{key}} : {{val|date}}
+            </li>
             </ul>
             ALL UNSENT NOTIFICATIONS:
             <ol>
@@ -423,24 +457,4 @@ editBoxStyle {
 
 
 </div>
-
-
-<%!
-
-    private NGPageIndex findOverdueContainer(AuthRequest ar) throws Exception  {
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
-            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<ar.nowTime) {
-                ar.write("<li>");
-                ar.writeHtml(ngpi.containerName);
-                ar.write(": ");
-                ar.write( (new Date(ngpi.nextScheduledAction)).toString() );
-                ar.write("</li>");
-            }
-        }
-        return null;
-    }
-
-
-%>
-
 
