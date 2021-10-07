@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
 public class LRUCache
 {
     private List<NGWorkspace> listOfPages;
-    private Hashtable<String,NGWorkspace> hash;
+    private Hashtable<File,NGWorkspace> hash;
     private int       cacheSize;
 
     public LRUCache(int numberToCache) {
@@ -44,7 +45,7 @@ public class LRUCache
 
     public synchronized void emptyCache() {
         listOfPages = new ArrayList<NGWorkspace>(cacheSize);
-        hash = new Hashtable<String,NGWorkspace>(cacheSize);
+        hash = new Hashtable<File,NGWorkspace>(cacheSize);
     }
 
     /**
@@ -74,18 +75,18 @@ public class LRUCache
     * make the first thread to request the page much much faster
     * and this reduces the possibility of simultaneous access.
     */
-    public synchronized NGWorkspace recall(String id) {
+    public synchronized NGWorkspace recall(File id) {
         if (id==null) {
             throw new RuntimeException("NULL value passed for the cache key in LRUCache.recall");
         }
-        NGWorkspace o = hash.get(id);
-        if (o!=null) {
+        NGWorkspace ngw = hash.get(id);
+        if (ngw!=null) {
             unstore(id);
-            if (!id.equals(o.getFilePath().toString())) {
-                throw new RuntimeException("Retrieved object for "+id+" has a path of "+o.getFilePath()+"!");
+            if (!id.equals(ngw.associatedFile)) {
+                throw new RuntimeException("Retrieved object for "+id+" has a path of "+ngw.getFilePath()+"!");
             }
         }
-        return o;
+        return ngw;
     }
 
     /**
@@ -94,13 +95,13 @@ public class LRUCache
      * be eliminated from the cache.  This will guarantee that the
      * next access to a page will be from reading the file on the disk.
      */
-    public synchronized void unstore(String id) {
-        NGWorkspace o = hash.get(id);
-        if (o!=null) {
-            listOfPages.remove(o);
-            hash.remove(id);
+    public synchronized void unstore(File associatedFile) {
+        NGWorkspace ngw = hash.get(associatedFile);
+        if (ngw!=null) {
+            listOfPages.remove(ngw);
+            hash.remove(associatedFile);
         }
-        if (hash.containsKey(id)) {
+        if (hash.containsKey(associatedFile)) {
             throw new RuntimeException("Removal of cache item did not work!");
         }
     }
@@ -112,24 +113,24 @@ public class LRUCache
     * If an object already exists with that id, then this new object
     * will replace it.
     */
-    public synchronized void store(String id, NGWorkspace o) {
-        if (!id.equals(o.getFilePath().toString())) {
-            throw new RuntimeException("Trying to store object for "+id+" has a path of "+o.getFilePath()+"!");
+    public synchronized void store(File id, NGWorkspace ngw) {
+        if (!id.equals(ngw.associatedFile)) {
+            throw new RuntimeException("Trying to store object for "+id+" has a path of "+ngw.getFilePath()+"!");
         }
         NGWorkspace prev = hash.get(id);
         if (prev!=null) {
             listOfPages.remove(prev);
-            hash.remove(prev);
+            hash.remove(id);
         }
         else {
             //then, if cache full, remove the oldest ones
             while (listOfPages.size()>=cacheSize) {
                 prev = listOfPages.remove(cacheSize-1);
-                hash.remove(prev);
+                hash.remove(prev.associatedFile);
             }
         }
-        listOfPages.add(0,o);
-        hash.put(id, o);
+        listOfPages.add(0,ngw);
+        hash.put(id, ngw);
     }
 
 }

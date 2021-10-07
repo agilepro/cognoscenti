@@ -147,7 +147,6 @@ public class NGSession
     * This method gets rid of ALL attributes...
     */
     public void deleteAllSpecialSessionAccess(){
-        @SuppressWarnings("unchecked")
         Enumeration<String> e = session.getAttributeNames();
         while (e.hasMoreElements()) {
             String attribute = e.nextElement();

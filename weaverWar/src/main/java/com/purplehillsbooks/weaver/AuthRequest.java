@@ -205,10 +205,10 @@ public class AuthRequest
     * a page, this can be done with a nested request.  Pass the URL of the
     * request page, and the writer to write out to.
     */
+    /*
     public AuthRequest getNestedRequest(String relativeUrl, Writer nestedOut)
         throws Exception
     {
-        //TODO: this probably should parse the query parameters off of the URL
         HttpNestedRequest nreq = new HttpNestedRequest(relativeUrl, "", req);
         HttpNestedResponse nresp = new HttpNestedResponse(nestedOut);
         AuthRequest nested =  new AuthRequest(nreq, nresp, nestedOut);
@@ -216,6 +216,7 @@ public class AuthRequest
         nreq.setAttribute("AuthRequest", nested);
         return nested;
     }
+    */
 
 
     /**

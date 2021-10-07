@@ -208,10 +208,8 @@ public class NGWorkspace extends NGPage {
             throw new NGException("nugen.exception.file.not.exist", new Object[]{theFile});
         }
         try {
-            String fullFilePath = theFile.toString();
-
             //look in the cache
-            NGWorkspace newWorkspace = pageCache.recall(fullFilePath);
+            NGWorkspace newWorkspace = pageCache.recall(theFile);
             if (newWorkspace==null) {
                  //determine the site settings
                 File cogFolder = theFile.getParentFile();
@@ -240,7 +238,7 @@ public class NGWorkspace extends NGPage {
             }
 
             //store into the cache.
-            pageCache.store(fullFilePath, newWorkspace);
+            pageCache.store(theFile, newWorkspace);
             return newWorkspace;
         }
         catch (Exception e) {
