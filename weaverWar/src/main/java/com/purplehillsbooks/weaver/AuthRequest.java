@@ -528,7 +528,7 @@ public class AuthRequest
      */
     public void rollbackChanges() {
         if (ngp!=null) {
-            NGWorkspace.removeCachedPage(ngp.getFilePath().toString());
+            NGWorkspace.removeCachedPage(ngp.getFilePath());
             ngp = null;
         }
         NGPageIndex.clearLocksHeldByThisThread();

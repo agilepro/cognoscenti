@@ -238,7 +238,7 @@ public abstract class NGPage extends ContainerCommon {
      * This method should be called whenever an exception is caught (at the root level)
      * so that any possible changes during processing before the exception is thrown away.
      */
-    public static void removeCachedPage(String fullFilePath) {
+    public static void removeCachedPage(File fullFilePath) {
         pageCache.unstore(fullFilePath);
     }
 

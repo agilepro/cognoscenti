@@ -128,27 +128,32 @@ app.controller('myCtrl', function($scope, $http) {
         }
     }
     $scope.metadata = {
-        "isMute": {
-            "title": "Mute Emails",
+        "isWatching": {
+            "title": "Watch workspace",
             "type": "boolean",
-            "help": "Normally all members will receive an email when a new topic is created. This option allows you to disable that so that you will not receive any email when a new discussion topic is created."
-        },
-        "isTemplate": {
-            "title": "Template",
-            "type": "boolean",
-            "help": "A template workspace is used at the time that you create a new workspace, and all of the roles and action items will be copied from the template to the newly created workspace (but without any users assigned to them). List your templates by choosing \"Workspaces > Templates\" from the navigation bar at the top of the screen. "
-        },
+            "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion topic) will automatically add the workspace to your watched list."
+        },  
+//       "isTemplate": {
+//            "title": "Template",
+//            "type": "boolean",
+//            "help": "A template workspace is used at the time that you create a new workspace, and all of the roles and action items will be copied from the template to the newly created workspace (but without any users assigned to them). List your templates by choosing \"Workspaces > Templates\" from the navigation bar at the top of the screen. "
+//        },
         "isNotify": {
             "title": "Digest",
             "type": "boolean",
             "help": "If you request to receive the digest of changes, then a summary of the changes to this workspace will be included in the period email (daily, weekly, or monthly) that you receive. Set the notification period in your personal settings. "
         },
-        "isWatching": {
-            "title": "Watch workspace",
+        "isMute": {
+            "title": "Mute Emails",
             "type": "boolean",
-            "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion topic) will automatically add the workspace to your watched list."
-        }         
+            "help": "Normally all members will receive an email when a new topic is created. This option allows you to disable that so that you will not receive any email when a new discussion topic is created."
+        }
     };
+    $scope.propertyOrder = [
+        "isWatching",
+        "isNotify",
+        "isMute"
+    ]
 });
 
 </script>
@@ -179,27 +184,27 @@ app.controller('myCtrl', function($scope, $http) {
     <i class="fa fa-list-alt material-icons"></i> View Emails</a>
 </div>
 
-        <table class="table">
-            <col width="150px">
-            <col width="50px">
-            <col width="400px">
-            <tr ng-repeat="(key,item) in metadata">
-                <td><b>{{item.title}}:</b></td>
-                <td>
-                    <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
-                    <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
-                </td>
-                <td ng-hide="exposed[key]">
-                    <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
-                </td>
-                <td ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
-                  <div class="guideVocal">
-                  {{item.help}}
-                  </div>
-                </td>
-            </tr>
-            
-        </table>
+    <table class="table">
+        <col width="150px">
+        <col width="50px">
+        <col width="400px">
+        <tr ng-repeat="key in propertyOrder">
+            <td><b>{{metadata[key].title}}:</b></td>
+            <td>
+                <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
+                <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
+            </td>
+            <td ng-hide="exposed[key]">
+                <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
+            </td>
+            <td ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
+              <div class="guideVocal">
+              {{metadata[key].help}}
+              </div>
+            </td>
+        </tr>
+        
+    </table>
 
 
     <div style="height:100px"></div>
