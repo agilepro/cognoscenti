@@ -618,6 +618,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
     }
     function setMeetingData(data) {
+        console.log("MEETING INFO: ", data);
         if (!data) {
             throw "ASKED to SET MEETING DATA but no meeting data passed";
         }
@@ -2179,6 +2180,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.saveParticipantEdit = function() {
         $scope.meeting.participants = $scope.participantEditCopy;
         $scope.savePendingEdits();
+    }
+    
+    $scope.isPresent = function(tuid) {
+        var found = false;
+        $scope.meeting.visitors.forEach( function(visitor) {
+            if (tuid == visitor.uid) {
+                console.log("FOUND: "+tuid);
+                found = true;
+            }           
+        });
+        return found;
     }
     
 });

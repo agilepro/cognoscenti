@@ -921,6 +921,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <th>Attended</th>
           <th>Expected</th>
           <th>Situation</th>
+          <th>Present</th>
       </tr>
       <tr class="comment-inner" ng-repeat="pers in timeSlotResponders">
           <td>
@@ -936,6 +937,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           </td>
           <td>{{expectAttend[pers.uid]}}</td>
           <td>{{expectSituation[pers.uid]}}</td>
+          <td>
+            <span ng-show="isPresent(pers.uid)" style="color:green"><span class="fa fa-check"></span></span>
+            <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee"><span class="fa fa-circle-thin"></span></span>
+          </td>
       </tr>
       </table>
       
@@ -1031,6 +1036,12 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
               </td>
               <td ng-dblclick="openModalActionItem(selectedItem, goal)">
                 {{goal.synopsis}}
+              </td>
+              <td>
+                <div ng-repeat="person in goal.assignTo"><img class="img-circle" 
+                   src="<%=ar.retPath%>icon/{{getImageName(person)}}" 
+                   style="width:32px;height:32px" 
+                   title="{{person.name}} - {{person.uid}}"></div>
               </td>
               <td ng-dblclick="openModalActionItem(selectedItem, goal)">
                 <div>{{goal.status}}</div>
