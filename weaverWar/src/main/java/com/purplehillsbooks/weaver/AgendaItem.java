@@ -23,6 +23,18 @@ public class AgendaItem extends CommentContainer {
         super(doc, ele, p);
         //check if the lock needs to be cleared after being idle
         //for 30 minutes
+        
+        //schema update Oct 2021
+        //convert from one topic to a list of topics
+        //converts the XML in memory and will be saved if there is a save
+        String oldTopic = getAttribute("topicLink");
+        if (oldTopic!=null && oldTopic.length()>0) {
+            List<String> newList = new ArrayList<String>();
+            newList.add(oldTopic);
+            setVector("topics", newList);
+            setAttribute("topicLink", null);
+        }
+        
         long lockTime = getLockTime();
         if (lockTime>0 && lockTime < System.currentTimeMillis()-30*60000) {
             clearLock();
@@ -97,23 +109,40 @@ public class AgendaItem extends CommentContainer {
 
     
     /**
-     * An agenda item can be linked to a discussion topic
+     * In the olden-days An agenda item can be linked to a single discussion topic
+     * @deprecated use getLinkedTopics instead
      */
     public String getTopicLink() {
-        return getAttribute("topicLink");
+        List<String> list = getLinkedTopics();
+        if (list.size()>0) {
+            return list.get(0);
+        }
+        return null;
     }
+    /**
+     * In the olden-days An agenda item can be linked to a single discussion topic
+     * @deprecated use setLinkedTopics instead
+     */
     public void setTopicLink(String newVal) throws Exception {
-        setAttribute("topicLink", newVal);
+        List<String> list = getLinkedTopics();
+        if (!list.contains(newVal)) {
+            list.add(newVal);
+            setLinkedTopics(list);
+        }
     }
 
-/*
-    public String getNotes()  throws Exception {
-        return getScalar("notes");
+    /**
+     * An agenda item can be linked to any number of 
+     * discussion topics.
+     */
+    public List<String> getLinkedTopics() {
+        return this.getVector("topics");
     }
-    public void setNotes(String newVal) throws Exception {
-        setScalar("notes", newVal);
+    public void setLinkedTopics(List<String> newVal) throws Exception {
+        setVector("topics", newVal);
     }
-    */
+
+
 
     public int getStatus() {
         return getAttributeInt("status");
@@ -241,19 +270,13 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("subject",   getSubject());
         aiInfo.put("duration",  getDuration());
         aiInfo.put("status",    getStatus());
-        aiInfo.put("topicLink", getTopicLink());
         aiInfo.put("readyToGo", getReadyToGo());
         aiInfo.put("description", getDesc());
         
-        //REMOVE THIS soon, no HTML
-        //String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
-        //aiInfo.put("desc",      htmlVal);
         aiInfo.put("position",  getPosition());
         aiInfo.put("number",    getNumber());
         aiInfo.put("isSpacer",  isSpacer());
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
-        //htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
-        //aiInfo.put("notes",     htmlVal);
         
         //duplicated the presenters into a list of full person definitions.
         //ultimately get rid of the other.
@@ -279,10 +302,7 @@ public class AgendaItem extends CommentContainer {
         extractAttributeBool(aiInfo, "proposed");
         extractScalarString(aiInfo, "minutes");
         
-        //retire this soon, no more HTML to the client
-        //String htmlMinutes = WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("minutes"));
-        //aiInfo.put("minutes", htmlMinutes);
-        
+        aiInfo.put("topics", constructJSONArray(getLinkedTopics()));
         return aiInfo;
     }
 
@@ -322,18 +342,12 @@ public class AgendaItem extends CommentContainer {
             setReadyToGo(input.getBoolean("readyToGo"));
         }
 
-        /*
-        if (input.has("notes")) {
-            String html = input.getString("notes");
-            setNotes(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
-        }
-        */
+
         if (input.has("minutesMerge")) {
         	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
         }
-        if (input.has("topicLink")) {
-            String topicLink = input.getString("topicLink");
-            setTopicLink(topicLink);
+        if (input.has("topics")) {
+            setLinkedTopics(input.getJSONArray("topics").getStringList());
         }
         
         updateCommentsFromJSON(input, ar);

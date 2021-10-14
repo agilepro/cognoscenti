@@ -282,7 +282,7 @@ function GetFirstHundredNoHtml(input) {
                         </div>
                       </td>
                       <td><b>{{rec.subject}}
-                              <span ng-show="rec.topicLink">(Linked Topic)</span>
+                              <span ng-show="rec.topics.length()>0">(Linked Topic)</span>
                           </b>
                           </td>
                       <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>

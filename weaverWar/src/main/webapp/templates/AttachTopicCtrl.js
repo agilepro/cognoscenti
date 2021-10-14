@@ -1,8 +1,21 @@
-app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic, attachmentList) {
+app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopics, attachmentList) {
 
     $scope.attachmentList = attachmentList;
-    $scope.selectedTopic = selectedTopic;
+    $scope.topics = selectedTopics;
+    $scope.fullTopics = [];
     $scope.realDocumentFilter = "";
+    
+    function generateList() {
+        console.log("Topic BEFORE: ", $scope.fullTopics);
+        var res = [];
+        $scope.attachmentList.forEach( function(oneTopic) {
+            if ($scope.itemHasDoc(oneTopic.universalid)) {
+                res.push(oneTopic);
+            }
+        });
+        console.log("Topic gotten: ", res);
+        $scope.fullTopics = res;
+    }
 
     $scope.filterDocs = function() {
         var filterlc = $scope.realDocumentFilter.toLowerCase();
@@ -16,31 +29,48 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
         return rez;
     }
     $scope.itemHasDoc = function(oneTopic) {
-        return $scope.selectedTopic == oneTopic.universalid;
-    }
-    $scope.itemDocs = function() {
-        return $scope.attachmentList.filter( function(oneTopic) {
-            return $scope.itemHasDoc(oneTopic);
-        });
-    }
-    $scope.findSubject = function() {
-        var foundSubj = "";
-        $scope.attachmentList.forEach( function(oneTopic) {
-            if ($scope.itemHasDoc(oneTopic)) {
-                foundSubj = oneTopic.subject;
+        var found = false;
+        $scope.topics.forEach( function(item) {
+            if (item == oneTopic) {
+                found = true;
             }
         });
-        return foundSubj;
+        return found;
     }
+    generateList();
+    
+    $scope.topicsOnItem = function() {
+        var res = [];
+        return $scope.attachmentList.forEach( function(oneTopic) {
+            if ($scope.itemHasDoc(oneTopic.universalid)) {
+                res.push(oneTopic);
+            }
+        });
+        console.log("Topic gotten: ", res);
+        return res;
+    }
+
     $scope.addDocToItem = function(oneTopic) {
-        $scope.selectedTopic = oneTopic.universalid;
+        if (!$scope.itemHasDoc(oneTopic.universalid)) {
+            $scope.topics.push(oneTopic.universalid);
+        }
+        console.log("Topic list: ", $scope.topics);
+        generateList();
     }
     $scope.removeDocFromItem = function(oneTopic) {
-        $scope.selectedTopic = "";
+        var newList = [];
+        $scope.topics.forEach( function(item) {
+            if (item != oneTopic.universalid) {
+                newList.push(item);
+            }
+        });
+        $scope.topics = newList;
+        console.log("Topic list: ", $scope.topics);
+        generateList();
     }
 
     $scope.ok = function () {
-        $modalInstance.close($scope.selectedTopic);
+        $modalInstance.close($scope.topics);
     };
 
     $scope.cancel = function () {

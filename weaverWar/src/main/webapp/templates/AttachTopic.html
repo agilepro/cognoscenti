@@ -49,18 +49,18 @@
       </td>
       <td style="width:50%;vertical-align:top;padding:10px;">
         <div class="sBoxTop"> 
-            Selected Topic (only one)
+            Selected Topics
         </div>
         <div class="sBoxMain">
           <table class="docTable">
-            <tr ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
+            <tr ng-repeat="topic in fullTopics" ng-click="removeDocFromItem(topic)" 
                 title="Click to unlink the discussion topic"  style="cursor:pointer">
-                <td> {{doc.subject}} </td>
+                <td> {{topic.subject}} </td>
                 <td>
                     <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
                 </td>
             </tr>
-            <tr ng-show="itemDocs().length==0">
+            <tr ng-show="fullTopics.length==0">
                 <td class="instruction">No topic linked..<br/><br/>
                 <span ng-show="filterDocs().length>0">Click on an topic on the left, to set it here on the right.  Since only one can be linked it will replace whatever was linked before.</span></td>
             </tr>

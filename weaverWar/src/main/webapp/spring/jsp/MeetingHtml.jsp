@@ -1131,11 +1131,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       </td>
     </tr>
     <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachTopics(selectedItem)" class="labelColumn">Topic:</td>
+      <td ng-click="openAttachTopics(selectedItem)" class="labelColumn">Topics:</td>
       <td>
           <div ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  
                 style="margin:4px;max-width:200px;overflow: hidden"
-            ng-click="navigateToTopic(selectedItem.topicLink)">
+            ng-click="navigateToTopic(topic.universalid)">
             <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
           </div>
           <div ng-hide="itemTopics(selectedItem).length>0" class="doubleClickHint">

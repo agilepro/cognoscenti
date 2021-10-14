@@ -917,9 +917,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                              Action Items Add/Remove</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i>
-                              <span ng-hide="item.topicLink">Set</span>
-                              <span ng-show="item.topicLink">Change</span>
-                              Discussion Topic</a></li>
+                              Change Discussion Topica</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
                              Toggle Ready Flag</a></li>
@@ -1003,9 +1001,9 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
       <tr ng-show="showItemMap[item.id] && itemTopics(item).length>0" >
         <td>
            <div style="margin:10px;">
-              <b>Discussion Topic: </b>
+              <b>Discussion Topics: </b>
               <span ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToTopic(item.topicLink)">
+                   ng-click="navigateToTopic(topic.universalid)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
               </span>
            </div>

@@ -175,7 +175,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             return false;
         }
         return $scope.allTopics.filter( function(oneTopic) {
-            return item.topicLink == oneTopic.universalid;
+            return item.topics.includes(oneTopic.universalid);
         });
     }
 
@@ -1668,8 +1668,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             size: 'lg',
             backdrop: "static",
             resolve: {
-                selectedTopic: function () {
-                    return item.topicLink;
+                selectedTopics: function () {
+                    return item.topics;
                 },
                 attachmentList: function() {
                     return $scope.allTopics;
@@ -1678,8 +1678,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
 
         attachModalInstance.result
-        .then(function (selectedTopic, topicName) {
-            item.topicLink = selectedTopic;
+        .then(function (selectedTopics, topicName) {
+            item.topics = selectedTopics;
             $scope.saveAgendaItem(item);
         }, function () {
             //cancel action - nothing really to do

@@ -806,9 +806,10 @@ public class TopicRecord extends CommentContainer {
           for (MeetingRecord meet : ngc.getMeetings()) {
               boolean found = false;
               for (AgendaItem ai : meet.getAgendaItems()) {
-                  if (uid.equals(ai.getTopicLink())) {
+                  List<String> linkedTopics = ai.getLinkedTopics();
+                  if (linkedTopics.contains(uid)) {
                       found = true;
-                  } else if (nid.equals(ai.getTopicLink())) {
+                  } else if (linkedTopics.contains(nid)) {
                       //for a while local id was being saved....so look for that as well.
                       found = true;
                   }
