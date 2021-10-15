@@ -18,6 +18,7 @@ public class WorkspaceStats {
     public long sizeDocuments= 0;
     public long sizeArchives = 0;
     public int numWorkspaces = 0;  //only for a site will this be anything other than 1
+    public long recentChange = 0;  //will be date for most recently changed workspace
 
     public NameCounter topicsPerUser      = new NameCounter();
     public NameCounter docsPerUser        = new NameCounter();
@@ -30,6 +31,10 @@ public class WorkspaceStats {
 
     public void gatherFromWorkspace(NGWorkspace ngp) throws Exception {
 
+        long changed = ngp.getLastModifyTime();
+        if (changed > recentChange) {
+            recentChange = changed;
+        }
         for (TopicRecord topic : ngp.getAllDiscussionTopics()) {
             numTopics++;
             AddressListEntry modUser = topic.getModUser();
@@ -131,6 +136,10 @@ public class WorkspaceStats {
         numProposals  += other.numProposals;
         sizeDocuments += other.sizeDocuments;
         sizeArchives  += other.sizeArchives;
+        if (other.recentChange > recentChange) {
+            recentChange = other.recentChange;
+        }
+        
 
         topicsPerUser.addAllCounts(other.topicsPerUser);
         docsPerUser.addAllCounts(other.docsPerUser);
@@ -153,6 +162,7 @@ public class WorkspaceStats {
         jo.put("sizeDocuments", sizeDocuments);
         jo.put("sizeArchives",  sizeArchives);
         jo.put("numWorkspaces",  numWorkspaces);
+        jo.put("recentChange",  recentChange);
         jo.put("numUsers",       anythingPerUser.size());
         jo.put("topicsPerUser",      topicsPerUser.getJSON());
         jo.put("docsPerUser",        docsPerUser.getJSON());

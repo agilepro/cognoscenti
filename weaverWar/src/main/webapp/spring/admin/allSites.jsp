@@ -9,17 +9,13 @@
     Cognoscenti cog = Cognoscenti.getInstance(request);
     List<AddressListEntry> allEmail = new ArrayList<AddressListEntry>();
     
-    JSONArray allRequests = new JSONArray();
+    JSONArray allSites = new JSONArray();
     for (NGPageIndex ngpi : cog.getAllSites()){
         NGBook site = ngpi.getSite();
         JSONObject jo = site.getConfigJSON();
         WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
-        jo.put("numWorkspaces", stats.numWorkspaces);
-        jo.put("numTopics", stats.numTopics);
-        jo.put("numUsers", stats.anythingPerUser.size());
-        jo.put("numMeets", stats.numMeetings);
-        jo.put("numDocs", stats.numDocs);
-        allRequests.put(jo);
+        jo.put("stats", stats.getJSON());
+        allSites.put(jo);
         
         for (AddressListEntry ale : site.getPrimaryRole().getExpandedPlayers(site)) {
             AddressListEntry.addIfNotPresent(allEmail, ale);
@@ -44,7 +40,11 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    $scope.allRequests = <%allRequests.write(out,2,4);%>;
+    $scope.allSites = <%allSites.write(out,2,4);%>;
+    $scope.showSiteDate = true;
+    $scope.showWSDate = true;
+    $scope.showOwners = true;
+    
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -58,8 +58,8 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.sortSites = function() {
-        $scope.allRequests.sort( function(a,b) {
-            return (b.changed-a.changed);
+        $scope.allSites.sort( function(a,b) {
+            return (b.stats.recentChange-a.stats.recentChange);
         });
     }
     $scope.sortSites();
@@ -75,7 +75,7 @@ app.controller('myCtrl', function($scope, $http) {
             $http.post(postURL, postdata)
             .success( function(data) {
                 var newList = [];
-                $scope.allRequests.forEach( function(item) {
+                $scope.allSites.forEach( function(item) {
                     if (item.key==siteKey) {
                         newList.push(data);
                     }
@@ -83,13 +83,30 @@ app.controller('myCtrl', function($scope, $http) {
                         newList.push(item);
                     }
                 });
-                $scope.allRequests = newList;
+                $scope.allSites = newList;
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
             });
         }
     };
+    
+    $scope.filterSites = function() {
+        if (!$scope.filterChars) {
+            return $scope.allSites;
+        }
+        var filter = $scope.filterChars.toLowerCase();
+        var ret = [];
+        $scope.allSites.forEach( function(item) {
+            if (item.names[0].toLowerCase().indexOf(filter)>=0) {
+                ret.push(item);
+            }
+            else if (item.key.toLowerCase().indexOf(filter)>=0) {
+                ret.push(item);
+            }
+        });
+        return ret;
+    }
     
     $scope.garbageCollect = function(rec) {
         if (confirm("Are you sure you want to delete parts from site: "
@@ -104,12 +121,12 @@ app.controller('myCtrl', function($scope, $http) {
             .success( function(data) {
                 console.log("GC got success: ", data);
                 var newList = [];
-                $scope.allRequests.forEach( function(item) {
+                $scope.allSites.forEach( function(item) {
                     if (item.key!=siteKey) {
                         newList.push(item);
                     }
                 });
-                $scope.allRequests = newList;
+                $scope.allSites = newList;
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
@@ -128,6 +145,15 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="h1">
         All Sites
     </div>
+    
+    <p>
+        Filter
+           <input type="text" ng-model="filterChars"/>
+        Include 
+           <input type="checkBox" ng-model="showSiteDate"> Site Change
+           <input type="checkBox" ng-model="showWSDate"> WS Change
+           <input type="checkBox" ng-model="showOwners"> Owners   
+    </p>
 
     <div id="accountRequestDiv">
         <table class="table">
@@ -136,9 +162,10 @@ app.controller('myCtrl', function($scope, $http) {
                     <th></th>
                     <th >ID</th>
                     <th >Site Name</th>
-                    <th >Last Change</th>
+                    <th  ng-show="showSiteDate">Site Change</th>
+                    <th ng-show="showWSDate">WS Change</th>
                     <th >Status</th>
-                    <th >Owners</th>
+                    <th ng-show="showOwners">Owners</th>
                     <th >WS</th>
                     <th >Topics</th>
                     <th >Users</th>
@@ -147,7 +174,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="rec in allRequests">
+                <tr ng-repeat="rec in filterSites()">
                     <td>
                       <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -166,18 +193,19 @@ app.controller('myCtrl', function($scope, $http) {
                     </td>
                     <td>{{rec.key}}</td>
                     <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a></td>
-                    <td>{{rec.changed|date}}</td>
+                    <td ng-show="showSiteDate">{{rec.changed|cdate}}</td>
+                    <td ng-show="showWSDate">{{rec.stats.recentChange|cdate}}</td>
                     <td><div ng-show="rec.isDeleted">Deleted</div>
                         <div ng-show="rec.frozen">Frozen</div>
                         <div ng-show="rec.offLine">OffLine</div>
                         <div ng-show="rec.movedTo">Moved</div>
                     </td>
-                    <td><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
-                    <td>{{rec.numWorkspaces}}</td>
-                    <td>{{rec.numTopics}}</td>
-                    <td>{{rec.numUsers}}</td>
-                    <td>{{rec.numMeets}}</td>
-                    <td>{{rec.numDocs}}</td>
+                    <td ng-show="showOwners"><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
+                    <td>{{rec.stats.numWorkspaces}}</td>
+                    <td>{{rec.stats.numTopics}}</td>
+                    <td>{{rec.stats.numUsers}}</td>
+                    <td>{{rec.stats.numMeetings}}</td>
+                    <td>{{rec.stats.numDocs}}</td>
                 </tr>
             </tbody>
         </table>
