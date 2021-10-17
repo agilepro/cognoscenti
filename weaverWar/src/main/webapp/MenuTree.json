@@ -52,7 +52,7 @@
       "title":"List and manage all the meetings in this workspace",
       "opts": [
         {
-          "use": ["MeetingList.jsp"],
+          "use": ["MeetingList.jsp","AttendeeMatrix.jsp"],
           "href":"CloneMeeting.htm",
           "name":"Create",
           "title":"Create a new, empty meeting"
@@ -74,9 +74,15 @@
           "href":"MeetMerge.htm?id={{meetId}}&tem=FullDetail.chtml",
           "name":"Layouts",
           "title":"Send email about this particular meeting"
+        },
+        {
+          "use": ["MeetingList.jsp","AttendeeMatrix.jsp"],
+          "href":"AttendeeMatrix.htm",
+          "name":"Attendance",
+          "title":"A list of who attended which meetings"
         }
       ],
-      "useOpts": ["MeetingList.jsp"]
+      "useOpts": ["MeetingList.jsp", "AttendeeMatrix.jsp"]
     },
     {
       "href":"NotesList.htm",

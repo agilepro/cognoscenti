@@ -225,6 +225,9 @@ public class MeetingRecord extends DOMFace {
         }
         return false;
     }
+    public List<String> getAttendees() {
+        return getVector("attended");
+    }
 
 
     /**
@@ -1413,5 +1416,29 @@ public class MeetingRecord extends DOMFace {
             return findMeetingLayout(ar, ngw, "FullDetail.chtml");
         }
         return meetingLayoutFile;
+    }
+    
+    public static JSONObject findAttendeeMatrix(NGWorkspace ngw) throws Exception {
+        JSONObject jo = new JSONObject();
+        for (MeetingRecord meet : ngw.getMeetings()) {
+            for (String attendee : meet.getAttendees()) {
+                AddressListEntry ale = new AddressListEntry(attendee);
+                UserProfile user = ale.getUserProfile();
+                if (user==null) {
+                    //ignore attendance entries for people without user profiles
+                    continue;
+                }
+                String id = user.getUniversalId();
+                if (jo.has(attendee)) {
+                    jo.getJSONObject(id).put(meet.getId(), true);
+                }
+                else {
+                    JSONObject newObj =  new JSONObject();
+                    newObj.put(meet.getId(), true);
+                    jo.put(id, newObj);
+                }
+            }
+        }
+        return jo;
     }
 }
