@@ -49,7 +49,7 @@ public abstract class NGPage extends ContainerCommon {
     public static final String ACCESS_STATE_FROZEN_STR = "Frozen";
     public static final String ACCESS_STATE_DELETED_STR = "Deleted";
 
-    private PageInfoRecord pageInfo;
+    protected PageInfoRecord pageInfo;
     private ReminderMgr reminderMgr;
     private ProcessRecord pageProcess;
 
@@ -408,13 +408,6 @@ public abstract class NGPage extends ContainerCommon {
     public boolean isDeleted() {
         return pageInfo.isDeleted();
     }
-    private long getDeleteDate() {
-        return pageInfo.getDeleteDate();
-    }
-    private String getDeleteUser() {
-        return pageInfo.getDeleteUser();
-    }
-
 
     /**
     * Get a section, creating it if it does not exist yet
@@ -1653,74 +1646,10 @@ public abstract class NGPage extends ContainerCommon {
         getProcess().setDescription(purp);
     }
 
-    public JSONObject getConfigJSON() throws Exception {
-        ProcessRecord process = getProcess();
-        JSONObject workspaceConfigInfo = new JSONObject();
-        workspaceConfigInfo.put("key", getKey());
-        workspaceConfigInfo.put("site", getSiteKey());
-        workspaceConfigInfo.put("goal", process.getSynopsis());
-        workspaceConfigInfo.put("parentKey", getParentKey());
-        workspaceConfigInfo.put("frozen", isFrozen());
-        workspaceConfigInfo.put("deleted", isDeleted());
-        if (isDeleted()) {
-            workspaceConfigInfo.put("deleteDate", getDeleteDate());
-            workspaceConfigInfo.put("deleteUser", getDeleteUser());
-        }
-        workspaceConfigInfo.put("accessState", getAccessStateStr());
+    public abstract JSONObject getConfigJSON() throws Exception;
 
-        //read only information from the site
-        workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
-
-        //returns all the names for this page
-        List<String> nameSet = getPageNames();
-        workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
-
-        workspaceConfigInfo.put("purpose", process.getDescription());  //a.k.a. 'aim'
-        process.extractScalarString(workspaceConfigInfo, "mission");
-        process.extractScalarString(workspaceConfigInfo, "vision");
-        process.extractScalarString(workspaceConfigInfo, "domain");
-
-        return workspaceConfigInfo;
-    }
-
-    public void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception {
-        ProcessRecord process = getProcess();
-        if (newConfig.has("goal")) {
-            process.setSynopsis(newConfig.getString("goal"));
-        }
-        if (newConfig.has("parentKey")) {
-            String parentKey = newConfig.getString("parentKey");
-            if ("$delete$".equals(parentKey)) {
-                setParentKey(null);
-            }
-            else {
-                setParentKey(parentKey);
-            }
-        }
-        if (newConfig.has("deleted") || newConfig.has("frozen")) {
-            boolean newDelete = newConfig.optBoolean("deleted", false);
-            boolean newFrozen = newConfig.optBoolean("frozen", false);
-            if (newDelete) {
-                setAccessState(ar, ACCESS_STATE_DELETED);
-            }
-            else if (newFrozen) {
-                setAccessState(ar, ACCESS_STATE_FROZEN);
-            }
-            else {
-                setAccessState(ar, ACCESS_STATE_LIVE);
-            }
-        }
-        if (newConfig.has("projectMail")) {
-            setWorkspaceMailId(newConfig.getString("projectMail"));
-        }
-        if (newConfig.has("purpose")) {
-            //also known as 'aim'
-            process.setDescription(newConfig.getString("purpose"));
-        }
-        process.updateScalarString("mission", newConfig);
-        process.updateScalarString("vision", newConfig);
-        process.updateScalarString("domain", newConfig);
-    }
+    public abstract void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception;
+    
 
 
 

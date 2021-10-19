@@ -160,7 +160,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.saveOneField = function(fieldName) {
         var newData = {};
         newData[fieldName] = $scope.workspaceConfig[fieldName];
-        $scope.saveRecord(newData);
+        saveRecord(newData);
         $scope.isEditing = null;
     }
     $scope.deleteParentKey = function() {
@@ -175,13 +175,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.clearField = function(fieldName) {
         var newData = {};
         newData[fieldName] = "";
-        $scope.saveRecord(newData);
+        saveRecord(newData);
         $scope.isEditing = null;
     }
     $scope.saveProjectConfig = function() {
-        $scope.saveRecord($scope.workspaceConfig);
+        saveRecord($scope.workspaceConfig);
     }
-    $scope.saveRecord = function(rec) {
+    function saveRecord(rec) {
         $scope.generateTheHtmlValues();
         var postURL = "updateProjectInfo.json";
         var postdata = angular.toJson(rec);
@@ -273,6 +273,13 @@ app.controller('myCtrl', function($scope, $http) {
             }
         });
         return res;
+    }
+    
+    $scope.toggleFrontPage = function(flag) {
+        $scope.workspaceConfig.wsSettings[flag] = !$scope.workspaceConfig.wsSettings[flag];
+        var newData = {wsSettings: {}};
+        newData.wsSettings[flag] = $scope.workspaceConfig.wsSettings[flag];
+        saveRecord(newData);
     }
 
 });
@@ -381,6 +388,15 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
+                    <td></td>
+                    <td ng-click="toggleFrontPage('showVisionOnFrontPage')">
+                        <span ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+                            <i class="fa fa-check-circle"></i> Show vision on Front Page</span>
+                        <span ng-hide="workspaceConfig.wsSettings.showVisionOnFrontPage">
+                            <i class="fa fa-circle-o"></i> Don't show vision on Front Page</span>
+                    </td>
+                </tr>
+                <tr>
                     <td ng-click="setEdit('mission')"><label>Mission:</label></td>
                     <td ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle markDownEditor"
@@ -396,8 +412,17 @@ editBoxStyle {
                         <div ng-hide="missionHtml" class="clicker"></div>
                     </td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td ng-click="toggleFrontPage('showMissionOnFrontPage')">
+                        <span ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+                            <i class="fa fa-check-circle"></i> Show mission on Front Page</span>
+                        <span ng-hide="workspaceConfig.wsSettings.showMissionOnFrontPage">
+                            <i class="fa fa-circle-o"></i> Don't show mission on Front Page</span>
+                    </td>
+                </tr>
                 <tr >
-                    <td  ng-click="setEdit('purpose')"><label>Aim:</label></td>
+                    <td ng-click="setEdit('purpose')"><label>Aim:</label></td>
                     <td ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace."
@@ -410,6 +435,15 @@ editBoxStyle {
                     <td ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
                         <div ng-bind-html="purposeHtml"></div>
                         <div ng-hide="purposeHtml" class="clicker"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td ng-click="toggleFrontPage('showAimOnFrontPage')">
+                        <span ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
+                            <i class="fa fa-check-circle"></i> Show aim on Front Page</span>
+                        <span ng-hide="workspaceConfig.wsSettings.showAimOnFrontPage">
+                            <i class="fa fa-circle-o"></i> Don't show aim on Front Page</span>
                     </td>
                 </tr>
                 <tr>
@@ -426,6 +460,15 @@ editBoxStyle {
                     <td ng-hide="isEditing=='domain'" ng-dblclick="setEdit('domain')">
                         <div ng-bind-html="domainHtml"></div>
                         <div ng-hide="domainHtml" class="clicker"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td ng-click="toggleFrontPage('showDomainOnFrontPage')">
+                        <span ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+                            <i class="fa fa-check-circle"></i> Show domain on Front Page</span>
+                        <span ng-hide="workspaceConfig.wsSettings.showDomainOnFrontPage">
+                            <i class="fa fa-circle-o"></i> Don't show domain on Front Page</span>
                     </td>
                 </tr>
                 <tr>

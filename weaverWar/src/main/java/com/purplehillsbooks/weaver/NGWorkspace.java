@@ -67,28 +67,20 @@ public class NGWorkspace extends NGPage {
         super(theFile, newDoc, site);
 
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
-        if (jsonFilePath.exists()) {
-            workspaceJSON = JSONObject.readFromFile(jsonFilePath);
-        }
-        else {
-            workspaceJSON = new JSONObject();
-        }
+        
+        //we can relax this and get from lazy evaluation, but need to test carefully
+        //leaving this in for now
+        getWorkspaceJSON();
+        
+        //search for old, outdated invitations and delete them
         removeOldInvitations();
 
 
         String name = theFile.getName();
         if (!name.equals("ProjInfo.xml")) {
-            if (name.endsWith(".sp")) {
-                //this is a non-migrated case ... remove this code
-                throw new Exception("Seems to have found a server with an unmigrated data folder "
-                        +"from long long ago.  The '.sp' files all in one folder no longer supported.  "
-                        +"Manual migration will be needed! :: "+theFile);
-            }
-            else {
-                throw new Exception("Something is wrong with the data folder structure.  "
+            throw new Exception("Something is wrong with the data folder structure.  "
                         +"Tried to open a NGWorkspace file named "+name
                         +" and don't know what to do with that.");
-            }
         }
 
         File cogFolder = theFile.getParentFile();
@@ -134,7 +126,9 @@ public class NGWorkspace extends NGPage {
     public void save() throws Exception {
         super.save();
 
-        workspaceJSON.writeToFile(jsonFilePath);
+        if (workspaceJSON!=null) {
+            workspaceJSON.writeToFile(jsonFilePath);
+        }
         //store into the cache.  Something might be copying things in memory,
         //and this assures that the cache matches the latest written version.
         //String fullFilePath = associatedFile.toString();
@@ -515,10 +509,7 @@ public class NGWorkspace extends NGPage {
     ///////////////////////// SharePortRecord //////////////////
 
     public List<SharePortRecord> getSharePorts() throws Exception {
-        if (!workspaceJSON.has("sharePorts")) {
-            workspaceJSON.put("sharePorts", new JSONArray());
-        }
-        JSONArray ports = workspaceJSON.getJSONArray("sharePorts");
+        JSONArray ports = workspaceJSON.requireJSONArray("sharePorts");
         ArrayList<SharePortRecord> res = new ArrayList<SharePortRecord>();
         for (int i=0; i<ports.length(); i++) {
             JSONObject onePort = ports.getJSONObject(i);
@@ -528,10 +519,7 @@ public class NGWorkspace extends NGPage {
         return res;
     }
     public SharePortRecord createSharePort() throws Exception {
-        if (!workspaceJSON.has("sharePorts")) {
-            workspaceJSON.put("sharePorts", new JSONArray());
-        }
-        JSONArray ports = workspaceJSON.getJSONArray("sharePorts");
+        JSONArray ports = workspaceJSON.requireJSONArray("sharePorts");
         JSONObject jo = new JSONObject();
         jo.put("id", IdGenerator.generateDoubleKey());
         ports.put(jo);
@@ -579,15 +567,43 @@ public class NGWorkspace extends NGPage {
         }
     }
 
+    
+    private JSONObject getWorkspaceJSON() throws Exception {
+        if (workspaceJSON == null) {
+            if (jsonFilePath.exists()) {
+                workspaceJSON = JSONObject.readFromFile(jsonFilePath);
+            }
+            else {
+                workspaceJSON = new JSONObject();
+            }
+        }
+        return workspaceJSON;
+    }
+    
+    public JSONObject getWSSettings() throws Exception {
+        JSONObject wsJSON = getWorkspaceJSON();
+        if (!wsJSON.has("wsSettings")) {
+            //traditionally we have shown the aim on the front page, 
+            //so if the settings are not there, default to that setting
+            JSONObject def = new JSONObject();
+            def.put("showAimOnFrontPage", true);
+            wsJSON.put("wsSettings", def);
+        }
+        return wsJSON.getJSONObject("wsSettings");
+    }
+    
+    public void updateWSSettings(JSONObject newValues) throws Exception {
+        JSONObject props = getWorkspaceJSON().requireJSONObject("wsSettings");
+        for (String key : newValues.keySet()) {
+            props.put(key, newValues.get(key));
+        }
+    }
 
 
     ///////////////////////// TaskArea //////////////////
 
     public List<TaskArea> getTaskAreas() throws Exception {
-        if (!workspaceJSON.has("taskAreas")) {
-            workspaceJSON.put("taskAreas", new JSONArray());
-        }
-        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         ArrayList<TaskArea> res = new ArrayList<TaskArea>();
         for (int i=0; i<ports.length(); i++) {
             JSONObject onePort = ports.getJSONObject(i);
@@ -597,7 +613,7 @@ public class NGWorkspace extends NGPage {
         return res;
     }
     public void moveTaskArea(String id, boolean moveDown) throws Exception {
-        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         int index = -1;
         for (int i=0; i<ports.length(); i++) {
             if (id.equals(ports.getJSONObject(i).getString("id"))) {
@@ -630,10 +646,7 @@ public class NGWorkspace extends NGPage {
         workspaceJSON.put("taskAreas", newArray);
     }
     public TaskArea createTaskArea() throws Exception {
-        if (!workspaceJSON.has("taskAreas")) {
-            workspaceJSON.put("taskAreas", new JSONArray());
-        }
-        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         JSONObject jo = new JSONObject();
         jo.put("id", IdGenerator.generateKey());
         ports.put(jo);
@@ -661,10 +674,7 @@ public class NGWorkspace extends NGPage {
     ///////////////////////// Invitations //////////////////
 
     public List<RoleInvitation> getInvitations() throws Exception {
-        if (!workspaceJSON.has("roleInvitations")) {
-            workspaceJSON.put("roleInvitations", new JSONArray());
-        }
-        JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
+        JSONArray invites = getWorkspaceJSON().requireJSONArray("roleInvitations");
         ArrayList<RoleInvitation> res = new ArrayList<RoleInvitation>();
         for (int i=0; i<invites.length(); i++) {
             JSONObject riObj = invites.getJSONObject(i);
@@ -674,7 +684,7 @@ public class NGWorkspace extends NGPage {
         return res;
     }
     public void removeOldInvitations() throws Exception {
-        if (!workspaceJSON.has("roleInvitations")) {
+        if (!getWorkspaceJSON().has("roleInvitations")) {
             return;
         }
         long timeLimit = System.currentTimeMillis() - 180L*24*60*60*1000;
@@ -906,6 +916,80 @@ public class NGWorkspace extends NGPage {
         JSONObject newVal = new JSONObject();
         newVal.put("isTemplate", val);
         updatePersonalWorkspaceSettings(user, newVal);
+    }
+    
+
+    
+    public JSONObject getConfigJSON() throws Exception {
+        ProcessRecord process = getProcess();
+        JSONObject workspaceConfigInfo = new JSONObject();
+        workspaceConfigInfo.put("key", getKey());
+        workspaceConfigInfo.put("site", getSiteKey());
+        workspaceConfigInfo.put("goal", process.getSynopsis());
+        workspaceConfigInfo.put("parentKey", getParentKey());
+        workspaceConfigInfo.put("frozen", isFrozen());
+        workspaceConfigInfo.put("deleted", isDeleted());
+        if (isDeleted()) {
+            workspaceConfigInfo.put("deleteDate", pageInfo.getDeleteDate());
+            workspaceConfigInfo.put("deleteUser", pageInfo.getDeleteUser());
+        }
+        workspaceConfigInfo.put("accessState", getAccessStateStr());
+
+        //read only information from the site
+        workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
+
+        //returns all the names for this page
+        List<String> nameSet = getPageNames();
+        workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
+
+        workspaceConfigInfo.put("purpose", process.getDescription());  //a.k.a. 'aim'
+        process.extractScalarString(workspaceConfigInfo, "mission");
+        process.extractScalarString(workspaceConfigInfo, "vision");
+        process.extractScalarString(workspaceConfigInfo, "domain");
+        workspaceConfigInfo.put("wsSettings", getWSSettings());
+        return workspaceConfigInfo;
+    }
+
+    public void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception {
+        ProcessRecord process = getProcess();
+        if (newConfig.has("goal")) {
+            process.setSynopsis(newConfig.getString("goal"));
+        }
+        if (newConfig.has("parentKey")) {
+            String parentKey = newConfig.getString("parentKey");
+            if ("$delete$".equals(parentKey)) {
+                setParentKey(null);
+            }
+            else {
+                setParentKey(parentKey);
+            }
+        }
+        if (newConfig.has("deleted") || newConfig.has("frozen")) {
+            boolean newDelete = newConfig.optBoolean("deleted", false);
+            boolean newFrozen = newConfig.optBoolean("frozen", false);
+            if (newDelete) {
+                setAccessState(ar, ACCESS_STATE_DELETED);
+            }
+            else if (newFrozen) {
+                setAccessState(ar, ACCESS_STATE_FROZEN);
+            }
+            else {
+                setAccessState(ar, ACCESS_STATE_LIVE);
+            }
+        }
+        if (newConfig.has("projectMail")) {
+            setWorkspaceMailId(newConfig.getString("projectMail"));
+        }
+        if (newConfig.has("purpose")) {
+            //also known as 'aim'
+            process.setDescription(newConfig.getString("purpose"));
+        }
+        process.updateScalarString("mission", newConfig);
+        process.updateScalarString("vision", newConfig);
+        process.updateScalarString("domain", newConfig);
+        if (newConfig.has("wsSettings")) {
+            updateWSSettings(newConfig.getJSONObject("wsSettings"));
+        }
     }
     
 }

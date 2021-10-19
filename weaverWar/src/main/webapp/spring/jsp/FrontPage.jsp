@@ -193,6 +193,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Front Page");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.workspaceConfig = <%ngp.getConfigJSON().write(out,2,4);%>;
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
     $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
     $scope.parent     = <%parent.write(out,2,4);%>;
@@ -207,15 +208,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.isMember = <%=isMember%>;
     $scope.filter = "";
     
-    if (!$scope.purpose) {
-        $scope.purposeHtml = "<i>no description</i>";
+    function processHtml(value) {
+        if (!value) {
+            return "<i>no description</i>";
+        }
+        else if (value.length<200) {
+            return convertMarkdownToHtml(value);
+        }
+        else {
+            return convertMarkdownToHtml(value.substring(0,198)+" ...");
+        }
     }
-    else if ($scope.purpose.length<200) {
-        $scope.purposeHtml = convertMarkdownToHtml($scope.purpose);
+    function generateTheHtmlValues() {
+        $scope.purposeHtml = processHtml($scope.workspaceConfig.purpose);
+        $scope.visionHtml  = processHtml($scope.workspaceConfig.vision);
+        $scope.missionHtml = processHtml($scope.workspaceConfig.mission);
+        $scope.domainHtml  = processHtml($scope.workspaceConfig.domain);
     }
-    else {
-        $scope.purposeHtml = convertMarkdownToHtml($scope.purpose.substring(0,198)+" ...");
-    }
+    generateTheHtmlValues();
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -573,10 +583,38 @@ a {
 <!-- COLUMN 3 -->
       <div class="col-md-4 col-sm-12">
 
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Vision of Workspace</div>
+              <div style="float:right" title="Edit vision in this workspace">
+                  <a href="AdminSettings.htm">
+                      <i class="fa fa-info-circle"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body" >
+              <a href="AdminSettings.htm">
+              <div ng-bind-html="visionHtml"></div>
+              </a>
+          </div>
+        </div>
+        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Mission of Workspace</div>
+              <div style="float:right" title="Edit mission in this workspace">
+                  <a href="AdminSettings.htm">
+                      <i class="fa fa-info-circle"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body" >
+              <a href="AdminSettings.htm">
+              <div ng-bind-html="missionHtml"></div>
+              </a>
+          </div>
+        </div>
+        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
           <div class="panel-heading headingfont">
               <div style="float:left">Aim of Workspace</div>
-              <div style="float:right" title="View and manage the roles in this workspace">
+              <div style="float:right" title="Edit aim in this workspace">
                   <a href="AdminSettings.htm">
                       <i class="fa fa-info-circle"></i></a></div>
               <div style="clear:both"></div>
@@ -584,6 +622,20 @@ a {
           <div class="panel-body" >
               <a href="AdminSettings.htm">
               <div ng-bind-html="purposeHtml"></div>
+              </a>
+          </div>
+        </div>
+        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Domain of Workspace</div>
+              <div style="float:right" title="Edit domain in this workspace">
+                  <a href="AdminSettings.htm">
+                      <i class="fa fa-info-circle"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body" >
+              <a href="AdminSettings.htm">
+              <div ng-bind-html="domainHtml"></div>
               </a>
           </div>
         </div>
