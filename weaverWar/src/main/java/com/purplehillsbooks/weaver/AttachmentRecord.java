@@ -192,7 +192,8 @@ public class AttachmentRecord extends CommentContainer {
         setAttribute("displayName", newDisplayName);
         niceName = newDisplayName;
 
-        updateActualFile(oldName, newDisplayName);
+        //duplicate copy no longer kept in the project folder
+        //updateActualFile(oldName, newDisplayName);
     }
 
     /**
@@ -208,14 +209,15 @@ public class AttachmentRecord extends CommentContainer {
         return name.equalsIgnoreCase(dName);
     }
 
+    /*
     public void updateActualFile(String oldName, String newName) throws Exception
     {
         if (container==null) {
             throw new Exception("ProjectAttachment record has not be innitialized correctly, there is no container setting.");
         }
-        File folder = container.containingFolder;
-        File docFile = new File(folder, oldName);
-        File newFile = new File(folder, newName);
+        File projectFolder = container.containingFolder;
+        File docFile = new File(projectFolder, oldName);
+        File newFile = new File(projectFolder, newName);
         if (docFile.exists()) {
             //this will fail if the file already exists.
             docFile.renameTo(newFile);
@@ -227,6 +229,7 @@ public class AttachmentRecord extends CommentContainer {
             container.removeExtrasByName(newName);
         }
     }
+    */
 
     public String getLicensedAccessURL(AuthRequest ar, NGWorkspace ngp, String licenseId)
             throws Exception {
@@ -265,10 +268,8 @@ public class AttachmentRecord extends CommentContainer {
      *    content store
      * EXTERN: this is also a URL which is launched in a
      *    separate window, but it migh also have a local copy.
-     * EXTRA: this file appeared in the project folder (all by
-     *    itself) but not yet tracked
-     * GONE: this file is missing from the folder,
-     *    might have been deleted by user
+     * EXTRA: deprecated, not used any more
+     * GONE: deprecated, not used any more
      * DEFER: deprecated, not supported any more
      * except legacy
      */
@@ -290,9 +291,8 @@ public class AttachmentRecord extends CommentContainer {
         // check that a valid string id being passed
         // this is a program logic exception since the user never enters
         // the type of attachment
-        if (!type.equals("FILE") && !type.equals("URL") && !type.equals("EXTRA")
-                && !type.equals("GONE")) {
-            throw new RuntimeException("Attachment type has to be either FILE, EXTRA, GONE, or URL");
+        if (!type.equals("FILE") && !type.equals("URL")) {
+            throw new RuntimeException("Attachment type has to be either FILE, or URL");
         }
         setAttribute("type", type);
     }
@@ -361,14 +361,14 @@ public class AttachmentRecord extends CommentContainer {
     * The container is needed so that each attachment can caluculate
     * its own name properly.
     */
-    public List<AttachmentVersion> getVersions(NGContainer ngc)
+    public List<AttachmentVersion> getVersions(NGWorkspace ngc)
         throws Exception {
         if (!(ngc instanceof NGWorkspace)) {
             throw new Exception("Problem: ProjectAttachment should only belong to NGProject, "
                     +"but somehow got a different kind of container.");
         }
 
-        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        File projectFolder = ngc.containingFolder;
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
@@ -389,7 +389,7 @@ public class AttachmentRecord extends CommentContainer {
      * Can return null if the file has been found missing, and there are no
      * committed versions.
      */
-    public AttachmentVersion getLatestVersion(NGContainer ngc) throws Exception {
+    public AttachmentVersion getLatestVersion(NGWorkspace ngc) throws Exception {
 
         // code must determine HERE what kind of versioning system is being used
         // currently we only have the simple versioning system.
@@ -418,7 +418,7 @@ public class AttachmentRecord extends CommentContainer {
      * Just get the specified version, or null if that version can not be found
      * Pass a negative version number to get the latest version
      */
-    public AttachmentVersion getSpecificVersion(NGContainer ngc, int version) throws Exception {
+    public AttachmentVersion getSpecificVersion(NGWorkspace ngc, int version) throws Exception {
 
         // code must determine HERE what kind of versioning system is being used
         // currently we only have the simple versioning system.
@@ -454,7 +454,8 @@ public class AttachmentRecord extends CommentContainer {
      *
      * Returns null if versioning system does not have working copy.
      */
-    public AttachmentVersion getWorkingCopy(NGContainer ngc) throws Exception {
+    /*
+    private AttachmentVersion getWorkingCopy(NGWorkspace ngc) throws Exception {
         AttachmentVersion highest = getHighestCommittedVersion(ngc);
         int ver = 0;
         if (highest!=null) {
@@ -471,8 +472,9 @@ public class AttachmentRecord extends CommentContainer {
         }
         return null;
     }
+    */
 
-    public AttachmentVersion getHighestCommittedVersion(NGContainer ngc) throws Exception {
+    public AttachmentVersion getHighestCommittedVersion(NGWorkspace ngc) throws Exception {
         List<AttachmentVersion> list = getVersions(ngc);
         AttachmentVersion highest = null;
         int ver = 0;
@@ -486,9 +488,10 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * Takes the working copy, and make a new internal, backed up copy.
+     * OLD checkin checkout capabilities have been removed
      */
-    public void commitWorkingCopy(NGContainer ngc) throws Exception {
+    /*
+    public void commitWorkingCopy(NGWorkspace ngc) throws Exception {
         File projectFolder = ((NGWorkspace)ngc).containingFolder;
         if (!projectFolder.exists()) {
             throw new Exception("Strange, this workspace's folder does not exist.  "
@@ -507,7 +510,7 @@ public class AttachmentRecord extends CommentContainer {
         String fileExtension = getFileExtension();
         File tempCogFile = File.createTempFile("~newP_"+attachmentId, fileExtension, cogFolder);
         File workFile = workCopy.getLocalFile();
-        AttachmentVersion.copyFileContents(workFile, tempCogFile);
+        StreamHelper.copyFileToFile(workFile, tempCogFile);
 
         //rename the special copy to have the right version number
         String specialVerFileName = "att"+attachmentId+"-"+Integer.toString(workCopy.getNumber())
@@ -518,12 +521,13 @@ public class AttachmentRecord extends CommentContainer {
                 new Object[]{tempCogFile,specialVerFile});
         }
     }
+    */
 
 
     /**
-     * Pass the version list in to find out whether this attachment is
-     * has uncommitted changes.
+     * OLD checkin checkout capabilities have been removed
      */
+    /*
     public boolean hasUncommittedChanges( List<AttachmentVersion> list) {
         AttachmentVersion externalCopy = null;
         AttachmentVersion latestInternal = null;
@@ -549,6 +553,7 @@ public class AttachmentRecord extends CommentContainer {
         long internalLen = latestInternal.getFileSize();
         return (externalLen != internalLen);
     }
+    */
 
     /**
      * Provide an input stream to the contents of the new version, and this
@@ -556,7 +561,7 @@ public class AttachmentRecord extends CommentContainer {
      * for that file, and return the AttachmentVersion object that represents
      * that new version.
      */
-    public AttachmentVersion streamNewVersion(AuthRequest ar, NGContainer ngc, InputStream contents)
+    public AttachmentVersion streamNewVersion(AuthRequest ar, NGWorkspace ngc, InputStream contents)
             throws Exception {
         return streamNewVersion(ngc, contents, ar.getBestUserId(), ar.nowTime);
     }
@@ -566,13 +571,13 @@ public class AttachmentRecord extends CommentContainer {
     * copy the contents into here, and then create a new version for that file, and
     * return the AttachmentVersion object that represents that new version.
     */
-    public AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
+    public AttachmentVersion streamNewVersion(NGWorkspace ngc, InputStream contents,
             String userId, long timeStamp) throws Exception {
 
         if (!(ngc instanceof NGWorkspace)) {
             throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
         }
-        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        File projectFolder = ngc.containingFolder;
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
@@ -762,7 +767,7 @@ public class AttachmentRecord extends CommentContainer {
     /**
      * return the size of the file in bytes
      */
-    public long getFileSize(NGContainer ngc) throws Exception {
+    public long getFileSize(NGWorkspace ngc) throws Exception {
         if (!"FILE".equals(getType()) || isDeleted()) {
             return -1;
         }
@@ -1158,11 +1163,7 @@ public class AttachmentRecord extends CommentContainer {
      * evidence of a file from the storage.  After calling this
      * the documents are really, truly deleted.
      */
-    public void purgeAllVersions(NGContainer ngc) throws Exception {
-        AttachmentVersion workCopy = getWorkingCopy(ngc);
-        if (workCopy!=null) {
-            workCopy.purgeLocalFile();
-        }
+    public void purgeAllVersions(NGWorkspace ngc) throws Exception {
         for (AttachmentVersion av : getVersions(ngc)) {
             av.purgeLocalFile();
         }
@@ -1195,11 +1196,6 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    public void markTimestamp(long newTime) throws Exception {
-        // does not care about timestamp
-    }
-
-
     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
         //there is no subscribers for document attachments
     }
@@ -1220,5 +1216,20 @@ public class AttachmentRecord extends CommentContainer {
         }
     }
 
-
+    /**
+     * We used to keep a duplicate copy of the file in the project directory.
+     * That is, one copy in the project directory, and then a file for 
+     * every version in the .cog folder.   We only need the versions inside
+     * the cog folder, so get rid of the extra copy in the project folder.
+     */
+    public void purgeUnnecessaryDuplicate() {
+        File projectFolder = container.containingFolder;
+        File currentFile = new File(projectFolder, getNiceName());
+        if (currentFile.exists()) {
+            currentFile.delete();
+        }
+        if (currentFile.exists()) {
+            throw new RuntimeException("Tried and failed to delete file: "+currentFile.getAbsolutePath());
+        }
+    }
 }

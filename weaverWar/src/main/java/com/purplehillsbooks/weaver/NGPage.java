@@ -1754,43 +1754,6 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-    /**
-     * This is effectively the "empty trashcan" operation.  Documents that
-     * have been marked as deleted will actually, finally, be deleted with
-     * this operation.
-     */
-    public void purgeDeletedAttachments() throws Exception {
-        List<AttachmentRecord> cleanList = new ArrayList<AttachmentRecord>();
-        for (AttachmentRecord ar : getAllAttachments()) {
-            if (!ar.isDeleted()) {
-                //don't purge or do anything to non-deleted attachments
-                continue;
-            }
-            ar.purgeAllVersions(this);
-            cleanList.add(ar);
-        }
-        for (AttachmentRecord ar : cleanList) {
-            eraseAttachmentRecord(ar.getId());
-        }
-    }
-
-
-    public File getAttachmentPathOrNull(String oneId) throws Exception {
-
-        AttachmentRecord attach = this.findAttachmentByID(oneId);
-        if (attach==null) {
-            //attachments might get removed in the mean time, just ignore them
-            //throw new Exception("getAttachmentPathFromContainer was called with an invalid ID?: "+oneId);
-            return null;
-        }
-        AttachmentVersion aVer = attach.getLatestVersion(this);
-        if (aVer==null) {
-            //throw new Exception("Apparently there are no file versions of ID: "+oneId);
-            return null;
-        }
-        return(aVer.getLocalFile());
-    }
-
 
     //////////////////// HISTORY ///////////////////////
 

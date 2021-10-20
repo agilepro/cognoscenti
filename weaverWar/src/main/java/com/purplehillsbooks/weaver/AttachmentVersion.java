@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +30,15 @@ import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 
 /**
 * A project folder file versioning system just represents multiple files
-* in a file system.  The primary version (the latest version) is kept directly
-* in the project folder using the name of the attachment.  All version are
+* in a file system.  All version are
 * stored in a subfolder named ".cog". and are named as the internal ID and
 * appending the version number to that ID.
 * For example the following might exist in the file system:
 *
-*     great-cars/CarStatistics.xls    (this is equal to version 5)
 *     great-cars/.cog/9987-1.xls
 *     great-cars/.cog/9987-2.xls
 *     great-cars/.cog/9987-3.xls
@@ -61,12 +59,8 @@ import com.purplehillsbooks.json.JSONObject;
 * Disks are cheap, and if your documents are mostly binary, then there is
 * little need to use a differencing algorithm to store more efficiently.
 *
-* The current version file is duplicated: it is both in the version folder
-* and it is also with the access name in the main folder.  First reason
-* is to enable accurate detection of changes when a person is editing directly.
-* Second, if the file is deleted, the display copy is removed, but the
-* versioned copy is still there for accessing deleted documents.  If user
-* is editing directly, the former version is preserved this way.
+* The current version file is no longer duplicated in the project folder.
+* Used to be these for direct editing, but we only support servers now.
 *
 * Date and time of the version is taken directly from the file system date.
 *
@@ -74,45 +68,28 @@ import com.purplehillsbooks.json.JSONObject;
 * you would get in a real versioning system.  Might think about adding another
 * structure in the .cog folder to track that.
 *
-* The attachment can be in some funny states.  (FILE, EXTRA, GONE, or URL)
+* The attachment can be in these states:  (FILE, or URL)
 *
 * "FILE" is the normal situation, there is a file in the main folder, and there
 * is at least one version in the COG folder that exactly equals it.
 *
 * "URL" is data only, there are no files on the disk.
 *
-* "EXTRA" is when a file exists in the folder, but NO file in the COG folder
-* This means that the file has appeared through user saving it.  User might
-* want to commit this to make a version in the COG folder.
+* "EXTRA" - deprecated, not used
 *
-*     great-cars/CarStatistics.xls
+* "GONE" - deprecated, not used
 *
-* "GONE" means that there is one or more versions in the COG folder,
-* but there is nothing in the main folder.  There are two options to
-* rectify: delete the file, or restore from latest committed version.
-*
-*     great-cars/.cog/9987-1.xls
-*     great-cars/.cog/9987-2.xls
-*     great-cars/.cog/9987-3.xls
-*
-* "GHOST" - this state does not exist, but it means that there is an attachment
-* record, and there is no file at all, neither in the main folder, nor in the COG.
-* In this case the attachment record should be ignored?
+* "GHOST" - deprecated, not used
 *
 * "DELETED" - this state is when the user deleted the file.  There should still be
 * files in the COG folder.
 *
-* "MODIFIED" is when there are all the normal files, but the file has been modified
-* in the main folder so that it is NOT the same as the highest numbered version in
-* the COG folder.  In this case the list of versions is extended and one more
-* is included to represent the file in the folder.
+* "MODIFIED" - deprecated, not used
 */
 public class AttachmentVersion {
     private final AttachmentRecord attachment;
     private final File      actualFile;
     private final int       number;
-    private final boolean   readOnly;
-    public  boolean   isInMainFolder;    //DUPLICATED in the cog subfolder
 
     /**
     * This is the static method that will search the file system for all of the attachments
@@ -141,9 +118,9 @@ public class AttachmentVersion {
         }
         List<AttachmentVersion> list = new ArrayList<AttachmentVersion>();
 
-        AttachmentVersion highestInternal = fillListReturnHighestInternalVersion(
-                list, projectfolder,  att);
+        fillListReturnHighestInternalVersion(list, projectfolder,  att);
 
+        /*
         int highestVersionSeen = 0;
         if (highestInternal!=null) {
             highestVersionSeen = highestInternal.getNumber();
@@ -151,6 +128,11 @@ public class AttachmentVersion {
 
         //This is needed only if there have been recent edits to the display copy
         //this is detected by comparing lengths
+        //--UPDATE: eliminating this because we do not allow editing of the file 
+        //  on the server.  Original design included possibly running server locally
+        //  and that caused an extra copy of the file to be in the project dir.
+        //  That extra copy no longer needed, so no need to look for attachments in the main folder
+        
         for (File testFile : projectfolder.listFiles()) {
             String testName = testFile.getName();
             if (attachName.equalsIgnoreCase(testName)) {
@@ -161,12 +143,13 @@ public class AttachmentVersion {
                 break;
             }
         }
-
+        */
+        
         return list;
     }
 
-    public static AttachmentVersion fillListReturnHighestInternalVersion(
-            List<AttachmentVersion> list, File projectfolder, AttachmentRecord att ) {
+    private static AttachmentVersion fillListReturnHighestInternalVersion(
+            List<AttachmentVersion> list, File projectfolder, AttachmentRecord att ) throws Exception {
         String attachmentId = att.getId();
         File cogfolder = new File(projectfolder, ".cog");
         if (!cogfolder.exists()) {
@@ -201,7 +184,7 @@ public class AttachmentVersion {
                     //version number, and so should not include in the list of files
                     continue;
                 }
-                AttachmentVersion avp = new AttachmentVersion(att, testFile, ver, true, false);
+                AttachmentVersion avp = new AttachmentVersion(att, testFile, ver);
                 list.add(avp);
                 if (ver>highestVersionSeen) {
                     highestVersionSeen = ver;
@@ -213,7 +196,12 @@ public class AttachmentVersion {
     }
 
 
-
+    static int counter = 1;
+    private static String unique() {
+        return Integer.toString(counter++);
+    }
+    
+    
     /**
     * This static method does the right thing for project versioning system to get a new
     * version file. Calculates the name of the new file, and it streams the entire contents
@@ -226,7 +214,7 @@ public class AttachmentVersion {
         String attachName = att.getNiceName();
         String attachmentId = att.getId();
         File cogFolder = new File(projectFolder,".cog");
-        File currentFile = new File(projectFolder, attachName);
+        //File currentFile = new File(projectFolder, attachName);
         if (!cogFolder.exists()) {
             cogFolder.mkdir();
         }
@@ -240,21 +228,23 @@ public class AttachmentVersion {
         //First, lets copy the new contents here, so that there is no blocking while in the synchronized
         //block.  Create a local file in the attachments folds, and copy the file there, so that
         //later the rename will be very fast.
-        File tempFile = File.createTempFile("~newM_"+attachmentId, fileExtension, projectFolder);
-        streamContentsToFile(contents, tempFile);
+        File tempCogFile = new File(cogFolder, "~tmpV-"+attachmentId+"-"+unique()+fileExtension);
+        StreamHelper.copyStreamToFile(contents, tempCogFile);
 
-        //Second, make a copy of this in the cog directory.
-
-        File tempCogFile = File.createTempFile("~newV_"+attachmentId, fileExtension, cogFolder);
-        copyFileContents(tempFile, tempCogFile);
+        //Second, make a copy of this in the main directory.
+        //---Eliminate the copy in the main folder.  ONLY use the COG version
+        //---No need for the unnecessary duplication
+        //File tempFile = File.createTempFile("~newM_"+attachmentId, fileExtension, projectFolder);
+        //copyFileContents(tempCogFile, tempFile);
 
         //Third, check to see if the local copy in the project file has been modified,
         //if so, make a copy of that in the cog directory -- just INCASE it is needed
-        File specialCogFile = null;
-        if (currentFile.exists()) {
-            specialCogFile = File.createTempFile("~newS_"+attachmentId, fileExtension, cogFolder);
-            copyFileContents(currentFile, specialCogFile);
-        }
+        //---Since no file in the main folder, there is no need to check
+        //File specialCogFile = null;
+        //if (currentFile.exists()) {
+        //    specialCogFile = File.createTempFile("~newS_"+attachmentId, fileExtension, cogFolder);
+        //    copyFileContents(currentFile, specialCogFile);
+        //}
 
 
         //Next, search through the directory, find the version number that is next available
@@ -269,22 +259,6 @@ public class AttachmentVersion {
             int newSubVersion = 1;
             for (AttachmentVersion av : list) {
                 int thisVer = av.getNumber();
-                if (av.isInMainFolder) {
-                    //should never happen, but test to be sure
-                    if (specialCogFile==null)  {
-                        throw new Exception("Consistency problem: found a modified version in "
-                                +"the workspace folder, but the file did not exist and was not copied: "
-                                +currentFile);
-                    }
-                    //rename the special copy to have the right version number
-                    String specialVerFileName = "att"+attachmentId+"-"+thisVer+fileExtension;
-                    File specialVerFile = new File(cogFolder, specialVerFileName);
-                    if (!specialCogFile.renameTo(specialVerFile)) {
-                        throw new NGException("nugen.exception.unable.to.rename.temp.file",
-                            new Object[]{specialCogFile,specialVerFile});
-                    }
-                    specialCogFile = null;
-                }
                 if (thisVer>=newSubVersion) {
                     newSubVersion = thisVer+1;
                 }
@@ -298,53 +272,34 @@ public class AttachmentVersion {
                         new Object[]{tempCogFile,newCogFile});
             }
 
+            //no more files in the project folder
+            /*
             if (currentFile.exists()) {
                 currentFile.delete();
-            }
+            }           
+            
             //clean up that special copy made 'just in case'
             if (specialCogFile!=null && specialCogFile.exists()){
                 specialCogFile.delete();
             }
+            
             if (!tempFile.renameTo(currentFile)) {
                 throw new NGException("nugen.exception.unable.to.rename.temp.file",
                         new Object[]{tempFile,currentFile});
             }
-            return new AttachmentVersion(att, currentFile, newSubVersion, false, true);
+            */
+            return new AttachmentVersion(att, newCogFile, newSubVersion);
         }
     }
 
-
-    protected static void copyFileContents(File source, File dest)  throws Exception {
-        if (!source.exists())
-        {
-            throw new Exception("copyFileContents - The source file for copying does not exist: ("+source.toString()+")");
-        }
-        FileInputStream fis = new FileInputStream(source);
-        streamContentsToFile(fis, dest);
-        fis.close();
-    }
-
-    protected static void streamContentsToFile(InputStream source, File dest)  throws Exception {
-        FileOutputStream fos = new FileOutputStream(dest);
-        byte[] buf = new byte[2048];
-        int amtRead = source.read(buf);
-        while (amtRead>0)
-        {
-            fos.write(buf, 0, amtRead);
-            amtRead = source.read(buf);
-        }
-        fos.close();
-    }
 
     /**
     * Use the public static methods above to construct the file.
     */
-    public AttachmentVersion(AttachmentRecord att, File versionFile, int newNumber, boolean isReadOnly, boolean theLatest) {
+    public AttachmentVersion(AttachmentRecord att, File versionFile, int newNumber) throws Exception {
         attachment = att;
         actualFile = versionFile;
         number = newNumber;
-        readOnly = isReadOnly;
-        isInMainFolder = theLatest;
     }
 
 
@@ -362,22 +317,6 @@ public class AttachmentVersion {
         return actualFile.length();
     }
 
-    /**
-    * Generally an old, historical version is read only.
-    * But when you ask for a new version, you get a writeable
-    * version object.
-    */
-
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-
-    public boolean isModified() {
-        return isInMainFolder;
-    }
-
-
     public InputStream getInputStream() throws Exception {
         return new FileInputStream(actualFile);
     }
@@ -385,11 +324,6 @@ public class AttachmentVersion {
 
     public File getLocalFile() {
         return actualFile;
-    }
-
-
-    public boolean isWorkingCopy() {
-        return isInMainFolder;
     }
 
 

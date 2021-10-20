@@ -70,7 +70,7 @@ public class FolderAccessHelper {
         //the following should be inside the ResourceEntity ... soon
         ConnectionType cType = remoteFile.getConnection();
         InputStream is = cType.openInputStream(remoteFile);
-        attachment.streamNewVersion(ar, ar.ngp, is);
+        attachment.streamNewVersion(ar, ngp, is);
         is.close();
     }
 

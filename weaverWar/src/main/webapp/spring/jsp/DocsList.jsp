@@ -377,7 +377,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     
 </div>
-
+<!--have to make room for menu on bottom line-->
+<div style="height:300px"></div>
 
 <script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
 

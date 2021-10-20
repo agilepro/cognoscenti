@@ -112,7 +112,7 @@ public class AttachmentHelper {
         tempFile.delete();
         saveToFileAH(file, tempFile);
         FileInputStream fis = new FileInputStream(tempFile);
-        att.streamNewVersion(ar, ar.ngp, fis);
+        att.streamNewVersion(ar, (NGWorkspace)ar.ngp, fis);
         tempFile.delete();
 
         return fileExtension;

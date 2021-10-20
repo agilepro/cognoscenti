@@ -23,18 +23,7 @@
     List<AttachmentVersion>  versionList = attachRec.getVersions(ngp);
     JSONArray allVersions = new JSONArray();
     for(AttachmentVersion aVer : versionList){
-        JSONObject verObj = new JSONObject();
-        verObj.put("num", aVer.getNumber());
-        verObj.put("date", aVer.getCreatedDate());
-        verObj.put("size", aVer.getLocalFile().length());
-        verObj.put("modified", aVer.isModified());
-        if ("URL".equals(attachRec.getType())) {
-            verObj.put("link", attachRec.getURLValue());
-        }
-        else {
-            verObj.put("link", "a/" + SectionUtil.encodeURLData(attachRec.getNiceName())+"?version="+aVer.getNumber());
-        }
-        allVersions.put(verObj);
+        allVersions.put(aVer.getJSON());
     }
     List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
     JSONArray allHistory = new JSONArray();

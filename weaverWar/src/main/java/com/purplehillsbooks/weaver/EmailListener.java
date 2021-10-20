@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashSet;
 import java.util.Properties;
@@ -548,8 +547,9 @@ public class EmailListener extends TimerTask{
     }
     */
 
+    /*
     public static void saveUploadedFile(AuthRequest ar, AttachmentRecord att,
-           InputStream is,String fileExtension, String fromAdd, NGContainer ngp) throws Exception {
+           InputStream is,String fileExtension, String fromAdd, NGWorkspace ngp) throws Exception {
 
         att.streamNewVersion(ar, ngp, is);
 
@@ -558,6 +558,7 @@ public class EmailListener extends TimerTask{
         //TODO: is this the right setting?  What if this is not a real user?
         att.setModifiedBy(fromAdd);
     }
+    */
 
     private Properties setEmailProperties(File emailPropFile) throws Exception {
 

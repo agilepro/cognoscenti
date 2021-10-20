@@ -20,7 +20,7 @@ Required parameters:
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace(); 
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
     String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
@@ -452,29 +452,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </td>
         </tr>
 
-<%if("FILE".equals(attachment.getType())){ %>
         <tr ng-show="docInfo.attType=='FILE'">
             <td class="firstcol">Version:</td>
             <td><%=attachment.getVersion()%>
              - Size: <%=fileSize%> bytes</td>
         </tr>
-<%}%>
 <%
 if (ar.isLoggedIn() || canAccessDoc) {
 %>
         <tr>
             <td class="firstcol"></td>
-            <td>
-            <%if("FILE".equals(attachment.getType())){ %> 
+            <td ng-show="docInfo.attType=='FILE'">
                 <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
                 src="<%=ar.retPath%>download.gif"></a> 
-            <%}else if("URL".equals(attachment.getType())){ %>
+            </td>
+            <td ng-show="docInfo.attType=='URL'">
             <a href="<%ar.write(permaLink); %>" target="_blank"><img
                 src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
             <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
                 <button class="btn btn-primary btn-raised">View Text Only</button></a>
-            <%} %>
-
             </td>
         </tr>
 <%  }

@@ -103,13 +103,26 @@ public class NGWorkspace extends NGPage {
         //upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
         
+        //check for and remove unnecessary files in the root folder
+        purgeRootLevelFiles();
+        
         //get rid of old ics files that are piling up in directory
         //oldest file should be today minus 30 days
         long thirtyDaysAgo = System.currentTimeMillis() - 1000L*60*60*24*30;
         for (File child : cogFolder.listFiles()) {
             String fname = child.getName();
-            if (fname.endsWith(".ics") && child.lastModified()<thirtyDaysAgo) {
+            if (child.lastModified()>thirtyDaysAgo) {
+                //don't bother cleaning up anything less than 30 days old
+                continue;
+            }
+            if (fname.endsWith(".ics")) {
                 System.out.println("CLEANUP: deleting ICS created more than 30 days ago: "+child.getAbsolutePath());
+                if (!child.delete()) {
+                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                }
+            }
+            if (fname.startsWith("~tmp")) {
+                System.out.println("CLEANUP: deleting ~tmp file created more than 30 days ago: "+child.getAbsolutePath());
                 if (!child.delete()) {
                     System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
                 }
@@ -242,42 +255,83 @@ public class NGWorkspace extends NGPage {
 
 
     public List<AttachmentRecord> getAllAttachments() throws Exception {
-        @SuppressWarnings("unchecked")
-        List<AttachmentRecord> list = (List<AttachmentRecord>)(List<?>)
-                attachParent.getChildren("attachment", AttachmentRecord.class);
+        List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);
         for (AttachmentRecord att : list) {
             att.setContainer(this);
+            
             String atype = att.getType();
             boolean isDel = att.isDeleted();
-            if (atype.equals("FILE") && !isDel)
-            {
-                File attPath = new File(containingFolder, att.getDisplayName());
-                if (!attPath.exists()) {
-                    //the file is missing, set to GONE, but should this be persistent?
-                    att.setType("GONE");
+            if (atype.equals("FILE") && !isDel) {
+                String attName = att.getDisplayName();
+                if (attName==null || attName.length()==0) {
+                    System.out.println("Found attachement without name, id="+att.getId());
                 }
+                
+                //consider removing this check as unnecessary, project folder files
+                //eliminated in Oct 2021 and so at some point remove this unnecessary check.
+                /*
+                File attPath = new File(containingFolder, attName);
+                if (attPath.exists()) {
+                    throw new Exception("There is a copy in the main folder, it should not be there: "
+                        +attPath.getAbsolutePath());
+                }
+                */
             }
-            else if (atype.equals("GONE"))
-            {
-                File attPath = new File(containingFolder, att.getDisplayName());
-                if (isDel || attPath.exists()) {
-                    //either attachment deleted, or we found it again, so set it back to file
-                    att.setType("FILE");
-                }
+            else if (atype.equals("GONE")) {
+                //old state no longer supported, this correction was in the code
+                //eliminated project folder files in Oct 2021 and so at some point remove this unnecessary check.
+                att.setType("FILE");
             }
         }
         return list;
     }
 
     public AttachmentRecord createAttachment() throws Exception {
-        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
         String newId = getUniqueOnPage();
+        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
         attach.setId(newId);
         attach.setContainer(this);
         attach.setUniversalId( getContainerUniversalId() + "@" + newId );
         return attach;
     }
+    /**
+     * This is effectively the "empty trashcan" operation.  Documents that
+     * have been marked as deleted will actually, finally, be deleted with
+     * this operation.
+     */
+    public void purgeDeletedAttachments() throws Exception {
+        List<AttachmentRecord> cleanList = new ArrayList<AttachmentRecord>();
+        for (AttachmentRecord ar : getAllAttachments()) {
+            if (!ar.isDeleted()) {
+                //don't purge or do anything to non-deleted attachments
+                continue;
+            }
+            ar.purgeAllVersions(this);
+            cleanList.add(ar);
+        }
+        for (AttachmentRecord ar : cleanList) {
+            eraseAttachmentRecord(ar.getId());
+        }
+    }
 
+    public File getAttachmentPathOrNull(String oneId) throws Exception {
+
+        AttachmentRecord attach = this.findAttachmentByID(oneId);
+        if (attach==null) {
+            //attachments might get removed in the mean time, just ignore them
+            //throw new Exception("getAttachmentPathFromContainer was called with an invalid ID?: "+oneId);
+            return null;
+        }
+        AttachmentVersion aVer = attach.getLatestVersion(this);
+        if (aVer==null) {
+            //throw new Exception("Apparently there are no file versions of ID: "+oneId);
+            return null;
+        }
+        return(aVer.getLocalFile());
+    }
+
+
+/*
     public void scanForNewFiles() throws Exception {
         File[] children = containingFolder.listFiles();
         List<AttachmentRecord> list = getAllAttachments();
@@ -333,8 +387,9 @@ public class NGWorkspace extends NGPage {
             attachParent.removeChild(ghost);
         }
     }
+    */
 
-
+/*
     public void removeExtrasByName(String name) throws Exception {
         List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);
         for (AttachmentRecord att : list) {
@@ -344,6 +399,7 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
+    */
 
 
     public void assureLaunchingPad(AuthRequest ar) throws Exception {
@@ -476,7 +532,16 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
-
+    
+    /**
+     * Another structure migration.   Get rid of the files that are in the root
+     * of the project folder.
+     */
+    private void purgeRootLevelFiles() throws Exception {
+        for (AttachmentRecord att : getAllAttachments()) {
+            att.purgeUnnecessaryDuplicate();
+        }
+    }
 
     /**
     * schema migration ...
