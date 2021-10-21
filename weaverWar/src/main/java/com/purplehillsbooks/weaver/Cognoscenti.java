@@ -568,7 +568,7 @@ System.out.println("Weaver Server Object == Start the Server");
         // now process the site files if any
         for (File aSitePath : allSiteFiles) {
             try {
-                NGBook ngb = NGBook.readSiteAbsolutePath(aSitePath);
+                NGBook ngb = NGBook.readSiteAbsolutePath(this, aSitePath);
                 NGBook.registerSite(ngb);
                 makeIndexForSite(ngb);
             }

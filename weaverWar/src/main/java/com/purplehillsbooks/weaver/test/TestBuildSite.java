@@ -98,7 +98,7 @@ public class TestBuildSite implements TestSet {
         testString("secondaryRole.getName test", sec.getName(), "Owners");
 
         //read the file again from disk
-        testSite = NGBook.forceRereadSiteFile(siteKey);
+        testSite = NGBook.forceRereadSiteFile(siteKey, cog);
 
         testString("getFullName should return same name as set", testSite.getFullName(), siteName);
         testString("key member should return same key as set", testSite.key, siteKey);
@@ -126,7 +126,7 @@ public class TestBuildSite implements TestSet {
     }
 
     public void setValuesOnSite() throws Exception {
-        NGBook testSite = NGBook.forceRereadSiteFile(siteKey);
+        NGBook testSite = NGBook.forceRereadSiteFile(siteKey, cog);
         String testVal = allPunct+allPunct+allPunct;
         testSite.setDescription(testVal);
         testString("getDescription test value", testSite.getDescription(), testVal);
@@ -136,7 +136,7 @@ public class TestBuildSite implements TestSet {
         testString("getDescription CDATA value", testSite.getDescription(), testVal);
 
         testSite.save();
-        testSite = NGBook.forceRereadSiteFile(siteKey);
+        testSite = NGBook.forceRereadSiteFile(siteKey, cog);
         testString("getDescription CDATA value", testSite.getDescription(), testVal);
     }
 

@@ -628,7 +628,7 @@ public class SiteController extends BaseController {
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
 
             JSONArray peopleList = new JSONArray();
-            List<AddressListEntry> userList = site.getSiteUsersList(ar.getCogInstance());
+            List<AddressListEntry> userList = site.getSiteUsersList();
             for (AddressListEntry ale : userList) {
                 JSONObject person = ale.getJSON();
                 peopleList.put(person);
@@ -660,7 +660,7 @@ public class SiteController extends BaseController {
             if (recalc!=null) {
                 site.flushUserCache();
             }
-            WorkspaceStats ws = site.getRecentStats(ar.getCogInstance());
+            WorkspaceStats ws = site.getRecentStats();
 
             JSONObject result = new JSONObject();
             result.put("siteId",  siteId);
@@ -672,6 +672,53 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    @RequestMapping(value = "/{siteId}/$/SiteUserMap.json", method = RequestMethod.GET)
+    public void siteUserMapGet(HttpServletRequest request,
+            HttpServletResponse response, @PathVariable String siteId) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            if (!ar.isLoggedIn()) {
+                throw new Exception("Must be logged in to get users");
+            }
+            Cognoscenti cog = ar.getCogInstance();
+            NGBook site = cog.getSiteByIdOrFail(siteId);
+            JSONObject userMap = site.getUserMap();
+            sendJson(ar, userMap);
+        }
+        catch(Exception ex){
+            Exception ee = new JSONException("Unable to get user map for site {0}", ex, siteId);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/$/SiteUserMap.json", method = RequestMethod.POST)
+    public void siteUserMapPost(HttpServletRequest request,
+            HttpServletResponse response, @PathVariable String siteId) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            if (!ar.isLoggedIn()) {
+                throw new Exception("Must be logged in to get users");
+            }
+            Cognoscenti cog = ar.getCogInstance();
+            NGBook site = cog.getSiteByIdOrFail(siteId);
+            ar.setPageAccessLevels(site);
+            if (!ar.isAdmin()) {
+                throw new Exception("Must be administrator of site to update the permissions");
+            }
+            JSONObject userMapDelta = getPostedObject(ar);
+            JSONObject userMap = site.updateUserMap(userMapDelta);
+            sendJson(ar, userMap);
+        }
+        catch(Exception ex){
+            Exception ee = new JSONException("Unable to update user map for site {0}", ex, siteId);
+            streamException(ee, ar);
+        }
+    }
+
 
     @RequestMapping(value = "/{siteId}/$/GarbageCollect.json", method = RequestMethod.GET)
     public void GarbageCollect(HttpServletRequest request,
@@ -684,7 +731,7 @@ public class SiteController extends BaseController {
             ar.setPageAccessLevels(site);
             ar.assertAdmin("Must be admin to garbage collect items");
 
-            JSONObject result = site.actuallyGarbageCollect(ar.getCogInstance());
+            JSONObject result = site.actuallyGarbageCollect();
             sendJson(ar, result);
         }
         catch(Exception ex){

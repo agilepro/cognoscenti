@@ -22,9 +22,11 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.NGException;
@@ -57,14 +59,16 @@ public class NGBook extends ContainerCommon {
 
     private List<AddressListEntry> siteUsers;
     private boolean forceNewStatistics = false;
+    Map<String, Boolean> userAccessMap;
 
+    //this is the file system folder where site exists
+    //workspaces are underneath this folder
+    private File siteFolder = null;
+    private Cognoscenti cog;
 
-    //this is the file system folder where projects should be created
-    //or null indicates to create projects in the data folder.
-    private File projectFolder = null;
-
-    public NGBook(File theFile, Document newDoc) throws Exception {
+    public NGBook(File theFile, Document newDoc, Cognoscenti _cog) throws Exception {
         super(theFile, newDoc);
+        cog = _cog;
         siteInfoRec = requireChild("bookInfo", SiteInfoRecord.class);
         displayNames = siteInfoRec.getSiteNames();
         assureNameExists();
@@ -72,7 +76,7 @@ public class NGBook extends ContainerCommon {
         String fileName = theFile.getName();
         if (fileName.equalsIgnoreCase("SiteInfo.xml")) {
             File cogFolder = theFile.getParentFile();
-            projectFolder = cogFolder.getParentFile();
+            siteFolder = cogFolder.getParentFile();
         }
         else {
             throw new Exception("Unable to open site file with path: "+theFile);
@@ -81,8 +85,8 @@ public class NGBook extends ContainerCommon {
         // migration code, make sure there is a stored value for key
         key = siteInfoRec.getScalar("key");
         if (key == null || key.length() == 0) {
-            if (projectFolder!=null) {
-                key = SectionUtil.sanitize(projectFolder.getName());
+            if (siteFolder!=null) {
+                key = SectionUtil.sanitize(siteFolder.getName());
                 siteInfoRec.setScalar("key", key);
             }
             else if (fileName.endsWith(".book") || fileName.endsWith(".site")) {
@@ -105,6 +109,9 @@ public class NGBook extends ContainerCommon {
         // copy members from the members tag into the role itself
         moveOldMembersToRole();
         assureColorsExist();
+        
+        JSONObject userMap = getUserMap();
+        setUserUpdateMap(userMap);
     }
 
     private void assureNameExists() {
@@ -202,7 +209,7 @@ public class NGBook extends ContainerCommon {
      * Designed primarily for testing, this throws the current cached copy away
      * and re-reads the file from disk, picking up any changes on the disk
      */
-    public static NGBook forceRereadSiteFile(String key) throws Exception {
+    public static NGBook forceRereadSiteFile(String key, Cognoscenti cog) throws Exception {
         if (keyToSite == null) {
             // this should never happen, but if it does....
             throw new ProgramLogicError("in readSiteByKey called before the site index initialzed.");
@@ -221,19 +228,19 @@ public class NGBook extends ContainerCommon {
         }
         //throw it out of the cache
         unregisterSite(key);
-        site = NGBook.readSiteAbsolutePath(siteFile);
+        site = NGBook.readSiteAbsolutePath(cog, siteFile);
         registerSite(site);
         return site;
     }
 
 
-    public static NGBook readSiteAbsolutePath(File theFile) throws Exception {
+    public static NGBook readSiteAbsolutePath(Cognoscenti cog, File theFile) throws Exception {
         try {
             if (!theFile.exists()) {
                 throw new NGException("nugen.exception.file.not.exist", new Object[] { theFile });
             }
             Document newDoc = readOrCreateFile(theFile, "book");
-            NGBook newSite = new NGBook(theFile, newDoc);
+            NGBook newSite = new NGBook(theFile, newDoc, cog);
 
             //now fix up the site settings
             File cogFolder = theFile.getParentFile();
@@ -352,7 +359,7 @@ public class NGBook extends ContainerCommon {
         }
 
         Document newDoc = readOrCreateFile(theFile, "book");
-        NGBook newSite = new NGBook(theFile, newDoc);
+        NGBook newSite = new NGBook(theFile, newDoc, cog);
 
         // set default values
         List<String> nameSet = new ArrayList<String>();
@@ -632,7 +639,7 @@ public class NGBook extends ContainerCommon {
      * folder. If this site has such a folder, return it, otherwise, return null
      */
     public File getSiteRootFolder() {
-        return projectFolder;
+        return siteFolder;
     }
 
     /**
@@ -678,7 +685,7 @@ public class NGBook extends ContainerCommon {
      * Confirm that this is a good unique key, or extend the passed value until
      * is is good by adding hyphen and a number on the end.
      */
-    public String genUniqueWSKeyInSite(Cognoscenti cog, String workspaceKey) throws Exception {
+    public String genUniqueWSKeyInSite(String workspaceKey) throws Exception {
 
         // if it is already unique, use that. This tests ALL sites currently
         // loaded, but might consider a site-specific test when there is a
@@ -797,12 +804,12 @@ public class NGBook extends ContainerCommon {
         // get the sanitized form, just in case
         String sanitizedKey = SectionUtil.sanitize(workspaceKey);
         File newFilePath = newWorkspaceFolderOrFail(sanitizedKey);
-        return createProjectAtPath(ar.getUserProfile(), newFilePath, sanitizedKey, ar.nowTime, ar.getCogInstance());
+        return createProjectAtPath(ar.getUserProfile(), newFilePath, sanitizedKey, ar.nowTime);
     }
 
 
 
-    public NGWorkspace createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime, Cognoscenti cog)
+    private NGWorkspace createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime)
             throws Exception {
         if (newFilePath.exists()) {
             throw new ProgramLogicError("Somehow the file given already exists: " + newFilePath);
@@ -912,7 +919,7 @@ public class NGBook extends ContainerCommon {
 
     }
 
-    public WorkspaceStats getRecentStats(Cognoscenti cog) throws Exception {
+    public WorkspaceStats getRecentStats() throws Exception {
         if (!this.forceNewStatistics) {
             File statsFile = getStatsFilePath();
             long timeStamp = statsFile.lastModified();
@@ -943,7 +950,7 @@ public class NGBook extends ContainerCommon {
         return siteStats;
     }
     public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
-        WorkspaceStats ws = getRecentStats(cog);
+        WorkspaceStats ws = getRecentStats();
         return ws.getJSON();
     }
 
@@ -1174,13 +1181,13 @@ public class NGBook extends ContainerCommon {
     }
 
 
-    public List<AddressListEntry> getSiteUsersList(Cognoscenti cog) throws Exception {
+    public List<AddressListEntry> getSiteUsersList() throws Exception {
         if (siteUsers!=null) {
             return siteUsers;
         }
 
         List<AddressListEntry> temp = new ArrayList<AddressListEntry>();
-        WorkspaceStats ws = getRecentStats(cog);
+        WorkspaceStats ws = getRecentStats();
         List<String> userids = ws.anythingPerUser.getSortedKeys();
         Set<String> alreadyUsed = new HashSet<String>();
         for (String id : userids) {
@@ -1203,8 +1210,7 @@ public class NGBook extends ContainerCommon {
     }
 
 
-    public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
-
+    public JSONObject actuallyGarbageCollect() throws Exception {
         JSONArray ja = new JSONArray();
         JSONObject jo = new JSONObject();
         jo.put("list",  ja);
@@ -1223,6 +1229,102 @@ public class NGBook extends ContainerCommon {
             ja.put(ngw.actuallyGarbageCollect(cog));
         }
         return jo;
+    }
+    
+    public boolean userCanUpdate(String userId) {
+        if (userId==null || userId.length()==0 || userAccessMap==null) {
+            return false;
+        }
+        return userAccessMap.get(userId);
+    }
+    
+    private void setUserUpdateMap(JSONObject userMap) throws Exception {
+        
+        Map<String, Boolean> newMap = new HashMap<String, Boolean>();
+        for (String userKey : userMap.keySet()) {
+            JSONObject userInfo = userMap.getJSONObject(userKey);
+            if (!userInfo.optBoolean("readOnly", false)) {
+                newMap.put(userKey, true);
+            }
+        }
+        userAccessMap = newMap;
+    }
+    
+    public JSONObject getUserMap() throws Exception {
+        File cogFolder = new File(siteFolder, ".cog");
+        File userMapFile = new File(cogFolder, "users.json");
+        JSONObject userMap;
+        if (userMapFile.exists()) {
+            userMap = JSONObject.readFromFile(userMapFile);
+        }
+        else {
+            userMap = new JSONObject();
+        }
+        updateUserCounts(userMap);
+        return userMap;
+    }
+    
+    public JSONObject updateUserMap(JSONObject delta) throws Exception {
+        JSONObject userMap = getUserMap();
+        for (String userKey : delta.keySet()) {
+            JSONObject userDelta = delta.getJSONObject(userKey);
+            JSONObject userInfo = userMap.requireJSONObject(userKey);
+
+            //if nothing is mentioned about readOnly then it will be false
+            if (userDelta.has("readOnly")) {
+                userInfo.put("readOnly", userDelta.getBoolean("readOnly"));
+            }
+            if (userDelta.has("name")) {
+                userInfo.put("name", userDelta.getString("name"));
+            }
+        }
+        File cogFolder = new File(siteFolder, ".cog");
+        File userMapFile = new File(cogFolder, "users.json");
+        userMap.writeToFile(userMapFile);
+        setUserUpdateMap(userMap);
+        return userMap;
+    }
+    
+    private void updateUserCounts(JSONObject userMap) throws Exception{
+        
+        //clear out all the old settings
+        for (String userKey : userMap.keySet()) {
+            JSONObject userInfo = userMap.getJSONObject(userKey);
+            userInfo.put("count", 0);
+            userInfo.put("wscount", 0);
+            userInfo.put("wsMap", new JSONObject());
+        }
+        
+        //now update for the most recent settings
+        List<NGPageIndex> allWorkspaces = cog.getAllProjectsInSite(key);
+        
+        for (NGPageIndex ngpi : allWorkspaces) {
+            NGWorkspace ngw = ngpi.getWorkspace();
+            String wsKey = ngw.getKey();
+            for (CustomRole ngr : ngw.getAllRoles()) {
+                for (AddressListEntry ale : ngr.getDirectPlayers()) {
+                    String uid = ale.getUniversalId();
+
+                    JSONObject userInfo = userMap.requireJSONObject(uid);
+                    userInfo.put("count", userInfo.optInt("count", 0)+1);
+                    UserProfile user = ale.getUserProfile();
+                    if (user==null) {
+                        userInfo.put("info", ale.getJSON());
+                        userInfo.put("hasProfile", false);
+                    }
+                    else {
+                        userInfo.put("info", user.getFullJSON());
+                        userInfo.put("hasProfile", true);
+                    }
+
+                    JSONObject wsMap = userInfo.requireJSONObject("wsMap");
+                    if (!wsMap.has(wsKey)) {
+                        wsMap.put(wsKey, ngw.getFullName());
+                    }
+                    userInfo.put("wscount", wsMap.length());
+                }
+            }
+        }
     }
 
 }

@@ -183,7 +183,7 @@ public class CreateProjectController extends BaseController {
         }
 
         //look for an alternate key if the easy one is not available
-        pageKey = site.genUniqueWSKeyInSite(ar.getCogInstance(), pageKey);
+        pageKey = site.genUniqueWSKeyInSite(pageKey);
 
         NGWorkspace newWorkspace = site.createWorkspaceByKey(ar, pageKey);
         List<String> nameSet = new ArrayList<String>();

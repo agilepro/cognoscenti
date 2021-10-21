@@ -188,6 +188,7 @@ public class WorkspaceStats {
         if (jo.has("numWorkspaces")) {
             res.numWorkspaces = jo.getInt("numWorkspaces");
         }
+        res.recentChange = jo.getLong("recentChange");
         res.topicsPerUser.fromJSON(jo.getJSONObject("topicsPerUser"));
         res.docsPerUser.fromJSON(jo.getJSONObject("docsPerUser"));
         res.commentsPerUser.fromJSON(jo.getJSONObject("commentsPerUser"));

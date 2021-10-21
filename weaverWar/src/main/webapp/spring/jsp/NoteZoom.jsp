@@ -28,7 +28,7 @@ Required parameter:
 
     //there might be a better way to measure this that takes into account
     //magic numbers and tokens
-    boolean canUpdate = ar.isMember();
+    boolean canComment = ar.isMember();
 
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
@@ -104,7 +104,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.topicId = "<%=topicId%>";
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.canUpdate = <%=canUpdate%>;
+    $scope.canComment = <%=canComment%>;
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
@@ -427,7 +427,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.startResponse = function(cmt) {
-        if (!$scope.canUpdate) {
+        if (!$scope.canComment) {
             alert("You must be logged in to ceate a response");
             return;
         }
@@ -613,7 +613,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
-        if (!$scope.canUpdate) {
+        if (!$scope.canComment) {
             alert("You must be logged in to ceate a response");
             return;
         }
@@ -796,7 +796,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
-        if (!$scope.canUpdate) {
+        if (!$scope.canComment) {
             alert("You must be logged in to ceate a response");
             return;
         }
@@ -1290,7 +1290,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <tr>
     <td></td>
     <td>
-    <div ng-show="canUpdate && !isEditing">
+    <div ng-show="canComment && !isEditing">
         <div style="margin:20px;">
             <button ng-click="openCommentCreator({},1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
@@ -1300,7 +1300,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 Create New <i class="fa  fa-question-circle"></i> Round</button>
         </div>
     </div>
-    <div ng-hide="canUpdate">
+    <div ng-hide="canComment">
         <i>You have to be logged in and a member of this workspace in order to create a comment</i>
     </div>
     </td>

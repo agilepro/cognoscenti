@@ -113,7 +113,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Access Document");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.docId   = <%=aid%>;
+    $scope.docId   = "<%=aid%>";
     $scope.docInfo = <% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
@@ -124,7 +124,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.wsUrl = "<%= wsUrl %>";
 
     $scope.myComment = "";
-    $scope.canUpdate = <%=canAccessDoc%>;
+    $scope.canAccess = <%=canAccessDoc%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -520,13 +520,13 @@ if (ar.isLoggedIn() || canAccessDoc) {
 </table>
 
 
-  <div ng-show="canUpdate">
+  <div ng-show="canAccess">
     <div ng-hide="isCreatingComment" style="margin:20px;">
       <button ng-click="openCommentCreator(null, 1)" class="btn btn-default btn-raised">
         Create New <i class="fa fa-comments-o"></i> Comment</button>
     </div>
   </div>
-  <div ng-hide="canUpdate">
+  <div ng-hide="canAccess">
     <i>You have to be logged in and a member of this workspace in order to create a comment</i>
   </div>
 

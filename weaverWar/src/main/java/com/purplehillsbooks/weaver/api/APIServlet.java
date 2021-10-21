@@ -371,7 +371,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             NGBook site = resDec.site;
             String projectName = objIn.getString("projectName");
             String projectKey = SectionWiki.sanitize(projectName);
-            projectKey = site.genUniqueWSKeyInSite(ar.getCogInstance(), projectKey);
+            projectKey = site.genUniqueWSKeyInSite(projectKey);
             NGWorkspace ngp = site.createWorkspaceByKey(ar, projectKey);
 
             License lr = ngp.createLicense(ar.getBestUserId(), "Admin",

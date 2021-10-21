@@ -1,7 +1,6 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $timeout) {
-    console.log("controller is being constructed");
     window.setMainPageTitle("Meeting");
     
     var isLinkToComment = ( window.location.href.indexOf("#")>0 );
@@ -533,7 +532,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         for (var j=0; j<fieldList.length; j++) {
             saveRecord[fieldList[j]] = $scope.meeting[fieldList[j]];
         }
-        console.log("SAVING", saveRecord);
         $scope.putGetMeetingInfo(saveRecord);
         $scope.stopEditing();
     };
@@ -587,7 +585,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 postURL = "agendaAdd.json?id="+$scope.meeting.id;
             }
             var postdata = angular.toJson(readyToSave);
-            console.log("SAVE", postURL, readyToSave);
             promise = $http.post(postURL, postdata);
         }
         else {
@@ -618,7 +615,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
     }
     function setMeetingData(data) {
-        console.log("MEETING INFO: ", data);
         if (!data) {
             throw "ASKED to SET MEETING DATA but no meeting data passed";
         }
@@ -2186,7 +2182,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         var found = false;
         $scope.meeting.visitors.forEach( function(visitor) {
             if (tuid == visitor.uid) {
-                console.log("FOUND: "+tuid);
                 found = true;
             }           
         });

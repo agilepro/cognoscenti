@@ -42,6 +42,10 @@
         jo.put("imagePath",   imagePath );
         allHistory.put(jo);
     }
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
 %>
 
@@ -72,10 +76,11 @@ div[dropzone] {
 
 
 
+<script src="../../../jscript/AllPeople.js"></script>
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Document Versions");
     window.MY_SCOPE = $scope;
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
@@ -143,6 +148,35 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+    $scope.openDocDialog = function (doc) {
+        
+        var docsDialogInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
+            controller: 'DocumentDetailsCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                docId: function () {
+                    return doc.id;
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                },
+                wsUrl: function() {
+                    return $scope.wsUrl;
+                }
+            }
+        });
+
+        docsDialogInstance.result
+        .then(function () {
+            $scope.getDocumentList();
+        }, function () {
+            $scope.getDocumentList();
+            //cancel action - nothing really to do
+        });
+    };    
 });
 </script>
 
@@ -164,6 +198,7 @@ app.controller('myCtrl', function($scope, $http) {
         </ul>
       </span>
     </div>
+    
 
     <div id="TheNewDocument" class="well">
         <div>
@@ -214,6 +249,10 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
 
+    <div>
+        <button ng-click="openDocDialog(attachInfo)" class="btn btn-default btn-raised">
+            Document Settings</button>
+    </div>
 
     <table class="table">
         <thead>
@@ -293,3 +332,9 @@ holder.ondrop = function (e) {
     scope.$apply();
 };
 </script>
+<!--have to make room for menu on bottom line-->
+<div style="height:300px"></div>
+
+<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
+
+

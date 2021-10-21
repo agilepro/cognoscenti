@@ -13,6 +13,7 @@
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
+    boolean userCanUpdate = site.userCanUpdate(ar.getBestUserId()); 
 
 %>
 
@@ -229,15 +230,18 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{rec.duration}}</td>
         </tr>
     </table>
-    
+<% if (userCanUpdate) { %>
     <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
+<% } %>
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     You have no meetings in this workspace yet.<br/>
     <br/>
-    Create a meeting records to hold the agenda of an upcoming meeting.<br/>
+<% if (userCanUpdate) { %>    Create a meeting records to hold the agenda of an upcoming meeting.  
+    <br/>
     Later use the meeting record to check everyone in, help
     keep notes, and generate the minutes of the meetng.
+<% } %>    
     </div>
-    
+
     
 </div>

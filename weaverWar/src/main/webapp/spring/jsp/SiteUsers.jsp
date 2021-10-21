@@ -6,46 +6,10 @@
 
     ar.assertLoggedIn("");
     String siteId = ar.reqParam("siteId");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    String pageAddress = ar.getResourceURL(ngb,"Personal.htm");
+    Cognoscenti cog = ar.getCogInstance();
+    NGBook site = cog.getSiteByIdOrFail(siteId);
 
-    JSONObject userMap = new JSONObject();
-    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(siteId);
-    for (NGPageIndex ngpi : allWorkspaces) {
-        NGWorkspace ngw = ngpi.getWorkspace();
-        for (CustomRole ngr : ngw.getAllRoles()) {
-            for (AddressListEntry ale : ngr.getDirectPlayers()) {
-                String uid = ale.getUniversalId();
-                UserProfile user = ale.getUserProfile();
-
-                JSONObject userInfo = null;
-                JSONObject wsMap = null;
-                if (userMap.has(uid)) {
-                    userInfo = userMap.getJSONObject(uid);
-                    wsMap = userInfo.getJSONObject("wsMap");
-                    userInfo.put("count", userInfo.getInt("count")+1);
-                }
-                else {
-                    userInfo = new JSONObject();
-                    userMap.put(uid, userInfo);
-                    wsMap = new JSONObject();
-                    userInfo.put("wsMap", wsMap);
-                    if (user==null) {
-                        userInfo.put("info", ale.getJSON());
-                    }
-                    else {
-                        userInfo.put("info", user.getFullJSON());
-                    }
-                    userInfo.put("count", 1);
-                }
-                String wsKey = ngw.getKey();
-                if (!wsMap.has(wsKey)) {
-                    wsMap.put(wsKey, ngw.getFullName());
-                }
-                userInfo.put("wscount", wsMap.length());
-            }
-        }
-    }
+    JSONObject userMap = site.getUserMap();
 
 
 %>
@@ -93,6 +57,42 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.visitUser = function(email) {
         window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent(email);
     }
+    $scope.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
+    
+    $scope.updateCount = function() {
+        var count = 0;
+        var keys = Object.keys($scope.userMap);
+        keys.forEach( function(key) {
+            if (!$scope.userMap[key].readOnly && $scope.userMap[key].hasProfile) {
+                count++;
+            }
+        });
+        return count;
+    }
+    $scope.readOnlyCount = function() {
+        var count = 0;
+        var keys = Object.keys($scope.userMap);
+        keys.forEach( function(key) {
+            if ($scope.userMap[key].readOnly || !$scope.userMap[key].hasProfile) {
+                count++;
+            }
+        });
+        return count;
+    }
+    
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -132,29 +132,40 @@ app.filter('encode', function() {
 
 <div ng-hide="addUserPanel">
   <button class="btn btn-raised" ng-click="addUserPanel=true">Add User</button>
+  &nbsp; This site has {{updateCount()}} users who can update, and {{readOnlyCount()}} read-only users.
 </div>
 <div class="well" ng-show="addUserPanel">
    <input type="text" ng-model="newEmail" class="form-control"/>
    <button class="btn btn-primary btn-raised" ng-click="addUser()">Create User With This Email</button>
    <button class="btn btn-raised" ng-click="addUserPanel=false">Cancel</button>
+   
 </div>
 
     <div>
     <table class="table">
       <tr>
+         <th></th>
          <th>Name</th>
          <th>Primary Email</th>
+         <th>Access</th>
          <th>Last Login</th>
          <th>Objects</th>
          <th>Workspaces</th>
       </tr>
       <tr ng-repeat="(key, value) in userMap" 
           ng-click="visitUser(value.info.uid)">
-         <td>{{value.info.name}}</td>
-         <td>{{value.info.uid}}</td>
-         <td>{{value.info.lastLogin|cdate}}</td>
-         <td>{{value.count}}</td>
-         <td>{{value.wscount}}</td>
+        <td>
+            <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(value.info)}}" 
+                 style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
+        </td>
+        <td>{{value.info.name}}</td>
+        <td>{{value.info.uid}}</td>
+        <td><span ng-hide="value.readOnly || !value.hasProfile"><b>Update</b></span>
+            <span ng-show="value.readOnly || !value.hasProfile" style="color:grey">Read Only</span>
+        </td>
+        <td><span ng-show="value.info.lastLogin>0">{{value.info.lastLogin|cdate}}</span></td>
+        <td>{{value.count}}</td>
+        <td>{{value.wscount}}</td>
       </tr>
     </table>
     </div>

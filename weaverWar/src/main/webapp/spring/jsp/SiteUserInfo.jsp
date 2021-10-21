@@ -8,8 +8,8 @@
     ar.assertLoggedIn("");
     String siteId = ar.reqParam("siteId");
     String userKey = ar.reqParam("userKey");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    String pageAddress = ar.getResourceURL(ngb,"Personal.htm");
+    Cognoscenti cog = ar.getCogInstance();
+    NGBook  site = cog.getSiteByIdOrFail(siteId);
     
     
     AddressListEntry ale = new AddressListEntry(userKey);
@@ -22,15 +22,17 @@
         userDetails = ale.getJSON();
     }
     
+    JSONObject userMap = site.getUserMap();
+    JSONObject userMapEntry = userMap.requireJSONObject(ale.getUniversalId());
     
 
-    JSONObject userMap = new JSONObject();
+    JSONObject wsMap = new JSONObject();
     List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(siteId);
     for (NGPageIndex ngpi : allWorkspaces) {
         NGWorkspace ngw = ngpi.getWorkspace();
         JSONObject workspaceInfo = new JSONObject();
         workspaceInfo.put("name", ngpi.containerName);
-        userMap.put(ngw.getKey(), workspaceInfo);
+        wsMap.put(ngw.getKey(), workspaceInfo);
         JSONObject roleInfo = new JSONObject();
         workspaceInfo.put("roles", roleInfo);
         for (CustomRole ngr : ngw.getAllRoles()) {
@@ -58,10 +60,13 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Manage User");
+    
+    $scope.userMapEntry = <%userMapEntry.write(out,2,4);%>;
+    $scope.wsMap = <%wsMap.write(out,2,4);%>;
     $scope.userInfo = <%ale.getJSON().write(out,2,4);%>;
+    
     $scope.hasProfile = <%=user!=null%>;
     $scope.userDetails = <%userDetails.write(out,2,4);%>;
-    $scope.userMap = <%userMap.write(out,2,4);%>;
     $scope.siteId = "<%=siteId%>";
     $scope.newEmail = "";
     $scope.admin = <%admin.write(out,2,4);%>;
@@ -136,6 +141,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.userDetails.preferred = $scope.newEmail;
         $scope.updateUserProfile(["preferred"]);
     }
+    
+    $scope.changeAccess = function() {
+        $scope.userMapEntry.readOnly = !$scope.userMapEntry.readOnly;
+        $scope.updateUserMap(["readOnly"]);
+    }
+    $scope.updateUserMap = function(fields) {
+        var postObj = {};
+        var userEntry = {};
+        postObj[$scope.userInfo.uid] = userEntry;
+        fields.forEach( function(item) {
+            console.log("setting: "+item, $scope.userDetails[item]);
+            userEntry[item] = $scope.userMapEntry[item];
+        });
+        var postdata = angular.toJson(postObj);
+        $scope.showError=false;
+        console.log("UPDATE:", postObj);
+        $http.post("SiteUserMap.json" ,postdata)
+        .success( function(data) {
+            console.log("RESPONSE:", data);
+            //alert("Site User Map has been updated for "+$scope.userInfo.uid);
+            window.location.reload(false);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+            window.location.reload(false);
+        });
+    }
+
+    
     $scope.manageUserRoles = function(workspace, role, add) {
         var postObj = {};
         postObj.uid = $scope.userInfo.uid;
@@ -153,7 +187,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             else {
                 alert("User "+$scope.userInfo.uid+" has been added to role "+role);
             }
-            $scope.userMap[workspace].roles[role] = add;
+            $scope.wsMap[workspace].roles[role] = add;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -166,15 +200,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         proposedMessage.msg = "Hello,\n\nYou have been asked by '"+$scope.admin.name+"' to"
                     +" participate in a role of a Weaver project.\n";
                     
-        Object.keys($scope.userMap).forEach( function(workspace) {
+        Object.keys($scope.wsMap).forEach( function(workspace) {
             var inWorkspace = false;
-            Object.keys($scope.userMap[workspace].roles).forEach( function(role) {
-                if ($scope.userMap[workspace].roles[role]==true) {
+            Object.keys($scope.wsMap[workspace].roles).forEach( function(role) {
+                if ($scope.wsMap[workspace].roles[role]==true) {
                     inWorkspace = true;
                 }
             });
             if (inWorkspace) {
-                proposedMessage.msg += "\n* " + $scope.userMap[workspace].name;
+                proposedMessage.msg += "\n* " + $scope.wsMap[workspace].name;
                 proposedMessage.return = "<%=ar.baseURL%>v/" + $scope.siteId + "/" + workspace + "/frontPage.htm";
             }
         });
@@ -237,7 +271,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.userDetails.timeZone = newTimeZone;
         $scope.updateUserProfile(["timeZone"]);
     }
-
+    
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -300,6 +334,12 @@ app.filter('encode', function() {
         <td>{{userInfo.uid}}</td>
       </tr>
       <tr>
+        <td class="labelColumn">Permission</td>
+        <td>
+            <span>User can not update without a profile</span>
+        </td>
+      </tr>
+      <tr>
         <td class="labelColumn">Profile</td>
         <td ng-hide="hasProfile">
            <p>This user does not have a user profile yet.</p>
@@ -314,6 +354,19 @@ app.filter('encode', function() {
       <tr>
         <td class="labelColumn">Internal Key</td>
         <td><a href="../../{{userInfo.key}}/userSettings.htm">{{userInfo.key}}</a></td>
+      </tr>
+      <tr>
+        <td class="labelColumn">Permission</td>
+        <td>
+            <span ng-hide="userMapEntry.readOnly">User has update access
+            <button ng-click="changeAccess()" class="btn btn-sm btn-primary btn-raised">
+                Make Read Only</button>
+            </span>
+            <span ng-show="userMapEntry.readOnly">User has read-only access
+            <button ng-click="changeAccess()" class="btn btn-sm btn-primary btn-raised">
+                Allow Updates</button>
+            </span>
+        </td>
       </tr>
       <tr>
         <td class="labelColumn">Universal ID</td>
@@ -404,7 +457,7 @@ app.filter('encode', function() {
     <h3>Assign to Roles</h3>
     
     <table class="table">
-      <tbody ng-repeat="(key,ws) in userMap">
+      <tbody ng-repeat="(key,ws) in wsMap">
         <tr class="workspacerow" ng-click="showws[key] = !showws[key]">
           <td colspan="4">{{ws.name}} &nbsp; ({{key}})
              <div style="float:right"><a href="../{{key}}/RoleManagement.htm">

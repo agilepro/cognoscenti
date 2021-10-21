@@ -161,6 +161,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
            <td>{{stats.numDocs}}</td>
         </tr>
         <tr>
+           <td>Last WS Change:</td>
+           <td>{{stats.recentChange|cdate}}</td>
+        </tr>
+        <tr>
            <td>Size of Documents:</td>
            <td>{{stats.sizeDocuments|number}} bytes</td>
         </tr>
