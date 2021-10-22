@@ -25,7 +25,7 @@
         jObj.put("siteKey",  site.getKey());
         jObj.put("siteDesc", site.getDescription());
         jObj.put("siteName",     site.getFullName());
-        WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
+        WorkspaceStats stats = site.getRecentStats();
         jObj.put("numWorkspaces", stats.numWorkspaces);
         jObj.put("numTopics", stats.numTopics);
         siteList.put(jObj);

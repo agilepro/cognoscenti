@@ -732,7 +732,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             }
             if (!found) {
                 //mismatch, return
-                console.log("meeting is missing user: ", rolePerson);
+                //console.log("meeting is missing user from role: ", rolePerson);
                 return;
             }
         }
@@ -818,17 +818,22 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
     $scope.refreshCount = 0;
+    $scope.extendCount = 0;
+    $scope.saveCount = 0;
+    $scope.lastAutoSave = new Date().getTime();
     function cancelBackgroundTime() {
         console.log("BACKGROUND cancelled");
         $scope.bgActiveLimit = 0;  //already past
     }
     function extendBackgroundTime() {
-        console.log("BACKGROUND time extended");
+        console.log("BACKGROUND time extended ("+(++$scope.extendCount)+" times) because user click");
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
     extendBackgroundTime();
     $scope.refresh = function() {
-        var remainingSeconds = ($scope.bgActiveLimit - (new Date().getTime()))/1000;
+        var currentTime = (new Date().getTime());
+        var remainingSeconds = ($scope.bgActiveLimit - currentTime)/1000;
+        var secondsSinceLast = (currentTime - $scope.lastAutoSave)/1000;
         if (remainingSeconds<0) {
             console.log("AUTOSAVE deactivated");
             if (!$scope.askingToContinue) {
@@ -848,7 +853,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             }
             return;
         }
-        console.log("AUTOSAVE:  refreshing for "+remainingSeconds+" more seconds");
+        console.log("AUTOSAVE:  refreshing after "+secondsSinceLast+" seconds ("+(++$scope.saveCount)+" times), shold stop in "+remainingSeconds+" seconds.");
+        $scope.lastAutoSave = currentTime;
         if ($scope.meeting.state!=2) {
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode

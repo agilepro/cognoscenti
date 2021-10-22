@@ -65,7 +65,7 @@ Required parameters:
     JSONArray siteList = new JSONArray();
     for (NGBook site : loggedUser.findAllMemberSites()) {
         JSONObject jObj = site.getConfigJSON();
-        WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
+        WorkspaceStats stats = site.getRecentStats();
         jObj.put("numWorkspaces", stats.numWorkspaces);
         jObj.put("numTopics", stats.numTopics);
         siteList.put(jObj);

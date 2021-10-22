@@ -460,20 +460,32 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if ("updateDoc".equals(op) || "newDoc".equals(op) || "uploadDoc".equals(op)) {
             JSONObject newDocObj = objIn.getJSONObject("doc");
             String tempFileName = objIn.getString("tempFileName");
+            long size = newDocObj.optLong("size", -1);
 
             File folder = resDec.workspace.getContainingFolder();
             File tempFile = new File(folder, tempFileName);
-            if (!tempFile.exists()) {
-                //we had a problem where requests were getting here but the temp file did not exist
-                //but inspection showed the file to exist.  There might be a delay in uploading the 
-                //file due to caching delays.   This just waits for up to 4 seconds to see if the
-                //file appears in the file system after a delay.
-                int count = 0;
-                while (!tempFile.exists() && count++ < 20) {
-                    System.out.println("WAITING "+count+" FOR TEMPFILE: "+tempFile.toString());
-                    Thread.sleep(200);
+            
+            //we had a problem where requests were getting here but the temp file did not exist
+            //but inspection showed the file to exist.  There might be a delay in uploading the 
+            //file due to caching delays.   This just waits for up to 4 seconds to see if the
+            //file appears in the file system after a delay.
+            int count = 0;
+            while (!tempFile.exists()) {
+                if (count++ > 20) {
+                    throw new JSONException("Operation '{1}' failed because the temporary file does not exist: {0}", tempFile, op);
                 }
-                throw new JSONException("Operation '{1}' failed because the temporary file does not exist: {0}", tempFile, op);
+                System.out.println("WAITING "+count+" FOR TEMPFILE: "+tempFile.toString());
+                Thread.sleep(300);
+                
+            }
+            while (tempFile.length()<size) {
+                if (count++ > 20) {
+                    throw new JSONException("Operation '{0}' failed because file size is {1}, should be {2}", 
+                            op, Long.toString(tempFile.length()), Long.toString(size));
+                }
+                System.out.println("WAITING "+count+" FOR ("+tempFile.toString()
+                    +") to get from "+tempFile.length()+" to "+size+" bytes.");
+                Thread.sleep(300);
             }
 
             AttachmentRecord att;
@@ -556,7 +568,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             //a downstream synchronization.  Commenting out for now since it is inaccurate.
             HistoryRecord.createAttHistoryRecord(resDec.workspace, att, historyEventType, ar,
                     updateReason);
-            System.out.println("DOCUMENT: updated: "+att.getNiceName()+" and history created.");
+            System.out.println("DOCUMENT: updated: "+att.getNiceName()+" ("+size+" bytes) and history created.");
             resDec.workspace.saveFile(ar, "Document created or updated.");
             return responseOK;
         }

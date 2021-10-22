@@ -318,7 +318,6 @@ myApp.filter('cdate', function() {
       </ol>
       <script>
       function setMainPageTitle(str) {
-          console.log("SETWINDOW: "+str);
           document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }

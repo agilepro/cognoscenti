@@ -13,7 +13,7 @@
     for (NGPageIndex ngpi : cog.getAllSites()){
         NGBook site = ngpi.getSite();
         JSONObject jo = site.getConfigJSON();
-        WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
+        WorkspaceStats stats = site.getRecentStats();
         jo.put("stats", stats.getJSON());
         allSites.put(jo);
         

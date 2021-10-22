@@ -130,6 +130,7 @@ app.controller('myCtrl', function($scope, $http) {
         op.doc = {};
         op.doc.description = oneProgress.description;
         op.doc.name = oneProgress.file.name;
+        op.doc.size = oneProgress.file.size;
         op.doc.labelMap = oneProgress.labelMap;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)

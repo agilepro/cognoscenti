@@ -11,7 +11,7 @@
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
     JSONObject siteInfo = ngb.getConfigJSON();
 
-    WorkspaceStats wStats = ngb.getRecentStats(ar.getCogInstance());
+    WorkspaceStats wStats = ngb.getRecentStats();
 
  
 %> 
