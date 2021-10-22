@@ -21,6 +21,8 @@
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
+    
+    boolean userReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId()); 
 %>
 
 <script>
@@ -47,14 +49,28 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+<% if (userReadOnly) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    You are not allowed to add a document to the workspace, because
+    you are a passive 'read-only' user.  You can access documents, but you can 
+    not add them or update them.
+    
+    If you wish to add a document, speak to the administrator of this 
+    workspace / site and have your membership level changed to an
+    active user.
+</div>
+
+<% } else { %>
+
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
             Add Document
         </div>
     </div>
 
-
     <table>
+    boolean userCanUpdate = !site.userReadOnly(ar.getBestUserId()); >
     <tr>
         <td colspan="3" class="linkWizardHeading">How do you want to attach the file?:</td>
     </tr>
@@ -98,5 +114,8 @@ app.controller('myCtrl', function($scope, $http) {
         </td>
     </tr>
     </table>
+    
+<% } %> 
+
 </div>
 <!-- end addDocument.jsp -->

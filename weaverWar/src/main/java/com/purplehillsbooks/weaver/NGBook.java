@@ -22,11 +22,9 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.NGException;
@@ -59,7 +57,7 @@ public class NGBook extends ContainerCommon {
 
     private List<AddressListEntry> siteUsers;
     private boolean forceNewStatistics = false;
-    Map<String, Boolean> userAccessMap;
+    Set<String> userAccessMap;
 
     //this is the file system folder where site exists
     //workspaces are underneath this folder
@@ -1231,20 +1229,20 @@ public class NGBook extends ContainerCommon {
         return jo;
     }
     
-    public boolean userCanUpdate(String userId) {
-        if (userId==null || userId.length()==0 || userAccessMap==null) {
-            return false;
+    public boolean userReadOnly(String userId) {
+        if (userId==null || userId.length()==0) {
+            return true;
         }
-        return userAccessMap.get(userId);
+        return !userAccessMap.contains(userId);
     }
     
     private void setUserUpdateMap(JSONObject userMap) throws Exception {
         
-        Map<String, Boolean> newMap = new HashMap<String, Boolean>();
+        Set<String> newMap = new HashSet<String>();
         for (String userKey : userMap.keySet()) {
             JSONObject userInfo = userMap.getJSONObject(userKey);
-            if (!userInfo.optBoolean("readOnly", false)) {
-                newMap.put(userKey, true);
+            if (!userInfo.optBoolean("readOnly", false) && userInfo.optBoolean("hasProfile", false)) {
+                newMap.add(userKey);
             }
         }
         userAccessMap = newMap;

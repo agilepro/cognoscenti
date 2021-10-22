@@ -106,6 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newName = $scope.workspaceConfig.allNames[0];
     $scope.editName = false;
     $scope.editInfo = false;
+    $scope.isAdmin = <%= ar.isAdmin() %>;
     $scope.foo = "<p>This <b>bold</b> statement.</p>"
 
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
@@ -146,8 +147,9 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.isEditing = fieldName;
         }
         else {
+            alert("Sorry, only administrators can edit the values on this page");
             $scope.isEditing = null;
-            console.log("Non-admin not allowed to edit.")
+            console.log("Sorry, only administrators can edit the values on this page")
         }
     }
     $scope.generateTheHtmlValues = function() {
@@ -182,6 +184,10 @@ app.controller('myCtrl', function($scope, $http) {
         saveRecord($scope.workspaceConfig);
     }
     function saveRecord(rec) {
+        if (!<%=ar.isAdmin()%>) {
+            alert("Sorry, you are not allowed to make changes on this page.  You must be an administrator of this workspace.");
+            return;
+        }
         $scope.generateTheHtmlValues();
         var postURL = "updateProjectInfo.json";
         var postdata = angular.toJson(rec);
@@ -276,6 +282,9 @@ app.controller('myCtrl', function($scope, $http) {
     }
     
     $scope.toggleFrontPage = function(flag) {
+        if (!$scope.isAdmin) {
+            return;
+        }
         $scope.workspaceConfig.wsSettings[flag] = !$scope.workspaceConfig.wsSettings[flag];
         var newData = {wsSettings: {}};
         newData.wsSettings[flag] = $scope.workspaceConfig.wsSettings[flag];

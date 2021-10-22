@@ -28,6 +28,7 @@
         allRoles.put(aRole.getName());
     }
 
+    boolean userReadOnly = site.userReadOnly(ar.getBestUserId()); 
 %>
 
 <script type="text/javascript">
@@ -139,6 +140,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+<% if (userReadOnly) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    You are not allowed to invite people to the workspace, because
+    you are a passive 'read-only' user.  
+    
+    If you wish to invite people, speak to the administrator of this 
+    workspace / site and have your membership level changed to an
+    active user.
+</div>
+
+<% } else { %>
+
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -205,9 +219,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
   </div>  
   
-  <h2>Previously Invited</h2>
+<% } %> 
   
-    <table class="spacey">
+  <h2>Previously Invited</h2>
+
+    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
+
+  
+    <table class="table">
     <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
     <tr ng-repeat="invite in invitations" title="Click row to copy into the send form"
         ng-click="reset(invite)">
@@ -220,7 +239,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     </table>
 
-    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
 
 
 </div>

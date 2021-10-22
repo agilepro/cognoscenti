@@ -29,6 +29,7 @@
         allRoles.put(aRole.getName());
     }
 
+    boolean userReadOnly = site.userReadOnly(ar.getBestUserId()); 
 %>
 
 <script type="text/javascript">
@@ -99,6 +100,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         obj.email = newEmail;
         obj.role = $scope.newRole;
         obj.msg = $scope.message;
+        obj.ss = "Invitation to workspace '<%ar.writeHtml(ngc.getFullName());%>'";
         obj.status = "New";
         obj.timestamp = new Date().getTime();
         updateInvite(obj);
@@ -150,6 +152,19 @@ function parseList(inText) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+<% if (userReadOnly) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    You are not allowed to invite people to the workspace, because
+    you are a passive 'read-only' user.  
+    
+    If you wish to invite people, speak to the administrator of this 
+    workspace / site and have your membership level changed to an
+    active user.
+</div>
+
+<% } else { %>
+
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -177,44 +192,43 @@ function parseList(inText) {
     
     <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
 
-    <div class="well">
-    <table class="spacey" ng-show="addressing">
+  <div class="well" style="max-width:500px;margin-bottom:50px">
+      <div ng-show="addressing">
     
-    <tr>
-        <td>Email Addresses:</td>
-        <td><textarea class="form-control" ng-model="emailList" style="height:150px;"
-             placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea></td>
-    </tr>
-    <tr>
-        <td>Message:</td>
-        <td><textarea class="form-control" ng-model="message" style="height:150px;"
-            placeholder="Enter a message to send to all invited people"></textarea></td>
-    </tr>
-    <tr>
-        <td>Add to Role:</td>
-        <td><select class="form-control" ng-model="newRole" ng-options="value for value in allRoles"></select></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>
-            <button class="btn btn-primary btn-raised" ng-click="blastIt()" ng-show="emailList">Send Invitations</button>
-            <button class="btn btn-raised" ng-click="addressing=false">Close</button>
-        </td>
-    </tr>
-    <tr ng-show="results.length>0">
-        <td></td>
-        <td><div ng-repeat="res in results track by $index">Sent to: <b>{{res}}</b></div></td>
-    </tr>
-    </table>
+        <div class="form-group">
+            <label>Email Addresses</label>
+            <textarea class="form-control" ng-model="emailList" style="height:150px;"
+             placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Message</label>
+            <textarea class="form-control" style="height:200px" ng-model="message"
+            placeholder="Enter a message to send to all invited people"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select class="form-control" ng-model="newRole"
+                    ng-options="r for r in allRoles"></select>
+        </div>
+        <div>
+            <button ng-click="blastIt()" class="btn btn-sm btn-primary btn-raised" 
+                    ng-show="emailList"/>Send Invitations</button>
+            <button ng-click="addressing=false" class="btn btn-sm btn-raised"/>Close</button>
+        </div>
+    </div>
     <div  ng-hide="addressing">
        <button class="btn btn-primary btn-raised" ng-click="addressing=true">Open to Send More</button>
     </div>
     </div>
     
+ 
+<% } %> 
 
-  <h2>Invited - to see latest status: <button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></h2>
+   <h2>Previously Invited</h2>
+
+    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
   
-    <table class="table spacey">
+    <table class="table">
     <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
     <tr ng-repeat="invite in invitations" title="This form only displays the invited people, go to 'Invite Users' to re-invite a person"
         ng-click="reset(invite)">
@@ -227,7 +241,7 @@ function parseList(inText) {
 
     </table>
 
-    
+
     
 </div>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>

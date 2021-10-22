@@ -39,7 +39,7 @@
     //meetingInfo.put("id","~new~");
 
     meetingInfo.put("startTime", proposedStartTime);
-
+    boolean userReadOnly = site.userReadOnly(ar.getBestUserId()); 
 %>
 <style>
   .full button span {
@@ -222,6 +222,22 @@ function GetFirstHundredNoHtml(input) {
 <div>
 
   <%@include file="ErrorPanel.jsp"%>
+  
+  
+<% if (userReadOnly) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    You are not allowed to create a meeting in this workspace, because
+    you are a passive 'read-only' user.  You can access documents, but you can 
+    not add them or update them.
+    
+    If you wish to add or update meetings, speak to the administrator of this 
+    workspace / site and have your membership level changed to an
+    active user.
+</div>
+
+<% } else { %>
+  
   <div class="container">
     <div class="col-md-11">
       <div class="well">
@@ -301,6 +317,9 @@ function GetFirstHundredNoHtml(input) {
       </div>
     </div>
   </div>
+  
+<% } %> 
+  
 </div>
 
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>

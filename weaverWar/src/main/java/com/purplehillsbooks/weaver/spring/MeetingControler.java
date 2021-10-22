@@ -290,12 +290,12 @@ public class MeetingControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MeetingList");
     }
-    @RequestMapping(value = "/{siteId}/{pageId}/AttendeeMatrix.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingAttendees.htm", method = RequestMethod.GET)
     public void attendeeMatrix(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "AttendeeMatrix");
+        showJSPMembers(ar, siteId, pageId, "MeetingAttendees");
     }
 
 
