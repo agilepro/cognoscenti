@@ -57,7 +57,7 @@ public class NGBook extends ContainerCommon {
 
     private List<AddressListEntry> siteUsers;
     private boolean forceNewStatistics = false;
-    Set<String> userAccessMap;
+    private Set<String> userAccessMap;
 
     //this is the file system folder where site exists
     //workspaces are underneath this folder
@@ -108,8 +108,6 @@ public class NGBook extends ContainerCommon {
         moveOldMembersToRole();
         assureColorsExist();
         
-        JSONObject userMap = getUserMap();
-        setUserUpdateMap(userMap);
     }
 
     private void assureNameExists() {
@@ -1229,20 +1227,25 @@ public class NGBook extends ContainerCommon {
         return jo;
     }
     
-    public boolean userReadOnly(String userId) {
+    public boolean userReadOnly(String userId) throws Exception {
         if (userId==null || userId.length()==0) {
             return true;
         }
-        return !userAccessMap.contains(userId);
+        if (userAccessMap==null) {
+            JSONObject userMap = getUserMap();
+            setUserUpdateMap(userMap);            
+        }
+        boolean b = !userAccessMap.contains(userId);
+        return b;
     }
     
     private void setUserUpdateMap(JSONObject userMap) throws Exception {
         
         Set<String> newMap = new HashSet<String>();
-        for (String userKey : userMap.keySet()) {
-            JSONObject userInfo = userMap.getJSONObject(userKey);
-            if (!userInfo.optBoolean("readOnly", false) && userInfo.optBoolean("hasProfile", false)) {
-                newMap.add(userKey);
+        for (String userId : userMap.keySet()) {
+            JSONObject userInfo = userMap.getJSONObject(userId);
+            if (userInfo.optBoolean("hasProfile", false) && !userInfo.optBoolean("readOnly", false)) {
+                newMap.add(userId);
             }
         }
         userAccessMap = newMap;
@@ -1258,7 +1261,7 @@ public class NGBook extends ContainerCommon {
         else {
             userMap = new JSONObject();
         }
-        updateUserCounts(userMap);
+        recalcUserStats(userMap);
         return userMap;
     }
     
@@ -1283,7 +1286,7 @@ public class NGBook extends ContainerCommon {
         return userMap;
     }
     
-    private void updateUserCounts(JSONObject userMap) throws Exception{
+    private void recalcUserStats(JSONObject userMap) throws Exception{
         
         //clear out all the old settings
         for (String userKey : userMap.keySet()) {
@@ -1293,34 +1296,40 @@ public class NGBook extends ContainerCommon {
             userInfo.put("wsMap", new JSONObject());
         }
         
-        //now update for the most recent settings
-        List<NGPageIndex> allWorkspaces = cog.getAllProjectsInSite(key);
+        //get then settings from Site
+        setUserEntriesForContainer(userMap, this);
         
+        //now update for the most recent settings from workspace
+        List<NGPageIndex> allWorkspaces = cog.getAllProjectsInSite(key);
         for (NGPageIndex ngpi : allWorkspaces) {
             NGWorkspace ngw = ngpi.getWorkspace();
-            String wsKey = ngw.getKey();
-            for (CustomRole ngr : ngw.getAllRoles()) {
-                for (AddressListEntry ale : ngr.getDirectPlayers()) {
-                    String uid = ale.getUniversalId();
-
-                    JSONObject userInfo = userMap.requireJSONObject(uid);
-                    userInfo.put("count", userInfo.optInt("count", 0)+1);
-                    UserProfile user = ale.getUserProfile();
-                    if (user==null) {
-                        userInfo.put("info", ale.getJSON());
-                        userInfo.put("hasProfile", false);
-                    }
-                    else {
-                        userInfo.put("info", user.getFullJSON());
-                        userInfo.put("hasProfile", true);
-                    }
-
-                    JSONObject wsMap = userInfo.requireJSONObject("wsMap");
-                    if (!wsMap.has(wsKey)) {
-                        wsMap.put(wsKey, ngw.getFullName());
-                    }
-                    userInfo.put("wscount", wsMap.length());
+            setUserEntriesForContainer(userMap, ngw);
+        }
+    }
+    
+    private void setUserEntriesForContainer(JSONObject userMap, NGContainer ngw) throws Exception {
+        String wsKey = ngw.getKey();
+        for (CustomRole ngr : ngw.getAllRoles()) {
+            for (AddressListEntry ale : ngr.getDirectPlayers()) {
+                String uid = ale.getUniversalId();
+    
+                JSONObject userInfo = userMap.requireJSONObject(uid);
+                userInfo.put("count", userInfo.optInt("count", 0)+1);
+                UserProfile user = ale.getUserProfile();
+                if (user==null) {
+                    userInfo.put("info", ale.getJSON());
+                    userInfo.put("hasProfile", false);
                 }
+                else {
+                    userInfo.put("info", user.getFullJSON());
+                    userInfo.put("hasProfile", true);
+                }
+    
+                JSONObject wsMap = userInfo.requireJSONObject("wsMap");
+                if (!wsMap.has(wsKey)) {
+                    wsMap.put(wsKey, ngw.getFullName());
+                }
+                userInfo.put("wscount", wsMap.length());
             }
         }
     }

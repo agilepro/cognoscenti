@@ -751,6 +751,44 @@ public class AuthRequest
         }
     }
 
+    /**
+     * Identifies if the current logged in user is a read only 
+     * user in the current workspace.  If anything is wrong, like
+     * the user is not logged in or the workspace not set then 
+     * it presumes the most restrictive: true.
+     * 
+     * The logic in the site is that unknown users are 
+     * not read only, so that users added by workspace admin
+     * are usable at least until review at site level.  This 
+     * logic may change in the future.
+     * 
+     * If you are restricting update to a workspace,  you still
+     * need to check isMember, because read only depends only on logic
+     * at the site level, and does not consider workspace membership.
+     */
+    public boolean isReadOnly() throws Exception {
+        if (!isLoggedIn()) {
+            return true;
+        }
+        if (ngp==null) {
+            return true;
+        }
+        if (ngp instanceof NGBook) {
+            NGBook site = ((NGBook)ngp);
+            return site.userReadOnly(getBestUserId());
+        }
+        else if (ngp instanceof NGWorkspace) {
+            NGWorkspace workspace = ((NGWorkspace)ngp);
+            return workspace.getSite().userReadOnly(getBestUserId());
+        }
+        return true;
+    }
+    
+    public void assertNotReadOnly(String opDescription) throws Exception {
+        if (isReadOnly()) {
+            throw new JSONException("Read only user; can not update anything. {0}", opDescription);
+        }
+    }
 
     //checks the registered page and if there is on, returns true
     //if you are a member of the page, false otherwise.

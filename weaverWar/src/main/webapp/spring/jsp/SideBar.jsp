@@ -42,14 +42,24 @@
     }
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
-    
+    boolean userIsReadOnly = false;
+    if (site!=null) {
+        userIsReadOnly = site.userReadOnly(ar.getBestUserId());
+    }
+    else if (ngp!=null) {
+        //userIsReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId());
+    }
 %>
 
 <!-- Side Bar -->
 <nav class="navbar navbar-default navbar-fixed-side sidebar navbar-responsive-collapse" role="navigation">
   <ul>
     <% 
-    for (JSONObject jo : fullMenu.getJSONObjectList()) { 
+    for (JSONObject jo : fullMenu.getJSONObjectList()) {
+        if (userIsReadOnly && !jo.has("readOnly")) {
+            //skip anything not marked for read only when user is readonly.
+            continue;
+        }
     %>
       <li><a<%
         if (jo.has("href")) {
@@ -71,6 +81,10 @@
             %>
               <div class="sublist" style="color:black"><ul><%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
+                    if (userIsReadOnly && !jo2.has("readOnly")) {
+                        //skip anything not marked for read only when user is readonly.
+                        continue;
+                    }
                     %>
                       <li><a<%
                     if (jo2.has("href")) {
@@ -93,6 +107,7 @@
         %></li><% 
     }
     %>
+    <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
   </ul>
   <%if (false) {ar.write(templateName);} %>
 </nav>

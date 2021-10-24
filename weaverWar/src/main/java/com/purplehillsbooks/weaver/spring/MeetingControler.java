@@ -344,6 +344,7 @@ public class MeetingControler extends BaseController {
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a meeting.");
               ar.assertNotFrozen(ngw);
+              ar.assertNotReadOnly("Cannot create a meeting");
               JSONObject meetingInfo = getPostedObject(ar);
               String name = meetingInfo.getString("name");
               if (name==null || name.length()==0) {
@@ -592,6 +593,7 @@ public class MeetingControler extends BaseController {
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to delete a meeting.");
               ar.assertNotFrozen(ngw);
+              ar.assertNotReadOnly("Cannot delete a meeting");
               JSONObject meetingInfo = getPostedObject(ar);
               meetingId = meetingInfo.getString("id");
               ngw.removeMeeting(meetingId);

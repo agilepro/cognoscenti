@@ -515,10 +515,12 @@ public class ProjectSettingController extends BaseController {
         NGBook site = null;
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            //get this early so that the error message is proper
+            op = ar.reqParam("op");
             ar.setPageAccessLevels(ngc);
             //maybe this should be for admins?
             ar.assertMember("Must be a member to modify roles.");
-            op = ar.reqParam("op");
+            ar.assertNotReadOnly("Cannot modify roles");
             JSONObject roleInfo = getPostedObject(ar);
             JSONObject repo = new JSONObject();
             System.out.println("UPDATEROLE: "+roleInfo.toString());
@@ -628,6 +630,7 @@ public class ProjectSettingController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to create an email generator.");
+            ar.assertNotReadOnly("Cannot generate email");
             JSONObject eGenInfo = getPostedObject(ar);
 
             id = eGenInfo.getString("id");
@@ -740,6 +743,7 @@ public class ProjectSettingController extends BaseController {
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to modify labels.");
+            ar.assertNotReadOnly("Cannot modify labels");
             op = ar.reqParam("op");
             JSONObject labelInfo = getPostedObject(ar);
             String labelName = labelInfo.getString("name");

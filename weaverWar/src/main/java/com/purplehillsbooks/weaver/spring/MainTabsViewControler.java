@@ -359,6 +359,7 @@ public class MainTabsViewControler extends BaseController {
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a action item.");
               ar.assertNotFrozen(ngw);
+              ar.assertNotReadOnly("Cannot create a action item");
 
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = ngw.createGoal(ar.getBestUserId());

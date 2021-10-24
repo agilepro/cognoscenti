@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
@@ -126,8 +127,10 @@ public class RoleInvitation extends JSONWrapper {
         jo.put("msg", msg);
         jo.put("return", returnUrl);
         jo.put("ss", ss);
+        
+        String url = "?openid.mode=apiSendInvite&ss="+URLEncoder.encode(ss, "UTF-8");
 
-        JSONObject res = LightweightAuthServlet.postToTrustedProvider("?openid.mode=apiSendInvite&ss="+ss, jo);
+        JSONObject res = LightweightAuthServlet.postToTrustedProvider(url, jo);
         if (res.has("result") && "ok".equals(res.getString("result"))) {
             kernel.put("status", STATUS_INVITED);
         }

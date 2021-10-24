@@ -614,6 +614,29 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             return "fake-~.jpg";
         }
     }
+    $scope.singleTryToAdd = true;
+    function addYouselfIfAppropriate() {
+        // the problem here is that SLAP.loginInfo.userId is not necessarily
+        // the preferred email address in the profile, and in that case,
+        // you will never fine this address in the list.
+        // For now, manual setting of attended ONLY
+        if ($scope.singleTryToAdd) {
+            if ($scope.meeting.state==2) {
+                var foundMe = false;
+                $scope.meeting.attended.forEach( function(item) {
+                    if (item==SLAP.loginInfo.userId) {
+                        foundMe=true;
+                    }
+                });
+                if (!foundMe) {
+                    var fakeMeeting = {};
+                    fakeMeeting.attended_add = SLAP.loginInfo.userId;
+                    $scope.putGetMeetingInfo(fakeMeeting);
+                }
+            }
+            $scope.singleTryToAdd = false;
+        }
+    }    
     function setMeetingData(data) {
         if (!data) {
             throw "ASKED to SET MEETING DATA but no meeting data passed";
@@ -670,7 +693,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         else {
             $scope.factoredTime = $scope.meeting.reminderTime;
         }
-        $scope.addYouselfIfAppropriate();
+        addYouselfIfAppropriate();
         data.timeSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
@@ -856,6 +879,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         console.log("AUTOSAVE:  refreshing after "+secondsSinceLast+" seconds ("+(++$scope.saveCount)+" times), shold stop in "+remainingSeconds+" seconds.");
         $scope.lastAutoSave = currentTime;
         if ($scope.meeting.state!=2) {
+            console.log("AUTOSAVE: cancelled because meeting not in running state");
+            $interval.cancel($scope.promiseAutosave);
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode
         }
@@ -1179,24 +1204,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     $scope.isCompleted = function() {
         return ($scope.meeting.state >= 3);
-    }
-    $scope.addYouself = function() {
-        var fakeMeeting = {};
-        fakeMeeting.attended_add = SLAP.loginInfo.userId;
-        $scope.putGetMeetingInfo(fakeMeeting);
-    }
-    $scope.addYouselfIfAppropriate = function() {
-        if ($scope.meeting.state==2) {
-            var foundMe = false;
-            $scope.meeting.attended.forEach( function(item) {
-                if (item==SLAP.loginInfo.userId) {
-                    foundMe=true;
-                }
-            });
-            if (!foundMe) {
-                $scope.addYouself();
-            }
-        }
     }
     $scope.determineIfAttending = function() {
         $scope.isInAttendees = false;

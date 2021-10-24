@@ -212,6 +212,7 @@ public class TopicController extends BaseController {
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
+            ar.assertNotReadOnly("Cannot update a topic");
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
             TopicRecord note = ngw.getDiscussionTopic(nid);
@@ -251,6 +252,7 @@ public class TopicController extends BaseController {
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
+            ar.assertNotReadOnly("Cannot update a topic");
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
 

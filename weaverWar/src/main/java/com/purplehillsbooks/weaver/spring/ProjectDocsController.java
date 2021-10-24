@@ -329,6 +329,7 @@ public class ProjectDocsController extends BaseController {
             did = ar.reqParam("did");
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
+            //TODO: is this right?
             ar.assertMember("Must be a member to update a document information.");
             ar.assertNotFrozen(ngw);
             AttachmentRecord aDoc = ngw.findAttachmentByIDOrFail(did);
@@ -354,6 +355,7 @@ public class ProjectDocsController extends BaseController {
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to update a document information.");
             ar.assertNotFrozen(ngw);
+            ar.assertNotReadOnly("Cannot update a document.");
             JSONObject docInfo = getPostedObject(ar);
             int historyEventType = 0;
 
@@ -437,6 +439,7 @@ public class ProjectDocsController extends BaseController {
 
             ar.setPageAccessLevels(thisWS);
             ar.assertMember("You must be the member of the workspace you are copying to");
+            ar.assertNotReadOnly("Cannot copy a document");
             ar.setPageAccessLevels(fromWS);
             ar.assertMember("You must be the member of the workspace you are copying from");
 
