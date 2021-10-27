@@ -44,6 +44,7 @@ public class AdminController extends BaseController {
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
+            //ar.assertNotFrozen(ngp);
             JSONObject newConfig = getPostedObject(ar);
 
             ngp.updateConfigJSON(ar, newConfig);
@@ -54,7 +55,8 @@ public class AdminController extends BaseController {
             ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
             JSONObject repo = ngp.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to update project information.", ex);
             streamException(ee, ar);
         }
@@ -69,6 +71,7 @@ public class AdminController extends BaseController {
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
+            ar.assertNotFrozen(ngp);
             JSONObject newData = getPostedObject(ar);
 
             String newName = newData.getString("newName");
@@ -80,7 +83,8 @@ public class AdminController extends BaseController {
             ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
             JSONObject repo = ngp.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to save new name.", ex);
             streamException(ee, ar);
         }
@@ -93,6 +97,7 @@ public class AdminController extends BaseController {
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
+            ar.assertNotFrozen(ngp);
             JSONObject newData = getPostedObject(ar);
 
             String oldName = newData.getString("oldName");
@@ -104,7 +109,8 @@ public class AdminController extends BaseController {
             ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
             JSONObject repo = ngp.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to save new name.", ex);
             streamException(ee, ar);
         }
@@ -119,6 +125,8 @@ public class AdminController extends BaseController {
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
             ar.assertAdmin("Must be an admin to change site info.");
+            //even when frozen, need to be able to unfreeze
+            //ar.assertNotFrozen(site);
             JSONObject newConfig = getPostedObject(ar);
 
             site.updateConfigJSON(newConfig);
@@ -127,7 +135,8 @@ public class AdminController extends BaseController {
             site.save();
             JSONObject repo = site.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to update site information.", ex);
             streamException(ee, ar);
         }

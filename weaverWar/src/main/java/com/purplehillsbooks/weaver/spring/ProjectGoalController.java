@@ -846,6 +846,7 @@ public class ProjectGoalController extends BaseController {
             TaskArea ta = null;
             boolean needSave = false;
             if ("~new~".equals(id)) {
+                ar.assertNotFrozen(ngw);
                 ta = ngw.createTaskArea();
                 id = ta.getId();
                 needSave = true;
@@ -855,6 +856,7 @@ public class ProjectGoalController extends BaseController {
             }
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 JSONObject postBody = this.getPostedObject(ar);
+                ar.assertNotFrozen(ngw);
                 ta.updateFromJSON(postBody);
                 needSave = true;
             }

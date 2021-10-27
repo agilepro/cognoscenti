@@ -38,7 +38,8 @@
       "name":"Users",
       "title":"Add, remove, and configure users.",
       "opts": [],
-      "useOpts": []
+      "useOpts": [],
+      "readOnly": true
     },
     {
       "href":"RoleManagement.htm",

@@ -723,7 +723,7 @@ public class NGBook extends ContainerCommon {
         if (isDeleted()) {
             return true;
         }
-        return false;
+        return siteInfoRec.getAttributeBool("frozen");
     }
 
 

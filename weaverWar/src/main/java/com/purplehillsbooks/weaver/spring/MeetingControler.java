@@ -570,6 +570,7 @@ public class MeetingControler extends BaseController {
               if (!canAccess) {
                   throw new Exception("Unable to access meeting "+id);
               }
+              ar.assertNotFrozen(ngw);
               meeting.updateMeetingNotes(meetingInfo);
               JSONObject repo = meetingCache.updateCacheNotes(ngw, ar, id);
               addVisitors(ar, repo, siteId, pageId);
@@ -622,6 +623,7 @@ public class MeetingControler extends BaseController {
               if (!canAccess) {
                   throw new Exception("Unable to update meeting "+id);
               }
+              ar.assertNotFrozen(ngw);
               JSONObject agendaInfo = getPostedObject(ar);
 
               String subject = agendaInfo.getString("subject");
@@ -689,6 +691,7 @@ public class MeetingControler extends BaseController {
               if (!canAccess) {
                   throw new Exception("Unable to update meeting "+src);
               }
+              ar.assertNotFrozen(ngw);
               MeetingRecord destMeeting = ngw.findMeeting(dest);
               JSONObject agendaInfo = getPostedObject(ar);
               String agendaId = agendaInfo.getString("id");
@@ -782,6 +785,7 @@ public class MeetingControler extends BaseController {
               if (!canAccess) {
                   throw new Exception("Unable to create minutes of meeting "+id);
               }
+              ar.assertNotFrozen(ngw);
 
               TopicRecord nr = null;
               //

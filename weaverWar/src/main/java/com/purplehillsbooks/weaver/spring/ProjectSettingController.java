@@ -526,6 +526,7 @@ public class ProjectSettingController extends BaseController {
             System.out.println("UPDATEROLE: "+roleInfo.toString());
 
             if ("Update".equals(op)) {
+                ar.assertNotFrozen(ngc);
                 String roleName = roleInfo.getString("name");
                 CustomRole role = ngc.getRoleOrFail(roleName);
                 String priorLinkedRole = role.getLinkedRole();
@@ -565,11 +566,13 @@ public class ProjectSettingController extends BaseController {
                 repo = role.getJSONDetail();
             }
             else if ("Create".equals(op)) {
+                ar.assertNotFrozen(ngc);
                 CustomRole role = ngc.createRole(roleInfo.getString("name"), "");
                 role.updateFromJSON(roleInfo);
                 repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
+                ar.assertNotFrozen(ngc);
                 ngc.deleteRole(roleInfo.getString("name"));
                 repo.put("success",  true);
             }

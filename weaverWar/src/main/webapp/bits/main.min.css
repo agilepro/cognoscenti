@@ -175,3 +175,11 @@ h3{
     padding:4px;
     max-width:400px
 }
+
+.bodyFrozen{
+    background-image: url("frozen.png");
+}
+
+.bodyDeleted{
+    background-image: url("deleted.png");
+}

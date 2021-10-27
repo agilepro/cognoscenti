@@ -108,6 +108,7 @@
     }
     %>
     <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
+    
   </ul>
   <%if (false) {ar.write(templateName);} %>
 </nav>

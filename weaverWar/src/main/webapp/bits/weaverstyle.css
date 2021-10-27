@@ -12,6 +12,10 @@ body{
 .bodyWrapper{
 }
 
+.bodyFrozen{
+    background-color:yellow;
+}
+
 img{
   border:0px;
   margin:0px;

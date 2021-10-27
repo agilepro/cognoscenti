@@ -190,6 +190,9 @@ public class TopicController extends BaseController {
             
             TopicRecord topic = ngw.getNoteOrFail(nid);
             topic.mergeDoc(oldMarkDown, newMarkDown);
+            if (noteInfo.has("subject")) {
+                topic.setSubject(noteInfo.getString("subject"));
+            }
 
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");

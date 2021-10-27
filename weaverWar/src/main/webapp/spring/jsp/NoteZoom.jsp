@@ -205,6 +205,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var rec = {};
         rec.old = $scope.wikiLastSave;
         rec.new = $scope.wikiEditing;
+        rec.subject = $scope.noteInfo.subject;
         
         var postURL = "mergeTopicDoc.json?nid="+$scope.topicId;
         console.log("POST (Merge):", postURL);

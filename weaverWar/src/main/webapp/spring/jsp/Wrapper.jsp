@@ -132,6 +132,8 @@
     }
 
 
+    boolean isFrozen=false;
+    boolean isDeleted=false;    
     if (ngp!=null) {
         ar.setPageAccessLevels(ngp);
         pageTitle = ngp.getFullName();
@@ -147,9 +149,11 @@
             showExperimental = ngb.getShowExperimental();
         }
         if (ngp.isDeleted()) {
+            isDeleted = true;
             deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
         }
         else if (ngp.isFrozen()) {
+            isFrozen=true;
             deletedWarning = " &#10052; (Frozen)";
         }
     }
@@ -274,7 +278,7 @@ myApp.filter('cdate', function() {
 
 
 </head>
-<body ng-app="myApp" ng-controller="myCtrl">
+<body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
   <div class="bodyWrapper">
 
 <!-- Begin AppBar -->

@@ -532,6 +532,7 @@ public class ProjectDocsController extends BaseController {
             SharePortRecord spr = null;
             boolean needSave = false;
             if ("~new~".equals(id)) {
+                ar.assertNotFrozen(ngw);
                 spr = ngw.createSharePort();
                 id = spr.getPermId();
                 needSave = true;
@@ -541,6 +542,7 @@ public class ProjectDocsController extends BaseController {
             }
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 JSONObject postBody = this.getPostedObject(ar);
+                ar.assertNotFrozen(ngw);
                 spr.updateFromJSON(postBody);
                 needSave = true;
             }
