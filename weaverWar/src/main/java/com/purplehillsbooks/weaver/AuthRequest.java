@@ -770,6 +770,9 @@ public class AuthRequest
         if (!isLoggedIn()) {
             return true;
         }
+        if (isSuperAdmin()) {
+            return false;
+        }
         if (ngp==null) {
             return true;
         }

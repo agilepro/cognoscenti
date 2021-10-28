@@ -39,7 +39,7 @@
     //meetingInfo.put("id","~new~");
 
     meetingInfo.put("startTime", proposedStartTime);
-    boolean userReadOnly = site.userReadOnly(ar.getBestUserId()); 
+    boolean userReadOnly = ar.isReadOnly(); 
 %>
 <style>
   .full button span {

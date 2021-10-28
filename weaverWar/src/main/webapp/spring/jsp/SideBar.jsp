@@ -44,7 +44,7 @@
     
     boolean userIsReadOnly = false;
     if (site!=null) {
-        userIsReadOnly = site.userReadOnly(ar.getBestUserId());
+        userIsReadOnly = ar.isReadOnly(); 
     }
     else if (ngp!=null) {
         //userIsReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId());

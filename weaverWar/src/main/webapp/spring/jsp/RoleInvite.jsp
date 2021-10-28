@@ -28,7 +28,7 @@
         allRoles.put(aRole.getName());
     }
 
-    boolean userReadOnly = site.userReadOnly(ar.getBestUserId()); 
+    boolean userReadOnly = ar.isReadOnly(); 
 %>
 
 <script type="text/javascript">

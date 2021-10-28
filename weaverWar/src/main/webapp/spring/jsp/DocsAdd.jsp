@@ -22,7 +22,7 @@
 
     JSONArray allLabels = ngp.getJSONLabels();
     
-    boolean userReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId()); 
+    boolean userReadOnly = ar.isReadOnly(); 
 %>
 
 <script>

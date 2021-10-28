@@ -13,7 +13,7 @@
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
-    boolean userCanUpdate = !site.userReadOnly(ar.getBestUserId()); 
+    boolean userCanUpdate = !ar.isReadOnly(); 
 
 %>
 

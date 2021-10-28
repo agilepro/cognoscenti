@@ -1,0 +1,46 @@
+.mainContentDiv {
+    padding:30px;
+    max-width:800px
+}
+
+.standardFooter {
+    width:100%;
+    #background-color:#3e0656;
+    background-color:white;
+    padding:10px;
+    #margin-top:50px;
+    padding-bottom:20px;
+    margin-bottom:400px
+}
+.standardMenu {
+    width:100%;
+    background-color:white;
+    padding:10px;
+    padding-bottom:20px;
+}
+
+body {
+    color:white;
+	background-color: #39134C;
+}
+a, a:focus {
+    color: #DEA4F2;
+}
+a:hover {
+    color: white;
+}
+button {
+    background-color: #AB37C8;
+    #background-color: black;
+    color: white;
+    margin:10px;
+    border:1px black solid
+}
+button:hover {
+    background-color: #AB37C8;
+    color: black;
+}
+button:hover a {
+    background-color: #AB37C8;
+    color: black;
+}
