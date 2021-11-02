@@ -63,13 +63,13 @@ public class SiteController extends BaseController {
     public void SiteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar,siteId,null,"SiteAdmin");
+        showJSPMemberSite(ar,siteId,"SiteAdmin");
     }
     @RequestMapping(value = "/{siteId}/$/SiteStats.htm", method = RequestMethod.GET)
     public void SiteStats(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar,siteId,null,"SiteStats");
+        showJSPLoggedInSite(ar,siteId,"SiteStats");
     }
 
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
@@ -314,7 +314,7 @@ public class SiteController extends BaseController {
             if (executiveCheckViews(ar)) {
                 return;
             }
-            streamJSP(ar, "SiteRoleRequest");
+            streamJSPSite(ar, "SiteRoleRequest");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.role.request.page", new Object[]{siteId} , ex);
         }
@@ -326,7 +326,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar, siteId, null, "SiteWorkspaces");
+        showJSPLoggedInSite(ar, siteId, "SiteWorkspaces");
     }
 
     @RequestMapping(value = "/{siteId}/$/SiteCreateWorkspace.htm", method = RequestMethod.GET)
@@ -334,7 +334,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, null, "SiteCreateWorkspace");
+        showJSPMemberSite(ar, siteId, "SiteCreateWorkspace");
     }
 
 
@@ -344,7 +344,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMembers(ar,siteId,null,"SiteUsers");
+            showJSPMemberSite(ar,siteId,"SiteUsers");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -355,7 +355,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMembers(ar,siteId,null,"SiteUserInfo");
+            showJSPMemberSite(ar,siteId,"SiteUserInfo");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
         }

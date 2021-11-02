@@ -117,7 +117,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">

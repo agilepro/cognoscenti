@@ -215,6 +215,16 @@ public class BaseController {
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/jsp/Wrapper.jsp");
     }
+    protected static void streamJSPSite(AuthRequest ar, String jspName) throws Exception {
+        //just to make sure there are no DOUBLE pages being sent
+        if (ar.req.getAttribute("wrappedJSP")!=null) {
+            throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
+                     +") when trying to set it to ("+jspName+")");
+        }
+
+        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.invokeJSP("/spring/site/Wrapper.jsp");
+    }
 
     protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
         if (warnNotLoggedIn(ar)){
@@ -268,6 +278,21 @@ public class BaseController {
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
+    public static void showJSPLoggedInSite(AuthRequest ar, String siteId, String jspName) throws Exception {
+        try{
+            registerSiteOrProject(ar, siteId, null);
+            if (warnNotLoggedIn(ar)){
+                return;
+            }
+            if (warnSiteMoved(ar)) {
+                return;
+            }
+            streamJSPSite(ar, jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
+        }
+    }
 
 
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
@@ -280,6 +305,18 @@ public class BaseController {
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
+    public static void showJSPMemberSite(AuthRequest ar, String siteId, String jspName) throws Exception {
+        try{
+            registerSiteOrProject(ar, siteId, null);
+            if (warnNotMember(ar)){
+                return;
+            }
+            streamJSPSite(ar, jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
         }
     }
 

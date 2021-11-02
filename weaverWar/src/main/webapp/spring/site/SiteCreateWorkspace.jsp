@@ -179,7 +179,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
 
 <style>
