@@ -814,6 +814,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.assertNotFrozen(ngw);
             JSONObject post = this.getPostedObject(ar);
             String areaId = post.getString("areaId");
             boolean moveDown = post.getBoolean("moveDown");
@@ -916,6 +917,7 @@ public class ProjectGoalController extends BaseController {
             ar.setPageAccessLevels(thisWS);
             ar.assertMember("You must be the member of the workspace you are copying to");
             ar.assertNotReadOnly("Cannot move an action item");
+            ar.assertNotFrozen(thisWS);
             ar.setPageAccessLevels(fromWS);
             ar.assertMember("You must be the member of the workspace you are copying from");
 

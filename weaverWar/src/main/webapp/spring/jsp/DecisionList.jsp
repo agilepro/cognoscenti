@@ -28,18 +28,8 @@ Required parameters:
     UserProfile uProf = ar.getUserProfile();
 
     JSONArray allLabels = ngp.getJSONLabels();
+    boolean isFrozen = ngp.isFrozen();
 
-    JSONObject stateName = new JSONObject();
-    stateName.put("0", BaseRecord.stateName(0));
-    stateName.put("1", BaseRecord.stateName(1));
-    stateName.put("2", BaseRecord.stateName(2));
-    stateName.put("3", BaseRecord.stateName(3));
-    stateName.put("4", BaseRecord.stateName(4));
-    stateName.put("5", BaseRecord.stateName(5));
-    stateName.put("6", BaseRecord.stateName(6));
-    stateName.put("7", BaseRecord.stateName(7));
-    stateName.put("8", BaseRecord.stateName(8));
-    stateName.put("9", BaseRecord.stateName(9));
 
 /*** PROTOTYPE
 
@@ -67,7 +57,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.stateName = <%stateName.write(out,2,4);%>;
+    $scope.isFrozen = <%= isFrozen %>;
     $scope.filter = "";
     $scope.filterMap = {};
 
@@ -116,6 +106,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.startCreating = function() {
+        if ($scope.isFrozen) {
+            alert("You are not able to create a new decisions because this workspace is frozen");
+            return;
+        }
         var newDec = {num:"~new~",universalid:"~new~",timestamp:new Date().getTime(),labelMap:{}}
         $scope.openDecisionEditor(newDec);
     }
@@ -192,6 +186,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     $scope.openDecisionEditor = function (decision) {
+        if ($scope.isFrozen) {
+            alert("You are not able to edit decisions because this workspace is frozen");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,
@@ -228,6 +226,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.advanceDate = function(decision) {
+        if ($scope.isFrozen) {
+            alert("You are not able to change due dates on decisions because the workspace is frozen");
+            return;
+        }
         decision.reviewDate = decision.reviewDate + (365*24*60*60*1000);
         $scope.saveDecision(decision);
     }

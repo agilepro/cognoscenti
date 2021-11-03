@@ -58,6 +58,7 @@ Required parameters:
         taskAreaList.put(ta.getMinJSON());
     }
     taskAreaList.put(new JSONObject().put("name", "Unspecified"));
+    boolean isFrozen = ngp.isFrozen();
 
 /*** PROTOTYPE
 
@@ -100,6 +101,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
+    $scope.isFrozen = <%= isFrozen %>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -354,29 +356,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
 
-    $scope.createNewGoal = function() {
-        var newRec = $scope.newGoal;
-        newRec.id = "~new~";
-        newRec.universalid = "~new~";
-        newRec.assignTo = [];
-        newRec.state = 2;
-        newRec.assignTo = newRec.assignList;
-        newRec.modifiedtime = new Date().getTime();
-        newRec.modifieduser = SLAP.loginInfo.userId;
-
-        var postURL = "updateGoal.json?gid=~new~";
-        var postData = angular.toJson(newRec);
-        $http.post(postURL, postData)
-        .success( function(data) {
-            $scope.allGoals.push(data);
-            $scope.newGoal = {};
-            $scope.isCreating = false;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
     $scope.datePickOptions = {
         formatYear: 'yyyy',
         startingDay: 1
@@ -447,6 +426,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.openModalActionItem = function (goal, startMode) {
+        if ($scope.isFrozen) {
+            alert("You are not able to edit an action item because this workspace is frozen");
+            return;
+        }
 
         var modalInstance = $modal.open({
           animation: false,
@@ -560,6 +543,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     
     $scope.openTaskAreaEditor = function (ta) {
+        if ($scope.isFrozen) {
+            alert("You are not able to edit task areas because this workspace is frozen");
+            return;
+        }
         
         if (!ta.id) {
             alert("This group ("+ta.name+") is not a real task area and you can not edit it...");

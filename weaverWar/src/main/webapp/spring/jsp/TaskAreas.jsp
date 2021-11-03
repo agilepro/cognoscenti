@@ -29,6 +29,7 @@ Required parameters:
     for (TaskArea gr : ngw.getTaskAreas()) {
         allTaskAreas.put(gr.getMinJSON());
     }
+    boolean isFrozen = ngw.isFrozen();
 
 
 
@@ -42,6 +43,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.loaded = false;
     $scope.allTaskAreas  = [];
+    $scope.isFrozen = <%= isFrozen %>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -67,6 +69,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
     }
     
     $scope.moveTaskArea = function(item, isDown) {
+        if ($scope.isFrozen) {
+            alert("You are not able to move task areas because this workspace is frozen");
+            return;
+        }
         let postObject = {areaId: item.id, moveDown: isDown};
         console.log("moveTaskArea", postObject);
         var getURL = "moveTaskArea.json";
@@ -84,6 +90,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
     $scope.getTaskAreas();
 
     $scope.openTaskAreaEditor = function (ta) {
+        if ($scope.isFrozen) {
+            alert("You are not able to edit task areas because this workspace is frozen");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,

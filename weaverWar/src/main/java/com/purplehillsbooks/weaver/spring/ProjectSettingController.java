@@ -78,14 +78,6 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleManagement");
     }
     
-    @RequestMapping(value = "/{siteId}/$/SiteRoles.htm", method = RequestMethod.GET)
-    public void siteRoles(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar, siteId, "SiteRoles");
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/MultiInvite.htm", method = RequestMethod.GET)
     public void MultiInvite(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -342,6 +334,7 @@ public class ProjectSettingController extends BaseController {
             NGWorkspace ngw = (NGWorkspace) registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
+            ar.assertNotFrozen(ngw);
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
 
@@ -469,6 +462,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
+            ar.assertNotFrozen(ngc);
             JSONObject personalInfo = getPostedObject(ar);
             op = personalInfo.getString("op");
             String roleRequestId = personalInfo.getString("rrId");
@@ -642,6 +636,7 @@ public class ProjectSettingController extends BaseController {
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to create an email generator.");
             ar.assertNotReadOnly("Cannot generate email");
+            ar.assertNotFrozen(ngw);
             JSONObject eGenInfo = getPostedObject(ar);
 
             id = eGenInfo.getString("id");
@@ -755,6 +750,7 @@ public class ProjectSettingController extends BaseController {
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
+            ar.assertNotFrozen(ngp);
             op = ar.reqParam("op");
             JSONObject labelInfo = getPostedObject(ar);
             String labelName = labelInfo.getString("name");
@@ -842,6 +838,9 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertNotFrozen(ngw);
+            
             JSONObject posted = this.getPostedObject(ar);
             
             //posted object MUST have a ss field in it to work

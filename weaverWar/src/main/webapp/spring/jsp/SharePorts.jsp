@@ -24,6 +24,7 @@ Required parameters:
     ar.assertMember("Must be a member to see meetings");
 
     JSONArray allLabels = ngw.getJSONLabels();
+    boolean isFrozen = ngw.isFrozen();
     
 %>
 
@@ -35,6 +36,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.loaded = false;
     $scope.allShares = [];
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.isFrozen = <%= isFrozen %>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.newSharePort = {id:"~new~",universalid:"~new~"};
@@ -65,6 +67,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.getSharePorts();
 
     $scope.openSharePortEditor = function (sharePort) {
+        if ($scope.isFrozen) {
+            alert("You are not able to edit share ports because this workspace is frozen");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,

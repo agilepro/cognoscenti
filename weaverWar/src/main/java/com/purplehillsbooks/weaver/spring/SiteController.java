@@ -361,6 +361,14 @@ public class SiteController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/$/SiteRoles.htm", method = RequestMethod.GET)
+    public void siteRoles(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMemberSite(ar, siteId, "SiteRoles");
+    }
+
 
     @RequestMapping(value = "/{siteId}/$/account_settings.htm", method = RequestMethod.GET)
     public ModelAndView showProjectSettingsTab(@PathVariable String siteId,

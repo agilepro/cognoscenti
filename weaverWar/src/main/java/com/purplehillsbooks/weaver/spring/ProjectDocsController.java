@@ -438,6 +438,7 @@ public class ProjectDocsController extends BaseController {
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
 
             ar.setPageAccessLevels(thisWS);
+            ar.assertNotFrozen(thisWS);
             ar.assertMember("You must be the member of the workspace you are copying to");
             ar.assertNotReadOnly("Cannot copy a document");
             ar.setPageAccessLevels(fromWS);
@@ -634,6 +635,8 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            ar.setPageAccessLevels(ngw);
+            ar.assertNotFrozen(ngw);
             JSONObject input = getPostedObject(ar);
             if (!input.has("comments")) {
                 throw new Exception("posted object to specialReplySave needs to have a comments list");

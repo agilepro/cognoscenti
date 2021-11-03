@@ -8,19 +8,11 @@
     String siteId      = ar.reqParam("siteId");
     
     //page must work for both workspaces and for sites
-    boolean isSite = ("$".equals(pageId));
-    NGBook site;
-    NGContainer ngc;
-    if (isSite) {
-        site = ar.getCogInstance().getSiteByKeyOrFail(siteId).getSite();
-        ngc = site;
-    }
-    else {
-        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-        site = ngw.getSite();
-        ngc = ngw;
-    }
-    ar.setPageAccessLevels(ngc);
+
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGBook site = ngw.getSite();
+
+    ar.setPageAccessLevels(ngw);
     
     UserProfile uProf = ar.getUserProfile();
     
@@ -31,7 +23,7 @@
 
     JSONArray allRoles = new JSONArray();
 
-    for (CustomRole aRole : ngc.getAllRoles()) {
+    for (CustomRole aRole : ngw.getAllRoles()) {
         allRoles.put(aRole.getJSONDetail());
     }
 
@@ -40,6 +32,7 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
+    boolean isFrozen = ngw.isFrozen();
 
 %>
 
@@ -50,11 +43,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Roles");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
+    $scope.isFrozen = <%= isFrozen %>;
     $scope.showInput = false;
     AllPeople.clearCache($scope.siteInfo.key);
 
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in a role of the project '<%ar.writeHtml(ngc.getFullName());%>'."
+                    +" participate in a role of the project '<%ar.writeHtml(ngw.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
                     +" participate directly with the others through the site.";
     
@@ -117,6 +111,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     
     $scope.updateRole = function(role) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
         var key = role.name;
         var postURL = "roleUpdate.json?op=Update";
         role.players.forEach( function(item) {
@@ -136,21 +134,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     };
-    $scope.saveCreatedRole = function(newOne) {
-        var key = newOne.name;
-        $scope.allRoles.push(newOne);
-        var postdata = angular.toJson(newOne);
-        postURL = "roleUpdate.json?op=Create";
-        $http.post(postURL,postdata)
-        .success( function(data) {
-            $scope.cleanDuplicates(data);
-            $scope.updateRoleList(data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });        
-    }
     $scope.removePlayer = function(role, player) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
         var newPlayers = [];
         var found = false;
         role.players.forEach( function(item) {
@@ -172,6 +160,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.key;
     }
     $scope.deleteRole = function(role) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
         var key = role.name;
         if (role.name == "Members" || role.name == "Administrators" ) {
             alert("The role "+role.name+" is required and can not be deleted.");
@@ -221,12 +213,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     
     $scope.openInviteSender = function (player) {
+        if ($scope.isFrozen) {
+            alert("You are not able to invite because this workspace is frozen");
+            return;
+        }
 
         var proposedMessage = {}
         proposedMessage.msg = $scope.inviteMsg;
         proposedMessage.userId = player.uid;
         proposedMessage.name   = player.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
+        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
 
         var modalInstance = $modal.open({
             animation: false,
@@ -253,6 +249,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     
     $scope.openRoleModal = function (role) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
         var isNew = false;
         if (!role) {   
             role = {players:[]};
@@ -282,6 +282,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     
     $scope.goNomination = function(role) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
         if (!role.terms) {
             role.terms = [];
         }

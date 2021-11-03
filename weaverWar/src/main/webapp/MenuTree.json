@@ -42,7 +42,7 @@
       "readOnly": true
     },
     {
-      "href":"RoleManagement.htm",
+      "href":"SiteRoles.htm",
       "name":"Roles",
       "title":"Role define who can do what within this site.",
       "opts": [],

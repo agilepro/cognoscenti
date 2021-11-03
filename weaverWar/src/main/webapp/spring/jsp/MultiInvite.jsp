@@ -10,26 +10,20 @@
     
     //page must work for both workspaces and for sites
     boolean isSite = ("$".equals(pageId));
-    NGBook site;
-    NGContainer ngc;
-    if (isSite) {
-        site = ar.getCogInstance().getSiteByKeyOrFail(siteId).getSite();
-        ngc = site;
-    }
-    else {
-        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-        site = ngw.getSite();
-        ngc = ngw;
-    }
-    ar.setPageAccessLevels(ngc);
+    
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGBook site = ngw.getSite();
+    
+    ar.setPageAccessLevels(ngw);
     UserProfile uProf = ar.getUserProfile();
     
     JSONArray allRoles = new JSONArray();
-    for (NGRole aRole : ngc.getAllRoles()) {
+    for (NGRole aRole : ngw.getAllRoles()) {
         allRoles.put(aRole.getName());
     }
 
     boolean userReadOnly = ar.isReadOnly(); 
+    boolean isFrozen = ngw.isFrozen();
 %>
 
 <script type="text/javascript">
@@ -39,15 +33,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Multi-Person Invite");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     $scope.newRole = "<%ar.writeJS(roleName);%>"
+    $scope.isFrozen = <%= isFrozen %>;
     $scope.invitations = [];
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
+                    +" participate in the workspace for '<%ar.writeHtml(ngw.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and"
                     +" after that you will be able to"
                     +" participate directly with the others through the site.";
     $scope.emailList = "";
     $scope.results = [];
-    $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
+    $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
     $scope.addressing = true;
 
     function getAllInvites() {
@@ -100,7 +95,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         obj.email = newEmail;
         obj.role = $scope.newRole;
         obj.msg = $scope.message;
-        obj.ss = "Invitation to workspace '<%ar.writeHtml(ngc.getFullName());%>'";
+        obj.ss = "Invitation to workspace '<%ar.writeHtml(ngw.getFullName());%>'";
         obj.status = "New";
         obj.timestamp = new Date().getTime();
         updateInvite(obj);
@@ -192,7 +187,7 @@ function parseList(inText) {
     
     <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
 
-  <div class="well" style="max-width:500px;margin-bottom:50px">
+  <div class="well" style="max-width:500px;margin-bottom:50px" ng-hide="isFrozen">
       <div ng-show="addressing">
     
         <div class="form-group">
@@ -219,7 +214,10 @@ function parseList(inText) {
     <div  ng-hide="addressing">
        <button class="btn btn-primary btn-raised" ng-click="addressing=true">Open to Send More</button>
     </div>
-    </div>
+    </div>  
+  <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
+     You can't invite anyone because this workspace is frozen or deleted.
+  </div> 
     
  
 <% } %> 

@@ -366,6 +366,9 @@ public abstract class NGPage extends ContainerCommon {
     @Override
     public boolean isFrozen() throws Exception {
         //every workspace in a frozen site is considered frozen
+        if (prjSite.isDeleted()) {
+            return true;
+        }
         if (prjSite.isFrozen()) {
             return true;
         }
@@ -406,6 +409,9 @@ public abstract class NGPage extends ContainerCommon {
 
     @Override
     public boolean isDeleted() {
+        if (this.prjSite.isDeleted()) {
+            return true;
+        }
         return pageInfo.isDeleted();
     }
 
