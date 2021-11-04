@@ -408,20 +408,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return doc;
     }
-    $scope.navigateToDocOld = function(doc) {
-        if (!doc.id) {
-            alert("That document does not have an id");
-            return;
-        }
-        window.location="docinfo"+doc.id+".htm";
-    }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
-    }
-    $scope.navigateToDocDetails = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="DocsDetails"+doc.id+".htm";
+        window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);

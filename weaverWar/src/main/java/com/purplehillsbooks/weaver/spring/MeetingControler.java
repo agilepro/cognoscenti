@@ -83,7 +83,7 @@ public class MeetingControler extends BaseController {
                 return;
             }
             if(!ar.isLoggedIn()) {
-                specialAnonJSP(ar, siteId, pageId, "MeetingAnon.jsp");
+                streamJSPAnon(ar, siteId, pageId, "MeetingAnon.jsp");
                 return;
             }
             if (ar.isMember() || canAccess) {
@@ -128,7 +128,7 @@ public class MeetingControler extends BaseController {
                 return;
             }
             if(!ar.isLoggedIn()) {
-                specialAnonJSP(ar, siteId, pageId, "MeetingAnon.jsp");
+                streamJSPAnon(ar, siteId, pageId, "MeetingAnon.jsp");
                 return;
             }
 

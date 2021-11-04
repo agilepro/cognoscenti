@@ -131,7 +131,7 @@ public class ProjectGoalController extends BaseController {
 
             request.setAttribute("taskId", taskId);
             if (canAccessGoal && (!isLoggedIn || !isMember) ) {
-                specialAnonJSP(ar, siteId, pageId, "ActionItem.jsp");
+                streamJSPAnon(ar, siteId, pageId, "ActionItem.jsp");
             }
             else{
                 if (warnNotMember(ar)) {

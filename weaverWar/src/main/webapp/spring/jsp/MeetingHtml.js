@@ -1736,11 +1736,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
         return doc;
     }
-    $scope.navigateToDoc = function(docId) {
-        window.open("docinfo"+docId+".htm","_blank");
-    }
-    $scope.navigateToDocDetails = function(docId) {
-        window.open("DocsDetails"+docId+".htm","_blank");
+   $scope.navigateToDoc = function(docId) {
+        window.open("DocDetail.htm?aid="+docId,"_blank");
     }
     $scope.sendDocByEmail = function(docId) {
         window.open("SendNote.htm?att="+docId,"_blank");

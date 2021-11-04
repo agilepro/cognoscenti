@@ -1443,7 +1443,7 @@ public class AuthRequest
             flush();
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.invoke.jsp", new Object[]{JSPName}, e);
+            throw new JSONException("Unable to invoke JSP '{0}'", e, JSPName);
         }
         finally {
             nestingCount--;

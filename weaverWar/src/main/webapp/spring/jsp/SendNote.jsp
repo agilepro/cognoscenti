@@ -484,7 +484,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         return doc;
     }
     $scope.navigateToDoc = function(docId) {
-        window.location="docinfo"+docId+".htm";
+        window.location="DocDetail.htm?aid="+docId;
     }
     $scope.sendDocByEmail = function(docId) {
         window.location="SendNote.htm?att="+docId;

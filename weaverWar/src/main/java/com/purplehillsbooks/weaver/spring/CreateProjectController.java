@@ -205,7 +205,7 @@ public class CreateProjectController extends BaseController {
            throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           specialAnonJSP(ar, "N/A", "N/A", "NewSiteApplication.jsp");
+           streamJSPAnon(ar, "N/A", "N/A", "NewSiteApplication.jsp");
        }catch(Exception ex){
            throw new Exception("Unable to display the Register New Site page", ex);
        }

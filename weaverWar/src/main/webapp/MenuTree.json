@@ -138,7 +138,7 @@
       "title":"List and access all the attached documents in the workspace.",
       "opts": [
         {
-          "use": ["DocsList.jsp", "DocsFolder.jsp", "SharePorts.jsp", "docinfo.jsp", "DocsRevise.jsp", "DocsAdd.jsp"],
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "SharePorts.jsp", "DocDetail.jsp", "DocsRevise.jsp", "DocsAdd.jsp"],
           "href":"DocsAdd.htm",
           "name":"Add",
           "title":"Upload or link documents to this workspace"
@@ -157,21 +157,21 @@
           "title":"Display share ports"
         },
         {
-          "use": ["docinfo.jsp", "DocsRevise.jsp"],
-          "href":"docinfo{{docId}}.htm",
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
+          "href":"DocDetail.htm?aid={{docId}}",
           "name":"Access",
           "title":"Upload or link documents to this workspace",
           "readOnly": true
         },
         {
-          "use": ["docinfo.jsp", "DocsRevise.jsp"],
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
           "href":"DocsRevise.htm?aid={{docId}}",
           "name":"Versions",
           "title":"List and upload new versions of this document",
           "readOnly": true
         },
         {
-          "use": ["docinfo.jsp", "DocsRevise.jsp"],
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
           "href":"SendNote.htm?att={{docId}}",
           "name":"Send Email",
           "title":"List and upload new versions of this document"

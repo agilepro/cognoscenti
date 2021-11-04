@@ -120,33 +120,29 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2");
     }
 
+    //This is the OLD pattern we want to get rid of with aid embedded in the page name
+    //instead use DocDetails.htm?aid={aid}
+    @Deprecated
     @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
-    protected void docInfoView(@PathVariable String siteId,
+    private void docInfoView(@PathVariable String siteId,
              @PathVariable String pageId, @PathVariable String aid,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        //ngp.findAttachmentByIDOrFail(aid);
         request.setAttribute("aid", aid);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "docinfo");
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocDetail");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/DocsDetails{aid}.htm", method = RequestMethod.GET)
-    protected void docsDetails(@PathVariable String siteId,
-             @PathVariable String pageId, @PathVariable String aid,
+    // this will be DocDetails.htm??aid={aid}&lic={license}
+    @RequestMapping(value = "/{siteId}/{pageId}/DocDetail.htm", method = RequestMethod.GET)
+    protected void docDetail(@PathVariable String siteId,
+             @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-        //special behavior.  On the Edit Details page, if someone hits this when NOT LOGGED IN
-        //then redirect to the document information page, which is allowed when not logged in,
-        //and from there they can decide whether to log in or not, and then to edit the details.
-        //Seems better than just saying you are not logged in.
-        if (!ar.isLoggedIn()) {
-            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(aid, "UTF-8")+".htm");
-            return;
-        }
+        String aid = ar.reqParam("aid");
 
         request.setAttribute("aid", aid);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsDetails");
+        BaseController.showJSPDepending(ar, siteId, pageId, "DocDetail");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/DocsVersions.htm", method = RequestMethod.GET)
@@ -565,7 +561,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.setParam("id", id);
-        specialAnonJSP(ar, siteId, pageId, "Share.jsp");
+        streamJSPAnon(ar, siteId, pageId, "Share.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -598,7 +594,7 @@ public class ProjectDocsController extends BaseController {
         }
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
-        specialAnonJSP(ar, siteId, pageId, "Reply.jsp");
+        streamJSPAnon(ar, siteId, pageId, "Reply.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -617,13 +613,13 @@ public class ProjectDocsController extends BaseController {
         //}
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
-        specialAnonJSP(ar, siteId, pageId, "Unsub.jsp");
+        streamJSPAnon(ar, siteId, pageId, "Unsub.jsp");
     }
 
     @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
     public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        specialAnonJSP(ar, "NA", "NA", "Feedback.jsp");
+        streamJSPAnon(ar, "NA", "NA", "Feedback.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)

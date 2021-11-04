@@ -326,7 +326,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="docinfo{{rec.id}}.htm">Access Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
                   <li role="presentation" ng-show="rec.attType=='FILE'">
                       <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
                   <li role="presentation">
@@ -348,7 +348,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </td>
             <td>
               <div>
-                <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
+                <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
                 <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
                 <span ng-repeat="label in getAllLabels(rec)">
                     <button class="labelButton" 

@@ -1607,11 +1607,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.open("docinfo"+doc.id+".htm","_blank");
-    }
-    $scope.navigateToDocDetails = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.open("DocsDetails"+doc.id+".htm","_blank");
+        window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);

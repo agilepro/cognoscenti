@@ -192,7 +192,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="DocsList.htm" >List Documents</a></li>
           <li role="presentation"><a role="menuitem"
-              href="docinfo{{docId}}.htm">Access Document</a></li>
+              href="DocDetail.htm?aid={{docId}}">Access Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="DocsRevise.htm?aid={{docId}}" >Versions</a></li>
         </ul>

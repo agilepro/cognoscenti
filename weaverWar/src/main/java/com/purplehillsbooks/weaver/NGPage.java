@@ -172,6 +172,12 @@ public abstract class NGPage extends ContainerCommon {
                 }
             }
         }
+        
+        
+        //eliminate any attachments to topics from documents that have been deleted
+        for (TopicRecord tr : this.getAllDiscussionTopics()) {
+            tr.verifyAllAttachments(this);
+        }
 
     }
 

@@ -204,28 +204,40 @@ public class BaseController {
 
 
 
-
-    protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
+    private static void assertNoWrappedJSP(AuthRequest ar, String jspName) throws Exception {
         //just to make sure there are no DOUBLE pages being sent
         if (ar.req.getAttribute("wrappedJSP")!=null) {
             throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
                      +") when trying to set it to ("+jspName+")");
-        }
+        }        
+    }
+    protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
+        assertNoWrappedJSP(ar, jspName);
 
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/jsp/Wrapper.jsp");
     }
     protected static void streamJSPSite(AuthRequest ar, String jspName) throws Exception {
-        //just to make sure there are no DOUBLE pages being sent
-        if (ar.req.getAttribute("wrappedJSP")!=null) {
-            throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
-                     +") when trying to set it to ("+jspName+")");
-        }
+        assertNoWrappedJSP(ar, jspName);
 
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/site/Wrapper.jsp");
     }
+    public static void streamJSPAnon(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        assertNoWrappedJSP(ar, jspName);
+        try{
+            ar.setParam("pageId", pageId);
+            ar.setParam("siteId", siteId);
+            ar.invokeJSP("/spring/anon/"+jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of anon/"+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
 
+    
+    
+    
     protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
         if (warnNotLoggedIn(ar)){
             return;
@@ -248,6 +260,26 @@ public class BaseController {
         }
     }
 
+    public static void showJSPDepending(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            registerSiteOrProject(ar, siteId, pageId);
+            if (warnSiteMoved(ar)) {
+                return;
+            }
+            if (!ar.isLoggedIn()) {
+                ar.setParam("pageId", pageId);
+                ar.setParam("siteId", siteId);
+                ar.req.setAttribute("wrappedJSP", jspName+".jsp");
+                ar.invokeJSP("/spring/anon/Wrapper.jsp");
+            }
+            else {
+                streamJSP(ar, jspName);
+            }
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
 
 
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
@@ -321,16 +353,6 @@ public class BaseController {
     }
 
 
-    public static void specialAnonJSP(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
-        try{
-            ar.setParam("pageId", pageId);
-            ar.setParam("siteId", siteId);
-            ar.invokeJSP("/spring/anon/"+jspName);
-        }
-        catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of anon/"+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
-        }
-    }
 
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{

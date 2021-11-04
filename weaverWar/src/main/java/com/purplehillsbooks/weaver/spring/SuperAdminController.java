@@ -58,7 +58,7 @@ public class SuperAdminController extends BaseController {
              String jspName) throws Exception {
 
         if(!ar.isLoggedIn()){
-            specialAnonJSP(ar, "","","Admin.jsp");
+            streamJSPAnon(ar, "","","Admin.jsp");
             return;
         }
         if(!ar.isSuperAdmin()){

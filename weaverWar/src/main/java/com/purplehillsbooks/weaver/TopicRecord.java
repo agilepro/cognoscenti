@@ -682,6 +682,31 @@ public class TopicRecord extends CommentContainer {
           setWiki(wikiText);
       }
 
+      
+      
+      public void verifyAllAttachments(NGPage ngw) throws Exception {
+          List<String> attached = getDocList();
+          List<String> newList = new ArrayList<String>();
+          List<AttachmentRecord> attaches = ngw.getAllAttachments();
+          boolean changed = false;
+          for (String attId : attached) {
+              boolean found = false;
+              for (AttachmentRecord aRec : attaches) {
+                  if (aRec.getUniversalId().equals(attId)) {
+                      found = true;
+                  }
+              }
+              if (found) {
+                  newList.add(attId);
+              }
+              else {
+                  changed = true;
+              }
+          }
+          if (changed) {
+              setDocList(newList);
+          }
+      }
       public List<String> getDocList() {
           return getVector("docList");
       }

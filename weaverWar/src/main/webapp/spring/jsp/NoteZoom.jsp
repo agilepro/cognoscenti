@@ -845,17 +845,23 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.getFullDoc = function(docId) {
-        var doc = {};
+        var doc;
         $scope.attachmentList.forEach( function(item) {
+            console.log("   considering id="+item.universalid);
             if (item.universalid == docId) {
                 doc = item;
             }
         });
-        return doc;
+        if (!doc) {
+            console.log("Could not find document with id="+docId);
+        }
+        else {
+            return doc;
+        }
     }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
+        window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);

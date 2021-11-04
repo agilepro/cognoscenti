@@ -254,7 +254,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
+        window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.openAttachDocument = function () {
         

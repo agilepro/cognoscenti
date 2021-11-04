@@ -103,7 +103,7 @@ Required parameters:
                 objName = objectKey;
             }
             else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-                url = ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
+                url = ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
                 AttachmentRecord att = ngp.findAttachmentByID(objectKey);
                 if (att!=null) {
                     objName = att.getDisplayName();
