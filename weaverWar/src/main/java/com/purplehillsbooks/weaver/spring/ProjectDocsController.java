@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -325,16 +326,17 @@ public class ProjectDocsController extends BaseController {
             did = ar.reqParam("did");
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            //TODO: is this right?
-            ar.assertMember("Must be a member to update a document information.");
-            ar.assertNotFrozen(ngw);
-            AttachmentRecord aDoc = ngw.findAttachmentByIDOrFail(did);
+            AttachmentRecord attachment = ngw.findAttachmentByIDOrFail(did);
+            boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngw, attachment);
+            if (!canAccessDoc) {
+                throw new JSONException("Unable for user {1} to access document {0}", did, ar.getBestUserId());
+            }
 
-            JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
+            JSONObject repo = attachment.getJSON4Doc(ar, ngw);
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update document "+did, ex);
+            Exception ee = new Exception("Failure accessing document "+did, ex);
             streamException(ee, ar);
         }
     }

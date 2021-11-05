@@ -25,15 +25,12 @@ Required parameters:
     NGBook site = ngp.getSite();
     String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
     UserProfile uProf = ar.getUserProfile();
-    String currentUser = "";
-    String currentUserName = "";
-    String currentUserKey = "";
-    if (uProf!=null) {
-        currentUser = uProf.getUniversalId();
-        currentUserName = uProf.getName();
-        currentUserKey = uProf.getKey();
+    if (uProf==null) {
+        throw new Exception("DocDetail.jsp can only be used when logged in");
     }
-
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
 
     String aid      = ar.reqParam("aid");
     AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
@@ -43,6 +40,7 @@ Required parameters:
     String fileSize = String.format("%,d", fileSizeInt);
 
     boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngp, attachment);
+    boolean isMember = ar.isMember();
 
     String relativeLink = "a/"+attachment.getNiceName()+"?version="+attachment.getVersion();
     String permaLink = ar.getResourceURL(ngp, relativeLink);
@@ -129,6 +127,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.myComment = "";
     $scope.canAccess = <%=canAccessDoc%>;
+    $scope.isMember = <%=ar.isMember()%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -328,17 +327,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.setDocumentData = function(data) {
         $scope.timerCorrection = data.serverTime - new Date().getTime();
-        data.docs.forEach( function(rec) {
-            if (rec.id == $scope.docId) {
-                rec.html = convertMarkdownToHtml(rec.description);
-                $scope.docInfo = rec;
-            }
-        });
+        if (data.id == $scope.docId) {
+            data.html = convertMarkdownToHtml(data.description);
+            $scope.docInfo = data;
+        }
         $scope.dataArrived = true;
     }
-    $scope.getDocumentList = function() {
+    $scope.getDocumentInfo = function() {
         $scope.isUpdating = true;
-        var postURL = "docsList.json";
+        var postURL = "docInfo.json?did="+$scope.docId;
         $http.get(postURL)
         .success( function(data) {
             $scope.setDocumentData(data);
@@ -347,7 +344,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
-    $scope.getDocumentList();
+    $scope.getDocumentInfo();
     $scope.openDocDialog = function (doc) {
         
         var docsDialogInstance = $modal.open({
@@ -371,9 +368,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         docsDialogInstance.result
         .then(function () {
-            $scope.getDocumentList();
+            $scope.getDocumentInfo();
         }, function () {
-            $scope.getDocumentList();
+            $scope.getDocumentInfo();
         });
     };
     $scope.imageName = function(player) {
@@ -458,7 +455,6 @@ function copyTheLink() {
 }
 .panelClickable {
     margin:4px;
-    max-width:200px;
     overflow: hidden;
     cursor: pointer;
 }
@@ -468,23 +464,6 @@ function copyTheLink() {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-
-<% if (ar.isLoggedIn()) { %>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsRevise.htm?aid={{docInfo.id}}" >Versions</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
-        </ul>
-      </span>
-    </div>
-<% } %>    
 
 <div style="clear:both"></div>
 
@@ -530,23 +509,23 @@ function copyTheLink() {
      This document has been put into the <i class="fa fa-trash"></i> trash and will 
      be deleted soon.
   </div>
-  <div>
+  <div ng-show="isMember">
     <button class="btn btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
     <p>Edit the document details, like name and description.  The name and description tell
     others what the purpose of the document is, and ultimately whether they
     want to access the document or not.<p>
   </div>
-  <div>
+  <div ng-show="isMember">
     <button class="btn btn-raised" ng-click="makeLink = !makeLink">Create a link</button>
     <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.<p>
     <div ng-show="makeLink">
       <div class="roomy">
         <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()"> 
-        <b>Private</b> - link available only to workspace members.
+        <b>Private</b> - document can be accessed only by workspace members.
       </div>
       <div class="roomy">
         <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()"> 
-        <b>Public</b> - link can be used by anyone on the Internet.
+        <b>Public</b> - document can be accessed by anyone on the Internet.
       </div>
       <div class="roomy">
         <input type="text" ng-model="generatedLink" id="generatedLink"/>
@@ -554,7 +533,7 @@ function copyTheLink() {
       </div>
     </div>
   </div>
-  <div>
+  <div ng-show="isMember">
     <button class="btn btn-default btn-raised" ng-click="composeEmail()">Send by email</button>
     <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.<p>
   </div>
@@ -620,6 +599,7 @@ function copyTheLink() {
     </div>
 </div>
 
+<div style="clear:both"></div>
 <h3>Comments:</h3>
 <table >
   <tr ng-repeat="cmt in docInfo.comments">
@@ -637,7 +617,7 @@ function copyTheLink() {
   <div ng-hide="canAccess">
     <i>You have to be logged in and a member of this workspace in order to create a comment</i>
   </div>
-
+Can Access: {{canAccess}}
     <h3>History</h3>
     <table>
 

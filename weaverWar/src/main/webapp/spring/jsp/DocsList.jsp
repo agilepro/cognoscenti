@@ -318,6 +318,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td width="420px">Name ~ Description</td>
             <td width="40px"></td>
             <td width="80px">Date</td>
+            <td width="80px">Size</td>
         </tr>
         <tr ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
             <td>
@@ -365,6 +366,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
             </td>
             <td ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</td>
+            <td ng-click="openDocDialog(rec)"><span ng-show="rec.size>0">{{rec.size|number}}</span></td>
         </tr>
     </table>
     

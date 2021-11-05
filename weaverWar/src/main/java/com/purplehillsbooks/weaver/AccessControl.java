@@ -231,7 +231,10 @@ public class AccessControl {
         //at this point, we have seen a magic number allowing access to this page
         //so set up the rest of the login credentials for one request
         ar.setSpecialSessionAccess(resourceId);
-        return assureTemporaryProfile(ar);
+        if (!ar.isLoggedIn()) {
+            return assureTemporaryProfile(ar);
+        }
+        return true;
     }
 
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {

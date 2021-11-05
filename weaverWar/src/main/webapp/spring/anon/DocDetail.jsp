@@ -39,7 +39,7 @@ Required parameters:
     AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
     String version  = ar.defParam("version", null);
 
-    long fileSizeInt = attachment.getFileSize(ngp);
+    long fileSizeInt = attachment.getFileSize(ngp); 
     String fileSize = String.format("%,d", fileSizeInt);
 
     boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngp, attachment);
@@ -227,25 +227,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.setDocumentData = function(data) {
         $scope.timerCorrection = data.serverTime - new Date().getTime();
-        data.docs.forEach( function(rec) {
-            if (rec.id == $scope.docId) {
-                rec.html = convertMarkdownToHtml(rec.description);
-                $scope.docInfo = rec;
-            }
-        });
-        $scope.dataArrived = true;
+        if (data.id == $scope.docId) {
+            data.html = convertMarkdownToHtml(data.description);
+            $scope.docInfo = data;
+        }
     }
-    $scope.getDocumentList = function() {
-        $scope.isUpdating = true;
-        var postURL = "docsList.json";
-        $http.get(postURL)
-        .success( function(data) {
-            $scope.setDocumentData(data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
+    $scope.setDocumentData($scope.docInfo);
 
     $scope.imageName = function(player) {
         if (player.key) {
@@ -288,6 +275,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
     }
     
+    $scope.login = function() {
+        SLAP.loginUserRedirect();
+    }
+    
 });
 
 function copyTheLink() {
@@ -320,6 +311,7 @@ function copyTheLink() {
     width: 100%;
     display: flex;
     justify-content: center; 
+    padding:10px;
 }
 .clipping {
     overflow: hidden;
@@ -329,7 +321,6 @@ function copyTheLink() {
 }
 .panelClickable {
     margin:4px;
-    max-width:200px;
     overflow: hidden;
     cursor: pointer;
 }
@@ -338,26 +329,7 @@ function copyTheLink() {
 
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
-
-<% if (ar.isLoggedIn()) { %>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsRevise.htm?aid={{docInfo.id}}" >Versions</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
-        </ul>
-      </span>
-    </div>
-<% } %>    
-
-<div style="clear:both"></div>
+<%@include file="ErrorPanel.jsp"%> 
 
 <div class="col col-lg-6 col-sm-12">
   <div class="well">
@@ -376,17 +348,26 @@ function copyTheLink() {
         <span ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
       </div>
   </div>
-  <div ng-show="docInfo.attType=='FILE'">
-      <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
-      src="<%=ar.retPath%>download.gif"></a> 
+  <div ng-hide="canAccess">
+      <p>Sorry: you are not able to access this document because you are not logged in, and the link you used requires you to authenticate as a member of this workspace.</p>
+      <p>If you actually are a member of this Weaver workspace, then please <button ng-Click="login()">Login</button>
+      <p>You need to be a member of the workspace, or have been provided a special access link to the document.  Please contact the person who has provided this link and let them know you would like access.</p>
+      <p>If you are not a member of the workspace, but would like to be, then either register or login, and once logged in you will have more options including a request to join the workspace.</p>
   </div>
-  <div ng-show="docInfo.attType=='URL'">
-    <a href="<%ar.write(permaLink); %>" target="_blank"><img
-      src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
-    <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
-      <button class="btn btn-primary btn-raised">View Text Only</button></a>
-  </div>
-  
+  <div ng-show="canAccess">
+      <p>You have received special access to this document.</p>
+      <div ng-show="docInfo.attType=='FILE'">
+          <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
+          src="<%=ar.retPath%>download.gif"></a> 
+      </div>
+      <div ng-show="docInfo.attType=='URL'">
+        <a href="<%ar.write(permaLink); %>" target="_blank"><img
+          src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+        <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
+          <button class="btn btn-primary btn-raised">View Text Only</button></a>
+      </div>
+   </div>
+ 
   <div ng-show="docInfo.deleted">
      This document has been put into the <i class="fa fa-trash"></i> trash and will 
      be deleted soon.
@@ -394,23 +375,37 @@ function copyTheLink() {
 
 </div>
 <div class="col col-lg-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
-    <h2>Sharing</h2>
-    <p>Documents can be shared directly from Weaver, 
-    internally to current members and externally to anyone in the world.</p>
+    <h2>Welcome to Weaver</h2>
+   <p>Weaver allows members to share documents directly with anyone in a controlled way.
+    Instead of attaching a large document as an attachment to an email, Weaver provides
+    links to access and download documents directly.  Members can easily upload from
+    anywhere as well.</p>
     <div class="centered"><img src="../../../bits/safety-icon.png"/></div>
-    <p>Sending a link to download directly from Weaver is <i>safer</i> than sending the document as an
+    <p>Downloading directly from Weaver is <i>safer</i> than sending the document as an
     attachment to email, because the download is through a secure HTTPS channel.  
     Unlike emailing an attachment nobody else can intercept, see, or manipulate the contents of the file.
     The recipient will always get exactly the contents that were uploaded to Weaver.</p>
     <div class="centered"><img src="../../../bits/fast-email.png"/></div>
     <p>A link is smaller and more efficient than an attachment, 
-    so it can be sent to anyone without cluttering their inbox. 
+    so it can be sent to you without cluttering your inbox. 
     This is great espectially important for very large files.  
-    Sending a link to 100 MB or GB files avoids problems with size limits on email.</p>
+    Sending a link to hundred MB or GB files avoids problems with size limits on email.</p>
     <div class="centered"><img src="../../../bits/clock-change.png"/></div>
-    <p>Also, with a link, if the document is still changing, 
-    all recipients will always have access to the latest version at the time they download.
-    They never receive an out-of-date copy.</p>
+    <p>Also, if the document has changed recently,
+    you will be downloading the latest version at the time.
+    You will never receive an out-of-date copy.</p>
+    <hr/>
+    <div class="centered"><img src="../../../bits/weaver-logo-header.png"/></div>
+    <p>Weaver is developed by a team of volunteers to make tools to allow 
+    community groups to collaborate more effectively, and to get more done.
+    Please join our effort.   We help groups all over the worlsd.</p>
+    <p>You can <a href="../../index.htm">get your own free Weaver site</a>,
+    and use it to collaborate more effectively 
+    using a technique known as Dynamic Governance.
+    Give it a try.</p>
+    <p>If you want to know more, we have a sequence of 
+       <a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">training videos</a>
+       which will help explain exactly what Weaver can do for you and your team.</p>
 </div>
 
 

@@ -91,6 +91,11 @@ myApp.filter('cdate', function() {
   };
 });
 
+function reloadIfLoggedIn() {
+    if (SLAP.loginInfo.verified) {
+        window.location = "<%= ar.getCompleteURL() %>";
+    }
+}
  </script>
 
 
