@@ -441,7 +441,7 @@ public class EmailGenerator extends DOMFace {
             JSONObject oneAtt = new JSONObject();
             StringBuilder sb = new StringBuilder();
             sb.append(ar.baseURL);
-            sb.append(ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?"));
+            sb.append(att.getEmailURL(ar, ngp));
             sb.append(AccessControl.getAccessDocParams(ngp, att));
             sb.append("&emailId=");
             sb.append(URLEncoder.encode(ale.getEmail(), "UTF-8"));

@@ -54,7 +54,7 @@ public abstract class NGContainer extends DOMFile
     public abstract void writeContainerLink(AuthRequest ar, int len) throws Exception;
     public abstract void writeNoteLink(    AuthRequest ar, String noteId,     int len) throws Exception;
     public abstract void writeTaskLink(    AuthRequest ar, String taskId,     int len) throws Exception;
-    public abstract void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception;
+    //public abstract void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception;
     public abstract void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
 
 

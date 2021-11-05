@@ -372,7 +372,7 @@ public class AccessControl {
 
             //players of the target role are always allowed in as well
             NGRole targetRole = ngc.getRole(meet.getTargetRole());
-            if (targetRole.isExpandedPlayer(user, ngc)) {
+            if (targetRole!=null && targetRole.isExpandedPlayer(user, ngc)) {
                 return true;
             }
 

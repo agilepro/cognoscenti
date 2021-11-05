@@ -131,7 +131,7 @@ public class ProjectDocsController extends BaseController {
         System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         request.setAttribute("aid", aid);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocDetail");
+        BaseController.showJSPDepending(ar, siteId, pageId, "DocDetail");
     }
 
     // this will be DocDetails.htm??aid={aid}&lic={license}

@@ -23,6 +23,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.sourceUser = "";
     $scope.destUser = "";
     $scope.replaceConfirm = false;
+    $scope.filter = "";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -92,7 +93,28 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return count;
     }
-    
+    $scope.findUsers = function() {
+        var keys = Object.keys($scope.userMap);
+        var finalList = [];
+        if (!$scope.filter) {
+            keys.forEach( function(key) {
+                finalList.push($scope.userMap[key]);
+            });
+            return finalList;
+        }
+        var filterlist = parseLCList($scope.filter);
+        console.log("FILTER LIST", filterlist);
+        keys.forEach( function(key) {
+            var aUser = $scope.userMap[key];
+            if (containsOne(aUser.info.name, filterlist)) {
+                finalList.push(aUser);
+            }
+            else if (containsOne(aUser.info.uid, filterlist)) {
+                finalList.push(aUser);
+            }
+        });
+        return finalList;
+    }    
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -140,19 +162,19 @@ app.filter('encode', function() {
    <button class="btn btn-raised" ng-click="addUserPanel=false">Cancel</button>
    
 </div>
-
+{{filter}}
     <div>
     <table class="table">
       <tr>
          <th></th>
-         <th>Name</th>
+         <th>Name <input type="text" ng-model="filter"/></th>
          <th>Primary Email</th>
          <th>Access</th>
          <th>Last Login</th>
          <th>Objects</th>
          <th>Workspaces</th>
       </tr>
-      <tr ng-repeat="(key, value) in userMap" 
+      <tr ng-repeat="value in findUsers()" 
           ng-click="visitUser(value.info.uid)">
         <td>
             <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(value.info)}}" 

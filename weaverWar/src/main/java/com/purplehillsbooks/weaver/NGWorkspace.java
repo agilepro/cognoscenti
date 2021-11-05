@@ -253,6 +253,24 @@ public class NGWorkspace extends NGPage {
         }
     }
 
+    @Override
+    public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception
+    {
+        AttachmentRecord att = findAttachmentByID(documentId);
+        if(att==null)
+        {
+            ar.write( "(Document " );
+            ar.write( documentId );
+            ar.write( ")" );
+            return;
+        }
+        ar.write(ar.baseURL);
+        ar.write(att.getEmailURL(ar, this));
+        ar.write("\">" );
+        ar.writeHtml(trimName(att.getDisplayName(), len));
+        ar.write( "</a>");
+    }
+
 
     public List<AttachmentRecord> getAllAttachments() throws Exception {
         List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);

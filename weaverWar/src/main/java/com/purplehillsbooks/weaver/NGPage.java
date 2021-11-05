@@ -1271,26 +1271,7 @@ public abstract class NGPage extends ContainerCommon {
         ar.write( "</a>");
     }
 
-    @Override
-    public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception
-    {
-        AttachmentRecord att = findAttachmentByID(documentId);
-        if(att==null)
-        {
-            ar.write( "(Document " );
-            ar.write( documentId );
-            ar.write( ")" );
-            return;
-        }
-        String nameOfLink =  trimName(att.getDisplayName(), len);
-        writePageUrl(ar);
-        ar.write( "/docinfo");
-        ar.writeURLData(documentId );
-        ar.write( ".htm\">" );
-        ar.writeHtml(nameOfLink);
-        ar.write( "</a>");
-    }
-
+    /*
     @Override
     public void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception
     {
@@ -1310,6 +1291,7 @@ public abstract class NGPage extends ContainerCommon {
         ar.writeHtml(nameOfLink);
         ar.write( "</a>");
     }
+    */
 
 
     @Override

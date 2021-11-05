@@ -128,6 +128,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myComment = "";
     $scope.canAccess = <%=canAccessDoc%>;
     $scope.isMember = <%=ar.isMember()%>;
+    $scope.readonly = <%=ar.isReadOnly()%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -139,12 +140,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
     $scope.primitiveURL = "<%=ar.baseURL%><%ar.writeJS(permaLink);%>";
 
-    $scope.refreshData = function(cmt) {
-        var saveRecord = {};
-        saveRecord.id = $scope.docInfo.id;
-        saveRecord.universalid = $scope.docInfo.universalid;
-        $scope.savePartial(saveRecord);
-    }
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
         saveRecord.id = $scope.docInfo.id;
@@ -241,10 +236,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         modalInstance.result.then(function (returnedCmt) {
-            $scope.refreshData();
+            $scope.getDocumentInfo();
         }, function () {
             //cancel action - nothing really to do
-            $scope.refreshData();
+            $scope.getDocumentInfo();
         });
     };
     
@@ -334,6 +329,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.dataArrived = true;
     }
     $scope.getDocumentInfo = function() {
+        if (!$scope.canAccess) {
+            //avoid generating error if the user does not have access
+            return;
+        }
         $scope.isUpdating = true;
         var postURL = "docInfo.json?did="+$scope.docId;
         $http.get(postURL)
@@ -494,22 +493,38 @@ function copyTheLink() {
         <span ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
       </div>
   </div>
-  <div ng-show="docInfo.attType=='FILE'">
-      <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
-      src="<%=ar.retPath%>download.gif"></a> 
+  <div ng-show="canAccess">
+      <div ng-show="docInfo.attType=='FILE'">
+          <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
+          src="<%=ar.retPath%>download.gif"></a> 
+          <hr/>
+      </div>
+      <div ng-show="docInfo.attType=='URL'">
+        <a href="<%ar.write(permaLink); %>" target="_blank"><img
+          src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+        <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
+          <button class="btn btn-primary btn-raised">View Text Only</button></a>
+          <hr/>
+      </div>
   </div>
-  <div ng-show="docInfo.attType=='URL'">
-    <a href="<%ar.write(permaLink); %>" target="_blank"><img
-      src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
-    <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
-      <button class="btn btn-primary btn-raised">View Text Only</button></a>
+  <div ng-hide="canAccess">
+      <p>You are not able to access this document.</p>
   </div>
   
   <div ng-show="docInfo.deleted">
-     This document has been put into the <i class="fa fa-trash"></i> trash and will 
-     be deleted soon.
+      This document has been put into the <i class="fa fa-trash"></i> trash and will 
+      be deleted soon.
   </div>
-  <div ng-show="isMember">
+  <div ng-show="!isMember">
+      You are are not a member of this workspace.  
+      <span ng-show="canAccess">You can access this document because you received a special link allowing non-members to access the document.<span>
+  </div>
+  <div ng-show="isMember && readonly">
+      You are a read-only member of this site.  
+      If you wish to update this document, ask the site administrator to make you
+      an active (writeable) member of the site.
+  </div>
+  <div ng-show="isMember && !readonly">
     <button class="btn btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
     <p>Edit the document details, like name and description.  The name and description tell
     others what the purpose of the document is, and ultimately whether they
@@ -560,7 +575,7 @@ function copyTheLink() {
 
 
 <div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedGoals">
+    <div class="panel panel-default" ng-show="linkedTopics.length>0 && isMember">
       <div class="panel-heading headingfont">Linked Topics
       </div>
       <div class="panel-body clipping">
@@ -573,7 +588,7 @@ function copyTheLink() {
     </div>
 </div>
 <div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedGoals">
+    <div class="panel panel-default" ng-show="linkedGoals.length>0 && isMember">
       <div class="panel-heading headingfont">Linked Action Items
       </div>
       <div class="panel-body clipping">
@@ -586,7 +601,7 @@ function copyTheLink() {
     </div>
 </div>
 <div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedGoals">
+    <div class="panel panel-default" ng-show="linkedMeetings.length>0 && isMember">
       <div class="panel-heading headingfont">Linked Meetings
       </div>
       <div class="panel-body clipping">
@@ -600,24 +615,22 @@ function copyTheLink() {
 </div>
 
 <div style="clear:both"></div>
-<h3>Comments:</h3>
-<table >
-  <tr ng-repeat="cmt in docInfo.comments">
-     <%@ include file="/spring/jsp/CommentView.jsp"%>
-  </tr>
-</table>
 
 
-  <div ng-show="canAccess">
+
+<div ng-show="canAccess" class="col col-lg-6 col-sm-12">
+    <h3>Comments:</h3>
+    <table >
+      <tr ng-repeat="cmt in docInfo.comments">
+         <%@ include file="/spring/jsp/CommentView.jsp"%>
+      </tr>
+    </table>    
     <div ng-hide="isCreatingComment" style="margin:20px;">
       <button ng-click="openCommentCreator(null, 1)" class="btn btn-default btn-raised">
         Create New <i class="fa fa-comments-o"></i> Comment</button>
     </div>
-  </div>
-  <div ng-hide="canAccess">
-    <i>You have to be logged in and a member of this workspace in order to create a comment</i>
-  </div>
-Can Access: {{canAccess}}
+</div>
+<div ng-show="canAccess" class="col col-lg-6 col-sm-12">
     <h3>History</h3>
     <table>
 
@@ -636,20 +649,7 @@ Can Access: {{canAccess}}
 
             </td>
         </tr>
-
     </table>
-
-
-  <div>
-    <span class="tipText">This web page is a secure and
-      convenient way to send documents to others collaborating on projects.
-      The email message does not carry the document, but only a link to this
-      page, so that email is small. Then, from this page, you can get the
-      very latest version of the document. Documents can be protected by
-      access controls.
-    </span>
-  </div>
-
 </div>
 
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>

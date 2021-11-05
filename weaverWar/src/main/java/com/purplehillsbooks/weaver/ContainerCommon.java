@@ -204,9 +204,11 @@ public abstract class ContainerCommon extends NGContainer
         throw new ProgramLogicError("not implemented");
     }
 
+    /*
     public void writeReminderLink(AuthRequest ar, String id, int len) throws Exception{
         throw new ProgramLogicError("writeDocumentLink not implemented");
     }
+    */
 
     public void writeTaskLink(AuthRequest ar, String id, int len) throws Exception{
         throw new ProgramLogicError("writeTaskLink not implemented");

@@ -967,7 +967,7 @@ public class AttachmentRecord extends CommentContainer {
             if (att!=null) {
                 JSONObject jatt = new JSONObject();
                 jatt.put("name", att.getNiceName());
-                jatt.put("url", ar.baseURL + ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?")
+                jatt.put("url", ar.baseURL + ar.getResourceURL(ngp, "DocDetail.htm?aid=" + att.getId())
                         + AccessControl.getAccessDocParams(ngp, att));
                 attachInfo.put(jatt);
             }
@@ -1011,7 +1011,14 @@ public class AttachmentRecord extends CommentContainer {
             allCommentss.put(cr.getHtmlJSON(ar));
         }
         thisDoc.put("comments",  allCommentss);
-        thisDoc.put("magicNumber", AccessControl.getAccessDocParams(ngp, this));
+        
+        if (ar.isMember()) {
+            //this should only be given to members, it allows them to give 
+            //others access to the document.  Some people getting document
+            //info do not have access to the document, and therefor this prevents
+            //them from giving themselves (or anyone else) access.
+            thisDoc.put("magicNumber", AccessControl.getAccessDocParams(ngp, this));
+        }
 
         JSONArray versions = new JSONArray();
         for (AttachmentVersion av : getVersions(ngp)) {
@@ -1181,7 +1188,7 @@ public class AttachmentRecord extends CommentContainer {
 
 
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw,  "docinfo"+this.getId()+".htm");
+        return ar.getResourceURL(ngw,  "DocDetail.htm?aid="+this.getId());
     }
 
 

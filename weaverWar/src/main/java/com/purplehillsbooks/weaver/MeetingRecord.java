@@ -565,7 +565,7 @@ public class MeetingRecord extends DOMFace {
                     JSONObject oneAI = new JSONObject();
                     oneAI.put("id", arec.getId());
                     oneAI.put("name", arec.getNiceName());
-                    oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "docinfo"+arec.getId()+".htm"));
+                    oneAI.put("url", ar.baseURL + arec.getEmailURL(ar, ngw));
                     attList.put(oneAI);
                 }
             }
@@ -988,7 +988,7 @@ public class MeetingRecord extends DOMFace {
                     sb.append(aRec.getNiceName());
                     sb.append("|");
                     sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
+                    sb.append(aRec.getEmailURL(ar, ngp));
                     sb.append("]");
                 }
             }

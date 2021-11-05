@@ -934,7 +934,7 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngp, "findUser.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            return ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
+            return ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
             return ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");

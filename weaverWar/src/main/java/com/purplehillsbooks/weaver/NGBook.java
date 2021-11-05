@@ -604,10 +604,12 @@ public class NGBook extends ContainerCommon {
         throw new Exception("writeDocumentLink should no longer be used on an Site");
     }
 
+    /*
     @Override
     public void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception {
         throw new Exception("writeReminderLink should no longer be used on an Site");
     }
+    */
 
 
     @Override

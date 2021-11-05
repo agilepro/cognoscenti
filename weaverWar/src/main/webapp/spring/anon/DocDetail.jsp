@@ -352,7 +352,8 @@ function copyTheLink() {
       <p>Sorry: you are not able to access this document because you are not logged in, and the link you used requires you to authenticate as a member of this workspace.</p>
       <p>If you actually are a member of this Weaver workspace, then please <button ng-Click="login()">Login</button>
       <p>You need to be a member of the workspace, or have been provided a special access link to the document.  Please contact the person who has provided this link and let them know you would like access.</p>
-      <p>If you are not a member of the workspace, but would like to be, then either register or login, and once logged in you will have more options including a request to join the workspace.</p>
+      <p>If you would like to be a member of this workspace, then after logging in you can request membership.</p>
+      <p>If have no login for Weaver, you may <button ng-Click="login()">Register</button> an email address for logging in.
   </div>
   <div ng-show="canAccess">
       <p>You have received special access to this document.</p>
