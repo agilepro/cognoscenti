@@ -104,7 +104,11 @@ public class BaseController {
 
     protected static void showWarningView(AuthRequest ar, String why) throws Exception {
         ar.req.setAttribute("property_msg_key", why);
-        streamJSP(ar, "Warning");
+        streamJSP(ar, "Warning.jsp");
+    }
+    protected static void showWarningAnon(AuthRequest ar, String why) throws Exception {
+        ar.req.setAttribute("property_msg_key", why);
+        streamJSPAnonWrapped(ar, "NoAccess.jsp");
     }
 
 
@@ -120,11 +124,11 @@ public class BaseController {
      */
     protected static boolean warnNotLoggedIn(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
-            showWarningView(ar, "nugen.project.login.msg");
+            showWarningAnon(ar, "nugen.project.login.msg");
             return true;
         }
         if (needsToSetName(ar)) {
-            streamJSP(ar, "RequiredName");
+            streamJSP(ar, "RequiredName.jsp");
             return true;
         }
         return false;
@@ -138,7 +142,7 @@ public class BaseController {
             NGWorkspace ngw = (NGWorkspace) ar.ngp;
             NGBook site = ngw.getSite();
             if (site.isMoved()) {
-                streamJSP(ar, "Redirected");
+                streamJSP(ar, "Redirected.jsp");
                 return true;
             }
         }
@@ -164,11 +168,11 @@ public class BaseController {
         }
         if(!ar.isMember()){
             if (ar.ngp instanceof NGBook) {
-                streamJSP(ar, "WarningSite");
+                streamJSP(ar, "WarningSite.jsp");
                 return true;
             }
             ar.req.setAttribute("roleName", "Members");
-            streamJSP(ar, "WarningNotMember");
+            streamJSP(ar, "WarningNotMember.jsp");
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
@@ -196,7 +200,7 @@ public class BaseController {
             frozen = ((NGWorkspace)ngc).getSite().isFrozen();
         }
         if (frozen) {
-            streamJSP(ar, "WarningFrozen");
+            streamJSP(ar, "WarningFrozen.jsp");
             return true;
         }
         return false;
@@ -223,16 +227,14 @@ public class BaseController {
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/site/Wrapper.jsp");
     }
-    public static void streamJSPAnon(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+    public static void streamJSPAnon(AuthRequest ar, String jspName) throws Exception {
         assertNoWrappedJSP(ar, jspName);
-        try{
-            ar.setParam("pageId", pageId);
-            ar.setParam("siteId", siteId);
-            ar.invokeJSP("/spring/anon/"+jspName);
-        }
-        catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of anon/"+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
-        }
+        ar.invokeJSP("/spring/anon/"+jspName);
+    }
+    public static void streamJSPAnonWrapped(AuthRequest ar, String jspName) throws Exception {
+        assertNoWrappedJSP(ar, jspName);
+        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.invokeJSP("/spring/anon/Wrapper.jsp");
     }
 
     
@@ -242,7 +244,7 @@ public class BaseController {
         if (warnNotLoggedIn(ar)){
             return;
         }
-        streamJSP(ar, jspName);
+        streamJSP(ar, jspName+".jsp");
     }
 
 
@@ -273,7 +275,7 @@ public class BaseController {
                 ar.invokeJSP("/spring/anon/Wrapper.jsp");
             }
             else {
-                streamJSP(ar, jspName);
+                streamJSP(ar, jspName+".jsp");
             }
         }
         catch(Exception ex){
@@ -288,7 +290,7 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSP(ar, jspName);
+            streamJSP(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
@@ -304,7 +306,7 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSP(ar, jspName);
+            streamJSP(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
@@ -319,7 +321,7 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSPSite(ar, jspName);
+            streamJSPSite(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
@@ -333,7 +335,7 @@ public class BaseController {
             if (warnNotMember(ar)){
                 return;
             }
-            streamJSP(ar, jspName);
+            streamJSP(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
@@ -345,7 +347,7 @@ public class BaseController {
             if (warnNotMember(ar)){
                 return;
             }
-            streamJSPSite(ar, jspName);
+            streamJSPSite(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
@@ -360,7 +362,7 @@ public class BaseController {
             if (warnFrozenOrNotMember(ar, ngc)){
                 return;
             }
-            streamJSP(ar, jspName);
+            streamJSP(ar, jspName+".jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);

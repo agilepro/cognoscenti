@@ -131,13 +131,15 @@ public class ProjectGoalController extends BaseController {
 
             request.setAttribute("taskId", taskId);
             if (canAccessGoal && (!isLoggedIn || !isMember) ) {
-                streamJSPAnon(ar, siteId, pageId, "ActionItem.jsp");
+                ar.setParam("pageId", pageId);
+                ar.setParam("siteId", siteId);
+                streamJSPAnon(ar, "ActionItem.jsp");
             }
             else{
                 if (warnNotMember(ar)) {
                     return;
                 }
-                streamJSP(ar, "GoalEdit");
+                streamJSP(ar, "GoalEdit.jsp");
             }
 
         }catch(Exception ex){

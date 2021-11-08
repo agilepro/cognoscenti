@@ -70,7 +70,9 @@ public class TopicController extends BaseController {
            }
            else if (canAccessNote) {
                //show to people not logged in, but with special key to access it
-               streamJSPAnon(ar, siteId, pageId, "Topic.jsp");
+               ar.setParam("pageId", pageId);
+               ar.setParam("siteId", siteId);
+               streamJSPAnon(ar, "Topic.jsp");
            }
            else {
                showJSPMembers(ar, siteId, pageId, "NoteZoom");

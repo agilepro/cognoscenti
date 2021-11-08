@@ -124,7 +124,7 @@ public class MainTabsViewControler extends BaseController {
                 return;
             }
             registerSiteOrProject(ar, siteId, pageId);
-            streamJSP(ar, "SearchAllNotes");
+            streamJSP(ar, "SearchAllNotes.jsp");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.draft.notes.page", new Object[]{pageId,siteId} , ex);
@@ -150,7 +150,7 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
-             streamJSPAnon(ar, "N/A", "N/A", "Index.jsp");
+             streamJSPAnon(ar, "Index.jsp");
              return null;
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
@@ -197,7 +197,7 @@ public class MainTabsViewControler extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.preserveRealRequestURL();
-            streamJSP(ar, "EmailAdjustment");
+            streamJSP(ar, "EmailAdjustment.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
         }

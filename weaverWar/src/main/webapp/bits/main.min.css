@@ -183,3 +183,11 @@ h3{
 .bodyDeleted{
     background-image: url("deleted.png");
 }
+
+
+.centerIcon {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    padding:10px;
+}

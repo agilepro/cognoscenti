@@ -82,12 +82,15 @@ public class MeetingControler extends BaseController {
                 showJSPMembers(ar, siteId, pageId, "MeetingFull");
                 return;
             }
+
+            ar.setParam("pageId", pageId);
+            ar.setParam("siteId", siteId);            
             if(!ar.isLoggedIn()) {
-                streamJSPAnon(ar, siteId, pageId, "MeetingAnon.jsp");
+                streamJSPAnon(ar, "MeetingAnon.jsp");
                 return;
             }
             if (ar.isMember() || canAccess) {
-                streamJSP(ar, "MeetingFull");
+                streamJSP(ar, "MeetingFull.jsp");
                 return;
             }
             String roleName = meet.getTargetRole();
@@ -127,12 +130,15 @@ public class MeetingControler extends BaseController {
                 showJSPMembers(ar, siteId, pageId, "MeetingHtml");
                 return;
             }
+
+            ar.setParam("pageId", pageId);
+            ar.setParam("siteId", siteId);
             if(!ar.isLoggedIn()) {
-                streamJSPAnon(ar, siteId, pageId, "MeetingAnon.jsp");
+                streamJSPAnon(ar, "MeetingAnon.jsp");
                 return;
             }
 
-            streamJSP(ar, "MeetingHtml");
+            streamJSP(ar, "MeetingHtml.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
@@ -155,7 +161,7 @@ public class MeetingControler extends BaseController {
                 return;
             }
 
-            streamJSP(ar, "MeetMerge");
+            streamJSP(ar, "MeetMerge.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }

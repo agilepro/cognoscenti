@@ -76,7 +76,7 @@
         }
         %>><% ar.writeHtml(jo.getString("name")); if (jo.has("external")) {ar.write(" <i class=\"fa fa-external-link\"></i>");}%></a><%
         if (jo.has("opts")) {
-            JSONArray options = getOptions(jo, templateName);
+            JSONArray options = getOptions(jo, wrappedJSP);
             if (options.length()>0) {
             %>
               <div class="sublist" style="color:black"><ul><%
@@ -110,7 +110,7 @@
     <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
     
   </ul>
-  <%if (false) {ar.write(templateName);} %>
+  <%if (false) {ar.write(wrappedJSP);} %>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>

@@ -2,15 +2,28 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
-    String wrappedJSP = ar.reqParam("wrappedJSP");
-    String templateName = wrappedJSP; 
     String title = "sss";
-    NGContainer ngp =null;
+    NGWorkspace ngw =null;
     NGBook ngb=null;
+    Cognoscenti cog=null;
+    
+    String wrappedJSP = ar.reqParam("wrappedJSP"); 
+    cog = ar.getCogInstance();
+    String pageId = (String)request.getAttribute("pageId");
+    String siteId = (String)request.getAttribute("siteId");
+    if (pageId!=null) {
+        ngw = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
+        if (ngw!=null) {
+            ngb = ngw.getSite();
+        }
+    }
+    else if (siteId!=null) {
+        ngb = cog.getSiteById(siteId);
+    }
 
 %>
 
-<!-- BEGIN Wrapper.jsp Layout wrapping (<%=templateName%>) -->  
+<!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->  
 <html>
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
@@ -96,44 +109,36 @@ function reloadIfLoggedIn() {
         window.location = "<%= ar.getCompleteURL() %>";
     }
 }
+
+function setMainPageTitle(str) {
+    document.getElementById("mainPageTitle").innerHTML = str;
+    document.title = "X" + str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
+}
+
  </script>
 
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
-  <div class="bodyWrapper">
+  
+  
+<div class="bodyWrapper">
 
+<!-- Begin mainContent -->
+<div class="main-content">
 <%@ include file="AnonNavBar.jsp" %>
 
-<div class="container-fluid">
-  <div class="row">
-
-
-
-    <!-- Begin mainContent -->
-    <div class="col-sm-10 col-lg-11 main-content">
-
-      <!-- BEGIN Title and Breadcrump -->
+    <!-- BEGIN Title and Breadcrump -->
+    <div class="col col-lg-12">
       <ol class="title">
           <!-- user is not logged in, don't display any breadcrumbs -->
-        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
+        <li class="page-name"><h1 id="mainPageTitle">Welcome to Weaver</h1></li>
       </ol>
-      <script>
-      function setMainPageTitle(str) {
-          document.getElementById("mainPageTitle").innerHTML = str;
-          document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
-      }
-      </script>
-      <!-- BEGIN Title and Breadcrump -->
-
-      <!-- Welcome Message -->
-      <div id="welcomeMessage"></div>
-
-      <!-- Begin Template Content (compiled separately) -->
-      <jsp:include page="<%=templateName%>" />
-      <!-- End Template Content (compiled separately) -->
     </div>
-  </div>
+
+    <!-- Begin Template Content (compiled separately) -->
+    <jsp:include page="<%=wrappedJSP%>" />
+    <!-- End Template Content (compiled separately) -->
 </div>
 <!-- End mainContent -->
 

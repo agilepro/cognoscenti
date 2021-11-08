@@ -118,7 +118,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerSiteOrProject(ar, siteId, pageId);
         if (ar.isAdmin()) {
-            streamJSP(ar, "AdminSettings");
+            streamJSP(ar, "AdminSettings.jsp");
         }
         else {
             showJSPMembers(ar, siteId, pageId, "AdminSettings");

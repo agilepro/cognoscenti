@@ -58,13 +58,13 @@ public class SuperAdminController extends BaseController {
              String jspName) throws Exception {
 
         if(!ar.isLoggedIn()){
-            streamJSPAnon(ar, "","","Admin.jsp");
+            streamJSPAnon(ar, "Admin.jsp");
             return;
         }
         if(!ar.isSuperAdmin()){
             throw new NGException("nugen.exceptionhandling.system.admin.rights",null);
         }
-        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.req.setAttribute("wrappedJSP", jspName+".jsp");
         ar.invokeJSP("/spring/admin/Wrapper.jsp");
     }
 

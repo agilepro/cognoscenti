@@ -14,7 +14,6 @@
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
-    String templateName = wrappedJSP+".jsp"; 
     int slashPos = wrappedJSP.lastIndexOf("/");
 
 
@@ -193,7 +192,7 @@
 
     %>
 
-<!-- BEGIN Wrapper.jsp Layout wrapping (<%=templateName%>) -->
+<!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->
 <html>
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
@@ -371,7 +370,7 @@ myApp.filter('cdate', function() {
       </script>
 
       <!-- Begin Template Content (compiled separately) -->
-      <jsp:include page="<%=templateName%>" />
+      <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
     </div>
   </div>

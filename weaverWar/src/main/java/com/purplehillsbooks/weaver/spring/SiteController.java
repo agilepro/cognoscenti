@@ -82,7 +82,7 @@ public class SiteController extends BaseController {
                 return;
             }
             if (needsToSetName(ar)) {
-                streamJSP(ar, "RequiredName");
+                streamJSP(ar, "RequiredName.jsp");
             }
             if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
                 showWarningView(ar, "nugen.missingSuperAdmin");
@@ -314,7 +314,7 @@ public class SiteController extends BaseController {
             if (executiveCheckViews(ar)) {
                 return;
             }
-            streamJSPSite(ar, "SiteRoleRequest");
+            streamJSPSite(ar, "SiteRoleRequest.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.role.request.page", new Object[]{siteId} , ex);
         }

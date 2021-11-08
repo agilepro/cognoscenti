@@ -87,25 +87,19 @@ import com.purplehillsbooks.streams.MemFile;
 @Controller
 public class UserController extends BaseController {
 
-/*
-    protected void initBinder(HttpServletRequest request,
-            ServletRequestDataBinder binder) throws ServletException {
-        binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
-    }
-    */
 
 
     public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
         try {
             if(!ar.isLoggedIn()){
                 ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSP(ar, "Warning");
+                streamJSP(ar, "Warning.jsp");
                 return;
             }
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
             ar.req.setAttribute("userProfile", up);
             ar.req.setAttribute("userKey", up.getKey());
-            streamJSP(ar, jspName);
+            streamJSP(ar, jspName+".jsp");
         }
         catch (Exception e) {
             throw new Exception("Unable to prepare page ("+jspName+") for user ("+userKey+")", e);
@@ -117,27 +111,6 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         streamJSPUserLoggedIn(ar, userKey, viewName);
     }
-
-
-/*
-    @RequestMapping(value = "/{userKey}/userProfile.htm", method = RequestMethod.GET)
-    public void loadProfile(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar,"userSettings.htm");
-    }
-
-    @RequestMapping(value = "/{userKey}/userHome.htm", method = RequestMethod.GET)
-    public void loadUserHome(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar,"watchedProjects.htm");
-    }
-    */
 
 
 
@@ -331,34 +304,7 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/{userKey}/RefreshFromRemoteProfiles.form", method = RequestMethod.POST)
-    public void RefreshFromRemoteProfiles(@PathVariable String userKey,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can not update user contacts.");
 
-            String go = ar.reqParam("go");
-
-            UserProfile uProf = UserManager.getUserProfileByKey(userKey);
-            UserPage uPage = uProf.getUserPage();
-
-            List<ProfileRef> profRefs = uPage.getProfileRefs();
-            for (ProfileRef pRef : profRefs) {
-                RemoteProfile remProf = new RemoteProfile(pRef.getAddress());
-                remProf.syncRemoteGoals(uPage);
-            }
-            uPage.saveFile(ar, "Synchronized action items from remote profiles");
-
-            redirectBrowser(ar,go);
-
-        }catch(Exception ex){
-            throw new Exception("Unable to refresh consolidates action items list from remote profiles", ex);
-        }
-    }
-*/
 
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
     public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,
@@ -425,93 +371,7 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
-    public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in to approve a role request.");
-            UserProfile uProf = ar.getUserProfile();
 
-            String p = ar.reqParam("pageId");
-            NGWorkspace project = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
-            ar.setPageAccessLevels(project);
-
-            RoleRequestRecord roleRequestRecord = null;
-            String requestId = ar.defParam("requestId", null);
-
-            boolean canAccessPage = false;
-            if(requestId != null){
-                roleRequestRecord = project.getRoleRequestRecordById(requestId);
-                canAccessPage = AccessControl.canAccessRoleRequest(ar, project, roleRequestRecord);
-            }
-
-            if(!canAccessPage){
-                ar.assertLoggedIn("Must be logged in to approve a role request.");
-            }
-
-            String requestedBy ="";
-            String roleName = "";
-            String action = ar.reqParam("action");
-            if ("approved".equals(action))
-            {
-                String responseDescription = ar.defParam("responseDescription", "");
-                if(roleRequestRecord != null){
-                    roleName = roleRequestRecord.getRoleName();
-                    requestedBy = roleRequestRecord.getRequestedBy();
-                    project.addPlayerToRole(roleName,requestedBy);
-                    roleRequestRecord.setState("Approved");
-                    roleRequestRecord.setResponseDescription(responseDescription);
-                    roleRequestRecord.setCompleted(true);
-                }
-                HistoryRecord.createHistoryRecord(project,requestedBy,
-                        HistoryRecord.CONTEXT_TYPE_PERMISSIONS,0,
-                        HistoryRecord.EVENT_PLAYER_ADDED, ar, roleName);
-
-                project.saveFile(ar, "Add New Member ("+requestedBy+") to Role "+roleName);
-
-                String subject = "Approved: Role request for '"+roleName+"'";
-                sendRoleRequestApprovedOrRejectionEmail(ar, requestedBy, subject,responseDescription,project,roleName,action);
-            }
-            else if ("rejected".equals(action))
-            {
-                requestId = ar.reqParam("requestId");
-                String responseDescription = ar.defParam("responseDescription", "");
-                if(roleRequestRecord != null){
-                    roleName = roleRequestRecord.getRoleName();
-                    requestedBy = roleRequestRecord.getRequestedBy();
-                    roleRequestRecord.setState("Rejected");
-                    roleRequestRecord.setCompleted(true);
-                    roleRequestRecord.setResponseDescription(responseDescription);
-                }
-
-                project.saveFile(ar, "Rejected role request");
-
-                String subject = "Rejected: Role request for '"+roleName+"'";
-                sendRoleRequestApprovedOrRejectionEmail(ar, requestedBy, subject,responseDescription,project,roleName,action);
-            }else if ("cancel".equals(action)){
-                roleName = ar.reqParam("roleName").trim();
-                requestedBy = uProf.getUniversalId();
-                roleRequestRecord = project.getRoleRequestRecord(roleName,requestedBy);
-                project.deleteRoleRequest(roleRequestRecord.getRequestId());
-                project.saveContent(ar,"deleted role request "+requestId);
-            }else{
-               throw new NGException("nugen.exceptionhandling.system.not.understand.action",new Object[]{action});
-            }
-
-            JSONObject paramMap = new JSONObject();
-            paramMap.put("msgType" , "success");
-            paramMap.put("action", action);
-            paramMap.put("roleName", roleName);
-            sendJson(ar, paramMap);
-        }
-        catch(Exception ex){
-            streamException(ex,ar);
-        }
-    }
-*/
 
 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
@@ -622,7 +482,7 @@ public class UserController extends BaseController {
 
             if(!canAccessPage){
                 if (ar.isLoggedIn()) {
-                    streamJSP(ar, "WarningNotMember");
+                    streamJSP(ar, "WarningNotMember.jsp");
                 }
                 else {
                     showWarningView(ar, "nugen.project.login.msg");
@@ -647,91 +507,7 @@ public class UserController extends BaseController {
 
 
 
-/*
-    @RequestMapping(value = "/addEmailToProfile.form", method = RequestMethod.POST)
-    public void addEmailToProfile(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("You need to login to perform this function.");
-            String emailId    = ar.reqParam("emailId").trim();
-            String mn       = ar.reqParam("mn");
-            String containerId = ar.reqParam( "containerId" );
 
-            NGWorkspace page = ar.getCogInstance().getWSByCombinedKeyOrFail( containerId ).getWorkspace();
-            Cognoscenti cog = ar.getCogInstance();
-            cog.getSiteByIdOrFail(page.getSite().getKey());
-
-            String expectedMN = page.emailDependentMagicNumber(emailId);
-            if(!mn.equals(expectedMN)){
-                throw new NGException("nugen.exception.link.configured.improperly", new Object[]{emailId});
-            }
-            UserProfile  profileExists =  cog.getUserManager().lookupUserByAnyId( emailId );
-            if(profileExists != null){
-                throw new NGException("nugen.exception.invalid.link",null);
-            }
-            UserProfile up = ar.getUserProfile();
-            up.addId(emailId);
-            up.setLastUpdated(ar.nowTime);
-            cog.getUserManager().saveUserProfiles();
-
-            //remove micro profile if exists.
-            MicroProfileMgr.removeMicroProfileRecord(emailId);
-            MicroProfileMgr.save();
-
-            String go = ar.baseURL+"v/"+up.getKey()+"/userSettings.htm";
-            redirectBrowser(ar,go);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.add.mail.to.profile", null, ex);
-        }
-    }
-*/
-
-/*
-    @RequestMapping(value="/{userKey}/uploadContacts.form", method = RequestMethod.POST)
-    public void uploadContacts(
-            @PathVariable String userKey,
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam("fname") MultipartFile file) throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can not upload an attachment.");
-            ar.req = request;
-
-            request.setCharacterEncoding("UTF-8");
-
-            if (file.getSize() == 0) {
-                throw new NGException("nugen.exceptionhandling.no.file.attached",null);
-            }
-
-            String fileName = file.getOriginalFilename();
-
-            if (fileName == null || fileName.length()==0) {
-                throw new NGException("nugen.exceptionhandling.filename.empty", null);
-            }
-
-            Workbook workbook = Workbook.getWorkbook(file.getInputStream());
-            Sheet sheet = workbook.getSheet(0);
-            int emailColumn = Integer.valueOf(ar.reqParam("emailCol"));
-            int nameCol = Integer.valueOf(ar.reqParam("nameCol"));
-
-            Map<String, String> contactsMap = new HashMap<String, String>();
-            for (int i = 1; i < sheet.getRows(); i++) {
-                Cell name = sheet.getCell(nameCol, i);
-                Cell emailId = sheet.getCell(emailColumn, i);
-                contactsMap.put(name.getContents(), emailId.getContents());
-            }
-
-            request.getSession().setAttribute("contactList", contactsMap);
-            redirectBrowser(ar,"contacts.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.upload.contacts", new Object[]{userKey}, ex);
-        }
-    }
-*/
 
     @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
     public void updateMicroProfile(HttpServletRequest request,
@@ -753,91 +529,8 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value="/editMicroProfileDetail.form", method = RequestMethod.POST)
-    public void editMicroProfileDetail(
-
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can not update user contacts.");
-
-            String emailId = ar.reqParam("emailId").trim();
-            String idDisplayName = ar.reqParam("userName");
-            String go = ar.reqParam("go");
-
-            MicroProfileMgr.setDisplayName(emailId, idDisplayName);
-            MicroProfileMgr.save();
-            redirectBrowser(ar,go);
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
-        }
-    }
-*/
-
-/*
-    @RequestMapping(value="/getPeopleYouMayKnowList.ajax", method = RequestMethod.POST)
-    public void getPeopleYouMayKnowList(
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            ar.assertLoggedIn("Can not update user contacts.");
-
-            String searchStr = ar.defParam("searchStr","");
-
-            JSONObject parameters = new JSONObject();
-            parameters.put("msgType" , "success");
-            JSONArray array = getPeopleListInJSONArray(ar, searchStr);
-            parameters.put("datatable", array );
-
-            sendJson(ar, parameters);
-        }catch(Exception ex){
-            streamException(ex, ar);
-        }
-    }
-*/
 
 
-
-/*
-    @RequestMapping(value="/{userKey}/changeListenerSettings.form", method = RequestMethod.POST)
-    public void changeListenerSettings(
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can not update user contacts.");
-
-            String pop3Host = ar.reqParam("pop3Host");
-            String pop3Port = ar.reqParam("pop3Port");
-            String pop3User = ar.reqParam("pop3User");
-            String pop3Password = ar.reqParam("pop3Password");
-
-            Properties emailProperties = EmailListener.getEmailProperties();
-
-            emailProperties.setProperty("mail.pop3.host", pop3Host);
-            emailProperties.setProperty("mail.pop3.port", pop3Port);
-            emailProperties.setProperty("mail.pop3.user", pop3User);
-            emailProperties.setProperty("mail.pop3.password", pop3Password);
-
-            EmailListener emailListener = EmailListener.getEmailListener();
-            emailProperties.store(new FileOutputStream(emailListener.getEmailPropertiesFile()), "updating Listener properties");
-
-            emailListener.reStart();
-
-            redirectBrowser(ar,"emailListnerSettings.htm");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.to.change.listener.settings", null, ex);
-        }
-    }
-*/
 
     @RequestMapping(value = "/{userKey}/notificationSettings.htm", method = RequestMethod.GET)
     public void goToNotificationSetting(@PathVariable String userKey,
@@ -849,7 +542,7 @@ public class UserController extends BaseController {
 
             if(ar.hasSpecialSessionAccess("Notifications:"+userKey)){
                 //need to show this even if not logged in
-                streamJSP(ar, "../jsp/NotificationSettings");
+                streamJSP(ar, "../jsp/NotificationSettings.jsp");
                 return;
             }
 
@@ -1007,48 +700,6 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/{userKey}/userContacts.htm", method = RequestMethod.GET)
-    public void userContacts(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            if(ar.isLoggedIn()){
-                UserProfile loggedInUser = ar.getUserProfile();
-                String userName = loggedInUser.getName();
-
-                if (userName==null || userName.length()==0) {
-                    userName = loggedInUser.getKey();
-                }
-                if (userName.length()>28) {
-                    userName = userName.substring(0,28);
-                }
-
-                NGContainer ngp =null;
-
-                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-                String bookForNewProject = ar.defParam( "bookKey", null );
-
-                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                    if(foundPages.size()>0){
-                        NGPageIndex foundPage = foundPages.get( 0 );
-                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/FrontPage.htm" );
-                        return;
-                    }
-                }
-
-                request.setAttribute("userName",userName);
-            }
-            streamJSPUserLogged2(request, response, userKey, "../jsp/UserContacts");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
-        }
-    }
-*/
 
 
     @RequestMapping(value = "/{userKey}/searchNotes.json", method = RequestMethod.POST)
@@ -1086,7 +737,7 @@ public class UserController extends BaseController {
     }
 
 
-
+/*
     private static JSONArray getPeopleListInJSONArray(AuthRequest ar, String searchStr)
     throws Exception {
         String displayName = "";
@@ -1132,6 +783,7 @@ public class UserController extends BaseController {
         }
         return array;
     }
+    */
 
     private static void removeFromRole(NGWorkspace ngp, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
         if(stopRolePlayer != null && stopRolePlayer.length > 0){
@@ -1144,6 +796,8 @@ public class UserController extends BaseController {
         }
     }
 
+    
+    /*
     private static void sendRoleRequestApprovedOrRejectionEmail(AuthRequest ar,
             String addressee, String subject, String responseComment,
             NGContainer ngp, String roleName, String action) throws Exception {
@@ -1167,6 +821,7 @@ public class UserController extends BaseController {
         EmailSender.containerEmail(ooa, ngp, subject, templateFile, data,
                 null, new ArrayList<String>(), cog);
     }
+    */
 
 
     @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)
@@ -1184,7 +839,7 @@ public class UserController extends BaseController {
                 response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/userSettings.htm");
                 return;
             }
-            streamJSP(ar, "FindPerson");
+            streamJSP(ar, "FindPerson.jsp");
 
         }catch(Exception ex){
             throw new Exception("Failure trying to find user", ex);

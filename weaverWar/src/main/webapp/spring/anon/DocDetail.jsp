@@ -307,12 +307,6 @@ function copyTheLink() {
 .roomy {
     padding:5px;
 }
-.centered {
-    width: 100%;
-    display: flex;
-    justify-content: center; 
-    padding:10px;
-}
 .clipping {
     overflow: hidden;
     text-overflow: clip; 
@@ -331,7 +325,7 @@ function copyTheLink() {
 
 <%@include file="ErrorPanel.jsp"%> 
 
-<div class="col col-lg-6 col-sm-12">
+<div class="col col-lg-6 col-md-6 col-sm-12">
   <div class="well">
     <div><b>{{docInfo.name}}</b> 
         <span ng-show="docInfo.deleted" style="color:red">
@@ -375,28 +369,28 @@ function copyTheLink() {
   </div>
 
 </div>
-<div class="col col-lg-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
+<div class="col col-lg-6 col-md-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
     <h2>Welcome to Weaver</h2>
    <p>Weaver allows members to share documents directly with anyone in a controlled way.
     Instead of attaching a large document as an attachment to an email, Weaver provides
     links to access and download documents directly.  Members can easily upload from
     anywhere as well.</p>
-    <div class="centered"><img src="../../../bits/safety-icon.png"/></div>
+    <div class="centerIcon"><img src="../../../bits/safety-icon.png"/></div>
     <p>Downloading directly from Weaver is <i>safer</i> than sending the document as an
     attachment to email, because the download is through a secure HTTPS channel.  
     Unlike emailing an attachment nobody else can intercept, see, or manipulate the contents of the file.
     The recipient will always get exactly the contents that were uploaded to Weaver.</p>
-    <div class="centered"><img src="../../../bits/fast-email.png"/></div>
+    <div class="centerIcon"><img src="../../../bits/fast-email.png"/></div>
     <p>A link is smaller and more efficient than an attachment, 
     so it can be sent to you without cluttering your inbox. 
     This is great espectially important for very large files.  
     Sending a link to hundred MB or GB files avoids problems with size limits on email.</p>
-    <div class="centered"><img src="../../../bits/clock-change.png"/></div>
+    <div class="centerIcon"><img src="../../../bits/clock-change.png"/></div>
     <p>Also, if the document has changed recently,
     you will be downloading the latest version at the time.
     You will never receive an out-of-date copy.</p>
     <hr/>
-    <div class="centered"><img src="../../../bits/weaver-logo-header.png"/></div>
+    <div class="centerIcon"><img src="../../../bits/weaver-logo-header.png"/></div>
     <p>Weaver is developed by a team of volunteers to make tools to allow 
     community groups to collaborate more effectively, and to get more done.
     Please join our effort.   We help groups all over the worlsd.</p>

@@ -12,7 +12,6 @@
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
-    String templateName = wrappedJSP+".jsp";
     int slashPos = wrappedJSP.lastIndexOf("/");
     String jspName = wrappedJSP;
     if (slashPos>=0) {
@@ -123,7 +122,7 @@ myApp.filter('cdate', function() {
 
 <!-- Begin mainContent -->
 <div id="mainContent">
-<jsp:include page="<%=templateName%>" />
+<jsp:include page="<%=wrappedJSP%>" />
 </div>
 <!-- End mainContent -->
 

@@ -42,7 +42,7 @@ function updateBar() {
     <div class="navbar-brand pull-right" id="nb-is-login" >
        <a title="Authenticate Yourself"
        href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(otherPath, "UTF-8")%>">
-          <h1 id="nb-user-name">Do Nutin</h1>
+          <h1 id="nb-user-name">Authenticating</h1>
        </a>
     </div>
 

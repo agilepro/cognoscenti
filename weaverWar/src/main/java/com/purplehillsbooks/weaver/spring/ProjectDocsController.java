@@ -563,7 +563,9 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.setParam("id", id);
-        streamJSPAnon(ar, siteId, pageId, "Share.jsp");
+        ar.setParam("pageId", pageId);
+        ar.setParam("siteId", siteId);
+        streamJSPAnon(ar, "Share.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -596,7 +598,9 @@ public class ProjectDocsController extends BaseController {
         }
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
-        streamJSPAnon(ar, siteId, pageId, "Reply.jsp");
+        ar.setParam("pageId", pageId);
+        ar.setParam("siteId", siteId);
+        streamJSPAnon(ar, "Reply.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -615,13 +619,15 @@ public class ProjectDocsController extends BaseController {
         //}
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
-        streamJSPAnon(ar, siteId, pageId, "Unsub.jsp");
+        ar.setParam("pageId", pageId);
+        ar.setParam("siteId", siteId);
+        streamJSPAnon(ar, "Unsub.jsp");
     }
 
     @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
     public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPAnon(ar, "NA", "NA", "Feedback.jsp");
+        streamJSPAnon(ar, "Feedback.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)
