@@ -96,7 +96,7 @@ public class NGWorkspace extends NGPage {
         String key = this.getKey();
         if (!key.equals(realName)) {
             //maybe the workspace was moved or renamed
-            System.out.println("For some reason the page ("+realName+") thinks its name is ("+key+") FIXING THIS");
+            System.out.println("For some reason the page ("+site.getKey()+"/"+realName+") thinks its name is ("+key+") FIXING THIS");
             this.setKey(realName);
         }
 
