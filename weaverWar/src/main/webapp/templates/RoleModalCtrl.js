@@ -103,14 +103,29 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         return cleanList;
     }
         
+       
+        
     $scope.createAndClose = function () {
+        if (!$scope.roleInfo.name) {
+            alert("Please enter a name for the new role");
+            return;
+        }
         if ($scope.roleToCopy) {
             var roleName = $scope.roleInfo.name;
             $scope.roleInfo = JSON.parse(JSON.stringify($scope.roleToCopy));
             $scope.roleInfo.name = roleName;
         }
-        $scope.parentScope.saveCreatedRole($scope.roleInfo);
-        $modalInstance.dismiss('cancel');
+        var postdata = angular.toJson($scope.roleInfo);
+        postURL = "roleUpdate.json?op=Create";
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.parentScope.cleanDuplicates(data);
+            $scope.parentScope.updateRoleList(data);
+            $modalInstance.dismiss('cancel');
+        })
+        .error( function(data, status, headers, config) {
+            $scope.parentScope.reportError(data);
+        });        
     };
     $scope.saveAndClose = function () {
         $scope.parentScope.updateRole($scope.roleInfo);
