@@ -39,6 +39,7 @@ function standardTinyMCEOptions() {
         paste_as_text: false,
         browser_spellcheck: true,
         plugins: "link stylebuttons lists paste",
+        entity_encoding: "raw",
         inline: false,
         menubar: false,
         body_class: 'leafContent',
