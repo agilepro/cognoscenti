@@ -23,7 +23,7 @@ package com.purplehillsbooks.weaver;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
-* Represents the address of a user.
+* Represents the a user, either: AddressListEntry or UserProfile.
 * An interface for using with methods that check and compare addresses.
 *
 * Two known implementations: AddressListEntry which represents either a single

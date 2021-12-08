@@ -101,8 +101,6 @@
                     + "/summary.json?lic="+lfu.getId();
     }
     
-
-    MeetingRecord backlog = ngw.getAgendaItemBacklog();
     
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
     JSONArray allLayoutNames = new JSONArray();
@@ -205,7 +203,6 @@ embeddedData.previousMeeting = <%previousMeeting.write(out,2,2);%>;
 embeddedData.allGoals  = <%allGoals.write(out,2,2);%>;
 embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;
 embeddedData.allLabels = <%allLabels.write(out,2,2);%>;
-embeddedData.backlogId = "<%=backlog.getId()%>";
 embeddedData.retPath   = "<%=ar.retPath%>";
 embeddedData.templateCacheDefeater   = "<%=templateCacheDefeater%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"

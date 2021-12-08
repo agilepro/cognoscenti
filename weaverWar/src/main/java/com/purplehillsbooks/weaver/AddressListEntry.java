@@ -105,8 +105,8 @@ public class AddressListEntry implements UserRef
         if (addr.indexOf(LAQUO)>=0 || addr.indexOf('<')>=0) {
             throw new ProgramLogicError("looks like a combined address value and should be using parseCombinedAddress method: "+addr);
         }
+        rawAddress = UserManager.getCorrectedEmail(addr);
         user = UserManager.getStaticUserManager().lookupUserByAnyId(addr);
-        rawAddress = addr;
     }
 
     /**

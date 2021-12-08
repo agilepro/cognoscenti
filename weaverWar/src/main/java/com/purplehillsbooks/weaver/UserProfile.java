@@ -35,7 +35,7 @@ import com.purplehillsbooks.json.JSONObject;
 
 public class UserProfile implements UserRef
 {
-    public static String defaultTimeZone = "America/Los_Angeles";
+    public static final String defaultTimeZone = "America/Los_Angeles";
 
     private String userKey = "";
     private String name = "";
@@ -49,20 +49,24 @@ public class UserProfile implements UserRef
     private long   accessCodeModTime;
     private int    notifyPeriod;
     private boolean disabled;
-    private List<String> ids = null;
+    private List<String> emailAddresses = null;
     private String timeZone = "America/Los_Angeles";
     private JSONObject wsSettings = new JSONObject();
 
-    public UserProfile(String guid) throws Exception {
+    public UserProfile(String preferredEmail) throws Exception {
         userKey = IdGenerator.generateKey();
-        ids = new ArrayList<String>();
-        ids.add(guid);
+        emailAddresses = new ArrayList<String>();
+        emailAddresses.add(preferredEmail);
 
         //make sure that this profile has a license token
         getLicenseToken();
     }
 
 
+    public static boolean looksLikeEmail(String possibleEmail) {
+        return (possibleEmail.indexOf('@')>0 && possibleEmail.indexOf('/')<0);
+    }
+    
 
 
     public UserProfile(JSONObject fullJO) throws Exception {
@@ -74,7 +78,17 @@ public class UserProfile implements UserRef
             userKey = IdGenerator.generateKey();
         }
 
-        ids       = DOMFace.constructVector(fullJO.getJSONArray("ids"));
+        List<String> newEmail = new ArrayList<String>();
+        if (fullJO.has("ids")) {
+            for (String possibleEmail: fullJO.getJSONArray("ids").getStringList()) {
+                //we ONLY include things that looks like email address.
+                //check could be better, but this elminates the old OpenID
+                if (looksLikeEmail(possibleEmail)) {
+                    newEmail.add(possibleEmail);
+                }
+            }
+        }
+        emailAddresses = newEmail;
 
         licenseToken  = fullJO.getString("licenseToken");
 
@@ -84,10 +98,6 @@ public class UserProfile implements UserRef
         notifyTime    = fullJO.optLong("notifyTime",0);
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
-
-        if (fullJO.has("wsSettings")) {
-            wsSettings = fullJO.getJSONObject("wsSettings");
-        }
 
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
@@ -252,7 +262,7 @@ public class UserProfile implements UserRef
 
     public List<String> getAllIds() {
         List<String> retVal = new ArrayList<String> ();
-        for (String anId : ids) {
+        for (String anId : emailAddresses) {
             retVal.add(anId);
         }
         return retVal;
@@ -300,50 +310,41 @@ public class UserProfile implements UserRef
     * to this user!   This method will search for other users with that
     * ID, and remove that id from those other users.
     */
-    public void addId(String newId)
-        throws Exception
-    {
-        if (newId.indexOf(" ")>=0) {
-            throw new ProgramLogicError("an id value with a space in it was passed to UserProfile.addID: ("+newId+")");
+    public void addId(String newEmailAddress) throws Exception {
+        if (newEmailAddress.indexOf(" ")>=0) {
+            throw new ProgramLogicError("an email with a space in it was passed to UserProfile.addID: ("+newEmailAddress+")");
+        }
+        if (!looksLikeEmail(newEmailAddress)) {
+            throw new ProgramLogicError("Attempt to set non-email address on user: ("+newEmailAddress+").   Only email addresses are allowed");
         }
 
         //check if this user already has the ID, and do nothing if true
-        for (String idval : ids) {
-            if (newId.equalsIgnoreCase(idval)) {
+        for (String idval : emailAddresses) {
+            if (newEmailAddress.equalsIgnoreCase(idval)) {
                 //nothing to do, there is already an ID in there
                 return;
             }
         }
 
-        UserProfile otherUser = UserManager.getStaticUserManager().lookupUserByAnyId(newId);
-        while (otherUser!=null) {
-            //user could be found because this is an email, openid, key or name of that user
-            //if it is email or openid we can remove it.
-            List<String> listid = otherUser.getAllIds();
-            String foundId = null;
-            for (String oid : listid) {
-                //loop through all IDS and clear them out.
-                //remember, there may be more than one match
-                if (oid.equalsIgnoreCase(newId)) {
-                    foundId = oid;
-                    break;
-                }
+        //search all users for others that might have it
+        for(UserProfile otherUser : UserManager.getStaticUserManager().getAllUserProfiles()) {
+            
+            if (otherUser.getKey().equals(getKey())) {
+                //we found ourselves!   Skip this user from list
+                continue;
             }
-
-            if (foundId==null) {
-                //if the other user was retrieved, but it was NOT an email or openid
-                //it might be that you are trying to add a key or user name as another
-                //users id, and that can not be supported.  Throw an error.
-                throw new NGException("nugen.exception.user.conflicts", new Object[]{newId, otherUser.getName(),otherUser.getKey()});
+            if (!otherUser.hasAnyId(newEmailAddress)) {
+                //ignore users that do not have this email address
+                continue;
             }
 
             //found at least one on this user, remove it.
-            otherUser.removeId(foundId);
-
-            //are there any more users with this ID?
-            otherUser = UserManager.getStaticUserManager().lookupUserByAnyId(newId);
+            otherUser.removeId(newEmailAddress);
         }
-        ids.add(newId);
+        emailAddresses.add(newEmailAddress);
+        
+        //refresh the tables that find user profiles by name and email
+        UserManager.refreshHashtables();
     }
 
     /**
@@ -355,12 +356,12 @@ public class UserProfile implements UserRef
     */
     public void removeId(String newId) throws Exception {
         Vector<String> cache = new Vector<String>();
-        for (String possible : ids) {
+        for (String possible : emailAddresses) {
             if (!possible.equalsIgnoreCase(newId)) {
                 cache.add(possible);
             }
         }
-        ids = cache;
+        emailAddresses = cache;
     }
 
     public void setLastLogin(long newLastLogin, String loginId) {
@@ -378,7 +379,7 @@ public class UserProfile implements UserRef
     * used as a prompt for logging in (stored in cookies).
     */
     public String getLastLoginId() {
-        return lastLoginId;
+        return UserManager.getCorrectedEmail(lastLoginId);
     }
 
     public void setLastUpdated(long newLastUpdated) {
@@ -451,7 +452,7 @@ public class UserProfile implements UserRef
     * Required by interface UserRef
     */
     public boolean hasAnyId(String testId) {
-        for (String idval : ids) {
+        for (String idval : emailAddresses) {
             if (testId.equalsIgnoreCase(idval)) {
                 return true;
             }
@@ -496,24 +497,12 @@ public class UserProfile implements UserRef
         return other.hasAnyId(getUniversalId());
     }
 
-    /**
-    * compares two openid values properly
-    */
-    public static boolean equalsOpenId(String openId1, String openId2)
-    {
-        //if either value passed is null, then it never matches the other
-        //(even if they are both null)
-        if (openId1==null || openId2==null)
-        {
-            return false;
-        }
-        return IDRecord.simplifyOpenId(openId1).equalsIgnoreCase(IDRecord.simplifyOpenId(openId2));
-    }
 
     public AddressListEntry getAddressListEntry() {
         return new AddressListEntry(this);
     }
 
+/*
     public static void writeLink(AuthRequest ar, String anyId)
         throws Exception
     {
@@ -526,7 +515,7 @@ public class UserProfile implements UserRef
         AddressListEntry ale = new AddressListEntry(anyId);
         ale.writeLink(ar);
     }
-
+*/
 
     /**
     * Universal ID is normally the "preferred" email address of a particular user.
@@ -796,7 +785,7 @@ public class UserProfile implements UserRef
     */
     public String getPreferredEmail() {
         //return the first email address ... if there is one
-        for (String idval : ids) {
+        for (String idval : emailAddresses) {
             //an at sign in there, and no slashes, could be an email address
             if (idval.indexOf("@")>=0 && idval.indexOf("/")<0) {
                 return idval;
@@ -807,12 +796,12 @@ public class UserProfile implements UserRef
     public void setPreferredEmail(String newAddress) {
         ArrayList<String> newList = new ArrayList<String>();
         newList.add(newAddress);
-        for (String idval : ids) {
+        for (String idval : emailAddresses) {
             if (!idval.equalsIgnoreCase(newAddress)) {
                 newList.add(idval);
             }
         }
-        ids = newList;
+        emailAddresses = newList;
     }
 
 
@@ -832,7 +821,7 @@ public class UserProfile implements UserRef
         if (name.toLowerCase().contains(frag)) {
             return true;
         }
-        for (String idval : ids) {
+        for (String idval : emailAddresses) {
             if(idval.toLowerCase().contains(frag)){
                 return true;
             }
@@ -896,7 +885,7 @@ public class UserProfile implements UserRef
 
         {
             JSONArray idArray = new JSONArray();
-            for (String id : ids) {
+            for (String id : emailAddresses) {
                 idArray.put(id);
             }
             jObj.put("ids", idArray);
@@ -920,7 +909,7 @@ public class UserProfile implements UserRef
 
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("removeId")) {
-            if (ids.size()<=1) {
+            if (emailAddresses.size()<=1) {
                 throw new Exception("Can not remove an id from user who only has less than two ids!");
             }
             this.removeId(input.getString("removeId"));

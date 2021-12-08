@@ -304,7 +304,7 @@ public class HistoryRecord extends DOMFace
     public String getResponsible()
         throws Exception
     {
-        return getScalar("responsible");
+        return UserManager.getCorrectedEmail(getScalar("responsible"));
     }
     public void setResponsible(String resp)
         throws Exception
@@ -337,30 +337,9 @@ public class HistoryRecord extends DOMFace
         return "Object";
     }
 
-    public void fillInWfxmlHistory(Document doc, Element histEle)  throws Exception
-    {
-        if (doc == null)
-        {
-            throw new ProgramLogicError("Null doc parameter passed to fillInWfxmlHistory");
-        }
-        if (histEle == null)
-        {
-            throw new ProgramLogicError("Null histEle parameter passed to fillInWfxmlHistory");
-        }
-
-        //this code constructs XML for the WfXML protocol
-        Element eventEle = DOMUtils.createChildElement(doc, histEle, "event");
-        eventEle.setAttribute("id", getId());
-        DOMUtils.createChildElement(doc, eventEle, "type", String.valueOf(getEventType()));
-        DOMUtils.createChildElement(doc, eventEle, "context", String.valueOf(getContext()));
-        DOMUtils.createChildElement(doc, eventEle, "contexttype", String.valueOf(getContextType()));
-        DOMUtils.createChildElement(doc, eventEle, "responsible", getResponsible());
-        DOMUtils.createChildElement(doc, eventEle, "timestamp", UtilityMethods.getXMLDateFormat(getTimeStamp()));
-        DOMUtils.createChildElement(doc, eventEle, "comments", String.valueOf(getComments()));
-    }
 
     /**
-    * deprecated: remove this method when there is a chance.
+    * @deprecated: remove this method when there is a chance.
     */
     public static HistoryRecord createHistoryRecord(NGWorkspace ngp,
         String context, int contextType, int eventType,

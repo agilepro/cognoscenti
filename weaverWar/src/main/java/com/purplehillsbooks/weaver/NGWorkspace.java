@@ -1014,7 +1014,7 @@ public class NGWorkspace extends NGPage {
         workspaceConfigInfo.put("deleted", isDeleted());
         if (isDeleted()) {
             workspaceConfigInfo.put("deleteDate", pageInfo.getDeleteDate());
-            workspaceConfigInfo.put("deleteUser", pageInfo.getDeleteUser());
+            workspaceConfigInfo.put("deleteUser", UserManager.getCorrectedEmail(pageInfo.getDeleteUser()));
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
 

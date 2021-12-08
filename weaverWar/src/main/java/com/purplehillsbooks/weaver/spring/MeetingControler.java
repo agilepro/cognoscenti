@@ -281,14 +281,6 @@ public class MeetingControler extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/agendaBacklog.htm", method = RequestMethod.GET)
-    public void agendaBacklog(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "AgendaBacklog");
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingList.htm", method = RequestMethod.GET)
     public void meetingList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -510,9 +502,10 @@ public class MeetingControler extends BaseController {
               List<MeetingRecord> allMeets = ngw.getMeetings();
               MeetingRecord.sortChrono(allMeets);
               for (MeetingRecord oneRef : allMeets) {
-                  if (!oneRef.isBacklogContainer()) {
-                      meetings.put(oneRef.getListableJSON(ar));
+                  if (oneRef.isBacklogContainer()) {
+                      throw new Exception("no meeting should be a backlog container any more, just making sure");
                   }
+                  meetings.put(oneRef.getListableJSON(ar));
               }
               jo.put("meetings", meetings);
               sendJson(ar, jo);

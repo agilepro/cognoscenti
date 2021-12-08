@@ -31,6 +31,7 @@ import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class UserManager
@@ -39,9 +40,12 @@ public class UserManager
     public static int modCount = 0;
     public static int saveCount = 0;
 
-    private static Hashtable<String, UserProfile> userHashByUID = new Hashtable<String, UserProfile>();
     private static Hashtable<String, UserProfile> userHashByKey = new Hashtable<String, UserProfile>();
     private static Vector<UserProfile> allUsers = new Vector<UserProfile>();
+    
+    //these two together allow us to 'correct' old email addresses in the files
+    private static Hashtable<String, String> anyIdToKeyMap = new Hashtable<String, String>();
+    private static Hashtable<String, String> keyToEmailMap = new Hashtable<String, String>();
 
     private static boolean initialized = false;
 
@@ -63,7 +67,6 @@ public class UserManager
     * other than this list of users, so it is relatively safe.
     */
     public static synchronized void clearAllStaticVars() {
-        userHashByUID = new Hashtable<String, UserProfile>();
         userHashByKey = new Hashtable<String, UserProfile>();
         allUsers      = new Vector<UserProfile>();
         initialized   = false;
@@ -217,18 +220,58 @@ public class UserManager
 
 
 
-    private synchronized void refreshHashtables() {
-        Hashtable<String, UserProfile> readHashByUID = new Hashtable<String, UserProfile>();
+    public static synchronized void refreshHashtables() {
+        //this should be rare, maybe only once per server start.
+        //if happening more times, we want that reported in the log
+        System.out.println("USERS: Scanning all users for all keys and ids");
+        
+        //do this in a thread-safe manner
         Hashtable<String, UserProfile> readHashByKey = new Hashtable<String, UserProfile>();
+        Hashtable<String, String> anyIdToKeyMapTemp = new Hashtable<String, String>();
+        Hashtable<String, String> keyToEmailMapTemp = new Hashtable<String, String>();
 
         for (UserProfile up : allUsers) {
+            String key = up.getKey();
+            String preferredEmail = up.getPreferredEmail();
+            readHashByKey.put(key, up);
+            keyToEmailMapTemp.put(key, preferredEmail);
+            anyIdToKeyMapTemp.put(key, key);
             for (String idval : up.getAllIds()) {
-                readHashByUID.put(idval, up);
+                String otherKey = anyIdToKeyMapTemp.get(idval);
+                if (otherKey!=null && !otherKey.equals(key)) {
+                    UserProfile otherProfile = readHashByKey.get(otherKey);
+                    try {
+                        System.out.println("USERS: two users claim the same email address ("+idval+")");
+                        System.out.println("USER1: "+up.getJSON().toString(2));
+                        System.out.println("USER2: "+otherProfile.getJSON().toString(2));
+                    }
+                    catch(Exception e) {
+                        JSONException.traceException(e, "USERS: failed to report problem with email address ("+idval+")");
+                    }
+                }
+                anyIdToKeyMapTemp.put(idval, key);
             }
-            readHashByKey.put(up.getKey(), up);
         }
-        userHashByUID = readHashByUID;
         userHashByKey = readHashByKey;
+        anyIdToKeyMap = anyIdToKeyMapTemp;
+        keyToEmailMap = keyToEmailMapTemp;
+    }
+    
+    
+    
+    public static String getCorrectedEmail(String sourceId) {
+        if (sourceId==null) {
+            return null;
+        }
+        String key = anyIdToKeyMap.get(sourceId);
+        if (key==null) {
+            return sourceId;
+        }
+        String preferredEmail = keyToEmailMap.get(key);
+        if (preferredEmail==null) {
+            return sourceId;
+        }
+        return preferredEmail;
     }
 
 
@@ -258,26 +301,25 @@ public class UserManager
         }
 
         //first, try hashtable since that might be fast
-        UserProfile up = userHashByUID.get(anyId);
-        if (up!=null)
-        {
-            //this should always be true at this point
-            if (up.hasAnyId(anyId))
-            {
-                return up;
+        String key = anyIdToKeyMap.get(anyId);
+        if (key!=null) {
+            UserProfile up = userHashByKey.get(key);
+            if (up!=null) {
+                //this should always be true at this point
+                if (up.hasAnyId(anyId)) {
+                    return up;
+                }
+    
+                //if it gets here, then the hash table is messed up.
+                //rather than throw exception ... just regenerate
+                //the hash table, then drop into slow search.
+                refreshHashtables();
             }
-
-            //if it gets here, then the hash table is messed up.
-            //rather than throw exception ... just regenerate
-            //the hash table, then drop into slow search.
-            refreshHashtables();
         }
 
         //second, walk through users the slow way
-        for (UserProfile up2 : allUsers)
-        {
-            if (up2.hasAnyId(anyId))
-            {
+        for (UserProfile up2 : allUsers) {
+            if (up2.hasAnyId(anyId)) {
                 return up2;
             }
         }

@@ -23,6 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.rest.ResourceSection;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -217,7 +219,7 @@ public class ProcessRecord extends BaseRecord
             DOMUtils.createChildElement(doc, histEle, "processurl", processurl);
 
             for (HistoryRecord history : histRecs) {
-                history.fillInWfxmlHistory(doc, histEle);
+                ResourceSection.fillInWfxmlHistory(history, doc, histEle);
             }
         }
 

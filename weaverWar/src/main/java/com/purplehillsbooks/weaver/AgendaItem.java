@@ -108,28 +108,6 @@ public class AgendaItem extends CommentContainer {
     }
 
     
-    /**
-     * In the olden-days An agenda item can be linked to a single discussion topic
-     * @deprecated use getLinkedTopics instead
-     */
-    public String getTopicLink() {
-        List<String> list = getLinkedTopics();
-        if (list.size()>0) {
-            return list.get(0);
-        }
-        return null;
-    }
-    /**
-     * In the olden-days An agenda item can be linked to a single discussion topic
-     * @deprecated use setLinkedTopics instead
-     */
-    public void setTopicLink(String newVal) throws Exception {
-        List<String> list = getLinkedTopics();
-        if (!list.contains(newVal)) {
-            list.add(newVal);
-            setLinkedTopics(list);
-        }
-    }
 
     /**
      * An agenda item can be linked to any number of 
@@ -189,8 +167,12 @@ public class AgendaItem extends CommentContainer {
         setVector("docList", newVal);
     }
 
-    public List<String> getPresenters()  throws Exception {
-        return getVector("presenters");
+    public List<AddressListEntry> getPresenters()  throws Exception {
+        List<AddressListEntry> res = new ArrayList<AddressListEntry>();
+        for (String email : getVector("presenters")) {
+            res.add(new AddressListEntry(email));
+        }
+        return res;
     }
     public void setPresenters(List<String> newVal) throws Exception {
         setVector("presenters", newVal);
@@ -276,16 +258,17 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("position",  getPosition());
         aiInfo.put("number",    getNumber());
         aiInfo.put("isSpacer",  isSpacer());
-        aiInfo.put("presenters", constructJSONArray(getPresenters()));
         
         //duplicated the presenters into a list of full person definitions.
         //ultimately get rid of the other.
         JSONArray presenterList = new JSONArray();
-        for (String presenterId : getPresenters()) {
-            AddressListEntry ale = new AddressListEntry(presenterId);
+        JSONArray presenterNameList = new JSONArray();
+        for (AddressListEntry ale : getPresenters()) {
             presenterList.put(ale.getJSON());
+            presenterNameList.put(ale.getUniversalId());
         }
         aiInfo.put("presenterList", presenterList);
+        aiInfo.put("presenters", presenterNameList);
         
         aiInfo.put("actionItems", constructJSONArray(getActionItems()));
         aiInfo.put("docList", constructJSONArray(getDocList()));

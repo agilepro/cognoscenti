@@ -16,7 +16,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.allLabels = embeddedData.allLabels;
     $scope.allLayoutNames = embeddedData.allLayoutNames;
     $scope.allTopics = [];
-    $scope.backlogId = embeddedData.backlogId;
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
     $scope.displayMode='Agenda';
@@ -1213,19 +1212,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.showRollCall = $scope.isRegistered();
     }
 
-    $scope.moveItemToBacklog = function(item) {
-        var delId = item.id;
-        var postURL = "agendaMove.json?src="+$scope.meeting.id+"&dest="+$scope.backlogId;
-        var postdata = angular.toJson(item);
-        $scope.showError=false;
-        $http.post(postURL,postdata)
-        .success( function(data) {
-            $scope.refreshMeetingPromise();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
 
 
     $scope.openModalActionItem = function (item, goal, start) {

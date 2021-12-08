@@ -16,7 +16,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.allLabels = embeddedData.allLabels;
     $scope.allLayoutNames = embeddedData.allLayoutNames;
     $scope.allTopics = [];
-    $scope.backlogId = embeddedData.backlogId;
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
     $scope.displayMode='Items';

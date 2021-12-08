@@ -98,8 +98,6 @@
                     + "/summary.json?lic="+lfu.getId();
     }
     
-
-    MeetingRecord backlog = ngw.getAgendaItemBacklog();
     
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
     JSONArray allLayoutNames = new JSONArray();
@@ -186,7 +184,6 @@ embeddedData.previousMeeting = <%previousMeeting.write(out,2,2);%>;
 embeddedData.allGoals  = <%allGoals.write(out,2,2);%>;
 embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;
 embeddedData.allLabels = <%allLabels.write(out,2,2);%>;
-embeddedData.backlogId = "<%=backlog.getId()%>";
 embeddedData.retPath   = "<%=ar.retPath%>";
 embeddedData.templateCacheDefeater   = "<%=templateCacheDefeater%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
@@ -930,9 +927,6 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                       <li role="presentation" ng-hide="item.proposed">
                           <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
                              Move Down</a></li>
-                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i>
-                              Remove Item</a></li>
 
                    </ul>
                 </span>

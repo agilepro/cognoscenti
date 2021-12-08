@@ -39,6 +39,8 @@ import org.apache.pdfbox.pdmodel.graphics.color.PDGamma;
 import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
+
+import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthDummy;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.IdGenerator;
@@ -555,7 +557,8 @@ public class PDFUtil {
         MemFile linkData = new MemFile();
         AuthRequest clone = new AuthDummy(ar.getUserProfile(), linkData.getWriter(), ar.getCogInstance());
         clone.retPath = ar.baseURL;
-        UserProfile.writeLink(clone, userId);
+        AddressListEntry ale = new AddressListEntry(userId);
+        ale.writeLink(clone);
         clone.flush();
 
         Map<String, String> userInfoMap = parseStringForUserInfo(linkData.toString());

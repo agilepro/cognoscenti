@@ -948,7 +948,6 @@ public class TopicRecord extends CommentContainer {
      }
      public JSONObject getJSONWithHtml(AuthRequest ar, NGWorkspace ngw) throws Exception {
          JSONObject noteData = getJSON(ngw);
-         //noteData.put("html", getNoteHtml(ar));
          noteData.put("wiki", getWiki());
          return noteData;
      }

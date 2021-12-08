@@ -178,6 +178,14 @@ public abstract class NGPage extends ContainerCommon {
         for (TopicRecord tr : this.getAllDiscussionTopics()) {
             tr.verifyAllAttachments(this);
         }
+        
+        //eliminate old meetings that were just backlog containers
+        //added Dec 2021 cleanup schema migration
+        for (MeetingRecord meet: getMeetings()) {
+            if (meet.isBacklogContainer()) {
+                this.removeMeeting(meet.getId());
+            }
+        }
 
     }
 
@@ -1450,20 +1458,6 @@ public abstract class NGPage extends ContainerCommon {
         DOMFace meetings = requireChild("meetings", DOMFace.class);
         meetings.removeChildrenByNameAttrVal("meeting", "id", id);
     }
-
-    public MeetingRecord getAgendaItemBacklog() throws Exception {
-        for (MeetingRecord mr: getMeetings()) {
-            if (mr.isBacklogContainer()) {
-                return mr;
-            }
-        }
-        //didn't find one, so create it now
-        MeetingRecord newCont = createMeeting();
-        newCont.setBacklogContainer(true);
-        newCont.setName("BACKLOG AGENDA ITEM CONTAINER");
-        return newCont;
-    }
-
 
 
     public List<DecisionRecord> getDecisions() throws Exception {

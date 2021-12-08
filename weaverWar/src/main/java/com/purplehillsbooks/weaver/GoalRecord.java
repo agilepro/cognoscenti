@@ -87,7 +87,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     public String getCreator() throws Exception {
-        return getScalar("creator");
+        return UserManager.getCorrectedEmail(getScalar("creator"));
     }
 
     // The display link is determined FROM the Sub URL, by retrieving the

@@ -306,40 +306,6 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
-    public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable String userKey)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in in order to edit a user profile.");
-            String action = ar.reqParam("action");
-            if (action.equals("Cancel")) {
-                redirectBrowser(ar,"userSettings.htm");
-                return;
-            }
-
-            String u = ar.reqParam("u");
-            UserProfile profile = UserManager.getUserProfileOrFail(u);
-
-            if(action.equals("Save")) {
-                profile.setName(ar.defParam("name", ""));
-                profile.setDescription(ar.defParam("description", ""));
-                profile.setNotificationPeriod(DOMFace.safeConvertInt(ar.defParam("notificationPeriod", "1")));
-            }
-
-            String email= ar.defParam("email", null);
-            if (email!=null && email.length()>0){
-                profile.addId(email);
-            }
-
-            profile.setLastUpdated(ar.nowTime);
-            ar.getCogInstance().getUserManager().saveUserProfiles();
-            redirectBrowser(ar,"UserProfileEdit.htm?u="+userKey);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.edit.userprofile", new Object[]{userKey} , ex);
-        }
-    }
 
     @RequestMapping(value = "/{userKey}/updateProfile.json", method = RequestMethod.POST)
     public void updateProfile(HttpServletRequest request, HttpServletResponse response,

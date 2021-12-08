@@ -289,8 +289,6 @@ public class ResourcePage implements NGResource
                 ResourceSection.loadTaskSection(loutdoc, ngp, element_section, ar, lserverURL);
             }else if("attachsection".equals(secElname)){
                 ResourceSection.loadAttachmentSection(loutdoc, ngs, element_section, ar, lserverURL,null);
-            }else if("privatesection".equals(secElname)){
-                ResourceSection.loadPrivateSection(loutdoc, ngs, element_section, ar, lserverURL);
             }else if("commentsection".equals(secElname)){
                 loadSectionForNotes(loutdoc, ngs, element_section, ar, lserverURL);
             }else if("pollsection".equals(secElname)){

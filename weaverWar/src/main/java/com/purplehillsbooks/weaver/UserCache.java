@@ -91,8 +91,8 @@ public class UserCache {
             for (MeetingRecord meet : ngw.getMeetings()) {
 
                 if (meet.isBacklogContainer()) {
-                    //don't ever get anything from the backlog container
-                    continue;
+                    //added Dec 2021 because all backlog container support removed
+                    throw new Exception("Should never be seeing any backlog container meetings any more");
                 }
 
                 String address = "meetingHtml.htm?id="+meet.getId();

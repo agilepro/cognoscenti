@@ -37,12 +37,9 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGSection;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.ProcessRecord;
-import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SectionForNotes;
 import com.purplehillsbooks.weaver.SectionLink;
-import com.purplehillsbooks.weaver.SectionTask;
 import com.purplehillsbooks.weaver.TopicRecord;
-import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
@@ -304,9 +301,6 @@ public class ResourceSection  implements NGResource
         }else if(ngs.getName().equals("Attachments")
             || ngs.getName().equals("Public Attachments")){
             ResourceSection.loadAttachmentSection(loutdoc, ngs, element_section, lar, lserverURL, dataIds);
-        }else if(ngs.getName().equals("Private")
-            || ngs.getName().equals("Private Locker")){
-            ResourceSection.loadPrivateSection(loutdoc, ngs, element_section, lar, lserverURL);
         }else if(ngs.getName().equals("Public Comments")
             || ngs.getName().equals("Comments")){
             lrp.loadSectionForNotes(loutdoc, ngs, element_section, lar, lserverURL);
@@ -391,9 +385,32 @@ public class ResourceSection  implements NGResource
         List<HistoryRecord> histRecs = ngp.getAllHistory();
         for (HistoryRecord history : histRecs)
         {
-            history.fillInWfxmlHistory(loutdoc, element_root);
+            fillInWfxmlHistory(history, loutdoc, element_root);
         }
     }
+    
+    public static void fillInWfxmlHistory(HistoryRecord history, Document doc, Element histEle)  throws Exception
+    {
+        if (doc == null)
+        {
+            throw new ProgramLogicError("Null doc parameter passed to fillInWfxmlHistory");
+        }
+        if (histEle == null)
+        {
+            throw new ProgramLogicError("Null histEle parameter passed to fillInWfxmlHistory");
+        }
+
+        //this code constructs XML for the WfXML protocol
+        Element eventEle = DOMUtils.createChildElement(doc, histEle, "event");
+        eventEle.setAttribute("id", history.getId());
+        DOMUtils.createChildElement(doc, eventEle, "type", String.valueOf(history.getEventType()));
+        DOMUtils.createChildElement(doc, eventEle, "context", String.valueOf(history.getContext()));
+        DOMUtils.createChildElement(doc, eventEle, "contexttype", String.valueOf(history.getContextType()));
+        DOMUtils.createChildElement(doc, eventEle, "responsible", history.getResponsible());
+        DOMUtils.createChildElement(doc, eventEle, "timestamp", UtilityMethods.getXMLDateFormat(history.getTimeStamp()));
+        DOMUtils.createChildElement(doc, eventEle, "comments", String.valueOf(history.getComments()));
+    }
+
 
     public static void loadWikiSection(Document loutdoc, NGSection ngs, Element element_sec,
         AuthRequest au, String lserverURL)throws Exception
@@ -508,30 +525,6 @@ public class ResourceSection  implements NGResource
         DOMUtils.createChildElement(loutdoc, element_link, "url", linkAddr);
     }
 
-    public static void loadPrivateSection(Document loutdoc, NGSection ngs, Element element_sec,
-        AuthRequest au, String lserverURL)throws Exception
-    {
-        Element noteElem = null;
-        NodeList nl = DOMUtils.findNodesOneLevel(ngs.getElement(), "note");
-        int size = nl.getLength();
-        for(int i=0; i<size; i++)
-        {
-            Element ei = (Element)nl.item(i);
-            if (ei == null) {
-                continue; // there are strange cases where it can be null
-            }
-            String owner = DOMUtils.getChildText(ei,"owner").trim();
-            if(UserProfile.equalsOpenId(au.getBestUserId(), owner)) {
-                noteElem = ei;
-                break;
-            }
-        }
-
-        if(noteElem != null){
-            String tv = DOMUtils.getChildText(noteElem, "data").trim();
-            DOMUtils.createChildElement(loutdoc, element_sec, "content", tv);
-        }
-    }
 
     public static void loadTaskSection(Document loutdoc, NGWorkspace ngp, Element element_sec,
         AuthRequest au, String lserverURL)throws Exception

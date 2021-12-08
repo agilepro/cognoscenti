@@ -696,6 +696,13 @@ public class DOMFace
         }
         return array;
     }
+    public static JSONArray constructJSONArrayEmail(List<String> input) {
+        JSONArray array = new JSONArray();
+        for (String item : input) {
+            array.put(UserManager.getCorrectedEmail(item));
+        }
+        return array;
+    }
     public static JSONArray constructJSONArrayLong(List<Long> input) {
         JSONArray array = new JSONArray();
         for (Long item : input) {
@@ -754,6 +761,13 @@ public class DOMFace
     public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
         String val = getScalar(fieldName);
         if (val!=null) {
+            dest.put(fieldName, val);
+        }
+    }
+    public void extractScalarEmail(JSONObject dest, String fieldName) throws Exception {
+        String val = getScalar(fieldName);
+        if (val!=null) {
+            val = UserManager.getCorrectedEmail(val);
             dest.put(fieldName, val);
         }
     }

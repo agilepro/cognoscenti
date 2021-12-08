@@ -165,9 +165,6 @@ Required parameters:
             if (meet.getState() > 1) {
                 continue;
             }
-            if (meet.isBacklogContainer()) {
-                continue;
-            }
             myMeetings.put(meet.getListableJSON(ar));
         }
 

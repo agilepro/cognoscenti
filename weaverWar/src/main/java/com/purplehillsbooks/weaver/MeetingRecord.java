@@ -225,29 +225,17 @@ public class MeetingRecord extends DOMFace {
         }
         return false;
     }
-    public List<String> getAttendees() {
+    private List<String> getAttendees() {
         return getVector("attended");
     }
 
 
     /**
-     * There is one special meeting which is actually the container for backlog
-     * agenda items.  This special meeting should never be shown as a meeting
-     * but instead only to hold the agenda items.  The name and description
-     * does not matter.  If this special meeting does not exist, it should be
-     * created whenever needed.
+     * NO LONGER a special meeting which is actually the container for backlog
+     * agenda items. Should never exist any more.
      */
     public boolean isBacklogContainer() {
         return "true".equals(getAttribute("isBacklog"));
-    }
-
-    public void setBacklogContainer(boolean isBack) {
-        if (isBack) {
-            setAttribute("isBacklog", "true");
-        }
-        else {
-            setAttribute("isBacklog", null);
-        }
     }
 
 
@@ -477,7 +465,7 @@ public class MeetingRecord extends DOMFace {
         extractAttributeInt   (meetingInfo, "meetingType");
         extractAttributeInt   (meetingInfo, "reminderTime");
         extractAttributeLong  (meetingInfo, "reminderSent");
-        extractScalarString   (meetingInfo, "owner");
+        extractScalarEmail    (meetingInfo, "owner");
         extractScalarString   (meetingInfo, "previousMeeting");
         extractScalarString   (meetingInfo, "defaultLayout");
         extractScalarString   (meetingInfo, "notifyLayout");
@@ -501,7 +489,7 @@ public class MeetingRecord extends DOMFace {
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             JSONObject sub = new JSONObject();
             //user id
-            sub.put("uid", onePerson.getAttribute("uid"));
+            sub.put("uid", UserManager.getCorrectedEmail(onePerson.getAttribute("uid")));
 
             // yse, no, maybe
             sub.put("attend", onePerson.getScalar("attend"));
@@ -512,7 +500,11 @@ public class MeetingRecord extends DOMFace {
         }
         meetingInfo.put("rollCall",  rollCall);
 
-        meetingInfo.put("attended", constructJSONArray(this.getVector("attended")));
+        JSONArray attended = new JSONArray();
+        for (String attendee : this.getVector("attended")) {
+            attended.put(UserManager.getCorrectedEmail(attendee));
+        }
+        meetingInfo.put("attended", attended);
         meetingInfo.put("agendaUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("notifyLayout")));
         meetingInfo.put("minutesUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("defaultLayout")));
         return meetingInfo;
@@ -882,8 +874,7 @@ public class MeetingRecord extends DOMFace {
             sb.append(" minutes)");
             itemTime = finishTime;
             boolean isFirst = true;
-            for (String presenter : ai.getPresenters()) {
-                AddressListEntry ale = new AddressListEntry(presenter);
+            for (AddressListEntry ale : ai.getPresenters()) {
                 if (isFirst) {
                     sb.append(" Presented by: ");
                 }
@@ -946,8 +937,7 @@ public class MeetingRecord extends DOMFace {
             sb.append(" minutes)");
             itemTime = itemTime + (ai.getDuration()*60*1000);
             boolean isFirst = true;
-            for (String presenter : ai.getPresenters()) {
-                AddressListEntry ale = new AddressListEntry(presenter);
+            for (AddressListEntry ale : ai.getPresenters()) {
                 if (isFirst) {
                     sb.append(" Presented by: ");
                 }
@@ -1422,21 +1412,15 @@ public class MeetingRecord extends DOMFace {
         JSONObject jo = new JSONObject();
         for (MeetingRecord meet : ngw.getMeetings()) {
             for (String attendee : meet.getAttendees()) {
+                attendee = UserManager.getCorrectedEmail(attendee);
                 AddressListEntry ale = new AddressListEntry(attendee);
                 UserProfile user = ale.getUserProfile();
                 if (user==null) {
                     //ignore attendance entries for people without user profiles
                     continue;
                 }
-                String id = user.getUniversalId();
-                if (jo.has(attendee)) {
-                    jo.getJSONObject(id).put(meet.getId(), true);
-                }
-                else {
-                    JSONObject newObj =  new JSONObject();
-                    newObj.put(meet.getId(), true);
-                    jo.put(id, newObj);
-                }
+                JSONObject attendeeRecord = jo.requireJSONObject(attendee);
+                attendeeRecord.put(meet.getId(), true);
             }
         }
         return jo;

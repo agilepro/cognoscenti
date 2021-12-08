@@ -143,22 +143,6 @@ myApp.controller('myCtrl', function($scope, $http) {
 <fmt:setBundle basename="messages"/>
 <script>
 
-    function updateProfile(op){
-        document.getElementById('action').value=op;
-        document.getElementById('updateUserProfile').action ="EditUserProfileAction.form";
-        document.getElementById('updateUserProfile').submit();
-    }
-
-    function removeId(op,modid){
-        var reply = confirm("Do you want to remove ID?");
-        if(reply){
-            document.getElementById('delconf').value='yes';
-            document.getElementById('modid').value=modid;
-            document.getElementById('action').value=op;
-            document.getElementById('updateUserProfile').action = "EditUserProfileAction.form";
-            document.getElementById('updateUserProfile').submit();
-        }
-    }
 
 
     function uploadUserPhoto(){
