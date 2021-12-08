@@ -101,13 +101,13 @@ public class MeetingControler extends BaseController {
                     if (!role.isPlayer(user)) {
                         ar.req.setAttribute("roleName", roleName);
                         ar.req.setAttribute("objectName", "Meeting");
-                        streamJSP(ar, "WarningNotTargetRole");
+                        streamJSP(ar, "WarningNotTargetRole.jsp");
                         return;
                     }
                 }
             }
 
-            streamJSP(ar, "MeetingFull");
+            streamJSP(ar, "MeetingFull.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }

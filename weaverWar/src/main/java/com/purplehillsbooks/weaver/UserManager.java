@@ -22,8 +22,10 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import com.purplehillsbooks.weaver.exception.NGException;
@@ -143,7 +145,7 @@ public class UserManager
                 //after transferring any additional global ids that are not already on
                 //other objects.
                 for (String oneId : up.getAllIds()) {
-                    UserProfile other2 = idProfMap.get(oneId);
+                    UserProfile other2 = idProfMap.get(oneId.toLowerCase());
                     if (other2==null) {
                         System.out.println("USER MANAGER Copied one UID: "+key+", "+oneId);
                         other.addId(oneId);
@@ -162,7 +164,7 @@ public class UserManager
             }
             idsToRemove.clear();
             for (String oneId : up.getAllIds()) {
-                other = idProfMap.get(oneId);
+                other = idProfMap.get(oneId.toLowerCase());
                 if (other!=null) {
                     //if we find any profile that already had that address,
                     //then the prior one gets to keep it, and it must be removed
@@ -237,7 +239,8 @@ public class UserManager
             keyToEmailMapTemp.put(key, preferredEmail);
             anyIdToKeyMapTemp.put(key, key);
             for (String idval : up.getAllIds()) {
-                String otherKey = anyIdToKeyMapTemp.get(idval);
+                String idValLC = idval.toLowerCase();
+                String otherKey = anyIdToKeyMapTemp.get(idValLC);
                 if (otherKey!=null && !otherKey.equals(key)) {
                     UserProfile otherProfile = readHashByKey.get(otherKey);
                     try {
@@ -249,7 +252,7 @@ public class UserManager
                         JSONException.traceException(e, "USERS: failed to report problem with email address ("+idval+")");
                     }
                 }
-                anyIdToKeyMapTemp.put(idval, key);
+                anyIdToKeyMapTemp.put(idValLC, key);
             }
         }
         userHashByKey = readHashByKey;
@@ -263,7 +266,7 @@ public class UserManager
         if (sourceId==null) {
             return null;
         }
-        String key = anyIdToKeyMap.get(sourceId);
+        String key = anyIdToKeyMap.get(sourceId.toLowerCase());
         if (key==null) {
             return sourceId;
         }
@@ -301,7 +304,7 @@ public class UserManager
         }
 
         //first, try hashtable since that might be fast
-        String key = anyIdToKeyMap.get(anyId);
+        String key = anyIdToKeyMap.get(anyId.toLowerCase());
         if (key!=null) {
             UserProfile up = userHashByKey.get(key);
             if (up!=null) {
@@ -359,33 +362,6 @@ public class UserManager
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         for (UserProfile up : allUsers) {
             res.add(new AddressListEntry(up));
-        }
-        return res;
-    }
-
-    /**
-    * returns users that have profiles, and also users who have microprofile
-    */
-    public synchronized List<AddressListEntry> getAllPossibleUsers() throws Exception {
-        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
-        Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
-        for (UserProfile up : allUsers) {
-            if (up.getDisabled()) {
-                //skip disabled user accounts
-                continue;
-            }
-            String uid = up.getUniversalId();
-            if (!repeatCheck.containsKey(uid)) {
-                res.add(new AddressListEntry(up));
-                repeatCheck.put(uid,uid);
-            }
-        }
-        for (AddressListEntry one : MicroProfileMgr.getAllProfileIds()) {
-            String uid = one.getUniversalId();
-            if (!repeatCheck.containsKey(uid)) {
-                res.add( one );
-                repeatCheck.put(uid,uid);
-            }
         }
         return res;
     }

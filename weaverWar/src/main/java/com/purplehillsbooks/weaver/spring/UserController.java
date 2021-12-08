@@ -216,7 +216,7 @@ public class UserController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{userKey}/userAccounts.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/userSites.htm", method = RequestMethod.GET)
     public void loadUserAccounts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserAccounts");
@@ -462,7 +462,7 @@ public class UserController extends BaseController {
 
             request.setAttribute("isAccessThroughEmail", isAccessThroughEmail);
             request.setAttribute("canAccessPage", canAccessPage);
-            streamJSP(ar, "RoleRequest");
+            streamJSP(ar, "RoleRequest.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.approve.reject.rolereq.page", null , ex);
         }

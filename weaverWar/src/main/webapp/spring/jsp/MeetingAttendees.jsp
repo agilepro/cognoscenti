@@ -194,11 +194,19 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
       </span>
 </div>
 
+<style>
+.centerCell {
+    align-items:center;
+    text-align:center;
+}
+</style>
+
+
     <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
             <th width="200px">Meeting</th>
             <th width="200px">Date ({{browserZone}})</th>
-            <th ng-repeat="user in foundUsers"><img class="img-circle" 
+            <th ng-repeat="user in foundUsers" class="centerCell"><img class="img-circle" 
                 src="<%=ar.retPath%>icon/{{getImageName(user)}}" 
                 style="width:32px;height:32px" 
                 title="{{user.name}} - {{user.uid}}"></th>
@@ -212,7 +220,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                 <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
                 <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
             </td>
-            <td ng-repeat="user in foundUsers" style="align-items:center;text-align:center">
+            <td ng-repeat="user in foundUsers" class="centerCell">
                 <span ng-show="attendeeMatrix[user.uid][rec.id]"><i class="fa fa-check"></i></span>
                 <span ng-hide="attendeeMatrix[user.uid][rec.id]" style="color:grey">.</span>
             </td>

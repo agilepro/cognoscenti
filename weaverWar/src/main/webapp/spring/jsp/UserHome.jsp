@@ -327,7 +327,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Sites you Manage</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userSites.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -338,7 +338,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="siteList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" 
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userSites.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
            </div>

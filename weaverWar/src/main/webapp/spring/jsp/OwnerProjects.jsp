@@ -109,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
        <br/>
        In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
        <br/>
-       Use <button class="btn btn-sm" onClick="location.href='userAccounts.htm'">Settings &gt; Sites</button>
+       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'">Settings &gt; Sites</button>
        to view your sites, or request a new site from the system administrator.
        If approved you will be the owner of that new site,
        and can create new projects within it.

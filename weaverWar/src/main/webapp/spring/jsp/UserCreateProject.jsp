@@ -85,12 +85,12 @@ if(memberOfSites.size()>0) {
 %>
         <div class="generalContent">
             To create a workspace, you must have a space for that
-            workspace in an account.  You have no sites at this time.
+            workspace in a site.  You have no sites at this time.
             Each workspace has to belong to a site, and you can only create a
             workspace in a site if you have been given access to do so.
             <br/>
             Create a Site in order to create a workspace<br/>.
-            <form action="userAccounts.htm">
+            <form action="userSites.htm">
             <input type="submit" value="View Your Sites" class="btn btn-primary btn-raised">
             </form>
         </div>

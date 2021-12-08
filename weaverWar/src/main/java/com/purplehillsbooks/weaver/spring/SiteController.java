@@ -89,7 +89,7 @@ public class SiteController extends BaseController {
                 return;
             }
 
-            streamJSP(ar, "RequestAccount");
+            streamJSP(ar, "RequestAccount.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.request.page", null, ex);
         }
@@ -121,7 +121,7 @@ public class SiteController extends BaseController {
                 throw new Exception("Method requestNewSite does not understand the action: "+action);
             }
 
-            redirectBrowser(ar, "userAccounts.htm");
+            redirectBrowser(ar, "userSites.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.new.account.request", null , ex);
         }
