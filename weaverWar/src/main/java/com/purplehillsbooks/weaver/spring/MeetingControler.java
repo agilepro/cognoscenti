@@ -79,7 +79,7 @@ public class MeetingControler extends BaseController {
             MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
-                showJSPMembers(ar, siteId, pageId, "MeetingFull");
+                showJSPMembers(ar, siteId, pageId, "MeetingFull.jsp");
                 return;
             }
 
@@ -127,7 +127,7 @@ public class MeetingControler extends BaseController {
             MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
-                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
                 return;
             }
 
@@ -157,7 +157,7 @@ public class MeetingControler extends BaseController {
             MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
-                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
                 return;
             }
 
@@ -185,7 +185,7 @@ public class MeetingControler extends BaseController {
             }
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
-                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
                 return;
             }
 
@@ -223,7 +223,7 @@ public class MeetingControler extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             String id = ar.reqParam("id");
             if (!meetingCache.canAcccessMeeting(siteId, pageId, ar, id)) {
-                showJSPMembers(ar, siteId, pageId, "MeetingMinutes");
+                showJSPMembers(ar, siteId, pageId, "MeetingMinutes.jsp");
                 return;
             }
 
@@ -277,7 +277,7 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "CloneMeeting");
+        showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
     }
 
 
@@ -286,14 +286,14 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "MeetingList");
+        showJSPMembers(ar, siteId, pageId, "MeetingList.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingAttendees.htm", method = RequestMethod.GET)
     public void attendeeMatrix(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "MeetingAttendees");
+        showJSPMembers(ar, siteId, pageId, "MeetingAttendees.jsp");
     }
 
 

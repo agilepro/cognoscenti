@@ -20,6 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,16 +33,76 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.xml.Mel;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 
 @Controller
 public class CommentController extends BaseController {
 
+    @RequestMapping(value = "/{siteId}/{pageId}/CommentList.htm", method = RequestMethod.GET)
+    public void commentList(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "CommentList.jsp");
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/CommentZoom.htm", method = RequestMethod.GET)
+    public void commentZoom(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "CommentZoom.jsp");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/getComment.json", method = RequestMethod.GET)
+    public void getTopic(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        long cid = 0;
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertMember("must be a member to get discussion topic information");
+            cid = Mel.safeConvertLong(ar.reqParam("cid"));
+            CommentRecord topic = ngw.getCommentOrFail(cid);
+
+            JSONObject repo = topic.getHtmlJSON(ar);
+            sendJson(ar, repo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get comment ("+cid+") contents", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/getCommentList.json", method = RequestMethod.GET)
+    public void getCommentList(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertMember("must be a member to get discussion topic information");
+            
+            JSONArray allComments = new JSONArray();
+            for (CommentRecord cmt : ngw.getAllComments()) {
+                allComments.put(cmt.getHtmlJSON(ar));
+            }
+
+            JSONObject jo = new JSONObject();
+            jo.put("list",  allComments);
+            sendJson(ar, jo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get list of all comments", ex);
+            streamException(ee, ar);
+        }
+    }
 
     private void countComments(NGWorkspace ngw) throws Exception {
         int count = 0;

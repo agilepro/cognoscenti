@@ -335,7 +335,10 @@ public class BaseController {
             if (warnNotMember(ar)){
                 return;
             }
-            streamJSP(ar, jspName+".jsp");
+            if (!jspName.endsWith(".jsp")) {
+                jspName = jspName + ".jsp";
+            }
+            streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);

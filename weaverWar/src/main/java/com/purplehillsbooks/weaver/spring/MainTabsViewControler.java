@@ -96,7 +96,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "History");
+        showJSPMembers(ar, siteId, pageId, "History.jsp");
     }
 
     /**
@@ -106,7 +106,7 @@ public class MainTabsViewControler extends BaseController {
     public void exportPDF(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String pageId, @PathVariable String siteId) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "exportPDF");
+        showJSPMembers(ar, siteId, pageId, "exportPDF.jsp");
     }
 
 

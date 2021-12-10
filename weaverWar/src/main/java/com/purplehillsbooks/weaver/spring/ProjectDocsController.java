@@ -68,7 +68,7 @@ public class ProjectDocsController extends BaseController {
     public void docsList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "DocsList");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsList.jsp");
     }
 
 
@@ -76,7 +76,7 @@ public class ProjectDocsController extends BaseController {
     public void docsFolder(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "DocsFolder");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsFolder.jsp");
     }
 
 
@@ -85,7 +85,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "DocsUpload");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsUpload.jsp");
     }
 
     /**
@@ -107,7 +107,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove1");
+        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove1.jsp");
     }
 
     /**
@@ -118,7 +118,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2");
+        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2.jsp");
     }
 
     //This is the OLD pattern we want to get rid of with aid embedded in the page name
@@ -309,7 +309,7 @@ public class ProjectDocsController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            showJSPMembers(ar, siteId, pageId, "reminders");
+            showJSPMembers(ar, siteId, pageId, "reminders.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.reminder.page", new Object[]{pageId,siteId} , ex);
         }
@@ -498,7 +498,7 @@ public class ProjectDocsController extends BaseController {
     public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "SharePorts");
+        BaseController.showJSPMembers(ar, siteId, pageId, "SharePorts.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.json", method = RequestMethod.GET)
@@ -692,14 +692,14 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.reqParam("path");
-        BaseController.showJSPMembers(ar, siteId, pageId, "CleanAtt");
+        BaseController.showJSPMembers(ar, siteId, pageId, "CleanAtt.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/CleanDebug.htm", method = RequestMethod.GET)
     public void cleanDebug(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.reqParam("path");
-        BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug");
+        BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug.jsp");
     }
 
     /**

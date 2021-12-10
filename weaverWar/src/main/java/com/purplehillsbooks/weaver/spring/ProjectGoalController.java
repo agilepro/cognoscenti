@@ -80,7 +80,7 @@ public class ProjectGoalController extends BaseController {
     public void goalList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "GoalList");
+        showJSPMembers(ar, siteId, pageId, "GoalList.jsp");
     }
 
 
@@ -89,7 +89,7 @@ public class ProjectGoalController extends BaseController {
     public void goalStatus(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "GoalStatus");
+        showJSPMembers(ar, siteId, pageId, "GoalStatus.jsp");
     }
 
 
@@ -151,7 +151,7 @@ public class ProjectGoalController extends BaseController {
     public void decisionList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "DecisionList");
+        showJSPMembers(ar, siteId, pageId, "DecisionList.jsp");
     }
 
 
@@ -790,7 +790,7 @@ public class ProjectGoalController extends BaseController {
     public void taskArea(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "TaskAreas");
+        showJSPMembers(ar, siteId, pageId, "TaskAreas.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.json", method = RequestMethod.GET)
     public void taskAreasJSON(@PathVariable String siteId,@PathVariable String pageId,
@@ -965,35 +965,35 @@ public class ProjectGoalController extends BaseController {
     public void processApps(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "ProcessApps");
+        showJSPMembers(ar, siteId, pageId, "ProcessApps.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessRun.htm", method = RequestMethod.GET)
     public void processRun(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "ProcessRun");
+        showJSPMembers(ar, siteId, pageId, "ProcessRun.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessTasks.htm", method = RequestMethod.GET)
     public void processTasks(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "ProcessTasks");
+        showJSPMembers(ar, siteId, pageId, "ProcessTasks.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/Analytics.htm", method = RequestMethod.GET)
     public void analytics(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "Analytics");
+        showJSPMembers(ar, siteId, pageId, "Analytics.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RulesList.htm", method = RequestMethod.GET)
     public void rulesList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RulesList");
+        showJSPMembers(ar, siteId, pageId, "RulesList.jsp");
     }
     
     private static void addMembersInContacts(AuthRequest ar,

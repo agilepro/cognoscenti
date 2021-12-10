@@ -67,7 +67,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar,siteId,pageId, "Personal");
+        showJSPMembers(ar,siteId,pageId, "Personal.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleManagement.htm", method = RequestMethod.GET)
@@ -75,7 +75,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RoleManagement");
+        showJSPMembers(ar, siteId, pageId, "RoleManagement.jsp");
     }
     
     @RequestMapping(value = "/{siteId}/{pageId}/MultiInvite.htm", method = RequestMethod.GET)
@@ -83,7 +83,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "MultiInvite");
+        showJSPMembers(ar, siteId, pageId, "MultiInvite.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/roleDefine.htm", method = RequestMethod.GET)
@@ -91,7 +91,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RoleDefine");
+        showJSPMembers(ar, siteId, pageId, "RoleDefine.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/roleNomination.htm", method = RequestMethod.GET)
@@ -99,7 +99,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RoleNomination");
+        showJSPMembers(ar, siteId, pageId, "RoleNomination.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleRequest.htm", method = RequestMethod.GET)
@@ -107,7 +107,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RoleRequest");
+        showJSPMembers(ar, siteId, pageId, "RoleRequest.jsp");
     }
 
 
@@ -121,7 +121,7 @@ public class ProjectSettingController extends BaseController {
             streamJSP(ar, "AdminSettings.jsp");
         }
         else {
-            showJSPMembers(ar, siteId, pageId, "AdminSettings");
+            showJSPMembers(ar, siteId, pageId, "AdminSettings.jsp");
         }
     }
     @RequestMapping(value = "/{siteId}/{pageId}/AdminStats.htm", method = RequestMethod.GET)
@@ -130,7 +130,7 @@ public class ProjectSettingController extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerSiteOrProject(ar, siteId, pageId);
-        showJSPMembers(ar, siteId, pageId, "AdminStats");
+        showJSPMembers(ar, siteId, pageId, "AdminStats.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/AdminAPI.htm", method = RequestMethod.GET)
     public void showAdminAPI(@PathVariable String siteId,
@@ -138,7 +138,7 @@ public class ProjectSettingController extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerSiteOrProject(ar, siteId, pageId);
-        showJSPMembers(ar, siteId, pageId, "AdminAPI");
+        showJSPMembers(ar, siteId, pageId, "AdminAPI.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/LabelList.htm", method = RequestMethod.GET)
@@ -147,21 +147,21 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "LabelList");
+        showJSPMembers(ar, siteId, pageId, "LabelList.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/EmailCreated.htm", method = RequestMethod.GET)
     public void getEmailRecordsPage( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "EmailCreated");
+        showJSPMembers(ar, siteId, pageId, "EmailCreated.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/EmailSent.htm", method = RequestMethod.GET)
     public void emailSent( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "EmailSent");
+        showJSPMembers(ar, siteId, pageId, "EmailSent.jsp");
     }
 
 
@@ -169,7 +169,7 @@ public class ProjectSettingController extends BaseController {
     public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "EmailMsg");
+        showJSPMembers(ar, siteId, pageId, "EmailMsg.jsp");
     }
 
 
@@ -177,7 +177,7 @@ public class ProjectSettingController extends BaseController {
     public void streamingLinks(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "StreamingLinks");
+        showJSPMembers(ar, siteId, pageId, "StreamingLinks.jsp");
     }
 
 
@@ -187,7 +187,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "SendNote");
+        showJSPMembers(ar, siteId, pageId, "SendNote.jsp");
     }
 
 
@@ -196,7 +196,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "sendNoteView");
+        showJSPMembers(ar, siteId, pageId, "sendNoteView.jsp");
     }
 
 
@@ -206,7 +206,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "RoleInvite");
+        showJSPMembers(ar, siteId, pageId, "RoleInvite.jsp");
     }
 
 

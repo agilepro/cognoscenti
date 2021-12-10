@@ -186,7 +186,7 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMembers(ar, siteId, pageId, "ReminderEmail");
+            showJSPMembers(ar, siteId, pageId, "ReminderEmail.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.send.email.reminder", new Object[]{pageId,siteId} , ex);
         }
@@ -267,7 +267,7 @@ public class UploadFileController extends BaseController {
                 return;
             }
 
-            showJSPMembers(ar, siteId, pageId, "linkURLToProject");
+            showJSPMembers(ar, siteId, pageId, "linkURLToProject.jsp");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
@@ -286,7 +286,7 @@ public class UploadFileController extends BaseController {
                 return;
             }
 
-            showJSPMembers(ar, siteId, pageId, "linkGoogleDoc");
+            showJSPMembers(ar, siteId, pageId, "linkGoogleDoc.jsp");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
@@ -309,7 +309,7 @@ public class UploadFileController extends BaseController {
 
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("title", ngp.getFullName());
-            showJSPMembers(ar, siteId, pageId, "emailreminder_form");
+            showJSPMembers(ar, siteId, pageId, "emailreminder_form.jsp");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.email.reminder.page", new Object[]{pageId,siteId} , ex);
@@ -359,7 +359,7 @@ public class UploadFileController extends BaseController {
             ReminderMgr mgr = ngw.getReminderMgr();
             ReminderRecord reminderRecord = mgr.findReminderByIDOrFail(rid);
             if (AccessControl.canAccessReminder(ar, ngw, reminderRecord)) {
-                showJSPMembers(ar, siteId, pageId, "remindAttachment");
+                showJSPMembers(ar, siteId, pageId, "remindAttachment.jsp");
                 return;
             }
 
@@ -367,12 +367,12 @@ public class UploadFileController extends BaseController {
                 request.setAttribute("property_msg_key", "You must be logged in to access this page.");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "User "+ar.getUserProfile().getName()+" must be a Member of this workspace to open an document reminder of the Workspace");
-                showJSPMembers(ar, siteId, pageId, "WarningNotMember");
+                showJSPMembers(ar, siteId, pageId, "WarningNotMember.jsp");
             }else {
                 //basically, the reminder should have been display, and we have no idea now why not
                 throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
             }
-            showJSPMembers(ar, siteId, pageId, "Warning");
+            showJSPMembers(ar, siteId, pageId, "Warning.jsp");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.reminder.attachment.page",

@@ -3,6 +3,7 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
@@ -812,5 +813,23 @@ public class CommentRecord extends DOMFace {
 
     }
 
+    public static void sortByTimestamp(List<CommentRecord> list) {
+        list.sort(new CommentTimeComparator());
+        
+    }
+    
+    private static class CommentTimeComparator implements Comparator<CommentRecord> {
 
+        @Override
+        public int compare(CommentRecord arg0, CommentRecord arg1) {
+            long diff = (arg1.getTime() - arg1.getTime());
+            if (diff>0) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        }
+        
+    }
 }

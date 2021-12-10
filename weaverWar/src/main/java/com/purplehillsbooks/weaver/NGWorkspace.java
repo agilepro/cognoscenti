@@ -862,6 +862,28 @@ public class NGWorkspace extends NGPage {
         }
         return com;
     }
+    public List<CommentRecord> getAllComments() throws Exception {
+        List<CommentRecord> res = new ArrayList<CommentRecord>();
+        for (TopicRecord note : this.getAllDiscussionTopics()) {
+            for (CommentRecord comm : note.getComments()) {
+                res.add(comm);
+            }
+        }
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    res.add(comm);
+                }
+            }
+        }
+        for (AttachmentRecord doc : this.getAllAttachments()) {
+            for (CommentRecord comm : doc.getComments()) {
+                    res.add(comm);
+            }
+        }
+        CommentRecord.sortByTimestamp(res);
+        return res;
+    }
 
     public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
 
@@ -1074,5 +1096,7 @@ public class NGWorkspace extends NGPage {
             updateWSSettings(newConfig.getJSONObject("wsSettings"));
         }
     }
+    
+    
     
 }

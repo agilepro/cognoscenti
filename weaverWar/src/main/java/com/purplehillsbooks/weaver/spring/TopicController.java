@@ -51,7 +51,7 @@ public class TopicController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "NotesList");
+        showJSPMembers(ar, siteId, pageId, "NotesList.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{lid}.htm", method = RequestMethod.GET)
@@ -66,7 +66,7 @@ public class TopicController extends BaseController {
            TopicRecord note = ngp.getNoteOrFail(lid);
            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
            if (reallyLoggedIn && canAccessNote) {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom");
+               showJSPMembers(ar, siteId, pageId, "NoteZoom.jsp");
            }
            else if (canAccessNote) {
                //show to people not logged in, but with special key to access it
@@ -75,7 +75,7 @@ public class TopicController extends BaseController {
                streamJSPAnon(ar, "Topic.jsp");
            }
            else {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom");
+               showJSPMembers(ar, siteId, pageId, "NoteZoom.jsp");
            }
        }catch(Exception ex){
            throw new NGException("nugen.operation.fail.project.zoom.note.page", new Object[]{lid,pageId,siteId} , ex);
