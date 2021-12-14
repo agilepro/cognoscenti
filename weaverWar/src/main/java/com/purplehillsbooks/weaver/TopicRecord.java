@@ -106,6 +106,7 @@ public class TopicRecord extends CommentContainer {
     public void addContainerFields(CommentRecord cr) {
         cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
         cr.containerID = getId();
+        cr.containerName = this.getSubject();
     }
 
     public String getId() {
@@ -330,7 +331,6 @@ public class TopicRecord extends CommentContainer {
     public void setChoices(String choices) {
         setScalar("choices", choices);
     }
-
 
 
     /**

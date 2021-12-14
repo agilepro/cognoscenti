@@ -1,5 +1,5 @@
 
-app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt) {
+app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt, $http) {
 
     $scope.cmt = cmt;
 
@@ -7,7 +7,7 @@ app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt) {
     $scope.tinymceOptions.height = 300;
 
     $scope.ok = function () {
-        $modalInstance.close($scope.cmt);
+        saveComment("Y");
     };
 
     $scope.cancel = function () {
@@ -23,5 +23,53 @@ app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt) {
         }
         return "Comment";
     }
+    function getComment() {
+        if ($scope.cmt.time>0) {
+            var getURL = "info/comment?cid="+$scope.cmt.time;
+            console.log("calling: ",getURL);
+            $http.get(getURL)
+            .success( setComment )
+            .error( handleHTTPError );
+        }
+    }
+    function handleHTTPError(data, status, headers, config) {
+        console.log("ERROR in ResponseModel Dialog: ", data);
+    }
+    function setComment(newComment) {
+        console.log("SET COMMENT", newComment);
+        if (!newComment.responses) {
+            newComment.responses = [];
+        }
+        newComment.suppressEmail = (newComment.suppressEmail==true);
+        newComment.choices = ["Consent", "Objection"];
+        if (!newComment.docList) {
+            newComment.docList = [];
+        }
+        if (!newComment.notify) {
+            newComment.notify = [];
+        }
+        newComment.state = 13;
+        $scope.cmt = newComment;
+    }
 
+    function saveComment(closeIt) {
+        console.log("SAVE COMMENT");
+        var updateRec = {};
+        updateRec.time = $scope.cmt.time;
+        updateRec.outcome = $scope.cmt.outcome;
+        updateRec.state = 13;
+        var postdata = angular.toJson(updateRec);
+        var postURL = "info/comment?cid="+$scope.cmt.time;
+        console.log(postURL,updateRec);
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            if ("Y"==closeIt) {
+                $modalInstance.dismiss('ok')
+            }
+            else {
+                setComment(data);
+            }
+        })
+        .error( handleHTTPError );
+    }
 });

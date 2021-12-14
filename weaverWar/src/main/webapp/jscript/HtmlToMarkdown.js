@@ -87,7 +87,6 @@ function HTML2Markdown(html, opts) {
             var attr = attrs[k];
             attributes[attr.name] = attr.value;
         }
-        console.log("ATTRIBS:", attributes);
         return attributes;
     }
 
@@ -112,7 +111,6 @@ function HTML2Markdown(html, opts) {
     }
 
     function removeIfEmptyTag(start) {
-        console.log("removeIfEmptyTag:", nodeList);
         var cleaned = false;
         if(start == peekTillNotEmpty(nodeList)) {
             while(peek(nodeList) != start) {

@@ -49,6 +49,7 @@ Required parameters:
     }
     
     
+    JSONObject workspaceInfo = ngp.getConfigJSON();
     AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
 
     JSONArray linkedMeetings = new JSONArray();
@@ -111,6 +112,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Document Details");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.docId   = "<%=aid%>";
     $scope.docInfo = <% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
@@ -140,29 +142,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
     $scope.primitiveURL = "<%=ar.baseURL%><%ar.writeJS(permaLink);%>";
 
-    $scope.updateComment = function(cmt) {
-        var saveRecord = {};
-        saveRecord.id = $scope.docInfo.id;
-        saveRecord.universalid = $scope.docInfo.universalid;
-        saveRecord.comments = [];
-        saveRecord.comments.push(cmt);
-        $scope.isCreatingComment = false;
-        $scope.savePartial(saveRecord);
-    }
     
-    $scope.savePartial = function(recordToSave) {
-        var postURL = "docsUpdate.json?did="+recordToSave.id;
-        var postdata = angular.toJson(recordToSave);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.docInfo = data;
-            $scope.myComment = "";
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
     $scope.navigateToActionItem = function(act) {
         window.location="task"+act.id+".htm";
     }
@@ -172,109 +152,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToMeeting = function(meet) {
         window.location="meetingHtml.htm?id="+meet.id;
     }
-    $scope.commentTypeName = function(cmt) {
-        if (cmt.commentType==2) {
-            return "Proposal";
-        }
-        if (cmt.commentType==3) {
-            return "Round";
-        }
-        if (cmt.commentType==5) {
-            return "Minutes";
-        }
-        return "Comment";
-    }
 
     $scope.allowCommentEmail = function() {
         return true;
     }
 
-    $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
-        var newComment = {};
-        newComment.time = -1;
-        newComment.commentType = type;
-        newComment.containerType = "A";
-        newComment.containerID = $scope.docInfo.id;
-        newComment.state = 11;
-        newComment.isNew = true;
-        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
-        newComment.user = "<%ar.writeJS(currentUser);%>";
-        newComment.userName = "<%ar.writeJS(currentUserName);%>";
-        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
-        if (replyTo) {
-            newComment.replyTo = replyTo;
-        }
-        if (defaultBody) {
-            newComment.html = defaultBody;
-        }
-        $scope.openCommentEditor(itemNotUsed, newComment);
-    }
 
-    $scope.openCommentEditor = function (itemNotUsed, cmt) {
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function () {
-                  return $scope.siteInfo.key;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            $scope.getDocumentInfo();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.getDocumentInfo();
-        });
-    };
-    
-    
-    
-    $scope.stateStyle = function(cmt) {
-        if (cmt.state==11) {
-            return "background-color:yellow;";
-        }
-        if (cmt.state==12) {
-            return "background-color:#DEF;";
-        }
-        return "background-color:#EEE;";
-    }
-    $scope.stateClass = function(cmt) {
-        if (cmt.state==11) {
-            return "comment-state-draft";
-        }
-        if (cmt.state==12) {
-            return "comment-state-active";
-        }
-        return "comment-state-complete";
-    }
-    $scope.postComment = function(itemNotUsed, cmt) {
-        cmt.state = 12;
-        if (cmt.commentType == 1 || cmt.commentType == 5) {
-            //simple comments go all the way to closed
-            cmt.state = 13;
-        }
-        $scope.updateComment(cmt);
-    }
-    $scope.deleteComment = function(itemNotUsed, cmt) {
-        cmt.deleteMe = true;
-        $scope.updateComment(cmt);
-    }
     $scope.needsUserResponse = function(cmt) {
         if (cmt.state!=12) { //not open
             return false;
@@ -296,15 +179,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
         });
         return selected;
-    }
-    $scope.getFullDoc = function(docId) {
-        var doc = {};
-        $scope.attachmentList.filter( function(item) {
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        return doc;
     }
 
     $scope.assignedLabels = function() {
@@ -412,7 +286,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             window.open("a/"+doc.name,"_blank");
         }
     }
+    $scope.refreshCommentList = function() {
+        $scope.getDocumentInfo();
+    }
+    $scope.extendBackgroundTime = function() {
+        //does not do anything now
+    }
+    $scope.setContainerFields = function(newComment) {
+        newComment.containerType = "A";
+        newComment.containerID = $scope.docId;
+    }
     
+    setUpCommentMethods($scope, $http, $modal);
 });
 
 function copyTheLink() {

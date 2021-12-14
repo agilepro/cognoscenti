@@ -141,7 +141,7 @@ public class UserCache {
             if (up.equals(cr.getUser())) {
                 //first ... is this the owner, and if overdue let them know
                 //If user created this round, then remember that ... because it is still open or draft
-                addRecordToList(openRounds, cr,  aPage, address);
+                addRecordToList(openRounds, cr,  aPage);
             }
 
 
@@ -153,7 +153,7 @@ public class UserCache {
                     //add proposal info if there is no response from this user
                     //seems a bit overkill to have everything, but then,
                     //everything is there for displaying a list...
-                    addRecordToList(proposalList, cr,  aPage, address);
+                    addRecordToList(proposalList, cr,  aPage);
                 }
             }
         }
@@ -161,12 +161,12 @@ public class UserCache {
         //now check to see if there are any draft comments hanging around.
         else if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
             if (up.equals(cr.getUser())) {
-                addRecordToList(openRounds, cr,  aPage, address);
+                addRecordToList(openRounds, cr,  aPage);
             }
         }
     }
 
-    private void addRecordToList(JSONArray list, CommentRecord cr, NGWorkspace aPage, String address) throws Exception {
+    private void addRecordToList(JSONArray list, CommentRecord cr, NGWorkspace aPage) throws Exception {
         JSONObject jo = cr.getJSON();
         String prop = cr.getContent();
         if (prop.length()>100) {
@@ -178,7 +178,7 @@ public class UserCache {
         NGBook site = aPage.getSite();
         jo.put("siteKey", site.getKey());
         jo.put("siteName", site.getFullName());
-        jo.put("address", address+"#cmt"+cr.getTime());
+        jo.put("address", "CommentZoom.htm?cid="+cr.getTime());
         list.put(jo);
     }
 

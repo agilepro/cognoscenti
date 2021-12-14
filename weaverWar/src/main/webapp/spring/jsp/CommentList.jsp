@@ -22,6 +22,7 @@
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
     
     boolean isMember = ar.isMember();
 
@@ -37,40 +38,40 @@
     String currentUserKey = up.getKey();
 
     JSONArray allLabels = ngw.getJSONLabels();
-    
+    boolean canComment = ar.isMember();
+
 
 
 /* NOTES RECORD PROTOTYPE
-    $scope.notes = [
-      {
-        "comments": [
-          {
-            "content": "this is a comment",
-            "time": 1435036060903,
-            "user": "kswenson@us.fujitsu.com"
-          },
-          {
-            "content": "another comment",
-            "time": 1435036329093,
-            "user": "kswenson@us.fujitsu.com"
-          }
-        ],
-        "deleted": false,
-        "docList": [],
-        "draft": false,
-        "html": "<h1>Minutes for Meeting: Status Update for May 19\n<\/h1><p>...\n<\/p>\n",
-        "id": "6314",
-        "labelMap": {},
-        "modTime": 1434492969035,
-        "modUser": {
-          "name": "Keith Swenson",
-          "uid": "kswenson@us.fujitsu.com"
-        },
-        "pin": 0,
-        "public": false,
-        "subject": "Minutes for Meeting: Status Update for May 19",
-        "universalid": "MAPZIUHWG@test-for-john@6314"
-      },
+    $scope.comment = {
+      "choices": [],
+      "commentType": 1,
+      "containerID": "8505",
+      "containerName": "DSC03885.jpg",
+      "containerType": "A",
+      "decision": "",
+      "docList": [],
+      "dueDate": 1639946254880,
+      "emailPending": false,
+      "excludeSelf": false,
+      "html": "<p>\nThis is a comment on a document called  <b>DSC03885.jpg<\/b>\n<\/p>\n<p>\nThis is a picture of Devil's Postpile!\n<\/p>\n<p>\n \n<\/p>\n<p>\n \n<\/p>\n",
+      "includeInMinutes": false,
+      "newPhase": "",
+      "notify": [],
+      "outcome": "",
+      "poll": false,
+      "postTime": 1639341514618,
+      "replies": [],
+      "replyTo": 0,
+      "responses": [],
+      "state": 13,
+      "suppressEmail": false,
+      "time": 1639341464671,
+      "user": "kswenson@pobox.com",
+      "userKey": "j9iyux0nhu6mh9n2",
+      "userName": "Keith ॐ Swenson"
+    };
+
 */
 
 %>
@@ -96,8 +97,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
+    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allComments = <%allComments.write(out,2,4);%>;
+    $scope.canComment = <%=canComment%>;
     $scope.filter = "";
     $scope.showVizPub = true;
     $scope.showVizMem = true;
@@ -116,56 +119,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.getComments = function() {
-        return $scope.allComments;
-    }
-    $scope.openCommentEditor = function (itemNotUsed, cmt) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
+        if (!$scope.filter) {
+            return $scope.allComments;
         }
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return cmt;
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function() {return $scope.siteInfo.key}
+        var retSet = [];
+        var filterlist = parseLCList($scope.filter);
+        $scope.allComments.forEach( function(aCmt) {
+            console.log("looking at "+aCmt.time);
+            if (containsOne(aCmt.html, filterlist)) {
+                retSet.push(aCmt);
             }
         });
-
-        modalInstance.result.then(function (returnedCmt) {
-            refreshCommentList();
-        }, function () {
-            //cancel action - nothing really to do
-            refreshCommentList();
-        });
-    };
-    
-    function extendBackgroundTime() {
+        return retSet;
+    }
+    $scope.extendBackgroundTime = function() {
         //does not do anything now
     }
+    $scope.defaultProposalAssignees = function() {
+        return [];
+    }
+    
+    setUpCommentMethods($scope, $http, $modal);
+
+    
     $scope.allowCommentEmail = function() {
         return true;
     }
-    function refreshCommentList() {
+    $scope.refreshCommentList = function() {
         var postURL = "getCommentList.json";
         console.log("GET:", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
-            console.log("   GOT IT"+ status, data);
             $scope.allComments = data.list;
         })
         .error( function(data, status, headers, config) {
@@ -248,7 +233,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
 
-      <table>
+      <table style="max-width:800px">
         <tr ng-repeat="cmt in getComments()">
           <%@ include file="/spring/jsp/CommentView.jsp"%>          
         </tr>
@@ -262,6 +247,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-<script src="<%=ar.retPath%>templates/CommentModal.js"></script><script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

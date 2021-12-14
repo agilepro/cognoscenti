@@ -179,13 +179,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         
+        //clear from any prior edit sessions
+        $scope.saveNotice = "";
+        
         //fetch the newest, most up to date copy to start editing
         var postURL = "getTopic.json?nid="+$scope.topicId;
         console.log("GET (StartEdit):", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data) {
-            extendBackgroundTime();
+            $scope.extendBackgroundTime();
             $scope.receiveTopicRecord(data);
             $scope.wikiLastSave = $scope.noteInfo.wiki;
             $scope.wikiEditing = $scope.noteInfo.wiki;
@@ -198,7 +201,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.mergeUpdateDoc = function(changeEditing) {
         if (!changeEditing) {
-            extendBackgroundTime();
+            $scope.extendBackgroundTime();
         }
         $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
         
@@ -237,7 +240,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            extendBackgroundTime();
+            $scope.extendBackgroundTime();
             $scope.receiveTopicRecord(data);
         })
         .error( function(data, status, headers, config) {
@@ -250,7 +253,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
-            console.log("   GOT IT"+ status, data);
             $scope.receiveTopicRecord(data);
         })
         .error( function(data, status, headers, config) {
@@ -265,7 +267,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
             console.log("MERGE:", "("+$scope.wikiLastSave+")", "("+$scope.wikiEditing+")", "("+$scope.noteInfo.wiki+")");
             $scope.wikiEditing = Textmerger.get().merge($scope.wikiLastSave, $scope.wikiEditing, $scope.noteInfo.wiki);
-            //console.log("RESULT:", "("+$scope.wikiEditing+")");
         }
         else {
             $scope.wikiEditing = $scope.noteInfo.wiki;
@@ -276,13 +277,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.receiveTopicRecord = function(data) {
-        //console.log("RECEIVE TOPIC:", data);
         $scope.noteInfo = data;
         if (data.wiki) {
             if ($scope.isEditing) {
                 if (data.wiki.trim() != $scope.wikiEditing.trim()) {
                     $scope.changesToMerge = true;
-                    //console.log("CHANGES TO MERGE: ", "("+data.wiki+")", "("+$scope.wikiEditing+")");
                 }
             }
             else {
@@ -304,36 +303,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.refreshHistory();
     }
 
-    $scope.postComment = function(itemNotUsed, cmt) {
-        cmt.state = 12;
-        if (cmt.commentType == 1 || cmt.commentType == 5) {
-            //simple comments go all the way to closed
-            cmt.state = 13;
-        }
-        $scope.updateComment(cmt);
-    }
-    $scope.deleteComment = function(itemNotUsed, cmt) {
-        cmt.deleteMe = true;
-        $scope.updateComment(cmt);
-    }
-    $scope.closeComment = function(itemNotUsed, cmt) {
-        if (cmt.commentType>1) {
-            if (cmt.state!=13) {
-                $scope.openOutcomeEditor(cmt);
-            }
-        }
-        else {
-            $scope.updateComment(cmt);
-        }
-    }
-    $scope.updateComment = function(cmt) {
-        var saveRecord = {};
-        saveRecord.id = $scope.topicId;
-        saveRecord.universalid = $scope.noteInfo.universalid;
-        saveRecord.comments = [];
-        saveRecord.comments.push(cmt);
-        $scope.savePartial(saveRecord);
-    }
     $scope.saveDocs = function() {
         var saveRecord = {};
         saveRecord.id = $scope.topicId;
@@ -355,7 +324,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            extendBackgroundTime();
+            $scope.extendBackgroundTime();
             $scope.myComment = "";
             $scope.receiveTopicRecord(data);
         })
@@ -427,14 +396,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return selected;
     }
 
-    $scope.startResponse = function(cmt) {
-        if (!$scope.canComment) {
-            alert("You must be logged in to ceate a response");
-            return;
-        }
-        $scope.openResponseEditor(cmt)
-    }
-
     $scope.getComments = function() {
         var res = [];
         if ($scope.noteInfo.comments) {
@@ -448,18 +409,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return res;
     }
 
-    $scope.commentTypeName = function(cmt) {
-        if (cmt.commentType==2) {
-            return "Proposal";
-        }
-        if (cmt.commentType==3) {
-            return "Round";
-        }
-        if (cmt.commentType==5) {
-            return "Minutes";
-        }
-        return "Comment";
-    }
     $scope.refreshHistory = function() {
         var postURL = "getNoteHistory.json?nid="+$scope.topicId;
         $scope.showError=false;
@@ -478,36 +427,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.toggleLabel = function(label) {
         $scope.noteInfo.labelMap[label.name] = !$scope.noteInfo.labelMap[label.name];
         $scope.saveLabels();
-    }
-    $scope.stateStyle = function(cmt) {
-        if (cmt.state==11) {
-            return "background-color:yellow;";
-        }
-        if (cmt.state==12) {
-            return "background-color:#DEF;";
-        }
-        return "background-color:#EEE;";
-    }
-    $scope.stateClass = function(cmt) {
-        if (cmt.commentType==6) {
-            return "comment-phase-change";
-        }
-        if (cmt.state==11) {
-            return "comment-state-draft";
-        }
-        if (cmt.state==12) {
-            return "comment-state-active";
-        }
-        return "comment-state-complete";
-    }
-    $scope.stateName = function(cmt) {
-        if (cmt.state==11) {
-            return "Draft";
-        }
-        if (cmt.state==12) {
-            return "Active";
-        }
-        return "Completed";
     }
     $scope.calcDueDisplay = function(cmt) {
         if (cmt.commentType==1 || cmt.commentType==4) {
@@ -535,12 +454,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return "due in "+diff+" weeks";
     }
 
-    $scope.createModifiedProposal = function(cmt) {
-        $scope.openCommentCreator({},2,cmt.time,cmt.html);  //proposal
-    }
-    $scope.replyToComment = function(cmt) {
-        $scope.openCommentCreator({},1,cmt.time);  //simple comment
-    }
 
     $scope.phaseNames = {
         "Draft": "Draft",
@@ -607,165 +520,25 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     }
 
-
-    $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-        if (!$scope.canComment) {
-            alert("You must be logged in to ceate a response");
-            return;
-        }
-        var newComment = {};
-        newComment.time = -1;
+    $scope.defaultProposalAssignees = function() {
+        return $scope.noteInfo.subscribers;
+    }
+    $scope.refreshCommentList = function() {
+        refreshTopic();
+    }
+    $scope.setContainerFields = function(newComment) {
         newComment.containerType = "T";
         newComment.containerID = $scope.topicId;
-        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
-        newComment.commentType = type;
-        newComment.state = 11;
-        newComment.isNew = true;
-        newComment.user = "<%ar.writeJS(currentUser);%>";
-        newComment.userName = "<%ar.writeJS(currentUserName);%>";
-        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
-        newComment.responses = [];
-        if (type==2 || type==3) {
-            $scope.noteInfo.subscribers.forEach( function(item) {
-                newComment.responses.push({
-                    "choice": "None",
-                    "html": "",
-                    "user": item.uid,
-                    "key": item.key,
-                    "userName": item.name,
-                });
-            });
-        }
-        
-        if (replyTo) {
-            newComment.replyTo = replyTo;
-        }
-        if (defaultBody) {
-            newComment.html = defaultBody;
-        }
-        $scope.openCommentEditor({}, newComment);
     }
+    setUpCommentMethods($scope, $http, $modal);
 
 
-    $scope.openCommentEditor = function (itemNotUsed, cmt) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return cmt;
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function() {return $scope.siteInfo.key}
-            }
-        });
 
-        modalInstance.result.then(function (returnedCmt) {
-            refreshTopic();
-        }, function () {
-            //cancel action - nothing really to do
-            refreshTopic();
-        });
-    };
 
-    $scope.openResponseEditor = function (cmt, user) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
-            return;
-        }
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html<%=templateCacheDefeater%>',
-            controller: 'ModalResponseCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                responseUser: function () {
-                    return user;
-                },
-                cmtId: function () {
-                    return cmt.time;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (response) {
-            refreshTopic();
-        }, function () {
-            //cancel action - nothing really to do
-            refreshTopic();
-        });
-    };
-
-    $scope.removeResponse =  function(cmt,resp) {
-        extendBackgroundTime();
-        if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
-            return;
-        }
-        cmt.responses.forEach( function(item) {
-            if (item.user == resp.user) {
-                item.removeMe = true;
-            }
-        });
-        $scope.updateComment(cmt);
-    }
-
-    $scope.openOutcomeEditor = function (cmt) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
-            controller: 'OutcomeModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                }
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.outcome = returnedCmt.outcome;
-            cleanCmt.state = 13;    //close
-            cleanCmt.commentType = returnedCmt.commentType;
-            $scope.updateComment(cleanCmt);
-        }, function () {
-            //cancel action - nothing really to do
-        });
-    };
 
 
     $scope.createDecision = function(newDecision) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
@@ -776,7 +549,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var postData = angular.toJson(newDecision);
         $http.post(postURL, postData)
         .success( function(data) {
-            extendBackgroundTime();
+            $scope.extendBackgroundTime();
             var relatedComment = data.sourceCmt;
             $scope.noteInfo.comments.map( function(cmt) {
                 if (cmt.time == relatedComment) {
@@ -792,7 +565,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
 
     $scope.openDecisionEditor = function (itemNotUsed, cmt) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
@@ -844,21 +617,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return res;
     }
 
-    $scope.getFullDoc = function(docId) {
-        var doc;
-        $scope.attachmentList.forEach( function(item) {
-            console.log("   considering id="+item.universalid);
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        if (!doc) {
-            console.log("Could not find document with id="+docId);
-        }
-        else {
-            return doc;
-        }
-    }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
         window.location="DocDetail.htm?aid="+doc.id;
@@ -882,7 +640,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.saveEdits(['docList']);
     }
     $scope.openAttachDocument = function () {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Documents can not be attached in a frozen workspace.");
@@ -914,7 +672,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
 
     $scope.openAttachAction = function (item) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Action items can not be attached in a frozen workspace.");
@@ -944,7 +702,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
     $scope.openFeedbackModal = function (item) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         
         var attachModalInstance = $modal.open({
             animation: true,
@@ -990,6 +748,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         console.log("AUTOSAVE:  refreshing for "+remainingSeconds+" more seconds");
+        $scope.saveNotice = "Saved at "+new Date().toLocaleTimeString();
         if ($scope.isEditing) {
             if (!$scope.lastAuto) {
                 $scope.lastAuto = {};
@@ -1006,29 +765,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 return;
             }
             $scope.mergeUpdateDoc(true);
-            
-            //it is NOT idle so mark it thus
-            /*  i think this is not needed??
-            $scope.autoIdleCount = 0;
-            $scope.lastAuto.html = $scope.noteInfo.html;
-            $scope.lastAuto.subject = $scope.noteInfo.subject;
-            saveRecord = {};
-            saveRecord.saveMode = "autosave";
-            saveRecord.subject = $scope.noteInfo.subject;
-            saveRecord.id = $scope.topicId;
-            saveRecord.universalid = $scope.noteInfo.universalid;
-            var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
-            var postdata = angular.toJson(saveRecord);
-            //for autosave ... don't complain about errors
-            $http.post(postURL ,postdata)
-            .success( function(data) {
-                $scope.receiveTopicRecord(data);
-                console.log("AUTOSAVE succeeded at "+new Date());
-            })
-            .error( function(data) {
-                console.log("AUTOSAVE FAILED", data);
-            });
-            */
         }
         else {
             refreshTopic();
@@ -1038,11 +774,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         console.log("BACKGROUND cancelled");
         $scope.bgActiveLimit = 0;  //already past
     }
-    function extendBackgroundTime() {
+    $scope.extendBackgroundTime = function() {
         console.log("BACKGROUND time extended");
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
-    extendBackgroundTime();
+    $scope.extendBackgroundTime();
     $scope.promiseAutosave = $interval($scope.autosave, 15000);
 
     $scope.loadPersonList = function(query) {
@@ -1160,6 +896,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)">Close Editor</button>
         <button ng-show="changesToMerge" class="btn btn-warning btn-raised" 
             ng-click="mergeFromOthers()">Merge Edits from other Users</button>
+            {{saveNotice}}
     </div>
 <% } %>
 

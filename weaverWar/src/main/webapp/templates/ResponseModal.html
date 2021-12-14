@@ -12,11 +12,7 @@
 
 <div class="modal-body">
     <div class="leafContent">
-        <div class="comment-inner" ng-bind-html="cmt.html" style="max-height:200px;overflow: auto"></div>
-    </div>
-    <div class="form-inline form-group" style="padding:10px;" ng-show="cmt.commentType==2">
-        Choice:  <select class="form-control" ng-model="response.choice"
-            ng-options="onch as onch for onch in cmt.choices"></select>
+        <div ng-bind-html="cmt.html" style="max-height:200px;overflow: auto"></div>
     </div>
     <div class="leafContent">
     	<div ui-tinymce="tinymceOptions" ng-model="response.html" 
@@ -24,10 +20,8 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button ng-show="reponse.isNew" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Create</button>
-    <button ng-hide="reponse.isNew" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Save</button>
+    <button ng-repeat="choice in choices" class="btn btn-primary btn-raised"
+        type="button" ng-click="ok(choice)">{{choice}}</button>
     <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
         Cancel</button>
 </div>

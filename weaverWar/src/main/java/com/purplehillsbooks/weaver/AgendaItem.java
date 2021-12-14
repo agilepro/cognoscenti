@@ -16,7 +16,7 @@ public class AgendaItem extends CommentContainer {
     public static final int STATUS_MID  = 2;
     public static final int STATUS_POOR = 3;
     
-    public String meetingId = "";
+    public MeetingRecord meeting;
 
 
     public AgendaItem(Document doc, Element ele, DOMFace p) {
@@ -40,13 +40,18 @@ public class AgendaItem extends CommentContainer {
             clearLock();
         }
     }
+    public void setMeeting(MeetingRecord m) {
+        meeting = m;
+    }
 
 
     //This is a callback from container to set the specific fields
     public void addContainerFields(CommentRecord cr) {
         cr.containerType = CommentRecord.CONTAINER_TYPE_MEETING;
-        cr.containerID = meetingId+":"+getId();
+        cr.containerID = meeting.getId()+":"+getId();
+        cr.containerName = meeting.getName()+":"+getSubject();
     }
+    
 
     public String getId() {
         return getAttribute("id");
@@ -240,7 +245,6 @@ public class AgendaItem extends CommentContainer {
     public void mergeMinutes(String oldMins, String newMins) {
         mergeScalar("minutes", oldMins, newMins);
     }
-    
     
     /**
      * full JSON representation including all comments, etc.

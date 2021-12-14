@@ -35,6 +35,7 @@ public class CommentRecord extends DOMFace {
 
     public char containerType = '?';
     public String containerID = "";
+    public String containerName = "unknown";
 
     public CommentRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
@@ -636,6 +637,7 @@ public class CommentRecord extends DOMFace {
             throw new Exception("getHtmlJSON requires an AuthRequest object with a NGP member set");
         }
         JSONObject commInfo = getJSON();
+        commInfo.put("containerName", containerName);
         commInfo.put("html", getContentHtml(ar));
         commInfo.put("outcome", getOutcomeHtml(ar));
         JSONArray responseArray = new JSONArray();
@@ -812,6 +814,33 @@ public class CommentRecord extends DOMFace {
         }
 
     }
+    
+    /*
+    public String findContainerName(NGWorkspace ngw) throws Exception {
+        if ('M' == containerType) {
+            int pos = containerID.indexOf(":");
+            if (pos<0) {
+                throw new Exception("Meeting ID must contain a colon.  Got: "+containerID);
+            }
+            String meetID = containerID.substring(0, pos);
+            String agendaID = containerID.substring(pos+1);
+            MeetingRecord mr = ngw.findMeeting(meetID);
+            AgendaItem ai = mr.findAgendaItem(agendaID);
+            return mr.getName()+":"+ai.getSubject();
+            
+        }
+        else if ('T' == containerType) {
+            TopicRecord tr = ngw.getDiscussionTopic(containerID);
+            return tr.getSubject();
+        }
+        else if ('A' == containerType) {
+            AttachmentRecord att = ngw.findAttachmentByIDOrFail(containerID);
+            return att.getDisplayName();
+        }
+        throw new Exception("Don't know how to get name for container type: "+containerType);
+    }
+*/
+    
 
     public static void sortByTimestamp(List<CommentRecord> list) {
         list.sort(new CommentTimeComparator());
@@ -822,12 +851,15 @@ public class CommentRecord extends DOMFace {
 
         @Override
         public int compare(CommentRecord arg0, CommentRecord arg1) {
-            long diff = (arg1.getTime() - arg1.getTime());
+            long diff = (arg1.getTime() - arg0.getTime());
             if (diff>0) {
                 return 1;
             }
-            else {
+            else if (diff<0) {
                 return -1;
+            }
+            else {
+                return 0;
             }
         }
         

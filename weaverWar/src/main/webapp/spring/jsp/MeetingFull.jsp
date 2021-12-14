@@ -245,7 +245,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
       <span class="dropdown" title="Control the way people see this meeting." 
             ng-hide="meeting.state<=0">
           <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
-          State: {{stateName()}} <span class="caret"></span></button>
+          State: {{meetingStateName()}} <span class="caret"></span></button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
             <li role="presentation"><a role="menuitem" 
                 title="Use DRAFT to set the meeting without any notifications going out"

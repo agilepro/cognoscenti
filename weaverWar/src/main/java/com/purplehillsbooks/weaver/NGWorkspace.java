@@ -827,8 +827,6 @@ public class NGWorkspace extends NGPage {
         for (TopicRecord note : this.getAllDiscussionTopics()) {
             for (CommentRecord comm : note.getComments()) {
                 if (comm.getTime()==cid) {
-                    comm.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
-                    comm.containerID = note.getId();
                     return comm;
                 }
             }
@@ -837,8 +835,6 @@ public class NGWorkspace extends NGPage {
             for (AgendaItem ai : meet.getAgendaItems()) {
                 for (CommentRecord comm : ai.getComments()) {
                     if (comm.getTime()==cid) {
-                        comm.containerType = CommentRecord.CONTAINER_TYPE_MEETING;
-                        comm.containerID = meet.getId()+":"+ai.getId();
                         return comm;
                     }
                 }
@@ -847,8 +843,6 @@ public class NGWorkspace extends NGPage {
         for (AttachmentRecord doc : this.getAllAttachments()) {
             for (CommentRecord comm : doc.getComments()) {
                 if (comm.getTime()==cid) {
-                    comm.containerType = CommentRecord.CONTAINER_TYPE_ATTACHMENT;
-                    comm.containerID = doc.getId();
                     return comm;
                 }
             }
@@ -878,11 +872,50 @@ public class NGWorkspace extends NGPage {
         }
         for (AttachmentRecord doc : this.getAllAttachments()) {
             for (CommentRecord comm : doc.getComments()) {
-                    res.add(comm);
+                res.add(comm);
             }
         }
         CommentRecord.sortByTimestamp(res);
         return res;
+    }
+    
+    public void deleteComment(long cid) throws Exception {
+        CommentRecord foundComment = null;
+        for (TopicRecord note : this.getAllDiscussionTopics()) {
+            for (CommentRecord comm : note.getComments()) {
+                if (comm.getTime()==cid) {
+                    foundComment = comm;
+                }
+            }
+            if (foundComment != null) {
+                note.deleteComment(cid);
+                return;
+            }
+        }
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    if (comm.getTime()==cid) {
+                        foundComment = comm;
+                    }
+                }
+                if (foundComment != null) {
+                    ai.deleteComment(cid);
+                    return;
+                }
+            }
+        }
+        for (AttachmentRecord doc : this.getAllAttachments()) {
+            for (CommentRecord comm : doc.getComments()) {
+                if (comm.getTime()==cid) {
+                    foundComment = comm;
+                }
+            }
+            if (foundComment != null) {
+                doc.deleteComment(cid);
+                return;
+            }
+        }
     }
 
     public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {

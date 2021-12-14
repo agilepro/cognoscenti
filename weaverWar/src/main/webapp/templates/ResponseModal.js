@@ -43,6 +43,12 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         $scope.cmt = newComment;
         $scope.cmtOriginal = JSON.parse(JSON.stringify(newComment));
         $scope.response = {"user":$scope.responseUser};
+        if (newComment.commentType == 2) {
+            $scope.choices = newComment.choices;
+        }
+        else {
+            $scope.choices = ["Save Response"];
+        }
         newComment.responses.forEach( function(item) {
             if ($scope.responseUser == item.user) {
                 $scope.response = item;
@@ -57,7 +63,8 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     $scope.tinymceOptions.height = 300;
 
 
-    $scope.ok = function () {
+    $scope.ok = function (choice) {
+        $scope.response.choice = choice;
         saveComment("Y");
     };
 

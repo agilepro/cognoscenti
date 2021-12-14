@@ -29,7 +29,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
     $scope.meetings = [];
-    $scope.wsProxy.getMeetingList(data => {$scope.meetings = data.meetings; console.log("GOT IT", $scope.meetings)});
+    $scope.wsProxy.getMeetingList(data => {$scope.meetings = data.meetings});
     
     $scope.getMeetings = function() {
         return $scope.meetings;

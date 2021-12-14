@@ -256,7 +256,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.saveAgendaItem(item);
     }
 
-    $scope.stateName = function() {
+    $scope.meetingStateName = function() {
         if ($scope.meeting.state<=0) {
             return "Draft";
         }
@@ -962,61 +962,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
 
-    $scope.stateStyle = function(cmt) {
-        if (cmt.state==11) {
-            return "background-color:yellow;";
-        }
-        if (cmt.state==12) {
-            return "background-color:#DEF;";
-        }
-        return "background-color:#EEE;";
-    }
-    $scope.stateClass = function(cmt) {
-        if (cmt.commentType==6) {
-            return "comment-phase-change";
-        }
-        if (cmt.state==11) {
-            return "comment-state-draft";
-        }
-        if (cmt.state==12) {
-            return "comment-state-active";
-        }
-        return "comment-state-complete";
-    }
-    $scope.commentTypeName = function(cmt) {
-        if (cmt.commentType==2) {
-            return "Proposal";
-        }
-        if (cmt.commentType==3) {
-            return "Round";
-        }
-        if (cmt.commentType==5) {
-            return "Minutes";
-        }
-        return "Comment";
-    }
-    $scope.postComment = function(item, cmt) {
-        cmt.state = 12;
-        if (cmt.commentType == 1 || cmt.commentType == 5 ) {
-            //simple comments & minutes go all the way to closed
-            cmt.state = 13;
-        }
-        $scope.saveComment(item, cmt);
-    }
-    $scope.deleteComment = function(item, cmt) {
-        cmt.deleteMe = true;
-        $scope.saveComment(item, cmt);
-    }
-    $scope.closeComment = function(item, cmt) {
-        cmt.state = 13;
-        if (cmt.commentType>1) {
-            $scope.openOutcomeEditor(item, cmt);
-        }
-        else {
-            $scope.saveComment(item, cmt);
-        }
-    }
-
     $scope.getMyResponse = function(cmt) {
         cmt.choices = ["Consent", "Objection"]
         var selected = [];
@@ -1258,12 +1203,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     };
 
-    $scope.replyToComment = function(item,cmt) {
-        item.newComment = {};
-        item.newComment.myReplyTo = cmt.time;
-        item.newComment.myPoll = false;
-    }
-
     $scope.findComment = function(item, timeStamp) {
         var foundComment = null;
         if (item) {
@@ -1320,15 +1259,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var whatNot = $scope.getResponse(cmt, userId);
         return (whatNot!=null);
     }
-    $scope.updateResponse = function(cmt, response) {
-        var selected = cmt.responses.filter( function(item) {
-            return item.user!=SLAP.loginInfo.userId;
-        });
-        selected.push(response);
-        cmt.responses = selected;
-        //should pass the agent item so we can just save it....
-        $scope.saveMeeting();
-    }
     $scope.moveItem = function(item,amt) {
         var thisPos = item.position;
         var otherPos = thisPos + amt;
@@ -1347,78 +1277,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.saveMeeting();
     }
 
-    $scope.openResponseEditor = function (cmt, userId) {
 
-        if (cmt.choices.length==0) {
-            cmt.choices = ["Consent", "Objection"];
-            if (cmt.choices[1]=="Object") {
-                cmt.choices[1]="Objection";
-            }
-        }
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: embeddedData.retPath+"templates/ResponseModal.html"+templateCacheDefeater,
-            controller: 'ModalResponseCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                responseUser: function () {
-                    return userId;
-                },
-                cmtId: function () {
-                    return cmt.time;
-                }
-            }
-        });
-
-        modalInstance.result.then(function () {
-            $scope.refreshMeetingPromise();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.refreshMeetingPromise();
-        });
-    };
-    $scope.removeResponse =  function(cmt,resp) {
-        if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
-            return;
-        }
-        cmt.responses.forEach( function(item) {
-            if (item.user == resp.user) {
-                item.removeMe = true;
-            }
-        });
-        $scope.updateComment(cmt);
-    }
 
     $scope.commentItemBeingEdited = 0;
-    $scope.updateComment = function(cmt) {
-        var agendaItem = null;
-        $scope.meeting.agenda.forEach( function(ai) {
-            if (hasComment(ai,cmt)) {
-                agendaItem = ai;
-            }
-        });
-        if (agendaItem) {
-            $scope.saveComment(agendaItem, cmt);
-        }
-        else if ($scope.commentItemBeingEdited) {
-            //this is needed for the comment CREATE case
-            $scope.saveComment($scope.commentItemBeingEdited, cmt);
-        }
-        else {
-            console.log("DID NOT find an agenda item for comment", cmt);
-        }
-    }
-    function hasComment(ai,cmt) {
-        var foundIt = false;
-        ai.comments.forEach( function(item) {
-            if (item.time == cmt.time) {
-                foundIt = true;
-            }
-        });
-        return foundIt;
-    }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
         $scope.selectedPerson = tag;
@@ -1433,100 +1294,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.allowCommentEmail = function() {
         return ($scope.meeting.state>0);
     }
-
-    $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
-        
-        var newComment = {};
-        newComment.time = -1;
-        newComment.commentType = type;
-        newComment.containerType = "M";
-        newComment.containerID = $scope.meetId + ":" + item.id;
-        newComment.state = 11;
-        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
-        newComment.isNew = true;
-        newComment.user = SLAP.loginInfo.userId;
-        newComment.userName = SLAP.loginInfo.userName;
-        newComment.userKey = AllPeople.findUserKey(SLAP.loginInfo.userId, $scope.siteInfo.key);
-        if (replyTo) {
-            newComment.replyTo = replyTo;
-        }
-        if (defaultBody) {
-            newComment.html = defaultBody;
-        }
-        newComment.responses = [];
-        if (type==2 || type==3) {
-            var selRole = $scope.getMeetingParticipants();
-            selRole.forEach( function(item) {
-                newComment.responses.push({
-                    "choice": "None",
-                    "html": "",
-                    "user": item.uid,
-                    "key": item.key,
-                    "userName": item.name,
-                });
-            });
-        }
-        $scope.openCommentEditor(item, newComment);
-    }
-
-    $scope.openCommentEditor = function (item, cmt) {
-        $scope.commentItemBeingEdited = item;
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: embeddedData.retPath+"templates/CommentModal.html"+templateCacheDefeater+"?sss",
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function() {return $scope.siteInfo.key}
-            }
-        });
-
-        modalInstance.result.then(function () {
-            $scope.refreshMeetingPromise();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.refreshMeetingPromise();
-        });
-    };
-
-    $scope.openOutcomeEditor = function (item, cmt) {
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: embeddedData.retPath+"templates/OutcomeModal.html"+templateCacheDefeater,
-            controller: 'OutcomeModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            keyboard: false,
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                }
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.outcome = returnedCmt.outcome;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.commentType = returnedCmt.commentType;
-            $scope.saveComment(item, cleanCmt);
-        }, function () {
-            //cancel action - nothing really to do
-        });
-    };
 
 
 
@@ -1582,15 +1349,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     };
 
 
-    $scope.getFullDoc = function(docId) {
-        var doc = {};
-        $scope.attachmentList.filter( function(item) {
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        return doc;
-    }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
         window.location="DocDetail.htm?aid="+doc.id;
@@ -1984,6 +1742,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.reportError(data);
         });
     }
+    
+    $scope.setContainerFields = function(newComment) {
+        newComment.containerType = "A";
+        newComment.containerID = $scope.docId;
+    }
+    console.log("ABOUT TO CALL the setup ");
+    setUpCommentMethods($scope, $http, $modal);
 });
 
 function calcResponders(slots, AllPeople, siteId) {

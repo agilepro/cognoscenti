@@ -173,6 +173,8 @@ SLAP.queryTheServer = function() {
 };
 
 SLAP.queryTheProvider = function() {
+    console.log("###queryTheProvider");
+    console.trace()
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiWho";
     pUrl = SLAP.addSessionParameter(pUrl);
     SLAP.getJSON(pUrl, function(data) {

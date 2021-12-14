@@ -150,36 +150,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     
-    $scope.stateStyle = function(cmt) {
-        if (cmt.state==11) {
-            return "background-color:yellow;";
-        }
-        if (cmt.state==12) {
-            return "background-color:#DEF;";
-        }
-        return "background-color:#EEE;";
-    }
-    $scope.stateClass = function(cmt) {
-        if (cmt.state==11) {
-            return "comment-state-draft";
-        }
-        if (cmt.state==12) {
-            return "comment-state-active";
-        }
-        return "comment-state-complete";
-    }
-    $scope.postComment = function(itemNotUsed, cmt) {
-        cmt.state = 12;
-        if (cmt.commentType == 1 || cmt.commentType == 5) {
-            //simple comments go all the way to closed
-            cmt.state = 13;
-        }
-        $scope.updateComment(cmt);
-    }
-    $scope.deleteComment = function(itemNotUsed, cmt) {
-        cmt.deleteMe = true;
-        $scope.updateComment(cmt);
-    }
     $scope.needsUserResponse = function(cmt) {
         if (cmt.state!=12) { //not open
             return false;
@@ -201,15 +171,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
         });
         return selected;
-    }
-    $scope.getFullDoc = function(docId) {
-        var doc = {};
-        $scope.attachmentList.filter( function(item) {
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        return doc;
     }
 
     $scope.assignedLabels = function() {

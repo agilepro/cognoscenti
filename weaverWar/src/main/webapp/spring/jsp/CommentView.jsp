@@ -1,5 +1,277 @@
 <!-- begin CommentView.jsp -->
 
+<script>
+function setUpCommentMethods($scope, $http, $modal) {
+    console.log("SETTING UP");
+    $scope.openCommentCreator = function(itemNotUsed, type, replyComment, defaultBody) {
+        $scope.extendBackgroundTime();
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
+        if (!<%=ar.isMember()%>) {
+            alert("You must be a member of workspace to make a comment.");
+            return;
+        }
+        var newComment = {};
+        newComment.time = -1;
+        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
+        newComment.commentType = type;
+        newComment.state = 11;
+        newComment.isNew = true;
+        newComment.user = "<%ar.writeJS(currentUser);%>";
+        newComment.userName = "<%ar.writeJS(currentUserName);%>";
+        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
+        newComment.responses = [];
+        $scope.setContainerFields(newComment);
+        if (type==2 || type==3) {
+            $scope.defaultProposalAssignees().forEach( function(item) {
+                newComment.responses.push({
+                    "choice": "None",
+                    "html": "",
+                    "user": item.uid,
+                    "key": item.key,
+                    "userName": item.name,
+                });
+            });
+        }
+        
+        if (replyComment) {
+            newComment.replyTo = replyComment.time;
+            newComment.containerID = replyComment.containerID;
+            newComment.containerType = replyComment.containerType;
+        }
+        if (defaultBody) {
+            newComment.html = defaultBody;
+        }
+        $scope.openCommentEditor({}, newComment);
+    }
+    
+    $scope.openCommentEditor = function (itemNotUsed, cmt) {
+        $scope.extendBackgroundTime();
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
+            controller: 'CommentModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                cmt: function () {
+                    return cmt;
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.docSpaceURL;
+                },
+                parentScope: function() { return $scope; },
+                siteId: function() {return $scope.siteInfo.key}
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            $scope.refreshCommentList();
+        }, function () {
+            //cancel action - nothing really to do
+            $scope.refreshCommentList();
+        });
+    };
+    
+    $scope.openResponseEditor = function (cmt, user) {
+        console.log("STARTOMG");
+        $scope.extendBackgroundTime();
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
+            return;
+        }
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html<%=templateCacheDefeater%>',
+            controller: 'ModalResponseCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                responseUser: function () {
+                    return user;
+                },
+                cmtId: function () {
+                    return cmt.time;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            $scope.refreshCommentList();
+        }, function () {
+            //cancel action - nothing really to do
+            $scope.refreshCommentList();
+        });
+    };
+    $scope.openOutcomeEditor = function (cmt) {
+        $scope.extendBackgroundTime();
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
+            controller: 'OutcomeModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            $scope.refreshCommentList();
+        }, function () {
+            $scope.refreshCommentList();
+        });
+    };
+
+    $scope.stateStyle = function(cmt) {
+        if (cmt.state==11) {
+            return "background-color:yellow;";
+        }
+        if (cmt.state==12) {
+            return "background-color:#DEF;";
+        }
+        return "background-color:#EEE;";
+    }
+    $scope.stateClass = function(cmt) {
+        if (cmt.commentType==6) {
+            return "comment-phase-change";
+        }
+        if (cmt.state==11) {
+            return "comment-state-draft";
+        }
+        if (cmt.state==12) {
+            return "comment-state-active";
+        }
+        return "comment-state-complete";
+    }
+    $scope.cmtStateName = function(cmt) {
+        if (cmt.state==11) {
+            return "Draft";
+        }
+        if (cmt.state==12) {
+            return "Active";
+        }
+        return "Completed";
+    }
+    $scope.createModifiedProposal = function(cmt) {
+        $scope.openCommentCreator({},2,cmt.time,cmt.html);  //proposal
+    }
+    $scope.replyToComment = function(cmt) {
+        $scope.openCommentCreator({},1,cmt.time);  //simple comment
+    }
+    
+    $scope.deleteComment = function(cmt) {
+        if (!confirm("Are you sure you want to delete this?   (No UNDO)")) {
+            return;
+        }
+        var newCmt = {};
+        newCmt.time = cmt.time;
+        newCmt.deleteMe = true;
+        $scope.updateComment(newCmt);
+    }
+    $scope.closeComment = function(itemNotUsed, cmt) {
+        if (cmt.commentType>1) {
+            if (cmt.state!=13) {
+                $scope.openOutcomeEditor(cmt);
+            }
+        }
+    }
+    $scope.removeResponse =  function(cmt,resp) {
+        $scope.extendBackgroundTime();
+        if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
+            return;
+        }
+        cmt.responses.forEach( function(item) {
+            if (item.user == resp.user) {
+                item.removeMe = true;
+            }
+        });
+        $scope.updateComment(cmt);
+    }
+    $scope.updateComment = function(cmt) {
+        console.log("updateComment.json");
+        var postdata = angular.toJson(cmt);
+        var postURL = "updateComment.json?cid="+cmt.time;
+        console.log(postURL,cmt);
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.refreshCommentList();
+        })
+        .error( function(data) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.postComment = function(itemNotUsed, cmt) {
+        cmt.state = 12;
+        if (cmt.commentType == 1 || cmt.commentType == 5) {
+            //simple comments go all the way to closed
+            cmt.state = 13;
+        }
+        $scope.updateComment(cmt);
+    }
+
+    $scope.commentTypeName = function(cmt) {
+        if (cmt.commentType==2) {
+            return "Proposal";
+        }
+        if (cmt.commentType==3) {
+            return "Round";
+        }
+        if (cmt.commentType==5) {
+            return "Minutes";
+        }
+        return "Comment";
+    }
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+
+    $scope.containerLink = function(cmt) {
+        if (cmt.containerType=="M") {
+            var colonPos = cmt.containerID.indexOf(":");
+            var meetingId = cmt.containerID.substring(0,colonPos);
+            var agendaItem = cmt.containerID.substring(colonPos+1);
+            return "meetingHtml.htm?id="+meetingId+"&mode=Items&ai="+agendaItem;
+        }
+        else if (cmt.containerType=="T") {
+            return "noteZoom"+cmt.containerID+".htm"
+        }
+        else if (cmt.containerType=="A") {
+            return "DocDetail.htm?aid="+cmt.containerID;
+        }
+        else {
+            console.log("Sorry, I can't understand this comment", cmt);
+        }
+    }
+
+}
+</script>
+
+
+
   <td style="width:50px;vertical-align:top;padding:15px;">
     <img id="cmt{{cmt.time}}" class="img-circle" title="{{cmt.userName}} - {{cmt.user}}" style="height:35px;width:35px;" 
          ng-src="<%=ar.retPath%>/icon/{{cmt.userKey}}.jpg" alt="{{cmt.user|limitTo : 8}}" >
@@ -21,15 +293,15 @@
             <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="deleteComment(item, cmt)">
+              <a role="menuitem" ng-click="deleteComment(cmt)">
               Delete {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.state==12">
               <a role="menuitem" ng-click="closeComment(item, cmt)">Close {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.commentType==1">
-              <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">
+              <a role="menuitem" ng-click="openCommentCreator(item,1,cmt)">
               Reply</a></li>
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">
+              <a role="menuitem" ng-click="openCommentCreator(item,2,cmt,cmt.html)">
               Make Modified Proposal</a></li>
             <li role="presentation">
               <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">
@@ -37,13 +309,13 @@
             </ul>
           </div>
 
-        <span ng-show="cmt.commentType==1" title="{{stateName(cmt)}} Comment">
+        <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
           <i class="fa fa-comments-o" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==2" title="{{stateName(cmt)}} Proposal">
+        <span ng-show="cmt.commentType==2" title="{{cmtStateName(cmt)}} Proposal">
           <i class="fa fa-star-o" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==3" title="{{stateName(cmt)}} Round">
+        <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
           <i class="fa fa-question-circle" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
+        <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
           <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                &nbsp; 
         <span title="Created {{cmt.dueDate|cdate}}"
@@ -56,7 +328,7 @@
         <span ng-show="cmt.replyTo">
           <span ng-show="cmt.commentType==1">
             In reply to                 
-            <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+            <a style="border-color:white;" href="CommentZoom.htm?cid={{cmt.replyTo}}">
               <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
           </span>
           <span ng-show="cmt.commentType>1">Based on
@@ -68,7 +340,8 @@
               ng-click="openCommentEditor(item,cmt)"> [+minutes] </span>
         <span ng-show="cmt.commentType==6" style="color:green">
             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
-        <span style="float:right" ><a href="CommentZoom.htm?cid={{cmt.time}}"><i class="fa fa-external-link"></i></a></span>
+        <span style="float:right" >&nbsp;<a href="CommentZoom.htm?cid={{cmt.time}}"><i class="fa fa-external-link"></i></a></span>
+        <span style="float:right" >&nbsp;<a href="{{containerLink(cmt)}}"><i class="fa fa-bullseye"></i></a></span>
         <span style="float:right;color:green;" title="Due {{cmt.dueDate|cdate}}">{{calcDueDisplay(cmt)}}</span>
         <div style="clear:both"></div>
       </div>
@@ -101,7 +374,7 @@
                 <i class="fa fa-edit"></i></a>
             </span>
           </td>
-          <td style="padding:5px;">
+          <td style="padding:5px;" ng-dblclick="openResponseEditor(cmt, resp.user)">
             <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
           </td>
           <td ng-click="removeResponse(cmt,resp)" ng-show="cmt.state==12" >
@@ -144,7 +417,7 @@
       <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
         See replies:
         <span ng-repeat="reply in cmt.replies">
-          <a href="#cmt{{reply}}" >
+          <a href="CommentZoom.htm?cid={{reply}}" >
             <i class="fa fa-comments-o"></i> {{findComment(item,reply).userName}}
           </a>
         </span>
@@ -157,4 +430,9 @@
     </div>
   </td>
    
+   
+
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>   
 <!-- end CommentView.jsp -->

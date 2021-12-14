@@ -43,10 +43,15 @@ public abstract class CommentContainer extends DOMFace {
         super(definingDoc, definingElement, new_ngs);
     }
 
-
-    public List<CommentRecord> getComments()  throws Exception {
-        return getChildren("comment", CommentRecord.class);
+    //subclasses must implement this
+    public List<CommentRecord> getComments() throws Exception {
+        List<CommentRecord> chilluns = getChildren("comment", CommentRecord.class);
+        for (CommentRecord comm : chilluns){
+            addContainerFields(comm);
+        }
+        return chilluns;
     }
+    
     public CommentRecord findComment(long timestamp)  throws Exception {
         for (CommentRecord cr : getComments()) {
             if (cr.getTime() == timestamp) {

@@ -167,14 +167,14 @@
           "use": ["DocDetail.jsp", "DocsRevise.jsp"],
           "href":"DocsRevise.htm?aid={{docId}}",
           "name":"Versions",
-          "title":"List and upload new versions of this document",
+          "title":"List versions of this document",
           "readOnly": true
         },
         {
           "use": ["DocDetail.jsp", "DocsRevise.jsp"],
           "href":"SendNote.htm?att={{docId}}",
           "name":"Send Email",
-          "title":"List and upload new versions of this document"
+          "title":"Send email with this document attached"
         }
       ],
       "useOpts": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
@@ -239,6 +239,13 @@
           "href":"EmailSent.htm",
           "name":"Sent",
           "title":"Create a new email message to send",
+          "readOnly": true
+        },
+        {
+          "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp", "CommentList.jsp", "CommentZoom.jsp"],
+          "href":"CommentList.htm",
+          "name":"Comments",
+          "title":"View all the comments in this workspace",
           "readOnly": true
         }
       ],

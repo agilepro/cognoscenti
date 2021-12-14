@@ -6,6 +6,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     var isLinkToComment = ( window.location.href.indexOf("#")>0 );
     
     $scope.siteInfo = embeddedData.siteInfo;
+    $scope.workspaceInfo = embeddedData.workspaceInfo;
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
     $scope.meeting = {rollCall:[],agenda:[],participants:[]};
@@ -254,7 +255,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveAgendaItem(item);
     }
 
-    $scope.stateName = function() {
+    $scope.meetingStateName = function() {
         if ($scope.meeting.state<=0) {
             return "Draft";
         }
@@ -591,7 +592,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
         promise.success( function(data) {
             if (readyToSave) {
-                extendBackgroundTime();
+                $scope.extendBackgroundTime();
             }
             setMeetingData(data);
         });
@@ -847,11 +848,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         console.log("BACKGROUND cancelled");
         $scope.bgActiveLimit = 0;  //already past
     }
-    function extendBackgroundTime() {
+    $scope.extendBackgroundTime = function() {
         console.log("BACKGROUND time extended ("+(++$scope.extendCount)+" times) because user click");
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
-    extendBackgroundTime();
+    $scope.extendBackgroundTime();
     $scope.refresh = function() {
         var currentTime = (new Date().getTime());
         var remainingSeconds = ($scope.bgActiveLimit - currentTime)/1000;
@@ -1035,69 +1036,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
 
-    $scope.saveComment = function(item, cmt) {
-        var itemCopy = {};
-        itemCopy.id = item.id;
-        itemCopy.comments = [];
-        itemCopy.comments.push(cmt);
-        $scope.saveAgendaItem(itemCopy);
-    }
-
-
-    $scope.stateStyle = function(cmt) {
-        if (cmt.state==11) {
-            return "background-color:yellow;";
-        }
-        if (cmt.state==12) {
-            return "background-color:#DEF;";
-        }
-        return "background-color:#EEE;";
-    }
-    $scope.stateClass = function(cmt) {
-        if (cmt.commentType==6) {
-            return "comment-phase-change";
-        }
-        if (cmt.state==11) {
-            return "comment-state-draft";
-        }
-        if (cmt.state==12) {
-            return "comment-state-active";
-        }
-        return "comment-state-complete";
-    }
-    $scope.commentTypeName = function(cmt) {
-        if (cmt.commentType==2) {
-            return "Proposal";
-        }
-        if (cmt.commentType==3) {
-            return "Round";
-        }
-        if (cmt.commentType==5) {
-            return "Minutes";
-        }
-        return "Comment";
-    }
-    $scope.postComment = function(item, cmt) {
-        cmt.state = 12;
-        if (cmt.commentType == 1 || cmt.commentType == 5 ) {
-            //simple comments & minutes go all the way to closed
-            cmt.state = 13;
-        }
-        $scope.saveComment(item, cmt);
-    }
-    $scope.deleteComment = function(item, cmt) {
-        cmt.deleteMe = true;
-        $scope.saveComment(item, cmt);
-    }
-    $scope.closeComment = function(item, cmt) {
-        cmt.state = 13;
-        if (cmt.commentType>1) {
-            $scope.openOutcomeEditor(item, cmt);
-        }
-        else {
-            $scope.saveComment(item, cmt);
-        }
-    }
 
     $scope.getMyResponse = function(cmt) {
         cmt.choices = ["Consent", "Objection"]
@@ -1300,7 +1238,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openModalActionItem = function (item, goal, start) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         if (!start) {
             start = 'status';
         }
@@ -1388,12 +1326,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
     $scope.constructAllCheckItems();
 
-    $scope.replyToComment = function(item,cmt) {
-        item.newComment = {};
-        item.newComment.myReplyTo = cmt.time;
-        item.newComment.myPoll = false;
-    }
-
     $scope.findComment = function(item, timeStamp) {
         var foundComment = null;
         if (item) {
@@ -1450,15 +1382,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         var whatNot = $scope.getResponse(cmt, userId);
         return (whatNot!=null);
     }
-    $scope.updateResponse = function(cmt, response) {
-        var selected = cmt.responses.filter( function(item) {
-            return item.user!=SLAP.loginInfo.userId;
-        });
-        selected.push(response);
-        cmt.responses = selected;
-        //should pass the agent item so we can just save it....
-        $scope.saveMeeting();
-    }
     $scope.moveItem = function(item,amt) {
         var thisPos = item.position;
         var otherPos = thisPos + amt;
@@ -1477,39 +1400,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveMeeting();
     }
 
-    $scope.openResponseEditor = function (cmt, userId) {
-        extendBackgroundTime();
-        
-        if (cmt.choices.length==0) {
-            cmt.choices = ["Consent", "Objection"];
-            if (cmt.choices[1]=="Object") {
-                cmt.choices[1]="Objection";
-            }
-        }
 
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: embeddedData.retPath+"templates/ResponseModal.html"+templateCacheDefeater,
-            controller: 'ModalResponseCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                responseUser: function () {
-                    return userId;
-                },
-                cmtId: function () {
-                    return cmt.time;
-                }
-            }
-        });
-
-        modalInstance.result.then(function () {
-            $scope.refreshMeetingPromise();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.refreshMeetingPromise();
-        });
-    };
     $scope.removeResponse =  function(cmt,resp) {
         if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
             return;
@@ -1565,107 +1456,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         return ($scope.meeting.state>0);
     }
 
-    $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
-        extendBackgroundTime();
-        
-        var newComment = {};
-        newComment.time = -1;
-        newComment.commentType = type;
-        newComment.containerType = "M";
-        newComment.containerID = $scope.meetId + ":" + item.id;
-        newComment.state = 11;
-        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
-        newComment.isNew = true;
-        newComment.user = SLAP.loginInfo.userId;
-        newComment.userName = SLAP.loginInfo.userName;
-        newComment.userKey = AllPeople.findUserKey(SLAP.loginInfo.userId, $scope.siteInfo.key);
-        if (replyTo) {
-            newComment.replyTo = replyTo;
-        }
-        if (defaultBody) {
-            newComment.html = defaultBody;
-        }
-        newComment.responses = [];
-        if (type==2 || type==3) {
-            var selRole = $scope.getMeetingParticipants();
-            selRole.forEach( function(item) {
-                newComment.responses.push({
-                    "choice": "None",
-                    "html": "",
-                    "user": item.uid,
-                    "key": item.key,
-                    "userName": item.name,
-                });
-            });
-        }
-        $scope.openCommentEditor(item, newComment);
-    }
-
-    $scope.openCommentEditor = function (item, cmt) {
-        extendBackgroundTime();
-        $scope.commentItemBeingEdited = item;
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: embeddedData.retPath+"templates/CommentModal.html"+templateCacheDefeater+"?sss",
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function() {return $scope.siteInfo.key}
-            }
-        });
-
-        modalInstance.result.then(function () {
-            $scope.refreshMeetingPromise();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.refreshMeetingPromise();
-        });
-    };
-
-    $scope.openOutcomeEditor = function (item, cmt) {
-        extendBackgroundTime();
-
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: embeddedData.retPath+"templates/OutcomeModal.html"+templateCacheDefeater,
-            controller: 'OutcomeModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            keyboard: false,
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                }
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.outcome = returnedCmt.outcome;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.commentType = returnedCmt.commentType;
-            $scope.saveComment(item, cleanCmt);
-        }, function () {
-            //cancel action - nothing really to do
-        });
-    };
-
 
 
     $scope.openDecisionEditor = function (item, cmt) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         var newDecision = {
             html: cmt.html,
@@ -1717,15 +1511,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
 
-    $scope.getFullDoc = function(docId) {
-        var doc = {};
-        $scope.attachmentList.forEach( function(item) {
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        return doc;
-    }
     $scope.getSelectedDocList = function(docId) {
         var doc = [];
         $scope.attachmentList.forEach( function(item) {
@@ -1760,7 +1545,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveAgendaItemParts(item, ['docList']);
     }
     $scope.openAttachDocument = function (item) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1789,7 +1574,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAttachTopics = function (item) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1817,7 +1602,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
     $scope.openAttachAction = function (item) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1862,7 +1647,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAgenda = function (agendaItem, display) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         
         var displayMode = 'Settings';
         if (display) {
@@ -1962,7 +1747,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.refreshMeetingPromise(); 
 
     $scope.openEditor = function() {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         if ($scope.meeting.state < 1) {
             alert("Post the meeting before entering any minutes / notes.");
             return;
@@ -2122,7 +1907,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.savePartialMeeting(["attended"]);
     }
     $scope.changeMeetingMode = function(newMode) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         $scope.displayMode=newMode;
         let stateObj = {
             foo: newMode
@@ -2153,7 +1938,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     
     $scope.openNotesDialog = function (agendaItem) {
-        extendBackgroundTime();
+        $scope.extendBackgroundTime();
         
         var notesModalInstance = $modal.open({
             animation: true,
@@ -2196,7 +1981,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
         return found;
     }
-    
+     $scope.setContainerFields = function(newComment) {
+        newComment.containerType = "M";
+        newComment.containerID = $scope.meetId+":"+$scope.selectedItem.id;
+    }
+    $scope.refreshCommentList = function() {
+        $scope.refreshMeetingPromise(true);
+    }
+
+    setUpCommentMethods($scope, $http, $modal);
+   
 });
 
 function calcResponders(slots, AllPeople, siteId) {

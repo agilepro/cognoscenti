@@ -209,27 +209,6 @@ public class AttachmentRecord extends CommentContainer {
         return name.equalsIgnoreCase(dName);
     }
 
-    /*
-    public void updateActualFile(String oldName, String newName) throws Exception
-    {
-        if (container==null) {
-            throw new Exception("ProjectAttachment record has not be innitialized correctly, there is no container setting.");
-        }
-        File projectFolder = container.containingFolder;
-        File docFile = new File(projectFolder, oldName);
-        File newFile = new File(projectFolder, newName);
-        if (docFile.exists()) {
-            //this will fail if the file already exists.
-            docFile.renameTo(newFile);
-        }
-        else {
-            //it is possible that user is 'fixing' the project by changing the name of an attachment
-            //record to the name of an existing file.  IF this is the case, there may have been a
-            //record of an "extra" file.  This will eliminate that.
-            container.removeExtrasByName(newName);
-        }
-    }
-    */
 
     public String getLicensedAccessURL(AuthRequest ar, NGWorkspace ngp, String licenseId)
             throws Exception {
@@ -447,32 +426,7 @@ public class AttachmentRecord extends CommentContainer {
         return null;
     }
 
-    /**
-     * In some versioning schemes, there is a 'checked-out' copy of the file that
-     * is the working version -- the user can modify that directly.  This gets
-     * a version object pointing to it.
-     *
-     * Returns null if versioning system does not have working copy.
-     */
-    /*
-    private AttachmentVersion getWorkingCopy(NGWorkspace ngc) throws Exception {
-        AttachmentVersion highest = getHighestCommittedVersion(ngc);
-        int ver = 0;
-        if (highest!=null) {
-            ver = highest.getNumber();
-        }
-        File projectFolder = ((NGWorkspace)ngc).containingFolder;
-        String attachName = getDisplayName();
-        for (File testFile : projectFolder.listFiles())
-        {
-            String testName = testFile.getName();
-            if (attachName.equalsIgnoreCase(testName)) {
-                return new AttachmentVersion(this, testFile, ver+1, true, true);
-            }
-        }
-        return null;
-    }
-    */
+
 
     public AttachmentVersion getHighestCommittedVersion(NGWorkspace ngc) throws Exception {
         List<AttachmentVersion> list = getVersions(ngc);
@@ -486,74 +440,6 @@ public class AttachmentRecord extends CommentContainer {
         }
         return highest;
     }
-
-    /**
-     * OLD checkin checkout capabilities have been removed
-     */
-    /*
-    public void commitWorkingCopy(NGWorkspace ngc) throws Exception {
-        File projectFolder = ((NGWorkspace)ngc).containingFolder;
-        if (!projectFolder.exists()) {
-            throw new Exception("Strange, this workspace's folder does not exist.  "
-                    + "Something must be wrong: "+projectFolder);
-        }
-        File cogFolder = new File(projectFolder,".cog");
-        if (!cogFolder.exists()) {
-            //this might be the first thing in the COG folder
-            cogFolder.mkdirs();
-        }
-        if (!cogFolder.exists()) {
-            throw new Exception("Unable to create the COG folder: "+cogFolder);
-        }
-        AttachmentVersion workCopy = getWorkingCopy(ngc);
-        String attachmentId = getId();
-        String fileExtension = getFileExtension();
-        File tempCogFile = File.createTempFile("~newP_"+attachmentId, fileExtension, cogFolder);
-        File workFile = workCopy.getLocalFile();
-        StreamHelper.copyFileToFile(workFile, tempCogFile);
-
-        //rename the special copy to have the right version number
-        String specialVerFileName = "att"+attachmentId+"-"+Integer.toString(workCopy.getNumber())
-                +fileExtension;
-        File specialVerFile = new File(cogFolder, specialVerFileName);
-        if (!tempCogFile.renameTo(specialVerFile)) {
-            throw new NGException("nugen.exception.unable.to.rename.temp.file",
-                new Object[]{tempCogFile,specialVerFile});
-        }
-    }
-    */
-
-
-    /**
-     * OLD checkin checkout capabilities have been removed
-     */
-    /*
-    public boolean hasUncommittedChanges( List<AttachmentVersion> list) {
-        AttachmentVersion externalCopy = null;
-        AttachmentVersion latestInternal = null;
-        int ver = -1;
-        for (AttachmentVersion av : list) {
-            if (av.isWorkingCopy()) {
-                externalCopy = av;
-            }
-            else if (av.getNumber()>ver) {
-                ver = av.getNumber();
-                latestInternal = av;
-            }
-        }
-        if (externalCopy==null) {
-            //no external, nothing to commit
-            return false;
-        }
-        if (latestInternal == null) {
-            //external, but no internal, then you need commit
-            return true;
-        }
-        long externalLen = externalCopy.getFileSize();
-        long internalLen = latestInternal.getFileSize();
-        return (externalLen != internalLen);
-    }
-    */
 
     /**
      * Provide an input stream to the contents of the new version, and this
@@ -958,8 +844,8 @@ public class AttachmentRecord extends CommentContainer {
     public void setPurgeDate(long val) {
         setAttributeLong("purgeDate", val);
     }
-
-
+    
+    
     public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGWorkspace ngp, List<String> docUIDs) throws Exception {
         JSONArray attachInfo = new JSONArray();
         for (String docUID : docUIDs) {
@@ -1209,8 +1095,9 @@ public class AttachmentRecord extends CommentContainer {
 
     //This is a callback from container to set the specific fields
     public void addContainerFields(CommentRecord cr) {
-        cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
+        cr.containerType = CommentRecord.CONTAINER_TYPE_ATTACHMENT;
         cr.containerID = this.getId();
+        cr.containerName = this.getNiceName();
     }
 
 

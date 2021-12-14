@@ -138,7 +138,7 @@ public class MeetingRecord extends DOMFace {
     public List<AgendaItem> getAgendaItems() throws Exception {
         List<AgendaItem> ret = getChildren("agenda", AgendaItem.class);
         for (AgendaItem ai : ret) {
-            ai.meetingId = this.getId();
+            ai.setMeeting(this);
         }
         return ret;
     }
@@ -164,7 +164,7 @@ public class MeetingRecord extends DOMFace {
     }
     public AgendaItem createAgendaItem(NGWorkspace ngp) throws Exception {
         AgendaItem ai = createChildWithID("agenda", AgendaItem.class, "id", ngp.getUniqueOnPage());
-        ai.meetingId = this.getId();
+        ai.setMeeting(this);
         ai.setPosition(99999);   //position it at the end
         return ai;
     }

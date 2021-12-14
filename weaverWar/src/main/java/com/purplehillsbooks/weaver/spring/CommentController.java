@@ -20,8 +20,6 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,7 +66,7 @@ public class CommentController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to get discussion topic information");
+            ar.assertMember("must be a member to get comment");
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
             CommentRecord topic = ngw.getCommentOrFail(cid);
 
@@ -87,7 +85,7 @@ public class CommentController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to get discussion topic information");
+            ar.assertMember("must be a member to get comment list");
             
             JSONArray allComments = new JSONArray();
             for (CommentRecord cmt : ngw.getAllComments()) {
@@ -100,6 +98,34 @@ public class CommentController extends BaseController {
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to get list of all comments", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/updateComment.json", method = RequestMethod.POST)
+    public void updateComment(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        long cid = 0;
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertMember("must be a member to update comment");
+            JSONObject postObject = this.getPostedObject(ar);
+            cid = Mel.safeConvertLong(ar.reqParam("cid"));
+            if (postObject.has("deleteMe")) {
+                ngw.deleteComment(cid);
+                sendJson(ar, new JSONObject().put("delete", "success"));
+            }
+            else {
+                CommentRecord topic = ngw.getCommentOrFail(cid);
+                topic.updateFromJSON(postObject, ar);
+    
+                JSONObject repo = topic.getHtmlJSON(ar);
+                sendJson(ar, repo);
+            }
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update comment ("+cid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -180,10 +206,10 @@ public class CommentController extends BaseController {
             throw new Exception("Creating a comment requires a POST of JSON parameters");
         }
         
-        String containerType = postObject.getString("containerType");
+        char containerType = postObject.getString("containerType").charAt(0);
         String containerID   = postObject.getString("containerID");
         CommentRecord cr = null;
-        if ("M".equals(containerType)) {
+        if ('M' == containerType) {
             int pos = containerID.indexOf(":");
             if (pos<0) {
                 throw new Exception("Meeting ID must contain a colon.  Got: "+containerID);
@@ -195,11 +221,11 @@ public class CommentController extends BaseController {
             cr = ai.addComment(ar);
             
         }
-        else if ("T".equals(containerType)) {
+        else if ('T' == containerType) {
             TopicRecord tr = ngw.getDiscussionTopic(containerID);
             cr = tr.addComment(ar);
         }
-        else if ("A".equals(containerType)) {
+        else if ('A' == containerType) {
             AttachmentRecord att = ngw.findAttachmentByIDOrFail(containerID);
             cr = att.addComment(ar);
         }
@@ -209,7 +235,6 @@ public class CommentController extends BaseController {
         return cr;
     }
     
-
 
 }
 

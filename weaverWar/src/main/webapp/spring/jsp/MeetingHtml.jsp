@@ -14,6 +14,8 @@
     ar.assertLoggedIn("Meeting page designed for people logged in");
     ar.setPageAccessLevels(ngw);
     
+    JSONObject workspaceInfo = ngw.getConfigJSON();
+    
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
@@ -209,6 +211,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 embeddedData.mode     = "<%ar.writeJS(mode);%>";
+embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 
 
@@ -278,7 +281,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
     <div class="upRightOptions rightDivContent">
       <button class="btn btn-default btn-raised" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'">
-          State: {{stateName()}}</button>
+          State: {{meetingStateName()}}</button>
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>

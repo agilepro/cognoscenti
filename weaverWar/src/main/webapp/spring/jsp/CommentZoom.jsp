@@ -22,6 +22,7 @@
     JSONObject comment = selectedComment.getHtmlJSON(ar);
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
     
     boolean isMember = ar.isMember();
 
@@ -37,40 +38,12 @@
     String currentUserKey = up.getKey();
 
     JSONArray allLabels = ngw.getJSONLabels();
-    
+    boolean canComment = ar.isMember();
+
 
 
 /* NOTES RECORD PROTOTYPE
-    $scope.notes = [
-      {
-        "comments": [
-          {
-            "content": "this is a comment",
-            "time": 1435036060903,
-            "user": "kswenson@us.fujitsu.com"
-          },
-          {
-            "content": "another comment",
-            "time": 1435036329093,
-            "user": "kswenson@us.fujitsu.com"
-          }
-        ],
-        "deleted": false,
-        "docList": [],
-        "draft": false,
-        "html": "<h1>Minutes for Meeting: Status Update for May 19\n<\/h1><p>...\n<\/p>\n",
-        "id": "6314",
-        "labelMap": {},
-        "modTime": 1434492969035,
-        "modUser": {
-          "name": "Keith Swenson",
-          "uid": "kswenson@us.fujitsu.com"
-        },
-        "pin": 0,
-        "public": false,
-        "subject": "Minutes for Meeting: Status Update for May 19",
-        "universalid": "MAPZIUHWG@test-for-john@6314"
-      },
+
 */
 
 %>
@@ -90,14 +63,17 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    window.setMainPageTitle("All Comments List");
+    window.setMainPageTitle("Comment Detail");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
+    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.comment = <%comment.write(out,2,4);%>;
+    $scope.canComment = <%=canComment%>;
+    $scope.cid = <%= cid %>;
     $scope.filter = "";
     $scope.showVizPub = true;
     $scope.showVizMem = true;
@@ -118,62 +94,41 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.getComments = function() {
         return [$scope.comment];
     }
-    $scope.openCommentEditor = function (itemNotUsed, cmt) {
-        extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
-            controller: 'CommentModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return cmt;
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                },
-                parentScope: function() { return $scope; },
-                siteId: function() {return $scope.siteInfo.key}
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            refreshCommentList();
-        }, function () {
-            //cancel action - nothing really to do
-            refreshCommentList();
-        });
-    };
-    
-    function extendBackgroundTime() {
+    $scope.extendBackgroundTime = function() {
         //does not do anything now
     }
+    $scope.defaultProposalAssignees = function() {
+        return [];
+    }
+    $scope.setContainerFields = function(newComment) {
+        newComment.containerType = $scope.comment.containerType;
+        newComment.containerID = $scope.comment.containerID;
+    }
+    
+    setUpCommentMethods($scope, $http, $modal);
+    $scope.deleteComment = function(cmt) {
+        //single page cant handle this
+        alert("In this mode comment delete is not allowed.  Instead, go to "
+        +"the place where the comment is listed and delete there");
+    }
+    
     $scope.allowCommentEmail = function() {
         return true;
     }
-    function refreshCommentList() {
-        var postURL = "getCommentList.json";
+    $scope.refreshCommentList = function() {
+        console.log("REFRESHING single comment");
+        var postURL = "getComment.json?cid="+$scope.cid;
         console.log("GET:", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
-            console.log("   GOT IT"+ status, data);
-            $scope.allComments = data.list;
+            $scope.comment = data;
         })
         .error( function(data, status, headers, config) {
             console.log("   FAILED"+ status, data);
             $scope.reportError(data);
         });
     }
-    
 });
 
 </script>
@@ -219,6 +174,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </style>
 
     <div style="height:20px;"></div>
+    
+      <table class="table" style="max-width:600px">
+        <tr>
+          <td>Container Key</td>
+          <td>{{comment.containerType}}:{{comment.containerID}}</td>
+        </tr>
+        <tr>
+          <td>Container Name</td>
+          <td><a href="{{containerLink(comment)}}">{{comment.containerName}}</a></td>
+        </tr>
+        <tr ng-show="comment.replyTo">
+          <td>Reply To</td>
+          <td><a href="CommentZoom.htm?cid={{comment.replyTo}}">Comment {{comment.replyTo|date}}</a></td>
+        </tr>
+        <tr ng-repeat="reply in comment.replies">
+          <td>Reply</td>
+          <td><a href="CommentZoom.htm?cid={{reply}}">Comment {{reply|date}}</a></td>
+        </tr>
+      </table>
 
       <table>
         <tr ng-repeat="cmt in getComments()">
@@ -230,10 +204,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
        
 </div>
 
+    <div style="height:200px;"></div>
+    
 
 
 
-
-<script src="<%=ar.retPath%>templates/CommentModal.js"></script><script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
