@@ -2,7 +2,6 @@
 
 <script>
 function setUpCommentMethods($scope, $http, $modal) {
-    console.log("SETTING UP");
     $scope.openCommentCreator = function(itemNotUsed, type, replyComment, defaultBody) {
         $scope.extendBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
@@ -37,6 +36,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         }
         
         if (replyComment) {
+            console.log("This is a REPLY");
             newComment.replyTo = replyComment.time;
             newComment.containerID = replyComment.containerID;
             newComment.containerType = replyComment.containerType;
@@ -83,7 +83,6 @@ function setUpCommentMethods($scope, $http, $modal) {
     };
     
     $scope.openResponseEditor = function (cmt, user) {
-        console.log("STARTOMG");
         $scope.extendBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
@@ -206,7 +205,6 @@ function setUpCommentMethods($scope, $http, $modal) {
         $scope.updateComment(cmt);
     }
     $scope.updateComment = function(cmt) {
-        console.log("updateComment.json");
         var postdata = angular.toJson(cmt);
         var postURL = "updateComment.json?cid="+cmt.time;
         console.log(postURL,cmt);

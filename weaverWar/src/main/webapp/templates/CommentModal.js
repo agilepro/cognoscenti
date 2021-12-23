@@ -51,6 +51,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         updateRec.dueDate = $scope.cmt.dueDate;
         updateRec.html = $scope.cmt.html;
         updateRec.responses = $scope.cmt.responses;
+        updateRec.replyTo = $scope.cmt.replyTo;
+        updateRec.containerID = $scope.cmt.containerID;
+        updateRec.containerType = $scope.cmt.containerType;
         $scope.responders.forEach( function(userRec) {
             var found = false;
             $scope.oldCmt.responses.forEach( function(oldItem) {

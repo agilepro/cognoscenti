@@ -305,8 +305,8 @@ public class CommentRecord extends DOMFace {
     public String getDecision() {
         return getScalar("decision");
     }
-    public void setDecision(String replies) {
-        setScalar("decision", replies);
+    public void setDecision(String decision) {
+        setScalar("decision", decision);
     }
 
     public boolean getSuppressEmail() {
@@ -652,7 +652,7 @@ public class CommentRecord extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
-
+        NGWorkspace ngw = (NGWorkspace) ar.ngp;
         if (input.has("html")) {
             String html = input.getString("html");
             setContentHtml(ar, html);
@@ -685,7 +685,13 @@ public class CommentRecord extends DOMFace {
             }
         }
         if (input.has("replyTo")) {
-            setReplyTo(input.getLong("replyTo"));
+            long source = input.getLong("replyTo");
+            setReplyTo(source);
+            ngw.assureRepliesSet(source, this.getTime());
+        }
+        if (input.has("replies")) {
+            //this should probably never be used, but left in just in case
+            setReplies(constructVectorLong(input.getJSONArray("replies")));
         }
         if (input.has("postTime")) {
             setPostTime(input.getLong("postTime"));
@@ -695,9 +701,6 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("dueDate")) {
             setDueDate(input.getLong("dueDate"));
-        }
-        if (input.has("replies")) {
-            setReplies(constructVectorLong(input.getJSONArray("replies")));
         }
         if (input.has("decision")) {
             setDecision(input.getString("decision"));

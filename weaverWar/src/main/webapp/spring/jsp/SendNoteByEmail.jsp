@@ -242,27 +242,6 @@ Optional Parameters:
                         <td><input id="includeFilesCheckBox" type="checkbox" name="includeFiles"> Actually send files as attachments to the email (unprotected)</td>
                     </tr>
 
-<%
-    String overrideAddress = EmailSender.getProperty("overrideAddress");
-    if (overrideAddress!=null && overrideAddress.length()>0) {
-%>
-                    <tr><td style="height:30px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader" valign="top">Override Address Active:</td>
-                        <td style="width:20px;"></td>
-                        <td>Note: this server is configured in email test mode.  Messages will be composed to
-                            users and participants having different email addresses, but the messages will
-                            not actually be sent there!  Instead, all email from this server will actually
-                            be sent to the override address (<b><% ar.writeHtml(overrideAddress); %></b>).
-                            This is configured in the WEB-INF/EmailNotification.properties file by
-                            giving a value to the 'overrideAddress' property.   Leave this property
-                            empty in order to take the server out of test mode, into production mode,
-                            where it actually sends email to the actual addresses.</td>
-                    </tr>
-<%
-    }
-%>
-
 
                     <tr><td style="height:30px"></td></tr>
                     <tr>

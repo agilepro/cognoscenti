@@ -1,5 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailListener"
+%><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@ include file="/spring/jsp/include.jsp"
 %>
 <div class="content tab01" style="display:block;" >
@@ -34,8 +35,22 @@
                 <td><%=EmailSender.getProperty("automated.email.delay")%></td>
             </tr>
             <tr>
-                <td>overrideAddress</td>
-                <td><%=EmailSender.getProperty("overrideAddress")%></td>
+                <td>Last Email Send</td>
+                <td><%=SectionUtil.getDateAndTime(EmailSender.lastEmailProcessTime)%></td>
+            </tr>
+            <tr>
+                <td>Number of Email Sent</td>
+                <td><%=EmailSender.emailSendCount%></td>
+            </tr>
+            <tr>
+                <td>Last Email Error Time</td>
+                <td><%=SectionUtil.getDateAndTime(EmailSender.lastEmailFailureTime)%></td>
+            </tr>
+            <tr>
+                <td>Last Email Error</td>
+                <td><pre><% if (EmailSender.lastEmailSendFailure!=null) { 
+                    JSONException.traceException(out,EmailSender.lastEmailSendFailure, "EMAIL FAILURE"); }
+                %></pre></td>
             </tr>
         </table>
 

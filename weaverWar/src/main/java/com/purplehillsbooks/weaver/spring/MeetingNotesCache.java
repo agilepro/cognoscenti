@@ -4,7 +4,9 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AgendaItem;
 import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.CustomRole;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGRole;
@@ -139,7 +141,7 @@ public class MeetingNotesCache {
         NoteHolder nh = cacheMeeting(ngw,ar,meetingId);
         return nh.fullObject;
     }
-
+    
 
     private NoteHolder cacheMeeting(NGWorkspace ngw, AuthRequest ar,
             String meetingId) throws Exception {

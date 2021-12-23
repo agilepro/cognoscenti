@@ -18,8 +18,11 @@
     JSONObject siteInfo = ngb.getConfigJSON();
     siteInfo.put("frozen", ngb.isFrozen());
     
-    CommentRecord selectedComment = ngw.getCommentOrFail(cid);
-    JSONObject comment = selectedComment.getHtmlJSON(ar);
+    CommentRecord selectedComment = ngw.getCommentOrNull(cid);
+    JSONObject comment = new JSONObject();
+    if (selectedComment!=null) {
+        comment = selectedComment.getHtmlJSON(ar);
+    }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
@@ -72,6 +75,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.comment = <%comment.write(out,2,4);%>;
+    $scope.commentExists = <%=selectedComment!=null%>;
     $scope.canComment = <%=canComment%>;
     $scope.cid = <%= cid %>;
     $scope.filter = "";
@@ -92,7 +96,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.getComments = function() {
-        return [$scope.comment];
+        if ($scope.comment) {
+            return [$scope.comment];
+        }
+        else {
+            return [];
+        }
     }
     $scope.extendBackgroundTime = function() {
         //does not do anything now
@@ -107,9 +116,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     setUpCommentMethods($scope, $http, $modal);
     $scope.deleteComment = function(cmt) {
-        //single page cant handle this
-        alert("In this mode comment delete is not allowed.  Instead, go to "
-        +"the place where the comment is listed and delete there");
+        var newCmt = {};
+        newCmt.time = $scope.cid;
+        newCmt.deleteMe = true;
+        var postdata = angular.toJson(newCmt);
+        var postURL = "updateComment.json?cid="+newCmt.time;
+        console.log(postURL,newCmt);
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.commentExists = false;
+        })
+        .error( function(data) {
+            $scope.reportError(data);
+        });
     }
     
     $scope.allowCommentEmail = function() {
@@ -175,7 +194,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
     
-      <table class="table" style="max-width:600px">
+      <table class="table" style="max-width:600px" ng-show="commentExists">
         <tr>
           <td>Container Key</td>
           <td>{{comment.containerType}}:{{comment.containerID}}</td>
@@ -193,21 +212,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <td><a href="CommentZoom.htm?cid={{reply}}">Comment {{reply|date}}</a></td>
         </tr>
       </table>
-
-      <table>
+      <table class="table" style="max-width:600px" ng-hide="commentExists">
+        <tr>
+          <td>Status</td>
+          <td>A comment/round/proposal with id {{cid}} not found.  Has it been deleted?</td>
+        </tr>
+      </table>
+      <table ng-show="commentExists">
         <tr ng-repeat="cmt in getComments()">
           <%@ include file="/spring/jsp/CommentView.jsp"%>          
         </tr>
       </table>
-        
-    
-       
 </div>
 
-    <div style="height:200px;"></div>
-    
-
-
+<div style="height:200px;"></div>
 
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>

@@ -588,6 +588,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             promise = $http.post(postURL, postdata);
         }
         else {
+            console.log("GETTING meeting info");
             promise = $http.get("meetingRead.json?id="+$scope.meetId);
         }
         promise.success( function(data) {
@@ -1986,6 +1987,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         newComment.containerID = $scope.meetId+":"+$scope.selectedItem.id;
     }
     $scope.refreshCommentList = function() {
+        console.log("REFRESH comment list");
         $scope.refreshMeetingPromise(true);
     }
 

@@ -269,11 +269,18 @@ public class MailInst extends JSONWrapper {
 
             System.out.println("MAILINST: Sent email to "+addressee+": "+getSubject());
 
+            //tally the email begin sent without error
+            EmailSender.emailSendCount++;
+
             setStatus(EmailRecord.SENT);
             setLastSentDate(sendStart);
             setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             return true;
-      } catch (Exception me) {
+        } 
+        catch (Exception me) {
+            EmailSender.lastEmailFailureTime = System.currentTimeMillis();
+            EmailSender.lastEmailSendFailure = me;
+          
             try {
                 String context = "Email Send Failed ("+SectionUtil.currentTimeString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
                 setExceptionMessage(me, context);

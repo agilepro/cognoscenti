@@ -112,17 +112,28 @@ public class CommentController extends BaseController {
             ar.assertMember("must be a member to update comment");
             JSONObject postObject = this.getPostedObject(ar);
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
+            JSONObject repo = null;
+            String meetingId = ngw.findMeetingIdForComment(cid);
             if (postObject.has("deleteMe")) {
                 ngw.deleteComment(cid);
-                sendJson(ar, new JSONObject().put("delete", "success"));
+                repo = new JSONObject().put("delete", "success");
             }
             else {
                 CommentRecord topic = ngw.getCommentOrFail(cid);
                 topic.updateFromJSON(postObject, ar);
     
-                JSONObject repo = topic.getHtmlJSON(ar);
-                sendJson(ar, repo);
+                repo = topic.getHtmlJSON(ar);
             }
+            
+            //re-link (or unlink) replies links to all comments
+            ngw.correctAllRepliesLinks();
+            
+            //if the comment was on a meeting, then refresh the meeting cache
+            if (meetingId!=null) {
+                MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
+            }
+            saveAndReleaseLock(ngw, ar, "updated a comment");
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update comment ("+cid+") contents", ex);

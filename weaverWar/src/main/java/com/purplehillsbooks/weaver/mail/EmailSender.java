@@ -52,10 +52,6 @@ import com.purplehillsbooks.json.JSONObject;
 /**
  * Support class for sending email messages based on an email configuration
  * file.
- *
- * Use EmailSender.quickEmail(to, from, subj, body) whenever possible because
- * this is the essential method for sending email and will be supported in the
- * long run.
  */
 public class EmailSender extends TimerTask {
     private static Properties emailProperties = new Properties();
@@ -90,6 +86,24 @@ public class EmailSender extends TimerTask {
      */
     public static Exception threadLastMsgException = null;
 
+    /**
+     * Sometimes the thread dies.  This records the last time email was checked
+     * to see if there are any to send.  (It may not have sent any then.)
+     * Updated only if there are no failure in processing.
+     */
+    public static long lastEmailProcessTime = 0;
+ 
+    /**
+     * If we got an exception while sending email record it here
+     */
+    public static Exception lastEmailSendFailure;
+    public static long lastEmailFailureTime = 0;
+    
+    /**
+     * This is the number of email messages sent since the last 
+     * server reboot.
+     */
+    public static long emailSendCount = 0;
 
 
     /**
@@ -179,12 +193,13 @@ public class EmailSender extends TimerTask {
     
             // make sure that this method doesn't throw any exception
             try {
-                System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().getId());
+                //System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().getId());
                 NGPageIndex.assertNoLocksOnThread();
                 checkAndSendDailyDigest(ar);
                 handleGlobalEmail();
                 handleAllOverdueScheduledEvents(ar);
-                System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(startTime));
+                lastEmailProcessTime = startTime;
+                System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
                 Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
                 JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");

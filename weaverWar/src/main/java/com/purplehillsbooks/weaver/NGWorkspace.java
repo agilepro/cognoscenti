@@ -917,6 +917,48 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
+    /**
+     * Context is that a comment going to be changed.  If that comment was on a meeting
+     * then the meeting cache needs to be updated.   This method searches to 
+     * find whether a comment in on a meeting, and returns the id for that meeting
+     * so that the cache can be updated.
+     * 
+     * Returns null if the comment is NOT on any meeting
+     */
+    public String findMeetingIdForComment(long cid) throws Exception {
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    if (comm.getTime()==cid) {
+                        return meet.getId();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public void assureRepliesSet(long cid, long replyId) throws Exception {
+        CommentRecord source = getCommentOrNull(cid);
+        if (source!=null) {
+            source.addOneToReplies(replyId);
+        }
+    }
+    
+    public void correctAllRepliesLinks() throws Exception {
+        List<CommentRecord> allComments = getAllComments();
+        List<Long> emptySet = new ArrayList<Long>();
+        for (CommentRecord cr : allComments) {
+            cr.setReplies(emptySet);
+        }
+        for (CommentRecord cr : allComments) {
+            long replyTo = cr.getReplyTo();
+            if (replyTo>0) {
+                assureRepliesSet(replyTo, cr.getTime());
+            }
+        }
+    }
+
 
     public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
 
