@@ -49,7 +49,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         updateRec.state = $scope.cmt.state;
         updateRec.commentType = $scope.cmt.commentType;
         updateRec.dueDate = $scope.cmt.dueDate;
-        updateRec.html = $scope.cmt.html;
+        //updateRec.html = $scope.cmt.html;
+        updateRec.body = HTML2Markdown($scope.cmt.html, {});
         updateRec.responses = $scope.cmt.responses;
         updateRec.replyTo = $scope.cmt.replyTo;
         updateRec.containerID = $scope.cmt.containerID;
@@ -84,7 +85,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         .error( handleHTTPError );
     }
     function setComment(newComment) {
-        console.log("SET COMMENT", newComment);
         if (!newComment.responses) {
             newComment.responses = [];
         }
@@ -96,10 +96,10 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         if (!newComment.notify) {
             newComment.notify = [];
         }
+        newComment.html = convertMarkdownToHtml(newComment.body);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
-        $scope.flattenedCmt = JSON.stringify(newComment);
-        $scope.oldCmt = JSON.parse($scope.flattenedCmt);
+        $scope.oldCmt = JSON.parse(JSON.stringify(newComment));
         $scope.responders = [];
         if (newComment.commentType==2 || newComment.commentType==3) {
             $scope.cmt.responses.forEach( function(item)  {

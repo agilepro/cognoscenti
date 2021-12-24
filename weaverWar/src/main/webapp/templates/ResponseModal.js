@@ -24,6 +24,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     function saveComment(close) {
         var postURL = "info/comment?cid="+$scope.cmtId;
         var updateRec = {time:$scope.cmtId, responses:[]};
+        $scope.response.body = HTML2Markdown($scope.response.html, {});
         updateRec.responses.push($scope.response);
         var postdata = angular.toJson(updateRec);
         console.log("saving new comment: ",updateRec);
@@ -40,6 +41,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     }
     function setComment(newComment) {
         newComment.choices = ["Consent", "Objection"];
+        newComment.html = convertMarkdownToHtml(newComment.body);
         $scope.cmt = newComment;
         $scope.cmtOriginal = JSON.parse(JSON.stringify(newComment));
         $scope.response = {"user":$scope.responseUser};

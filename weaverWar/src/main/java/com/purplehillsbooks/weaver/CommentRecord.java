@@ -578,6 +578,7 @@ public class CommentRecord extends DOMFace {
         data.put("opType", opType);
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);
+        data.put("outcome", getScalar("outcome"));
         data.put("outcomeHtml", this.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
@@ -638,8 +639,10 @@ public class CommentRecord extends DOMFace {
         }
         JSONObject commInfo = getJSON();
         commInfo.put("containerName", containerName);
-        commInfo.put("html", getContentHtml(ar));
-        commInfo.put("outcome", getOutcomeHtml(ar));
+        commInfo.put("html", getContentHtml(ar));     //REMOVE THIS SOME DAY
+        commInfo.put("body", getContent());
+        commInfo.put("outcome", getScalar("outcome"));
+        commInfo.put("outcomeHtml", getOutcomeHtml(ar));     //REMOVE THIS SOME DAY
         JSONArray responseArray = new JSONArray();
         for (ResponseRecord rr : getResponses()) {
             responseArray.put(rr.getJSON(ar));
@@ -657,9 +660,14 @@ public class CommentRecord extends DOMFace {
             String html = input.getString("html");
             setContentHtml(ar, html);
         }
+        if (input.has("body")) {
+            setContent(input.getString("body"));
+        }
+        if (input.has("outcomeHtml")) {
+            setOutcomeHtml(ar, input.getString("outcomeHtml"));
+        }
         if (input.has("outcome")) {
-            String html = input.getString("outcome");
-            setOutcomeHtml(ar, html);
+            setScalar("outcome", input.getString("outcome"));
         }
         if (input.has("commentType")) {
             setCommentType(input.getInt("commentType"));

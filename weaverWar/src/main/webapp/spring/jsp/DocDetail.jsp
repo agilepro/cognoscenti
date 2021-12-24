@@ -543,4 +543,6 @@ function copyTheLink() {
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 

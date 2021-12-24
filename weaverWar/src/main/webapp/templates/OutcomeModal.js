@@ -56,7 +56,8 @@ app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt, $http)
         console.log("SAVE COMMENT");
         var updateRec = {};
         updateRec.time = $scope.cmt.time;
-        updateRec.outcome = $scope.cmt.outcome;
+        updateRec.outcomeHtml = $scope.cmt.outcomeHtml;
+        updateRec.outcome = HTML2Markdown(updateRec.outcomeHtml, {});
         updateRec.state = 13;
         var postdata = angular.toJson(updateRec);
         var postURL = "info/comment?cid="+$scope.cmt.time;

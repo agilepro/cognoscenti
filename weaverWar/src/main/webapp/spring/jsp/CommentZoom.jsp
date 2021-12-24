@@ -205,11 +205,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
         <tr ng-show="comment.replyTo">
           <td>Reply To</td>
-          <td><a href="CommentZoom.htm?cid={{comment.replyTo}}">Comment {{comment.replyTo|date}}</a></td>
+          <td><a href="CommentZoom.htm?cid={{comment.replyTo}}">{{comment.replyTo|cdate}}</a></td>
         </tr>
         <tr ng-repeat="reply in comment.replies">
           <td>Reply</td>
-          <td><a href="CommentZoom.htm?cid={{reply}}">Comment {{reply|date}}</a></td>
+          <td><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></td>
         </tr>
       </table>
       <table class="table" style="max-width:600px" ng-hide="commentExists">

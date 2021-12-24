@@ -197,7 +197,8 @@ public class ResponseRecord extends DOMFace
         }
         jo.put("userName", ale.getName());
         jo.put("choice",  getChoice());
-        jo.put("html", getHtml(ar));
+        jo.put("body", getContent());
+        jo.put("html", getHtml(ar));     //REMOVE THIS SOME DAY
         jo.put("time", getTime());
         return jo;
     }
@@ -207,6 +208,9 @@ public class ResponseRecord extends DOMFace
         //user name and key is not stored here either
         if (input.has("html")) {
             setHtml(ar, input.getString("html"));
+        }
+        if (input.has("body")) {
+            setContent(input.getString("body"));
         }
         if (input.has("choice")) {
             setChoice(input.getString("choice"));
