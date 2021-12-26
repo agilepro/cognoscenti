@@ -568,9 +568,10 @@ public class CommentRecord extends DOMFace {
         String fullURLtoContext = ar.baseURL + noteOrMeet.getEmailURL(clone, ngp);
         data.put("parentURL", fullURLtoContext);
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", fullURLtoContext + "#cmt" + getTime());
+        data.put("commentURL", ar.baseURL + clone.getResourceURL(ngp, "CommentZoom.htm?cid=" + getTime()));
         data.put("comment", this.getHtmlJSON(clone));
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
+        data.put("wsFrontPage", ar.baseURL + clone.getDefaultURL(ngp));
+        data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngp));
         data.put("wsName", ngp.getFullName());
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
         data.put("userName", owner.getName());
@@ -587,6 +588,9 @@ public class CommentRecord extends DOMFace {
         data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngp,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
 
+        //deprecated value remove
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));   //remove this when templates no longer use
+        
         AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
@@ -734,6 +738,23 @@ public class CommentRecord extends DOMFace {
                 getState()==COMMENT_STATE_OPEN) {
             setState(COMMENT_STATE_CLOSED);
         }
+        
+        //the resendEmail command can be sent in whether email sent or not
+        //it will cause an email to be sent, for sure, resent if necessary
+        if (input.has("resendEmail") && input.getBoolean("resendEmail")) {
+            setAttributeBool("suppressEmail", false);
+            if (getState()==COMMENT_STATE_OPEN || getCommentType()==COMMENT_TYPE_SIMPLE) {
+                setAttributeBool("emailSent", false);
+            }
+            else if (getState()==COMMENT_STATE_CLOSED) {
+                setAttributeBool("closeEmailSent", false);
+            }
+            else {
+                //the state should have been set at the same time, so this should never 
+                //happen, but testing here to make sure.
+                throw new Exception("No able to resendEmail in state = "+getState());
+            }
+        }
     }
 
 
@@ -826,31 +847,6 @@ public class CommentRecord extends DOMFace {
 
     }
     
-    /*
-    public String findContainerName(NGWorkspace ngw) throws Exception {
-        if ('M' == containerType) {
-            int pos = containerID.indexOf(":");
-            if (pos<0) {
-                throw new Exception("Meeting ID must contain a colon.  Got: "+containerID);
-            }
-            String meetID = containerID.substring(0, pos);
-            String agendaID = containerID.substring(pos+1);
-            MeetingRecord mr = ngw.findMeeting(meetID);
-            AgendaItem ai = mr.findAgendaItem(agendaID);
-            return mr.getName()+":"+ai.getSubject();
-            
-        }
-        else if ('T' == containerType) {
-            TopicRecord tr = ngw.getDiscussionTopic(containerID);
-            return tr.getSubject();
-        }
-        else if ('A' == containerType) {
-            AttachmentRecord att = ngw.findAttachmentByIDOrFail(containerID);
-            return att.getDisplayName();
-        }
-        throw new Exception("Don't know how to get name for container type: "+containerType);
-    }
-*/
     
 
     public static void sortByTimestamp(List<CommentRecord> list) {

@@ -31,6 +31,11 @@
           ng-show="cmt.commentType==2 || cmt.commentType==3">
     Responders
     </span>
+    <span ng-click="selectedTab='Outcome'" 
+          ng-class="selectedTab=='Outcome'?'qqTabSelected':'qqTabUnselected'"
+          ng-show="cmt.commentType==2 || cmt.commentType==3">
+    Outcome
+    </span>
   </div>
 </div>
 <div class="modal-body" style="min-height:400px">
@@ -131,6 +136,10 @@
           A {{commentTypeName()}} does not have any responders.
         </div>
     </div>
+    <div ng-show="selectedTab=='Outcome' && (cmt.commentType==2 || cmt.commentType==3)">
+    	<div ui-tinymce="tinymceOptions" ng-model="cmt.outcomeHtml" 
+             class="leafContent" style="min-height:160px;" id="theOutcomeEditor"></div>
+    </div>
 </div>
 <div class="modal-footer">
 	<div class="row">
@@ -143,11 +152,16 @@
 		</div>
 		<div class="col-md-8 text-right">
 		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-show="cmt.state<=11">Save Draft</button>
+		  <button ng-click="saveReopen()" class="btn btn-default btn-raised" ng-show="cmt.state>12">Reopen {{commentTypeName()}}</button>
 		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-hide="cmt.state<=11">Save</button>
 		  <button ng-click="postIt(false)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
 				Post without Email</button>
 		  <button ng-click="postIt(true)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11 && allowCommentEmail">
 				Post with Email</button>
+          <button ng-click="okEmail()" class="btn btn-primary btn-raised" ng-show="cmt.state==12">
+                Close Send Email</button>
+          <button ng-click="okNoEmail()" class="btn btn-primary btn-raised" ng-show="cmt.state==12">
+                Close No Email</button>
           <button class="btn btn-warning btn-raised" ng-click="cancel()">Cancel</button>
 		</div>
 	</div>

@@ -15,7 +15,7 @@
 </style>
 <body>
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
-<!--TEMPLATE NewTopic.htm-->
+<!--TEMPLATE ActionItem.chtml-->
 <p>Workspace: <a href="{$wsURL}">{$wsName|onempty(Unnamed Workspace)|html}</a>
 &nbsp; Action Item: <a href="{$actionItemURL}">{$actionItem.synopsis}</a></p>
 <hr/>

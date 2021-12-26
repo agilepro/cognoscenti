@@ -134,6 +134,16 @@ function reloadIfLoggedIn() {
     <p>
         <button class="btn btn-primary btn-raised" ng-click="createNewSite()">Request A Site</button>
     </p>
+    <h1>How can you Help?</h1>
+    <p>
+        Weaver is 100% supported by volunteers, and is structured as a cooperative.  Want to help?
+        There are many ways you could contribute to Weaver beyond using it.
+        Donations are appreciated for helping to run the server.  
+        We could use additional training videos showing how to effectively get things done.
+        If you understand AngularJS Ui framework, you could help enhance the 
+        open source Weaver project by improving the user interface to meet more needs.
+        Or -- at the very least -- tell all your friends about Weaver!
+    </p>
 
 </div>
 

@@ -10,7 +10,8 @@
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
 Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 <br/>
-{$opType} <b>{$cmtType}</b> on topic <a href="{$commentURL}">{$parentName|onempty(No Name)|html}</a>
+Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a> 
+ has a <a href="{$commentURL}">{$opType} <b>{$cmtType}</b> (view online)</a>.
 </p>
 <hr/>
 

@@ -249,7 +249,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
-<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

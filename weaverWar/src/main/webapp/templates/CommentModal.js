@@ -19,6 +19,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.docSpaceURL = docSpaceURL;
     $scope.attachmentList = attachmentList;
     $scope.showEmail = false;
+    $scope.selectedTab = (cmt.state>11 && (cmt.commentType==2 || cmt.commentType==3))?"Outcome":"Update";
     getComment();
 
 
@@ -31,13 +32,14 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             .error( handleHTTPError );
         }
     }
-    function saveComment(closeIt) {
+    function saveComment(closeIt, resend) {
 		$scope.cmt.notify.forEach( function(item) {
 			if (!item.uid) {
 				item.uid = item.name;
 			}
 		});
         var updateRec = {};
+        updateRec.resendEmail = resend;
         updateRec.time = $scope.cmt.time;
         updateRec.containerType = $scope.cmt.containerType;
         updateRec.containerID = $scope.cmt.containerID;
@@ -51,6 +53,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         updateRec.dueDate = $scope.cmt.dueDate;
         //updateRec.html = $scope.cmt.html;
         updateRec.body = HTML2Markdown($scope.cmt.html, {});
+        updateRec.outcome = HTML2Markdown($scope.cmt.outcomeHtml, {});
         updateRec.responses = $scope.cmt.responses;
         updateRec.replyTo = $scope.cmt.replyTo;
         updateRec.containerID = $scope.cmt.containerID;
@@ -97,6 +100,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             newComment.notify = [];
         }
         newComment.html = convertMarkdownToHtml(newComment.body);
+        newComment.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
         $scope.oldCmt = JSON.parse(JSON.stringify(newComment));
@@ -147,19 +151,25 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $modalInstance.dismiss('cancel');
     }
     $scope.save = function() {
-		saveComment("N");
+		saveComment("N", false);
     }
     $scope.saveAndClose = function () {
-		saveComment("Y");
-        //$interval.cancel($scope.promiseAutosave);
+		saveComment("Y", false);
     };
+    $scope.saveReopen = function () {
+        $scope.cmt.state = 12
+		saveComment("Y", false);
+    };
+    $scope.okEmail = function () {
+        $scope.cmt.state = 13;
+        saveComment("Y", true);
+    };
+    $scope.okNoEmail = function () {
+        $scope.cmt.state = 13;
+        saveComment("Y", false);
+    };
+    
     $scope.postIt = function (sendEmail) {
-        if (sendEmail && $scope.allowCommentEmail) {
-            $scope.cmt.suppressEmail = false;
-        }
-        else {
-            $scope.cmt.suppressEmail = true;
-        }
         if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
             $scope.cmt.state = 12;
         }
@@ -168,7 +178,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
                 $scope.cmt.state=13;
             }
         }
-        $scope.saveAndClose();
+        saveComment("Y", sendEmail);
     };
    
     $scope.commentTypeName = function() {
@@ -220,7 +230,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.autosave = function() {
         var newFlat = JSON.stringify($scope.cmt);
         if (newFlat != $scope.flattenedCmt ) {
-            saveComment("N");
+            saveComment("N", false);
             $scope.unsaved = -1;
         }
     }
@@ -288,6 +298,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             //cancel action - nothing really to do
         });
     };
-    $scope.selectedTab = "Update";
+
 
 });

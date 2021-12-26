@@ -1367,9 +1367,22 @@ public class AuthRequest
         return superAdmin.contains(key);
     }
 
-    public String getResourceURL(NGPageIndex ngpi, String resource)
-        throws Exception
-    {
+    
+    
+    //ADDRESSES
+    
+    
+    public String getWorkspaceBaseURL(NGContainer ngc) throws Exception {
+        if(ngc instanceof NGWorkspace){
+            return "t/" + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
+                        + "/" + ngc.getKey() + "/";
+        }
+
+        // for site go to the project list
+        return  "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8")+"/$/";
+    }
+    
+    public String getResourceURL(NGPageIndex ngpi, String resource) throws Exception {
         if(!ngpi.isProject()){
             return "t/" + ngpi.containerKey+"/$/"+resource;
         }
@@ -1377,15 +1390,8 @@ public class AuthRequest
                +ngpi.containerKey+"/"+resource;
     }
 
-    public String getResourceURL(NGContainer ngc, String resource)
-        throws Exception
-    {
-        if(ngc instanceof NGWorkspace){
-            NGBook ngb = ((NGWorkspace)ngc).getSite();
-            return "t/" + URLEncoder.encode(ngb.getKey(), "UTF-8")+"/"
-                        + ngc.getKey()+"/"+resource;
-        }
-        return  "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8")+"/$/"+resource;
+    public String getResourceURL(NGContainer ngc, String resource) throws Exception {
+        return  getWorkspaceBaseURL(ngc) + resource;
     }
 
     public String getDefaultURL(NGContainer ngc) throws Exception {
@@ -1407,9 +1413,7 @@ public class AuthRequest
         return  "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8")+"/$/SiteWorkspaces.htm";
     }
 
-    public String getResourceURL(NGContainer ngp, TopicRecord note)
-        throws Exception
-    {
+    public String getResourceURL(NGContainer ngp, TopicRecord note) throws Exception {
         return getResourceURL(ngp, "noteZoom"+note.getId()+".htm");
     }
 

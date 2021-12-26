@@ -112,32 +112,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             $scope.refreshCommentList();
         });
     };
-    $scope.openOutcomeEditor = function (cmt) {
-        $scope.extendBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
 
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
-            controller: 'OutcomeModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
-                }
-            }
-        });
-
-        modalInstance.result.then(function (returnedCmt) {
-            $scope.refreshCommentList();
-        }, function () {
-            $scope.refreshCommentList();
-        });
-    };
 
     $scope.stateStyle = function(cmt) {
         if (cmt.state==11) {
@@ -184,13 +159,6 @@ function setUpCommentMethods($scope, $http, $modal) {
         newCmt.time = cmt.time;
         newCmt.deleteMe = true;
         $scope.updateComment(newCmt);
-    }
-    $scope.closeComment = function(itemNotUsed, cmt) {
-        if (cmt.commentType>1) {
-            if (cmt.state!=13) {
-                $scope.openOutcomeEditor(cmt);
-            }
-        }
     }
     $scope.removeResponse =  function(cmt,resp) {
         $scope.extendBackgroundTime();
@@ -293,8 +261,6 @@ function setUpCommentMethods($scope, $http, $modal) {
             <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="deleteComment(cmt)">
               Delete {{commentTypeName(cmt)}}</a></li>
-            <li role="presentation" ng-show="cmt.state==12">
-              <a role="menuitem" ng-click="closeComment(item, cmt)">Close {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.commentType==1">
               <a role="menuitem" ng-click="openCommentCreator(item,1,cmt)">
               Reply</a></li>
@@ -403,7 +369,7 @@ function setUpCommentMethods($scope, $http, $modal) {
       </div>
       <div class="leafContent comment-inner" 
            ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
-           ng-click="closeComment(item, cmt)"
+           ng-dblclick="openCommentEditor(item, cmt)"
            title="closing outcome of the round/proposal">
         <div ng-bind-html="cmt.outcomeHtml"></div>
       </div>
@@ -431,6 +397,5 @@ function setUpCommentMethods($scope, $http, $modal) {
    
 
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
-<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>   
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>  
 <!-- end CommentView.jsp -->

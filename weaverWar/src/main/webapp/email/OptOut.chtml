@@ -33,3 +33,8 @@ with any existing profile.
 {% endif %}
 </div>
 
+
+
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border-top: 2px solid lightgray;padding:10px;border-radius:10px;">
+<p><a href="https://s06.circleweaver.com/"><b>Weaver</b></a> is a cloud based sytem teams use to organize themselves.  Weaver is 100% supported by volunteers.  <a href="https://s06.circleweaver.com/WhoWeAre.html">Join us!</a></p>
+</div>
