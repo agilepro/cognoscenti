@@ -19,10 +19,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.allTopics = [];
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
-    $scope.displayMode='Items';
-    if (embeddedData.mode) {
-        $scope.displayMode=embeddedData.mode;
-    }
+    
     $scope.htmlAgenda = "";
     $scope.htmlMinutes = "";
     
@@ -169,7 +166,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     }
     $scope.itemTopics = function(item) {
-        if (!item) {
+        if (!item || !item.topics) {
             return false;
         }
         return $scope.allTopics.filter( function(oneTopic) {
@@ -179,7 +176,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
     $scope.itemGoals = function(item) {
         var res = [];
-        if (item) {
+        if (item && item.actionItems) {
             for (var j=0; j<item.actionItems.length; j++) {
                 var aiId = item.actionItems[j];
                 for(var i=0; i<$scope.allGoals.length; i++) {
@@ -711,17 +708,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             isLinkToComment = false;
         }
         $scope.calcAttended();
+        
+        $scope.selectedItem = {};
+        $scope.setSelectedItemById($scope.uiState.selectedItemId);
         if (!$scope.selectedItem) {
             if (data.agenda && data.agenda.length>0) {
-                $scope.selectedItem = data.agenda[0];
+                $scope.setSelectedItem(data.agenda[0]);
             }
-        }
-        else {
-            data.agenda.forEach( function(item) {
-                if (item.position == $scope.selectedItem.position) {
-                    $scope.selectedItem = item;
-                }
-            });
         }
         
         $scope.loadAgenda();
@@ -1879,6 +1872,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     $scope.setSelectedItem = function(item) {
         $scope.selectedItem = item;
+        
+        $scope.uiState.selectedItemId=item.id;
+        WCACHE.putObj("MEET"+$scope.meetId, $scope.uiState, new Date().getTime());
+    }
+    $scope.setSelectedItemById = function(itemId) {
+        $scope.getAgendaItems().forEach( function(item) {
+            if (itemId == item.id) {
+                $scope.setSelectedItem(item);
+            }
+        });
     }
     
     $scope.didAttend = function(specId) {
@@ -1913,7 +1916,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         let stateObj = {
             foo: newMode
         }
-        window.history.pushState(stateObj, newMode, 'meetingHtml.htm?id='+embeddedData.meetId+'&mode='+newMode);
+        $scope.uiState.displayMode=newMode;
+        WCACHE.putObj("MEET"+$scope.meetId, $scope.uiState, new Date().getTime());
     }
     
     
@@ -1992,7 +1996,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
     setUpCommentMethods($scope, $http, $modal);
-   
+    
+    //this is the display state of the meeting for user
+    $scope.uiState = WCACHE.getObj("MEET"+$scope.meetId);
+    if ($scope.uiState.displayMode) {
+        $scope.changeMeetingMode($scope.uiState.displayMode);
+    }
+    else if (embeddedData.mode) {
+        $scope.changeMeetingMode(embeddedData.mode);
+    }
+    $scope.setSelectedItemById($scope.uiState.selectedItemId);
+
 });
 
 function calcResponders(slots, AllPeople, siteId) {

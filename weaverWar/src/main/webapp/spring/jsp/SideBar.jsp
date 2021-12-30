@@ -74,6 +74,9 @@
         if (jo.has("external")) {
             %> target="_blank"<%
         }
+        else {
+            %> target="weaver"<%
+        }
         %>><% ar.writeHtml(jo.getString("name")); if (jo.has("external")) {ar.write(" <i class=\"fa fa-external-link\"></i>");}%></a><%
         if (jo.has("opts")) {
             JSONArray options = getOptions(jo, wrappedJSP);
@@ -98,6 +101,9 @@
                     }
                     if (jo2.has("external")) {
                         %> target="_blank"<%
+                    }
+                    else {
+                        %> target="weaver"<%
                     }
                     %>><% ar.writeHtml(jo2.getString("name")); %></a></li> <%
                  }       
