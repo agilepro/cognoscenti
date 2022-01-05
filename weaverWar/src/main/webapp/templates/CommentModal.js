@@ -19,7 +19,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.docSpaceURL = docSpaceURL;
     $scope.attachmentList = attachmentList;
     $scope.showEmail = false;
-    $scope.selectedTab = (cmt.state>11 && (cmt.commentType==2 || cmt.commentType==3))?"Outcome":"Update";
+    $scope.hasOutcome = (cmt.commentType==2 || cmt.commentType==3);
+    $scope.selectedTab = (cmt.state>11 && $scope.hasOutcome)?"Outcome":"Update";
     getComment();
 
 
@@ -101,6 +102,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         }
         newComment.html = convertMarkdownToHtml(newComment.body);
         newComment.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
+        $scope.hasOutcome = (newComment.commentType==2 || newComment.commentType==3);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
         $scope.oldCmt = JSON.parse(JSON.stringify(newComment));

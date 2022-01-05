@@ -854,7 +854,7 @@ public class AttachmentRecord extends CommentContainer {
                 JSONObject jatt = new JSONObject();
                 jatt.put("name", att.getNiceName());
                 jatt.put("url", ar.baseURL + ar.getResourceURL(ngp, "DocDetail.htm?aid=" + att.getId())
-                        + AccessControl.getAccessDocParams(ngp, att));
+                        + "&" + AccessControl.getAccessDocParams(ngp, att));
                 attachInfo.put(jatt);
             }
         }

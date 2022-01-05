@@ -29,6 +29,13 @@ dependencies {
     implementation fileTree(dir: 'thirdparty', include: ['*.jar'])
         
     compileOnly 'org.apache.tomcat:tomcat-catalina:8.5.46'
+    
+    // https://mvnrepository.com/artifact/com.purplehillsbooks.purple/purple
+    implementation 'com.purplehillsbooks.purple:purple:3.0'
+    
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    //implementation 'org.apache.logging.log4j:log4j-core:2.17.1'    
+
 }
 
 application {

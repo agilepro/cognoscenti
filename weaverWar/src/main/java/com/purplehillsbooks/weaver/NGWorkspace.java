@@ -282,7 +282,7 @@ public class NGWorkspace extends NGPage {
             if (atype.equals("FILE") && !isDel) {
                 String attName = att.getDisplayName();
                 if (attName==null || attName.length()==0) {
-                    System.out.println("Found attachement without name, id="+att.getId());
+                    System.out.println("Found attachement without name, id="+att.getId()+" in project ("+this.getCombinedKey()+")");
                 }
                 
                 //consider removing this check as unnecessary, project folder files

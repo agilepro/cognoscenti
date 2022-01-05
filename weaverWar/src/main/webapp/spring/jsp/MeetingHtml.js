@@ -1073,7 +1073,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         return selRole;
     }
     $scope.getMeetingParticipants = function() {
-        var parts = [];
         if ($scope.meeting.participants.length > 0) {
             return $scope.meeting.participants;
         }
@@ -1394,7 +1393,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveMeeting();
     }
 
-
+    $scope.defaultProposalAssignees = function() {
+        return $scope.getMeetingParticipants();
+    }
     $scope.removeResponse =  function(cmt,resp) {
         if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
             return;

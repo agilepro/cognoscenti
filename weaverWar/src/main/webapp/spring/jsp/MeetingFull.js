@@ -952,6 +952,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
 
 
+    $scope.defaultProposalAssignees = function() {
+        return $scope.getMeetingParticipants();
+    }
 
     $scope.saveComment = function(item, cmt) {
         var itemCopy = {};
@@ -1004,7 +1007,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return selRole;
     }
     $scope.getMeetingParticipants = function() {
-        var parts = [];
         if ($scope.meeting.participants.length > 0) {
             return $scope.meeting.participants;
         }

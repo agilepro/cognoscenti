@@ -91,7 +91,7 @@ public class BaseController {
      */
     private void displayException(AuthRequest ar, Exception extd) {
         try {
-            long exceptionNO=ar.logException("Caught in user interface", extd);
+            long exceptionNO=ar.logException("SPRING MAPPED EXCEPTION: "+ar.getCompleteURL(), extd);
             ar.req.setAttribute("display_exception", extd);
             ar.req.setAttribute("log_number", exceptionNO);
             ar.invokeJSP("/spring/anon/Error.jsp");

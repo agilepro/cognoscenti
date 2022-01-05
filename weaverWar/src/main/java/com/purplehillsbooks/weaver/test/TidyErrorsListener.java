@@ -23,8 +23,6 @@ package com.purplehillsbooks.weaver.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 
@@ -33,8 +31,7 @@ import org.w3c.tidy.TidyMessageListener;
  */
 class TidyErrorsListener implements TidyMessageListener {
 
-    private Logger log = Logger
-            .getLogger("org.socialbiz.cog.test.TidyErrorListener");
+    //private Logger log = Logger.getLogger("org.socialbiz.cog.test.TidyErrorListener");
 
     /**
      * The list of errors received from the validator.
@@ -63,12 +60,14 @@ class TidyErrorsListener implements TidyMessageListener {
      */
     public void messageReceived(TidyMessage aMessage) {
 
+        System.out.println(aMessage.getMessage());
+        /*
         if (aMessage.getLevel().equals(org.w3c.tidy.TidyMessage.Level.ERROR)) {
             errors.add(aMessage);
         } else {
             log.log(Level.WARN, aMessage.getMessage());
         }
-
+        */
     }
 
     /**

@@ -152,8 +152,9 @@
 		</div>
 		<div class="col-md-8 text-right">
 		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-show="cmt.state<=11">Save Draft</button>
-		  <button ng-click="saveReopen()" class="btn btn-default btn-raised" ng-show="cmt.state>12">Reopen {{commentTypeName()}}</button>
+		  <button ng-click="saveReopen()" class="btn btn-default btn-raised" ng-show="cmt.state==13 && hasOutcome">Reopen {{commentTypeName()}}</button>
 		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-hide="cmt.state<=11">Save</button>
+		  <button ng-click="okEmail()" class="btn btn-primary btn-raised" ng-show="cmt.state==13">Send Email Again</button>
 		  <button ng-click="postIt(false)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
 				Post without Email</button>
 		  <button ng-click="postIt(true)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11 && allowCommentEmail">

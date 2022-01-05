@@ -442,6 +442,7 @@ public class EmailGenerator extends DOMFace {
             StringBuilder sb = new StringBuilder();
             sb.append(ar.baseURL);
             sb.append(att.getEmailURL(ar, ngp));
+            sb.append("&");
             sb.append(AccessControl.getAccessDocParams(ngp, att));
             sb.append("&emailId=");
             sb.append(URLEncoder.encode(ale.getEmail(), "UTF-8"));
