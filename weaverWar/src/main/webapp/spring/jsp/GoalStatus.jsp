@@ -776,6 +776,12 @@ function addvalue() {
                       Mark Completed
                   </a>
               </li>
+              <li role="presentation" ng-show="rec.state!=6">
+                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 6)">
+                      <img src="<%=ar.retPath%>assets/goalstate/small6.gif" alt="completed"  />
+                      Mark Skipped
+                  </a>
+              </li>
             </ul>
           </div>
         </div>

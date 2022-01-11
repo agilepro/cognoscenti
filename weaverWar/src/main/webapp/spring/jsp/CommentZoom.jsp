@@ -215,7 +215,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <table class="table" style="max-width:600px" ng-hide="commentExists">
         <tr>
           <td>Status</td>
-          <td>A comment/round/proposal with id {{cid}} not found.  Has it been deleted?</td>
+          <td>A comment/round/proposal with id {{cid}} not found.  Probably it has been deleted.</td>
         </tr>
       </table>
       <table ng-show="commentExists">
