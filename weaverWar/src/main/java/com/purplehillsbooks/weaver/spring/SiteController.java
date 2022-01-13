@@ -82,7 +82,7 @@ public class SiteController extends BaseController {
                 return;
             }
             if (needsToSetName(ar)) {
-                streamJSP(ar, "RequiredName.jsp");
+                streamJSP(ar, "RequireName.jsp");
             }
             if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
                 showWarningView(ar, "nugen.missingSuperAdmin");

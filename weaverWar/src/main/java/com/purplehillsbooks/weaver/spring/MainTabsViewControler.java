@@ -394,6 +394,8 @@ public class MainTabsViewControler extends BaseController {
       //and the user name is set with whatever is posted in.
       //Can only set the current logged in user name.
       //User session must be logged in (so you have a profile to set)
+      //If not logged in, because maybe timeout, or server restart, then
+      //just silently ignore this and try again once logged in.
       @RequestMapping(value = "/RequiredName.form", method = RequestMethod.POST)
       public void requireName_form(HttpServletRequest request, HttpServletResponse response)
           throws Exception {
