@@ -146,7 +146,6 @@ public class ExceptionBase extends Exception {
 
     //--------------------------PRIVATE---------------------------------//
     private static final long serialVersionUID = 1L;
-    private final static String DEFAULT_DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
 
     /**
      * There are exactly two resource bundles which this class will represent.
@@ -422,7 +421,7 @@ public class ExceptionBase extends Exception {
             if (locale == null) {
                 locale = Locale.getDefault();
             }
-            DateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT, locale);
+            DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", locale);
             text = df.format(date);
         }
         return text;

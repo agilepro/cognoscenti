@@ -40,10 +40,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.addressing = true;    
     
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in the workspace for '<%ar.writeHtml(ngw.getFullName());%>'."
-                    +"\n\nThe links below will make registration quick and easy, and"
-                    +" after that you will be able to"
-                    +" participate directly with the others through the site.";
+                    +" participate in a role of the project '<%ar.writeHtml(ngw.getFullName());%>' on Weaver."
+                    +"\n\nWeaver is a collaboration site that helps teams work together better.  "
+                    +"You can share documents, hold a discussion, and prepare for  meetings, "
+                    +"all securely shared within a workspace accessible only to members.  "
+                    +"Weaver is supported by volunteers.  Join us and see how it works.\n";
 
     $scope.showError = false;
     $scope.errorMsg = "";
