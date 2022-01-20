@@ -40,7 +40,6 @@
     </servlet>
     <servlet>
         <servlet-name>DataFeedServlet</servlet-name>
-        <display-name>DataFeedServlet</display-name>
         <servlet-class>com.purplehillsbooks.weaver.rest.DataFeedServlet</servlet-class>
     </servlet>
     <servlet>
@@ -54,7 +53,6 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>EmergencyConfigServlet</servlet-name>
-        <display-name>EmergencyConfigServlet</display-name>
         <servlet-class>com.purplehillsbooks.weaver.rest.EmergencyConfigServlet</servlet-class>
     </servlet>
     <servlet>

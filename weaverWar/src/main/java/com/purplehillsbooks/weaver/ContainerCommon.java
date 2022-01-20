@@ -332,9 +332,7 @@ public abstract class ContainerCommon extends NGContainer
     * would soon receive new links with the new numbers in them.
     * There is no real requirement that the number last *forever*.
     */
-    public String emailDependentMagicNumber(String emailId)
-        throws Exception
-    {
+    public String emailDependentMagicNumber(String emailId) throws Exception {
         String encryptionPad = getScalar("encryptionPad");
         if (encryptionPad==null || encryptionPad.length()!=30)
         {

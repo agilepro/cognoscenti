@@ -48,7 +48,7 @@ Required parameters:
     else {
         TopicRecord topic = ngw.getDiscussionTopic(topicId);
         JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
-        originalTopic = topicInfo.getString("html");
+        originalTopic = topicInfo.getString("wiki");
         subscribers = topicInfo.getJSONArray("subscribers");
         specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
                     + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
@@ -119,14 +119,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.specialAccess = "<%ar.writeJS(specialAccess);%>";
     $scope.comments = <%comments.write(out,2,4);%>;
     $scope.subscribers = <%subscribers.write(out,2,4);%>;
-    $scope.originalTopic = "<%ar.writeJS(originalTopic);%>";
+    $scope.originalWiki = "<%ar.writeJS(originalTopic);%>";
     $scope.originalSubject = "<%ar.writeJS(originalSubject);%>";
     $scope.meetingTitle = "<%ar.writeJS(meetingTitle);%>";
     $scope.topicSubject = "<%ar.writeJS(topicSubject);%>";
     $scope.agendaItem = "<%ar.writeJS(agendaItem);%>";
     $scope.topicId = "<%ar.writeJS(topicId);%>";
     
-    
+    $scope.originalTopic = convertMarkdownToHtml($scope.originalWiki);
     
 
     $scope.distributeComments = function() {
@@ -371,4 +371,5 @@ function reloadIfLoggedIn() {
 
 
 
+<script src="<%=ar.retPath%>jscript/MarkdownToHtml.js"></script>
 
