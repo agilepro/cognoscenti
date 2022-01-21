@@ -7,7 +7,7 @@
 
     JSONArray projList = new JSONArray();
     for (NGPageIndex ngpi : ownedProjs) {
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             continue;
         }
         projList.put(ngpi.getJSON4List());

@@ -83,6 +83,7 @@ SLAP.storeSession = function(data) {
 SLAP.retrieveSession = function() {
     var oldData = sessionStorage.getItem("SSOFI_Logged_User");
     if (oldData) {
+        console.log("SSOFI: YES found data from previous session: ",oldData);
         try {
             SLAP.loginInfo = JSON.parse(oldData);
         }
@@ -90,11 +91,16 @@ SLAP.retrieveSession = function() {
             SLAP.loginInfo = {};
         }
     }
+    else {
+        console.log("SSOFI: NO data from previous session: ");
+    }        
+    /* calling method does this anyway...
     if (!SLAP.loginInfo.ss) {
         //if there is no session id, go and get one, migration from earlier object.
         SLAP.queryTheProvider();
         console.log("FETCHED new SSOFI session id: ", SLAP.loginInfo);
     }
+    */
 }
     
 SLAP.getJSON = function(url, passedFunction, errorFunction) {
@@ -105,6 +111,7 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
+                console.log("SSOFI SUCCESS: ", xhr.responseText); 
                 passedFunction(JSON.parse(xhr.responseText));
             }
             catch (e) {

@@ -119,7 +119,7 @@ public class TaskHelper
         for (NGPageIndex ngpi : pindxlist)
         {
             //only includes tasks from projects at this point
-            if (ngpi.isProject())
+            if (ngpi.isWorkspace())
             {
                 NGWorkspace aProject = ngpi.getWorkspace();
                 registerGoalsAssignedToUser(aProject, ale);

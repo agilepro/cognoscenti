@@ -49,7 +49,7 @@ Required parameters:
 
     JSONArray children = new JSONArray();
     for (NGPageIndex child : cog.getChildWorkspaces(ngpi)) {
-        if (!child.isProject()) {
+        if (!child.isWorkspace()) {
             continue;
         }
         JSONObject jo = new JSONObject();

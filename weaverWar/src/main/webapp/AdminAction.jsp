@@ -57,7 +57,7 @@
     }
     else if (action.equals("Purge Deleted Documents")) {
         for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
-            if (!ngpi.isDeleted && ngpi.isProject()) {
+            if (!ngpi.isDeleted && ngpi.isWorkspace()) {
                 NGWorkspace ngp = ngpi.getWorkspace();
                 ngp.purgeDeletedAttachments();
             }

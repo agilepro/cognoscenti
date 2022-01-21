@@ -111,7 +111,7 @@ public class NGPageIndex {
     public String[] admins; // a.k.a. authors
     public long nextScheduledAction;
 
-    public File containerPath;
+    public File containerPath;   // full path to the workspace XML file
     public String containerName; // The nicest name to use for this container
     public String containerKey;
     public String wsSiteName;
@@ -126,7 +126,7 @@ public class NGPageIndex {
     public int containerType = 0;
     // use these constants for containerType
     public static final int CONTAINER_TYPE_SITE = 1;
-    public static final int CONTAINER_TYPE_PROJECT = 4;
+    public static final int CONTAINER_TYPE_WORKSPACE = 4;
 
     private long lockedBy = 0;
     private long lockedTime = 0;
@@ -235,6 +235,9 @@ public class NGPageIndex {
     public NGBook getSite() throws Exception {
         return (NGBook) getContainer();
     }
+    public NGBook getSiteForWorkspace() throws Exception {
+        return NGBook.readSiteByKey(wsSiteKey);
+    }
 
     /**
      * Get the container object associated with this index entry, or return a
@@ -242,7 +245,7 @@ public class NGPageIndex {
      */
     private NGContainer getContainer() throws Exception {
         setLock();
-        if (containerType == CONTAINER_TYPE_PROJECT) {
+        if (containerType == CONTAINER_TYPE_WORKSPACE) {
             return NGWorkspace.readWorkspaceAbsolutePath(containerPath);
         }
         else if (containerType == CONTAINER_TYPE_SITE) {
@@ -312,7 +315,7 @@ public class NGPageIndex {
 
 
     public boolean isInVector(List<NGPageIndex> v) {
-        boolean isProject = isProject();
+        boolean isProject = isWorkspace();
         for (NGPageIndex y : v) {
             if (containerKey.equals(y.containerKey)) {
                 if (!isProject) {
@@ -372,8 +375,8 @@ public class NGPageIndex {
 
     }
 
-    public boolean isProject() {
-        return (containerType == CONTAINER_TYPE_PROJECT);
+    public boolean isWorkspace() {
+        return (containerType == CONTAINER_TYPE_WORKSPACE);
     }
 
     public static void postEventMsg(String emsg) {
@@ -643,7 +646,7 @@ public class NGPageIndex {
         containerKey = container.getKey();
 
         if (container instanceof NGWorkspace) {
-            containerType = CONTAINER_TYPE_PROJECT;
+            containerType = CONTAINER_TYPE_WORKSPACE;
         }
         else if (container instanceof NGBook) {
             containerType = CONTAINER_TYPE_SITE;
@@ -691,7 +694,7 @@ public class NGPageIndex {
 
         // make a link to the page key first
         String combinedKey = containerKey;
-        if (isProject()) {
+        if (isWorkspace()) {
             combinedKey = wsSiteKey + "|" + containerKey;
         }
         NGTerm term = NGTerm.findTerm(combinedKey);

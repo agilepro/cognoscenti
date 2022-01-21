@@ -632,7 +632,7 @@ public class ResourceLocater
             throw new ProgramLogicError("Not able to find a workspace named '"+ token1
                            +"'.  Check the link and see if it is entered correctly.");
         }
-        if (!ngpi.isProject())
+        if (!ngpi.isWorkspace())
         {
             throw new ProgramLogicError("Not able to find a workspace named '"+ token1
                            +"'.  Found some other container with that name.");

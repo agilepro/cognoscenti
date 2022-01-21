@@ -1383,7 +1383,7 @@ public class AuthRequest
     }
     
     public String getResourceURL(NGPageIndex ngpi, String resource) throws Exception {
-        if(!ngpi.isProject()){
+        if(!ngpi.isWorkspace()){
             return "t/" + ngpi.containerKey+"/$/"+resource;
         }
         return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")+"/"
@@ -1405,7 +1405,7 @@ public class AuthRequest
     }
 
     public String getDefaultURL(NGPageIndex ngpi) throws Exception {
-        if (ngpi.isProject()) {
+        if (ngpi.isWorkspace()) {
             return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")+"/"
                         + ngpi.containerKey + "/FrontPage.htm";
         }

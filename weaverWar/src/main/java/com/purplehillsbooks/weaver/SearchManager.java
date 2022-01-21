@@ -21,6 +21,7 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,13 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.streams.StreamHelper;
+
 
 public class SearchManager {
 
-    private Directory directory = null;
+    private Directory directoryStore = null;
     private Analyzer analyzer = null;
     private Cognoscenti cog = null;
 
@@ -52,169 +56,362 @@ public class SearchManager {
         cog = _cog;
     }
 
-    public synchronized void initializeIndex() throws Exception {
-        analyzer = new StandardAnalyzer(Version.LUCENE_42);
-
+    public static void writeStringToFile(String str, File file) throws Exception {
+        StringReader sr = new StringReader(str);
+        StreamHelper.copyReaderToFile(sr, file, "UTF-8");
+    }
+    public static void addString(MemFile mf, String str) throws Exception {
+        StringReader sr = new StringReader(str);
+        mf.fillWithReader(sr);
+    }
+    
+    private Directory getStore() throws Exception {
         File directoryFolder = new File(cog.getConfig().getUserFolderOrFail(), ".search");
+        System.out.println("SearchManager - starting to build index in ("+directoryFolder.getCanonicalPath()+")");
 
         //directory = new RAMDirectory();
-        if (directory==null) {
-            directory = FSDirectory.open(directoryFolder);
+        if (directoryStore==null) {
+            directoryStore = FSDirectory.open(directoryFolder);
+        }
+        
+        return directoryStore;
+    }
+    
+    public void cleanOutIndex() throws Exception {
+        Directory dirStore = getStore();
+        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
+        IndexWriter iWriter = new IndexWriter(dirStore, config);
+        try {
+            iWriter.deleteAll();
+            for (NGPageIndex ngpi : cog.getAllContainers()) {
+                File containingFolder = ngpi.containerPath.getParentFile();
+                File searchFile = new File(containingFolder, "search.txt");
+                if (searchFile.exists()) {
+                    searchFile.delete();
+                }
+            }
+        }
+        finally {
+            iWriter.close();
+        }
+        System.out.println("SearchManager - index completely cleared");
+    }
+    
+    public String max50(String str) {
+        if (str==null) {
+            return null;
+        }
+        if (str.length()<=50) {
+            return str;
+        }
+        return str.substring(0,50);
+    }
+    
+    /**
+    * Given a block of wiki formatted text, this will strip out all the
+    * formatting characters, but write out everything else as plain text.
+    */
+    public static String stripWikiFormatting(String wikiData) throws Exception
+    {
+        StringBuilder sb = new StringBuilder();
+        LineIterator li = new LineIterator(wikiData);
+        while (li.moreLines())
+        {
+            String thisLine = li.nextLine();
+            sb.append(stripWikiFromLine(thisLine));
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    protected static String stripWikiFromLine(String line)
+            throws Exception
+    {
+        if (line == null || ((line = line.trim()).length()) == 0) {
+            return "";
         }
 
+        if (line.startsWith("----"))
+        {
+            line = line.substring(4);
+        }
+        else if (line.startsWith("!!!") || (line.startsWith("***")))
+        {
+            line = line.substring(3);
+        }
+        else if (line.startsWith("!!") || (line.startsWith("**")))
+        {
+            line = line.substring(2);
+        }
+        else if (line.startsWith("!") || (line.startsWith("*")))
+        {
+            line = line.substring(1);
+        }
+        line = line.replaceAll("__", "");
+        line = line.replaceAll("''", "");
+        line = line.replaceAll("\\[", "");
+        line = line.replaceAll("\\]", "");
+        line = line.replaceAll("\\|", "");
+        return line;
+    }    
+    
+    private synchronized void initializeIndex() throws Exception {
+        analyzer = new StandardAnalyzer(Version.LUCENE_42);
+
         long startTime = System.currentTimeMillis();
-        System.out.println("SearchManager - starting to build the internal index.");
 
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
 
+        Directory dirStore = getStore();
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
-        IndexWriter iWriter = new IndexWriter(directory, config);
+        IndexWriter iWriter = new IndexWriter(dirStore, config);
+        
 
         try {
 
-            //get rid of all the existing files.   Make sure that search methods
-            //are synchronized so you don't have any searches  while updating the index.
-            iWriter.deleteAll();
-
             for (NGPageIndex ngpi : cog.getAllContainers()) {
 
-                if (ngpi.isProject()) {
-
-                    NGWorkspace ngp = ngpi.getWorkspace();
-                    if (ngp.isDeleted()) {
-                        //skip all deleted workspaces
-                        continue;
-                    }
-
-                    NGBook site = ngp.getSite();
-                    if (site.isDeleted()) {
-                        //skip all deleted sites
-                        continue;
-                    }
-                    if (site.isMoved()) {
-                        //skip all moved sites
-                        continue;
-                    }
-
-
-                    String projectKey = ngp.getKey();
-                    String siteKey = ngp.getSiteKey();
-                    String projectName = ngp.getFullName();
-                    String accountName = ngp.getSite().getFullName();
-
-                    //add a record for the project as a whole
-                    {
-                        Document doc = new Document();
-                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                        doc.add(new Field("NOTEID", "$", TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDUSER", ngp.getLastModifyUser(), TextField.TYPE_STORED));
-                        StringBuilder bodyStuff = new StringBuilder();
-                        bodyStuff.append(ngp.getFullName());
-                        bodyStuff.append("\n");
-                        for (GoalRecord goal : ngp.getAllGoals()) {
-                            //put each goal in
-                            bodyStuff.append(goal.getSynopsis());
-                            bodyStuff.append("\n");
-                        }
-                        ProcessRecord process = ngp.getProcess();
-                        String s = process.getScalar("description");
-                        bodyStuff.append(s);   //a.k.a. "aim"
-                        bodyStuff.append("\n");
-                        bodyStuff.append(process.getScalar("mission"));
-                        bodyStuff.append("\n");
-                        bodyStuff.append(process.getScalar("vision"));
-                        bodyStuff.append("\n");
-                        bodyStuff.append(process.getScalar("domain"));
-                        bodyStuff.append("\n");
-                        // put the name in a few times to increase those scores
-                        bodyStuff.append(ngp.getFullName());
-                        bodyStuff.append("\n");
-                        bodyStuff.append(ngp.getFullName());
-                        doc.add(new Field("BODY", bodyStuff.toString(), TextField.TYPE_STORED));
-                        iWriter.addDocument(doc);
-                    }
-
-
-
-                    for (TopicRecord note : ngp.getAllDiscussionTopics()) {
-                        Document doc = new Document();
-                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                        doc.add(new Field("NOTEID", note.getId(), TextField.TYPE_STORED));
-                        doc.add(new Field("NOTESUBJ", note.getSubject(), TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDUSER", note.getModUser().getName(), TextField.TYPE_STORED));
-
-                        //first add the subject, then add the text of the note, then all the comments
-                        doc.add(new Field("BODY", note.getSubject(), TextField.TYPE_STORED));
-                        doc.add(new Field("BODY", note.getWiki(), TextField.TYPE_STORED));
-                        for (CommentRecord cr : note.getComments()) {
-                            doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
-                        }
-                        iWriter.addDocument(doc);
-                    }
-                    for (MeetingRecord meet : ngp.getMeetings()) {
-                        Document doc = new Document();
-                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                        doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
-                        doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
-
-                        doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
-                        doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
-                        for (AgendaItem ai : meet.getSortedAgendaItems()) {
-                            for (CommentRecord cr : ai.getComments()) {
-                                doc.add(new Field("BODY", cr.getAllSearchableText(), TextField.TYPE_STORED));
-                            }
-                            doc.add(new Field("BODY", ai.getMeetingNotes(), TextField.TYPE_STORED));
-                            doc.add(new Field("BODY", ai.getDesc(), TextField.TYPE_STORED));
-                        }
-                        iWriter.addDocument(doc);
-                    }
-
-                    for (DecisionRecord dec : ngp.getDecisions()) {
-                        Document doc = new Document();
-                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                        doc.add(new Field("DECISIONID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
-                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
-
-                        doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
-                        iWriter.addDocument(doc);
-                    }
-
-                    for (AttachmentRecord att : ngp.getAllAttachments()) {
-                        if (att.isDeleted()) {
-                            continue; //skip deleted attachments
-                        }
-                        Document doc = new Document();
-                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                        doc.add(new Field("ATTACHMENTID", att.getId(), TextField.TYPE_STORED));
-                        doc.add(new Field("ATTACHTIME", Long.toString(att.getAttachTime()), TextField.TYPE_STORED));
-
-                        doc.add(new Field("BODY", att.getDescription(), TextField.TYPE_STORED));
-                        iWriter.addDocument(doc);
-                    }
+                if (!ngpi.isWorkspace()) {
+                    //we only index workspaces
+                    continue;
                 }
+                if (ngpi.isDeleted) {
+                    //skip all deleted workspaces
+                    continue;
+                }
+                NGBook site = ngpi.getSiteForWorkspace();
+                if (site.isDeleted()) {
+                    //skip all deleted sites
+                    continue;
+                }
+                if (site.isMoved()) {
+                    //skip all moved sites
+                    continue;
+                }
+                
+                File containingFolder = ngpi.containerPath.getParentFile();
+                File searchFile = new File(containingFolder, "search.txt");
+                if (searchFile.exists() && searchFile.lastModified() > ngpi.containerPath.lastModified()) {
+                    //seems this version of the workspace has already been indexed
+                    //System.out.println("[-][-][-] skipping [-][-][-] "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
+                    continue;
+                }
+                
+                
+                NGWorkspace ngp = ngpi.getWorkspace();
+                if (ngp.isDeleted()) {
+                    //skip all deleted workspaces in case different from above
+                    continue;
+                }
+
+                String workspaceKey = ngp.getKey();
+                //we can't tolerate any hyphens in the page key
+                if (workspaceKey.startsWith("-")) {
+                    //forget it, we simply can't index pages that start with hyphen
+                    System.out.println("SearchManager - can not handle workspace ("+workspaceKey+")");
+                    continue;
+                }
+                String siteKey = ngp.getSiteKey();
+                String workspaceName = ngp.getFullName();
+                String siteName = ngp.getSite().getFullName();
+                
+                System.out.println("SearchManager - Updating workspace "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
+                
+                //delete all documents with workspace equal to the workspace key
+                QueryParser parser = new QueryParser(Version.LUCENE_42, "BODY", analyzer);
+                Query query = parser.parse("PAGEKEY:"+workspaceKey);
+                iWriter.deleteDocuments(query);
+                
+                MemFile mf = new MemFile();
+                
+                {
+                    //add a record for the workspace as a whole
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Workspace", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", "$", TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(workspaceName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "FrontPage.htm", TextField.TYPE_STORED));
+                    
+                    StringBuilder bodyStuff = new StringBuilder();
+                    bodyStuff.append(siteName);
+                    bodyStuff.append("\n");
+                    bodyStuff.append(workspaceName);
+                    bodyStuff.append("\n");
+                    ProcessRecord process = ngp.getProcess();
+                    bodyStuff.append(stripWikiFormatting(process.getScalar("description")));   //a.k.a. "aim"
+                    bodyStuff.append("\n");
+                    bodyStuff.append(stripWikiFormatting(process.getScalar("mission")));
+                    bodyStuff.append("\n");
+                    bodyStuff.append(stripWikiFormatting(process.getScalar("vision")));
+                    bodyStuff.append("\n");
+                    bodyStuff.append(stripWikiFormatting(process.getScalar("domain")));
+                    bodyStuff.append("\n");
+                    // put the name in a few times to increase those scores
+                    bodyStuff.append(ngp.getFullName());
+                    bodyStuff.append("\n");
+                    bodyStuff.append(ngp.getFullName());
+                    doc.add(new Field("BODY", bodyStuff.toString(), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, doc.toString());
+                }
+
+
+
+                for (TopicRecord note : ngp.getAllDiscussionTopics()) {
+                    String itemName = note.getSubject();
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Topic", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", note.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "noteZoom"+note.getId()+".htm", TextField.TYPE_STORED));
+                    
+
+                    //first add the subject, then add the text of the note, then all the comments
+                    doc.add(new Field("BODY", itemName, TextField.TYPE_STORED));
+                    doc.add(new Field("BODY", stripWikiFormatting(note.getWiki()), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== TOPIC\n");
+                    addString(mf, doc.toString());
+                }
+                for (MeetingRecord meet : ngp.getMeetings()) {
+                    String itemName = meet.getName();
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Meeting", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", meet.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "meetingHtml.htm?id="+meet.getId(), TextField.TYPE_STORED));
+                    
+
+                    doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", itemName, TextField.TYPE_STORED));
+                    doc.add(new Field("BODY", stripWikiFormatting(meet.generateWikiRep(ar, ngp)), TextField.TYPE_STORED));
+                    for (AgendaItem ai : meet.getSortedAgendaItems()) {
+                        doc.add(new Field("BODY", stripWikiFormatting(ai.getMeetingNotes()), TextField.TYPE_STORED));
+                        doc.add(new Field("BODY", stripWikiFormatting(ai.getDesc()), TextField.TYPE_STORED));
+                    }
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== MEETING\n");
+                    addString(mf, doc.toString());
+                }
+
+                for (DecisionRecord dec : ngp.getDecisions()) {
+                    String itemName = stripWikiFormatting(dec.getDecision());
+                    if (itemName.length()<5) {
+                        //short decisions are not searchable
+                        continue;
+                    }
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Decision", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "DecisionList.htm#DEC"+dec.getNumber(), TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", itemName, TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== DECISION\n");
+                    addString(mf, doc.toString());
+                }
+
+                for (AttachmentRecord att : ngp.getAllAttachments()) {
+                    if (att.isDeleted()) {
+                        continue; //skip deleted attachments
+                    }
+                    String itemName = att.getNiceName();
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Document", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(att.getModifiedDate()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", att.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "DocDetail.htm?aid="+att.getId(), TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", itemName + "\n" + stripWikiFormatting(att.getDescription()), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== DOCUMENT\n");
+                    addString(mf, doc.toString());
+                }
+                
+                for (CommentRecord comment : ngp.getAllComments()) {
+                    String itemName = stripWikiFormatting(comment.getAllSearchableText());
+                    if (itemName.length()<5) {
+                        //short comments are not searchable, like phase change messages
+                        continue;
+                    }
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Comment", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(comment.getTime()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", Long.toString(comment.getTime()), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "CommentZoom.htm?cid="+comment.getTime(), TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", itemName, TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== COMMENT\n");
+                    addString(mf, doc.toString());
+                }
+                for (GoalRecord goal : ngp.getAllGoals()) {
+                    String itemName = goal.getSynopsis();
+                    if (itemName.length()<5) {
+                        //short action items are not searchable
+                        continue;
+                    }
+                    long itemTime = goal.getDueDate();
+                    if (itemTime<10) {
+                        itemTime = goal.getStartDate();
+                    }
+                    if (itemTime<10) {
+                        itemTime = goal.getEmailSendTime();
+                    }
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Action Item", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", workspaceKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(itemTime), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
+                    doc.add(new Field("ITEMID", goal.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "task"+goal.getId()+".htm", TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", stripWikiFormatting(goal.getAllSearchableText()), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                    addString(mf, "\n=============== ACTION ITEM\n");
+                    addString(mf, doc.toString());
+                }
+                
+                //now make a copy of the searchable text into a temp file
+                if (searchFile.exists()) {
+                    searchFile.delete();
+                }
+                StreamHelper.copyStreamToFile(mf.getInputStream(), searchFile);
             }
             System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
             iWriter.commit();
@@ -229,34 +426,43 @@ public class SearchManager {
                 String queryStr, String relationship, String siteId, String workspaceId) throws Exception {
 
         long startTime = System.currentTimeMillis();
-        System.out.println("SearchManager - actually performing a search for "+queryStr);
+        
+        
+        //rebuild the parts of the index that have changed
+        initializeIndex();
+        
+        System.out.println("SearchManager - actually performing a search for ("+queryStr+") "+relationship);
         List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
+        if (!ar.isLoggedIn()) {
+            return vec;   //bomb out without searching for anything
+        }
 
         boolean onlyOwner  = ("owner".equals(relationship));
         boolean onlyMember = ("member".equals(relationship));
         boolean onlyOne    = ("one".equals(relationship));
 
-        DirectoryReader ireader = DirectoryReader.open(directory);
+        DirectoryReader ireader = DirectoryReader.open(directoryStore);
         IndexSearcher isearcher = new IndexSearcher(ireader);
+        
         // Parse a simple query that searches for "text":
         QueryParser parser = new QueryParser(Version.LUCENE_42, "BODY", analyzer);
         Query query = parser.parse(queryStr);
+        
         TopDocs td = isearcher.search(query, null, 1000);
         ScoreDoc[] hits = td.scoreDocs;
 
         UserProfile up = ar.getUserProfile();
-        boolean isLoggedIn = (up!=null);
 
         for (int i = 0; i < hits.length; i++)
         {
             Document hitDoc = isearcher.doc(hits[i].doc);
+            String containerType = hitDoc.get("containerType");
             String key = hitDoc.get("PAGEKEY");
             String siteKey = hitDoc.get("SITEKEY");
-            String noteId = hitDoc.get("NOTEID");
-            String meetId = hitDoc.get("MEETID");
-            String decId = hitDoc.get("DECISIONID");
-            String linkAddr = null;
-            String noteSubject = null;
+            String link = hitDoc.get("LINK");
+            String itemName = containerType+": "+hitDoc.get("ITEMNAME");
+            
+            long updateTime = DOMFace.safeConvertLong(hitDoc.get("MODTIME"));
 
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {
@@ -272,81 +478,26 @@ public class SearchManager {
             }
 
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
-
+            if (!ngp.primaryOrSecondaryPermission(up)) {
+                continue;   //don't include anything else if not a member
+            }
+            
+            String linkAddr = ar.getResourceURL(ngp, link);
             if (onlyOwner) {
                 if (!ngp.secondaryPermission(up)) {
                     continue;
                 }
             }
-            if (onlyMember) {
-                if (!ngp.primaryOrSecondaryPermission(up)) {
-                    continue;
-                }
-            }
-
-            if ("$".equals(noteId)) {
-                //this is the case of the entire page search record
-                linkAddr = ar.getDefaultURL(ngp);
-                noteSubject = "Workspace: "+ngp.getFullName();
-            }
-            else if (noteId!=null && noteId.length()==4) {
-                TopicRecord note = ngp.getNoteOrFail(noteId);
-
-                if (note.getVisibility()==SectionDef.PUBLIC_ACCESS) {
-                    //ok to access public topic
-                }
-                else if (!isLoggedIn) {
-                    continue;   //don't include this result if not logged in
-                }
-                else if (ngp.primaryOrSecondaryPermission(up)) {
-                    //OK no problem, user is a member or admin
-                }
-                else {
-                    continue; //no access to non members
-                }
-                noteSubject = note.getSubject();
-                linkAddr = ar.getResourceURL(ngp, note);
-            }
-            else if (meetId!=null && meetId.length()==4) {
-                if (!isLoggedIn) {
-                    continue;   //don't include this result if not logged in
-                }
-                else if (ngp.primaryOrSecondaryPermission(up)) {
-                    //OK no problem, user is a member or admin
-                }
-                else {
-                    continue; //no access to non members
-                }
-                MeetingRecord meet = ngp.findMeeting(meetId);
-
-                noteSubject = meet.getName();
-                linkAddr = ar.getResourceURL(ngp, "meetingHtml.htm?id="+meetId);
-            }
-            else if (decId!=null) {
-                if (!isLoggedIn) {
-                    continue;   //don't include this result if not logged in
-                }
-                else if (ngp.primaryOrSecondaryPermission(up)) {
-                    //OK no problem, user is a member or admin
-                }
-                else {
-                    continue; //no access to non members
-                }
-
-                noteSubject = "Decision "+decId;
-                linkAddr = ar.getResourceURL(ngp, "DecisionList.htm#DEC"+decId);
-            }
-
+          
 
             SearchResultRecord sr = new SearchResultRecord();
             sr.setPageName(hitDoc.get("PAGENAME"));
             sr.setPageKey(key);
             sr.setBookName(hitDoc.get("ACCTNAME"));
-            sr.setNoteSubject(noteSubject);
+            sr.setNoteSubject(itemName);
             sr.setNoteLink(linkAddr);
             sr.setPageLink(ar.getDefaultURL(ngp));
-            sr.setLastModifiedTime(DOMFace.safeConvertLong(hitDoc.get("LASTMODIFIEDTIME")));
-            sr.setLastModifiedBy(hitDoc.get("LASTMODIFIEDUSER"));
+            sr.setLastModifiedTime(updateTime);
             vec.add(sr);
         }
 

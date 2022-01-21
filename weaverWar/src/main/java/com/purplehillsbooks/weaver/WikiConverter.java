@@ -619,6 +619,11 @@ public class WikiConverter
         {
             line = line.substring(1);
         }
+        line = line.replaceAll("__", "");
+        line = line.replaceAll("''", "");
+        line = line.replaceAll("[", "");
+        line = line.replaceAll("]", "");
+        line = line.replaceAll("|", "");
         ar.write(line);
     }
 

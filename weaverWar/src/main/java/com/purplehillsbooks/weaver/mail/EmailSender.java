@@ -276,7 +276,7 @@ public class EmailSender extends TimerTask {
             MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile, 3);
 
 
-            if (ngpi.isProject()){
+            if (ngpi.isWorkspace()){
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
 

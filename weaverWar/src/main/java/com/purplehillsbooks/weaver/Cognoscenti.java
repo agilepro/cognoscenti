@@ -447,7 +447,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getAllSites() {
         ArrayList<NGPageIndex> res = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : allContainers) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 res.add(ngpi);
             }
         }
@@ -492,7 +492,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getAllProjectsInSite(String accountKey) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 // only consider book/project style containers
                 continue;
             }
@@ -508,7 +508,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getAllPagesForAdmin(UserProfile user) {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 // only consider project style containers
                 continue;
             }
@@ -525,7 +525,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getProjectsUserIsPartOf(UserRef ale) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 // only consider project style containers
                 continue;
             }
@@ -765,11 +765,6 @@ System.out.println("Weaver Server Object == Start the Server");
         if (searchManager==null) {
             searchManager = new SearchManager(this);
         }
-        //if it has not been built this hour, rebuild
-        if (searchIndexBuildtime < System.currentTimeMillis()- (60 * 60 * 1000)) {
-            searchManager.initializeIndex();
-            searchIndexBuildtime = System.currentTimeMillis();
-        }
         return searchManager.performSearch(ar, queryStr, relationship, siteId, workspaceId);
     }
 
@@ -782,7 +777,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
 
     public NGPageIndex getParentWorkspace(NGPageIndex child) throws Exception {
-        if (!child.isProject()) {
+        if (!child.isWorkspace()) {
             throw new Exception("You can only get a parent of a workspace, but this is not workspace: "+child.containerKey);
         }
         String searchKey = child.parentKey;
@@ -803,7 +798,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return null;
     }
     public List<NGPageIndex> getChildWorkspaces(NGPageIndex parent) throws Exception {
-        if (!parent.isProject()) {
+        if (!parent.isWorkspace()) {
             throw new Exception("You can only get children of a workspace, but this is not workspace: "+parent.containerKey);
         }
         List<NGPageIndex> res = new ArrayList<NGPageIndex>();

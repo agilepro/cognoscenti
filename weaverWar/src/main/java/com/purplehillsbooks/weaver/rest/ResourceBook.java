@@ -295,7 +295,7 @@ public class ResourceBook implements NGResource
         {
             NGPageIndex.clearLocksHeldByThisThread();
 
-            if (!ngpi.isProject())
+            if (!ngpi.isWorkspace())
             {
                 continue;
             }

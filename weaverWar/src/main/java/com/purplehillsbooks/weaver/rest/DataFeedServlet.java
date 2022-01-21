@@ -272,7 +272,7 @@ public class DataFeedServlet extends HttpServlet {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
 
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 continue;
             }
             NGWorkspace aPage = ngpi.getWorkspace();

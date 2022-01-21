@@ -217,7 +217,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                     throw new Exception("Unable to find a workspace with the name: "+pageid);
                 }
             }
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 throw new Exception("Something is wrong with the workspace name: "+pageid);
             }
 

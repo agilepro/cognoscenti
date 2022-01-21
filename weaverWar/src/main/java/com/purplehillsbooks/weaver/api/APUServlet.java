@@ -196,7 +196,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
 
-            if (!ngpi.isProject() || ngpi.isDeleted) {
+            if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;
             }
             NGWorkspace aPage = ngpi.getWorkspace();

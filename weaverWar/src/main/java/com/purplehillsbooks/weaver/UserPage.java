@@ -656,7 +656,7 @@ public class UserPage extends ContainerCommon
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
 
-            if (!ngpi.isProject() || ngpi.isDeleted) {
+            if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;
             }
             NGWorkspace aWorkspace = ngpi.getWorkspace();

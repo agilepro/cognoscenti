@@ -455,7 +455,7 @@ public class SiteController extends BaseController {
             }
             int count = 0;
             for(NGPageIndex ngpi : listOfSpaces) {
-                if (!ngpi.isProject()) {
+                if (!ngpi.isWorkspace()) {
                     continue;
                 }
                 NGWorkspace ngw = ngpi.getWorkspace();

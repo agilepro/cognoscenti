@@ -1213,7 +1213,7 @@ public class NGBook extends ContainerCommon {
         JSONObject jo = new JSONObject();
         jo.put("list",  ja);
         for (NGPageIndex ngpi : cog.getDeletedContainers()) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 continue;
             }
             if (!ngpi.wsSiteKey.equals(this.key)) {

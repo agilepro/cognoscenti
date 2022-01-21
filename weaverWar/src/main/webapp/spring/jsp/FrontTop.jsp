@@ -23,7 +23,7 @@ Required parameters:
     HashSet<String> allKeys = new HashSet<String>();
     
     for (NGPageIndex ngpi : cog.getAllContainers()) {
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             continue;
         }
         if (!siteId.equals(ngpi.wsSiteKey)) {

@@ -60,7 +60,7 @@ public class TestBuildSite implements TestSet {
             throw new Exception("Strange.  Found a site with the key '"+siteKey+"' but the name does not have special punctuation in it, so please delete this manually");
         }
 
-        if (testSiteCon.isProject()) {
+        if (testSiteCon.isWorkspace()) {
             throw new Exception("Strange.  Found a site with the key '"+siteKey+"' but it is not a NGBook .... don't know what to do with it.");
         }
 

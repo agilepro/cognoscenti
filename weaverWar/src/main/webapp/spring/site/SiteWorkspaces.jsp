@@ -12,13 +12,13 @@
 
     JSONArray projList = new JSONArray();
     for (NGPageIndex ngpi : cog.getAllProjectsInSite(accountKey)) {
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             continue;
         }
         projList.put(ngpi.getJSON4List());
     }
     for (NGPageIndex ngpi : cog.getDeletedContainers()) {
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             continue;
         }
         if (!accountKey.equals(ngpi.wsSiteKey)) {

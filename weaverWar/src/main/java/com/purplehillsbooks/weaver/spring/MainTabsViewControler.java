@@ -290,7 +290,7 @@ public class MainTabsViewControler extends BaseController {
 
             JSONObject query = getPostedObject(ar);
 
-            String searchText    = query.getString("searchFilter");
+            String searchFilter  = query.getString("searchFilter");
             String searchSite    = query.getString("searchSite");
             String searchProject = query.getString("searchProject");
 
@@ -299,8 +299,8 @@ public class MainTabsViewControler extends BaseController {
             }
 
             List<SearchResultRecord> searchResults = null;
-            if (searchText.length()>0) {
-                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, siteId, pageId);
+            if (searchFilter.length()>0) {
+                searchResults = ar.getCogInstance().performSearch(ar, searchFilter, searchProject, siteId, pageId);
             }
             else {
                 searchResults = new ArrayList<SearchResultRecord>();

@@ -1288,6 +1288,9 @@ public class GoalRecord extends BaseRecord {
             resList.add(new GScheduledNotification(ngp, this));
         }
     }
+    public String getAllSearchableText() throws Exception  {
+        return this.getSynopsis() + "\n" + this.getDescription();
+    }
 
     private class GScheduledNotification implements ScheduledNotification {
         NGWorkspace ngp;
@@ -1327,6 +1330,7 @@ public class GoalRecord extends BaseRecord {
         public String selfDescription() throws Exception {
             return "(ActionItem) "+getSynopsis();
         }
+        
     }
 
 }

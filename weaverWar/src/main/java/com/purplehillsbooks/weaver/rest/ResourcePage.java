@@ -93,7 +93,7 @@ public class ResourcePage implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
         }
-        if (!ngpi.isProject())
+        if (!ngpi.isWorkspace())
         {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});

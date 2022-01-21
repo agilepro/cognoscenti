@@ -205,7 +205,7 @@ public class DailyDigest {
                     //ignoring any reference to a workspace that no longer exists
                     continue;
                 }
-                if (!ngpi.isProject()) {
+                if (!ngpi.isWorkspace()) {
                     //ignore site objects
                     continue;
                 }
@@ -271,7 +271,7 @@ public class DailyDigest {
                     if (ngci != null) {
                         //apparently it is possible for people to get a 'Site' in their
                         //notify list.
-                        if (ngci.isProject()) {
+                        if (ngci.isWorkspace()) {
                             containers.add(ngci);
                         }
                     }
@@ -381,7 +381,7 @@ public class DailyDigest {
             if (ngpi==null) {
                 throw new Exception("How did I get a null value by iterating a List collection?");
             }
-            if (!ngpi.isProject()) {
+            if (!ngpi.isWorkspace()) {
                 //ignore sites
                 continue;
             }
@@ -629,7 +629,7 @@ public class DailyDigest {
             throws Exception {
 
         NGPageIndex.assertNoLocksOnThread();
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             return noOfReminders;
         }
         int count = 0;
@@ -753,7 +753,7 @@ public class DailyDigest {
         for (NGPageIndex ngpi : cog.getAllContainers()) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
-            if (!ngpi.isProject() || ngpi.isDeleted) {
+            if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;
             }
             NGWorkspace aPage = ngpi.getWorkspace();

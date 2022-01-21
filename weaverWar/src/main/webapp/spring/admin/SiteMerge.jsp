@@ -22,7 +22,7 @@
     JSONObject siteJSON = ngb.getConfigJSON();
     JSONArray projList = new JSONArray();
     for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             continue;
         }
         projList.put(ngpi.getJSON4List());

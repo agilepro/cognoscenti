@@ -113,7 +113,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
         }
-        if (!ngpi.isProject())
+        if (!ngpi.isWorkspace())
         {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
@@ -368,7 +368,7 @@ public class ResourceSection  implements NGResource
         {
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
         }
-        if (!ngpi.isProject())
+        if (!ngpi.isWorkspace())
         {
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
@@ -514,7 +514,7 @@ public class ResourceSection  implements NGResource
         if (!isExternal)
         {
             NGPageIndex foundPI = ar.getCogInstance().getWSByCombinedKeyOrFail(linkAddr);
-            if (foundPI!=null && foundPI.isProject())
+            if (foundPI!=null && foundPI.isWorkspace())
             {
                 NGWorkspace ngp = foundPI.getWorkspace();
                 linkAddr = lserverURL + "p/" + ngp.getKey() + "/leaf.xml";
@@ -952,7 +952,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
         }
-        if (!ngpi.isProject()) {
+        if (!ngpi.isWorkspace()) {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }

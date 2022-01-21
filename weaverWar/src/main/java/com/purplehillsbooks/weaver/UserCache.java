@@ -42,7 +42,7 @@ public class UserCache {
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
-            if (!ngpi.isProject() || ngpi.isDeleted) {
+            if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;
             }
             NGWorkspace ngw = ngpi.getWorkspace();
