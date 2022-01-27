@@ -111,7 +111,7 @@ public class SearchManager {
     * Given a block of wiki formatted text, this will strip out all the
     * formatting characters, but write out everything else as plain text.
     */
-    public static String stripWikiFormatting(String wikiData) throws Exception
+    private static String stripWikiFormatting(String wikiData) throws Exception
     {
         StringBuilder sb = new StringBuilder();
         LineIterator li = new LineIterator(wikiData);
@@ -164,59 +164,59 @@ public class SearchManager {
 
         Directory dirStore = getStore();
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
-        IndexWriter iWriter = new IndexWriter(dirStore, config);
-        
 
-        try {
+        for (NGPageIndex ngpi : cog.getAllContainers()) {
 
-            for (NGPageIndex ngpi : cog.getAllContainers()) {
+            if (!ngpi.isWorkspace()) {
+                //we only index workspaces
+                continue;
+            }
+            if (ngpi.isDeleted) {
+                //skip all deleted workspaces
+                continue;
+            }
+            NGBook site = ngpi.getSiteForWorkspace();
+            if (site.isDeleted()) {
+                //skip all deleted sites
+                continue;
+            }
+            if (site.isMoved()) {
+                //skip all moved sites
+                continue;
+            }
+            
+            File containingFolder = ngpi.containerPath.getParentFile();
+            File searchFile = new File(containingFolder, "search.txt");
+            if (searchFile.exists() && searchFile.lastModified() > ngpi.containerPath.lastModified()) {
+                //seems this version of the workspace has already been indexed
+                //System.out.println("[-][-][-] skipping [-][-][-] "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
+                continue;
+            }
+            
+            
+            NGWorkspace ngp = ngpi.getWorkspace();
+            if (ngp.isDeleted()) {
+                //skip all deleted workspaces in case different from above
+                continue;
+            }
 
-                if (!ngpi.isWorkspace()) {
-                    //we only index workspaces
-                    continue;
-                }
-                if (ngpi.isDeleted) {
-                    //skip all deleted workspaces
-                    continue;
-                }
-                NGBook site = ngpi.getSiteForWorkspace();
-                if (site.isDeleted()) {
-                    //skip all deleted sites
-                    continue;
-                }
-                if (site.isMoved()) {
-                    //skip all moved sites
-                    continue;
-                }
-                
-                File containingFolder = ngpi.containerPath.getParentFile();
-                File searchFile = new File(containingFolder, "search.txt");
-                if (searchFile.exists() && searchFile.lastModified() > ngpi.containerPath.lastModified()) {
-                    //seems this version of the workspace has already been indexed
-                    //System.out.println("[-][-][-] skipping [-][-][-] "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
-                    continue;
-                }
-                
-                
-                NGWorkspace ngp = ngpi.getWorkspace();
-                if (ngp.isDeleted()) {
-                    //skip all deleted workspaces in case different from above
-                    continue;
-                }
+            String workspaceKey = ngp.getKey();
+            //we can't tolerate any hyphens in the page key
+            if (workspaceKey.startsWith("-")) {
+                //forget it, we simply can't index pages that start with hyphen
+                System.out.println("SearchManager - can not handle workspace ("+workspaceKey+")");
+                continue;
+            }
+            String siteKey = ngp.getSiteKey();
+            String workspaceName = ngp.getFullName();
+            String siteName = ngp.getSite().getFullName();
+            
+            System.out.println("SearchManager - Updating workspace "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
+            
+            IndexWriter iWriter = new IndexWriter(dirStore, config);
+            
 
-                String workspaceKey = ngp.getKey();
-                //we can't tolerate any hyphens in the page key
-                if (workspaceKey.startsWith("-")) {
-                    //forget it, we simply can't index pages that start with hyphen
-                    System.out.println("SearchManager - can not handle workspace ("+workspaceKey+")");
-                    continue;
-                }
-                String siteKey = ngp.getSiteKey();
-                String workspaceName = ngp.getFullName();
-                String siteName = ngp.getSite().getFullName();
-                
-                System.out.println("SearchManager - Updating workspace "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
-                
+            try {
                 //delete all documents with workspace equal to the workspace key
                 QueryParser parser = new QueryParser(Version.LUCENE_42, "BODY", analyzer);
                 Query query = parser.parse("PAGEKEY:"+workspaceKey);
@@ -412,13 +412,13 @@ public class SearchManager {
                     searchFile.delete();
                 }
                 StreamHelper.copyStreamToFile(mf.getInputStream(), searchFile);
+                iWriter.commit();
             }
-            System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
-            iWriter.commit();
+            finally {
+                iWriter.close();
+            }
         }
-        finally {
-            iWriter.close();
-        }
+        System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
     }
 
 

@@ -57,8 +57,6 @@ public class Cognoscenti {
     public List<String> projectsWithEmailToSend = new ArrayList<String>();
 
     SearchManager searchManager = null;
-    private long searchIndexBuildtime = 0;
-
     private Cognoscenti(ServletContext sc) {
         System.out.println("Weaver Server Object == Constructing");
         rootFolder = new File(sc.getRealPath(""));

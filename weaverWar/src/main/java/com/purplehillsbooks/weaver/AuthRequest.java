@@ -1082,7 +1082,6 @@ public class AuthRequest
     */
     public String getCompleteURL() {
         StringBuilder qs = new StringBuilder(getRequestURL());
-        @SuppressWarnings("unchecked")
         Enumeration<String> en = req.getParameterNames();
         boolean firstTime = true;
         while (en.hasMoreElements())

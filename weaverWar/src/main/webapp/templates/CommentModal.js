@@ -33,61 +33,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             .error( handleHTTPError );
         }
     }
-    function saveComment(closeIt, resend) {
-		$scope.cmt.notify.forEach( function(item) {
-			if (!item.uid) {
-				item.uid = item.name;
-			}
-		});
-        var updateRec = {};
-        updateRec.resendEmail = resend;
-        updateRec.time = $scope.cmt.time;
-        updateRec.containerType = $scope.cmt.containerType;
-        updateRec.containerID = $scope.cmt.containerID;
-        updateRec.notify = $scope.cmt.notify;
-        updateRec.docList = $scope.cmt.docList;
-        updateRec.excludeSelf = $scope.cmt.excludeSelf;
-        updateRec.includeInMinutes = $scope.cmt.includeInMinutes;
-        updateRec.suppressEmail = $scope.cmt.suppressEmail;
-        updateRec.state = $scope.cmt.state;
-        updateRec.commentType = $scope.cmt.commentType;
-        updateRec.dueDate = $scope.cmt.dueDate;
-        //updateRec.html = $scope.cmt.html;
-        updateRec.body = HTML2Markdown($scope.cmt.html, {});
-        updateRec.outcome = HTML2Markdown($scope.cmt.outcomeHtml, {});
-        updateRec.responses = $scope.cmt.responses;
-        updateRec.replyTo = $scope.cmt.replyTo;
-        updateRec.containerID = $scope.cmt.containerID;
-        updateRec.containerType = $scope.cmt.containerType;
-        $scope.responders.forEach( function(userRec) {
-            var found = false;
-            $scope.oldCmt.responses.forEach( function(oldItem) {
-                if (oldItem.user == userRec.uid) {
-                    found = true;
-                }
-            });
-            if (!found) {
-                updateRec.responses.push({
-                    "choice": "None",
-                    "html": "",
-                    "user": userRec.uid
-                });
-            }
-        });
-        var postdata = angular.toJson(updateRec);
-        var postURL = "info/comment?cid="+$scope.cmt.time;
-        console.log(postURL,updateRec);
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            if ("Y"==closeIt) {
-                $modalInstance.dismiss('cancel')
-            }
-            else {
-                setComment(data);
-            }
-        })
-        .error( handleHTTPError );
-    }
     function setComment(newComment) {
         if (!newComment.responses) {
             newComment.responses = [];
@@ -162,16 +107,23 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $scope.cmt.state = 12
 		saveComment("Y", false);
     };
-    $scope.okEmail = function () {
-        $scope.cmt.state = 13;
+    $scope.resendEmail = function () {
+        $scope.cmt.suppressEmail = false;
         saveComment("Y", true);
     };
-    $scope.okNoEmail = function () {
+    $scope.closeSendEmail = function () {
         $scope.cmt.state = 13;
+        $scope.cmt.suppressEmail = false;
+        saveComment("Y", true);
+    };
+    $scope.closeNoEmail = function () {
+        $scope.cmt.state = 13;
+        $scope.cmt.suppressEmail = true;
         saveComment("Y", false);
     };
     
-    $scope.postIt = function (sendEmail) {
+    
+    $scope.postIt = function (resendEmail) {
         if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
             $scope.cmt.state = 12;
         }
@@ -180,8 +132,65 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
                 $scope.cmt.state=13;
             }
         }
-        saveComment("Y", sendEmail);
+        $scope.cmt.suppressEmail = !resendEmail;
+        saveComment("Y", resendEmail);
     };
+    function saveComment(closeIt, resend) {
+		$scope.cmt.notify.forEach( function(item) {
+			if (!item.uid) {
+				item.uid = item.name;
+			}
+		});
+        var updateRec = {};
+        updateRec.resendEmail = resend;
+        updateRec.time          = $scope.cmt.time;
+        updateRec.containerType = $scope.cmt.containerType;
+        updateRec.containerID   = $scope.cmt.containerID;
+        updateRec.notify        = $scope.cmt.notify;
+        updateRec.docList       = $scope.cmt.docList;
+        updateRec.excludeSelf   = $scope.cmt.excludeSelf;
+        updateRec.includeInMinutes = $scope.cmt.includeInMinutes;
+        updateRec.suppressEmail = $scope.cmt.suppressEmail;
+        updateRec.state         = $scope.cmt.state;
+        updateRec.commentType   = $scope.cmt.commentType;
+        updateRec.dueDate       = $scope.cmt.dueDate;
+        updateRec.body          = HTML2Markdown($scope.cmt.html, {});
+        updateRec.outcome       = HTML2Markdown($scope.cmt.outcomeHtml, {});
+        updateRec.responses     = $scope.cmt.responses;
+        updateRec.replyTo       = $scope.cmt.replyTo;
+        updateRec.containerID   = $scope.cmt.containerID;
+        updateRec.containerType = $scope.cmt.containerType;
+        $scope.responders.forEach( function(userRec) {
+            var found = false;
+            $scope.oldCmt.responses.forEach( function(oldItem) {
+                if (oldItem.user == userRec.uid) {
+                    found = true;
+                }
+            });
+            if (!found) {
+                updateRec.responses.push({
+                    "choice": "None",
+                    "html": "",
+                    "user": userRec.uid
+                });
+            }
+        });
+        var postdata = angular.toJson(updateRec);
+        var postURL = "info/comment?cid="+$scope.cmt.time;
+        console.log(postURL,updateRec);
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            if ("Y"==closeIt) {
+                $modalInstance.dismiss('cancel')
+            }
+            else {
+                setComment(data);
+            }
+        })
+        .error( handleHTTPError );
+    }
+
+
    
     $scope.commentTypeName = function() {
         if ($scope.cmt.commentType==2) {
