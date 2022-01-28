@@ -401,7 +401,7 @@ public class DailyDigest {
                     clone.write(clone.baseURL);
                     clone.write("v/");
                     clone.writeURLData(clone.getUserProfile().getKey());
-                    clone.write("/userAlerts.htm\">View Latest</a></div>");
+                    clone.write("/UserAlerts.htm\">View Latest</a></div>");
 
                     needsFirst = false;
                 }
@@ -519,7 +519,7 @@ public class DailyDigest {
         ar.write(ar.baseURL);
         ar.write("v/");
         ar.writeURLData(up.getKey());
-        ar.write("/userActiveTasks.htm\">View Latest</a></div>");
+        ar.write("/UserActiveTasks.htm\">View Latest</a></div>");
         ar.write("\n <table width=\"600\" class=\"Design8\">");
         ar.write("\n <col width=\"30\"/>");
         ar.write("\n <col width=\"500\"/>");
@@ -648,7 +648,7 @@ public class DailyDigest {
                     ar.write(ar.baseURL);
                     ar.write("v/");
                     ar.writeURLData(up.getKey());
-                    ar.write("/userActiveTasks.htm\">View Latest </a>");
+                    ar.write("/UserActiveTasks.htm\">View Latest </a>");
                     ar.write("(Below is list of reminders of documents which you are requested to upload.)</div>");
                     ar.write("\n <table width=\"800\" class=\"Design8\">");
                     ar.write("\n <thead> ");

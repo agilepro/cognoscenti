@@ -142,4 +142,10 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
         </div>
 
+        <hr/>
+        <div><i>Note: this list is updated daily so it might not show changes that have occurred in the last 24 hours.
+        If you want to see this page updated use 
+        <a href="UserHome.htm?ref=<%=ar.nowTime%>">
+          <button class="btn btn-default btn-raised">Refresh</button></a></i></div>
+
 </div>

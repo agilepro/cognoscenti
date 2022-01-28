@@ -10,12 +10,15 @@ Required parameters:
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
 
+    String userKey = ar.reqParam("userKey");
 
     UserProfile loggedUser = ar.getUserProfile();
+    UserProfile displayedUser = UserManager.getUserProfileByKey(userKey);
+    
     NGPageIndex.clearLocksHeldByThisThread();
     Cognoscenti cog = ar.getCogInstance();
 
-    UserCache userCache = cog.getUserCacheMgr().getCache(loggedUser.getKey());
+    UserCache userCache = cog.getUserCacheMgr().getCache(userKey);
 
     String refresh = ar.defParam("ref", null);
     if (refresh!=null) {
@@ -38,13 +41,13 @@ Required parameters:
     
     JSONArray accWSpaces = new JSONArray();
     int count = 0;
-    for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(loggedUser)) {
+    for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(displayedUser)) {
         accWSpaces.put(ngpi.getJSON4List());
     }
     
     JSONObject userCacheJSON = userCache.getAsJSON();
 
-    List<WatchRecord> watchList = loggedUser.getWatchList();
+    List<WatchRecord> watchList = displayedUser.getWatchList();
 
     JSONArray wList = new JSONArray();
     count = 0;
@@ -63,7 +66,7 @@ Required parameters:
     }
 
     JSONArray siteList = new JSONArray();
-    for (NGBook site : loggedUser.findAllMemberSites()) {
+    for (NGBook site : displayedUser.findAllMemberSites()) {
         JSONObject jObj = site.getConfigJSON();
         WorkspaceStats stats = site.getRecentStats();
         jObj.put("numWorkspaces", stats.numWorkspaces);
@@ -78,7 +81,7 @@ Required parameters:
 
 var myApp = angular.module('myApp');
 myApp.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Home for "+"<%ar.writeJS(loggedUser.getName());%>");
+    window.setMainPageTitle("Home for "+"<%ar.writeJS(displayedUser.getName());%>");
     $scope.futureMeetings  = <%futureMeetings.write(out,2,4);%>;
     $scope.futureMeetings.sort( function(a,b) {
         return a.startTime - b.startTime;
@@ -91,7 +94,7 @@ myApp.controller('myCtrl', function($scope, $http) {
     $scope.accWSpaces  = <%accWSpaces.write(out,2,4);%>;
     
     $scope.siteList    = <%siteList.write(out,2,4);%>;
-    $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
+    $scope.displayedUser  = <% displayedUser.getJSON().write(out,2,4);%>;
     
     $scope.userCache   = <%userCacheJSON.write(out,2,4);%>;
 
@@ -137,7 +140,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <span translate>Options</span> <span class="caret"></span></button>
           <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
             <li role="presentation"><a role="menuitem"
-                href="userAlerts.htm" translate
+                href="UserAlerts.htm" translate
                 title="{{'A list of things that have changed in the pages that you watch'|translate}}">
                 User Alerts</a></li>
             <li role="presentation"><a role="menuitem" href="UserHome.htm?ref=<%=ar.nowTime%>" translate
@@ -173,7 +176,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Top Action Items</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">
+                  <a href="UserActiveTasks.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -184,7 +187,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                  {{item.synopsis}}</a>
             </div>
             <div ng-show="openActionItems.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" 
+                 <a href="UserActiveTasks.htm" 
                       class="btn btn-sm btn-default btn-raised" translate>See all...</a>
             </div>
           </div>
@@ -193,9 +196,6 @@ myApp.controller('myCtrl', function($scope, $http) {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Planned Meetings</span></div>
-              <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
-                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -220,7 +220,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Need to Respond</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm">
+                  <a href="userMissingResponses.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -229,7 +229,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{item.content}}</a>
                </div>
                <div ng-show="proposals.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" 
+                 <a href="userMissingResponses.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
           </div>
@@ -241,7 +241,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Need to Complete</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">
+                  <a href="userOpenRounds.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -250,7 +250,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixNull(item.content)}}</a>
                </div>
                <div ng-show="openRounds.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" 
+                 <a href="userOpenRounds.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
           </div>
@@ -259,18 +259,11 @@ myApp.controller('myCtrl', function($scope, $http) {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Unposted Draft Topics</span></div>
-              <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">
-                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
                <div ng-repeat="item in userCache.draftTopics | limitTo: 10" class="clipping">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/noteZoom{{item.id}}.htm">{{fixNull(item.subject)}}</a>
-               </div>
-               <div ng-show="userCache.draftTopics.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
           </div>
        </div>
@@ -284,7 +277,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Watched Workspaces</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
+                  <a href="WatchedProjects.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -295,7 +288,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="wList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" 
+                 <a href="WatchedProjects.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
           </div>
@@ -305,7 +298,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Accessible Workspaces</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/participantProjects.htm">
+                  <a href="ParticipantProjects.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -316,7 +309,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="wList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" 
+                 <a href="ParticipantProjects.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
           </div>
@@ -327,7 +320,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Sites you Manage</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userSites.htm">
+                  <a href="userSites.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -338,7 +331,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="siteList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userSites.htm" 
+                 <a href="userSites.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
            </div>

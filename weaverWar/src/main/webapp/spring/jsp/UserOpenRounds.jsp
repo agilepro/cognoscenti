@@ -161,7 +161,10 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
         </div>
 
-
-        <div><i>Note: this list is updated when the email is sent.  Email is usually delayed 5 minutes.</i></div>
+        <hr/>
+        <div><i>Note: this list is updated daily so it might not show changes that have occurred in the last 24 hours.
+        If you want to see this page updated use 
+        <a href="UserHome.htm?ref=<%=ar.nowTime%>">
+          <button class="btn btn-default btn-raised">Refresh</button></a></i></div>
     </div>
 </div>

@@ -120,8 +120,8 @@
             <li><a onclick='logOutPage()'>Log Out</a></li>
 <% } %>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
-            <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
-            <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
+            <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
+            <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
             <li><a href="<%=userRelPath%>emailListnerSettings.htm">Administration</a></li>
           </ul>
         </li>

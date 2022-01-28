@@ -123,9 +123,16 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserHome");
     }
+    
+    //this one just in case someone had bookmarked the old value
+    @RequestMapping(value = "/{userKey}/userHome.htm", method = RequestMethod.GET)
+    public void userHome2(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserHome");
+    }
 
 
-    @RequestMapping(value = "{userKey}/watchedProjects.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "{userKey}/WatchedProjects.htm", method = RequestMethod.GET)
     public void watchedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -140,7 +147,7 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "../jsp/NotifiedProjects");
     }
 
-    @RequestMapping(value = "/{userKey}/ownerProjects.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/OwnerProjects.htm", method = RequestMethod.GET)
     public void ownerProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -155,14 +162,14 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "../jsp/Templates");
     }
 
-    @RequestMapping(value = "/{userKey}/participantProjects.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/ParticipantProjects.htm", method = RequestMethod.GET)
     public void participantProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/ParticipantProjects");
     }
 
-    @RequestMapping(value = "/{userKey}/allProjects.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/AllProjects.htm", method = RequestMethod.GET)
     public void allProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/AllProjects");
@@ -177,14 +184,14 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{userKey}/userAlerts.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/UserAlerts.htm", method = RequestMethod.GET)
     public void loadUserAlerts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserAlerts");
     }
 
 
-    @RequestMapping(value = "/{userKey}/userActiveTasks.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/UserActiveTasks.htm", method = RequestMethod.GET)
     public void userActiveTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserActiveTasks");
@@ -498,7 +505,7 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{userKey}/notificationSettings.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/NotificationSettings.htm", method = RequestMethod.GET)
     public void goToNotificationSetting(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -528,7 +535,7 @@ public class UserController extends BaseController {
 
             if(ar.isLoggedIn()){
                 UserProfile profile = ar.getUserProfile();
-                ar.resp.sendRedirect(ar.baseURL+"v/"+profile.getKey()+"/notificationSettings.htm");
+                ar.resp.sendRedirect(ar.baseURL+"v/"+profile.getKey()+"/NotificationSettings.htm");
                 return;
             }
 
@@ -539,7 +546,7 @@ public class UserController extends BaseController {
                 String accessCode = ar.defParam("accessCode", null);
                 if(userProfile != null && userProfile.getAccessCode().equals(accessCode)){
                     ar.setSpecialSessionAccess("Notifications:"+userKey);
-                    ar.resp.sendRedirect(ar.baseURL+"v/"+userKey+"/notificationSettings.htm");
+                    ar.resp.sendRedirect(ar.baseURL+"v/"+userKey+"/NotificationSettings.htm");
                     return;
                 }
             }
@@ -618,7 +625,7 @@ public class UserController extends BaseController {
             }
 
             ngw.saveFile(ar,"updated notification settings");
-            redirectBrowser(ar,"notificationSettings.htm");
+            redirectBrowser(ar,"NotificationSettings.htm");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);

@@ -139,11 +139,11 @@
 
 %>
             <li class="divider"></li>
-            <li><a href="<%=userRelPath%>watchedProjects.htm">Watched Workspaces</a></li>
+            <li><a href="<%=userRelPath%>WatchedProjects.htm">Watched Workspaces</a></li>
             <li><a href="<%=userRelPath%>templates.htm">Templates</a></li>
-            <li><a href="<%=userRelPath%>ownerProjects.htm">Administered</a></li>
-            <li><a href="<%=userRelPath%>participantProjects.htm">Participant</a></li>
-            <li><a href="<%=userRelPath%>allProjects.htm">All</a></li>
+            <li><a href="<%=userRelPath%>OwnerProjects.htm">Administered</a></li>
+            <li><a href="<%=userRelPath%>ParticipantProjects.htm">Participant</a></li>
+            <li><a href="<%=userRelPath%>AllProjects.htm">All</a></li>
           </ul>
         </li>
 
@@ -175,8 +175,8 @@
           <ul class="dropdown-menu pull-right tighten">
             <li><a href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
-            <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
-            <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
+            <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
+            <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
             <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
