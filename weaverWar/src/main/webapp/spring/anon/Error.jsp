@@ -109,15 +109,22 @@ td {
     
     <div>
         <div class="page-name">
-            <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
+            <h1 id="mainPageTitle"
                 title="This is the title of the discussion topic that all these topics are attached to">
-                A Problem Handling that Request
+                Sorry, Weaver can't Handle that Request
             </h1>
         </div>
         
         <div class="guideVocal">
-            The information below may be helpful in determining what went wrong.  
-            In some cases you can go back to the last page and make a change.
+            For some reason, the system is not able to handle that request.
+            Don't worry, there is probably a perfectly good reason, but the 
+            program just can't figure it out.
+            <br/>
+            In this case, what we do is to display the information below 
+            and somtimes this provides a clue to determine why the program can't
+            figure out the request it was given.
+            <br/>
+            In some cases you can go back to the last page, change what you entered, and try again.
             In other cases the system may need the attention of an administrator.
         </div>
     

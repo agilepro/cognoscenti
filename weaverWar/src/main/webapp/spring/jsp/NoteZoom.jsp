@@ -799,6 +799,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
+    $scope.startSubscriberEdit = function() {
+        $scope.editMeetingPart='subscribers';
+        $scope.subscriberBuffer = $scope.noteInfo.subscribers;
+    }
+    $scope.saveSubscriberEdit = function() {
+        $scope.editMeetingPart=null;
+        var saveRec = {subscribers: $scope.subscriberBuffer, universalid: $scope.noteInfo.universalid};
+        $scope.savePartial(saveRec);
+    }
     
     //now actually get it
     refreshTopic();
@@ -973,7 +982,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </td>
 </tr>
 <tr ng-hide="editMeetingPart=='subscribers'">
-    <td class="labelColumn" ng-click="editMeetingPart='subscribers'">Subscribers:</td>
+    <td class="labelColumn" ng-click="startSubscriberEdit()">Subscribers:</td>
     <td ng-dblclick="editMeetingPart='subscribers'">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}"    
           style="text-align:center">
@@ -1001,7 +1010,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       <div class="well" ng-show="editMeetingPart=='subscribers'">
           <h2>Adjust Subscribers:</h2>
           <div>
-              <tags-input ng-model="noteInfo.subscribers" 
+              <tags-input ng-model="subscriberBuffer" 
                           placeholder="Enter users to send notification email to"
                           display-property="name" key-property="uid"
                           replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
@@ -1013,7 +1022,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <div>
           <span class="dropdown">
               <button class="btn btn-default btn-primary btn-raised" type="button" 
-                      ng-click="saveEdits(['subscribers']);editMeetingPart=null"
+                      ng-click="saveSubscriberEdit()"
                       title="Post this topic but don't send any email">
               Save </button>
           </span>
