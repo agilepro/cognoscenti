@@ -232,7 +232,22 @@ function setUpCommentMethods($scope, $http, $modal) {
             console.log("Sorry, I can't understand this comment", cmt);
         }
     }
-
+    $scope.hasOutcome = function(cmt) {
+        var val = (cmt.outcomeHtml);
+        console.log("hasOutcome: "+val);
+        return val;
+    }
+    $scope.getOutcome = function(cmt) {
+        if ($scope.hasOutcome(cmt)) {
+            return cmt.outcomeHtml;
+        }
+        if (cmt.state<13) {
+            return "The outcome will appear here when closed.  Double-click here to close the "+$scope.commentTypeName(cmt);
+        }
+        else {
+            return "No outcome recorded for this "+$scope.commentTypeName(cmt);
+        }
+    }
 }
 </script>
 
@@ -368,10 +383,16 @@ function setUpCommentMethods($scope, $http, $modal) {
           </span>
       </div>
       <div class="leafContent comment-inner" 
-           ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
+           ng-show="(cmt.commentType==2 || cmt.commentType==3) && hasOutcome(cmt)" 
            ng-dblclick="openCommentEditor(item, cmt)"
            title="closing outcome of the round/proposal">
-        <div ng-bind-html="cmt.outcomeHtml"></div>
+        <div ng-bind-html="getOutcome(cmt)"></div>
+      </div>
+      <div class="leafContent comment-inner" 
+           ng-show="(cmt.commentType==2 || cmt.commentType==3) && !hasOutcome(cmt)" 
+           ng-dblclick="openCommentEditor(item, cmt)"
+           title="closing outcome of the round/proposal">
+        <div style="color:lightgrey" ng-bind-html="getOutcome(cmt)"></div>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
         See proposals:
