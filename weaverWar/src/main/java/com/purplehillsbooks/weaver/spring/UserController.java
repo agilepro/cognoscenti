@@ -176,13 +176,6 @@ public class UserController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{userKey}/userCreateProject.htm", method = RequestMethod.GET)
-    public void userCreateProject(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)  throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserCreateProject");
-    }
-
-
 
     @RequestMapping(value = "/{userKey}/UserAlerts.htm", method = RequestMethod.GET)
     public void loadUserAlerts(@PathVariable String userKey,

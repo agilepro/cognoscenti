@@ -374,10 +374,15 @@ myApp.filter('cdate', function() {
       <!-- End Template Content (compiled separately) -->
       
         <div style="clear:both"></div>
+
+      <% if(ar.isSuperAdmin()) { %>
+
         <hr/>
         <div class="well">
         <button ng-click="fakeError()">Cause Error</button>
         </div>
+      <% } %>
+      
     </div>
   </div>
 

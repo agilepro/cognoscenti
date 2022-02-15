@@ -263,30 +263,7 @@ img {
 	display: inline
 }
 
-.primary-fab {
-	position: fixed !important;
-	right: 15px;
-	bottom: 15px
-}
 
-.role-label {
-	font-size: 11pt;
-	color: #291720;
-	font-weight: 500 !important
-}
-
-.role-label .label {
-	font-size: 11pt;
-	color: #291720;
-	font-weight: 500 !important
-}
-
-.role-label a {
-	background-color: #d9d0de;
-	color: #291720;
-	padding: 0.3em 0.6em;
-	margin-left: -0.3em
-}
 
 .form-hide.ng-show-add,
 .form-hide.ng-show-remove {
