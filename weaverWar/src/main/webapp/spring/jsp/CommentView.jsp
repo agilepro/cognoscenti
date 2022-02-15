@@ -232,21 +232,22 @@ function setUpCommentMethods($scope, $http, $modal) {
             console.log("Sorry, I can't understand this comment", cmt);
         }
     }
-    $scope.hasOutcome = function(cmt) {
-        var val = (cmt.outcomeHtml);
-        console.log("hasOutcome: "+val);
-        return val;
-    }
-    $scope.getOutcome = function(cmt) {
-        if ($scope.hasOutcome(cmt)) {
+    $scope.getOutcomeHtml = function(cmt) {
+        if (cmt.outcomeHtml) {
             return cmt.outcomeHtml;
         }
         if (cmt.state<13) {
-            return "The outcome will appear here when closed.  Double-click here to close the "+$scope.commentTypeName(cmt);
+            return "<span style=\"color:lightgrey\">The outcome will appear here when closed.  Double-click here to close the "+$scope.commentTypeName(cmt)+".<span>";
         }
         else {
-            return "No outcome recorded for this "+$scope.commentTypeName(cmt);
+            return "<span style=\"color:lightgrey\">No outcome recorded for this "+$scope.commentTypeName(cmt)+".<span>";
         }
+    }
+    $scope.getResponseHtml = function(resp) {
+        if (resp.html) {
+            return resp.html;
+        }
+        return "<span style=\"color:lightgrey\">No response provided</span>";
     }
 }
 </script>
@@ -354,7 +355,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             </span>
           </td>
           <td style="padding:5px;" ng-dblclick="openResponseEditor(cmt, resp.user)">
-            <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
+            <div class="leafContent comment-inner" ng-bind-html="getResponseHtml(resp)"></div>
           </td>
           <td ng-click="removeResponse(cmt,resp)" ng-show="cmt.state==12" >
             <span class="fa fa-trash" style="color:orange"></span>
@@ -383,16 +384,10 @@ function setUpCommentMethods($scope, $http, $modal) {
           </span>
       </div>
       <div class="leafContent comment-inner" 
-           ng-show="(cmt.commentType==2 || cmt.commentType==3) && hasOutcome(cmt)" 
+           ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
            ng-dblclick="openCommentEditor(item, cmt)"
            title="closing outcome of the round/proposal">
-        <div ng-bind-html="getOutcome(cmt)"></div>
-      </div>
-      <div class="leafContent comment-inner" 
-           ng-show="(cmt.commentType==2 || cmt.commentType==3) && !hasOutcome(cmt)" 
-           ng-dblclick="openCommentEditor(item, cmt)"
-           title="closing outcome of the round/proposal">
-        <div style="color:lightgrey" ng-bind-html="getOutcome(cmt)"></div>
+        <div ng-bind-html="getOutcomeHtml(cmt)"></div>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
         See proposals:

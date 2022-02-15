@@ -2,12 +2,13 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<NGPageIndex> ownedProjs = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
-    boolean noneFound = ownedProjs.size()==0;
+    Vector<NGPageIndex> tmpList = uProf.getValidTemplates(ar.getCogInstance());
+    boolean noneFound = tmpList.size()==0;
 
     JSONArray projList = new JSONArray();
-    for (NGPageIndex ngpi : ownedProjs) {
-        projList.put(ngpi.getJSON4List());
+    for (NGPageIndex ngpi : tmpList) {
+        JSONObject wObj = ngpi.getJSON4List();
+        projList.put(wObj);
     }
 
 /** RECORD PROTOTYPE
@@ -15,8 +16,7 @@
         "changed": 1433079860881,
         "name": "Secular Coalition for America",
         "pageKey": "secular-coalition-for-america",
-        "siteKey": "serious",
-        "visited": 1408859504142
+        "siteKey": "serious"
       },
 */
 
@@ -26,7 +26,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Workspaces <% ar.writeJS(uProf.getName()); %> Participate In");
+    window.setMainPageTitle("Your Template Workspaces");
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
     $scope.filter = "";
@@ -66,7 +66,7 @@ app.controller('myCtrl', function($scope, $http) {
 <!-- MAIN CONTENT SECTION START -->
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
 
     <div>Filter <input ng-model="filter"></div>
@@ -85,35 +85,37 @@ app.controller('myCtrl', function($scope, $http) {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
+                          Access Workspace</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/permission.htm">Abandon Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/Personal.htm">
+                          Remove Template</a></li>
                 </ul>
               </div>
             </td>
             <td class="repositoryName">
-                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/NotesList.htm">
+                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
                    {{rec.name}}
-                       <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
-                       <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
-                       <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
             </td>
-            <td>{{rec.changed|cdate}}</td>
+            <td>{{rec.changed|cdate}}</span></td>
         </tr>
     </table>
 
     <div class="guideVocal" ng-show="noneFound">
-        User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
-       <br/>
-       When a user create projects, they will be listed here.<br/>
-       <br/>
-       In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
-       <br/>
-       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'">Settings &gt; Sites</button>
-       to view your sites, or request a new site from the system administrator.
-       If approved you will be the owner of that new site,
-       and can create new projects within it.
+        User <% uProf.writeLink(ar); %> has not specified any templates.<br/>
+            <br/>
+            Templates are references to normal projects.  When you
+            create a new workspace, you can specify a template, and all the action items
+            and roles are copied (empty & unstarted) into the new workspace.
+            This is a convenient way to 'prime' a workspace with the normal tasks
+            and roles that you need. <br/>
+            <br/>
+            If you visit a workspace which has a good form, and you might want to use it
+            in the future as a template, on that workspace go the "Workspace Settings>Personal" page,
+            and choose to remember the workspace as a template.  Then that workspace will appear here
+            and in other places where you can use a template, such as at the time that you
+            create a new workspace.
     </div>
 
 </div>

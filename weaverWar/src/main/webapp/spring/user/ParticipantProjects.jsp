@@ -2,7 +2,7 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllPagesForAdmin(uProf);
+    List<NGPageIndex> ownedProjs = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
     boolean noneFound = ownedProjs.size()==0;
 
     JSONArray projList = new JSONArray();
@@ -26,7 +26,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Workspaces You Administer");
+    window.setMainPageTitle("Workspaces <% ar.writeJS(uProf.getName()); %> Participate In");
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
     $scope.filter = "";
@@ -66,7 +66,8 @@ app.controller('myCtrl', function($scope, $http) {
 <!-- MAIN CONTENT SECTION START -->
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
+
 
     <div>Filter <input ng-model="filter"></div>
     <div style="height:30px;"></div>
@@ -86,12 +87,12 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Abandon Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/permission.htm">Abandon Workspace</a></li>
                 </ul>
               </div>
             </td>
             <td class="repositoryName">
-                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
+                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/NotesList.htm">
                    {{rec.name}}
                        <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
                        <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>

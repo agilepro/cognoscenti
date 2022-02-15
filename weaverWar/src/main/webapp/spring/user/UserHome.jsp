@@ -117,7 +117,9 @@ myApp.controller('myCtrl', function($scope, $http) {
         }
         return str;
     }
-    console.log("UserCache Data", $scope.userCache);
+    $scope.fakeError = function() {
+        errorPanelHandler($scope, "This pages makes no calls to server so no real way to cause an error");
+    }
 });
 </script>
 
@@ -133,7 +135,8 @@ myApp.controller('myCtrl', function($scope, $http) {
 <!-- MAIN CONTENT SECTION START -->
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
+ 
+<%@include file="../jsp/ErrorPanel.jsp"%>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
           <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">

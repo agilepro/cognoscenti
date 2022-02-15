@@ -221,6 +221,12 @@ public class BaseController {
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/jsp/Wrapper.jsp");
     }
+    protected static void streamJSPUser(AuthRequest ar, String jspName) throws Exception {
+        assertNoWrappedJSP(ar, jspName);
+
+        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.invokeJSP("/spring/user/Wrapper.jsp");
+    }
     protected static void streamJSPSite(AuthRequest ar, String jspName) throws Exception {
         assertNoWrappedJSP(ar, jspName);
 
