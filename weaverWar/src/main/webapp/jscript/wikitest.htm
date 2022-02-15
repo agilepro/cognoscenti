@@ -2,6 +2,8 @@
 
 <head>
 <script src="MarkdownToHtml.js"></script>
+<script src="HtmlParser.js"></script>
+<script src="HtmlToMarkdown.js"></script>
 <script>
 function convert() {
     var inStr = document.getElementById("srcVal").value;
@@ -9,6 +11,8 @@ function convert() {
     var outStr = convertMarkdownToHtml(inStr);
     console.log("OUT ---------------\n", outStr);
     document.getElementById("demo").innerHTML = outStr;
+    var roundtrip = HTML2Markdown(outStr);
+    document.getElementById("roundtrip").value = roundtrip;
 }
 </script>
 
@@ -22,6 +26,8 @@ function convert() {
 <button onclick="convert()">Convert</button>
 
 <p id="demo"></p>
+
+<textarea cols="60" rows="10" name="src" id="roundtrip"></textarea>
 
 </body>
 </html>

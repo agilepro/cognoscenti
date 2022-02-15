@@ -216,13 +216,6 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "ShareRequests");
     }
 
-    @RequestMapping(value = "/{userKey}/RemoteProfiles.htm", method = RequestMethod.GET)
-    public void remoteProfiles(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "RemoteProfiles");
-    }
-
-
     @RequestMapping(value = "/{userKey}/userSites.htm", method = RequestMethod.GET)
     public void loadUserAccounts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {

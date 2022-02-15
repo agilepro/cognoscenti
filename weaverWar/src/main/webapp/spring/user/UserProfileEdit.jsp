@@ -1,14 +1,11 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.SectionUtil"
-%><%@page import="com.purplehillsbooks.weaver.ValueElement"
-%><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="com.purplehillsbooks.weaver.UserManager"
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
-%><%@page import="com.purplehillsbooks.weaver.IDRecord"
 %><%@page import="java.util.TimeZone"
-%><%@ include file="functions.jsp"
 %><%
+
+// %)(%@ include file="functions.jsp"
 
     ar.assertLoggedIn("Can't edit a user's profile.");
     UserProfile uProf = findSpecifiedUserOrDefault(ar);
@@ -171,7 +168,7 @@ myApp.controller('myCtrl', function($scope, $http) {
 
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
 
     <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >

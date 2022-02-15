@@ -156,8 +156,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" href="UserHome.htm" >
                     Show Home</a></li>
-          <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" ><!--this should be removed-->
-                    Remote Profiles</a></li>
         </ul>
       </span>
     </div>
