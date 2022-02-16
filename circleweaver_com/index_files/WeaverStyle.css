@@ -1369,13 +1369,13 @@ ul {
 
 @media screen and (min-width: 44.375em) {
 	#content	{
-		margin:-148px 0px;
+		margin:0px 0px;
 		height: auto;
 	}
 
 
 	.site-header {
-		padding:  .5em 2em 2.5em 1em;
+		padding:  1em 2em 0em 1em;
 
 	}
 	.site-header-main {
@@ -1393,7 +1393,8 @@ ul {
 			max-width: 200px;
 		}
 	.site-content {
-		padding: 2em 0em 0em;
+		padding: 0em 0em 0em;
+
 	}
 	.menu-toggle {
 		display: none;
@@ -1403,19 +1404,20 @@ ul {
 		-webkit-flex: 0 1 auto;
 		-ms-flex: 0 1 auto;
 		flex: 0 1 auto;
-		margin: 8px auto 0;
+		margin: 1.5em auto 0;
 	}
 	.custom-logo {
-		padding-bottom: 1em
+		padding-bottom: 0em;
+		margin-bottom: -10px
 	}
 	.site-header-menu.toggled-on,
 	.no-js .site-header-menu {
 		display: block;
 }
 	.main-navigation {
-		margin: 0 -0.5em;
+		margin: 0;
 		font-family: 'Roboto', sans-serif;
-		font-size: 18px;
+		font-size: 1.2em;
 		font-weight: bold;
 		line-height: 2.53;
 		letter-spacing: 1.5px;
@@ -1436,8 +1438,8 @@ ul {
 		}
 
 	.main-navigation a {
-			outline-offset: -8px;
-			padding: 0.65625em 0.875em;
+			outline-offset: -5px;
+			padding: 1em 0.5em;
 			white-space: nowrap;
 	}
 
@@ -1572,7 +1574,7 @@ ul {
 		font-size: 30px;
 		font-size: 3.0rem;
 		line-height: 1.225;
-		margin-top: 1em;
+		margin-top: 0.1em;
 		padding-top: 1em;
 		margin-left: 1em;
 		margin-bottom: 1.05em;
@@ -1736,11 +1738,17 @@ ul {
 		-ms-flex-align: center;
 		align-items: center;
 	}
-
+	.site-content {
+		padding: 7.2em 0em 1em;
+	}
 	.site-header-main {
 		-webkit-align-items:flex-start;
 		-ms-flex-align:start;
 		align-items: flex-start;
+	}
+	.custom-logo {
+		padding-bottom: 0em;
+		margin-bottom: 0em;
 	}
 	.custom-logo .site-header-main {
 		-webkit-align-items: center;
@@ -1977,7 +1985,9 @@ ul {
 		padding: 0 1em 1em 1em;
 		background-color: #fff;
 	}
-
+	.site-content {
+		padding: 2em 0em 1em;
+	}
 	.menu-toggle {
 		display: none;
 	}
@@ -2343,7 +2353,7 @@ ul {
 		margin: 0 0;
 	}
 	.custom-logo {
-		padding-bottom: 1em
+		padding-bottom: 1.5em
 	}
 	.site-header-menu.toggled-on,
 	.no-js .site-header-menu {
@@ -2531,7 +2541,7 @@ ul {
 .entry-title {
 	font-family: "Roboto", sans-serif;
 	color: #fff;
-	font-size: 4rem;
+	font-size: 3.5rem;
 	font-weight: 700;
 	line-height: 1.25;
 	margin-bottom: 1em;
@@ -2549,7 +2559,7 @@ h2 {
 .entry-summary h2,
 .comment-content h2 {
 	font-size: 28px;
-	font-size: 3.75rem;
+	font-size: 3rem;
 	font-style: normal;
     font-weight: 300;
 	line-height: 1.25;
@@ -2560,7 +2570,7 @@ h2 {
 .entry-summary h3,
 .comment-content h3 {
 	font-size: 23px;
-	font-size: 2.75rem;
+	font-size: 2.5rem;
 	line-height: 1.2173913043;
 	margin-top: 2.4347826087em;
 	margin-bottom: 1.2173913043em;
