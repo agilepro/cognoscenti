@@ -43,21 +43,12 @@ Required parameter:
     }
 
     UserProfile  uProf =ar.getUserProfile();
-    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
-    JSONArray templateList = new JSONArray();
 
     JSONObject newWorkspace = new JSONObject();
     newWorkspace.put("newName", ar.defParam("pname", ""));
     newWorkspace.put("purpose", ar.defParam("purpose", ""));
     newWorkspace.put("parent", ar.defParam("parent", ""));
     newWorkspace.put("members", new JSONArray());
-
-    for (NGPageIndex ngpi : templates) {
-        JSONObject jo = new JSONObject();
-        jo.put("key", ngpi.containerKey);
-        jo.put("name", ngpi.containerName);
-        templateList.put(jo);
-    }
 
     String desc = ar.defParam("desc", "");
 
@@ -94,7 +85,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
     $scope.accountKey = "<%ar.writeJS(accountKey);%>";
-    $scope.templateList = <% templateList.write(ar.w,2,4); %>;
     $scope.selectedTemplate = "";
     $scope.newWorkspace = <% newWorkspace.write(ar.w,2,4); %>;
 
@@ -254,13 +244,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">
             Create Workspace</button>
     </div>
-    <!--div class="form-group" ng-show="templateList && templateList.length>0">
-        <label >Select Template (optional)</label>
-        <select class="form-control" ng-model="newWorkspace.template"
-                ng-options="tmp.name for tmp in templateList">
-                <option value="">-- no template --</option>
-        </select>
-    </div-->
     
     <!--pre>
     < debugMessage >

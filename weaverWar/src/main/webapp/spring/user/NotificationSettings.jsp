@@ -91,7 +91,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 

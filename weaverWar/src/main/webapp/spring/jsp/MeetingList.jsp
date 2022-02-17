@@ -211,7 +211,7 @@ app.controller('myCtrl', function($scope, $http) {
               </a>
             </td>
             <td><b><a title="Meeting User Interface" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=Items" target="Meeting{{rec.id}}">
+                 href="meetingHtml.htm?id={{rec.id}}&mode=Items">
                 {{rec.name}}</a></b>
             </td>
             <td>

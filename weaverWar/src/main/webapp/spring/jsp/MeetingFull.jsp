@@ -1017,19 +1017,19 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                             <a role="menuitem" 
                             title="This is the full name of the document"
                             ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
+                        <li role="presentation"><a role="menuitem"
                             title="Visit the access page where you can download the document and see comments about it"
                             ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
+                        <li role="presentation"><a role="menuitem"
                             title="Directly download the document"
                             ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
+                        <li role="presentation"><a role="menuitem"
                             title="View the document details before accessing it"
                             ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
+                        <li role="presentation"><a role="menuitem"
                             title="create a new email with this document attached"
                             ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
+                        <li role="presentation"><a role="menuitem"
                             title="remove this document from this agenda item"
                             ng-click="unattachDocFromItem(item, docid)">Un-attach</a></li>
                       </ul>

@@ -86,12 +86,12 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-<div class="generalHeading" style="padding-top:35px">Workspace Notifications Since Last Digest
+<div class="generalHeading">Workspace Notifications Since Last Digest
         <%SectionUtil.nicePrintDateAndTime(out, lastSendTime);%></div>
     <p>These notifications, if any, will be included in your next daily digest email.
        Notification period: <%= uProf.getNotificationPeriod() %> days.

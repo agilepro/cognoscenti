@@ -48,10 +48,6 @@
     String userRelPath = ar.retPath + "v/"+uProf.getKey()+"/";
     String userName = uProf.getName();
 
-    int exposeLevel = 1;
-    if (ar.isSuperAdmin()) {
-        exposeLevel = 2;
-    }
     JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {
         loginInfoPrefetch.put("userId", ar.getBestUserId());

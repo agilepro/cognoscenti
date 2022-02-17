@@ -258,12 +258,18 @@ public class ProjectSettingController extends BaseController {
                 userManager.saveUserProfiles();
             }
             else if ("SetTemplate".equals(op)) {
+                throw new Exception("SetTemplate is no longer a supported function");
+            /*
                 up.setProjectAsTemplate(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
+            */
             }
             else if ("ClearTemplate".equals(op)) {
+                throw new Exception("ClearTemplate is no longer a supported function");
+            /*
                 up.removeTemplateRecord(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
+            */
             }
             else if ("SetNotify".equals(op)) {
                 up.setNotification(siteWorkspaceCombo);

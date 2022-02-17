@@ -4,22 +4,19 @@
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
-
-    String loggedKey = "";
-    if (ar.isLoggedIn()) {
-        loggedKey = loggedUser.getKey();
-    }
+    ar.assertLoggedIn("user pages should be seen only while logged in");
+    
+    
+    String loggedKey = loggedUser.getKey();
 
 
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
-    int slashPos = wrappedJSP.lastIndexOf("/");
-
 
     String title = ar.defParam("title", wrappedJSP);
 
-    slashPos = title.lastIndexOf("/");
+    int slashPos = title.lastIndexOf("/");
     if (slashPos>=0) {
         title = title.substring(slashPos+1);
     }
@@ -36,9 +33,11 @@
 
 //this indicates a user page
     String pageUserKey = (String)request.getAttribute("userKey");
+    if (pageUserKey==null) {
+        throw new Exception("User page does not have a user key");
+    }
 
 //this indicates a workspace page
-    String pageId = (String)request.getAttribute("pageId");
     String siteId = (String)request.getAttribute("siteId");
 
 //this also indicates a site id
@@ -47,141 +46,26 @@
 //apparently this is calculated elsewhere and passed in.
     String viewingSelfStr = (String)request.getAttribute("viewingSelf");
 
-//this is another hint as to the header type
-    String headerTypeStr = (String)request.getAttribute("headerType");
-
-    if (headerTypeStr==null) {
-        headerTypeStr="user";
-    }
-    boolean isBlankHeader   = headerTypeStr.equals("blank");   //used for welcome page and error pages, no nav bar
-    boolean isSiteHeader    = headerTypeStr.equals("site");
-    boolean isUserHeader    = headerTypeStr.equals("user");
-    boolean isProjectHeader = headerTypeStr.equals("project");
-    boolean showExperimental= false;
-
-    if (isSiteHeader) {
-        if (siteId==null) {
-            throw new Exception("Program Logic Error: need a site id passed to a site style header");
-        }
-    }
-    else if (isUserHeader) {
-        //can not test for presence of a user or not .... because unlogged in warning use this
-        //probably need a special header type for warnings...like not logged in
-    }
-    else if (isProjectHeader) {
-        if (pageId==null || "$".equals(pageId)) {
-            throw new Exception("Program Logic Error: need a pageId passed to a workspace style header");
-        }
-    }
-    else if (!isBlankHeader) {
-        throw new Exception("don't understand header type: "+headerTypeStr);
-    }
-
 
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
-    if (!"DisplayException.jsp".equals(wrappedJSP)) {
-        ar.assertNotPost();
-    }
+    ar.assertNotPost();
 
-    String mainWorkspaceId = "";
-    String mainSiteId = "";
-    String mainSiteName = "";
-    if (ar.isLoggedIn()) {
-        List<WatchRecord> wl = loggedUser.getWatchList();
-        if (wl.size()>0) {
-            mainWorkspaceId = wl.get(0).pageKey;
-            NGPageIndex ngpi = cog.getWSByCombinedKey(mainWorkspaceId);
-            if (ngpi==null) {
-                //transition to combined key for everyone someday
-                ngpi = cog.lookForWSBySimpleKeyOnly(mainWorkspaceId);
-            }
-            if (ngpi!=null) {
-                mainSiteId = ngpi.wsSiteKey;
-                NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
-                mainSiteName = site.getFullName();
-            }
-        }
-    }
-    String accountKey = ar.defParam("siteId", null);
-    NGBook site = null;
-    if (accountKey!=null) {
-        site = cog.getSiteByIdOrFail(accountKey);
-        mainSiteName = site.getFullName();
-    }
+    UserProfile userPageUser = UserManager.getUserProfileByKey(pageUserKey);
+    String pageUserName = userPageUser.getName();
 
-
-//TODO: determine what this does.
-    String deletedWarning = "";
-
-    NGContainer ngp =null;
-    NGBook ngb=null;
-    UserProfile userPageUser = null;
-    String pageUserName = "";
-    if(isUserHeader && pageUserKey!=null){
-        userPageUser = UserManager.getUserProfileByKey(pageUserKey);
-        if (userPageUser!=null) {
-            pageUserName = userPageUser.getName();
-        }
-    }
-
-//TODO: why test for pageTitle being null here?
-    if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
-    }
-
-
-    boolean isFrozen=false;
-    boolean isDeleted=false;    
-    if (ngp!=null) {
-        ar.setPageAccessLevels(ngp);
-        pageTitle = ngp.getFullName();
-        if(ngp instanceof NGWorkspace) {
-            ngb = ((NGWorkspace)ngp).getSite();
-            showExperimental = ngb.getShowExperimental();
-            if (loggedUser!=null) {
-                ((NGWorkspace)ngp).registerJoining(loggedUser);
-            }
-        }
-        else if(ngp instanceof NGBook) {
-            ngb = ((NGBook)ngp);
-            showExperimental = ngb.getShowExperimental();
-        }
-        if (ngp.isDeleted()) {
-            isDeleted = true;
-            deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
-        }
-        else if (ngp.isFrozen()) {
-            isFrozen=true;
-            deletedWarning = " &#10052; (Frozen)";
-        }
-    }
     //this is the base path for the all of the menu options.
     //should not actually see any menu options if not logged in, however
     //need to give a value for this.
-    String userRelPath = ar.retPath + "v/$/";
-    String userName = "GUEST";
-    if (loggedUser!=null) {
-        userRelPath = ar.retPath + "v/"+loggedUser.getKey()+"/";
-        userName = loggedUser.getName();
-    }
-    int exposeLevel = 1;
-    if (ar.isSuperAdmin()) {
-        exposeLevel = 2;
-    }
+    String userRelPath = ar.retPath + "v/"+loggedUser.getKey()+"/";
+    String userName = loggedUser.getName();
     
 
     JSONObject loginInfoPrefetch = new JSONObject();
-    if (ar.isLoggedIn()) {
-        loginInfoPrefetch.put("userId", ar.getBestUserId());
-        loginInfoPrefetch.put("userName", loggedUser.getName());
-        loginInfoPrefetch.put("verified", true);
-        loginInfoPrefetch.put("msg", "Previously logged into server");
-    }
-    else {
-        //use this to indicate the very first display, before the page knows anything
-        loginInfoPrefetch.put("haveNotCheckedYet", true);
-    }
+    loginInfoPrefetch.put("userId", ar.getBestUserId());
+    loginInfoPrefetch.put("userName", loggedUser.getName());
+    loginInfoPrefetch.put("verified", true);
+    loginInfoPrefetch.put("msg", "Previously logged into server");
 
     
     JSONObject loginConfigSetup = new JSONObject();
@@ -247,7 +131,6 @@
     <title><% ar.writeHtml(title); %></title>
 
 <script>
-/* NEW UI TEMPPORARY SCRIPTS */
 // TODO Remove this after removing the options dropdown
 $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
@@ -273,11 +156,50 @@ myApp.filter('cdate', function() {
   };
 });
 
+function setMainPageTitle(str) {
+  document.getElementById("mainPageTitle").innerHTML = str;
+  document.title = str;
+}
+var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
+function displayWelcomeMessagexx(info) {
+  console.log('LOGGED IN', info);
+}
+function displayWelcomeMessage(info) {
+  //console.log("WELCOME:", knowWeAreLoggedIn, info)
+  var y = document.getElementById("welcomeMessage");
+  if (knowWeAreLoggedIn && info.verified) {
+      //nothing to do in this case
+  }
+  else if (knowWeAreLoggedIn && !info.verified) {
+      //this encountered only when logging out
+      window.location.reload(true);
+  }
+  else if (info.haveNotCheckedYet) {
+      y.innerHTML = 'Checking identity, please <a href="'
+          +SLAP.loginConfig.providerUrl
+          +'&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
+  }
+  else if (!info.userId) {
+      y.innerHTML = 'Not logged in, please <a href="'
+          +SLAP.loginConfig.providerUrl
+          +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
+  }
+  else if (!info.verified) {
+      y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
+  }
+  else {
+      y.innerHTML = 'Hello <b>'+info.userName+'</b>.  You are now logged in.  Refreshing page.';
+      window.location.reload();
+  }
+}
+
+SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
+
  </script>
 
 
 </head>
-<body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
+<body ng-app="myApp" ng-controller="myCtrl">
   <div class="bodyWrapper">
 
 <!-- Begin AppBar -->
@@ -288,86 +210,20 @@ myApp.filter('cdate', function() {
 <div class="container-fluid">
   <div class="row">
 
-    <!-- Begin SideBar  -->
-    <div class="col-sm-2 col-lg-1">
-      <%@ include file="SideBar.jsp" %>
-    </div>
-    <!-- End SideBar -->
 
     <!-- Begin mainContent -->
-    <div class="col-sm-10 col-lg-11 main-content">
+    <div class="main-content">
 
-      <!-- BEGIN Title and Breadcrump -->
-      <ol class="title">
-      <% if(!ar.isLoggedIn()) { %>
-          <!-- user is not logged in, don't display any breadcrumbs -->
-      <% } else if(isUserHeader) { %>
-        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></div></li>
-      <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
-            Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
-      <% } else { %>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
-            <%ar.writeHtml(ngp.getFullName());%></a>
-                <span style="color:gray">
-                <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
-                  else if (ngp.isFrozen()) {ar.write(" (FROZEN) ");}%>
-                </span>
-            </li>
-      <% } %>
-        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
-      </ol>
-      <script>
-      function setMainPageTitle(str) {
-          document.getElementById("mainPageTitle").innerHTML = str;
-          document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
-      }
-      </script>
-      <!-- BEGIN Title and Breadcrump -->
-
+      <!-- BEGIN Breadcrumbs -->
+      <div class="mainBeadCrumbs">
+        <span class="page-name"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
+            User: <% ar.writeHtml(pageUserName); %></a></span>
+        &gt;
+        <span id="mainPageTitle">Untitled Page</span>
+      </div>
+      
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
-      <script>
-
-
-
-      var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
-      function displayWelcomeMessagexx(info) {
-          console.log('LOGGED IN', info);
-      }
-      function displayWelcomeMessage(info) {
-          //console.log("WELCOME:", knowWeAreLoggedIn, info)
-          var y = document.getElementById("welcomeMessage");
-          if (knowWeAreLoggedIn && info.verified) {
-              //nothing to do in this case
-          }
-          else if (knowWeAreLoggedIn && !info.verified) {
-              //this encountered only when logging out
-              window.location.reload(true);
-          }
-          else if (info.haveNotCheckedYet) {
-              y.innerHTML = 'Checking identity, please <a href="'
-                  +SLAP.loginConfig.providerUrl
-                  +'&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
-          }
-          else if (!info.userId) {
-              y.innerHTML = 'Not logged in, please <a href="'
-                  +SLAP.loginConfig.providerUrl
-                  +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
-          }
-          else if (!info.verified) {
-              y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
-          }
-          else {
-              y.innerHTML = 'Hello <b>'+info.userName+'</b>.  You are now logged in.  Refreshing page.';
-              window.location.reload();
-          }
-      }
-
-      SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
-      </script>
 
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />

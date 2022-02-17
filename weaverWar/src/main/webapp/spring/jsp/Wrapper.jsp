@@ -165,11 +165,6 @@
         userRelPath = ar.retPath + "v/"+loggedUser.getKey()+"/";
         userName = loggedUser.getName();
     }
-    int exposeLevel = 1;
-    if (ar.isSuperAdmin()) {
-        exposeLevel = 2;
-    }
-    
 
     JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {
@@ -275,6 +270,13 @@ myApp.filter('cdate', function() {
 
  </script>
 
+<style>
+.navbar.navbar-default.sidebar {
+	margin-bottom: 0;
+	background-color: #ab37c8;
+	border: 0
+}
+</style>
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>

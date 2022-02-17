@@ -40,7 +40,6 @@ Required parameters:
         allHist.put(history.getJSON(ngp, ar));
     }
 
-    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
 
     JSONObject goalInfo = currentTaskRecord.getJSON4Goal(ngp);
     JSONArray allLabels = ngp.getJSONLabels();

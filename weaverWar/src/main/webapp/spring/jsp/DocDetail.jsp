@@ -110,7 +110,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    window.setMainPageTitle("Document Details");
+    window.setMainPageTitle("Access Document");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.docId   = "<%=aid%>";

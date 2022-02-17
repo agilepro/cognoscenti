@@ -32,7 +32,6 @@
     /*new JSONObject();
     personalSettings.put("isWatching", uProf.isWatch(siteId+"|"+pageId));
     personalSettings.put("reviewTime", uProf.watchTime(siteId+"|"+pageId));
-    personalSettings.put("isTemplate", uProf.isTemplate(siteId+"|"+pageId));
     personalSettings.put("isNotify", uProf.isNotifiedForProject(siteId+"|"+pageId));
     personalSettings.put("isMute", ngp.getMuteRole().isPlayer(uProf));*/
 
@@ -133,11 +132,6 @@ app.controller('myCtrl', function($scope, $http) {
             "type": "boolean",
             "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion topic) will automatically add the workspace to your watched list."
         },  
-//       "isTemplate": {
-//            "title": "Template",
-//            "type": "boolean",
-//            "help": "A template workspace is used at the time that you create a new workspace, and all of the roles and action items will be copied from the template to the newly created workspace (but without any users assigned to them). List your templates by choosing \"Workspaces > Templates\" from the navigation bar at the top of the screen. "
-//        },
         "isNotify": {
             "title": "Digest",
             "type": "boolean",

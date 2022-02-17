@@ -1,12 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
-/*
-Required parameters:
-
-    1. pageId : This is the id of a Workspace and here it is used to retrieve NGWorkspace.
-
-*/
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
 
@@ -130,6 +124,15 @@ myApp.controller('myCtrl', function($scope, $http) {
     border-bottom:1px solid #EEEEEE;
     white-space: nowrap
 }
+.headingfont {
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+    font-size:20px;
+    font-weight:normal;
+    color:red;
+}
+a {
+    color: black;
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
@@ -137,39 +140,8 @@ myApp.controller('myCtrl', function($scope, $http) {
 
  
 <%@include file="../jsp/ErrorPanel.jsp"%>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-          <span translate>Options</span> <span class="caret"></span></button>
-          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
-            <li role="presentation"><a role="menuitem"
-                href="UserAlerts.htm" translate
-                title="{{'A list of things that have changed in the pages that you watch'|translate}}">
-                User Alerts</a></li>
-            <li role="presentation"><a role="menuitem" href="UserHome.htm?ref=<%=ar.nowTime%>" translate
-                title="{{'Use this option if you want to see changes that occurred in the past 24 hours'|translate}}">
-          Recalculate</a>
-            </li>
-          </ul>
-      </span>
-    </div>
 
     <style>
-      .tripleColumn {
-          border: 1px solid white;
-          border-radius:5px;
-          padding:5px;
-          background-color:#FFFFFF;
-          margin:6px;
-      }
-      .headingfont {
-          font-family: Arial, Helvetica, Verdana, sans-serif;
-          font-size:20px;
-          font-weight:normal;
-      }
-      a {
-          color: black;
-      }
     </style>
 
 <!-- COLUMN 1 -->
@@ -211,8 +183,13 @@ myApp.controller('myCtrl', function($scope, $http) {
           </div>
         </div>
 
-
-    </div>
+        <a class="btn btn-default btn-raised" href="UserHome.htm?ref=<%=ar.nowTime%>" translate
+                title="{{'Use this option if you want to see changes that occurred in the past 24 hours'|translate}}">
+          Recalculate Page</a>
+        <a class="btn btn-default btn-raised" 
+            href="UserAlerts.htm" translate
+            title="{{'A list of things that have changed in the pages that you watch'|translate}}">
+            User Alerts</a>    </div>
 
 
 <!-- COLUMN 2 -->

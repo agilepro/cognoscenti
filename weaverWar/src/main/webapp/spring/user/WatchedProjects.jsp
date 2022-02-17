@@ -76,15 +76,15 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div>Filter <input ng-model="filter"></div>
+    <div class="well">Filter <input ng-model="filter"></div>
     <div style="height:30px;"></div>
 
-    <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
+    <table class="table" width="100%">
+        <tr>
             <td width="50px"></td>
             <td width="200px">Workspace</td>
             <td width="100px">Changed</td>

@@ -72,11 +72,15 @@ img {
 	margin-right: 10px
 }
 
-.appbar .navbar-brand h1 {
+.weaver-logo {
 	color: #fafafa;
 	display: inline;
 	margin: 0;
-	padding: 0
+	padding: 0;
+	padding-top: 50px;
+    font-size: 46px;
+    font-weight: 300;
+    font-family: "PT_Sans", Helvetica, sans-serif
 }
 
 .appbar .search {
@@ -171,11 +175,7 @@ img {
 	font-size: 13pt
 }
 
-.sidebar {
-	margin-bottom: 0;
-	background-color: #ab37c8 !important;
-	border: 0
-}
+
 
 @media screen and (max-width: 768px) {
 	.sidebar {
@@ -353,10 +353,14 @@ img {
 
 .upRightOptions {
     position: absolute;
-    top: 10px;
+    top: 15px;
     right: 15px;
 }
 
+.userPageContents {
+    margin:5px;
+    padding:10px;
+}
 
 a, a:focus, a:hover {
     color: #AB37C8;
@@ -519,3 +523,9 @@ h3{
     justify-content: center; 
     padding:10px;
 }
+
+
+.mainBeadCrumbs {
+    padding: 15px;
+}
+

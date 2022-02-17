@@ -83,7 +83,6 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.onTimeSet = function (newDate, secondparam) {
         $scope.meeting.startTime = newDate.getTime();
-        console.log("NEW TIME:", newDate);
     }
 
     $scope.tinymceOptions = standardTinyMCEOptions();
@@ -117,7 +116,6 @@ app.controller('myCtrl', function($scope, $http) {
         var postURL = "meetingCreate.json";
         var minutesFromNow = Math.floor(($scope.meeting.startTime - (new Date()).getTime()) / 60000);
         if ($scope.meeting.startTime>1000000 && minutesFromNow<0) {
-            console.log("STARTTIME is: ", $scope.meeting.startTime);
             if (!confirm("Warning: this meeting is being scheduled for time in the past.  An email message will be sent immediately informing people of the meeting before you get a chance to change the date.   If you mean to schedule a meeting for the future, press 'Cancel' and correct the date.   Do you still want to create a meeting for the past?")) {
                 return;
             }
@@ -141,6 +139,7 @@ app.controller('myCtrl', function($scope, $http) {
         newMeeting.reminderTime = $scope.meeting.reminderTime;
         newMeeting.startTime = $scope.meeting.startTime;
         newMeeting.targetRole = $scope.meeting.targetRole;
+        newMeeting.participants = $scope.meeting.participants;
         newMeeting.defaultLayout = $scope.meeting.defaultLayout;
         newMeeting.notifyLayout = $scope.meeting.notifyLayout;
         newMeeting.agenda = [];
@@ -150,7 +149,6 @@ app.controller('myCtrl', function($scope, $http) {
                 newAgenda.readyToGo = false;
                 newAgenda.timerElapsed = 0;
                 newAgenda.comments = [];
-                console.log("NEW AGENDA ITEM", newAgenda);
                 newMeeting.agenda.push(newAgenda);
             }
         });

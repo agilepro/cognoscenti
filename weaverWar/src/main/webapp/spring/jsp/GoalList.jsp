@@ -33,9 +33,6 @@ Required parameters:
 
     UserProfile uProf = ar.getUserProfile();
 
-
-    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
-
     JSONArray allLabels = ngp.getJSONLabels();
 
     JSONObject stateName = new JSONObject();

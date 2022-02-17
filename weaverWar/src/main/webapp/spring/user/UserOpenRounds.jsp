@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
@@ -106,7 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
             <h3>Draft Topics</h3>
 
             <table class="table" width="100%">
-            <tr class="gridTableHeader">
+            <tr>
                 <td width="16px"></td>
                 <td width="300px">Draft Topic</td>
                 <td width="100px">Workspace</td>

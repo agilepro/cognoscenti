@@ -157,7 +157,8 @@ public class UserProfile implements UserRef
             if (jo.has("isNotify") && !jo.getBoolean("isNotify")) {
                 jo.remove("isNotify");
             }
-            if (jo.has("isTemplate") && !jo.getBoolean("isTemplate")) {
+            if (jo.has("isTemplate")) {
+                //this is removed, so always clean up
                 jo.remove("isTemplate");
             }
             if (jo.has("isWatching") && !jo.getBoolean("isWatching")) {
@@ -186,7 +187,7 @@ public class UserProfile implements UserRef
      *  wsSettings: {
      *     "ws": {
      *        notify: true,
-     *        template: true,
+     *        template: true,   //THIS REMOVED
      *        watch: true,
      *        reviewTime: 1453902246029
      *      }
@@ -224,12 +225,14 @@ public class UserProfile implements UserRef
             fullJO.remove("notifyList");
         }
         if (fullJO.has("templateList")) {
+        /*
             JSONArray templateList = fullJO.getJSONArray("templateList");
             for (int i=0; i<templateList.length(); i++) {
                 String siteWorkspaceCombo = templateList.getString(i);
                 JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
                 settingObj.put("isTemplate", true);
             }
+        */
             fullJO.remove("templateList");
         }
 
@@ -502,20 +505,7 @@ public class UserProfile implements UserRef
         return new AddressListEntry(this);
     }
 
-/*
-    public static void writeLink(AuthRequest ar, String anyId)
-        throws Exception
-    {
-        if (anyId==null || anyId.length()==0)
-        {
-            //TODO: this should be translateable
-            ar.write("Unknown User");
-            return;
-        }
-        AddressListEntry ale = new AddressListEntry(anyId);
-        ale.writeLink(ar);
-    }
-*/
+
 
     /**
     * Universal ID is normally the "preferred" email address of a particular user.
@@ -732,6 +722,7 @@ public class UserProfile implements UserRef
      * Templates are workspaces that can be easily copied into a new workspace
      * to make it easier to created workspaces of particular styles
      */
+    /*
     public boolean isTemplate(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
         if (setting.has("isTemplate")) {
@@ -755,12 +746,14 @@ public class UserProfile implements UserRef
             removeTemplateRecord(siteWorkspaceCombo);
         }
     }
+    */
 
     /**
      * returns the NGPageIndex entries for each project template, but
      * only if that key matches a project that still exists.
      * Invalid template list entries are ignored.
      */
+    /*
     public Vector<NGPageIndex> getValidTemplates(Cognoscenti cog) throws Exception {
         Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
         for(String siteWorkspaceCombo : wsSettings.keySet()) {
@@ -776,6 +769,7 @@ public class UserProfile implements UserRef
         NGPageIndex.sortInverseChronological(templates);
         return templates;
     }
+    */
 
     /**
     * Preferred email is where all the notifications to this user will be sent.

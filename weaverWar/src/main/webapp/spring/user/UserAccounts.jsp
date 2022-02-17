@@ -73,7 +73,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
@@ -90,7 +90,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         <div class="generalContent">
             <table class="table" width="100%">
-                <tr class="gridTableHeader">
+                <tr>
                     <td>Site Name</td>
                     <td>Site Description</td>
                     <td>Workspaces</td>

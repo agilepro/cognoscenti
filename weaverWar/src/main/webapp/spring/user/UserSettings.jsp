@@ -136,7 +136,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </style>
 
 
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 

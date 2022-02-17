@@ -21,29 +21,16 @@
 package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
-import com.purplehillsbooks.weaver.AuthDummy;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.BaseRecord;
 import com.purplehillsbooks.weaver.Cognoscenti;
-import com.purplehillsbooks.weaver.DOMFace;
-import com.purplehillsbooks.weaver.EmailListener;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MicroProfileMgr;
@@ -52,7 +39,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.OptOutAddr;
-import com.purplehillsbooks.weaver.OptOutIndividualRequest;
 import com.purplehillsbooks.weaver.ProfileRef;
 import com.purplehillsbooks.weaver.ReminderMgr;
 import com.purplehillsbooks.weaver.ReminderRecord;
@@ -63,25 +49,19 @@ import com.purplehillsbooks.weaver.UserCacheMgr;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.api.RemoteProfile;
-import com.purplehillsbooks.weaver.dms.FolderAccessHelper;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.util.Thumbnail;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
 
 
 @Controller
@@ -154,13 +134,6 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "OwnerProjects");
     }
 
-
-    @RequestMapping(value = "/{userKey}/templates.htm", method = RequestMethod.GET)
-    public void templates(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "Templates");
-    }
 
     @RequestMapping(value = "/{userKey}/ParticipantProjects.htm", method = RequestMethod.GET)
     public void participantProjects(@PathVariable String userKey,
@@ -627,7 +600,7 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(ar.isLoggedIn()){
-                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
+                UserManager.getUserProfileOrFail(userKey);
                 UserProfile loggedInUser = ar.getUserProfile();
 
                 String userName = loggedInUser.getName();

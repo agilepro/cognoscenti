@@ -26,30 +26,18 @@
 <%
     String thisPageName = "MeetingList.htm";
     
-    
-    
-    
     File menuFile = ar.getCogInstance().getConfig().getFileFromRoot("MenuTree.json");
     allMenu = JSONObject.readFromFile(menuFile);
     
     JSONArray fullMenu = new JSONArray();
     
-    if(isSiteHeader) {
-        fullMenu.addAll(allMenu.getJSONArray("siteMode"));
-    }
-    else if(!isUserHeader) {
-        fullMenu.addAll(allMenu.getJSONArray("workMode"));
-    }
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
     boolean userIsReadOnly = false;
-    if (site!=null) {
-        throw new Exception("This sodebar for user should NEVER have a site");
-    }
 %>
 <style>
     special-user-sidebar {
-        background-color: #39134C;
+        background-color: #000000;
         color: white;
         margin-bottom: 0;
         border: 0;

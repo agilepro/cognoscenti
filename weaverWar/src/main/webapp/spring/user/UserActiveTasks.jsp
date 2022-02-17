@@ -98,54 +98,57 @@ app.controller('myCtrl', function($scope, $http) {
 });
 
 </script>
+<style>
+.selectableRow:hover {
+    background:lightblue;
+    cursor:pointer;
+}
+</style>
+        
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-        <div >
+        <div class="well">
             Filter: <input ng-model="filterVal"> 
                 <input type="checkbox" ng-model="filterPast"> Past
                 <input type="checkbox" ng-model="filterCurrent"> Current
                 <input type="checkbox" ng-model="filterFuture"> Future
         </div>
 
-<style>
-.selectableRow:hover {background:lightblue;cursor:pointer;}
-</style>
         
-        
-        <div class="generalSettings">
+    <div class="generalSettings">
 
-            <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
-                <td width="16px"></td>
-                <td width="300px">Action Item - Description</td>
-                <td width="100px">Due Date</td>
-                <td width="100px">Workspace</td>
-            </tr>
-            <tr ng-repeat="rec in getRows()" ng-click="navigateRec(rec)" class="selectableRow">
-                <td width="16px">
-                  <img ng-src="<%= ar.retPath %>/assets/goalstate/small{{rec.state}}.gif">
-                </td>
-                <td >
-                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">
-                        {{rec.synopsis}}
-                    </a> - {{rec.description | limitTo: 250}}
-                </td>
-                <td>{{bestDate(rec)|cdate}}</td>
-                <td>
-                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
-                </td>
-            </tr>
-            </table>
-        </div>
+      <table class="table" width="100%">
+        <tr>
+            <td width="16px"></td>
+            <td width="300px">Action Item - Description</td>
+            <td width="100px">Due Date</td>
+            <td width="100px">Workspace</td>
+        </tr>
+        <tr ng-repeat="rec in getRows()" ng-click="navigateRec(rec)" class="selectableRow">
+            <td width="16px">
+              <img ng-src="<%= ar.retPath %>/assets/goalstate/small{{rec.state}}.gif">
+            </td>
+            <td >
+                <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">
+                    {{rec.synopsis}}
+                </a> - {{rec.description | limitTo: 250}}
+            </td>
+            <td>{{bestDate(rec)|cdate}}</td>
+            <td>
+                <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
+            </td>
+        </tr>
+      </table>
+    </div>
 
-        <hr/>
-        <div><i>Note: this list is updated daily so it might not show changes that have occurred in the last 24 hours.
-        If you want to see this page updated use 
-        <a href="UserHome.htm?ref=<%=ar.nowTime%>">
-          <button class="btn btn-default btn-raised">Refresh</button></a></i></div>
+    <hr/>
+    <div><i>Note: this list is updated daily so it might not show changes that have occurred in the last 24 hours.
+    If you want to see this page updated use 
+    <a href="UserHome.htm?ref=<%=ar.nowTime%>">
+      <button class="btn btn-default btn-raised">Refresh</button></a></i></div>
 
 </div>

@@ -1031,7 +1031,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <table class="table">
           <tr ng-repeat="goal in itemGoals(selectedItem)">
               <td>
-                <a href="task{{goal.id}}.htm" title="access action item details" target="_blank">
+                <a href="task{{goal.id}}.htm" title="access action item details">
                    <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
               </td>
               <td ng-dblclick="openModalActionItem(selectedItem, goal)">

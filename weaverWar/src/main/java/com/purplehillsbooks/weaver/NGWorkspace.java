@@ -1033,7 +1033,6 @@ public class NGWorkspace extends NGPage {
         personalSettings.put("isWatching", user.isWatch(combo));
         personalSettings.put("reviewTime", user.watchTime(combo));
 
-        personalSettings.put("isTemplate", user.isTemplate(combo));
         personalSettings.put("isNotify", user.isNotifiedForProject(combo));
         user.clearNotification(combo);
         if (getMuteRole().isPlayer(user)) {
@@ -1061,9 +1060,11 @@ public class NGWorkspace extends NGPage {
                     user.clearWatch(combo);
                 }
             }
+            /*
             if ("isTemplate".equals(key)) {
                 user.setProjectAsTemplate(combo, newVals.getBoolean(key));
             }
+            */
         }
 
         personal.writeToFile(personalFile);
@@ -1084,7 +1085,7 @@ public class NGWorkspace extends NGPage {
     }
 
     
-    
+    /*
     public boolean isTemplate(UserProfile user) throws Exception {
         JSONObject personal = getPersonalWorkspaceSettings(user);
         if (!personal.has("isTemplate")) {
@@ -1092,11 +1093,13 @@ public class NGWorkspace extends NGPage {
         }
         return personal.getBoolean("isTemplate");
     }
+    
     public void setTemplate(UserProfile user, boolean val) throws Exception {
         JSONObject newVal = new JSONObject();
         newVal.put("isTemplate", val);
         updatePersonalWorkspaceSettings(user, newVal);
     }
+    */
     
 
     

@@ -37,9 +37,6 @@ img{
   top:66px;
 }
 
-#weaver-logo-header img {
-	margin: 5px;
-}
 
 .leftDivContent{
   float: left;
@@ -54,6 +51,7 @@ img{
 .gridTable2{
   margin-top: 0px;
   margin-bottom: 20px;
+  background-color:red;
 }
 .gridTable2 th{
   font-weight: bold;
@@ -130,4 +128,3 @@ img{
     background-color:ivory;
     color:brown
 }
-

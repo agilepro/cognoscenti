@@ -1,8 +1,4 @@
 <!-- BEGIN AppBar.jsp -->
-<%
-
-    boolean isDXP = "true".equals(ar.getSystemProperty("isDXP"));
-%>
 <script>
 
     function changePage(dest) {
@@ -13,30 +9,11 @@
     }
 
     var retPath ='<%=ar.retPath%>';
-    var headerType = '<%=headerTypeStr%>';
-    var book='';
-    var pageId = '<%=pageId%>';
     var userKey = "<%=pageUserKey%>";
     var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
 </script>
 
 
-<% if (!isSiteHeader) { %>
-    <script>
-        <% if (pageId != null && siteId != null) { %>
-          book='<%=siteId%>';
-        <% } %>
-    </script>
-
-<% } else if(isSiteHeader){ %>
-     <script>
-        <% if(accountId != null){ %>
-        var accountId='<%=accountId %>';
-        <% } else if(pageId!=null){ %>
-        var accountId='<%=pageId%>';
-        <% } %>
-     </script>
-<% } %>
 
 
 
@@ -85,11 +62,7 @@
   <!-- Logo Brand -->
   <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-    <% if (isDXP) { %>
-    <h1>DXP</h1>
-    <% } else  { %>
-    <h1>Weaver</h1>
-    <% } %>
+    <span class="weaver-logo">Weaver</span>
   </a>
 
   <!-- Drop Down Workspaces -->

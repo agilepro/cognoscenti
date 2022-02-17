@@ -165,11 +165,6 @@
         userRelPath = ar.retPath + "v/"+loggedUser.getKey()+"/";
         userName = loggedUser.getName();
     }
-    int exposeLevel = 1;
-    if (ar.isSuperAdmin()) {
-        exposeLevel = 2;
-    }
-    
 
     JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {

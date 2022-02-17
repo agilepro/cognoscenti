@@ -36,9 +36,6 @@ Required parameters:
 
     UserProfile uProf = ar.getUserProfile();
 
-
-    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
-
     JSONArray allLabels = ngp.getJSONLabels();
 
     JSONObject stateName = new JSONObject();
@@ -129,9 +126,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.findGoalsInArea = function(areaId) {
         var lcFilterList = $scope.filter.toLowerCase().split(" ");
-        $scope.allGoals.sort( function(a,b) {
-            return a.rank-b.rank;
-        });
         var src = [];
         $scope.allGoals.forEach( function(item) {
             item.html = convertMarkdownToHtml(item.description);
@@ -207,9 +201,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.findGoals = function() {
         var lcFilterList = parseLCList($scope.filter);
-        $scope.allGoals.sort( function(a,b) {
-            return a.rank-b.rank;
-        });
         var src = $scope.allGoals;
         var res = [];
         src.forEach( function(rec) {
@@ -234,7 +225,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.swapItems = function(item, amt) {
         let movingUp = (amt<0);
         var list = $scope.findGoalsInArea(item.taskArea);
-        console.log("List is: ", list);
 
         var foundAt = -1;
         var index = -1;
@@ -266,10 +256,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.replaceGoal = function(goal) {
-        var newList = $scope.allGoals.filter( function(item) {
-            return item.id != goal.id;
+        var newList = [];
+        $scope.allGoals.forEach( function(item) {
+            if (item.id == goal.id) {
+                newList.push(goal);
+            }
+            else {
+                newList.push(item);
+            }
         });
-        newList.push(goal);
         $scope.allGoals = newList;
         $scope.constructAllCheckItems();
     }
@@ -497,6 +492,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.getTaskAreas();
     
     $scope.constructAllCheckItems = function() {
+        $scope.allGoals.sort( function(a,b) {
+            return a.rank-b.rank;
+        });
         $scope.allGoals.forEach( function(actionItem) {
             var list = [];
             if (actionItem.checklist) {
