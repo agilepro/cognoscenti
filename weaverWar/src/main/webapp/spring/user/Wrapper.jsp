@@ -234,8 +234,8 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
       <% if(ar.isSuperAdmin()) { %>
 
         <hr/>
-        <div class="well">
-        <button ng-click="fakeError()">Cause Error</button>
+        <div class="well" style="margin:20px">
+        <button ng-click="fakeError()">Cause Error</button> (This test function only appears for super administrators :-)
         </div>
       <% } %>
       

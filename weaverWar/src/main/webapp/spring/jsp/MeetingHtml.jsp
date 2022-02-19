@@ -1202,13 +1202,14 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 <link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
 
 <div ng-show="displayMode=='Agenda'">
-    Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=agendaLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a>' 
+    Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
     (available to anonymous users)
     <div class="well" ng-bind-html="htmlAgenda">
     </div>
 </div>
 <div ng-show="displayMode=='Minutes'">
-    Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=minutesLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a>' 
+    Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">
+    {{meeting.name}}</a>' 
     (available to anonymous users)
     <div class="well"> 
     <div ng-bind-html="htmlMinutes"> </div>

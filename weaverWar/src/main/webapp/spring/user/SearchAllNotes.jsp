@@ -63,20 +63,10 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="clearResults()">Clear Results</a></li>
-        </ul>
-      </span>
-    </div>
 
     <table>
         <tr >
@@ -88,13 +78,15 @@ app.controller('myCtrl', function($scope, $http) {
         <tr >
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
-            <td><button ng-click="doSearch()" class="btn btn-primary btn-raised">Search</button></td>
+            <td>
+              <button class="btn btn-primary btn-raised" ng-click="doSearch()">Search</button>
+              <button class="btn btn-default btn-raised" ng-click="clearResults()">Clear Results</button>
+            </td>
         </tr>
     </table>
 
-    <div style="height:60px"></div>
 
-    <table class="table" width="100%">
+    <table class="table" width="100%" ng-show="actualSearch">
         <tr class="gridTableHeader">
             <td width="200px">Site/Workspace</td>
             <td width="200px">Topic</td>
@@ -105,7 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td><a href="<%=ar.retPath%>{{row.noteLink}}">{{row.noteSubject}}</a></td>
             <td>{{row.modTime |cdate}}</td>
         </tr>
-        <tr ng-hide="hasResults">
+        <tr ng-show="!hasResults">
            <td colspan="5">
            <div class="guideVocal" ng-hide="isSearching"> 
              Did not find any results for search string: {{actualSearch}}

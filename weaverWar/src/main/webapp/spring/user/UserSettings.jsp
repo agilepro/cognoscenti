@@ -139,26 +139,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
-
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="goToEdit()" >
-                    <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                    Update Settings</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="addingEmail=!addingEmail" >
-                    Add Email Address</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" ng-click="openSendEmail()" >
-                    Send Email to this User</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="UserHome.htm" >
-                    Show Home</a></li>
-        </ul>
-      </span>
-    </div>
+    
+      <a class="btn btn-default btn-raised" ng-click="goToEdit()" >
+                <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
+                Update Settings</a>
+      <a class="btn btn-default btn-raised" ng-click="openSendEmail()" >
+                Send Email to this User</a>
+      <a class="btn btn-default btn-raised" href="UserHome.htm" >
+                Show Home</a>
 
     <table class="spacey table">
         <tr ng-show="userInfo.disabled">
