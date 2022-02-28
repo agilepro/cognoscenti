@@ -990,7 +990,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 </td>
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
 
-    <table class="table" ng-show="item">
+    <table class="table" ng-show="item.id">
     <col width="150">
     <tr ng-show="meeting.state<=1">
       <td></td>
@@ -1170,11 +1170,11 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
         <td></td>
         <td>
         <div style="margin:20px;">
-            <button ng-click="openCommentCreator(selectedItem, 1)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(selectedItem, 1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator(selectedItem, 2)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(selectedItem, 2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator(selectedItem, 3)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(selectedItem, 3)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-question-circle"></i> Round</button>
         </div>
         </td>

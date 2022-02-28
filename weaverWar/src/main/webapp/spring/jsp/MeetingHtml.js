@@ -1229,8 +1229,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
 
+    
+    $scope.openMeetingComment = function (item, commentKind) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
+        $scope.openCommentCreator(item, commentKind)
+    }
 
     $scope.openModalActionItem = function (item, goal, start) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
         if (!start) {
             start = 'status';
@@ -1454,6 +1466,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openDecisionEditor = function (item, cmt) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
 
         var newDecision = {
@@ -1540,6 +1556,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveAgendaItemParts(item, ['docList']);
     }
     $scope.openAttachDocument = function (item) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
@@ -1569,6 +1589,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAttachTopics = function (item) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
@@ -1597,6 +1621,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
     $scope.openAttachAction = function (item) {
+        if (!item || !item.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
 
         var attachModalInstance = $modal.open({
@@ -1642,6 +1670,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAgenda = function (agendaItem, display) {
+        if (!agendaItem || !agendaItem.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
         $scope.extendBackgroundTime();
         
         var displayMode = 'Settings';
@@ -1944,6 +1976,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     
     $scope.openNotesDialog = function (agendaItem) {
+        if (!agendaItem || !agendaItem.id) {
+            alert("Please select an agenda item, and try again");
+            return;
+        }
+        
         $scope.extendBackgroundTime();
         
         var notesModalInstance = $modal.open({
