@@ -158,13 +158,9 @@ app.controller('myCtrl', function($scope, $http) {
             <td class="firstcol">Labels: </td>
             <td>
                 <span class="dropdown" ng-repeat="label in assignedLabels()" style="float:left">
-                    <button class="labelButton" type="button" id="menu2"
-                       data-toggle="dropdown" style="background-color:{{label.color}};"
+                    <button class="labelButton" ng-click="toggleLabel(label)"
+                       style="background-color:{{label.color}};"
                        ng-show="hasLabel(label.name)">{{label.name}} <i class="fa fa-close"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                       <li role="presentation"><a role="menuitem" title="{{add}}"
-                          ng-click="toggleLabel(label)" style="border:2px {{label.color}} solid;">Remove Label:<br/>{{label.name}}</a></li>
-                    </ul>
                 </span>
                 <span>
                      <span class="dropdown" style="float:left">

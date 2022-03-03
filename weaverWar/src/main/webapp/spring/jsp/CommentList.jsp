@@ -171,31 +171,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizDel">
-            Deleted</span> &nbsp;
-        <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
-            </ul>
-        </span>
-        <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
-                       title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                   style="width:320px;left:-130px">
-                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                         {{rolex.name}}</button>
-                 </li>
-               </ul>
-             </span>
-        </span>
     </div>
      
      

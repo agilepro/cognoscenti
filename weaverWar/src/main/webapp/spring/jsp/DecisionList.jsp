@@ -256,14 +256,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
-        <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="dropdown-toggle labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
-            </ul>
+        <span ng-repeat="role in allLabelFilters()">
+            <button class="labelButton" type="button" id="menu2"
+               style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)" 
+               ng-click="toggleLabel(role)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>
         <span>
              <span class="dropdown">
@@ -273,7 +270,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                    style="width:320px;left:-130px">
                  <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                     <button ng-click="toggleLabel(rolex)" class="labelButton" 
                      ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                          {{rolex.name}}</button>
                  </li>

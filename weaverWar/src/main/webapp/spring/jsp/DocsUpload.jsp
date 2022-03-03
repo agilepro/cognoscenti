@@ -203,16 +203,10 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
                 <span class="dropdown" ng-repeat="role in allLabelFilters()">
                     <button class="labelButton" 
-                       type="button" id="menu2"
-                       data-toggle="dropdown" 
+                       ng-click="toggleLabel(role)"
                        style="background-color:{{role.color}};"
                        ng-show="hasLabel(role.name)">
                        {{role.name}} <i class="fa fa-close"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                       <li role="presentation"><a role="menuitem" title="{{add}}"
-                          ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">
-                          Remove Label:<br/>{{role.name}}</a></li>
-                    </ul>
                 </span>
                 <span class="dropdown">
                     <button class="btn btn-sm btn-primary btn-raised labelButton" 

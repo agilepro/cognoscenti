@@ -42,13 +42,9 @@
         <div class="form-group">
             <label for="labels">Labels:</label>
             <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="labelButton" type="button" id="menu2"
-                   data-toggle="dropdown" style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}}</button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                   <li role="presentation"><a role="menuitem" title="{{add}}"
-                      ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
-                </ul>
+                <button class="labelButton" ng-click="toggleLabel(role)"
+                   style="background-color:{{role.color}};"
+                   ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             </span>
             <span class="dropdown">
                <button class="btn btn-sm btn-primary btn-raised labelButton" 

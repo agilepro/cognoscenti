@@ -445,13 +445,9 @@ function addvalue() {
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
             Completed</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="dropdown-toggle labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
+            <button class="labelButton" ng-click="toggleLabel(role)"
+               style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">Remove Filter:<br/>{{role.name}}</a></li>
-            </ul>
         </span>
         <span>
              <span class="dropdown">

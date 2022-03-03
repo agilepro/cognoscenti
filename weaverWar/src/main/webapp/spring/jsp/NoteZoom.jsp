@@ -918,15 +918,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <td>Labels:</td>
     <td>
           <span class="dropdown" ng-repeat="role in allLabels">
-            <button class="labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}}</button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation">
-                  <a role="menuitem" title="{{add}}"
-                     ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">
-                     Remove Label:<br/>{{role.name}}</a></li>
-            </ul>
+            <button class="labelButton" ng-click="toggleLabel(role)"
+               style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
           </span>
 
         <%if (isLoggedIn) { %>
