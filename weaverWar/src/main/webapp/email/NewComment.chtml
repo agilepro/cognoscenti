@@ -17,7 +17,7 @@ Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a>
 
 
 <div>
-{$comment.html}
+{$comment.body|markdown}
 </div>
 
 {% if($attList) %}
@@ -51,7 +51,8 @@ Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a>
 {% if($isClosed==true) %}
 <br/>
 {% loop in $comment.responses as $resp %}
-<div><b>{$resp.choice}</b> - {$resp.userName}</div> 
+<div><b>{$resp.choice}</b> - {$resp.userName}</div>
+<div>{$resp.body|markdown}</div>
 {% onEmpty %}
 <div><i>nobody responded</i></div> 
 {% endloop %}
@@ -60,7 +61,7 @@ Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a>
 <div style="color:grey;font-weight: bold;">
   The final outcome is:
 </div>
-{$outcomeHtml}
+{$outcome|markdown}
 </div>
 {% endif %}
 

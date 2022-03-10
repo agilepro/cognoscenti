@@ -10,7 +10,7 @@
 &nbsp; <b>Workspace:</b> 
    <a href="{$workspaceUrl}frontPage.htm">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>
 <div >
-{$introHtml}
+{$intro|markdown}
 </div>
 
 {% if ($meeting) %}
@@ -55,7 +55,7 @@
   <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
     <b>{$note.subject|onempty(No Name)|html}</b></a></p>
 <hr/>
-<div>{$note.html}</div>
+<div>{$note.wiki|markdown}</div>
 {% else %}
 <p><i>Access the web page using the following link:</i> 
   <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
@@ -107,6 +107,6 @@
 {% include OptOut %}
 
 <!--pre>
-{$  debugDump|html}
+{-dollar- debugDump|html}
 </pre-->
 </body></html>

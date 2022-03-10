@@ -111,7 +111,7 @@
         },
         {
           "use": ["NoteZoom.jsp"],
-          "href":"SendNote.htm",
+          "href":"SendNote.htm?noteId={{topicId}}",
           "name":"Send Email",
           "title":"Send an email about this discussion topic"
         },

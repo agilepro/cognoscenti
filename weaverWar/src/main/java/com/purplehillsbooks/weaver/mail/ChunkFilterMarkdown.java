@@ -16,6 +16,8 @@ import com.x5.template.filters.FilterArgs;
   HTML when sent in an email message or other destinations.
   This filter converts a block of markdown text into a 
   block of HTML text.
+  
+  usage: {$ value | markdown}
 
  */
 public class ChunkFilterMarkdown  extends BasicFilter implements ChunkFilter {

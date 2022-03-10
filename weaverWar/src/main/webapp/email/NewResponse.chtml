@@ -17,13 +17,13 @@ Response on topic <a href="{$commentURL}">{$parentName|onempty(No Name)|html}</a
 <p>Choice: <b>{$choice|html}</b></p>
 {% endif %}
 <div>
-{$response.html}
+{$response.body|markdown}
 </div>
 
 <hr/>
 In response to: 
 <div style="color:#A9A9A9">
-{$comment.html}
+{$comment.body|markdown}
 </div>
 
 </div>

@@ -17,7 +17,7 @@
 <p><b>New topic: </b><a href="{$topicURL}">{$topic.subject|onempty(No Name)|html}</a>
 in workspace <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a></p>
 
-{$topic.html}
+{$topic.wiki|markdown}
 
 {% if($attList) %}
 <b>Attachments:</b><br/>

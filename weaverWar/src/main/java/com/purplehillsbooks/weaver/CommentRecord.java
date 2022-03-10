@@ -580,7 +580,10 @@ public class CommentRecord extends DOMFace {
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);
         data.put("outcome", getScalar("outcome"));
+        
+        //TODO: get rid of this
         data.put("outcomeHtml", this.getOutcomeHtml(clone));
+        
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
         data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
