@@ -70,7 +70,7 @@ app.controller('myCtrl', function($scope, $http) {
       <tr ng-repeat="row in allDetails">
          <td><a href="errorDetails{{row.errNo}}.htm?searchByDate=<%=errorDate%>">{{row.errNo}}</a></td>
          <td>{{row.message}}</td>
-         <td style="width:100px">{{row.modTime | date}}</td>
+         <td style="width:100px">{{row.modTime | date:'HH:mm:ss'}}</td>
       </tr>
    </table>
 

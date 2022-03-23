@@ -161,53 +161,34 @@ public class SiteReqFile {
         Cognoscenti cog = ar.getCogInstance();
 
         String siteId      = newSiteReq.getString("siteId").toLowerCase();
-        String siteName    = newSiteReq.getString("siteName");
+        
+        siteId = SiteRequest.cleanUpSiteId(siteId);
         
         //need to assure this is lower case so that the folder is created
         //lower case.  On Linux this makes a difference.
         newSiteReq.put("siteId", siteId);
 
 
-        // first, lets see if there is a site already with that ID
-        NGContainer site = cog.getSiteById(siteId);
-        if (site != null) {
-            throw new JSONException("Sorry, there already exists a site with that ID ({0}).  Please try again with a different ID.",
-                    siteId);
-        }
-
-        if (siteName.length() < 4) {
-            throw new JSONException("New site must have a name with 4 or more letters");
-        }
-        if (siteId == null) {
-            throw new JSONException("SiteId parameter can not be null in createNewSiteRequest");
-        }
-        if (siteId.length() < 4 || siteId.length() > 8) {
-            throw new JSONException("SiteId must be four to eight charcters/numbers long.  Received ({0})", siteId);
-        }
-
-        for (int i = 0; i < siteId.length(); i++) {
-            char ch = siteId.charAt(i);
-            if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})",
-                        siteId);
-            }
-        }
-
-        //actually update the file
         SiteReqFile siteReqFile = new SiteReqFile(cog);
         SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
+        
+        //this will throw some exceptions if values like site id are bad
+        newRequest.validateValues();
+        newRequest.assertSiteNotExist(cog);
 
         String preApprove = newSiteReq.optString("preapprove", "").toLowerCase();
         if (preApprove.equals("ccc2019") || preApprove.equals("ccc2018")) {
             HistoricActions ha = new HistoricActions(ar);
-            ha.completeSiteRequest(newRequest, true, "Accepted pre-approval code: "+preApprove);
+            ha.completeSiteRequest(newRequest, true);
         }
 
+        //actually update the file
         siteReqFile.save();
 
         return newRequest;
     }
 
+    
 
 
     private SiteRequest createNewRequest(JSONObject newSiteReq) throws Exception {

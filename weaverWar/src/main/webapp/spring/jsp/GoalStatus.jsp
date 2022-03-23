@@ -56,6 +56,11 @@ Required parameters:
     }
     taskAreaList.put(new JSONObject().put("name", "Unspecified"));
     boolean isFrozen = ngp.isFrozen();
+    
+    JSONArray allEmail = new JSONArray();
+    for (String oneId : uProf.getAllIds()) {
+        allEmail.put(oneId.toLowerCase());
+    }
 
 /*** PROTOTYPE
 
@@ -99,6 +104,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.isFrozen = <%= isFrozen %>;
+    $scope.allEmail = <% allEmail.write(out,2,4); %>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -164,9 +170,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         if ($scope.mineOnly) {
             var found = false;
             rec.assignees.forEach( function(ass) {
-                if (ass == SLAP.loginInfo.userId) {
-                    found = true;
-                }
+                var lcAss = ass.toLowerCase();
+                $scope.allEmail.forEach( function(currentUserId) {
+                    if (ass == currentUserId) {
+                        found = true;
+                    }
+                });
             });
             if (!found) {
                 return false;

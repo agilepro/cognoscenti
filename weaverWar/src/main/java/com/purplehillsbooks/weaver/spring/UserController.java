@@ -69,27 +69,10 @@ public class UserController extends BaseController {
 
 
 
-    public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
-        try {
-            if(!ar.isLoggedIn()){
-                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSP(ar, "Warning.jsp");
-                return;
-            }
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
-            ar.req.setAttribute("userProfile", up);
-            ar.req.setAttribute("userKey", up.getKey());
-            streamJSPUser(ar, jspName+".jsp");
-        }
-        catch (Exception e) {
-            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userKey+")", e);
-        }
-    }
-
-    private void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
+    public void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
             String userKey, String viewName) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPUserLoggedIn(ar, userKey, viewName);
+        streamJSPUserLoggedIn(ar, userKey, viewName+".jsp");
     }
 
 
@@ -479,7 +462,7 @@ public class UserController extends BaseController {
             }
 
             //this will fail if not logged in
-            streamJSPUserLoggedIn(ar, userKey, "NotificationSettings");
+            streamJSPUserLoggedIn(ar, userKey, "NotificationSettings.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
         }

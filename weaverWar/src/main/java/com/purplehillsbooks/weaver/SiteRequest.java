@@ -27,7 +27,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
-
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -55,12 +55,14 @@ public class SiteRequest {
         sr.put("purpose", descr.trim());
     }
 
+    /*
     public String getAdminComment() throws Exception {
         return sr.getString("adminComment");
     }
     public void setAdminComment(String descr) throws Exception {
         sr.put("adminComment", descr.trim());
     }
+    */
 
     public String getSiteId() throws Exception {
         return sr.getString("siteId");
@@ -136,5 +138,53 @@ public class SiteRequest {
         return sr;
     }
 
+    public static String cleanUpSiteId(String siteId) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < siteId.length(); i++) {
+            char ch = siteId.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                sb.append(ch);
+            }
+            else if (ch >= 'a' && ch <= 'z') {
+                sb.append(ch);
+            }
+            else if (ch >= 'A' && ch <= 'Z') {
+                sb.append(Character.toLowerCase(ch));
+            }
+        }
+        if (sb.length()>12) {
+            sb.setLength(12);
+        }
+        return sb.toString();
+    }
+    
+    public void validateValues() throws Exception {
+        if (getSiteName().length() < 4) {
+            throw new JSONException("New site must have a name with 4 or more letters");
+        }
+        String siteId = getSiteId();
+        if (siteId == null) {
+            throw new JSONException("SiteId parameter can not be null in createNewSiteRequest");
+        }
+        if (siteId.length() < 4 || siteId.length() > 12) {
+            throw new JSONException("SiteId must be four to twelve charcters/numbers long.  Received ({0})", siteId);
+        }
+
+        for (int i = 0; i < siteId.length(); i++) {
+            char ch = siteId.charAt(i);
+            if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
+                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})",
+                        siteId);
+            }
+        }
+    }
+    
+    public void assertSiteNotExist(Cognoscenti cog) throws Exception {
+        NGContainer site = cog.getSiteById(getSiteId());
+        if (site != null) {
+            throw new JSONException("Sorry, there already exists a site with that ID ({0}).  Please try again with a different ID.",
+                    getSiteId());
+        }        
+    }
 
 }

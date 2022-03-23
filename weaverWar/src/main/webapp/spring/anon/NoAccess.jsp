@@ -102,15 +102,15 @@ app.controller('myCtrl', function($scope, $http) {
 
     <p>Weaver makes it easy to share documents and to track work.</p>
     
-    <div class="centerIcon"><img src="../../../bits/workspace.png"/></div>
+    <div class="centerIcon"><img src="<%=ar.retPath%>bits/workspace.png"/></div>
     <p><b>Workspaces</b> - The workspace is a place where a specified set of people -- also known as a circle in Dynamic Governance terminology -- can place documents, tasks, discussions, meetings, and decisions.  Think of it as a storage cabinet that only members of that circle can get into.  But workspaces also allow you to share in a safe way information with people outside the circle.</p>
     
-    <div class="centerIcon"><img src="../../../bits/safety-icon.png"/></div>
+    <div class="centerIcon"><img src="<%=ar.retPath%>bits/safety-icon.png"/></div>
     <p><b>Security</b> - Weaver uses secure protocols so that your information remains safe and protected.
     You can make it available to anyone you designate, and tracks who accesses it.  
     All the documents for a circle of people are here in one place, together.</p>
     
-    <div class="centerIcon"><img src="../../../bits/meeting-icon.png"/></div>
+    <div class="centerIcon"><img src="<%=ar.retPath%>bits/meeting-icon.png"/></div>
     <p><b>Meetings</b> - Prepare for, run, and record the results of meetings.  Automatically collect and track
     presentations, handouts, notes, minutes, and timings.  Send announcements, help decide the time for a meeting, and record attendance.  All of this collected on one place available to all circle members.</p>
     

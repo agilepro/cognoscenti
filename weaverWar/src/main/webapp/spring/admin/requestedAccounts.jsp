@@ -37,6 +37,7 @@ app.controller('myCtrl', function($scope, $http) {
         var postURL = "acceptOrDenySite.json";
         var postObject = {};
         postObject.requestId = rec.requestId;
+        postObject.siteId = rec.siteId;
         if (isGranted) {
             postObject.newStatus = "Granted";
         }
@@ -46,8 +47,10 @@ app.controller('myCtrl', function($scope, $http) {
         postObject.description = "";
         var postdata = angular.toJson(postObject);
         $scope.showError=false;
+        console.log("REQUEST UPDATE:", postObject);
         $http.post(postURL, postdata)
         .success( function(data) {
+            console.log("REQUEST RETURN:", data);
             rec.status = data.status;
         })
         .error( function(data, status, headers, config) {
@@ -94,7 +97,9 @@ app.controller('myCtrl', function($scope, $http) {
                           </div>
                         </td>
                         <td>{{rec.requestId}}<br/>{{rec.status}}</td>
-                        <td>{{rec.siteName}}<br/>{{rec.siteId}}</td>
+                        <td>{{rec.siteName}}<br/>
+                            <input ng-model="rec.siteId" type="text">
+                            </td>
                         <td>{{rec.purpose}}</td>
                         <td>{{rec.requester}}<br/>{{rec.modTime|date}}</td>
                     </tr>

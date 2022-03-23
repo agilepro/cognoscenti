@@ -287,6 +287,10 @@ public class DailyDigest {
                 }
 
                 if (clone.isSuperAdmin(up.getKey())) {
+                    
+                    //TODO: not sure that this double check is valid.   I think 
+                    //superadmin value can have multiple ids now, so this is wrong
+                    //however I am not seeing the error message in debug out put so not sure.
                     String doublecheck = clone.getSystemProperty("superAdmin");
                     if (up.getKey().equals(doublecheck)) {
                         SiteReqFile siteReqFile = new SiteReqFile(cog);
@@ -468,6 +472,14 @@ public class DailyDigest {
         return totalHistoryCount;
     }
 
+    
+    /** 
+     * this is a reminder to super admins that there are sites waiting to be 
+     * granted or not.   Not sure this is needed.
+     * @param clone
+     * @param delayedSites
+     * @throws Exception
+     */
     private static void writeDelayedSiteList(AuthRequest clone,
             List<SiteRequest> delayedSites) throws Exception {
         clone.write("<table width=\"80%\" class=\"Design8\">");
@@ -496,9 +508,7 @@ public class DailyDigest {
             clone.write("<td>");
             clone.write("<a href=\"");
             clone.write(clone.baseURL);
-            clone.write("v/approveAccountThroughMail.htm?requestId=");
-            clone.writeURLData(details.getRequestId());
-            clone.write("\">Click here to Accept/Deny this request</a>");
+            clone.write("v/su/requestedAccounts.htm\">Click here to review list</a>");
             clone.write("</td>");
             clone.write("</tr>");
         }

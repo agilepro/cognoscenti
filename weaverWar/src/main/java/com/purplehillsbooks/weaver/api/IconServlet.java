@@ -34,12 +34,12 @@ import com.purplehillsbooks.streams.StreamHelper;
 public class IconServlet extends javax.servlet.http.HttpServlet {
     private static ConfigFile theConfig;
     private static File userFolder;
-    private static File defaultFolder;
+    private static File applicationUsersFolder;
 
     public static void init(ConfigFile config) throws Exception {
         theConfig = config;
         userFolder = theConfig.getUserFolderOrFail();
-        defaultFolder = theConfig.getFileFromRoot("users");
+        applicationUsersFolder = theConfig.getFileFromRoot("users");
     }
 
 
@@ -73,7 +73,7 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
                 imgFile = new File(userFolder, fileName.toLowerCase());
             }
             if (!imgFile.exists()) {
-                moveFileIfExists(new File(defaultFolder, fileName), imgFile);
+                moveFileIfExists(new File(applicationUsersFolder, fileName), imgFile);
             }
             if (!imgFile.exists()) {
                 //the path might be an email address, or a user key.   If not an email address, then look up user profile
@@ -87,16 +87,16 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
                         if (userName.length()>0) {
                             firstChar = userName.substring(0,1).toLowerCase();
                         }
-                        copyFileIfExists(new File(defaultFolder, "fake-"+firstChar+".jpg"), imgFile);
+                        copyFileIfExists(new File(applicationUsersFolder, "fake-"+firstChar+".jpg"), imgFile);
                     }
                 }
             }
             if (!imgFile.exists()) {
                 String firstChar = fileName.substring(0,1).toLowerCase();
-                copyFileIfExists(new File(defaultFolder, "fake-"+firstChar+".jpg"), imgFile);
+                copyFileIfExists(new File(applicationUsersFolder, "fake-"+firstChar+".jpg"), imgFile);
             }
             if (!imgFile.exists()) {
-                copyFileIfExists(new File(defaultFolder, "fake-~.jpg"), imgFile);
+                copyFileIfExists(new File(applicationUsersFolder, "fake-~.jpg"), imgFile);
             }
             StreamHelper.copyFileToOutput(imgFile, resp.getOutputStream());
         }

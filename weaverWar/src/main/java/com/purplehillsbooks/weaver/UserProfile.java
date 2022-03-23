@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -718,58 +717,7 @@ public class UserProfile implements UserRef
     }
 
     
-    /**
-     * Templates are workspaces that can be easily copied into a new workspace
-     * to make it easier to created workspaces of particular styles
-     */
-    /*
-    public boolean isTemplate(String siteWorkspaceCombo) throws Exception {
-        JSONObject setting = assureSettings(siteWorkspaceCombo);
-        if (setting.has("isTemplate")) {
-            return setting.getBoolean("isTemplate");
-        }
-        return false;
-    }
-    public void setProjectAsTemplate(String siteWorkspaceCombo) throws Exception {
-        JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isTemplate", true);
-    }
-    public void removeTemplateRecord(String siteWorkspaceCombo) throws Exception {
-        JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.remove("isTemplate");
-    }
-    public void setProjectAsTemplate(String siteWorkspaceCombo, boolean val) throws Exception {
-        if (val) {
-            setProjectAsTemplate(siteWorkspaceCombo);
-        }
-        else {
-            removeTemplateRecord(siteWorkspaceCombo);
-        }
-    }
-    */
 
-    /**
-     * returns the NGPageIndex entries for each project template, but
-     * only if that key matches a project that still exists.
-     * Invalid template list entries are ignored.
-     */
-    /*
-    public Vector<NGPageIndex> getValidTemplates(Cognoscenti cog) throws Exception {
-        Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
-        for(String siteWorkspaceCombo : wsSettings.keySet()) {
-            JSONObject setting = wsSettings.getJSONObject(siteWorkspaceCombo);
-            if (setting.has("isTemplate") && setting.getBoolean("isTemplate")) {
-                NGPageIndex ngpi = cog.getWSByCombinedKey(siteWorkspaceCombo);
-                if (ngpi!=null) {
-                    //silently ignore templates that no longer exist
-                    templates.add(ngpi);
-                }
-            }
-        }
-        NGPageIndex.sortInverseChronological(templates);
-        return templates;
-    }
-    */
 
     /**
     * Preferred email is where all the notifications to this user will be sent.
@@ -855,6 +803,14 @@ public class UserProfile implements UserRef
     public String getTimeZone() {
         return timeZone;
     }
+    
+    public JSONArray getAllEmailAddresses() {
+        JSONArray idArray = new JSONArray();
+        for (String id : emailAddresses) {
+            idArray.put(id);
+        }
+        return idArray;
+    }
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -875,15 +831,9 @@ public class UserProfile implements UserRef
         jObj.put("preferred",   getPreferredEmail());
         jObj.put("timeZone",    timeZone);
 
-        jObj.put("image",       this.getImage());
+        jObj.put("image",       getImage());
+        jObj.put("ids",         getAllEmailAddresses());
 
-        {
-            JSONArray idArray = new JSONArray();
-            for (String id : emailAddresses) {
-                idArray.put(id);
-            }
-            jObj.put("ids", idArray);
-        }
         jObj.put("wsSettings", wsSettings);
         return jObj;
     }

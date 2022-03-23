@@ -199,14 +199,37 @@ public class CreateProjectController extends BaseController {
 
 
 
-
     @RequestMapping(value = "/NewSiteApplication.htm", method = RequestMethod.GET)
     public void NewSiteApplication(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if (ar.isLoggedIn()) {
+                redirectBrowser(ar, ar.getUserProfile().getKey()+"/NewSiteRequest.htm");
+            }
+            streamJSPAnon(ar, "NewSiteApplication.jsp");
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to display the Register New Site page", ex);
+        }
+    }
+
+    @RequestMapping(value = "/{userKey}/NewSiteRequest.htm", method = RequestMethod.GET)
+    public void NewSiteRequest(HttpServletRequest request, HttpServletResponse response)
            throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           streamJSPAnon(ar, "NewSiteApplication.jsp");
-       }catch(Exception ex){
+           if (!ar.isLoggedIn()) {
+               redirectBrowser(ar, "../NewSiteApplication.htm");
+           }
+           UserProfile uProf = ar.getUserProfile();
+           if (uProf==null) {
+               redirectBrowser(ar, "../NewSiteApplication.htm");
+           }
+           String userKey = uProf.getKey();
+           streamJSPUserLoggedIn(ar, userKey, "NewSiteRequest.jsp");
+       }
+       catch(Exception ex){
            throw new Exception("Unable to display the Register New Site page", ex);
        }
    }

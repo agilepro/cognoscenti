@@ -34,6 +34,7 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGContainer;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ServletExit;
@@ -607,6 +608,25 @@ public class BaseController {
         ngw.saveFile(ar, msg);
         NGPageIndex.clearLocksHeldByThisThread();
     }
+    
+    public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
+        try {
+            if(!ar.isLoggedIn()){
+                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
+                streamJSP(ar, "Warning.jsp");
+                return;
+            }
+            UserProfile up = UserManager.getUserProfileOrFail(userKey);
+            ar.req.setAttribute("userProfile", up);
+            ar.req.setAttribute("userKey", up.getKey());
+            streamJSPUser(ar, jspName);
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userKey+")", e);
+        }
+    }
+
+    
 }
 
 

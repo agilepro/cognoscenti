@@ -78,7 +78,7 @@ app.controller('myCtrl', function($scope, $http) {
   <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-    <a class="btn btn-default btn-raised" href="requestAccount.htm">Request New Site</a>
+    <a class="btn btn-default btn-raised" href="NewSiteRequest.htm">Request New Site</a>
     
     <div class="generalContent">
         <table class="table" width="100%">
@@ -108,7 +108,7 @@ app.controller('myCtrl', function($scope, $http) {
         <p>You do not need an site in order to participate on projects that have already been created.<br/>
         Other site owners may give you permission to create projects in their sites.</p>
 
-        <form name="createAccountForm" method="GET" action="requestAccount.htm">
+        <form name="createAccountForm" method="GET" action="NewSiteRequest.htm">
             <input type="submit" class="btn btn-sm"  Value="Request New Site">
         </form>
         <p>Use this button to request an site from the system administrator.</p>

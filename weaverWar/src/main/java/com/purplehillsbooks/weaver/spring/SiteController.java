@@ -72,6 +72,7 @@ public class SiteController extends BaseController {
         showJSPLoggedInSite(ar,siteId,"SiteStats");
     }
 
+    /*
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
     public void requestSite(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -94,10 +95,11 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.account.request.page", null, ex);
         }
     }
+    */
 
     @RequestMapping(value = "/{userKey}/accountRequests.form", method = RequestMethod.POST)
-    public void requestNewSite(@PathVariable
-            String userKey, HttpServletRequest request, HttpServletResponse response)
+    public void requestNewSite(@PathVariable String userKey, 
+                HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
         try{
@@ -128,8 +130,9 @@ public class SiteController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/siteRequest.json", method = RequestMethod.POST)
-    public void siteRequest(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/{userKey}/siteRequest.json", method = RequestMethod.POST)
+    public void siteRequest(@PathVariable String userKey, 
+            HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             JSONObject incoming = getPostedObject(ar);
@@ -252,6 +255,7 @@ public class SiteController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/{userKey}/acceptOrDeny.form", method = RequestMethod.POST)
     public void acceptOrDeny(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -295,6 +299,7 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.acceptOrDeny.account.request", null, ex);
         }
     }
+    */
 
 
     /**
@@ -378,7 +383,7 @@ public class SiteController extends BaseController {
         return modelAndView;
     }
 
-
+/*
     @RequestMapping(value = "/approveAccountThroughMail.htm", method = RequestMethod.GET)
     public ModelAndView approveSiteThroughEmail(
             HttpServletRequest request, HttpServletResponse response)
@@ -407,6 +412,7 @@ public class SiteController extends BaseController {
         }
         return modelAndView;
     }
+    */
 
     @RequestMapping(value = "/{siteId}/$/CreateAccountRole.form", method = RequestMethod.POST)
     public ModelAndView createRole(@PathVariable String siteId,HttpServletRequest request,

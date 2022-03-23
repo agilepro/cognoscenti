@@ -181,16 +181,21 @@ public class SuperAdminController extends BaseController {
              if (siteRequest==null) {
                  throw new NGException("nugen.exceptionhandling.not.find.account.request",new Object[]{requestId});
              }
-
+             
+             String possiblyChangedSiteId = requestInfo.optString("siteId");
+             if (possiblyChangedSiteId!=null) {
+                 possiblyChangedSiteId = SiteRequest.cleanUpSiteId(possiblyChangedSiteId);                 
+                 siteRequest.setSiteId(possiblyChangedSiteId);
+                 siteRequest.validateValues();
+             }
              String newStatus = requestInfo.getString("newStatus");
-             String description = requestInfo.getString("description");
 
              HistoricActions ha = new HistoricActions(ar);
              if ("Granted".equals(newStatus)) {
-                 ha.completeSiteRequest(siteRequest, true, description);
+                 ha.completeSiteRequest(siteRequest, true);
              }
              else if("Denied".equals(newStatus)) {
-                 ha.completeSiteRequest(siteRequest, false, description);
+                 ha.completeSiteRequest(siteRequest, false);
              }
              else{
                  throw new Exception("Unrecognized new status ("+newStatus+") in acceptOrDenySite.json");

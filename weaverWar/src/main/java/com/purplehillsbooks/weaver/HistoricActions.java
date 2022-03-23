@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
-
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -54,12 +54,13 @@ public class HistoricActions {
      * @param adminComment = the comment from the administrator about why to do it
      * @return the site created, or null if denied
      */
-    public NGBook completeSiteRequest(SiteRequest siteRequest, boolean granted, String adminComment) throws Exception {
-        siteRequest.setAdminComment(adminComment);
+    public NGBook completeSiteRequest(SiteRequest siteRequest, boolean granted) throws Exception {
         AddressListEntry ale = new AddressListEntry(siteRequest.getRequester());
         NGBook ngb = null;
         if (granted) {
             //Create new Site
+            siteRequest.assertSiteNotExist(cog);
+            
             ngb = NGBook.createNewSite(siteRequest.getSiteId(), siteRequest.getSiteName(), cog);
             ngb.setKey(siteRequest.getSiteId());
             ngb.setDescription(siteRequest.getDescription());

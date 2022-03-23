@@ -31,6 +31,7 @@ import com.purplehillsbooks.weaver.exception.NGException;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.streams.StreamHelper;
 
 public class ErrorLog extends DOMFile {
 
@@ -45,15 +46,23 @@ public class ErrorLog extends DOMFile {
         // create a log file name based on the date passed in.
         String encodedDate = new SimpleDateFormat("yyyy.MM.dd").format(dateValue);
         String fileName = "errorLog_"+ encodedDate.substring(0,10)+".xml";
-        File userFolder = cog.getConfig().getUserFolderOrFail();
-        File newPlace = new File(userFolder, fileName);
-
-        ErrorLog eLog = cachedLogFile;
-
-        //maybe this one is already cached ... if so use that.
-        if (eLog!=null && newPlace.equals(eLog.getFilePath())) {
-            return eLog;
+        File logFolder = new File(cog.getConfig().getUserFolderOrFail(), "logs");
+        File newPlace = new File(logFolder, fileName);
+        
+        //maybe this one is already cached and in use ... if so use that.
+        if (cachedLogFile!=null && newPlace.equals(cachedLogFile.getFilePath())) {
+            return cachedLogFile;
         }
+        
+        
+        //error log files were placed directly in the main users folder for a while
+        //now moved to the users logs folder, but look if it is there and move it if found there
+        File oldPlace = new File(cog.getConfig().getUserFolderOrFail(), fileName);
+        if (!newPlace.exists() && oldPlace.exists()) {
+            StreamHelper.copyFileToFile(oldPlace, newPlace);
+            oldPlace.delete();
+        }
+
 
         //not cached, so load or create a new one
         Document errorLogDoc = readOrCreateFile(newPlace, "errorlog");
