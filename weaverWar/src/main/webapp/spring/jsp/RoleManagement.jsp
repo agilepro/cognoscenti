@@ -45,6 +45,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.isFrozen = <%= isFrozen %>;
     $scope.showInput = false;
+    //this map tells whether to display the role in detail mode.   All roles
+    //start in non-detailed mode
+    $scope.roleDetailToggle = {};
+    
     AllPeople.clearCache($scope.siteInfo.key);
 
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
@@ -399,11 +403,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </ul>
               </div>
             </td>
-            <td ng-dblclick="openRoleModal(role)">
+            <td ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
             </td>
             <td style="width:200px">
+              <div ng-hide="roleDetailToggle[role.name]">
                 <span ng-repeat="player in role.players">
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
@@ -431,8 +436,40 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </ul>
                   </span>
                 </span>
+              </div>
+              <div ng-show="roleDetailToggle[role.name]"> 
+                <div ng-repeat="player in role.players"  style="height:40px">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{imageName(player)}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="openInviteSender(player)">
+                          <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="openRoleModal(role)">
+                          <span class="fa fa-edit"></span> Edit All Players </a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="removePlayer(role, player)">
+                          <span class="fa fa-times"></span> Remove from Role </a></li>
+                    </ul>
+                  </span>
+                  <span>{{player.name}}</span>
+                </div>
+              </div>              
             </td>
             <td  ng-dblclick="openRoleModal(role)">
+              <div ng-hide="roleDetailToggle[role.name]"> 
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     {{role.description}}
@@ -444,6 +481,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <b>Eligibility:</b><br/>
                     {{role.requirements}}
                 </div>
+              </div>
+              <div ng-show="roleDetailToggle[role.name]"> 
+                <div ng-repeat="player in role.players" style="height:40px;vertical-align: middle">
+                  {{player.uid}}
+                </div>
+              </div>
             </td>
         </tr>
     </table>
