@@ -148,6 +148,9 @@ public class MeetingRecord extends DOMFace {
         return tempList;
     }
     public AgendaItem findAgendaItem(String id) throws Exception {
+        if (id==null) {
+            throw new Exception("Program Logic Error: Attempt to find an agenda item with a null id");
+        }
         AgendaItem ai = findAgendaItemOrNull(id);
         if (ai==null) {
             throw new Exception("Agenda Item with that id ("+id+") does not exist in this meeting.");

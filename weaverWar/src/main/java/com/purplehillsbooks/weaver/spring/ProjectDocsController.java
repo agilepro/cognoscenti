@@ -677,8 +677,7 @@ public class ProjectDocsController extends BaseController {
 
             ngw.saveFile(ar, "saving comment using special reply");
 
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch (Exception ex) {
             Exception ee = new Exception("Unable to update the comment in specialReplySave", ex);
@@ -817,8 +816,7 @@ public class ProjectDocsController extends BaseController {
                 ja.put(docId);
             }
             repo.put("list", ja);
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch (Exception ex) {
             Exception ee = new Exception("Unable to GET/POST attachedDocs.json", ex);
@@ -891,6 +889,9 @@ public class ProjectDocsController extends BaseController {
                 if (meetId != null) {
                     MeetingRecord mr = ngw.findMeeting(meetId);
                     String agendaId = request.getParameter("ai");
+                    if (agendaId == null) {
+                        throw new Exception("must specify the agenda item with an 'ai' parameter");
+                    }
                     AgendaItem ai = mr.findAgendaItem(agendaId);
                     ai.setActionItems(newActionItems);
                     MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetId);
@@ -910,6 +911,9 @@ public class ProjectDocsController extends BaseController {
                 if (meetId != null) {
                     MeetingRecord mr = ngw.findMeeting(meetId);
                     String agendaId = request.getParameter("ai");
+                    if (agendaId == null) {
+                        throw new Exception("must specify the agenda item with an 'ai' parameter");
+                    }
                     AgendaItem ai = mr.findAgendaItem(agendaId);
                     actionItemList = ai.getActionItems();
                 }
@@ -931,8 +935,7 @@ public class ProjectDocsController extends BaseController {
                 ja.put(docId);
             }
             repo.put("list", ja);
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch (Exception ex) {
             Exception ee = new Exception("Unable to GET/POST attachedActions.json", ex);
