@@ -80,6 +80,7 @@ public class RemoteLinkCombo
         rpath    = _rpath;
     }
 
+    /*
     public RemoteLinkCombo(String _userKey, ResourceEntity ent) throws Exception
     {
         if (_userKey==null) {
@@ -89,6 +90,7 @@ public class RemoteLinkCombo
         folderId = ent.getFolderId();
         rpath    = ent.getPath();
     }
+    */
 
     /**
     * A single string value that represents all three values,
