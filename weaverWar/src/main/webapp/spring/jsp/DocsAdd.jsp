@@ -70,7 +70,7 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table>
-    boolean userCanUpdate = !site.userReadOnly(ar.getBestUserId()); >
+
     <tr>
         <td colspan="3" class="linkWizardHeading">How do you want to attach the file?:</td>
     </tr>

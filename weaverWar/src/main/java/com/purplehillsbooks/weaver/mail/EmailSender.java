@@ -139,8 +139,7 @@ public class EmailSender extends TimerTask {
 
     /**
      * Initialize must be called if you want any background email to be sent on
-     * schedule Generally it is called by the servlet initialization routines,
-     * passing the ServletContext and the ApplicationContext objects in. This is
+     * schedule Generally it is called by the servlet initialization routines. This is
      * an initialization routine, and should only be called once, when the
      * server starts up. There are some error checks to make sure that this is
      * the case.

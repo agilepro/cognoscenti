@@ -60,14 +60,34 @@ public class ProjectSettingController extends BaseController {
 
 
 
+    //////////////////////// WEFT HANDLER ////////////////////////////
+
+    @RequestMapping(value = "/{siteId}/{pageId}/{pagename}.weft", method = RequestMethod.GET)
+    public void handleWeft(@PathVariable String siteId,
+            @PathVariable String pageId, @PathVariable String pagename, 
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, pagename+".jsp");
+    }
+
+    
     //////////////////////// MAIN VIEWS ////////////////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/AddSomething.htm", method = RequestMethod.GET)
+    public void AddSomething(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "AddSomething.jsp");
+    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/Personal.htm", method = RequestMethod.GET)
     public void showPersonalTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar,siteId,pageId, "Personal.jsp");
+        showJSPMembers(ar, siteId, pageId, "Personal.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleManagement.htm", method = RequestMethod.GET)

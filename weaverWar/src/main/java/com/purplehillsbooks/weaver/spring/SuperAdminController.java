@@ -48,11 +48,6 @@ import com.purplehillsbooks.json.JSONObject;
 @Controller
 public class SuperAdminController extends BaseController {
 
-     @Autowired
-     public void setContext(ApplicationContext context) {
-         //NGWebUtils.srvContext = context;
-     }
-
 
      private static void streamAdminJSP(AuthRequest ar,
              String jspName) throws Exception {

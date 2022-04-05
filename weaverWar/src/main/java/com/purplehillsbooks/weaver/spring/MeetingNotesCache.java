@@ -4,9 +4,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
-import com.purplehillsbooks.weaver.AgendaItem;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.CustomRole;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGRole;

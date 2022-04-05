@@ -14,7 +14,6 @@
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="com.purplehillsbooks.weaver.rest.TaskHelper"
-%><%@page import="org.springframework.context.ApplicationContext"
 %><%@page import="org.w3c.dom.Element"
 %><%
     /*
@@ -26,8 +25,6 @@ Required Parameters:
 
 */
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-
-    ApplicationContext context = (ApplicationContext)request.getAttribute("messages");
 
     JSONArray allAlerts = new JSONArray();
 

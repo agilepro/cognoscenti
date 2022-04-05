@@ -334,7 +334,7 @@ public class UserController extends BaseController {
             }
 
             //write the image content to the temp file
-            AttachmentHelper.saveToFileAH(fileInPost, userImageTmpFile2);
+            UploadFileController.saveToFileAH(fileInPost, userImageTmpFile2);
 
             Thumbnail.makeSquareFile(userImageTmpFile2,userImageTmpFile,100);
 
@@ -652,53 +652,6 @@ public class UserController extends BaseController {
     }
 
 
-/*
-    private static JSONArray getPeopleListInJSONArray(AuthRequest ar, String searchStr)
-    throws Exception {
-        String displayName = "";
-        String id = "";
-        String profilelinkwithquote = "";
-        String profilelink = "";
-        JSONArray array = new JSONArray();
-        List<AddressListEntry> list = ar.getUserPage().getPeopleYouMayKnowList();
-        String go = ar.reqParam("go");
-        for (AddressListEntry ale : list) {
-            UserProfile profile = ale.getUserProfile();
-            String srcOfPhoto = "assets/photoThumbnail.gif";
-            displayName = ale.getName();
-            if(profile != null){
-                id = profile.getUniversalId();
-                if(profile.getImage().length() > 0){
-                    srcOfPhoto = "users/"+profile.getImage();
-                }
-                MemFile owner = new MemFile();
-                AuthRequest clone = new AuthDummy(profile, owner.getWriter(), ar.getCogInstance());
-                ale.writeLink(clone);
-                clone.flush();
-                profilelinkwithquote = ar.getQuote4JS(owner.toString());
-                profilelink = owner.toString();
-            }else{
-                id = ale.getUniversalId();
-                profilelink = "<a href=\"javascript:\" onclick=\"javascript:editDetail("+ar.getQuote4JS(id)+", "+ar.getQuote4JS(displayName)+",this,"+ar.getQuote4JS(go)+");\"><div>"+displayName+"&nbsp;&nbsp;(&nbsp;"+id+"&nbsp;)</div></a>";
-                profilelinkwithquote = ar.getQuote4JS(profilelink);
-            }
-            String lookupInStr = id+" "+displayName;
-
-            if(searchStr.trim().length()==0 || lookupInStr.toLowerCase().indexOf(searchStr.toLowerCase()) >=0 ){
-
-                JSONObject jsonObj= new JSONObject();
-                jsonObj.put("username", displayName);
-                jsonObj.put("userid", id);
-                jsonObj.put("srcOfPhoto", srcOfPhoto);
-                jsonObj.put("profilelinkwithquote", profilelinkwithquote);
-                jsonObj.put("profilelink", profilelink);
-                jsonObj.put("go", go);
-                array.put(jsonObj);
-            }
-        }
-        return array;
-    }
-    */
 
     private static void removeFromRole(NGWorkspace ngp, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
         if(stopRolePlayer != null && stopRolePlayer.length > 0){
@@ -712,31 +665,6 @@ public class UserController extends BaseController {
     }
 
     
-    /*
-    private static void sendRoleRequestApprovedOrRejectionEmail(AuthRequest ar,
-            String addressee, String subject, String responseComment,
-            NGContainer ngp, String roleName, String action) throws Exception {
-        Cognoscenti cog = ar.getCogInstance();
-        MemFile bodyWriter = new MemFile();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
-        clone.retPath = ar.baseURL;
-        OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
-                addressee));
-
-        JSONObject data = new JSONObject();
-        data.put("aseURL",  ar.baseURL);
-        data.put("roleName",  roleName);
-        data.put("wsURL", clone.baseURL + clone.getDefaultURL(ngp));
-        data.put("wsName", ngp.getFullName());
-        data.put("isApproved", "approved".equalsIgnoreCase(action));
-        data.put("responseComment", responseComment);
-
-        File templateFile = cog.getConfig().getFileFromRoot("email/RoleResponse.chtml");
-
-        EmailSender.containerEmail(ooa, ngp, subject, templateFile, data,
-                null, new ArrayList<String>(), cog);
-    }
-    */
 
 
     @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)

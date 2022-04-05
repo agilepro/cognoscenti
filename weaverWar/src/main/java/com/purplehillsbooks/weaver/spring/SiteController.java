@@ -72,30 +72,7 @@ public class SiteController extends BaseController {
         showJSPLoggedInSite(ar,siteId,"SiteStats");
     }
 
-    /*
-    @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
-    public void requestSite(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return;
-            }
-            if (needsToSetName(ar)) {
-                streamJSP(ar, "RequireName.jsp");
-            }
-            if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-                showWarningView(ar, "nugen.missingSuperAdmin");
-                return;
-            }
 
-            streamJSP(ar, "RequestAccount.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.request.page", null, ex);
-        }
-    }
-    */
 
     @RequestMapping(value = "/{userKey}/accountRequests.form", method = RequestMethod.POST)
     public void requestNewSite(@PathVariable String userKey, 
@@ -255,51 +232,7 @@ public class SiteController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{userKey}/acceptOrDeny.form", method = RequestMethod.POST)
-    public void acceptOrDeny(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return;
-            }
-            if(!ar.isSuperAdmin()){
-                showWarningView(ar, "message.superadmin.required");
-                return;
-            }
 
-            String requestId = ar.reqParam("requestId");
-            SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
-            SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
-            if (siteRequest==null) {
-                throw new NGException("nugen.exceptionhandling.not.find.account.request",new Object[]{requestId});
-            }
-
-            String action = ar.reqParam("action");
-            String description = ar.defParam("description", "");
-            HistoricActions ha = new HistoricActions(ar);
-            if ("Granted".equals(action)) {
-                ha.completeSiteRequest(siteRequest, true, description);
-            }
-            else if("Denied".equals(action)) {
-                ha.completeSiteRequest(siteRequest, false, description);
-            }
-            else{
-                throw new Exception("Unrecognized action '"+action+"' in acceptOrDeny.form");
-            }
-
-            //if we made any changes save them
-            siteReqFile.save();
-
-            //TODO: need a go parameter
-            redirectBrowser(ar, "requestedAccounts.htm");
-        }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.acceptOrDeny.account.request", null, ex);
-        }
-    }
-    */
 
 
     /**
@@ -383,36 +316,7 @@ public class SiteController extends BaseController {
         return modelAndView;
     }
 
-/*
-    @RequestMapping(value = "/approveAccountThroughMail.htm", method = RequestMethod.GET)
-    public ModelAndView approveSiteThroughEmail(
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
-            String requestId = ar.reqParam("requestId");
-            if (warnNotLoggedIn(ar)) {
-                return null;
-            }
-            if(!ar.isSuperAdmin()){
-                showWarningView(ar, "message.superadmin.required");
-                return null;
-            }
-
-            //Note: the approval page works in two modes.
-            //1. if you are super admin, you have buttons to grant or deny
-            //2. if you are not super admin, you can see status, but can not change status
-
-            modelAndView = new ModelAndView("AccountApproval");
-            modelAndView.addObject("requestId", requestId);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.approve.through.mail", null, ex);
-        }
-        return modelAndView;
-    }
-    */
 
     @RequestMapping(value = "/{siteId}/$/CreateAccountRole.form", method = RequestMethod.POST)
     public ModelAndView createRole(@PathVariable String siteId,HttpServletRequest request,

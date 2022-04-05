@@ -48,7 +48,6 @@ import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
-import com.purplehillsbooks.weaver.dms.FolderAccessHelper;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.PDFUtil;
 import org.springframework.stereotype.Controller;

@@ -30,14 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.exception.ServletExit;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * this class contains all the JSON style REST web service requests
@@ -46,12 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class JSONController extends BaseController {
-
-    private ApplicationContext context;
-    @Autowired
-    public void setContext(ApplicationContext context) {
-        this.context = context;
-    }
 
 
 
@@ -97,30 +85,6 @@ public class JSONController extends BaseController {
         }
     }
 
-
-
-    @RequestMapping(value = "/{siteId}/isProjectExist.ajax", method = RequestMethod.POST)
-    public void isProjectExist(@RequestParam String siteId,
-            ModelMap model, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try {
-            ar.assertLoggedIn("Must be logged in to check workspace name.");
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
-            String projectName = ar.reqParam("projectname");
-            
-            if (doesProjectExist(ar, projectName)) {
-                sendJson(ar,NGWebUtils.getJSONMessage("yes", context.getMessage(
-                        "nugen.userhome.project.name.already.exists",null, ar.getLocale()), ""));
-            } 
-            else {
-                sendJson(ar,NGWebUtils.getJSONMessage("no", projectName,""));
-            }
-        }
-        catch (Exception e) {
-            streamException(e,ar);
-        }
-    }
 
 
     public static boolean doesProjectExist(AuthRequest ar, String projectName) throws Exception {

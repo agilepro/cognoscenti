@@ -338,11 +338,11 @@ editBoxStyle {
        <li><a target="dataWindow" href="getGoalHistory.json?gid={{sampleGoal}}">getGoalHistory.json?gid={{sampleGoal}}</a></li>
        <li><a target="dataWindow" href="fetchGoal.json?gid={{sampleGoal}}">fetchGoal.json?gid={{sampleGoal}}</a></li>
        <li><a target="dataWindow" href="ActionItem{{sampleGoal}}Due.ics">ActionItem{{sampleGoal}}Due.ics</a></li>
-       <li>Sample Meeting: <input ng-model="sampleMeet"/></li>
+       <li>Sample Meeting: <input ng-model="sampleMeet"/> Agenda Item <input ng-model="sampleAgenda"/></li>
        <li><a target="dataWindow" href="getMeetingNotes.json?id={{sampleMeet}}">getMeetingNotes.json?id={{sampleMeet}}</a></li>
        <li><a target="dataWindow" href="meetingRead.json?id={{sampleMeet}}">meetingRead.json?id={{sampleMeet}}</a></li>
-       <li><a target="dataWindow" href="attachedActions.json?meet={{sampleMeet}}">attachedActions.json?meet={{sampleMeet}}</a></li>
-       <li><a target="dataWindow" href="attachedDocs.json?meet={{sampleMeet}}">attachedDocs.json?meet={{sampleMeet}}</a></li>
+       <li><a target="dataWindow" href="attachedActions.json?meet={{sampleMeet}}&ai={{sampleAgenda}}">attachedActions.json?meet={{sampleMeet}}&ai={{sampleAgenda}}</a></li>
+       <li><a target="dataWindow" href="attachedDocs.json?meet={{sampleMeet}}&ai={{sampleAgenda}}">attachedDocs.json?meet={{sampleMeet}}&ai={{sampleAgenda}}</a></li>
        <li>Sample Role: <input ng-model="sampleRole"/></li>
        <li><a target="dataWindow" href="isRolePlayer.json?role={{sampleRole}}">isRolePlayer.json?role={{sampleRole}}</a></li>
        <li>Sample Topic: <input ng-model="sampleTopic"/></li>

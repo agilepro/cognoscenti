@@ -7,6 +7,7 @@
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
+    String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
@@ -97,7 +98,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Discussion Topics");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
-    
+    $scope.startMode = "<%ar.writeJS(startMode);%>";
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -325,7 +326,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         window.location = "SendNote.htm?noteId="+note.id;
     }
-
+    if ($scope.startMode=="create") {
+        $scope.openTopicCreator();
+        $scope.startMode="nothing";
+    }
 });
 
 </script>
