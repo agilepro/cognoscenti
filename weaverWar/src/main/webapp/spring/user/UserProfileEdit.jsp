@@ -175,18 +175,31 @@ myApp.controller('myCtrl', function($scope, $http) {
         <input type="hidden" name="action" id="actionUploadPhoto" value='' />
         <table class="spacey">
             <tr>
-                <td width="148" class="firstcol">Profile Photo:</td>
-                <td style="width:50px;"><img src="<%ar.writeHtml(photoSource);%>" width="47" height="47" alt="" /></td>
-                <td valign="bottom"><input type="file" name="fname" id="fname" /></td>
+                <td class="firstcol">Profile Photo:</td>
+                <td valign="bottom">
+                    <input type="file" name="fname" id="fname" class="btn btn-default btn-raised"/>
+                </td>
+                <td>You must upload a JPG file.</br>Please choose one around 100x100 pixels if possible</td>
             </tr>
             <tr>
                 <td class="firstcol"></td>
-                <td colspan="2"><input type="button" class="btn-sm btn-primary btn-raised" value="Upload Photo"
-                    onclick="javascript:uploadUserPhoto();"/></td>
+                <td colspan="2">
+                    <button class="btn btn-primary btn-raised"
+                    onclick="javascript:uploadUserPhoto();">Upload Photo</button></td>
+            </tr>
+            <tr>
+                <td class="firstcol">(current)</td>
+                <td>
+                    <img src="<%ar.writeHtml(photoSource);%>" width="100" height="100" alt="user photo" />
+                    &nbsp; &nbsp;
+                    <img src="<%ar.writeHtml(photoSource);%>" class="img-circle" style="width:50px;height:50px" alt="user photo" />
+                    &nbsp; &nbsp;
+                    <img src="<%ar.writeHtml(photoSource);%>" class="img-circle" style="width:32px;height:32px" alt="user photo" />
+                </td>
             </tr>
         </table>
     </form>
-    <hr/>
+    <div style="height:50px"></div>
 
     <table class="spacey table">
         <tr>

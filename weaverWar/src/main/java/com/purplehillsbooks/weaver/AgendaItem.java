@@ -35,6 +35,20 @@ public class AgendaItem extends CommentContainer {
             setAttribute("topicLink", null);
         }
         
+        //if someone left the timer running for more than 1 day, clear it out.
+        //that is, remove the start time so that no time has elapsed and it is
+        //as if the start was not pressed.   This is better than recording 
+        //a day of time which is bogus.   If you want the time recorded you 
+        //have to press stop, and if you forget, it won't record anything.
+        //if less than 1 day leave it alone.
+        if (getAttributeBool("timerRunning")) {
+            long newElapse = System.currentTimeMillis() - getAttributeLong("timerStart");
+            if (newElapse > 24L*60*60*1000) {
+                setAttributeBool("timerRunning",  false);
+                setAttributeLong("timerStart", 0);
+            }
+        }
+        
         long lockTime = getLockTime();
         if (lockTime>0 && lockTime < System.currentTimeMillis()-30*60000) {
             clearLock();

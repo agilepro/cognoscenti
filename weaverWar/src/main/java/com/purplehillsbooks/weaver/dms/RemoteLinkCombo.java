@@ -80,18 +80,6 @@ public class RemoteLinkCombo
         rpath    = _rpath;
     }
 
-    /*
-    public RemoteLinkCombo(String _userKey, ResourceEntity ent) throws Exception
-    {
-        if (_userKey==null) {
-            throw new ProgramLogicError("Can not create a Combo with a null user key");
-        }
-        userKey  = _userKey;
-        folderId = ent.getFolderId();
-        rpath    = ent.getPath();
-    }
-    */
-
     /**
     * A single string value that represents all three values,
     * the user id, an @ sign, and then the "symbol" which is
@@ -110,28 +98,6 @@ public class RemoteLinkCombo
     {
         return folderId + rpath;
     }
-
-    /**
-    * Returns the resource entity that represents the remote file that
-    * this combo points to.
-    *
-    public ResourceEntity getResource() throws Exception
-    {
-        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
-        return uPage.getResource(folderId, rpath);
-    }
-
-    public ResourceEntity getResourceOrNull() throws Exception
-    {
-        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
-        ResourceEntity re = uPage.getResourceOrNull(folderId, rpath);
-        if(re!=null){
-            return re;
-        }else{
-            return null;
-        }
-    }
-    */
 
     public UserPage getUserPage() throws Exception
     {

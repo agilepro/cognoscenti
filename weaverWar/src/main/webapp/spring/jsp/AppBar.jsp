@@ -76,7 +76,7 @@
     color: black;
 }
 </style>
-<!-- #F0D7F7;  #F2EBF4 -->
+
 
   <!-- Logo Brand -->
   <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
@@ -103,6 +103,23 @@
 <% } %>      
       
 <% if (loggedUser!=null) { %>      
+      <li class="dropdown">
+          <a class="dropdown-toggle"
+            data-target="#"
+            data-toggle="dropdown"
+            aria-expanded="false"
+            title="Workspaces">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+              <span class="dropdown-toggle-label" translate>Add</span>
+              <div class="ripple-container"></div>
+          </a>
+          <ul class="dropdown-menu pull-right tighten">
+            <li><a href="DocsAdd.htm">Document</a></li>
+            <li><a href="NotesList.htm?start=create">Discussion Topic</a></li>
+            <li><a href="AddSomething.htm">Something Else</a></li>
+          </ul>
+      
+      </li>
       <li class="dropdown">
             <a class="dropdown-toggle"
             data-target="#"
