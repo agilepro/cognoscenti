@@ -300,7 +300,7 @@ function setUpCommentMethods($scope, $http, $modal) {
                &nbsp; 
         <span title="Created {{cmt.dueDate|cdate}}"
               ng-click="openCommentEditor(item,cmt)">{{cmt.time|cdate}}</span> -
-        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
+        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/UserSettings.htm">
           <span class="red">{{cmt.userName}}</span>
         </a>
         <span ng-show="cmt.emailPending && !cmt.suppressEmail" 

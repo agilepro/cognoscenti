@@ -46,6 +46,8 @@ public class AgendaItem extends CommentContainer {
             if (newElapse > 24L*60*60*1000) {
                 setAttributeBool("timerRunning",  false);
                 setAttributeLong("timerStart", 0);
+                newElapse = newElapse/60/60/1000;
+                System.out.println("MEETING TIMER cancelled on meeting agenda item #"+this.getId()+" after running "+newElapse+" hours");
             }
         }
         

@@ -29,7 +29,6 @@
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="com.purplehillsbooks.weaver.WikiConverter"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
-%><%@page import="com.purplehillsbooks.weaver.spring.NGWebUtils"
 %><%@page import="java.io.File"
 %><%@page import="java.io.Writer"
 %><%@page import="java.io.Writer"

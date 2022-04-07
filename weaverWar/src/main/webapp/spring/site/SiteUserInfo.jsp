@@ -353,7 +353,7 @@ app.filter('encode', function() {
     <table class="table" ng-show="hasProfile">
       <tr>
         <td class="labelColumn">Internal Key</td>
-        <td><a href="../../{{userInfo.key}}/userSettings.htm">{{userInfo.key}}</a></td>
+        <td><a href="../../{{userInfo.key}}/UserSettings.htm">{{userInfo.key}}</a></td>
       </tr>
       <tr>
         <td class="labelColumn">Permission</td>

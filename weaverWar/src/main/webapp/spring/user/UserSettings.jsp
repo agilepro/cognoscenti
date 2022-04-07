@@ -170,7 +170,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr>
             <td class="firstcol">Icon:</td>
             <td> 
-                <img src="<%ar.writeHtml(photoSrc);%>" width="50" height="50"/>
+                <img src="<%ar.writeHtml(photoSrc);%>" class="img-circle" style="width:50px;height:50px" alt="user photo" />
+                &nbsp; &nbsp;
+                <img src="<%ar.writeHtml(photoSrc);%>" class="img-circle" style="width:32px;height:32px" alt="user photo" />
             </td>
             <td ng-hide="helpIcon">
                 <button class="btn" ng-click="helpIcon=!helpIcon">?</button>

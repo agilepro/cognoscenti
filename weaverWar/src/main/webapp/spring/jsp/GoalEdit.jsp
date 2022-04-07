@@ -861,7 +861,7 @@ function updateVal(){
                                  alt="" width="50" height="50" /></td>
                         <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                             {{rec.time|cdate}} -
-                            <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
+                            <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/UserSettings.htm" title="access the profile of this user, if one exists">
                                                                     <span class="red">{{rec.responsible.name}}</span>
                             </a>
                             <br/>

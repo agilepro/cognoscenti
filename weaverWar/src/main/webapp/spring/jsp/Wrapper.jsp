@@ -304,7 +304,7 @@ myApp.filter('cdate', function() {
       <% if(!ar.isLoggedIn()) { %>
           <!-- user is not logged in, don't display any breadcrumbs -->
       <% } else if(isUserHeader) { %>
-        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
+        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
             User: <% ar.writeHtml(pageUserName); %></a></div></li>
       <% } else if(isSiteHeader) { %>
       <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">

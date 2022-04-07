@@ -78,7 +78,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
             //$scope.profile = data;
-            window.location='userSettings.htm';
+            window.location='UserSettings.htm';
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -256,7 +256,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         <tr>
             <td class="firstcol"></td>
             <td>
-                <button class="btn btn-raised" onclick="window.location='userSettings.htm'">Done</button>
+                <button class="btn btn-raised" onclick="window.location='UserSettings.htm'">Done</button>
             </td>
         </tr>
     </table>

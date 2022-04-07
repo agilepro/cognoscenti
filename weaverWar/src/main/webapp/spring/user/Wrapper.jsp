@@ -216,7 +216,7 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
 
       <!-- BEGIN Breadcrumbs -->
       <div class="mainBeadCrumbs">
-        <span class="page-name"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
+        <span class="page-name"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
             User: <% ar.writeHtml(pageUserName); %></a></span>
         &gt;
         <span id="mainPageTitle">Untitled Page</span>

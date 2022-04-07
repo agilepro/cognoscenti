@@ -576,7 +576,7 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{userKey}/userSettings.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userKey}/UserSettings.htm", method = RequestMethod.GET)
     public void userSettings(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -679,7 +679,7 @@ public class UserController extends BaseController {
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
-                response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/userSettings.htm");
+                response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/UserSettings.htm");
                 return;
             }
             streamJSP(ar, "FindPerson.jsp");
@@ -744,7 +744,7 @@ public class UserController extends BaseController {
                 throw new Exception("Unable to confirm that email address");
             }
 
-            redirectBrowser(ar,"userSettings.htm");
+            redirectBrowser(ar,"UserSettings.htm");
         }catch(Exception ex){
             throw new Exception("Email address not added to profile", ex);
         }

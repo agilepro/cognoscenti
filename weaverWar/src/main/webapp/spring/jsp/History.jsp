@@ -83,7 +83,7 @@ Required parameters:
         JSONObject jObj = hist.getJSON(ngp,ar);
         jObj.put("responsible", ale.getJSON() );
         if (responsible!=null) {
-            jObj.put("respUrl",     "v/"+responsible.getKey()+"/userSettings.htm" );
+            jObj.put("respUrl",     "v/"+responsible.getKey()+"/UserSettings.htm" );
         }
         else {
             jObj.put("respUrl",     "findUser.htm?id="+URLEncoder.encode(ale.getUniversalId(),"UTF-8") );

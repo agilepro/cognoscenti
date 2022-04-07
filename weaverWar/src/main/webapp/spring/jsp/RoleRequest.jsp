@@ -155,7 +155,7 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td>{{rec.roleName}}</td>
             <td>{{rec.modified|cdate}}</td>
-            <td><a href="<%=ar.retPath%>v/{{rec.requestKey}}/userSettings.htm">{{rec.requestName}}</a></td>
+            <td><a href="<%=ar.retPath%>v/{{rec.requestKey}}/UserSettings.htm">{{rec.requestName}}</a></td>
             <td>{{rec.description}}</td>
             <td>{{rec.state}} <img src="<%=ar.retPath%>assets/iconWarning.png" ng-hide="rec.completed"></td>
         </tr>
