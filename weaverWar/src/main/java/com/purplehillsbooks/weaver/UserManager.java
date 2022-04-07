@@ -22,10 +22,8 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import com.purplehillsbooks.weaver.exception.NGException;
@@ -235,6 +233,15 @@ public class UserManager
         for (UserProfile up : allUsers) {
             String key = up.getKey();
             String preferredEmail = up.getPreferredEmail();
+            if (preferredEmail==null) {
+                //users can exist without an email address when one user takes over the email
+                //address of another user, leaving the other without an address.
+                //that user should be deleted from the list of all users, but some
+                //lists of users might still be in memory.
+                //So -- just ignore users without email at this point to avoid NPE
+                System.out.println("USERS: Ignoring user found without an email address: "+key);
+                continue;
+            }
             readHashByKey.put(key, up);
             keyToEmailMapTemp.put(key, preferredEmail);
             anyIdToKeyMapTemp.put(key, key);
