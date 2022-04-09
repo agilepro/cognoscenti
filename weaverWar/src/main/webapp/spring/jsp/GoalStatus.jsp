@@ -6,12 +6,6 @@
 %><%@page import="com.purplehillsbooks.weaver.TaskArea"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
-/*
-Required parameters:
-
-    1. pageId   : This is the id of a workspace and here it is used to retrieve NGWorkspace.
-
-*/
 
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -21,6 +15,7 @@ Required parameters:
 
     String pageId  = ar.reqParam("pageId");
     String siteId  = ar.reqParam("siteId");
+    String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
@@ -105,6 +100,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.isFrozen = <%= isFrozen %>;
     $scope.allEmail = <% allEmail.write(out,2,4); %>;
+    $scope.startMode = "<%ar.writeJS(startMode);%>";
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -597,6 +593,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+    }
+    
+    if ($scope.startMode=="create") {
+        $scope.openModalActionItem($scope.newGoal,'details')
+        $scope.startMode="nothing";
     }
 
 });

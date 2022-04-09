@@ -33,7 +33,7 @@
 <script>
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Create Something");
+    window.setMainPageTitle("Add Something to Workspace");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.folderMap = <%folderMap.write(out,2,4);%>;
     $scope.showMeeting = false;
@@ -59,6 +59,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.createDiscussion = function() {
         window.location = "NotesList.htm?start=create";
     }
+    $scope.createGoal = function() {
+        window.location = "GoalStatus.htm?start=create";
+    }
+    
     $scope.cloneMeeting = function() {
         window.location = "CloneMeeting.htm?id="+$scope.meetingToClone.id;
     }
@@ -126,6 +130,19 @@ table tr td {
                 <button class="btn btn-primary btn-raised" ng-click="createDiscussion()"/> Create Discussion </button>
             </div>
             <div ng-hide="showSection=='discussion'">
+                Create a topic for a discussion with others in the circle.
+            <div>
+        </td>
+    </tr>
+    <tr>
+        <td ng-click="toggleShowSection('goal')">
+            <button class="btn btn-default btn-raised" >Create Action Item</button>
+        </td>
+        <td>
+            <div ng-show="showSection=='goal'">
+                <button class="btn btn-primary btn-raised" ng-click="createGoal()"/> Create Action Item </button>
+            </div>
+            <div ng-hide="showSection=='goal'">
                 Create a topic for a discussion with others in the circle.
             <div>
         </td>
