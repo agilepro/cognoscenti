@@ -14,6 +14,7 @@ Required parameters:
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
+    String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see decisions");
@@ -58,6 +59,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.isFrozen = <%= isFrozen %>;
+    $scope.startMode = "<%ar.writeJS(startMode);%>";
     $scope.filter = "";
     $scope.filterMap = {};
 
@@ -232,6 +234,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         decision.reviewDate = decision.reviewDate + (365*24*60*60*1000);
         $scope.saveDecision(decision);
+    }
+    if ($scope.startMode=="create") {
+        $scope.startCreating();
+        $scope.startMode="nothing";
     }
 });
 
