@@ -162,14 +162,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     $scope.createMeeting = function() {
         window.location = "CloneMeeting.htm";
     }
-    $scope.getImageName = function(item) {
-        if (item) {
-            return AllPeople.imageName(item);
-        }
-        else {
-            return "fake-~.jpg";
-        }
-    }
     
 });
 </script>
@@ -207,7 +199,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             <th width="200px">Meeting</th>
             <th width="200px">Date ({{browserZone}})</th>
             <th ng-repeat="user in foundUsers" class="centerCell"><img class="img-circle" 
-                src="<%=ar.retPath%>icon/{{getImageName(user)}}" 
+                src="<%=ar.retPath%>icon/{{user.key}}.jpg" 
                 style="width:32px;height:32px" 
                 title="{{user.name}} - {{user.uid}}"></th>
         </tr>

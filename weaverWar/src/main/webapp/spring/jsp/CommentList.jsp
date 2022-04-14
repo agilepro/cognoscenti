@@ -162,7 +162,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
+
 
 <div>
 

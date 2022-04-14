@@ -95,20 +95,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             $scope.reportError(data);
         });
     }
-    $scope.imageName = function(player) {
-        if (player.key) {
-            return player.key+".jpg";
-        }
-        else {
-            var lc = player.uid.toLowerCase();
-            var ch = lc.charAt(0);
-            var i =1;
-            while(i<lc.length && (ch<'a'||ch>'z')) {
-                ch = lc.charAt(i); i++;
-            }
-            return "fake-"+ch+".jpg";
-        }
-    }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
@@ -171,7 +157,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             <td>
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(rec.fromUser)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{rec.fromUser.uid}}.jpg" 
                          style="width:32px;height:32px" title="{{rec.fromUser.name}} - {{rec.fromUser.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -181,9 +167,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="navigateToUser(rec.fromUser)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="openInviteSender(rec.fromUser)">
-                          <span class="fa fa-envelope-o"></span> Send Invitation</a></li>
                     </ul>
                   </span>
             </td>

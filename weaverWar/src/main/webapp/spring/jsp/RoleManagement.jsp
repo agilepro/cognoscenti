@@ -193,20 +193,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             });
         }
     }
-    $scope.imageName = function(player) {
-        if (player.key) {
-            return player.key+".jpg";
-        }
-        else {
-            var lc = player.uid.toLowerCase();
-            var ch = lc.charAt(0);
-            var i =1;
-            while(i<lc.length && (ch<'a'||ch>'z')) {
-                ch = lc.charAt(i); i++;
-            }
-            return "fake-"+ch+".jpg";
-        }
-    }
 
     $scope.sendEmailLoginRequest = function(message) {
         console.log("Unnecessary method $scope.sendEmailLoginRequest");
@@ -413,7 +399,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{imageName(player)}}" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>
@@ -442,7 +428,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{imageName(player)}}" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>

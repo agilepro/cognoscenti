@@ -58,20 +58,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.visitUser = function(email) {
         window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent(email);
     }
-    $scope.imageName = function(player) {
-        if (player.key) {
-            return player.key+".jpg";
-        }
-        else {
-            var lc = player.uid.toLowerCase();
-            var ch = lc.charAt(0);
-            var i =1;
-            while(i<lc.length && (ch<'a'||ch>'z')) {
-                ch = lc.charAt(i); i++;
-            }
-            return "fake-"+ch+".jpg";
-        }
-    }
     
     $scope.updateCount = function() {
         var count = 0;
@@ -177,7 +163,7 @@ app.filter('encode', function() {
       <tr ng-repeat="value in findUsers()" 
           ng-click="visitUser(value.info.uid)">
         <td>
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(value.info)}}" 
+            <img class="img-circle" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
                  style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
         </td>
         <td>{{value.info.name}}</td>

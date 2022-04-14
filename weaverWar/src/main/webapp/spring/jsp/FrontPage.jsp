@@ -348,20 +348,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontTop.htm";
     }
-    $scope.imageName = function(player) {
-        if (player.key) {
-            return player.key+".jpg";
-        }
-        else {
-            var lc = player.uid.toLowerCase();
-            var ch = lc.charAt(0);
-            var i =1;
-            while(i<lc.length && (ch<'a'||ch>'z')) {
-                ch = lc.charAt(i); i++;
-            }
-            return "fake-"+ch+".jpg";
-        }
-    }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
@@ -676,7 +662,7 @@ a {
               <td>
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                          style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

@@ -286,8 +286,16 @@ public class AttachmentRecord extends CommentContainer {
         return ("EXTRA".equals(ftype) || "GONE".equals(ftype));
     }
 
+    public AddressListEntry getModifier() {
+        String modifiedBy = checkAndReturnAttributeValue("modifiedBy");
+        
+        //clean up old email addresses, and send latest if found
+        return new AddressListEntry(modifiedBy);
+    }
     public String getModifiedBy() {
-        return checkAndReturnAttributeValue("modifiedBy");
+        //clean up old email addresses, and send latest if found
+        AddressListEntry user = getModifier();
+        return user.getEmail();
     }
 
     public void setModifiedBy(String modifiedBy) {
@@ -877,6 +885,7 @@ public class AttachmentRecord extends CommentContainer {
         thisDoc.put("deleted",      isDeleted());
         thisDoc.put("modifiedtime", getModifiedDate());
         thisDoc.put("modifieduser", getModifiedBy());
+        thisDoc.put("modifier",     getModifier().getJSON());
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels() ) {
             labelMap.put(lRec.getName(), true);

@@ -29,6 +29,8 @@ import com.purplehillsbooks.streams.StreamHelper;
 
 /**
  * This servlet services up an image for use as an icon
+ * Any address of the type /icon/xxxxxxxx.jsp  will return an image
+ * The xxxxxxxx is either a user key or an email address
  */
 @SuppressWarnings("serial")
 public class IconServlet extends javax.servlet.http.HttpServlet {
@@ -43,6 +45,14 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
     }
 
 
+    public static void copyFileIfNeeded(File sourceFolder, File dest) throws Exception {
+        if (!dest.exists()) {
+            File source = new File(sourceFolder, dest.getName());
+            if (source.exists()) {
+                StreamHelper.copyFileToFile(source, dest);
+            }
+        }
+    }
     public static void copyFileIfExists(File source, File dest) throws Exception {
         if (source.exists()) {
             StreamHelper.copyFileToFile(source, dest);
@@ -54,50 +64,67 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
             source.delete();
         }
     }
+    
+    private File findMatchingImage(String fileName) throws Exception {
+        if (!fileName.endsWith(".jpg")) {
+            //only allow requests that end in jpg to make this safer
+            throw new Exception("Icon file must be a '.jpg' file, not "+fileName);
+        }
+        String firstChar = fileName.substring(0,1).toLowerCase();
+        
+        //if it looks like an email address, then try to look up the user
+        UserProfile user = null;
+        int atPos = fileName.indexOf("@");
+        if (atPos>0 && fileName.length()>6) {
+            //strip the .jpg off
+            String userEmail = fileName.substring(0,fileName.length()-4);
+            user = UserManager.lookupUserByAnyId(userEmail);
+            if (user!=null) {
+                fileName = user.getImage();
+                //use first character of the name instead of email address
+                firstChar = user.getName().substring(0,1).toLowerCase();
+            }
+        }
+        
+        File imgFile = new File(userFolder, fileName);
+        if (imgFile.exists()) {
+            return imgFile;
+        }
+        
+        //new scheme is to put all the icon files in lower case but a link
+        //might have it upper case.  Only try for upper case once, and 
+        //only in the user folder.
+        imgFile = new File(userFolder, fileName.toLowerCase());
+        if (imgFile.exists()) {
+            return imgFile;
+        }
+        
+        //no file exists for the user, to send down a generic based on first letter
+        imgFile = new File(applicationUsersFolder, "fake-"+firstChar+".jpg");
+        if (imgFile.exists()) {
+            return imgFile;
+        }
+        
+        //if there is a strange initial letter for any reason, use the generic generic
+        //this should ALWAYS exist
+        imgFile = new File(applicationUsersFolder, "fake-~.jpg");
+        return imgFile;
+    }
 
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         String path = req.getRequestURI();
         try {
-            //resp.setContentType(arg0);
+            
             int pos = path.indexOf("/icon/");
             if (pos<0) {
+                //if this happens the servlet is mapped to the wrong path
                 throw new Exception("path does not have 'icon'");
             }
-            String fileName = path.substring(pos+6);
-            File imgFile = new File(userFolder, fileName);
-            if (!imgFile.exists()) {
-                //new scheme is to put all the icon files in lower case but a link
-                //might have it differently
-                imgFile = new File(userFolder, fileName.toLowerCase());
-            }
-            if (!imgFile.exists()) {
-                moveFileIfExists(new File(applicationUsersFolder, fileName), imgFile);
-            }
-            if (!imgFile.exists()) {
-                //the path might be an email address, or a user key.   If not an email address, then look up user profile
-                int atPos = fileName.indexOf("@");
-                if (atPos<0 && fileName.length()>12) {
-                    String userKey = fileName.substring(0,9).toUpperCase();
-                    UserProfile user = UserManager.getUserProfileByKey(userKey);
-                    if (user!=null) {
-                        String userName = user.getName();
-                        String firstChar = "~";
-                        if (userName.length()>0) {
-                            firstChar = userName.substring(0,1).toLowerCase();
-                        }
-                        copyFileIfExists(new File(applicationUsersFolder, "fake-"+firstChar+".jpg"), imgFile);
-                    }
-                }
-            }
-            if (!imgFile.exists()) {
-                String firstChar = fileName.substring(0,1).toLowerCase();
-                copyFileIfExists(new File(applicationUsersFolder, "fake-"+firstChar+".jpg"), imgFile);
-            }
-            if (!imgFile.exists()) {
-                copyFileIfExists(new File(applicationUsersFolder, "fake-~.jpg"), imgFile);
-            }
+            
+            File imgFile = findMatchingImage(path.substring(pos+6));
+
             StreamHelper.copyFileToOutput(imgFile, resp.getOutputStream());
         }
         catch (Exception e) {

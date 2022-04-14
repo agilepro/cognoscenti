@@ -982,7 +982,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           style="text-align:center">
           <span class="dropdown" >
             <span id="menu1" data-toggle="dropdown">
-              <img src="<%=ar.retPath%>icon/{{player.image}}" 
+              <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}"
                  class="img-circle" />

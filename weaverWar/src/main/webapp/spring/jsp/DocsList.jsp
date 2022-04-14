@@ -168,6 +168,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             if (rec.description) {
                 rec.html = convertMarkdownToHtml(rec.description);
             }
+            //for each document provide a complete user object
+            rec.user = rec.modifier;
+            console.log("FOUND USER", rec.user);
         });
         $scope.dataArrived = true;
     }
@@ -223,6 +226,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             //cancel action - nothing really to do
         });
     };
+    
+    $scope.navigateToCreator = function(player) {
+        console.log("PLAYER:", player);
+        window.open("<%= ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key),"_blank");
+    }
 
 });
 
@@ -313,6 +321,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td width="40px"></td>
             <td width="420px">Name ~ Description</td>
             <td width="40px"></td>
+            <td width="40px"></td>
             <td width="80px">Date</td>
             <td width="80px">Size</td>
         </tr>
@@ -356,6 +365,24 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
               <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
               </div>
+            </td>
+            <td>
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{rec.user.uid}}.jpg" 
+                     style="width:32px;height:32px" 
+                     title="{{rec.user.name}} - {{rec.user.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{rec.user.name}}<br/>{{rec.user.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToCreator(rec.user)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
             </td>
             <td style="text-align: center" ng-click="openDocDialog(rec)">
                 <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>

@@ -249,14 +249,32 @@ function setUpCommentMethods($scope, $http, $modal) {
         }
         return "<span style=\"color:lightgrey\">No response provided</span>";
     }
+    $scope.navigateToCommentor = function(cmt) {
+        window.open("<%= ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(cmt.userKey),"_blank");
+    }
+    
 }
 </script>
 
 
 
   <td style="width:50px;vertical-align:top;padding:15px;">
-    <img id="cmt{{cmt.time}}" class="img-circle" title="{{cmt.userName}} - {{cmt.user}}" style="height:35px;width:35px;" 
-         ng-src="<%=ar.retPath%>/icon/{{cmt.userKey}}.jpg" alt="{{cmt.user|limitTo : 8}}" >
+      <span class="dropdown" >
+        <span id="menu1" data-toggle="dropdown">
+          <img class="img-circle" 
+             ng-src="<%=ar.retPath%>icon/{{cmt.userKey}}.jpg" 
+             style="width:50px;height:50px" 
+             title="{{cmt.userName}} - {{cmt.user}}">
+        </span>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+              tabindex="-1" style="text-decoration: none;text-align:center">
+              {{cmt.userName}}<br/>{{cmt.user}}</a></li>
+          <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+              ng-click="navigateToCommentor(cmt)">
+              <span class="fa fa-user"></span> Visit Profile</a></li>
+        </ul>
+      </span>
   </td>
   <td>
     <div class="comment-outer  {{stateClass(cmt)}}">

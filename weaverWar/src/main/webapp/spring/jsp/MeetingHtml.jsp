@@ -391,7 +391,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <span class="dropdown" >
             <span id="menu1" data-toggle="dropdown">
             <img class="img-circle" 
-                 ng-src="<%=ar.retPath%>icon/{{player.image}}" 
+                 ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}">
             </span>
@@ -402,9 +402,6 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
               <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                   ng-click="navigateToUser(player)">
                   <span class="fa fa-user"></span> Visit Profile</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="removeVoter('timeSlots',player.uid)">
-                  <span class="fa fa-times"></span> Remove User </a></li>
             </ul>
           </span>
       </th>
@@ -707,11 +704,23 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                 {{item.subject}} 
           </td>
           <td ng-dblclick="openAgenda(item)">
-              <span ng-repeat="pres in item.presenterList">
-                <img class="img-circle" 
-                    src="<%=ar.retPath%>icon/{{getImageName(pres)}}" 
-                    style="width:32px;height:32px" 
-                    title="{{pres.name}} - {{pres.uid}}">
+              <span ng-repeat="person in item.presenterList">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                         style="width:32px;height:32px" 
+                         title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
               </span>
           </td>
           <td ng-dblclick="openAgenda(item)" >
@@ -827,11 +836,24 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                 {{item.subject}} 
           </td>
           <td>
-              <span ng-repeat="pres in item.presenterList">
-                <img class="img-circle" 
-                    src="<%=ar.retPath%>icon/{{getImageName(pres)}}" 
-                    style="width:32px;height:32px" 
-                    title="{{pres.name}} - {{pres.uid}}">
+              <span ng-repeat="person in item.presenterList">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                         style="width:32px;height:32px" 
+                         title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
+
               </span>
           </td>
           <td >
@@ -925,10 +947,23 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
       </tr>
       <tr class="comment-inner" ng-repeat="pers in timeSlotResponders">
           <td>
-            <img class="img-circle" 
-                 ng-src="<%=ar.retPath%>icon/{{pers.image}}" 
-                 style="width:32px;height:32px" 
-                 title="{{pers.name}} - {{pers.uid}}"> &nbsp; 
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{pers.key}}.jpg" 
+                     style="width:32px;height:32px" 
+                     title="{{pers.name}} - {{pers.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{pers.name}}<br/>{{pers.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(pers)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
+          
             {{pers.name}}
           </td>
           <td ng-click="toggleAttend(pers.uid)">
@@ -1038,10 +1073,24 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                 {{goal.synopsis}}
               </td>
               <td>
-                <div ng-repeat="person in goal.assignTo"><img class="img-circle" 
-                   src="<%=ar.retPath%>icon/{{getImageName(person)}}" 
-                   style="width:32px;height:32px" 
-                   title="{{person.name}} - {{person.uid}}"></div>
+                <div ng-repeat="person in goal.assignTo">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                         style="width:32px;height:32px" 
+                         title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
+                </div>
               </td>
               <td ng-dblclick="openModalActionItem(selectedItem, goal)">
                 <div>{{goal.status}}</div>
@@ -1086,10 +1135,22 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
       <td>
         <div ng-repeat="presenter in selectedItem.presenterList">
-            <img class="img-circle" 
-                src="<%=ar.retPath%>icon/{{getImageName(presenter)}}" 
-                style="width:32px;height:32px" 
-                title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; 
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" 
+                     style="width:32px;height:32px" 
+                     title="{{presenter.name}} - {{presenter.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{presenter.name}}<br/>{{presenter.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(presenter)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
             {{presenter.name}}
         </div>
         <div ng-hide="selectedItem.presenterList && selectedItem.presenterList.length>0" class="doubleClickHint">

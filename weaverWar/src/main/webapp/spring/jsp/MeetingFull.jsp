@@ -536,7 +536,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{player.image}}" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>
@@ -672,7 +672,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{player.image}}" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>
@@ -1191,7 +1191,7 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{player.image}}" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>

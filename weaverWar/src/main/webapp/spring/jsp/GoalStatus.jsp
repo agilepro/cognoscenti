@@ -577,20 +577,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     
-    $scope.imageName = function(player) {
-        if (player.key) {
-            if (player.key.indexOf("@")<0) {
-                return player.key+".jpg";
-            }
-        }
-        var lc = player.uid.toLowerCase();
-        var ch = lc.charAt(0);
-        var i =1;
-        while(i<lc.length && (ch<'a'||ch>'z')) {
-            ch = lc.charAt(i); i++;
-        }
-        return "fake-"+ch+".jpg";
-    }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
@@ -716,7 +702,7 @@ function addvalue() {
             <div ng-repeat="person in area.assignees">
               <span class="dropdown">
                 <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
+                <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                      style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -810,7 +796,7 @@ function addvalue() {
             <div ng-repeat="person in rec.assignTo">
               <span class="dropdown">
                 <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
+                <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                      style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

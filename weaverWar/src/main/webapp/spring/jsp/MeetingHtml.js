@@ -604,14 +604,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.refreshMeetingPromise = function() {
         return $scope.putGetMeetingInfo(null);
     }
-    $scope.getImageName = function(item) {
-        if (item) {
-            return AllPeople.imageName(item);
-        }
-        else {
-            return "fake-~.jpg";
-        }
-    }
     $scope.singleTryToAdd = true;
     function addYouselfIfAppropriate() {
         // the problem here is that SLAP.loginInfo.userId is not necessarily

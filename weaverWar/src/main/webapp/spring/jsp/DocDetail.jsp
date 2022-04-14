@@ -260,7 +260,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "fake-"+ch+".jpg";
     }
-    $scope.navigateToUser = function(player) {
+    $scope.navigateToCreator = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
     $scope.composeEmail = function() {
@@ -363,7 +363,7 @@ function copyTheLink() {
         {{docInfo.modifiedtime|cdate}} &nbsp;
         <span class="dropdown">
             <span id="menu1" data-toggle="dropdown">
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(creator)}}" 
+            <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" 
                  style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
             </span>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -371,7 +371,7 @@ function copyTheLink() {
                   tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
                   {{creator.name}}<br/>{{creator.uid}}</a></li>
               <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="navigateToUser(creator)">
+                  ng-click="navigateToCreator(creator)">
                   <span class="fa fa-user"></span> Visit Profile</a></li>
             </ul>
         </span> &nbsp;

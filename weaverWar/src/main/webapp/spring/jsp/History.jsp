@@ -20,13 +20,13 @@ Required parameters:
     JSONArray allHistory = new JSONArray();
     for (HistoryRecord hist : histRecs) {
         AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        JSONObject userObject = ale.getJSON();
         UserProfile responsible = ale.getUserProfile();
-        String imagePath = "assets/photoThumbnail.gif";
         if(responsible!=null) {
-            String imgPath = responsible.getImage();
-            if (imgPath!=null && imgPath.length() > 0) {
-                imagePath = "icon/"+imgPath;
-            }
+            userObject = responsible.getFullJSON();
+        }
+        else {
+            userObject.put("image", "../assets/photoThumbnail.gif");
         }
         String objectKey = hist.getContext();
         int contextType = hist.getContextType();
@@ -34,72 +34,30 @@ Required parameters:
         String url = hist.lookUpURL(ar, ngp);
         String objName = hist.lookUpObjectName(ngp);
 
-/*
-        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            url = ar.getResourceURL(ngp, "projectAllTasks.htm");
-            objName = "";
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-            url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
-            GoalRecord gr = ngp.getGoalOrNull(objectKey);
-            if (gr!=null) {
-                objName = gr.getSynopsis();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
-            objName = objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            url = ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
-            AttachmentRecord att = ngp.findAttachmentByID(objectKey);
-            if (att!=null) {
-                objName = att.getDisplayName();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
-            TopicRecord nr = ngp.getDiscussionTopic(objectKey);
-            if (nr!=null) {
-                objName = nr.getSubject();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            url = ar.getResourceURL(ngp, "RoleManagement.htm");
-            NGRole role = ngp.getRole(objectKey);
-            if (role!=null) {
-                objName = role.getName();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            url = ar.getResourceURL(ngp, "meetingHtml.htm?id="+objectKey);
-            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
-            if (meet!=null) {
-                objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
-            }
-        }
-        */
+
 
         JSONObject jObj = hist.getJSON(ngp,ar);
-        jObj.put("responsible", ale.getJSON() );
+        jObj.put("responsible", userObject);
+        /*
         if (responsible!=null) {
             jObj.put("respUrl",     "v/"+responsible.getKey()+"/UserSettings.htm" );
         }
         else {
             jObj.put("respUrl",     "findUser.htm?id="+URLEncoder.encode(ale.getUniversalId(),"UTF-8") );
         }
+        */
         jObj.put("respName",    ale.getName() );
-        jObj.put("imagePath",   imagePath );
         jObj.put("contextUrl",  url );
         allHistory.put(jObj);
     }
 
 %>
 
+<script src="../../../jscript/AllPeople.js"></script>
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Activity Stream");
     $scope.allHistory = <%allHistory.write(out,2,4);%>;
     $scope.filter = "";
@@ -142,6 +100,10 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.navigateToUser = function(player) {
+        window.open("<%= ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key),"_blank");
+    }
+
 });
 </script>
 
@@ -158,7 +120,22 @@ app.controller('myCtrl', function($scope, $http) {
 
         <tr ng-repeat="hist in getHistory()"  >
             <td class="projectStreamIcons" style="padding-bottom:20px;">
-                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                  <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg" 
+                     style="width:50px;height:50px" 
+                     title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(hist.responsible)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
             </td>
             <td class="projectStreamText" style="padding-bottom:10px;">
                 {{hist.time|cdate}} -
