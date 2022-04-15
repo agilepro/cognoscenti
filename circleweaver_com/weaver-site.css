@@ -63,7 +63,19 @@ a {
     background-color: #AB37C8;
 }
 
-
+table tr {
+    margin: 15px;
+}
+table tr th {
+    padding: 15px;
+    vertical-align: top;
+    margin: 15px;
+}
+table tr td {
+    padding: 15px;
+    vertical-align: top;
+    margin: 15px;
+}
 
 
 
