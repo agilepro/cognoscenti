@@ -7,22 +7,14 @@
 	
 
 	<context:component-scan base-package="com.purplehillsbooks.weaver.spring"/>	
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />	
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver" p:basename="views" />
-    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer" p:definitions="/WEB-INF/tiles-defs.xml" />    
+
    
-      <bean id="messageSource"  
+    <bean id="messageSource"  
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource"  
           p:basename="classpath:messages"  
           p:fallbackToSystemLocale="false"  
           p:defaultEncoding="UTF-8" />
-
-     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-   	<!-- one of the properties available; the maximum file size in bytes -->
-   	<property name="maxInMemorySize" value="10240000" />
-   
-</bean> 
        
 </beans>
 

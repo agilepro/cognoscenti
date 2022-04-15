@@ -120,7 +120,7 @@ small {
 sub,
 sup {
 	font-size: 75%;
-	line-height: 0;
+
 	position: relative;
 	vertical-align: baseline;
 }
@@ -284,7 +284,7 @@ optgroup {
 	font-style: normal;
 	font-variant: normal;
 	font-weight: normal;
-	line-height: 1;
+
 	speak: none;
 	text-align: center;
 	text-decoration: inherit;
@@ -315,7 +315,7 @@ blockquote {
 	font-size: 19px;
 	font-size: 1.1875rem;
 	font-style: italic;
-	line-height: 1.4736842105;
+
 	margin: 0 0 1.4736842105em;
 	overflow: hidden;
 	padding: 0 0 0 1.263157895em;
@@ -343,7 +343,7 @@ blockquote small {
 	display: block;
 	font-size: 16px;
 	font-size: 1rem;
-	line-height: 1.75;
+
 }
 
 blockquote cite:before,
@@ -384,7 +384,7 @@ pre {
 	border: 1px solid #d1d1d1;
 	font-size: 16px;
 	font-size: 1rem;
-	line-height: 1.3125;
+
 	margin: 0 0 1.75em;
 	max-width: 100%;
 	overflow: auto;
@@ -472,9 +472,6 @@ dl {
 	margin: 0 0 1.75em;
 }
 
-dt {
-	font-weight: 700;
-}
 
 dd {
 	margin: 0 0 1.75em;
@@ -510,7 +507,6 @@ td {
 
 th {
 	border-width: 0 1px 1px 0;
-	font-weight: 700;
 }
 
 td {
@@ -551,7 +547,7 @@ td {
  */
 
 input {
-	line-height: normal;
+
 }
 
 button,
@@ -571,10 +567,10 @@ input[type="submit"][disabled]:focus {
 	border-radius: 20px;
 	color: #fff;
 	font-family: Lato, sans-serif;
-	letter-spacing: 0.046875em;
-	line-height: 1;
+
+
 	padding: 0.84375em 0.875em 0.78125em;
-	text-transform: uppercase;
+
 }
 
 button:hover,
@@ -647,10 +643,10 @@ textarea:focus {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	letter-spacing: 0.076923077em;
-	line-height: 1.6153846154;
+
+
 	margin-bottom: 1.75em;
-	text-transform: uppercase;
+
 }
 
 .post-password-form input[type="password"] {
@@ -675,7 +671,7 @@ input[type="search"].search-field {
 	content: "\f400";
 	font-size: 24px;
 	left: 2px;
-	line-height: 42px;
+
 	position: relative;
 	width: 40px;
 }
@@ -716,8 +712,8 @@ input[type="search"].search-field {
 .main-navigation {
 	font-family: 'Pt Sans', sans-serif;
 	font-size: 24px;
-	line-height: 2.53;
-	letter-spacing: 1.5px;
+
+
 	text-align: left;
 	color: #39134C;
 }
@@ -739,7 +735,7 @@ input[type="search"].search-field {
 .main-navigation a {
 	color: #39134c;
 	display: block;
-	line-height: 1.3125;
+
 	outline-offset: -1px;
 	padding: 0.84375em 0;
 }
@@ -853,7 +849,7 @@ input[type="search"].search-field {
 .social-navigation a:before {
 	content: "\f415";
 	height: 33px;
-	line-height: 33px;
+
 	text-align: center;
 	width: 33px;
 }
@@ -994,10 +990,10 @@ input[type="search"].search-field {
 	color: #686868;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	letter-spacing: 0.076923077em;
-	line-height: 1.6153846154;
+
+
 	margin-bottom: 0.5384615385em;
-	text-transform: uppercase;
+
 }
 
 .post-navigation .post-title {
@@ -1005,8 +1001,6 @@ input[type="search"].search-field {
 	font-family: Lato, sans-serif;
 	font-size: 23px;
 	font-size: 1.4375rem;
-	font-weight: 700;
-	line-height: 1.2173913043;
 	text-rendering: optimizeLegibility;
 }
 
@@ -1062,7 +1056,7 @@ input[type="search"].search-field {
 .pagination .nav-links:after {
 	color: #fff;
 	font-size: 32px;
-	line-height: 51px;
+
 	opacity: 0.3;
 	position: absolute;
 	width: 52px;
@@ -1086,16 +1080,15 @@ input[type="search"].search-field {
 
 .pagination .page-numbers {
 	display: none;
-	letter-spacing: 0.013157895em;
-	line-height: 1;
+
+
 	margin: 0 0.7368421053em 0 -0.7368421053em;
 	padding: 0.8157894737em 0.7368421053em 0.3947368421em;
-	text-transform: uppercase;
+
 }
 
 .pagination .current {
 	display: inline-block;
-	font-weight: 700;
 }
 
 .pagination .prev,
@@ -1117,7 +1110,7 @@ input[type="search"].search-field {
 .pagination .next:before {
 	font-size: 32px;
 	height: 53px;
-	line-height: 52px;
+
 	position: relative;
 	width: 53px;
 }
@@ -1163,7 +1156,7 @@ input[type="search"].search-field {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 	margin: 0 7.6923% 2.1538461538em;
 	padding: 1.0769230769em 0;
 }
@@ -1218,7 +1211,6 @@ input[type="search"].search-field {
 	display: block;
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 14px;
-	font-weight: 700;
 	left: -9999em;
 	outline: none;
 	padding: 15px 23px 14px;
@@ -1340,10 +1332,10 @@ blockquote:after,
 	font-family: Lato, "Helvetica Neue", sans-serif;
 	font-size: 16px;
 	font-size: 1rem;
-	letter-spacing: 0.046875em;
-	line-height: 1.3125;
+
+
 	margin: 0 0 1.75em;
-	text-transform: uppercase;
+
 }
 
 .widget .widget-title:empty {
@@ -1361,7 +1353,7 @@ blockquote:after,
 
 .widget_calendar td,
 .widget_calendar th {
-	line-height: 2.5625;
+
 	padding: 0;
 	text-align: center;
 }
@@ -1375,7 +1367,6 @@ blockquote:after,
 	background-color: #39134C;
 	color: #fff;
 	display: block;
-	font-weight: 700;
 }
 
 .widget_calendar tbody a:hover,
@@ -1391,7 +1382,7 @@ blockquote:after,
 	font-family: Lato, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.615384615;
+
 	margin-bottom: 0.538461538em;
 }
 
@@ -1412,7 +1403,7 @@ blockquote:after,
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-style: normal;
-	line-height: 1.615384615;
+
 	margin-bottom: 0.538461538em;
 }
 
@@ -1430,7 +1421,7 @@ blockquote:after,
 	border-radius: 2px;
 	display: inline-block;
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
-	line-height: 1;
+
 	margin: 0 0.1875em 0.4375em 0;
 	padding: 0.5625em 0.4375em 0.5em;
 }
@@ -1520,8 +1511,7 @@ blockquote:after,
 	font-family: Lato, sans-serif;
 	font-size: 23px;
 	font-size: 1.4375rem;
-	font-weight: 700;
-	line-height: 1.2173913043;
+
 	margin: 0;
 }
 
@@ -1544,7 +1534,7 @@ blockquote:after,
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-weight: 400;
-	line-height: 1.0769230769;
+
 	margin: 0.538461538em 0 0;
 }
 
@@ -1650,7 +1640,7 @@ a.post-thumbnail:focus {
 .textwidget h1 {
 	font-size: 28px;
 	font-size: 1.75rem;
-	line-height: 1.25;
+
 	margin-top: 2em;
 	margin-bottom: 1em;
 }
@@ -1661,7 +1651,7 @@ a.post-thumbnail:focus {
 .textwidget h2 {
 	font-size: 23px;
 	font-size: 1.4375rem;
-	line-height: 1.2173913043;
+
 	margin-top: 2.4347826087em;
 	margin-bottom: 1.2173913043em;
 }
@@ -1672,7 +1662,7 @@ a.post-thumbnail:focus {
 .textwidget h3 {
 	font-size: 19px;
 	font-size: 1.1875rem;
-	line-height: 1.1052631579;
+
 	margin-top: 2.9473684211em;
 	margin-bottom: 1.4736842105em;
 }
@@ -1691,7 +1681,7 @@ a.post-thumbnail:focus {
 .textwidget h6 {
 	font-size: 16px;
 	font-size: 1rem;
-	line-height: 1.3125;
+
 	margin-top: 3.5em;
 	margin-bottom: 1.75em;
 }*/
@@ -1700,8 +1690,8 @@ a.post-thumbnail:focus {
 .entry-summary h4,
 .comment-content h4,
 .textwidget h4 {
-	letter-spacing: 0.140625em;
-	text-transform: uppercase;
+
+
 }
 .entry-content-center h4 {
 	text-align: center;
@@ -1785,7 +1775,7 @@ body:not(.search-results) .entry-summary {
 	color: #686868;
 	font-size: 19px;
 	font-size: 1.1875rem;
-	line-height: 1.4736842105;
+
 	margin-bottom: 1.4736842105em;
 }
 
@@ -1858,7 +1848,7 @@ body:not(.search-results) .entry-summary > :last-child,
 	border-width: 1px 0 1px 0;
 	clear: both;
 	padding-top: 1.75em;
-	padding-bottom: 1.75em;
+
 }
 
 .author-avatar .avatar {
@@ -1877,7 +1867,7 @@ body:not(.search-results) .entry-summary > :last-child,
 	font-size: 16px;
 	font-size: 1rem;
 	font-weight: 900;
-	line-height: 1.75;
+
 	margin: 0;
 }
 
@@ -1885,7 +1875,7 @@ body:not(.search-results) .entry-summary > :last-child,
 	color: #686868;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 	margin-bottom: 1.6153846154em;
 	overflow: hidden;
 }
@@ -1899,7 +1889,7 @@ body:not(.search-results) .entry-summary > :last-child,
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 	margin-top: 2.1538461538em;
 }
 
@@ -1935,10 +1925,10 @@ body:not(.search-results) .entry-summary > :last-child,
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	letter-spacing: 0.076923077em;
-	line-height: 1.6153846154;
+
+
 	margin-bottom: 0.5384615385em;
-	text-transform: uppercase;
+
 }
 
 /**
@@ -1975,14 +1965,14 @@ body.search-no-results .page-header {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 23px;
 	font-size: 1.4375rem;
-	line-height: 1.2173913043;
+
 }
 
 .taxonomy-description {
 	color: #686868;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 }
 
 .taxonomy-description p {
@@ -2007,7 +1997,7 @@ body.search-no-results .page-header {
 	font-size: 13px;
 	font-size: 0.8125rem;
 	height: 1.8461538462em;
-	line-height: 1.6923076923em;
+
 	margin-right: 0.3076923077em;
 	text-align: center;
 	width: 1.8461538462em;
@@ -2044,7 +2034,7 @@ body.search-no-results .page-header {
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-style: italic;
-	line-height: 1.6153846154;
+
 	padding-top: 1.0769230769em;
 }
 
@@ -2076,7 +2066,7 @@ body.search-no-results .page-header {
 .format-chat .entry-title {
 	font-size: 19px;
 	font-size: 1.1875rem;
-	line-height: 1.473684211;
+
 	margin-bottom: 1.473684211em;
 }
 
@@ -2105,8 +2095,6 @@ body.search-no-results .page-header {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 23px;
 	font-size: 1.4375rem;
-	font-weight: 700;
-	line-height: 1.3125;
 	padding-top: 1.217391304em;
 }
 
@@ -2161,7 +2149,7 @@ body.search-no-results .page-header {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 }
 
 .comment-metadata {
@@ -2211,7 +2199,7 @@ body.search-no-results .page-header {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1;
+
 	margin-top: 2.1538461538em;
 	padding: 0.5384615385em 0.5384615385em 0.4615384615em;
 }
@@ -2233,14 +2221,14 @@ body.search-no-results .page-header {
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	letter-spacing: 0.076923077em;
-	line-height: 1.6153846154;
+
+
 	margin-bottom: 0.5384615385em;
-	text-transform: uppercase;
+
 }
 
 .comment-list .comment-form {
-	padding-bottom: 1.75em;
+
 }
 
 .comment-notes,
@@ -2250,14 +2238,13 @@ body.search-no-results .page-header {
 	color: #686868;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 	margin-bottom: 2.1538461538em;
 }
 
 .no-comments {
 	border-top: 1px solid #d1d1d1;
 	font-family: Montserrat, "Helvetica Neue", sans-serif;
-	font-weight: 700;
 	margin: 0;
 	padding-top: 1.75em;
 }
@@ -2327,7 +2314,7 @@ body.search-no-results .page-header {
 	color: #686868;
 	font-size: 13px;
 	font-size: 0.8125rem;
-	line-height: 1.6153846154;
+
 }
 
 .site-info a {
@@ -2409,7 +2396,7 @@ p > video {
 }
 
 .wp-playlist.wp-audio-playlist {
-	padding-bottom: 0;
+
 }
 
 .wp-playlist .wp-playlist-tracks {
@@ -2445,7 +2432,7 @@ p > video {
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-style: italic;
-	line-height: 1.6153846154;
+
 	padding-top: 0.5384615385em;
 }
 
@@ -2509,7 +2496,7 @@ p > video {
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-style: italic;
-	line-height: 1.6153846154;
+
 	padding-top: 0.5384615385em;
 }
 
@@ -2551,7 +2538,7 @@ p > video {
 	font-size: 23px;
 	font-size: 1.4375rem;
 	font-weight: 900;
-	line-height: 1.2173913043;
+
 	margin-bottom: 1.2173913043em;
 }
 
@@ -2570,9 +2557,9 @@ p > video {
 	font-size: 13px;
 	font-size: 0.8125rem;
 	font-weight: 400;
-	letter-spacing: 0.076923077em;
-	line-height: 1.6153846154;
-	text-transform: uppercase;
+
+
+
 }
 
 .widecolumn .mu_register label {
@@ -2694,7 +2681,7 @@ p > video {
 	.site-title {
 		font-size: 28px;
 		font-size: 1.75rem;
-		line-height: 1.25;
+
 	}
 
 	.wp-custom-logo .site-title {
@@ -2735,7 +2722,7 @@ p > video {
 	.post-navigation .post-title {
 		font-size: 28px;
 		font-size: 1.75rem;
-		line-height: 1.25;
+
 	}
 
 	/* restore screen-reader-text */
@@ -2768,7 +2755,7 @@ p > video {
 	.entry-title {
 		/*font-size: 33px;
 		font-size: 2.0625rem;*/
-		line-height: 1.2727272727;
+
 		margin-bottom: 0.8484848485em;
 	}
 
@@ -3052,7 +3039,7 @@ p > video {
 	.widget {
 		font-size: 13px;
 		font-size: 0.8125rem;
-		line-height: 1.6153846154;
+
 		margin-bottom: 3.230769231em;
 		padding-top: 1.615384615em;
 	}
@@ -3080,7 +3067,7 @@ p > video {
 	.widget blockquote {
 		font-size: 16px;
 		font-size: 1rem;
-		line-height: 1.3125;
+
 		margin-bottom: 1.3125em;
 		padding-left: 1.0625em;
 	}
@@ -3089,7 +3076,7 @@ p > video {
 	.widget blockquote small {
 		font-size: 13px;
 		font-size: 0.8125rem;
-		line-height: 1.6153846154;
+
 	}
 
 	.widget th,
@@ -3100,7 +3087,7 @@ p > video {
 	.widget pre {
 		font-size: 13px;
 		font-size: 0.8125rem;
-		line-height: 1.6153846154;
+
 		margin-bottom: 1.6153846154em;
 		padding: 0.5384615385em;
 	}
@@ -3116,14 +3103,14 @@ p > video {
 	.widget textarea {
 		font-size: 13px;
 		font-size: 0.8125rem;
-		line-height: 1.6153846154;
+
 	}
 
 	.widget button,
 	.widget input[type="button"],
 	.widget input[type="reset"],
 	.widget input[type="submit"] {
-		line-height: 1;
+
 		padding: 0.846153846em;
 	}
 
@@ -3146,21 +3133,21 @@ p > video {
 	.widget h1 {
 		font-size: 23px;
 		font-size: 1.4375rem;
-		line-height: 1.2173913043;
+
 		margin-bottom: 0.9130434783em;
 	}
 
 	.widget h2 {
 		font-size: 19px;
 		font-size: 1.1875rem;
-		line-height: 1.1052631579;
+
 		margin-bottom: 1.1052631579em;
 	}
 
 	.widget h3 {
 		font-size: 16px;
 		font-size: 1rem;
-		line-height: 1.3125;
+
 		margin-bottom: 1.3125em;
 	}
 
@@ -3169,7 +3156,7 @@ p > video {
 	.widget h6 {
 		font-size: 13px;
 		font-size: 0.8125rem;
-		line-height: 1.6153846154;
+
 		margin-bottom: 0.9130434783em;
 	}
 
@@ -3187,7 +3174,7 @@ p > video {
 
 	.widget_calendar td,
 	.widget_calendar th {
-		line-height: 2.6923076923;
+
 		padding: 0;
 	}
 
@@ -3203,7 +3190,7 @@ p > video {
 	.widget .search-submit:before {
 		font-size: 16px;
 		left: 1px;
-		line-height: 35px;
+
 		width: 34px;
 	}
 
@@ -3230,7 +3217,7 @@ p > video {
 	}
 
 	.textwidget h4 {
-		letter-spacing: 0.153846154em;
+
 	}
 
 	.textwidget h4,
@@ -3333,7 +3320,7 @@ p > video {
 	.entry-title {
 	/*font-size: 40px;
 		font-size: 2.5rem;*/
-	line-height: 1.225;
+
 	margin-bottom: 1.05em;
 	background-position: 0% 0%;
 	border-width: 50px;
@@ -3350,7 +3337,7 @@ p > video {
 	.format-chat .entry-title {
 		/*font-size: 23px;
 		font-size: 1.4375em;*/
-		line-height: 1.304347826;
+
 		margin-bottom: 1.826086957em;
 	}
 
@@ -3363,7 +3350,7 @@ p > video {
 	.comment-content h1 {
 		font-size: 33px;
 		font-size: 2.0625rem;
-		line-height: 1.2727272727;
+
 		margin-top: 1.696969697em;
 		margin-bottom: 0.8484848485em;
 	}
@@ -3375,7 +3362,7 @@ p > video {
 	.comment-content h3 {
 		font-size: 23px;
 		font-size: 1.4375rem;
-		line-height: 1.2173913043;
+
 		margin-top: 2.4347826087em;
 		margin-bottom: 1.2173913043em;*/
 	}
@@ -3384,7 +3371,7 @@ p > video {
 	.entry-summary h4,
 	.entry-intro h4,
 	.comment-content h4 {
-		letter-spacing: 0.131578947em;
+
 	}
 
 	.entry-content h4,
@@ -3398,14 +3385,14 @@ p > video {
 	.comment-content h6 {
 		font-size: 19px;
 		font-size: 1.1875rem;
-		line-height: 1.1052631579;
+
 		margin-top: 2.9473684211em;
 		margin-bottom: 1.473684211em;
 	}
 */
 	.author-info {
 		border-bottom-width: 0;
-		padding-bottom: 0;
+
 	}
 
 	.comment-list + .comment-respond,
@@ -3513,7 +3500,7 @@ p > video {
 	body:not(.search-results) .entry-summary {
 		font-size: 23px;
 		font-size: 1.4375rem;
-		line-height: 1.5217391304;
+
 		margin-bottom: 1.826086957em;
 	}
 
@@ -3545,7 +3532,7 @@ p > video {
 	body:not(.search-results) .entry-summary blockquote {
 		font-size: 23px;
 		font-size: 1.4375rem;
-		line-height: 1.5217391304;
+
 		margin: 0 0 1.5217391304em;
 		padding-left: 1.347826087em;
 	}
@@ -3562,7 +3549,7 @@ p > video {
 	body:not(.search-results) .entry-summary blockquote small {
 		font-size: 19px;
 		font-size: 1.1875rem;
-		line-height: 1.8421052632;
+
 	}
 
 	body:not(.search-results) .entry-summary th,
@@ -3573,7 +3560,7 @@ p > video {
 	body:not(.search-results) .entry-summary pre {
 		font-size: 16px;
 		font-size: 1rem;
-		line-height: 1.75;
+
 		margin-bottom: 1.75em;
 		padding: 1.75em;
 	}
@@ -3691,7 +3678,7 @@ p > video {
 
 	.entry-title {
 		font-size: 24.75pt;
-		line-height: 1.2727272727;
+
 		margin-bottom: 1.696969697em;
 	}
 
@@ -3705,7 +3692,7 @@ p > video {
 	.format-audio .entry-title,
 	.format-chat .entry-title {
 		font-size: 17.25pt;
-		line-height: 1.304347826;
+
 		margin-bottom: 1.826086957em;
 	}
 
