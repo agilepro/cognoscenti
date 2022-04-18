@@ -110,3 +110,9 @@ img{
     background-color:ivory;
     color:brown
 }
+
+
+.tutorialThumbnail {
+    border-radius:15px;
+    box-shadow: 5px 5px 5px gray;
+}

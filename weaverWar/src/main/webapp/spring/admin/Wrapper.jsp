@@ -51,7 +51,7 @@
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
+    <link href="<%=ar.retPath%>bits/superAdminStyle.css" rel="styleSheet" type="text/css" media="screen" />
     
     <script src="<%=ar.retPath%>bits/moment.js"></script>
     <title>Administration Page</title>

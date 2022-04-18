@@ -244,10 +244,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">
             Create Workspace</button>
     </div>
-    
-    <!--pre>
-    < debugMessage >
-    </pre-->
 
 </div>
 
@@ -261,5 +257,18 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     <div class="guideVocal">This site is off line and no workspaces can be created in it at this time.</div>
 </div>
 
+    <div class="guideVocal">
+        <p>
+       If you would like some guidance in how to create a workspace, and how sites and workspaces work,
+       please check the tutorial on the topic of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
+       for a complete walk through on how to do this.
+       </p>
+       <p>
+       <a href="https://s06.circleweaver.com/Tutorial02.html"   target="Tutorials">
+           <img src="https://s06.circleweaver.com/tutorial-files/Tutorial02-thumb.png"
+                class="tutorialThumbnail"/>
+       </a>
+       </p>
+    </div>
 
 </div>

@@ -5,7 +5,6 @@
     Cognoscenti cog = ar.getCogInstance();
     
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
-    boolean noneFound = ownedProjs.size()==0;
     String accountKey = ar.reqParam("siteId");
     NGBook site = cog.getSiteByIdOrFail(accountKey);
     boolean showExperimental = site.getShowExperimental();
@@ -27,6 +26,7 @@
         }
         projList.put(ngpi.getJSON4List());
     }
+    boolean noneFound = projList.length()==0;
     
 
 /** RECORD PROTOTYPE
@@ -49,6 +49,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
+    $scope.numberFound = <%=ownedProjs.size()%>
     $scope.filter = "";
     $scope.showExperimental = <%=showExperimental%>;
 
@@ -175,15 +176,28 @@ app.controller('myCtrl', function($scope, $http) {
     </a>
 
     <div class="guideVocal" ng-show="noneFound">
-        User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
-       <br/>
-       When a user create projects, they will be listed here.<br/>
-       <br/>
-       In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
-       <br/>
-       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'">Settings &gt; Sites</button>
-       to view your sites, or request a new site from the system administrator.
-       If approved you will be the owner of that new site,
-       and can create new projects within it.
+       <p>
+        This site &quot;{{siteInfo.names[0]}}&quot; does not have any workspaces.
+       </p>
+       <p>
+       The "Owner" or "Executive" of a "Site" has permission to create a workspace.
+       </p>
+       <p>
+       Use the button
+       <a href="SiteCreateWorkspace.htm">
+           <button class="btn btn-sm btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button></a>
+       to create a new workspace.
+       </p>
+       <p>
+       If you would like some guidance in how to do this, and how sites and workspaces work,
+       please check the tutorial on the topic of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
+       for a complete walk through on how to do this.
+       </p>
+       <p>
+       <a href="https://s06.circleweaver.com/Tutorial02.html"  target="Tutorials">
+           <img src="https://s06.circleweaver.com/tutorial-files/Tutorial02-thumb.png"
+                class="tutorialThumbnail"/>
+       </a>
+       </p>
     </div>
 </div>

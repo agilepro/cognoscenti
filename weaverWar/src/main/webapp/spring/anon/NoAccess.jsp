@@ -11,8 +11,8 @@
     Cognoscenti cog = ar.getCogInstance();
     String pageId = (String)request.getAttribute("pageId");
     String siteId = (String)request.getAttribute("siteId");
-    if (pageId!=null) {
-        ngw = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
+    if (pageId!=null && !"$".equals(pageId)) {
+        ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
         if (ngw!=null) {
             ngb = ngw.getSite();
         }

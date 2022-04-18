@@ -293,3 +293,11 @@ myApp.controller('myCtrl', function($scope, $http) {
     }
 
 %>
+
+<div class="well">
+    <form id="upload_user2" action="uploadImage.form" method="post" enctype="multipart/form-data" >
+       <input type="file" name="fname" id="fname"/>
+       <button onclick="document.getElementById('upload_user2').submit();">Upload Photo</button>
+    </form>
+
+</div>

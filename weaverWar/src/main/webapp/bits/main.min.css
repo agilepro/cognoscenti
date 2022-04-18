@@ -272,7 +272,7 @@ img {
 
 .guideVocal {
 	clear: both;
-	width: auto;
+    max-width: 600px;
 	border-radius: 8px;
 	background-color: #fafafa;
 	background-position: bottom left;
