@@ -23,7 +23,7 @@ public interface ScheduledNotification {
      * should ONLY be called on the background email processing thread because
      * MailFile is not thread safe.
      */
-    public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception;
+    public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception;
 
     public String selfDescription() throws Exception;
 

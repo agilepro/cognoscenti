@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.JSONWrapper;
 import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
@@ -170,7 +171,7 @@ public class RoleInvitation extends JSONWrapper {
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if ("New".equals(ri.getStatus())) {
                 System.out.println("ROLE INVITATION: "+SectionUtil.currentTimeString()+" to "+ri.getEmail()+" sending.");
                 ri.sendEmail(ar);

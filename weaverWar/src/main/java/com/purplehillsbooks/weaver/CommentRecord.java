@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -456,7 +456,7 @@ public class CommentRecord extends DOMFace {
     }
 
 
-    public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
+    public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, EmailSender mailFile) throws Exception {
         try {
             List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
             boolean excludeSelf = getAttributeBool("excludeSelf");
@@ -538,7 +538,7 @@ public class CommentRecord extends DOMFace {
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, EmailContext noteOrMeet, OptOutAddr ooa,
-            UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+            UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
         Cognoscenti cog = ar.getCogInstance();
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -601,7 +601,7 @@ public class CommentRecord extends DOMFace {
         clone.flush();
 
         String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;
-        mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
 
 
@@ -839,7 +839,7 @@ public class CommentRecord extends DOMFace {
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             cr.commentEmailRecord(ar,ngw,noteOrMeet,mailFile);
         }
 

@@ -12,7 +12,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1026,7 +1026,7 @@ public class MeetingRecord extends DOMFace {
     }
 
 
-    public void sendReminderEmail(AuthRequest ar, NGWorkspace ngw, MailFile mailFile) throws Exception {
+    public void sendReminderEmail(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
         try {
 
             //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
@@ -1248,7 +1248,7 @@ public class MeetingRecord extends DOMFace {
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
                 throw new Exception("Attempting to send email reminder when not in planning state.  State="+meet.getState());
             }

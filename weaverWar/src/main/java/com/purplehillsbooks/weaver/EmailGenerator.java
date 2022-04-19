@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -252,7 +253,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    public void constructEmailRecords(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
+    public void constructEmailRecords(AuthRequest ar, NGWorkspace ngp, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
 
         StringBuilder historyNameList = new StringBuilder();
@@ -272,7 +273,7 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa, MailFile mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa, EmailSender mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -688,7 +689,7 @@ public class EmailGenerator extends DOMFace {
 
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             eg.constructEmailRecords(ar, ngw, mailFile);
         }
 

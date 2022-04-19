@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -118,7 +118,7 @@ public class SiteMailGenerator extends DOMFace {
     }
 
 
-    public void constructEmailRecords(AuthRequest ar, NGBook ngb, MailFile mailFile) throws Exception {
+    public void constructEmailRecords(AuthRequest ar, NGBook ngb, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngb);
 
         StringBuilder historyNameList = new StringBuilder();
@@ -142,7 +142,7 @@ public class SiteMailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGBook ngb, OptOutAddr ooa, MailFile mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGBook ngb, OptOutAddr ooa, EmailSender mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -283,7 +283,7 @@ public class SiteMailGenerator extends DOMFace {
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             System.out.println("  SENDIT called on "+selfDescription());
             eg.constructEmailRecords(ar, ngb, mailFile);
         }

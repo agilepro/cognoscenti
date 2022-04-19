@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -851,7 +852,7 @@ public class TopicRecord extends CommentContainer {
       }
 
 
-      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, MailFile mailFile) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
 
           //The user interface will initialize the subscribers to the members of the target role
@@ -878,7 +879,7 @@ public class TopicRecord extends CommentContainer {
       }
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
-              UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+              UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
           Cognoscenti cog = ar.getCogInstance();
           if (!ooa.hasEmailAddress()) {
               return;  //ignore users without email addresses
@@ -910,7 +911,7 @@ public class TopicRecord extends CommentContainer {
           clone.flush();
 
           String emailSubject = "New Topic: "+note.getSubject();
-          mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+          mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
       }
 
 
@@ -1162,7 +1163,7 @@ public class TopicRecord extends CommentContainer {
          }
 
          @Override
-         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
              note.topicEmailRecord(ar,ngw, mailFile);
          }
 

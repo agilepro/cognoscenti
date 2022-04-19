@@ -34,6 +34,7 @@ import java.util.TimeZone;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -1101,7 +1102,7 @@ public class GoalRecord extends BaseRecord {
 
     ////////////////////////// EMAIL /////////////////////////////
 
-    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
+    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngp, EmailSender mailFile) throws Exception {
         try {
             if (!needSendEmail()) {
                 throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
@@ -1164,7 +1165,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa,
-            UserProfile requesterProfile, MailFile mailFile) throws Exception  {
+            UserProfile requesterProfile, EmailSender mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -1237,7 +1238,7 @@ public class GoalRecord extends BaseRecord {
         }
 
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
-        mailFile.createEmailRecord(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecordInDB(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
 
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
@@ -1319,7 +1320,7 @@ public class GoalRecord extends BaseRecord {
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             goal.goalEmailRecord(ar, ngp, mailFile);
             if (goal.needSendEmail()) {
                 System.out.println("ERROR: for some reason it did not get move to the mailFile?");

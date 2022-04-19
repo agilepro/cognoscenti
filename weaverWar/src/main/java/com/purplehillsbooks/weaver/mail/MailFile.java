@@ -26,16 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
-
 import javax.mail.Message;
 
-import com.purplehillsbooks.weaver.AddressListEntry;
-import com.purplehillsbooks.weaver.EmailRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.OptOutAddr;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -170,10 +163,12 @@ public class MailFile extends JSONWrapper {
         myPath = path;
     }
 
+    /*
     public void save() throws Exception {
         pruneOldRecords();
         kernel.writeToFile(myPath);
     }
+    */
 
     public List<MailInst> getAllMessages() throws Exception {
         JSONArray msgs = this.getRequiredArray("msgs");
@@ -198,6 +193,7 @@ public class MailFile extends JSONWrapper {
     }
 
 
+    /*
     public MailInst createEmailWithAttachments(
             AddressListEntry from,
             String addressee,
@@ -210,6 +206,7 @@ public class MailFile extends JSONWrapper {
         mi.setAttachmentFiles(attachments);
         return mi;
     }
+    */
 
 
     /**
@@ -217,6 +214,7 @@ public class MailFile extends JSONWrapper {
      * For the Opt-Out Address, you either must include the message in the email body
      * or you must "prepare" the object to have the message as a string.
      */
+    /*
     public MailInst createEmailRecord(
                     AddressListEntry from,
                     String addressee,
@@ -271,13 +269,17 @@ public class MailFile extends JSONWrapper {
             throw new JSONException("Unable to compose email record from '{0}' on: {1}", e, from, subject);
         }
     }
+    */
 
+    /*
     public MailInst createEmailFromTemplate( OptOutAddr ooa, String addressee,
             String subject, File templateFile, JSONObject data) throws Exception {
         String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
         return createEmailRecord( ooa.getAssignee(), addressee, subject, body);
     }
+    */
 
+    /*
     public boolean sendAllMail(Properties mailProps) throws Exception {
 
         List<MailInst> allEmail = getAllMessages();
@@ -293,6 +295,7 @@ public class MailFile extends JSONWrapper {
         }
         return allSentOK;
     }
+    */
 
     /**
      * This throws away old email on this schedule:
@@ -341,7 +344,12 @@ public class MailFile extends JSONWrapper {
         @Override
         public int compare(MailInst arg0, MailInst arg1) {
             try {
-                return (int) (arg1.getCreateDate()/1000 - arg0.getCreateDate()/1000);
+                if ((arg1.getCreateDate() - arg0.getCreateDate()) > 0) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
             }
             catch (Exception e) {
                 return 0;

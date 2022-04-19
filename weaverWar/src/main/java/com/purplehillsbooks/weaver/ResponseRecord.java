@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,7 +98,7 @@ public class ResponseRecord extends DOMFace
     }
 
 
-    public void responseEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
+    public void responseEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         noteOrMeet.appendTargetEmails(sendTo, ngw);
 
@@ -122,7 +122,7 @@ public class ResponseRecord extends DOMFace
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, OptOutAddr ooa,
-            CommentRecord cr, UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+            CommentRecord cr, UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
 
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -183,7 +183,7 @@ public class ResponseRecord extends DOMFace
 
         String bodyStr = body.toString();
         String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
-        mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, bodyStr);
+        mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, bodyStr);
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {
@@ -249,7 +249,7 @@ public class ResponseRecord extends DOMFace
         }
 
         @Override
-        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             rr.responseEmailRecord(ar,ngw,noteOrMeet,cr,mailFile);
         }
 
