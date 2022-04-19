@@ -1024,7 +1024,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       </div>
 
 
-<table>
+<table style="max-width:800px">
   <tr ng-repeat="cmt in getComments()">
 
      <%@ include file="/spring/jsp/CommentView.jsp"%>

@@ -406,7 +406,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           </span>
       </th>
     </tr>
-    <tr ng-repeat="time in meeting.timeSlots">
+    <tr ng-repeat="time in meeting.timeSlots" ng-style="timeRowStyle(time)">
       <td>
         <span class="dropdown">
             <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
@@ -421,10 +421,12 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
             </ul>
         </span>
       </td>
-      <td><div ng-click="setProposedTime(time.proposedTime)">
+      <td>
+          <div>
           {{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}
           <span ng-show="time.proposedTime == meeting.startTime" class="fa fa-check"></span>
-      </div></td>
+          </div>
+      </td>
       <td style="width:20px;"></td>
       <td ng-repeat="resp in timeSlotResponders"   
           style="text-align:center">
@@ -512,6 +514,15 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
+            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
+            <td ng-dblclick="editMeetingDesc=true">
+              <div ng-bind-html="meeting.descriptionHtml"></div>
+              <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
+                  Double-click to edit description
+              </div>
+            </td>
+          </tr>
+          <tr>
             <td ng-click="editMeetingPart='duration'" class="labelColumn">Total Duration:</td>
             <td ng-hide="'duration'==editMeetingPart" ng-dblclick="editMeetingPart='duration'">
               {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
@@ -521,25 +532,6 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                 <div class="well form-inline form-group" style="max-width:400px">
                     <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
                     Minutes ({{meeting.totalDuration}} currently allocated)<br/>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='reminderTime'" class="labelColumn">Reminder:</td>
-            <td ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
-              {{factoredTime}} {{timeFactor}} before the meeting. 
-                <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
-                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
-            </td>
-            <td ng-show="'reminderTime'==editMeetingPart">
-                <div class="well form-inline form-group" style="max-width:600px">
-                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
-                    <select ng-model="timeFactor" class="form-control" ng-change="">
-                        <option>Minutes</option>
-                        <option>Days</option>
-                        </select>
-                    before the meeting, ({{meeting.reminderTime}} minutes)<br/>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
             </td>
@@ -581,9 +573,6 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
               <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!
               </span>
-              <span ng-hide="meeting.state>0" style="color:red">
-                  (This role is consulted at the time you POST the meeting)
-              </span>
             </td>
             <td ng-show="'targetRole'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:400px">
@@ -591,15 +580,6 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                             ng-options="value for value in allRoles" ng-change="checkRole()"></select>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
-            <td ng-dblclick="editMeetingDesc=true">
-              <div ng-bind-html="meeting.descriptionHtml"></div>
-              <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
-                  Double-click to edit description
-              </div>
             </td>
           </tr>
           <tr ng-show="previousMeeting.id">
@@ -618,6 +598,25 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                      title="Navigate to the discussion topic that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='reminderTime'" class="labelColumn">Reminder:</td>
+            <td ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
+              {{factoredTime}} {{timeFactor}} before the meeting. 
+                <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
+                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
+            </td>
+            <td ng-show="'reminderTime'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:600px">
+                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
+                    <select ng-model="timeFactor" class="form-control" ng-change="">
+                        <option>Minutes</option>
+                        <option>Days</option>
+                        </select>
+                    before the meeting, ({{meeting.reminderTime}} minutes)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
             </td>
           </tr>
         </table>
@@ -1221,6 +1220,8 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
         </span>
       </td>
     </tr>
+    </table>
+    <table style="max-width:800px">
       <tr ng-repeat="cmt in selectedItem.comments"  ng-hide="selectedItem.isSpacer">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>

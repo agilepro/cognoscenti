@@ -258,7 +258,7 @@ function setUpCommentMethods($scope, $http, $modal) {
 
 
 
-  <td style="width:50px;vertical-align:top;padding:15px;">
+  <td style="width:50px;vertical-align:top;padding:15px">
       <span class="dropdown" >
         <span id="menu1" data-toggle="dropdown">
           <img class="img-circle" 
@@ -355,12 +355,12 @@ function setUpCommentMethods($scope, $http, $modal) {
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
       </div>
 
-      <table style="min-width:500px;overflow:hidden" ng-show="cmt.commentType==2 || cmt.commentType==3">
-        <col style="width:120px">
+      <table style="min-width:500px;overflow:hidden;table-layout:fixed" ng-show="cmt.commentType==2 || cmt.commentType==3">
+        <col style="width:120px;white-space:nowrap">
         <col style="width:10px">
         <col width="width:1*">
         <tr ng-repeat="resp in cmt.responses">
-          <td style="padding:5px;max-width:100px;overflow:hidden">
+          <td style="padding:5px;max-width:100px;overflow:hidden;white-space:nowrap">
             <div ng-show="cmt.commentType==2">
               <b>{{resp.choice}}</b></div>
             <div>{{resp.userName?resp.userName:resp.user}}</div>
@@ -392,7 +392,7 @@ function setUpCommentMethods($scope, $http, $modal) {
           </td>
           <td style="padding:5px;">
             <div class="leafContent comment-inner">
-              <i>Click edit button to register a response to this {{commentTypeName(cmt)}}.</i></div>
+              <span style="color:lightgrey">No response provided</span></div>
           </td>
         </tr>
       </table>

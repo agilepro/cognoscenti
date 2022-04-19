@@ -505,7 +505,7 @@ function copyTheLink() {
 
 <div ng-show="canAccess" class="col col-lg-6 col-sm-12">
     <h3>Comments:</h3>
-    <table >
+    <table style="max-width:800px">
       <tr ng-repeat="cmt in docInfo.comments">
          <%@ include file="/spring/jsp/CommentView.jsp"%>
       </tr>

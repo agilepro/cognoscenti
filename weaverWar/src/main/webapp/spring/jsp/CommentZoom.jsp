@@ -194,7 +194,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
     
-      <table class="table" style="max-width:600px" ng-show="commentExists">
+      <table class="table" style="max-width:800px" ng-show="commentExists">
         <tr>
           <td>Container Key</td>
           <td>{{comment.containerType}}:{{comment.containerID}}</td>
@@ -212,13 +212,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <td><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></td>
         </tr>
       </table>
-      <table class="table" style="max-width:600px" ng-hide="commentExists">
+      <table class="table" ng-hide="commentExists">
         <tr>
           <td>Status</td>
           <td>A comment/round/proposal with id {{cid}} not found.  Probably it has been deleted.</td>
         </tr>
       </table>
-      <table ng-show="commentExists">
+      <table ng-show="commentExists" style="max-width:800px">
         <tr ng-repeat="cmt in getComments()">
           <%@ include file="/spring/jsp/CommentView.jsp"%>          
         </tr>

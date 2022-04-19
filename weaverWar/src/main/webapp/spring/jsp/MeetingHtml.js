@@ -2037,6 +2037,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     $scope.setSelectedItemById($scope.uiState.selectedItemId);
 
+
+    $scope.timeRowStyle = function(time) {
+        if (time.proposedTime == $scope.meeting.startTime) {
+            return {"background-color": "yellow"}
+        }
+        return {};
+    }        
 });
 
 function calcResponders(slots, AllPeople, siteId) {

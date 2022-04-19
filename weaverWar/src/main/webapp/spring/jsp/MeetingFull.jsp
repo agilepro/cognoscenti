@@ -1117,7 +1117,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 
 
                           <!--  AGENDA comments -->
-      <table ng-show="showItemMap[item.id] && !item.isSpacer" >
+      <table ng-show="showItemMap[item.id] && !item.isSpacer" style="max-width:800px">
       <tr>
         <td style="width:50px;vertical-align:top;padding:15px;"></td>
         <td>
