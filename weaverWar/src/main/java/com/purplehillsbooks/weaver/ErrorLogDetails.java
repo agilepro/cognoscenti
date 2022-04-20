@@ -27,6 +27,8 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -98,6 +100,7 @@ public class ErrorLogDetails extends DOMFace {
 
     public void sendFeedbackEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
+        AddressListEntry from = new AddressListEntry(ar.getBestUserId());
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
             JSONObject jo = new JSONObject();
             jo.put("req", this.getJSON());
@@ -110,12 +113,16 @@ public class ErrorLogDetails extends DOMFace {
             ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
             w.flush();
 
-            List<OptOutAddr> thisSuperUserAddressList = new ArrayList<OptOutAddr>();
-            thisSuperUserAddressList.add(new OptOutSuperAdmin(up.getAddressListEntry()));
+            OptOutAddr ooa = new OptOutSuperAdmin(up.getAddressListEntry());
+            
+            MailInst msg = MailInst.genericEmail("$", "$", "Weaver feedback from " + ar.getBestUserId(), body.toString());
+            NGContainer ngc = ar.ngp;
+            if (ngc instanceof NGWorkspace) {
+                msg.setSiteKey(((NGWorkspace)ngc).getSiteKey());
+                msg.setWorkspaceKey(((NGWorkspace)ngc).getKey());
+            }
 
-            EmailSender.generalMailToList(thisSuperUserAddressList, new AddressListEntry(ar.getBestUserId()),
-                    "Weaver feedback from " + ar.getBestUserId(),
-                    body.toString(), cog);
+            EmailSender.generalMailToOne(msg, from, ooa);
         }
     }
 

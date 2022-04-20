@@ -76,11 +76,11 @@ public class MongoDB {
         
         JSONArray ja = new JSONArray();
         int count = 0;
-        while (count++ < limit && cursor.hasNext()) {
+        while (cursor.hasNext() && count < limit) {
             Document d = cursor.next();
-            
             JSONObject jo = new JSONObject(d.toJson());
             ja.put(jo);
+            count++;
         }
         long ms = System.currentTimeMillis()-startTime;
         System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);

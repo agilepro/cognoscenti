@@ -23,7 +23,7 @@
     MailFile archive = MailFile.readOrCreate(emailFilePath,3);
 
 
-    MailInst emailMsg = MailFile.getMessage(ngp, msgId);
+    MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);
     JSONObject mailObject = new JSONObject();
     String specialBody = "";
     boolean bodyIsDeleted = false;

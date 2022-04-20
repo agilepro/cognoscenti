@@ -2,6 +2,7 @@ package com.purplehillsbooks.weaver.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.EmailRecord;
 import com.purplehillsbooks.weaver.MemFileDataSource;
 import com.purplehillsbooks.weaver.MimeTypes;
+import com.purplehillsbooks.weaver.OptOutAddr;
 import com.purplehillsbooks.weaver.SectionUtil;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -51,8 +53,30 @@ public class MailInst extends JSONWrapper {
 
 
 
+    public MailInst() {
+        super(new JSONObject());
+    }
     public MailInst(JSONObject _kernel) {
         super(_kernel);
+    }
+    
+    public MailInst cloneMsg() throws Exception {
+        MemFile mf = new MemFile();
+        Writer w = mf.getWriter();
+        kernel.write(w, 0, 0);
+        w.flush();
+        JSONObject clonedJson = JSONObject.readFromReader(mf.getReader());
+        MailInst clone = new MailInst(clonedJson);
+        return clone;
+    }
+    
+    public static MailInst genericEmail(String site, String workspace, String subject, String body) throws Exception {
+        MailInst msg = new MailInst();
+        msg.setSiteKey(site);
+        msg.setWorkspaceKey(workspace);
+        msg.setSubject(subject);
+        msg.setBodyText(body);
+        return msg;
     }
 
     public String getStatus() throws Exception {
@@ -121,6 +145,20 @@ public class MailInst extends JSONWrapper {
         kernel.put("FromName", val);
     }
 
+    public String getSiteKey() throws Exception {
+        return kernel.getString("Site");
+    }
+    public void setSiteKey(String val) throws Exception {
+        kernel.put("Site", val);
+    }
+
+    public String getWorkspaceKey() throws Exception {
+        return kernel.getString("Workspace");
+    }
+    public void setWorkspaceKey(String val) throws Exception {
+        kernel.put("Workspace", val);
+    }
+
     public String getSubject() throws Exception {
         return kernel.getString("Subject");
     }
@@ -134,7 +172,11 @@ public class MailInst extends JSONWrapper {
     public void setBodyText(String val) throws Exception {
         kernel.put("BodyText", val);
     }
-
+    public void setBodyFromTemplate(File templateFile, JSONObject data, OptOutAddr ooa) throws Exception {
+        String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
+        setBodyText(body);
+    }
+    
     public String getExceptionMessage() throws Exception {
         return kernel.getString("Exception");
     }
@@ -425,6 +467,8 @@ public class MailInst extends JSONWrapper {
         e2.put("LastSentDate", kernel.optLong("LastSentDate",0));
         e2.put("Status",       kernel.optString("Status", "Unknown Status"));
         e2.put("Subject",      kernel.optString("Subject", "Unknown Subject"));
+        e2.put("Site",         kernel.optString("Site", "Unknown Site"));
+        e2.put("Workspace",    kernel.optString("Workspace", "Unknown Workspace"));
         return e2;
     }
 

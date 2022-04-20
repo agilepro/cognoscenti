@@ -500,25 +500,8 @@ public class SiteController extends BaseController {
             ar.setPageAccessLevels(ngb);
             JSONObject eGenInfo = getPostedObject(ar);
 
-            id = eGenInfo.getString("id");
-            SiteMailGenerator eGen = null;
-            if ("~new~".equals(id)) {
-                eGen = ngb.createSiteMail();
-                eGen.setId(IdGenerator.generateKey());
-                eGen.setState(SiteMailGenerator.SM_STATE_SCHEDULED);
-            }
-            else {
-                eGen = ngb.getSiteMailOrFail(id);
-            }
-
-            //this is a non persistent flag in the body ... could be a URL parameter
-            boolean deleteIt = eGenInfo.optBoolean("deleteIt");
-            if (deleteIt) {
-                ngb.deleteSiteMail(eGen.getId());
-            }
-            else {
-                eGen.updateFromJSON(eGenInfo);
-            }
+            SiteMailGenerator eGen = ngb.createSiteMail();
+            eGen.updateFromJSON(eGenInfo);
 
             ngpi.nextScheduledAction = ngb.nextActionDue();
             //save, but don't update the recently changed date, site mail does not represent real site activity

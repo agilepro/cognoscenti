@@ -28,7 +28,8 @@ import java.util.Properties;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -46,15 +47,6 @@ public class SiteMailGenerator extends DOMFace {
         super(nDoc, nEle, p);
     }
 
-    public String getId() throws Exception {
-        return getAttribute("id");
-    }
-
-    public void setId(String newVal) throws Exception {
-        setAttribute("id", newVal);
-    }
-
-    public static final int SM_STATE_DRAFT     = 1;
     public static final int SM_STATE_SCHEDULED = 2;
     public static final int SM_STATE_SENT      = 3;
 
@@ -118,7 +110,7 @@ public class SiteMailGenerator extends DOMFace {
     }
 
 
-    public void constructEmailRecords(AuthRequest ar, NGBook ngb, EmailSender mailFile) throws Exception {
+    public void actuallySendSiteMailNow(AuthRequest ar, NGBook ngb, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngb);
 
         StringBuilder historyNameList = new StringBuilder();
@@ -129,7 +121,7 @@ public class SiteMailGenerator extends DOMFace {
                 System.out.println("STRANGE: got site mail address with email address?? "+ooa.assignee.rawAddress);
             }
             else {
-                constructEmailRecordOneUser(ar, ngb, ooa, mailFile);
+                sendIndividualSiteMailNow(ar, ngb, ooa, mailFile);
                 if (needComma) {
                     historyNameList.append(",");
                 }
@@ -142,7 +134,7 @@ public class SiteMailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGBook ngb, OptOutAddr ooa, EmailSender mailFile)
+    private void sendIndividualSiteMailNow(AuthRequest ar, NGBook ngb, OptOutAddr ooa, EmailSender sender)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -162,15 +154,19 @@ public class SiteMailGenerator extends DOMFace {
         String subject = subjAndBody[0];
         String entireBody = subjAndBody[1];
 
-        List<File> noAttachments = new ArrayList<File>();
 
-        mailFile.createEmailWithAttachments(new AddressListEntry(from), ooa.getEmail(), 
-                subject, entireBody, noAttachments);
+        MailInst mailMsg = new MailInst();
+        mailMsg.setSiteKey(ngb.getKey());
+        mailMsg.setWorkspaceKey("$");
+        mailMsg.setSubject(subject);
+        mailMsg.setBodyText(entireBody);
+        
+        sender.createEmailRecordInDB(mailMsg, new AddressListEntry(from), ooa.getEmail());
         System.out.println("SiteMail was sent to ("+ooa.getEmail()+") "+subject);
     }
 
 
-    public String[] generateEmailBody(AuthRequest ar, NGBook ngb, OptOutAddr ooa) throws Exception {
+    private String[] generateEmailBody(AuthRequest ar, NGBook ngb, OptOutAddr ooa) throws Exception {
 
         String[] ret = new String[2];
 
@@ -210,12 +206,6 @@ public class SiteMailGenerator extends DOMFace {
         siteJSON.put("stats", ngb.getStatsJSON(ar.getCogInstance()));
         data.put("site", siteJSON);
 
-        
-        //String workspaceBaseUrl = ar.baseURL + "t/" + ngb.getKey() + "/$/";
-        //data.put("workspaceName", ngb.getFullName());
-        //data.put("workspaceUrl", workspaceBaseUrl);
-        //data.put("site", ngb.getJSON());
-
         ar.ngp = ngb;
 
         return data;
@@ -249,54 +239,8 @@ public class SiteMailGenerator extends DOMFace {
         this.updateAttributeString("from", obj);
     }
 
-    public void gatherUnsentScheduledNotification(NGBook ngb, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
-        if (getState()==SM_STATE_SCHEDULED) {
-            SiteMailNotification sn = new SiteMailNotification(ngb, this);
-            if (sn.needsSendingBefore(timeout)) {
-                resList.add(sn);
-            }
-        }
-    }
-
-
-    private class SiteMailNotification implements ScheduledNotification {
-        private NGBook ngb;
-        private SiteMailGenerator eg;
-
-        public SiteMailNotification( NGBook _ngb, SiteMailGenerator _eg) {
-            ngb  = _ngb;
-            eg = _eg;
-        }
-        @Override
-        public boolean needsSendingBefore(long timeout) throws Exception {
-            return eg.getState()!=SM_STATE_SENT;
-        }
-
-        @Override
-        public long futureTimeToSend() throws Exception {
-            if (eg.getState()!=SM_STATE_SENT) {
-                return System.currentTimeMillis() - 100000;  //one hundred seconds ago
-            }
-            else {
-                return -1;
-            }
-        }
-
-        @Override
-        public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
-            System.out.println("  SENDIT called on "+selfDescription());
-            eg.constructEmailRecords(ar, ngb, mailFile);
-        }
-
-        @Override
-        public String selfDescription() throws Exception {
-            if (eg.getState()!=SM_STATE_SENT) {
-                return "(Site Mail READY) "+eg.getLayoutName();
-            }
-            else {
-                return "(Site Mail SENT)  "+eg.getLayoutName();
-            }
-        }
+    public boolean notSentYet() {
+        return getState()==SM_STATE_SCHEDULED;
     }
 
 }

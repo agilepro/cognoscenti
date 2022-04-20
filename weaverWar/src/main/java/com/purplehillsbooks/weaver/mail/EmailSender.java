@@ -167,7 +167,14 @@ public class EmailSender extends TimerTask {
         globalMailArchive.renameTo(newName);
     }
     
-    private void updateEmailInDB(MailInst msg) throws Exception {
+    public void updateEmailInDB(MailInst msg) throws Exception {
+        //check
+        if (msg.getWorkspaceKey()==null || msg.getWorkspaceKey().length()==0) {
+            throw new Exception("the workspace is not set");
+        }
+        if (msg.getSiteKey()==null || msg.getSiteKey().length()==0) {
+            throw new Exception("the site is not set");
+        }
         long id = msg.getCreateDate();
         JSONObject mailObj = msg.getJSON();
         JSONObject query = new JSONObject();
@@ -321,11 +328,20 @@ public class EmailSender extends TimerTask {
 
         for (JSONObject msgObj : allUnsentMail.getJSONObjectList()) {
             MailInst inst = new MailInst(msgObj);
-            if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
-                if (!inst.sendPreparedMessageImmediately(emailProperties)) {
-                    allSentOK=false;
-                }
+            
+            //check that the query worked.
+            if (!MailInst.READY_TO_GO.equals(inst.getStatus())) {
+                System.out.println("MAIL DB ERROR: query for 'Ready' email, but got '"+inst.getStatus()+"' instead.");
+                continue;
+            }
+            
+            if (inst.sendPreparedMessageImmediately(emailProperties)) {
                 updateEmailInDB(inst);
+            }
+            else {
+                //this will be retried later
+                System.out.println("MAIL DB FAILURE: email '"+inst.getCreateDate()+"' to '"+inst.getAddressee()+"' failed to send, will try again later.");
+                allSentOK=false;
             }
         }
         return allSentOK;
@@ -349,83 +365,45 @@ public class EmailSender extends TimerTask {
         for (NGPageIndex ngpi : allOverdue) {
             iCount++;
 
-            File workspaceCogFolder = ngpi.containerPath.getParentFile();
-            File emailArchiveFile = new File(workspaceCogFolder, "mailArchive.json");
-
-            //open and read the archive first .. it is safe because this is the only thread
-            //that reads the email archive.
-            //MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile, 3);
-
-
             if (ngpi.isWorkspace()){
+                System.out.println("OVERDUE EMAIL on Workspace: "+ngpi.containerName);
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
-
-                try {
-                    //first, move all the email messages that have been stored in the project from foreground events.
-                    if (moveEmails(ngw)) {
-
-                        ngpi.nextScheduledAction = ngw.nextActionDue();
-                        ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime,
-                                "Processing handleAllOverdueScheduledEvents", cog);
-                        NGPageIndex.clearLocksHeldByThisThread();
-                    }
-                }
-                catch (Exception e) {
-                    throw new JSONException("Problem with email file: {0}", e, emailArchiveFile);
-                }
-
-                //now open the page and generate all the email messages, remember this
-                //locks the file blocking all other threads, so be quick
-                ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-                ngw.gatherUnsentScheduledNotification(resList, nowTime);
-
-                for (ScheduledNotification sn : resList) {
-                    if (sn.needsSendingBefore(nowTime)) {
-                        sn.sendIt(ar, this);
-                    }
+                boolean sentMsg = ngw.transferEmailToDB(cog, this);
+                
+                if (ngw.generateNotificationEmail(ar, this, nowTime)) {
+                    sentMsg = true;
                 }
 
                 ngpi.nextScheduledAction = ngw.nextActionDue();
-                ngw.save(); //save all the changes from the removal of email and scheduling of events
-                NGPageIndex.clearLocksHeldByThisThread();
-
-                //now we can go an actually send the email in the mailArchive
-                //emailArchive.save();
+                if (sentMsg) {
+                    ngw.save(); //save all the changes from the removal of email and scheduling of events
+                }
             }
             else {
                 //on the site the only thing currently is the SiteMail messages
-                System.out.println("Now checkin on Site: "+ngpi.containerName);
+                System.out.println("OVERDUE EMAIL on Site: "+ngpi.containerName);
                 NGBook site = ngpi.getSite();
-                ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-                site.gatherUnsentScheduledNotification(resList, nowTime);
-                for (ScheduledNotification sn : resList) {
-                    System.out.println("  Site: "+ngpi.containerName+" notification: "+sn.selfDescription());
-                    if (sn.needsSendingBefore(nowTime)) {
-                        System.out.println("  Site: "+ngpi.containerName+" has email due: "+sn.selfDescription());
-                        sn.sendIt(ar, this);
-                    }
-                }
+                boolean sentMsg = site.generateNotificationEmail(ar, this, nowTime);
 
                 ngpi.nextScheduledAction = site.nextActionDue();
-                site.save(); //save all the changes from the removal of email and scheduling of events
-                NGPageIndex.clearLocksHeldByThisThread();
-            }
-
-
-            //now we can go an actually send the email in the mailArchive
-            if (!sendAllMailFromDB()) {
-                //mark project as needing to try again in 5 minutes.
-                long nextCycle = System.currentTimeMillis()+300000;
-                if (ngpi.nextScheduledAction>nextCycle) {
-                    ngpi.nextScheduledAction = nextCycle;
+                if (sentMsg) {
+                    site.save(); //save all the changes from the removal of email and scheduling of events
                 }
+                
             }
+            NGPageIndex.clearLocksHeldByThisThread();
 
             Thread.sleep(200);  //just small delay to avoid saturation
         }
+        
+        //now we can go an actually send the email in the mailArchive
+        if (!sendAllMailFromDB()) {
+            System.out.println("EMAIL SENDER: FAILED to send email.");
+        }
+
         if (iCount>0) {
-            System.out.println("BACKGROUND: Processed "+iCount+" background events at "
+            System.out.println("EMAIL SENDER: Processed "+iCount+" background events at "
                 +SectionUtil.currentTimeString());
         }
     }
@@ -528,60 +506,6 @@ public class EmailSender extends TimerTask {
         return cal.getTime().getTime();
     }
 
-    /**
-    * Stores an email message in the NGWorkspace project workspace, that will LATER be moved to the
-    * MailFile archive and sent.
-    */
-    public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
-            String subject, File templateFile, JSONObject data, String from,
-            List<String> attachIds, Cognoscenti cog) throws Exception {
-        if (subject == null || subject.length() == 0) {
-            throw new ProgramLogicError("containerEmail requires a non null subject parameter");
-        }
-        if (!templateFile.exists()) {
-            throw new ProgramLogicError("containerEmail was passed a template that does not exist: "
-                      +templateFile.toString());
-        }
-        if (ngc == null) {
-            throw new ProgramLogicError("containerEmail requires a non null ngc parameter");
-        }
-        if (from == null) {
-            from = composeFromAddress(ngc);
-        }
-
-        String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
-
-        createEmailRecordInternal(ngc, from, ooa, subject, body, attachIds, cog);
-    }
-
-
-    /**
-     * Stores an email message in the NGWorkspace project workspace, that will LATER be moved to the
-     * MailFile archive and sent.
-     */
-    private static void createEmailRecordInternal(NGContainer ngc, String from,
-            OptOutAddr ooa, String subject, String bodyValue, List<String> attachIds,
-            Cognoscenti cog)
-            throws Exception {
-       try {
-
-            ooa.assertValidEmail();
-
-            EmailRecord emailRec = ngc.createEmail();
-            emailRec.setStatus(EmailRecord.READY_TO_GO);
-            emailRec.setFromAddress(from);
-            emailRec.setCreateDate(System.currentTimeMillis());
-            emailRec.setAddress(ooa);
-            emailRec.setBodyText(bodyValue);
-            emailRec.setSubject(subject);
-            emailRec.setProjectId(ngc.getKey());
-            emailRec.setAttachmentIds(attachIds);
-            ngc.saveWithoutAuthenticatedUser("SERVER", System.currentTimeMillis(), "Sending an email message", cog);
-        } catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.send.simple.msg",
-                    new Object[] { from, subject }, e);
-        }
-    }
 
 
     /**
@@ -596,11 +520,8 @@ public class EmailSender extends TimerTask {
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
-    public static void generalMailToOne(OptOutAddr ooa, AddressListEntry from, String subject,
-            String emailBody, Cognoscenti cog) throws Exception {
-        List<OptOutAddr> v = new ArrayList<OptOutAddr>();
-        v.add(ooa);
-        generalMailToList(v, from, subject, emailBody, cog);
+    public static void generalMailToOne(MailInst msg, AddressListEntry from, OptOutAddr addressee) throws Exception {
+        singletonSender.createEmailRecordInDB(msg, from, addressee.getEmail());
     }
 
 
@@ -616,52 +537,19 @@ public class EmailSender extends TimerTask {
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
-    public static void generalMailToList(List<OptOutAddr> addresses, AddressListEntry from,
-            String subject, String emailBody, Cognoscenti cog) throws Exception {
-        if (subject == null || subject.length() == 0) {
-            throw new ProgramLogicError("simpleEmail requires a non null subject parameter");
-        }
-        if (emailBody == null || emailBody.length() == 0) {
-            throw new ProgramLogicError("simpleEmail requires a non null body parameter");
-        }
-        if (addresses == null || addresses.size() == 0) {
-            throw new ProgramLogicError("simpleEmail requires a non empty addresses parameter");
-        }
-        if (from == null) {
-            throw new ProgramLogicError("simpleEmail requires a non empty from parameter");
-        }
-        synchronized(singletonSender) {
-            try {
-                for (OptOutAddr ooa : addresses) {
-                    singletonSender.createEmailRecordInDB(from, ooa.getEmail(), subject, emailBody);
-                }
+    public static void generalMailToList(MailInst msg, AddressListEntry from, List<OptOutAddr> addresses) throws Exception {
+        try {
+            for (OptOutAddr ooa : addresses) {
+                singletonSender.createEmailRecordInDB(msg, from, ooa.getEmail());
             }
-            catch (Exception e) {
-                throw new Exception("Failure while composing an email message for the global archive", e);
-            }
+        }
+        catch (Exception e) {
+            throw new Exception("Failure while composing an email message for the global archive", e);
         }
     }
 
-    public static MailInst createEmailFromTemplate( OptOutAddr ooa, String addressee,
-            String subject, File templateFile, JSONObject data) throws Exception {
-        synchronized(singletonSender) {
-            try {
-                MailInst mi = singletonSender.internalCreateEmailFromTemplate(ooa, addressee, subject, templateFile, data);
-                return mi;
-            }
-            catch (Exception e) {
-                throw new Exception("Failure while composing an email message for the global archive", e);
-            }
-        }
-    }
-    public MailInst internalCreateEmailFromTemplate( OptOutAddr ooa, String addressee,
-            String subject, File templateFile, JSONObject data) throws Exception {
-        String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
-        return createEmailRecordInDB( ooa.getAssignee(), addressee, subject, body);
-    }
 
-
-    private static String composeFromAddress(NGContainer ngc) throws Exception {
+    public static String composeFromAddress(NGContainer ngc) throws Exception {
         StringBuilder sb = new StringBuilder("^");
         String baseName = ngc.getFullName();
         int last = baseName.length();
@@ -737,16 +625,14 @@ public class EmailSender extends TimerTask {
     }
 
     public MailInst createEmailRecordInDB (
-            AddressListEntry from,
-            String addressee,
-            String subject,
-            String emailBody) throws Exception {
-        
+                MailInst msg,
+                AddressListEntry from,
+                String addressee) throws Exception {
         try {
-            if (subject == null || subject.length() == 0) {
+            if (msg.getSubject() == null || msg.getSubject().length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'subject' parameter");
             }
-            if (emailBody == null || emailBody.length() == 0) {
+            if (msg.getBodyText() == null || msg.getBodyText().length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'body' parameter");
             }
             if (addressee == null || addressee.length() == 0) {
@@ -755,8 +641,8 @@ public class EmailSender extends TimerTask {
             if (from == null) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
             }
-        
-            MailInst emailRec = new MailInst(new JSONObject());
+
+            MailInst emailRec = msg.cloneMsg();
             emailRec.setStatus(EmailRecord.READY_TO_GO);
             emailRec.setFromName(from.getName());
             emailRec.setFromAddress(from.getEmail());
@@ -771,6 +657,7 @@ public class EmailSender extends TimerTask {
             //This is a horrible horrible hack ... but it works reliably.
             //The problem seems to be the order of decoding the stream and the
             //quoted printable encoding.
+            String emailBody = msg.getBodyText();
             StringBuilder sb = new StringBuilder();
             for (int i=0; i<emailBody.length(); i++) {
                 char ch = emailBody.charAt(i);
@@ -784,69 +671,78 @@ public class EmailSender extends TimerTask {
                 }
             }
             emailRec.setBodyText(sb.toString());
-            emailRec.setSubject(subject);
-            
             updateEmailInDB(emailRec);
-            
             return emailRec;
         }
         catch (Exception e) {
-            throw new JSONException("Unable to compose email record from '{0}' on: {1}", e, from, subject);
+            throw new JSONException("Unable to compose email record from '{0}' on: {1}", e, from, addressee);
         }
     }
     
-    public MailInst createEmailWithAttachments(
-            AddressListEntry from,
-            String addressee,
-            String subject,
-            String emailBody,
-            List<File> attachments) throws Exception {
+    
+    /*
+     * following fields are allowed in the query
+     * 
+     * offset: starting opoint in the list of records
+     * batch: size of the batch, default 50
+     * includeBody: whether email body should be included for size reasons
+     * searchValue: thing being searched for
+     */
+    public static JSONObject queryWorkspaceEmail(NGWorkspace ngw, JSONObject query) throws Exception {
+        
+        int offset = query.optInt("offset", 0);
+        if (offset<0) {
+            offset = 0;
+        }
+        int batch  = query.optInt("batch", 50);
+        //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
+        String searchValue  = query.optString("searchValue", "");
+        long msgId  = query.optLong("msgId", 0);
+        
+        JSONObject sort = new JSONObject().put("CreateDate", -1);
+        
+        //the query is to find all email messages for that site,
+        //and that workspace, where either the subject or the 
+        //address contains the search value using regex
+        JSONObject mongoQuery = new JSONObject();
+        JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
+        basicAnd.put( new JSONObject().put("Site", ngw.getSiteKey()));
+        basicAnd.put( new JSONObject().put("Workspace", ngw.getKey()));
+        if (msgId>0) {
+            basicAnd.put( new JSONObject().put("CreateDate", msgId));
+        }
+        else if (searchValue.length()>0){
+            JSONObject fieldsOr = new JSONObject();
+            JSONArray orArray = fieldsOr.requireJSONArray("$or");
+            orArray.put( new JSONObject().put("Subject", new JSONObject().put("$regex", searchValue)));
+            orArray.put( new JSONObject().put("Addressee", new JSONObject().put("$regex", searchValue)));
+            basicAnd.put(fieldsOr);
+        }
 
-        MailInst mi = createEmailRecordInDB(from, addressee, subject, emailBody);
+        
+        //query.put("offset", offset);
+        //query.put("batch",  batch);
 
-        mi.setAttachmentFiles(attachments);
-        return mi;
+
+        JSONObject res = new JSONObject();
+        res.put("query", mongoQuery);
+
+        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort));
+
+        return res;
     }
     
-    
-    public boolean moveEmails(NGContainer ngp) throws Exception {
-        List<EmailRecord> allEmail = ngp.getAllEmail();
-        if (allEmail.size()==0) {
-            return false;
+    public static MailInst findEmailById(NGWorkspace ngw, long msgId) throws Exception {
+        
+        JSONObject query = new JSONObject().put("msgId", msgId);
+        
+        JSONObject res = queryWorkspaceEmail(ngw, query);
+        
+        JSONArray list = res.requireJSONArray("list");
+        if (list.length()>0) {
+            return new MailInst(list.getJSONObject(0));
         }
-        for (EmailRecord er : allEmail) {
-            String fullFromAddress = er.getFromAddress();
-            AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
-            List<OptOutAddr> allAddressees = er.getAddressees();
-            for (OptOutAddr oaa : allAddressees) {
-                //create a message for each addressee ... actually there is
-                //usually only one so this usually creates only a single email
-                MailInst inst = new MailInst(new JSONObject());
-                inst.setAddressee(oaa.getEmail());
-                inst.setStatus(er.getStatus());
-                inst.setSubject(er.getSubject());
-                inst.setFromAddress(fromAle.getEmail());
-                inst.setFromName(fromAle.getName());
-                oaa.prepareInternalMessage(cog);
-                inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
-                inst.setLastSentDate(er.getLastSentDate());
-                inst.setCreateDate(getUniqueTime());
-                ArrayList<File> attachments = new ArrayList<File>();
-                if (ngp instanceof NGWorkspace) {
-                    NGWorkspace ngw = (NGWorkspace) ngp;
-                    for (String id : er.getAttachmentIds()) {
-                        File path = ngw.getAttachmentPathOrNull(id);
-                        if (path!=null) {
-                            attachments.add(path);
-                        }
-                    }
-                }
-                inst.setAttachmentFiles(attachments);
-                updateEmailInDB(inst);
-            }
-        }
-        ngp.clearAllEmail();
-        return true;
+        return null;
     }
 
 }

@@ -270,22 +270,7 @@ img {
 	transition: all 0.5s linear
 }
 
-.guideVocal {
-	clear: both;
-    max-width: 600px;
-	border-radius: 8px;
-	background-color: #fafafa;
-	background-position: bottom left;
-	background-repeat: repeat-x;
-	border: 1px solid #d9d0de;
-	margin-top: 30px;
-	font-family: Arial, Helvetica, Verdana, sans-serif;
-	font-size: 14px;
-	font-style: italic;
-	color: #545454;
-	margin: 25px;
-	padding: 15px
-}
+
 
 .main-content form .form-group .form-control {
 	background-color: #fafafa !important;
@@ -366,9 +351,10 @@ a, a:focus, a:hover {
     color: #AB37C8;
 }
 
+
 .guideVocal{
   clear:both;
-  width:auto;
+  max-width: 600px;
   border-radius: 8px;
   background-color: #F0D7F7;
   border: 1px solid #39134C;
@@ -379,6 +365,11 @@ a, a:focus, a:hover {
   color: #39134C;
   margin: 25px;
   padding: 15px;
+}
+
+.tutorialThumbnail {
+    border-radius:15px;
+    box-shadow: 5px 5px 5px gray;
 }
 
 .siteMsg{

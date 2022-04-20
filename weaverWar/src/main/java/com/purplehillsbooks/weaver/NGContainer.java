@@ -54,7 +54,6 @@ public abstract class NGContainer extends DOMFile
     public abstract void writeContainerLink(AuthRequest ar, int len) throws Exception;
     public abstract void writeNoteLink(    AuthRequest ar, String noteId,     int len) throws Exception;
     public abstract void writeTaskLink(    AuthRequest ar, String taskId,     int len) throws Exception;
-    //public abstract void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception;
     public abstract void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
 
 
@@ -219,13 +218,12 @@ public abstract class NGContainer extends DOMFile
      * creates an email record and sets the ID to a unique value for this project
      */
     public abstract EmailRecord createEmail() throws Exception;
-    public abstract void clearAllEmail() throws Exception;
 
     /**
      * Scan through the email on this project, and return the number of
      * email messages on the page that have not been sent yet.
      */
-    public abstract int countEmailToSend() throws Exception;
+    //public abstract boolean hasEmailToSend() throws Exception;
 
     /**
      * figure out when the next background event is scheduled

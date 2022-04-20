@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -467,32 +468,6 @@ public class UserPage extends ContainerCommon
 
 
 
-    public List<SiteMailGenerator> getSiteMail() throws Exception {
-        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
-        List<SiteMailGenerator> siteMailList = siteMailContainer.getChildren("SiteMail", SiteMailGenerator.class);
-        return siteMailList;
-    }
-    public SiteMailGenerator createSiteMail() throws Exception {
-        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
-        SiteMailGenerator newOne = siteMailContainer.createChild("SiteMail", SiteMailGenerator.class);
-        newOne.setId(getUniqueOnPage());
-        return newOne;
-    }
-    public SiteMailGenerator findSiteMail(String id) throws Exception {
-        for (SiteMailGenerator ar : getSiteMail()) {
-            if (id.equals(ar.getId())) {
-                return ar;
-            }
-        }
-        return null;
-    }
-    public void deleteSiteMail(String id) throws Exception {
-        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
-        SiteMailGenerator found = findSiteMail(id);
-        siteMailContainer.removeChild(found);
-    }
-
-
     // operation get task list.
     public static JSONArray getWorkListJSON(UserProfile up, Cognoscenti cog) throws Exception {
 
@@ -536,6 +511,19 @@ public class UserPage extends ContainerCommon
 
         return list;
     }
+
+
+    @Override
+    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception {
+        //there is no user email to send
+        return false;
+    }
+    @Override
+    public EmailRecord createEmail() throws Exception {
+        //prove this point
+        throw new Exception("UserPage does not have any email created.");
+    }
+
 
 
 

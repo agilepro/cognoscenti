@@ -46,6 +46,8 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -459,14 +461,17 @@ public class ProjectSettingController extends BaseController {
 
         File templateFile = cog.getConfig().getFileFromRoot("email/RoleRequest.chtml");
 
+        MailInst msg = container.createMailInst();
+        msg.setSubject("Role Requested by " + ar.getBestUserId());
+        AddressListEntry from =  new AddressListEntry(EmailSender.composeFromAddress(container));
+        
         // filter out users that who have no profile and have never logged in.
         // Only send this request to real users, not just email addresses
         for (OptOutAddr ooa : initialList) {
             if (ooa.isUserWithProfile()) {
                 data.put("optout", ooa.getUnsubscribeJSON(ar));
-                EmailSender.containerEmail(ooa, container,
-                    "Role Requested by " + ar.getBestUserId(),
-                    templateFile,  data, null, new ArrayList<String>(), ar.getCogInstance());
+                msg.setBodyFromTemplate(templateFile, data, ooa);
+                EmailSender.generalMailToOne(msg, from, ooa);
             }
         }
     }
@@ -820,7 +825,7 @@ public class ProjectSettingController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject posted = this.getPostedObject(ar);
 
-            JSONObject repo = MailFile.queryEmail(ngw, posted);
+            JSONObject repo = EmailSender.queryWorkspaceEmail(ngw, posted);
 
             sendJson(ar, repo);
         }catch(Exception ex){

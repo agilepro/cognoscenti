@@ -36,6 +36,7 @@ import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1236,9 +1237,12 @@ public class GoalRecord extends BaseRecord {
             icsFileTmp.renameTo(icsFile);
             attachments.add(icsFile);
         }
+        
+        MailInst mailMsg = ngp.createMailInst();
+        mailMsg.setSubject("Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr);
+        mailMsg.setBodyText(body.toString());
 
-        String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
-        mailFile.createEmailRecordInDB(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecordInDB(mailMsg, requesterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {

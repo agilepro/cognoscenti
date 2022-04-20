@@ -716,7 +716,9 @@ public class UserController extends BaseController {
             mailData.put("newEmail", newEmail);
             mailData.put("token", token);
 
-            MailInst mi = EmailSender.createEmailFromTemplate(ooa, newEmail, "Confirm your email address", templateFile, mailData);
+            MailInst mi = MailInst.genericEmail("$", "$", "Confirm your email address", "");
+            mi.setBodyFromTemplate(templateFile, mailData, ooa);
+            EmailSender.generalMailToOne(mi, new AddressListEntry(newEmail), ooa);
             sendJson(ar, mi.getJSON());
 
         }catch(Exception ex){
@@ -775,8 +777,9 @@ public class UserController extends BaseController {
 
             File templateFile = ar.getCogInstance().getConfig().getFileFromRoot("email/DirectEmail.chtml");
 
-            MailInst mi = EmailSender.createEmailFromTemplate( ooa, user.getPreferredEmail(),
-                    postObject.getString("subject"), templateFile, postObject);
+            MailInst mi = MailInst.genericEmail("$", "$", "Confirm your email address", "");
+            mi.setBodyFromTemplate(templateFile, postObject, ooa);
+            EmailSender.generalMailToOne(mi, user.getAddressListEntry(), ooa);
 
             sendJson(ar, mi.getJSON());
         }catch(Exception ex){

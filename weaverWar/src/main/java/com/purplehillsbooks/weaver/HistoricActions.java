@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -104,91 +105,9 @@ public class HistoricActions {
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(ooir);
-
-        EmailSender.generalMailToList(v, new AddressListEntry(ar.getBestUserId()), "Site Request Resolution for " + owner.getName(),
-                body.toString(), cog);
+        
+        MailInst msg = MailInst.genericEmail("$", "$", "Site Request Resolution for " + owner.getName(), body.toString());
+        EmailSender.generalMailToOne(msg, ar.getUserProfile().getAddressListEntry(), ooir);
     }
-
-    /**
-     * When adding a list of people to be players of a role, this method will do that
-     * and will also email each one letting them know.
-     * @param memberList is a list of names in standard email format.
-     * @param sendEmail set to true if you want email sent, false if not.
-     */
-    public void addMembersToRole(NGContainer ngc, NGRole role, String memberList, boolean sendEmail) throws Exception {
-        List<AddressListEntry> emailList = AddressListEntry.parseEmailList(memberList);
-        for (AddressListEntry ale : emailList) {
-            addMemberToRole(ngc, role, ale, sendEmail);
-        }
-    }
-
-    public void addMemberToRole(NGContainer ngc, NGRole role, AddressListEntry ale, boolean sendEmail) throws Exception {
-        RoleRequestRecord roleRequestRecord = ngc.getRoleRequestRecord(role.getName(),
-                ale.getUniversalId());
-        if(roleRequestRecord != null){
-            roleRequestRecord.setState("Approved");
-        }
-
-        role.addPlayerIfNotPresent(ale);
-        if (sendEmail) {
-            sendInviteEmail(ngc,  ale.getEmail(), role.getName() );
-        }
-        if (ngc instanceof NGWorkspace) {
-            HistoryRecord.createHistoryRecord((NGWorkspace)ngc, ale.getUniversalId(), HistoryRecord.CONTEXT_TYPE_PERMISSIONS,
-                0, HistoryRecord.EVENT_PLAYER_ADDED, ar, role.getName());
-        }
-    }
-
-    private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
-        MemFile body = new MemFile();
-        UserProfile receivingUser = UserManager.getStaticUserManager().lookupUserByAnyId(emailId);
-        AuthRequest clone = new AuthDummy(receivingUser, body.getWriter(), cog);
-        UserProfile requestingUser = ar.getUserProfile();
-
-        String dest = emailId;
-
-        if (receivingUser != null) {
-            dest = receivingUser.getPreferredEmail();
-            if (dest == null) {
-                //if looked up by email address, should at least find that email address!
-                throw new Exception("something is wrong with the user information, looked up user '"
-                        +emailId+"' but the user object found does not have an email address.");
-            }
-        } else {
-            // first check to see if the passed value looks like an email
-            // address if not, OK, it may be an Open ID, and
-            // simply don't send the email in that case.
-            if (emailId.indexOf('@') < 0) {
-                // this is not an email address. Simply return silently, can't
-                // send email.
-                return;
-            }
-        }
-
-        AddressListEntry ale = AddressListEntry.parseCombinedAddress(emailId);
-        OptOutAddr ooa = new OptOutAddr(ale);
-
-        clone.retPath = ar.baseURL;
-
-
-        clone.flush();
-
-        File templateFile = cog.getConfig().getFileFromRoot("email/Invite.chtml");
-
-        JSONObject data = new JSONObject();
-        data.put("requesting", requestingUser.getJSON());
-        data.put("roleName", role);
-        data.put("wsURL", clone.baseURL + clone.getDefaultURL(container));
-        data.put("wsName", container.getFullName());
-        data.put("optout", ooa.getUnsubscribeJSON(ar));
-
-
-        EmailSender.containerEmail(ooa, container, "Added to " + role
-                + " role of " + container.getFullName(), templateFile, data,
-                null, new ArrayList<String>(), cog);
-    }
-
-
-
 
 }

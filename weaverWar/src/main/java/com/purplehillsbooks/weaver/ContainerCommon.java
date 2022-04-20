@@ -27,6 +27,7 @@ import java.util.Random;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 /**
@@ -203,12 +204,6 @@ public abstract class ContainerCommon extends NGContainer
     public void writeDocumentLink(AuthRequest ar, String id, int len) throws Exception{
         throw new ProgramLogicError("not implemented");
     }
-
-    /*
-    public void writeReminderLink(AuthRequest ar, String id, int len) throws Exception{
-        throw new ProgramLogicError("writeDocumentLink not implemented");
-    }
-    */
 
     public void writeTaskLink(AuthRequest ar, String id, int len) throws Exception{
         throw new ProgramLogicError("writeTaskLink not implemented");
@@ -457,25 +452,11 @@ public abstract class ContainerCommon extends NGContainer
         return email;
     }
 
-    /**
-     * This will delete all email records in the project (workspace)
-     */
-    public void clearAllEmail() throws Exception {
-        DOMFace mail = requireChild("mail", DOMFace.class);
-        mail.clearVector("email");
-    }
 
-    @Override
-    public int countEmailToSend() throws Exception {
-        int count = 0;
-        for (EmailRecord er : getAllEmail()) {
-            if (er.statusReadyToSend()) {
-                count++;
-            }
-        }
-        return count;
-    }
 
+    public abstract boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception;
+    
+    
     /**
     * Pages have a set of licenses
     */

@@ -107,6 +107,7 @@ public class MailFile extends JSONWrapper {
     }
 
 
+    /*
     public static MailInst getMessage(NGWorkspace ngw, long msgId) throws Exception {
         File cogFolder = ngw.getFilePath().getParentFile();
         File emailFilePath = new File(cogFolder, "mailArchive.json");
@@ -120,6 +121,7 @@ public class MailFile extends JSONWrapper {
         }
         return null;
     }
+    */
 
     public static MailFile readOrCreate(File path, int _retentionFactor) throws Exception {
 
@@ -181,16 +183,20 @@ public class MailFile extends JSONWrapper {
         Collections.sort(ret, new MailComparitor());
         return ret;
     }
+    /*
     void addMessage(MailInst mail) throws Exception {
         JSONArray msgs = this.getRequiredArray("msgs");
         msgs.put(mail.kernel);
     }
+    */
+    /*
     MailInst createMessage() throws Exception {
         JSONArray msgs = this.getRequiredArray("msgs");
         JSONObject jo = new JSONObject();
         msgs.put(jo);
         return new MailInst(jo);
     }
+    */
 
 
     /*
@@ -302,6 +308,8 @@ public class MailFile extends JSONWrapper {
      * 3 months old -- the body is discarded, only the metadata remains
      * 9 months old -- removed entirely
      */
+    
+    /*
     public void pruneOldRecords() throws Exception {
 
         //if retentionFactor is 3 these names are correct
@@ -332,13 +340,14 @@ public class MailFile extends JSONWrapper {
         }
         kernel.put("msgs", newEmailList);
     }
+    */
 
-
+/*
     public void storeMessage(Message message) throws Exception {
         MailInst emailRec = this.createMessage();
         emailRec.setFromMessage(message);
     }
-
+*/
     private class MailComparitor implements Comparator<MailInst> {
 
         @Override

@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -112,24 +113,19 @@ public class SiteRequest {
 
     public void sendSiteRequestEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
+        AddressListEntry from = new AddressListEntry(ar.getBestUserId());
+        MailInst msg = MailInst.genericEmail("$", "$", "Site Approval for " + ar.getBestUserId(), "");
+        File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
             JSONObject jo = new JSONObject();
             jo.put("req", this.getJSON());
             jo.put("baseURL", ar.baseURL);
             jo.put("admin", up.getJSON());
 
-            File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
-            MemFile body = new MemFile();
-            Writer w = body.getWriter();
-            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
-            w.flush();
+            OptOutAddr ooa = new OptOutSuperAdmin(up.getAddressListEntry());
+            msg.setBodyFromTemplate(templateFile, jo, ooa);
 
-            List<OptOutAddr> thisSuperUserAddressList = new ArrayList<OptOutAddr>();
-            thisSuperUserAddressList.add(new OptOutSuperAdmin(up.getAddressListEntry()));
-
-            EmailSender.generalMailToList(thisSuperUserAddressList, new AddressListEntry(ar.getBestUserId()),
-                    "Site Approval for " + ar.getBestUserId(),
-                    body.toString(), cog);
+            EmailSender.generalMailToOne(msg, from, ooa);
         }
     }
 

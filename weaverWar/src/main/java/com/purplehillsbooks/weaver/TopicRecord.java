@@ -30,6 +30,7 @@ import java.util.List;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -910,8 +911,11 @@ public class TopicRecord extends CommentContainer {
           ChunkTemplate.streamIt(clone.w, templateFile, data, commenterProfile.getCalendar());
           clone.flush();
 
-          String emailSubject = "New Topic: "+note.getSubject();
-          mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+          MailInst mailMsg = ngp.createMailInst();
+          mailMsg.setSubject("New Topic: "+note.getSubject());
+          mailMsg.setBodyText(body.toString());
+
+          mailFile.createEmailRecordInDB(mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
       }
 
 

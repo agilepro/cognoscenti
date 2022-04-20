@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -181,9 +182,11 @@ public class ResponseRecord extends DOMFace
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
 
-        String bodyStr = body.toString();
-        String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
-        mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, bodyStr);
+        MailInst mailMsg = ngw.createMailInst();
+        mailMsg.setSubject(noteOrMeet.emailSubject()+": "+detailMsg);
+        mailMsg.setBodyText(body.toString());
+
+        mailFile.createEmailRecordInDB(mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {

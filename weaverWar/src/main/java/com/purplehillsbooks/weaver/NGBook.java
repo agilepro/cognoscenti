@@ -29,7 +29,7 @@ import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
+import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -1027,31 +1027,34 @@ public class NGBook extends ContainerCommon {
      */
     @Override
     public long nextActionDue() throws Exception {
-        //initialize to some time next year
-        long nextYear = System.currentTimeMillis() + 31000000000L;
-        long nextTime = nextYear;
+        
+        //first check the site mail
+        long hundredSecondsAgo = System.currentTimeMillis() - 100000;
+        for (SiteMailGenerator smg : getAllSiteMail()) {
+            if (smg.notSentYet()) {
+                return hundredSecondsAgo;
+            }
+        }
+        
+
+        //TODO: remove this, I don't believe any email is being generated this way in a Site
         for (EmailRecord er : getAllEmail()) {
             if (er.statusReadyToSend()) {
                 //there is no scheduled time for sending email .. it just is scheduled
                 //immediately and supposed to be sent as soon as possible after that
                 //so return now minus 1 minutes
-                long reminderTime = System.currentTimeMillis()-60000;
-                if (reminderTime < nextTime) {
-                    System.out.println("Workspace has email that needs to be collected");
-                    nextTime = reminderTime;
-                }
+                return hundredSecondsAgo;
             }
         }
-        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-        this.gatherUnsentScheduledNotification(resList, nextYear);
-
-        for (ScheduledNotification sn : resList) {
-            if (sn.futureTimeToSend()<nextTime) {
-                //site mail is ready to go now
-                nextTime = sn.futureTimeToSend();
-            }
-        }
-        return nextTime;
+        
+        //nothing to do, return time for next year
+        return System.currentTimeMillis() + 31000000000L;
+    }
+    
+    @Override
+    public EmailRecord createEmail() throws Exception {
+        //prove this point
+        throw new Exception("Site does not have any email created.");
     }
 
     @Override
@@ -1138,44 +1141,19 @@ public class NGBook extends ContainerCommon {
     public SiteMailGenerator createSiteMail() throws Exception {
         DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
         SiteMailGenerator newMailGen = rolelist.createChild("mailGen", SiteMailGenerator.class);
+        newMailGen.setState(SiteMailGenerator.SM_STATE_SCHEDULED);
         return newMailGen;
     }
-    public SiteMailGenerator getOrCreateSiteMail(String searchId) throws Exception {
-        for (SiteMailGenerator smg : getAllSiteMail()){
-            if (searchId.equals(smg.getId())) {
-                return smg;
-            }
-        }
-        SiteMailGenerator s2 = createSiteMail();
-        s2.setId(searchId);
-        return s2;
-    }
-    public SiteMailGenerator getSiteMailOrFail(String searchId) throws Exception {
-        for (SiteMailGenerator smg : getAllSiteMail()){
-            if (searchId.equals(smg.getId())) {
-                return smg;
-            }
-        }
-        throw new Exception("Unable to find a Site Mail Generator with id: "+searchId);
-    }
-    public void deleteSiteMail(String searchId) throws Exception {
-        DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
-        List<SiteMailGenerator> children = rolelist.getChildren("mailGen", SiteMailGenerator.class);
-        SiteMailGenerator foundOne = null;
-        for (SiteMailGenerator rrr : children) {
-            if (searchId.equals(rrr.getId())) {
-                foundOne = rrr;
-            }
-        }
-        if (foundOne != null) {
-            rolelist.removeChild(foundOne);
-        }
-    }
 
-    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception {
+        boolean sentMsg = false;
         for (SiteMailGenerator smg : getAllSiteMail()) {
-            smg.gatherUnsentScheduledNotification(this, resList, timeout);
+            if (smg.notSentYet()) {
+                smg.actuallySendSiteMailNow(ar, this, sender);
+                sentMsg = true;
+            }
         }
+        return sentMsg;
     }
 
 

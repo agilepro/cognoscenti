@@ -327,9 +327,11 @@ public class DailyDigest {
                 String thisSubj = "Daily Digest - " + numberOfUpdates
                         + " updates, " + numTasks + " tasks, "
                         + numReminders + " reminders.";
+                
+                MailInst msg = MailInst.genericEmail("$", "$", thisSubj, body.toString());
 
                 //Actually SEND the email here
-                EmailSender.generalMailToOne(ooa, up.getAddressListEntry(), thisSubj, body.toString(), cog);
+                EmailSender.generalMailToOne(msg, up.getAddressListEntry(), ooa);
 
 
                 debugEvidence.write("\n<li>");

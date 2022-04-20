@@ -32,6 +32,8 @@ import java.util.List;
 
 //import org.apache.commons.io.FileUtils;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -496,8 +498,58 @@ public class NGWorkspace extends NGPage {
         return nextTime;
     }
 
+    public boolean transferEmailToDB(Cognoscenti cog, EmailSender sender) throws Exception {
+        List<EmailRecord> allEmail = getAllEmail();
+        if (allEmail.size()==0) {
+            return false;
+        }
+        for (EmailRecord er : allEmail) {
+            String fullFromAddress = er.getFromAddress();
+            AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
+            List<OptOutAddr> allAddressees = er.getAddressees();
+            for (OptOutAddr oaa : allAddressees) {
+                //create a message for each addressee ... actually there is
+                //usually only one so this usually creates only a single email
+                MailInst inst = createMailInst();
+                inst.setAddressee(oaa.getEmail());
+                inst.setStatus(er.getStatus());
+                inst.setSubject(er.getSubject());
+                inst.setFromAddress(fromAle.getEmail());
+                inst.setFromName(fromAle.getName());
+                oaa.prepareInternalMessage(cog);
+                inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
+                inst.setLastSentDate(er.getLastSentDate());
+                inst.setCreateDate(sender.getUniqueTime());
+                ArrayList<File> attachments = new ArrayList<File>();
+                for (String id : er.getAttachmentIds()) {
+                    File path = getAttachmentPathOrNull(id);
+                    if (path!=null) {
+                        attachments.add(path);
+                    }
+                }
+                inst.setAttachmentFiles(attachments);
+                sender.updateEmailInDB(inst);
+            }
+        }
+        clearAllEmail();
+        return true;
+    }
+    /**
+     * This will delete all email records in the project (workspace)
+     */
+    private void clearAllEmail() throws Exception {
+        DOMFace mail = requireChild("mail", DOMFace.class);
+        mail.clearVector("email");
+    }
+    public MailInst createMailInst() throws Exception {
+        MailInst msg = new MailInst();
+        msg.setSiteKey(getSiteKey());
+        msg.setWorkspaceKey(getKey());
+        return msg;
+    }
 
-    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+
+    private void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         for (MeetingRecord meeting : getMeetings()) {
             meeting.gatherUnsentScheduledNotification(this, resList, timeout);
         }
@@ -516,6 +568,21 @@ public class NGWorkspace extends NGPage {
         for (RoleInvitation ri : getInvitations()) {
             ri.gatherUnsentScheduledNotification(this, resList, timeout);
         }
+    }
+    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception {
+        boolean sentMessage = false;
+        //now open the page and generate all the email messages, remember this
+        //locks the file blocking all other threads, so be quick
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        gatherUnsentScheduledNotification(resList, nowTime);
+
+        for (ScheduledNotification sn : resList) {
+            if (sn.needsSendingBefore(nowTime)) {
+                sn.sendIt(ar, sender);
+                sentMessage = true;
+            }
+        }
+        return sentMessage;
     }
 
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -599,9 +600,12 @@ public class CommentRecord extends DOMFace {
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
+        
+        MailInst mailMsg = ngp.createMailInst();
+        mailMsg.setSubject(noteOrMeet.emailSubject()+": "+opType+cmtType);
+        mailMsg.setBodyText(body.toString());
 
-        String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;
-        mailFile.createEmailRecordInDB(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecordInDB(mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
 

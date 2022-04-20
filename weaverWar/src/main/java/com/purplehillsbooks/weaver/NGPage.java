@@ -320,9 +320,17 @@ public abstract class NGPage extends ContainerCommon {
         ngpi.buildLinks(this);
 
         // check if there is new email, and put this in the index as well
-        if (countEmailToSend() > 0) {
+        if (hasEmailToSend()) {
             cog.projectsWithEmailToSend.add(key);
         }
+    }
+    public boolean hasEmailToSend() throws Exception {
+        for (EmailRecord er : getAllEmail()) {
+            if (er.statusReadyToSend()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

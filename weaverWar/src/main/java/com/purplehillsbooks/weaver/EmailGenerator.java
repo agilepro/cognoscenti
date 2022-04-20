@@ -31,6 +31,7 @@ import java.util.List;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailFile;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -273,7 +274,7 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa, EmailSender mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa, EmailSender sender)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -324,7 +325,12 @@ public class EmailGenerator extends DOMFace {
             attachments.add(icsFile);
         }
 
-        mailFile.createEmailWithAttachments(new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachments);
+        MailInst mailMsg = ngp.createMailInst();
+        mailMsg.setSubject(subject);
+        mailMsg.setBodyText(entireBody);
+        mailMsg.setAttachmentFiles(attachments);
+        
+        sender.createEmailRecordInDB(mailMsg, new AddressListEntry(getOwner()), ooa.getEmail());
     }
 
 

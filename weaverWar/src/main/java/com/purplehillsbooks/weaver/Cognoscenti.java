@@ -712,7 +712,7 @@ System.out.println("Weaver Server Object == Start the Server");
         keyToWorkspace.put(workspaceKey, bIndex);
 
         // look for email and remember if there is some
-        if (ngw.countEmailToSend() > 0) {
+        if (ngw.hasEmailToSend()) {
             projectsWithEmailToSend.add(key);
         }
     }

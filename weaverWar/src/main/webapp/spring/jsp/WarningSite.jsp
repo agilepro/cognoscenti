@@ -98,24 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
-    $scope.requestEmail = function() {
-        var url="../../../v/<%ar.writeURLData(up.getKey());%>/addEmailAddress.htm?newEmail="+encodeURIComponent($scope.newEmail);
-        console.log("GET to:", url);
-        promise = $http.get(url);
-        promise.success( function(data) {
-            console.log("EMAIL: ", data);
-            $scope.addingEmail=false;
-            alert("Email has been sent to '"+$scope.newEmail+"'.  Find that email in your mailbox "+
-                  "and click on the link to add the email to your profile.\n"
-                  +"Then return and try to access workspace.");
-        })
-        .error( function(data) {
-            $scope.reportError(data);
-        });
-        
-    }
-    
-    
+
 });
 
 </script>

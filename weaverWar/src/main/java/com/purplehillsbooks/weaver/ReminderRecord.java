@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -342,7 +344,11 @@ public class ReminderRecord extends DOMFace
 
             File templateFile = cog.getConfig().getFileFromRoot("email/Reminder.chtml");
 
-            EmailSender.containerEmail(ooa, ngw, subject, templateFile, data, null, new ArrayList<String>(), cog);
+            MailInst msg = ngw.createMailInst();
+            msg.setSubject(subject);
+            AddressListEntry from =  new AddressListEntry(EmailSender.composeFromAddress(ngw));
+            msg.setBodyFromTemplate(templateFile, data, ooa);
+            EmailSender.generalMailToOne(msg, from, ooa);
         }
         if (ngw instanceof NGWorkspace) {
             HistoryRecord.createHistoryRecord(ngw, reminderId,

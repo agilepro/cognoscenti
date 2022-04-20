@@ -34,6 +34,8 @@ import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -221,7 +223,9 @@ public class SuperAdminController extends BaseController {
              String body = requestInfo.getString("body");
              String subject = requestInfo.getString("subject");
              OptOutAddr ooa = new OptOutAddr(new AddressListEntry(toAddress));
-             EmailSender.generalMailToOne(ooa, fromAddress, subject, body, ar.getCogInstance());
+             
+             MailInst msg = MailInst.genericEmail("$", "$", subject, body);
+             EmailSender.generalMailToOne(msg, fromAddress, ooa);
 
              requestInfo.put("status", "success");
              sendJson(ar, requestInfo);

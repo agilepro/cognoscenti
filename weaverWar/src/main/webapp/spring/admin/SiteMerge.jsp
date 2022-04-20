@@ -87,7 +87,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.sendIt = function() {
         var site = $scope.data.site;
         var postObj = {};
-        postObj.id = "~new~";
         postObj.layout = $scope.selectedLayout;
         postObj.subject = "Mail about your Weaver Site: "+site.names[0];
         var postData = angular.toJson(postObj);
