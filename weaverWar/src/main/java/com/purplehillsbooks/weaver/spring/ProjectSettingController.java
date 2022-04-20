@@ -463,7 +463,7 @@ public class ProjectSettingController extends BaseController {
 
         MailInst msg = container.createMailInst();
         msg.setSubject("Role Requested by " + ar.getBestUserId());
-        AddressListEntry from =  new AddressListEntry(EmailSender.composeFromAddress(container));
+        AddressListEntry from =  ar.getUserProfile().getAddressListEntry();
         
         // filter out users that who have no profile and have never logged in.
         // Only send this request to real users, not just email addresses
