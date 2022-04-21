@@ -36,8 +36,6 @@ import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -162,6 +160,30 @@ public class SuperAdminController extends BaseController {
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
+     
+     @RequestMapping(value = "/su/EmailScanner.htm", method = RequestMethod.GET)
+     public void emailScanner(HttpServletRequest request, HttpServletResponse response)
+             throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             streamAdminJSP(ar, "EmailScanner");
+         }catch(Exception ex){
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+         }
+     }
+
+
+     @RequestMapping(value = "/su/EmailMsgA.htm", method = RequestMethod.GET)
+     public void emailMsgA(HttpServletRequest request, HttpServletResponse response)
+             throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             streamAdminJSP(ar, "EmailMsgA");
+         }catch(Exception ex){
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+         }
+     }
+
 
      @RequestMapping(value = "/su/acceptOrDenySite.json", method = RequestMethod.POST)
      public void acceptOrDenySite(HttpServletRequest request, HttpServletResponse response) {
@@ -329,6 +351,27 @@ public class SuperAdminController extends BaseController {
              streamAdminJSP(ar, "SiteMerge");
          }catch(Exception ex){
              throw new JSONException("Unable to perform SiteMerge with site {0}", ex, siteId);
+         }
+     }
+
+     ///////////////////////// Eamil ///////////////////////
+
+     @RequestMapping(value = "/su/QuerySuperAdminEmail.json", method = RequestMethod.POST)
+     public void queryEmail(
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             if (!ar.isSuperAdmin()) {
+                 throw new Exception("Super admin email list is accessible only by administrator.");
+             }
+             JSONObject posted = this.getPostedObject(ar);
+
+             JSONObject repo = EmailSender.querySuperAdminEmail(posted);
+
+             sendJson(ar, repo);
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to get email", ex);
+             streamException(ee, ar);
          }
      }
 

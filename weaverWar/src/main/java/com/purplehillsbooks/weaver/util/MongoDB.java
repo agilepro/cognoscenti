@@ -60,9 +60,15 @@ public class MongoDB {
         return ja;
     }
     public JSONArray queryRecords(JSONObject query) throws Exception {
-        return querySortRecords(query, null);
+        return querySortRecords(query, null, 0, limit);
+    }
+    public JSONArray queryRecords(JSONObject query, int skip, int batchSize) throws Exception {
+        return querySortRecords(query, null, skip, batchSize);
     }
     public JSONArray querySortRecords(JSONObject query, JSONObject sort) throws Exception {
+        return querySortRecords(query, sort, 0, limit);
+    }
+    public JSONArray querySortRecords(JSONObject query, JSONObject sort, int skip, int batchSize) throws Exception {
         String queryString = query.toString(0);
         long startTime = System.currentTimeMillis();
         
@@ -71,12 +77,12 @@ public class MongoDB {
         if (sort!=null) {
             resultSet.sort(Document.parse(sort.toString(0)));
         }
-        
+        resultSet.skip(skip);
         MongoCursor<Document> cursor = resultSet.iterator();
         
         JSONArray ja = new JSONArray();
         int count = 0;
-        while (cursor.hasNext() && count < limit) {
+        while (cursor.hasNext() && count < batchSize) {
             Document d = cursor.next();
             JSONObject jo = new JSONObject(d.toJson());
             ja.put(jo);

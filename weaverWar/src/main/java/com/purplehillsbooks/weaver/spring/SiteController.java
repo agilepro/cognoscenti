@@ -42,6 +42,8 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WorkspaceStats;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -637,6 +639,26 @@ public class SiteController extends BaseController {
         }
         catch(Exception ex){
             Exception ee = new JSONException("Unable to garbage collect for site '{0}'", ex, siteId);
+            streamException(ee, ar);
+        }
+    }
+    
+    
+    ///////////////////////// Eamil ///////////////////////
+
+    @RequestMapping(value = "/{siteId}/$/QuerySiteEmail.json", method = RequestMethod.POST)
+    public void queryEmail(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook ngw = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            JSONObject posted = this.getPostedObject(ar);
+
+            JSONObject repo = EmailSender.querySiteEmail(ngw, posted);
+
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
             streamException(ee, ar);
         }
     }

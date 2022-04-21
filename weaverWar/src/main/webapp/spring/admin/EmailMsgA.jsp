@@ -10,14 +10,10 @@
     long msgId = DOMFace.safeConvertLong(msgSentDate);
     String filter      = ar.defParam("f", "");
     
-    String pageId = ar.reqParam("pageId");
-    String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    ar.assertSuperAdmin("Must be a member to see meetings");
 
-    MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);
+
+    MailInst emailMsg = EmailSender.findEmailById(msgId);
     JSONObject mailObject = new JSONObject();
     String specialBody = "";
     boolean bodyIsDeleted = false;
@@ -44,7 +40,6 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Email Sent");
     $scope.emailMsg = <%mailObject.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";
     $scope.bodyIsDeleted = <%=bodyIsDeleted%>;
@@ -79,7 +74,7 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 

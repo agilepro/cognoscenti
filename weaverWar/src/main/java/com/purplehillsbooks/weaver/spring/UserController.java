@@ -787,6 +787,32 @@ public class UserController extends BaseController {
         }
     }
 
+    ///////////////////////// Eamil ///////////////////////
+
+    @RequestMapping(value = "/{userKey}/QueryUserEmail.json", method = RequestMethod.POST)
+    public void queryEmail(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            Cognoscenti cog = ar.getCogInstance();
+            UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
+            if (!user.equals(ar.getUserProfile()) && !ar.isSuperAdmin()) {
+                throw new Exception("User email list is accessible only from the user themselves, or administrator.");
+            }
+            JSONObject posted = this.getPostedObject(ar);
+            posted.put("userKey", user.getKey());
+            posted.put("userEmail", user.getPreferredEmail());
+
+            JSONObject repo = EmailSender.queryUserEmail(posted);
+
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
+
+
 
 
 }

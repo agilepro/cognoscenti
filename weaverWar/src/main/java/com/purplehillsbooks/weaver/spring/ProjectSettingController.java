@@ -823,6 +823,10 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            if (!ar.isMember() && !ar.isSuperAdmin()) {
+                throw new Exception("Project email list is accessible only by members or administrator.");
+            }
             JSONObject posted = this.getPostedObject(ar);
 
             JSONObject repo = EmailSender.queryWorkspaceEmail(ngw, posted);

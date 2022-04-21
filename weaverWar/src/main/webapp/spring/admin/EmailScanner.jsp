@@ -2,25 +2,20 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailRecord"
 %><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
-%><%@page import="com.purplehillsbooks.weaver.mail.MailFile"
+%><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%
 
     String filter      = ar.defParam("f", "");
-    String pageId = ar.reqParam("pageId");
-    String siteId = ar.reqParam("siteId");
-    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngw);
-    ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngw.getSite();
+    ar.assertSuperAdmin("Must be a super admin to scan email");
 
 
     
     JSONObject newQuery = new JSONObject();
     newQuery.put("offset", 0);
-    newQuery.put("batch", 50);
+    newQuery.put("batch", 20);
     newQuery.put("includeBody", false);
-    JSONObject mailQueryResult = MailFile.queryEmail(ngw, newQuery);
+    JSONObject mailQueryResult = EmailSender.querySuperAdminEmail(newQuery);
     JSONArray mailList = mailQueryResult.getJSONArray("list");
 
 /* PROTOTYPE EMAIL RECORD
@@ -44,9 +39,10 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Email Sent");
     $scope.emailList = [];
     $scope.filter = "<%ar.writeJS(filter);%>";
+    $scope.site = "$";
+    $scope.workspace = "$";
     $scope.offset = 0;
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -62,7 +58,7 @@ app.controller('myCtrl', function($scope, $http) {
     };
     $scope.fetchEmailRecords = function(diff) {
         console.log("fetching records: "+diff);
-        var postURL = "QueryEmail.json";
+        var postURL = "QuerySuperAdminEmail.json";
         var newPos = $scope.offset + diff;
         if (newPos<0) {
             newPos = 0;
@@ -72,6 +68,8 @@ app.controller('myCtrl', function($scope, $http) {
         var query = {
             offset: newPos,
             batch: 20,
+            site: $scope.site,
+            workspace: $scope.workspace,
             searchValue: $scope.filter
         };
         var postdata = angular.toJson(query);
@@ -112,29 +110,13 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="EmailCreated.htm">
-              Email Prepared</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="EmailSent.htm">
-              Email Sent</a>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="SendNote.htm">
-              Create Email</a>
-          </li>
-        </ul>
-      </span>
-    </div>
 
         <div>
+            Site: <input ng-model="site">
+            Workspace: <input ng-model="workspace">
             Filter: <input ng-model="filter">
             <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
             <button ng-click="fetchEmailRecords(-20)" class="btn btn-default btn-raised">Previous</button>
@@ -147,14 +129,16 @@ app.controller('myCtrl', function($scope, $http) {
                 <td width="100px">From</td>
                 <td width="300px">Subject</td>
                 <td width="100px">Recipient</td>
+                <td width="100px">Site/Workspace</td>
                 <td width="50px">Status</td>
                 <td width="100px">Send Date</td>
             </tr>
             <tr ng-repeat="rec in emailList">
                 <td>{{offset+$index+1}}</td>
                 <td>{{namePart(rec.From)}}</td>
-                <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
+                <td><a href="EmailMsgA.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
                 <td>{{rec.Addressee}}</td>
+                <td>{{rec.Site}}/{{rec.Workspace}}</td>
                 <td>{{rec.Status}}</td>
                 <td>{{bestDate(rec) |cdate}}</td>
             </tr>

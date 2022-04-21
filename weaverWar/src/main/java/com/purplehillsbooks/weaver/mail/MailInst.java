@@ -28,7 +28,8 @@ import com.purplehillsbooks.weaver.MemFileDataSource;
 import com.purplehillsbooks.weaver.MimeTypes;
 import com.purplehillsbooks.weaver.OptOutAddr;
 import com.purplehillsbooks.weaver.SectionUtil;
-
+import com.purplehillsbooks.weaver.UserManager;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -122,8 +123,24 @@ public class MailInst extends JSONWrapper {
     public String getAddressee() throws Exception {
         return kernel.getString("Addressee");
     }
+    public String getUserKey() throws Exception {
+        return kernel.getString("UserKey");
+    }
+    /*
+     * Set both the addressee (To field) as well as the 
+     * associated UserKey for that user if there is one.
+     * Specify the email address of the addressee.
+     * The user key will be looked up.
+     */
     public void setAddressee(String val) throws Exception {
         kernel.put("Addressee", val);
+        UserProfile user = UserManager.lookupUserByAnyId(val);
+        if (user!=null) {
+            kernel.put("UserKey", user.getKey());
+        }
+        else {
+            kernel.remove("UserKey");
+        }
     }
 
     public String getFromAddress() throws Exception {

@@ -683,7 +683,7 @@ public class EmailSender extends TimerTask {
     /*
      * following fields are allowed in the query
      * 
-     * offset: starting opoint in the list of records
+     * offset: starting point in the list of records
      * batch: size of the batch, default 50
      * includeBody: whether email body should be included for size reasons
      * searchValue: thing being searched for
@@ -719,24 +719,165 @@ public class EmailSender extends TimerTask {
             basicAnd.put(fieldsOr);
         }
 
+        JSONObject res = new JSONObject();
+        res.put("query", mongoQuery);
+        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
+        return res;
+    }
+    
+    public static JSONObject querySiteEmail(NGBook ngb, JSONObject query) throws Exception {
         
-        //query.put("offset", offset);
-        //query.put("batch",  batch);
-
+        int offset = query.optInt("offset", 0);
+        if (offset<0) {
+            offset = 0;
+        }
+        int batch  = query.optInt("batch", 50);
+        //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
+        String searchValue  = query.optString("searchValue", "");
+        long msgId  = query.optLong("msgId", 0);
+        
+        JSONObject sort = new JSONObject().put("CreateDate", -1);
+        
+        //the query is to find all email messages for that site,
+        //and that workspace, where either the subject or the 
+        //address contains the search value using regex
+        JSONObject mongoQuery = new JSONObject();
+        JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
+        basicAnd.put( new JSONObject().put("Site", ngb.getKey()));
+        basicAnd.put( new JSONObject().put("Workspace", "$"));
+        if (msgId>0) {
+            basicAnd.put( new JSONObject().put("CreateDate", msgId));
+        }
+        else if (searchValue.length()>0){
+            JSONObject fieldsOr = new JSONObject();
+            JSONArray orArray = fieldsOr.requireJSONArray("$or");
+            orArray.put( new JSONObject().put("Subject", new JSONObject().put("$regex", searchValue)));
+            orArray.put( new JSONObject().put("Addressee", new JSONObject().put("$regex", searchValue)));
+            basicAnd.put(fieldsOr);
+        }
 
         JSONObject res = new JSONObject();
         res.put("query", mongoQuery);
-
-        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort));
-
+        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
         return res;
-    }
+    }    
+    
+    public static JSONObject queryUserEmail(JSONObject query) throws Exception {
+        
+        int offset = query.optInt("offset", 0);
+        if (offset<0) {
+            offset = 0;
+        }
+        int batch  = query.optInt("batch", 50);
+        //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
+        String searchValue  = query.optString("searchValue", "");
+        long msgId  = query.optLong("msgId", 0);
+        String userKey  = query.optString("userKey", null);
+        String userEmail  = query.optString("userEmail", null);
+        if (userKey==null && userEmail==null) {
+            throw new Exception("Must specify either a 'userKey' or a 'userEmail' for the user being searched in queryUserEmail");
+        }
+        
+        JSONObject sort = new JSONObject().put("CreateDate", -1);
+        
+        //the query is to find all email messages for that site,
+        //and that workspace, where either the subject or the 
+        //address contains the search value using regex
+        JSONObject mongoQuery = new JSONObject();
+        JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
+        
+        JSONObject userOr = new JSONObject();
+        JSONArray userOrArray = userOr.requireJSONArray("$or");
+        if (userKey!=null) {
+            userOrArray.put( new JSONObject().put("UserKey", userKey));
+        }
+        if (userEmail!=null) {
+            userOrArray.put( new JSONObject().put("Addressee", userEmail));
+        }
+        basicAnd.put(userOr);
+        
+        if (msgId>0) {
+            basicAnd.put( new JSONObject().put("CreateDate", msgId));
+        }
+        else if (searchValue.length()>0){
+            JSONObject fieldsOr = new JSONObject();
+            JSONArray orArray = fieldsOr.requireJSONArray("$or");
+            orArray.put( new JSONObject().put("Subject", new JSONObject().put("$regex", searchValue)));
+            orArray.put( new JSONObject().put("Addressee", new JSONObject().put("$regex", searchValue)));
+            basicAnd.put(fieldsOr);
+        }
+
+        JSONObject res = new JSONObject();
+        res.put("query", mongoQuery);
+        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
+        return res;
+    }    
+   
+    public static JSONObject querySuperAdminEmail(JSONObject query) throws Exception {
+        
+        int offset = query.optInt("offset", 0);
+        if (offset<0) {
+            offset = 0;
+        }
+        int batch  = query.optInt("batch", 50);
+        //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
+        String searchValue  = query.optString("searchValue", "");
+        long msgId  = query.optLong("msgId", 0);
+        String site  = query.optString("site", "");
+        String workspace  = query.optString("workspace", "");
+        if (site.length()==0 && workspace.length()==0 && searchValue.length()==0 && msgId<=0) {
+            //there has to be at least one condition . . .
+            workspace = "$";
+        }
+        
+        JSONObject sort = new JSONObject().put("CreateDate", -1);
+        
+        //the query is to find all email messages for that site,
+        //and that workspace, where either the subject or the 
+        //address contains the search value using regex
+        JSONObject mongoQuery = new JSONObject();
+        JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
+        if (site.length()>0) {
+            basicAnd.put( new JSONObject().put("Site", site));
+        }
+        if (workspace.length()>0) {
+            basicAnd.put( new JSONObject().put("Workspace", workspace));
+        }
+        if (msgId>0) {
+            basicAnd.put( new JSONObject().put("CreateDate", msgId));
+        }
+        else if (searchValue.length()>0){
+            JSONObject fieldsOr = new JSONObject();
+            JSONArray orArray = fieldsOr.requireJSONArray("$or");
+            orArray.put( new JSONObject().put("Subject", new JSONObject().put("$regex", searchValue)));
+            orArray.put( new JSONObject().put("Addressee", new JSONObject().put("$regex", searchValue)));
+            basicAnd.put(fieldsOr);
+        }
+
+        JSONObject res = new JSONObject();
+        res.put("query", mongoQuery);
+        res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
+        return res;
+    }    
+   
     
     public static MailInst findEmailById(NGWorkspace ngw, long msgId) throws Exception {
         
         JSONObject query = new JSONObject().put("msgId", msgId);
         
         JSONObject res = queryWorkspaceEmail(ngw, query);
+        
+        JSONArray list = res.requireJSONArray("list");
+        if (list.length()>0) {
+            return new MailInst(list.getJSONObject(0));
+        }
+        return null;
+    }
+    public static MailInst findEmailById(long msgId) throws Exception {
+        
+        JSONObject query = new JSONObject().put("msgId", msgId);
+        
+        JSONObject res = querySuperAdminEmail(query);
         
         JSONArray list = res.requireJSONArray("list");
         if (list.length()>0) {
