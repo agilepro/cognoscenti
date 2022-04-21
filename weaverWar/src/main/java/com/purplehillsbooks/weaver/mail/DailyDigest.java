@@ -627,7 +627,7 @@ public class DailyDigest {
 
         int noOfReminders = 0;
 
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
+        for (NGPageIndex ngpi : ar.getCogInstance().getProjectsUserIsPartOf(up)) {
 
             noOfReminders = writeOneReminder(ar, up, ngpi, noOfReminders);
 
@@ -762,7 +762,7 @@ public class DailyDigest {
             throw new Exception("can not get list of action items for userwhich is null");
         }
 
-        for (NGPageIndex ngpi : cog.getAllContainers()) {
+        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
             if (!ngpi.isWorkspace() || ngpi.isDeleted) {

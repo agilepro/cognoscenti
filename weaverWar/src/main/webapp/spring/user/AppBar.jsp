@@ -113,7 +113,6 @@
 %>
             <li class="divider"></li>
             <li><a href="<%=userRelPath%>WatchedProjects.htm">Watched Workspaces</a></li>
-            <li><a href="<%=userRelPath%>templates.htm">Templates</a></li>
             <li><a href="<%=userRelPath%>OwnerProjects.htm">Administered</a></li>
             <li><a href="<%=userRelPath%>ParticipantProjects.htm">Participant</a></li>
             <li><a href="<%=userRelPath%>AllProjects.htm">All</a></li>

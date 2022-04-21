@@ -520,20 +520,16 @@ System.out.println("Weaver Server Object == Start the Server");
         return ret;
     }
 
-    public List<NGPageIndex> getProjectsUserIsPartOf(UserRef ale) throws Exception {
+    public List<NGPageIndex> getProjectsUserIsPartOf(UserProfile ale) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
+        String userKey = ale.getKey();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (!ngpi.isWorkspace()) {
                 // only consider project style containers
                 continue;
             }
-            NGWorkspace container = ngpi.getWorkspace();
-
-            for (CustomRole role : container.getAllRoles()) {
-                if (role.isPlayer(ale)) {
-                    ret.add(ngpi);
-                    break;
-                }
+            if (ngpi.allUsers.contains(userKey)) {
+                ret.add(ngpi);
             }
         }
         NGPageIndex.sortByName(ret);

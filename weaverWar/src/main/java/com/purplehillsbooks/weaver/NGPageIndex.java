@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -117,6 +119,7 @@ public class NGPageIndex {
     public String wsSiteName;
     public String wsSiteKey;
     public String parentKey;     // Key for the 'circle' hierarchy parent project
+    public Set<String> allUsers; // all users mentioned anywhere
 
 
     /**
@@ -680,8 +683,26 @@ public class NGPageIndex {
                 wsSiteKey = ngb.getKey();
             }
             parentKey = ngw.getParentKey();
+            
+            updateAllUsersFromWorkspace(ngw);
         }
         nextScheduledAction = container.nextActionDue();
+    }
+    
+    public void updateAllUsersFromWorkspace(NGWorkspace ngw) throws Exception {
+        //now, get a complete listing of all users in the workspace
+        //to optimize the background refresh of user stats
+        WorkspaceStats wStats = new WorkspaceStats();
+        wStats.gatherFromWorkspace(ngw);
+        HashSet<String> userTempKeys = new HashSet<String>();
+        for (String email : wStats.anythingPerUser.keySet()) {
+            UserProfile uProf = UserManager.lookupUserByAnyId(email);
+            if (uProf!=null) {
+                //only add users that actually have profiles
+                userTempKeys.add(uProf.getKey());
+            }
+        }
+        allUsers = userTempKeys;
     }
 
     /**

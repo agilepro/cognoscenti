@@ -192,7 +192,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             throw new Exception("invalid parameter to getTaskList");
         }
 
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
+        for (NGPageIndex ngpi : ar.getCogInstance().getProjectsUserIsPartOf(up)) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
 

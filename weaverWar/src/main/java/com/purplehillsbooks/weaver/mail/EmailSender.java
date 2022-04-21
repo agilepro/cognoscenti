@@ -169,12 +169,14 @@ public class EmailSender extends TimerTask {
     
     public void updateEmailInDB(MailInst msg) throws Exception {
         //check
+        /*
         if (msg.getWorkspaceKey()==null || msg.getWorkspaceKey().length()==0) {
             throw new Exception("the workspace is not set");
         }
         if (msg.getSiteKey()==null || msg.getSiteKey().length()==0) {
             throw new Exception("the site is not set");
         }
+        */
         long id = msg.getCreateDate();
         JSONObject mailObj = msg.getJSON();
         JSONObject query = new JSONObject();

@@ -9,7 +9,7 @@
     UserProfile loggedUser = ar.getUserProfile();
     UserProfile displayedUser = UserManager.getUserProfileByKey(userKey);
     
-    NGPageIndex.clearLocksHeldByThisThread();
+    //NGPageIndex.clearLocksHeldByThisThread();
     Cognoscenti cog = ar.getCogInstance();
 
     UserCache userCache = cog.getUserCacheMgr().getCache(userKey);
@@ -67,7 +67,6 @@
         jObj.put("numTopics", stats.numTopics);
         siteList.put(jObj);
     }
-
 
 %>
 

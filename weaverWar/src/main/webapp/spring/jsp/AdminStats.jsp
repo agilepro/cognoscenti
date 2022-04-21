@@ -454,5 +454,13 @@ editBoxStyle {
     </div>
 
 
+<div class="well">
+<%
+   for (String name : ngpi.allUsers) {
+       out.write(name+", ");
+   }
+%>
+</div>
+
 </div>
 

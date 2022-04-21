@@ -68,6 +68,8 @@ public class NGWorkspace extends NGPage {
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
+        //System.out.println("     - LOADING: "+theFile.getParentFile().getParentFile().getName());
+        
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
         
         //we can relax this and get from lazy evaluation, but need to test carefully
@@ -144,6 +146,7 @@ public class NGWorkspace extends NGPage {
         if (workspaceJSON!=null) {
             workspaceJSON.writeToFile(jsonFilePath);
         }
+        
         //store into the cache.  Something might be copying things in memory,
         //and this assures that the cache matches the latest written version.
         //String fullFilePath = associatedFile.toString();
@@ -155,6 +158,9 @@ public class NGWorkspace extends NGPage {
         super.saveFile(ar, comment);
         assureLaunchingPad(ar);
         System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+        
+        NGPageIndex ngpi = ar.cog.getWSBySiteAndKey(getSiteKey(), getKey());
+        ngpi.updateAllUsersFromWorkspace(this);
     }
 
 
@@ -351,77 +357,6 @@ public class NGWorkspace extends NGPage {
     }
 
 
-/*
-    public void scanForNewFiles() throws Exception {
-        File[] children = containingFolder.listFiles();
-        List<AttachmentRecord> list = getAllAttachments();
-        for (File child : children) {
-            if (child.isDirectory()) {
-                continue;
-            }
-            String fname = child.getName();
-            if (fname.endsWith(".sp")) {
-                //ignoring other possible project files
-                continue;
-            }
-            if (fname.startsWith(".cog")) {
-                //need to ignore .cogProjectView.htm and other files with .cog*
-                continue;
-            }
-
-            //all others are possible documents at this point
-            AttachmentRecord att = null;
-            for (AttachmentRecord knownAtt : list) {
-                if (fname.equals(knownAtt.getDisplayName())) {
-                    att = knownAtt;
-                }
-            }
-            if (att!=null) {
-                continue;
-            }
-            att = createAttachment();
-            att.setDisplayName(fname);
-            att.setType("EXTRA");
-            list.add(att);
-        }
-        List<AttachmentRecord> ghosts = new ArrayList<AttachmentRecord>();
-        for (AttachmentRecord knownAtt : list) {
-            if ("URL".equals(knownAtt.getType())) {
-                continue;   //ignore URL attachments
-            }
-            AttachmentVersion aVer = knownAtt.getLatestVersion(this);
-            if (aVer==null) {
-                // this is a ghost if there are no versions at all.  Remove it
-                ghosts.add(knownAtt);
-                continue;
-            }
-            File attFile = aVer.getLocalFile();
-            if (!attFile.exists()) {
-                knownAtt.setType("GONE");
-            }
-        }
-
-        //delete the ghosts, if any exist
-        for (AttachmentRecord ghost : ghosts) {
-            //it disappears without a trace.  But what else can we do?
-            attachParent.removeChild(ghost);
-        }
-    }
-    */
-
-/*
-    public void removeExtrasByName(String name) throws Exception {
-        List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);
-        for (AttachmentRecord att : list) {
-            if (att.getType().equals("EXTRA") && att.getDisplayName().equals(name)) {
-                attachParent.removeChild(att);
-                break;
-            }
-        }
-    }
-    */
-
-
     public void assureLaunchingPad(AuthRequest ar) throws Exception {
         File launchFile = new File(containingFolder, ".cogProjectView.htm");
         if (!launchFile.exists()) {
@@ -549,7 +484,7 @@ public class NGWorkspace extends NGPage {
     }
 
 
-    private void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         for (MeetingRecord meeting : getMeetings()) {
             meeting.gatherUnsentScheduledNotification(this, resList, timeout);
         }
@@ -1127,11 +1062,6 @@ public class NGWorkspace extends NGPage {
                     user.clearWatch(combo);
                 }
             }
-            /*
-            if ("isTemplate".equals(key)) {
-                user.setProjectAsTemplate(combo, newVals.getBoolean(key));
-            }
-            */
         }
 
         personal.writeToFile(personalFile);
@@ -1151,23 +1081,6 @@ public class NGWorkspace extends NGPage {
         updatePersonalWorkspaceSettings(user, newVal);
     }
 
-    
-    /*
-    public boolean isTemplate(UserProfile user) throws Exception {
-        JSONObject personal = getPersonalWorkspaceSettings(user);
-        if (!personal.has("isTemplate")) {
-            return false;
-        }
-        return personal.getBoolean("isTemplate");
-    }
-    
-    public void setTemplate(UserProfile user, boolean val) throws Exception {
-        JSONObject newVal = new JSONObject();
-        newVal.put("isTemplate", val);
-        updatePersonalWorkspaceSettings(user, newVal);
-    }
-    */
-    
 
     
     public JSONObject getConfigJSON() throws Exception {

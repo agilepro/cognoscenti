@@ -41,7 +41,9 @@ public class UserCache {
 
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
-        for (NGPageIndex ngpi : cog.getAllContainers()) {
+        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
+            
+            System.out.println("refreshCache is reading "+ngpi.containerKey+" for "+up.getPreferredEmail());
             if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;
             }

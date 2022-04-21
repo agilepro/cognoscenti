@@ -35,6 +35,7 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.RemoteGoal;
 import com.purplehillsbooks.weaver.UserPage;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
@@ -109,7 +110,12 @@ public class TaskHelper
             //could change the logic to clear out the collections at this point, but
             //adding an exception here so we can learn if this ever happens.
         }
-        List<NGPageIndex> pindxlist = cog.getAllContainers();
+        
+        UserProfile up = ale.getUserProfile();
+        if (up==null) {
+            return;
+        }
+        List<NGPageIndex> pindxlist = cog.getProjectsUserIsPartOf(up);
         if (pindxlist==null || pindxlist.size()==0)
         {
             //this can happen if the server has been restarted and not yet

@@ -3,6 +3,7 @@
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
+    
     boolean noneFound = ownedProjs.size()==0;
 
     JSONArray projList = new JSONArray();

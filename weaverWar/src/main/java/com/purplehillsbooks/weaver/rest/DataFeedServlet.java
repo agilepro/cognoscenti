@@ -268,7 +268,7 @@ public class DataFeedServlet extends HttpServlet {
             return allTask;  //empty at this point
         }
 
-        for (NGPageIndex ngpi : cog.getAllContainers()) {
+        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
 
