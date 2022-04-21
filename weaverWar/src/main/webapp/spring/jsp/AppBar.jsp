@@ -188,7 +188,8 @@
             <li><a href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
-            <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
+            <li><a href="<%=userRelPath%>EmailUser.htm">Email Sent</a></li>
+            <li><a href="<%=userRelPath%>NotificationSettings.htm">Withdraw</a></li>
             <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>

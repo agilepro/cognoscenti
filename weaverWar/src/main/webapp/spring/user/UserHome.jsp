@@ -188,7 +188,12 @@ a {
         <a class="btn btn-default btn-raised" 
             href="UserAlerts.htm" translate
             title="{{'A list of things that have changed in the pages that you watch'|translate}}">
-            User Alerts</a>    </div>
+            User Alerts</a> 
+        <a class="btn btn-default btn-raised" 
+            href="EmailUser.htm" translate
+            title="{{'All email sent to this user'|translate}}">
+            Email</a>
+    </div>
 
 
 <!-- COLUMN 2 -->

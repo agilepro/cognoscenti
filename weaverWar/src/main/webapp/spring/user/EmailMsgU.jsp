@@ -10,8 +10,7 @@
     long msgId = DOMFace.safeConvertLong(msgSentDate);
     String filter      = ar.defParam("f", "");
     
-    ar.assertSuperAdmin("Must be a member to see meetings");
-
+    UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
 
     MailInst emailMsg = EmailSender.findEmailById(msgId);
     JSONObject mailObject = new JSONObject();
@@ -40,6 +39,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Email Sent");
     $scope.emailMsg = <%mailObject.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";
     $scope.bodyIsDeleted = <%=bodyIsDeleted%>;
@@ -74,9 +74,9 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div ng-app="myApp" ng-controller="myCtrl">
+<div>
 
-<%@include file="ErrorPanel.jsp"%>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
 
 <table class="table" style="max-width:800px">
@@ -110,12 +110,20 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Sent</td>
     <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
   </tr>
+  <tr ng-hide="bodyIsDeleted">
+    <td colspan="2"><%= specialBody %></td>
+  </tr>
+  <tr ng-show="bodyIsDeleted">
+    <td colspan="2">
+      <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;text-align:center;font-style:italic">
+      <p>Email bodies are deleted 3 months after sending</p>
+      <p>This email body was deleted around {{emailMsg.LastSentDate+(91*24*60*60*1000) |date:"dd-MMM-yyyy"}}</p>
+      </div>   
+    </td>
+  </tr>
   <tr ng-show="emailMsg.AttachmentFiles && emailMsg.AttachmentFiles.length>0">
     <td>Attachments</td>
     <td><div ng-repeat="att in emailMsg.AttachmentFiles">{{att}}</div></td>
-  </tr>
-  <tr>
-    <td colspan="2"><%= specialBody %></td>
   </tr>
 </table>
 

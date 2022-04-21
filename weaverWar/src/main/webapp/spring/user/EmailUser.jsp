@@ -7,20 +7,16 @@
 %><%
 
     String filter      = ar.defParam("f", "");
-    String pageId = ar.reqParam("pageId");
-    String siteId = ar.reqParam("siteId");
-    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngw);
-    ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngw.getSite();
-
-
+    UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
+    String userKey = ar.reqParam("userKey");
+    UserProfile displayedUser = UserManager.getUserProfileByKey(userKey);
     
     JSONObject newQuery = new JSONObject();
+    newQuery.put("userKey", displayedUser.getKey());
     newQuery.put("offset", 0);
     newQuery.put("batch", 50);
     newQuery.put("includeBody", false);
-    JSONObject mailQueryResult = EmailSender.queryWorkspaceEmail(ngw, newQuery);
+    JSONObject mailQueryResult = EmailSender.queryUserEmail(newQuery);
     JSONArray mailList = mailQueryResult.getJSONArray("list");
 
 /* PROTOTYPE EMAIL RECORD
@@ -44,7 +40,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Email Sent");
+    window.setMainPageTitle("Email Sent to <%ar.writeJS(displayedUser.getName());%>");
     $scope.emailList = [];
     $scope.filter = "<%ar.writeJS(filter);%>";
     $scope.offset = 0;
@@ -63,7 +59,7 @@ app.controller('myCtrl', function($scope, $http) {
     };
     $scope.fetchEmailRecords = function(diff) {
         console.log("fetching records: "+diff);
-        var postURL = "QueryEmail.json";
+        var postURL = "QueryUserEmail.json";
         var newPos = $scope.offset + diff;
         if (newPos<0) {
             newPos = 0;
@@ -115,25 +111,7 @@ app.controller('myCtrl', function($scope, $http) {
 <!-- MAIN CONTENT SECTION START -->
 <div>
 
-<%@include file="ErrorPanel.jsp"%>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="EmailCreated.htm">
-              Email Prepared</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="EmailSent.htm">
-              Email Sent</a>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="SendNote.htm">
-              Create Email</a>
-          </li>
-        </ul>
-      </span>
-    </div>
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
         <div>
             Filter: <input ng-model="filter">
@@ -148,15 +126,15 @@ app.controller('myCtrl', function($scope, $http) {
                 <td width="15px">#</td>
                 <td width="100px">From</td>
                 <td width="300px">Subject</td>
-                <td width="100px">Recipient</td>
+                <td width="50px">Site/Workspace</td>
                 <td width="50px">Status</td>
                 <td width="100px">Send Date</td>
             </tr>
             <tr ng-repeat="rec in emailList">
                 <td>{{offset+$index+1}}</td>
                 <td>{{namePart(rec.From)}}</td>
-                <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
-                <td>{{rec.Addressee}}</td>
+                <td><a href="EmailMsgU.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
+                <td>{{rec.Site}}/{{rec.Workspace}}</td>
                 <td>{{rec.Status}}</td>
                 <td>{{bestDate(rec) |cdate}}</td>
             </tr>

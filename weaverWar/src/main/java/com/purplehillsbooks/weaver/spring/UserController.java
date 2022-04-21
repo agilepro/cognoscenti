@@ -187,6 +187,20 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "SearchAllNotes");
     }
 
+    @RequestMapping(value = "/{userKey}/EmailUser.htm")
+    public void emailUser(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        streamJSPUserLogged2(request, response, userKey, "EmailUser");
+    }
+
+    @RequestMapping(value = "/{userKey}/EmailMsgU.htm")
+    public void emailMsgU(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        streamJSPUserLogged2(request, response, userKey, "EmailMsgU");
+    }
+
 
 
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
