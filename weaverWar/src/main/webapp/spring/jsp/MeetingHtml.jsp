@@ -880,36 +880,14 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 <div ng-show="displayMode=='Attendance'">
 
-<!-- THIS IS THE ROLL CALL SECTION -->
-
-    <div class="well" title="Use this to let others know whether you expect to attend the meeting or not" ng-show="meeting.state==1">
-      <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
-        <div class="form-inline form-group">
-            <select ng-model="mySitch.attend" class="form-control">
-                <option>Unknown</option>
-                <option>Yes</option>
-                <option>Maybe</option>
-                <option>No</option>
-            </select>
-            Details:
-            <input type="text" ng-model="mySitch.situation" class="form-control" style="width:400px;"
-                   placeholder="Enter a clarification of whether you will attend">
-            <button class="btn btn-primary btn-raised" ng-click="saveSituation()">Save</button>
-        </div>
-    </div>
-
-
-
-
-
     <div style="max-width:800px">
       <div style="margin:10px;vertical-align:middle">
           <span class="h2">Meeting Participants: </span> 
           <span ng-hide="editMeetingPart=='participants'">
-              <button 
+              <button class="btn btn-default btn-primary btn-raised" 
                       ng-click="startParticipantEdit()"
-                      title="Edit the list of participants of the meeting">
-              Edit </button>
+                      title="Add more people to the participants of the meeting">
+              <span class="fa fa-plus"></span> Add Participants </button>
           </span>
       </div>
       <div class="well" ng-show="editMeetingPart=='participants'">
@@ -917,18 +895,20 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
               <tags-input ng-model="participantEditCopy" 
                           placeholder="Enter users to send notification email to"
                           display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
           </div>
           <div>
           <span class="dropdown">
-              <button class="btn btn-default btn-primary btn-raised" type="button" 
-                      ng-click="saveParticipantEdit()"
+              <button class="btn btn-default btn-primary btn-raised" 
+                      ng-click="addParticipants()"
                       title="Put this list to the list of participants">
-              Save </button>
+              <span class="fa fa-plus"></span> Add </button>
+              <button class="btn btn-default btn-danger btn-raised" type="button" 
+                      ng-click="editMeetingPart=''"
+                      title="Ignore what have been put here">
+              Cancel </button>
               <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" 
                       ng-hide="roleEqualsParticipants">
                   Add Everyone from {{meeting.targetRole}}
@@ -936,16 +916,18 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           </span>
           </div>
       </div>
-      <table class="table" ng-hide="editMeetingPart=='participants'">
+      <table class="table">
       <tr>
+          <th></th>
           <th>Name</th>
           <th>Attended</th>
           <th>Expected</th>
           <th>Situation</th>
-          <th>Present</th>
+          <th>Avail</th>
+          <th>On-Line</th>
       </tr>
-      <tr class="comment-inner" ng-repeat="pers in timeSlotResponders">
-          <td>
+      <tr class="comment-inner" ng-repeat="(key, pers) in meeting.people" class="form-inline form-group">
+          <td >
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
                 <img class="img-circle" 
@@ -957,23 +939,59 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                   <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
                       tabindex="-1" style="text-decoration: none;text-align:center">
                       {{pers.name}}<br/>{{pers.uid}}</a></li>
-                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem"
                       ng-click="navigateToUser(pers)">
                       <span class="fa fa-user"></span> Visit Profile</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem"
+                      ng-click="removeParticipant(pers)">
+                      <span class="fa fa-times"></span> Remove User</a></li>
                 </ul>
               </span>
-          
+          </td>
+          <td style="overflow:hidden;white-space:nowrap;width:90px">
             {{pers.name}}
           </td>
           <td ng-click="toggleAttend(pers.uid)">
-            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-plus-circle"></span></span>
+            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-check"></span></span>
             <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"><span class="fa fa-question-circle"></span></span>
           </td>
-          <td>{{expectAttend[pers.uid]}}</td>
-          <td>{{expectSituation[pers.uid]}}</td>
+          <td ng-dblclick="toggleEditSitch(pers)">
+              <div ng-hide="editSitch.uid==pers.uid">{{pers.expect}}</div>
+              <div ng-show="editSitch.uid==pers.uid">
+                  <select ng-model="pers.expect" class="form-control" style="padding:0">
+                     <option>Unknown</option>
+                     <option>Yes</option>
+                     <option>Maybe</option>
+                     <option>No</option>
+                  </select>
+                  
+              </div>
+          </td>
+          <td  ng-dblclick="toggleEditSitch(pers)">
+              <div ng-hide="editSitch.uid==pers.uid">{{pers.situation}}</div>
+              <div ng-show="editSitch.uid==pers.uid">
+                  <input ng-model="pers.situation" class="form-control" style="width:400px;"/>
+                  <button ng-click="toggleEditSitch(pers)" class="btn btn-sm btn-primary btn-raised">Close</button>
+              </div>
+          </td>
           <td>
-            <span ng-show="isPresent(pers.uid)" style="color:green"><span class="fa fa-check"></span></span>
-            <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee"><span class="fa fa-circle-thin"></span></span>
+                <span ng-show="pers.available==1" title="Conflict for that time" style="color:red;">
+                    <span class="fa fa-minus-circle"></span>
+                    <span class="fa fa-minus-circle"></span></span>
+                <span ng-show="pers.available==2" title="Very uncertain, maybe unlikely" style="color:red;">
+                    <span class="fa fa-question-circle"></span></span>
+                <span ng-show="pers.available==3" title="No response given" style="color:#eeeeee;">
+                    <span class="fa fa-question-circle"></span></span>
+                <span ng-show="pers.available==4" title="ok time for me" style="color:green;">
+                    <span class="fa fa-plus-circle"></span></span>
+                <span ng-show="pers.available==5" title="good time for me" style="color:green;">
+                    <span class="fa fa-plus-circle"></span>
+                    <span class="fa fa-plus-circle"></span></span>
+          
+          </td>
+          <td>
+            <span ng-show="isPresent(pers.uid)" style="color:green;text-align:center;"><span class="fa fa-user"></span></span>
+            <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee;text-align:center;"><span class="fa fa-circle-thin"></span></span>
           </td>
       </tr>
       </table>

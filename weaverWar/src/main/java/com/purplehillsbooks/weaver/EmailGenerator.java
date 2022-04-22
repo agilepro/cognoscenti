@@ -379,6 +379,10 @@ public class EmailGenerator extends DOMFace {
                 for (AgendaItem ai : meeting.getSortedAgendaItems()) {
                     for (String docId : ai.getDocList()) {
                         AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
+                        if (aRec==null) {
+                            //this means that the document does not exist.  Maybe it was deleted?  Ignore it.
+                            continue;
+                        }
                         attachList.add(aRec);
                     }
                 }
@@ -446,6 +450,10 @@ public class EmailGenerator extends DOMFace {
         
         JSONArray attachArray = new JSONArray();
         for (AttachmentRecord att : selAtt) {
+            if (att==null) {
+                System.out.println("How is it possible that the iterated value 'att' is null in getJSONForTemplate???");
+                continue;
+            }
             JSONObject oneAtt = new JSONObject();
             StringBuilder sb = new StringBuilder();
             sb.append(ar.baseURL);

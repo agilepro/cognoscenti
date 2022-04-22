@@ -388,15 +388,11 @@ public class MeetingRecord extends DOMFace {
      */
     public void actOnProposedTime(JSONObject cmdInput) throws Exception {
         String action = cmdInput.getString("action");
-        String fieldName = "timeSlots";
-        if (!cmdInput.getBoolean("isCurrent")) {
-            fieldName = "futureSlots";
-        }
         if ("SetValue".equals(action)) {
             long time = cmdInput.getLong("time");
-            MeetingProposeTime mpt = findProposedTime(fieldName, time);
+            MeetingProposeTime mpt = findProposedTime("timeSlots", time);
             if (mpt==null) {
-                throw new Exception("This meeting does not have a "+fieldName+" time of "+time);
+                throw new Exception("This meeting does not have a proposed time of "+time);
             }
             String user = cmdInput.getString("user");
             int value = cmdInput.getInt("value");
@@ -404,21 +400,21 @@ public class MeetingRecord extends DOMFace {
         }
         else if ("AddTime".equals(action)) {
             long time = cmdInput.getLong("time");
-            MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
+            MeetingProposeTime mpt = createChild("timeSlots", MeetingProposeTime.class);
             mpt.setProposedTime(time);
         }
         else if ("RemoveTime".equals(action)) {
             long time = cmdInput.getLong("time");
-            this.removeChildrenByNameAttrVal(fieldName, "proposedTime", Long.toString(time));
+            this.removeChildrenByNameAttrVal("timeSlots", "proposedTime", Long.toString(time));
         }
         else if ("ChangeTime".equals(action)) {
             long newTime = cmdInput.getLong("newTime");
-            MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
+            MeetingProposeTime mpt = createChild("timeSlots", MeetingProposeTime.class);
             mpt.setProposedTime(newTime);
         }
         else if ("RemoveUser".equals(action)) {
             String user = cmdInput.getString("user");
-            this.removeUserFromAllSlots(fieldName, user);
+            this.removeUserFromAllSlots("timeSlots", user);
         }
         else {
             throw new Exception("actOnProposedTime does not understand the command: "+action);
@@ -588,12 +584,6 @@ public class MeetingRecord extends DOMFace {
             timeSlotArray.put(oneSlot.getJSON());
         }
         meetingInfo.put("timeSlots", timeSlotArray);
-        timeSlotArray = new JSONArray();
-        timeSlot = getChildren("futureSlots", MeetingProposeTime.class);
-        for (MeetingProposeTime oneSlot : timeSlot) {
-            timeSlotArray.put(oneSlot.getJSON());
-        }
-        meetingInfo.put("futureSlots", timeSlotArray);
 
         //we need to know the id of the minutes of the previous meeting
         //if they exist.  Look it up every time.
@@ -621,28 +611,32 @@ public class MeetingRecord extends DOMFace {
         for (String id : this.getVector("participants")) {
             AddressListEntry ale = new AddressListEntry(id);
             JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
-            personRecord.put("isParticipant", true);
         }
         for (String id : this.getVector("attended")) {
             AddressListEntry ale = new AddressListEntry(id);
-            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
-            personRecord.put("attended", true);
+            if (peopleMap.has(ale.getKey())) {
+                JSONObject personRecord = peopleMap.getJSONObject(ale.getKey());
+                personRecord.put("attended", true);
+            }
         }
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
-            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
-
-            //whether they expect to attend or not
-            personRecord.put("expect", onePerson.getScalar("attend"));
-
-            // a comment about their situation
-            personRecord.put("situation", onePerson.getScalar("situation"));
+            if (peopleMap.has(ale.getKey())) {
+                JSONObject personRecord = peopleMap.getJSONObject(ale.getKey());
+    
+                //whether they expect to attend or not
+                personRecord.put("expect", onePerson.getScalar("attend"));
+    
+                // a comment about their situation
+                personRecord.put("situation", onePerson.getScalar("situation"));
+            }
         }
         for (String key : peopleMap.keySet()) {
             AddressListEntry ale = new AddressListEntry(key);
             JSONObject personRecord = peopleMap.requireJSONObject(key);
             personRecord.put("uid", ale.getUniversalId());
             personRecord.put("name", ale.getName());
+            personRecord.put("key", ale.getKey());
         }
         meetingInfo.put("people", peopleMap);
 
@@ -760,15 +754,6 @@ public class MeetingRecord extends DOMFace {
             for(int i=0; i<timeSlotArray.length(); i++) {
                 JSONObject oneSlot = timeSlotArray.getJSONObject(i);
                 MeetingProposeTime mpt = createChild("timeSlots", MeetingProposeTime.class);
-                mpt.updateFromJSON(oneSlot);
-            }
-        }
-        if (input.has("futureSlots")) {
-            this.removeAllNamedChild("futureSlots");
-            JSONArray timeSlotArray = input.getJSONArray("futureSlots");
-            for(int i=0; i<timeSlotArray.length(); i++) {
-                JSONObject oneSlot = timeSlotArray.getJSONObject(i);
-                MeetingProposeTime mpt = createChild("futureSlots", MeetingProposeTime.class);
                 mpt.updateFromJSON(oneSlot);
             }
         }

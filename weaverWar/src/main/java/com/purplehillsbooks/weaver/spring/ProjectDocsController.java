@@ -740,9 +740,13 @@ public class ProjectDocsController extends BaseController {
                 List<String> newDocs = new ArrayList<String>();
                 for (int i=0; i<postedList.length(); i++) {
                     String docId = postedList.getString(i);
-                    if (!newDocs.contains(docId)) {
-                        //make sure only unique values get stored once
-                        newDocs.add(docId);
+                    AttachmentRecord aRec = ngw.findAttachmentByUidOrNull(docId);
+                    if (aRec!=null) {
+                        //check that there really is a document with that id
+                        if (!newDocs.contains(aRec.getUniversalId())) {
+                            //make sure only unique values get stored once
+                            newDocs.add(aRec.getUniversalId());
+                        }
                     }
                 }
                 if (meetId != null) {
@@ -812,7 +816,11 @@ public class ProjectDocsController extends BaseController {
             JSONObject repo = new JSONObject();
             JSONArray ja = new JSONArray();
             for (String docId : docList) {
-                ja.put(docId);
+                AttachmentRecord aRec = ngw.findAttachmentByUidOrNull(docId);
+                if (aRec!=null) {
+                    //check that there really is a document with that id
+                    ja.put(aRec.getUniversalId());
+                }
             }
             repo.put("list", ja);
             sendJson(ar, repo);

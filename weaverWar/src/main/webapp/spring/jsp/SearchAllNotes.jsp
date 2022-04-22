@@ -19,6 +19,7 @@ app.controller('myCtrl', function($scope, $http) {
         searchSite: "one",
         searchProject: "one"
     }
+    $scope.searchScope = "This Workspace";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -37,6 +38,18 @@ app.controller('myCtrl', function($scope, $http) {
             return;
         }
         $scope.actualSearch = $scope.query.searchFilter;
+        if ($scope.searchScope=="This Workspace") {
+            $scope.query.searchSite = "one";
+            $scope.query.searchProject = "one";
+        }
+        else if ($scope.searchScope=="All Workspaces in Site") {
+            $scope.query.searchSite = "one";
+            $scope.query.searchProject = "all";
+        }
+        else {
+            $scope.query.searchSite = "all";
+            $scope.query.searchProject = "all";
+        }
         var postURL = "searchNotes.json";
         var postdata = angular.toJson($scope.query);
         $scope.showError=false;
@@ -90,19 +103,11 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
               <div class="form-inline form-group" style="margin:0px">
-                  <select ng-model="query.searchProject" class="form-control" style="width:150px;">
-                      <option value="one">This Workspace</option>
-                      <option value="all">All Workspaces</option>
-                      <option value="member">Member Workspaces</option>
-                      <option value="owner">Owned Workspaces</option>
+                  <select ng-model="searchScope" class="form-control" style="width:150px;">
+                      <option value="This Workspace">This Workspace</option>
+                      <option value="All Workspaces in Site">All Workspaces in Site</option>
+                      <option value="All Sites">All Sites</option>
                   </select>
-                  <span>
-                      <span class="gridTableColummHeader">Sites:</span>
-                      <select ng-model="query.searchSite" class="form-control" style="width:150px;">
-                          <option value="one">This Site</option>
-                          <option value="all">All Sites</option>
-                      </select>
-                  </span>
               </div>
             </td>
         </tr>

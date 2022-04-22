@@ -112,11 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         data.timeSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
-        data.futureSlots.sort(function(a,b) {
-            return a.proposedTime - b.proposedTime;
-        });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, $scope.emailId);
-        $scope.futureSlotResponders = calcResponders(data.futureSlots, $scope.emailId);
         
         $scope.descriptionHtml = data.meetingInfo;
     }    

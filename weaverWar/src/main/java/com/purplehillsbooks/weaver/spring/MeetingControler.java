@@ -479,6 +479,7 @@ public class MeetingControler extends BaseController {
               meeting.actOnProposedTime(timeUpdateInfo);
 
               JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
+              addVisitors(ar, repo, siteId, pageId);
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());

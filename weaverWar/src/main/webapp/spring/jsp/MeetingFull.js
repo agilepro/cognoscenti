@@ -611,11 +611,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         data.timeSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
-        data.futureSlots.sort(function(a,b) {
-            return a.proposedTime - b.proposedTime;
-        });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople, $scope.siteInfo.key);
-        $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople, $scope.siteInfo.key);
         determineRoleEqualsParticipants();
         if (isLinkToComment) {
             $scope.showAll();

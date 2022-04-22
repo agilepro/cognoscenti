@@ -30,6 +30,22 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.timeSlotResponders = [];
     $scope.newProposedTime = 0;
     $scope.mySitch = {uid:embeddedData.userId,attend:"Unknown",situation: ""}
+    $scope.editSitch = {};
+    $scope.sitchChoice = "";
+    $scope.sitchText = "";
+    
+    $scope.toggleEditSitch = function(pers) {
+        console.log("Changin sitch edit to: "+pers.uid);
+        if ($scope.editSitch.uid) {
+            $scope.saveSituation($scope.editSitch);
+        }
+        if ($scope.editSitch.uid == pers.uid) {
+            $scope.editSitch = {};
+        }
+        else {
+            $scope.editSitch = pers;
+        }
+    }
     
     
     var templateCacheDefeater = embeddedData.templateCacheDefeater;
@@ -64,20 +80,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.myUserId = SLAP.loginInfo.userId;
     $scope.actionItemFilter = "";
     $scope.realDocumentFilter = "";
-
-    $scope.isRegistered = function() {
-        var registered = false;
-        $scope.meeting.rollCall.forEach( function(item) {
-            if (item.uid == SLAP.loginInfo.userId) {
-                registered = ("Unknown" != item.attend);
-            }
-        });
-        return registered;
-    }
-
-    //initialize based on being registered, but allow user to toggle later
-    $scope.showRollCall = $scope.isRegistered();
-
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -307,9 +309,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             });
         }
     }
-    $scope.updatePlayers = function() {
-        $scope.meeting.participants = cleanUserList($scope.meeting.participants);
-    }    
     $scope.postIt = function(sendEmail) {
         $scope.meeting.state=1;
         $scope.savePartialMeeting(['state','sendEmailNow','participants']);
@@ -634,7 +633,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         
         //create HTML for description
         data.descriptionHtml = convertMarkdownToHtml(data.description);
-        
+        console.log("GOT PARTICIPANTS: ", data.participants);
+        console.log("GOT PEOPLE: ", data.people);
         if (!data.participants) {
             data.participants = [];
         }
@@ -645,11 +645,29 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             }
         }
         
-        data.participants.forEach( function(item) {
-            if (item) {
-                item.image = AllPeople.imageName(item);
+        Object.keys(data.people).forEach( function(key) {
+            let partCopy = data.people[key];
+            partCopy.key = key;
+            partCopy.image = key+".jpg";
+            if (!partCopy.expect) {
+                partCopy.expect = "Unknown";
+            }
+            if (!partCopy.situation) {
+                partCopy.situation = "";
+            }
+            partCopy.timeSlots = {};
+            partCopy.available = 3;
+            if (data.timeSlots) {
+                data.timeSlots.forEach( function(timeSlot) {
+                    partCopy.timeSlots[timeSlot.proposedTime] = timeSlot.people[partCopy.uid] || 3;
+                    if (timeSlot.proposedTime == data.startTime) {
+                        partCopy.available = timeSlot.people[partCopy.uid] || 3;
+                    }
+                });
             }
         });
+        
+        
         var totalAgendaTime = 0;
         data.agenda.forEach( function(item) {
             if (!item.proposed) {
@@ -1115,12 +1133,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 //so since this value does not change, storing the result here.
     $scope.extractPeopleSituation();
 
-    $scope.showSelfRegister = function() {
-        return ($scope.meeting.state == 1 && !$scope.showRollCall);
-    }
-    $scope.showRollBox = function() {
-        return $scope.showRollCall && $scope.meeting.state >= 1 && $scope.meeting.state <= 2
-    }
     $scope.editAttendees = function() {
         return ($scope.meeting.state == 2);
     }
@@ -1183,24 +1195,52 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.attendedCache = res;
     }
 
-    $scope.saveSituation = function() {
+    $scope.saveSituation = function(pers) {
         var found = false;
         $scope.meeting.rollCall.forEach( function(item) {
-            if (item.uid == embeddedData.userId) {
+            if (item.uid == pers.uid) {
                 found = true;
-                item.attend = $scope.mySitch.attend;
-                item.situation = $scope.mySitch.situation;
+                item.attend = pers.expect;
+                item.situation = pers.situation;
             }
         });
         if (!found) {
             $scope.meeting.rollCall.push( {
-                uid: embeddedData.userId,
-                attend: $scope.mySitch.attend,
-                situation: $scope.mySitch.situation
+                uid: pers.uid,
+                attend: pers.expect,
+                situation: pers.situation
             });
         }
         $scope.savePartialMeeting(['rollCall']);
-        $scope.showRollCall = $scope.isRegistered();
+    }
+
+    $scope.removeParticipant = function(pers) {
+        if ($scope.meeting.people[pers.key]) {
+            delete $scope.meeting.people[pers.key];
+            let newParticipants = [];
+            Object.keys($scope.meeting.people).forEach( function(key) {
+                let peopleItem = $scope.meeting.people[key];
+                newParticipants.push({name: peopleItem.name, uid: peopleItem.uid, key:peopleItem.key});
+            });
+            $scope.meeting.participants = newParticipants;
+            console.log("CHANGE PARTICIPANTS: ", newParticipants);
+            $scope.savePartialMeeting(['participants']);
+        }
+    }
+    $scope.addParticipants = function() {
+        $scope.participantEditCopy.forEach( function(newPers) {
+            let found = false;
+            $scope.meeting.participants.forEach( function(already) {
+                if (already.uid == newPers.uid) {
+                    found = true;
+                }
+            });
+            if (!found) {
+                $scope.meeting.participants.push(newPers);
+            }
+        });
+        $scope.savePartialMeeting(['participants']);
+        $scope.editMeetingPart="";
     }
 
     $scope.deleteItem = function(item) {
@@ -1999,7 +2039,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     };
     $scope.startParticipantEdit = function() {
-        $scope.participantEditCopy = $scope.meeting.participants
+        $scope.participantEditCopy = [];
         $scope.editMeetingPart='participants';
     }
     $scope.saveParticipantEdit = function() {
@@ -2043,32 +2083,45 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             return {"background-color": "yellow"}
         }
         return {};
-    }        
-});
+    }  
 
-function calcResponders(slots, AllPeople, siteId) {
-    var res = [];
-    var checker = [];
-    slots.forEach( function(person) {
-        if (checker.indexOf(person.uid)<0) {
-            let onePerson = AllPeople.findUserFromID(person.uid, siteId);
+
+    function calcResponders(slots, AllPeople, siteId) {
+        var res = [];
+        var checker = [];
+        slots.forEach( function(person) {
+            if (checker.indexOf(person.uid)<0) {
+                let onePerson = AllPeople.findUserFromID(person.uid, siteId);
+                if (onePerson && onePerson.uid) {
+                   res.push(onePerson);
+                }
+                checker.push(person.uid);
+            }
+        });
+        if (checker.indexOf(embeddedData.userId)<0) {
+            let onePerson = AllPeople.findUserFromID(embeddedData.userId, siteId);
             if (onePerson && onePerson.uid) {
                res.push(onePerson);
             }
-            checker.push(person.uid);
         }
-    });
-    if (checker.indexOf(embeddedData.userId)<0) {
-        let onePerson = AllPeople.findUserFromID(embeddedData.userId, siteId);
-        if (onePerson && onePerson.uid) {
-           res.push(onePerson);
-        }
+        res.forEach( function(person) {
+            person.sitchChoice = "Unknown";
+            person.sitchText = "";
+            $scope.meeting.rollCall.forEach( function(rc) {
+                if (rc.uid === person.uid) {
+                    person.sitchChoice = rc.attend;
+                    person.sitchText = rc.situation;
+                }
+            });
+        });
+        res.sort( function(a,b) {
+            return a.name.localeCompare(b.name);
+        });
+        return res;
     }
-    res.sort( function(a,b) {
-        return a.name.localeCompare(b.name);
-    });
-    return res;
-}
+    
+});
+
 
 app.filter('minutes', function() {
 

@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**

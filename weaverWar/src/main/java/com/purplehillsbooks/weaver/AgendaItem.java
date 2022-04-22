@@ -349,16 +349,40 @@ public class AgendaItem extends CommentContainer {
         if (input.has("minutesMerge")) {
         	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
         }
-        if (input.has("topics")) {
-            setLinkedTopics(input.getJSONArray("topics").getStringList());
-        }
-        
         updateCommentsFromJSON(input, ar);
+
+        if (input.has("topics")) {
+            List<String> newTopicList = new ArrayList<String>();
+            for (String oneTopic : input.getJSONArray("topics").getStringList()) {
+                TopicRecord aRec = ngw.getDiscussionTopic(oneTopic);
+                if (aRec!=null) {
+                    //add only if the topic is found, ignore if not found
+                    newTopicList.add(aRec.getUniversalId());
+                }
+            }
+            setLinkedTopics(newTopicList);
+        }
         if (input.has("actionItems")) {
-            setActionItems(constructVector(input.getJSONArray("actionItems")));
+            List<String> newDocList = new ArrayList<String>();
+            for (String id : constructVector(input.getJSONArray("actionItems"))) {
+                GoalRecord aRec = ngw.getGoalOrNull(id);
+                if (aRec!=null) {
+                    //add only if the document is found, ignore if not found
+                    newDocList.add(aRec.getUniversalId());
+                }
+            }
+            setActionItems(newDocList);
         }
         if (input.has("docList")) {
-            setDocList(constructVector(input.getJSONArray("docList")));
+            List<String> newDocList = new ArrayList<String>();
+            for (String oneDoc : constructVector(input.getJSONArray("docList"))) {
+                AttachmentRecord aRec = ngw.findAttachmentByUidOrNull(oneDoc);
+                if (aRec!=null) {
+                    //add only if the document is found, ignore if not found
+                    newDocList.add(aRec.getUniversalId());
+                }
+            }
+            setDocList(newDocList);
         }
 
         if (input.has("presenters")) {

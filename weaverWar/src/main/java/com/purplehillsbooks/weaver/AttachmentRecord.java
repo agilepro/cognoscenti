@@ -1074,7 +1074,7 @@ public class AttachmentRecord extends CommentContainer {
 
 
     public String emailSubject() throws Exception {
-        return "Attachment: "+getDisplayName();
+        return "Document: "+getDisplayName();
     }
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
