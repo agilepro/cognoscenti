@@ -29,21 +29,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.showTimeSlots = false;
     $scope.timeSlotResponders = [];
     $scope.newProposedTime = 0;
-    $scope.mySitch = {uid:embeddedData.userId,attend:"Unknown",situation: ""}
     $scope.editSitch = {};
-    $scope.sitchChoice = "";
-    $scope.sitchText = "";
     
     $scope.toggleEditSitch = function(pers) {
-        console.log("Changin sitch edit to: "+pers.uid);
         if ($scope.editSitch.uid) {
-            $scope.saveSituation($scope.editSitch);
+            let tempSitch = {expect: $scope.editSitch.expect, situation: $scope.editSitch.situation, uid: $scope.editSitch.uid};
+            $scope.saveSituation(tempSitch);
         }
         if ($scope.editSitch.uid == pers.uid) {
+            //just close it
             $scope.editSitch = {};
         }
         else {
-            $scope.editSitch = pers;
+            $scope.editSitch = {expect: pers.expect, situation: pers.situation, uid: pers.uid};
         }
     }
     
@@ -648,6 +646,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         Object.keys(data.people).forEach( function(key) {
             let partCopy = data.people[key];
             partCopy.key = key;
+            if (!partCopy.name) {
+                partCopy.name = partCopy.uid;
+            }
             partCopy.image = key+".jpg";
             if (!partCopy.expect) {
                 partCopy.expect = "Unknown";
@@ -687,7 +688,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
         $scope.editHead=false;
         $scope.editDesc=false;
-        $scope.extractPeopleSituation();
         $scope.determineIfAttending();
         if (data.reminderTime%1440 == 0) {
             $scope.timeFactor="Days"
@@ -1094,44 +1094,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         return [];
     }
     
-    
-    $scope.extractPeopleSituation = function() {
-        if (Array.isArray) {
-            if (!Array.isArray($scope.allLabels)) {
-                return;
-            }
-        }
-        else {
-            console.log("NO isArray function");
-        }
-        var selRole = getMeetingRole();
-        var expectAttend = {};
-        var expectSituation = {};
-        $scope.mySitch = {};
-        $scope.meeting.participants.forEach( function(item) {
-            var current = {uid:item.uid,name:item.name,key:item.key,attend: "Unknown",situation: ""};
-            let found = false;
-            expectAttend[item.uid] = "Unknown";
-            expectSituation[item.uid] = "";
-            $scope.meeting.rollCall.forEach( function(rc) {
-                if (rc.uid === item.uid) {
-                    current.attend = rc.attend;
-                    expectAttend[item.uid] = rc.attend;
-                    current.situation = rc.situation;
-                    expectSituation[item.uid] = rc.situation;
-                }
-            });
-            if (item.uid === embeddedData.userId) {
-                $scope.mySitch = current;
-            }
-        });
-        $scope.expectAttend = expectAttend;
-        $scope.expectSituation = expectSituation;
-    }
-
-//There is a strange bug in Angular that you can't call the method directly
-//so since this value does not change, storing the result here.
-    $scope.extractPeopleSituation();
 
     $scope.editAttendees = function() {
         return ($scope.meeting.state == 2);
@@ -2041,10 +2003,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.startParticipantEdit = function() {
         $scope.participantEditCopy = [];
         $scope.editMeetingPart='participants';
-    }
-    $scope.saveParticipantEdit = function() {
-        $scope.meeting.participants = $scope.participantEditCopy;
-        $scope.savePendingEdits();
     }
     
     $scope.isPresent = function(tuid) {

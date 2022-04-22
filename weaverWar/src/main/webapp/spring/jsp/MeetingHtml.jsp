@@ -600,7 +600,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                 </span>
             </td>
           </tr>
-          <tr>
+          <tr ng-show="false">
             <td ng-click="editMeetingPart='reminderTime'" class="labelColumn">Reminder:</td>
             <td ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
               {{factoredTime}} {{timeFactor}} before the meeting. 
@@ -886,7 +886,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <span ng-hide="editMeetingPart=='participants'">
               <button class="btn btn-default btn-primary btn-raised" 
                       ng-click="startParticipantEdit()"
-                      title="Add more people to the participants of the meeting">
+                      title="Add more people to the list below">
               <span class="fa fa-plus"></span> Add Participants </button>
           </span>
       </div>
@@ -903,14 +903,15 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <span class="dropdown">
               <button class="btn btn-default btn-primary btn-raised" 
                       ng-click="addParticipants()"
-                      title="Put this list to the list of participants">
+                      title="Add these people to the list of participants">
               <span class="fa fa-plus"></span> Add </button>
               <button class="btn btn-default btn-danger btn-raised" type="button" 
                       ng-click="editMeetingPart=''"
-                      title="Ignore what have been put here">
+                      title="Ignore what has been put here and close box">
               Cancel </button>
               <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" 
-                      ng-hide="roleEqualsParticipants">
+                      ng-hide="roleEqualsParticipants" 
+                      title="Look at the workspace role, and suggest anyone not already a participant">
                   Add Everyone from {{meeting.targetRole}}
               </button>
           </span>
@@ -919,12 +920,12 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
       <table class="table">
       <tr>
           <th></th>
-          <th>Name</th>
-          <th>Attended</th>
-          <th>Expected</th>
-          <th>Situation</th>
-          <th>Avail</th>
-          <th>On-Line</th>
+          <th title="Name of the participant">Name</th>
+          <th title="Click on these to record whether the user attended or not">Attended</th>
+          <th title="Shows whether the user is expected to be there or not">Expected</th>
+          <th title="Shows the user explanation of whether they will attend or not">Situation</th>
+          <th title="Shows what the user selected during the time selection phase, if anything">Avail</th>
+          <th title="Shows an indicator when this person is online and has accessed meeting in last 30 minutes">On</th>
       </tr>
       <tr class="comment-inner" ng-repeat="(key, pers) in meeting.people" class="form-inline form-group">
           <td >
@@ -952,13 +953,15 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
             {{pers.name}}
           </td>
           <td ng-click="toggleAttend(pers.uid)">
-            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-check"></span></span>
-            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"><span class="fa fa-question-circle"></span></span>
+            <span ng-show="didAttend(pers.uid)" style="color:green" title="indicates that the user did attend meeting">
+                <span class="fa fa-check"></span></span>
+            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"  title="indicates that the user did not attend meeting">
+                <span class="fa fa-question-circle"></span></span>
           </td>
           <td ng-dblclick="toggleEditSitch(pers)">
               <div ng-hide="editSitch.uid==pers.uid">{{pers.expect}}</div>
               <div ng-show="editSitch.uid==pers.uid">
-                  <select ng-model="pers.expect" class="form-control" style="padding:0">
+                  <select ng-model="editSitch.expect" class="form-control" style="padding:0">
                      <option>Unknown</option>
                      <option>Yes</option>
                      <option>Maybe</option>
@@ -970,7 +973,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <td  ng-dblclick="toggleEditSitch(pers)">
               <div ng-hide="editSitch.uid==pers.uid">{{pers.situation}}</div>
               <div ng-show="editSitch.uid==pers.uid">
-                  <input ng-model="pers.situation" class="form-control" style="width:400px;"/>
+                  <input ng-model="editSitch.situation" class="form-control" style="width:400px;"/>
                   <button ng-click="toggleEditSitch(pers)" class="btn btn-sm btn-primary btn-raised">Close</button>
               </div>
           </td>
@@ -990,8 +993,8 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           
           </td>
           <td>
-            <span ng-show="isPresent(pers.uid)" style="color:green;text-align:center;"><span class="fa fa-user"></span></span>
-            <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee;text-align:center;"><span class="fa fa-circle-thin"></span></span>
+            <span ng-show="isPresent(pers.uid)" style="color:green;text-align:center;" title="this user is online and has accessed this meeting recently"><span class="fa fa-user"></span></span>
+            <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee;text-align:center;" title="this user has not accessed this meeting recently"><span class="fa fa-circle-thin"></span></span>
           </td>
       </tr>
       </table>

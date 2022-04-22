@@ -26,7 +26,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -449,11 +451,17 @@ public class EmailGenerator extends DOMFace {
         ar.ngp = ngp;
         
         JSONArray attachArray = new JSONArray();
+        Set<String> duplicateEliminator = new HashSet<String>();
         for (AttachmentRecord att : selAtt) {
             if (att==null) {
                 System.out.println("How is it possible that the iterated value 'att' is null in getJSONForTemplate???");
                 continue;
             }
+            String docId = att.getUniversalId();
+            if (duplicateEliminator.contains(docId)) {
+                continue;
+            }
+            duplicateEliminator.add(docId);
             JSONObject oneAtt = new JSONObject();
             StringBuilder sb = new StringBuilder();
             sb.append(ar.baseURL);
