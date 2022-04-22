@@ -379,12 +379,12 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     </div>
 
     <hr/>
-    <h3>Proposed Times ({{browserZone}})</h3>
+    <h3>Availability for Proposed Times</h3>
 
     <table class="table">
     <tr>
       <th></th>
-      <th>Date and Time</th>
+      <th>Date and Time<br/>{{browserZone}}</th>
       <th style="width:20px;"></th>
       <th ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
           style="text-align:center">
@@ -673,12 +673,10 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
         </td>
         </tr>
         </table>
-      <div ng-show="meeting.state<=0">
-          <p>Meeting is in draft mode and is hidden from the participants.
+      <div ng-show="meeting.state<=2">
+          <p ng-show="meeting.state<=0">Meeting is in draft mode and is hidden from the participants.
              Advance the meeting to planning mode to let them know about it
              before the meeting starts.</p>
-      </div>
-      <div ng-show="meeting.state<=2">
           <p ng-show="meeting.state==1">
           Meeting is in planning mode until the time that the meeting starts.
           </p>
@@ -692,8 +690,8 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
           <th>Start</th>
           <th>Planned<br/>Duration</th>
           <th></th>
-          <th>Actual<br/>Duration</th>
-          <th>Remaining</th>
+          <th ng-show="meeting.state==2">Actual<br/>Duration</th>
+          <th ng-show="meeting.state==2">Remaining</th>
           <th></th>
         </tr>
         <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-hide="item.proposed" >
@@ -736,11 +734,11 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                     <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                 </span>
           </td>
-          <td ng-dblclick="openAgenda(item)">
-                <span ng-show="meeting.state==2">{{item.timerTotal| minutes}}</span>
+          <td ng-dblclick="openAgenda(item)" ng-show="meeting.state==2">
+                <span>{{item.timerTotal| minutes}}</span>
           </td>
-          <td ng-dblclick="openAgenda(item)">
-                <span ng-show="meeting.state==2">{{item.duration - item.timerTotal| minutes}}</span>
+          <td ng-dblclick="openAgenda(item)" ng-show="meeting.state==2">
+                <span>{{item.duration - item.timerTotal| minutes}}</span>
           </td>
           <td ng-style="timerStyleComplete(item)" >
             <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
