@@ -28,6 +28,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.createPdf = function() {
         document.getElementById("exportPdfFrom").submit();
+        alert("look");
     }
 });
 
@@ -43,19 +44,21 @@ app.controller('myCtrl', function($scope, $http) {
     function selectAll(type){
         if(type == 'public'){
             var obj = document.getElementsByName("publicNotes");
+            var allPublic = document.getElementById("publicNotesAll");
+            var setting = true;
             for(i=0; i<obj.length ; i++){
-                var allPublic = document.getElementById("publicNotesAll");
                 if(allPublic.checked == true){
                     obj[i].checked = true;
                 }else{
                     obj[i].checked = false;
                 }
             }
-        }else if(type == 'member'){
-            var obj = document.getElementsByName("memberNotes");
+        }
+        if(type == 'meeting'){
+            var obj = document.getElementsByName("meetings");
+            var allPublic = document.getElementById("meetingAll");
             for(i=0; i<obj.length ; i++){
-                var allMember = document.getElementById("memberNotesAll");
-                if(allMember.checked == true){
+                if(allPublic.checked == true){
                     obj[i].checked = true;
                 }else{
                     obj[i].checked = false;
@@ -105,7 +108,8 @@ app.controller('myCtrl', function($scope, $http) {
             <thead>
             <tr>
                <th width="75%">&nbsp;&nbsp;&nbsp;<b>Subject</b></th>
-                <th><b><input type="checkbox" name="publicNotesAll" id="publicNotesAll" onclick="return selectAll('public')" checked="checked" /> &nbsp; Select All </b></th>
+                <th><b><input type="checkbox" name="publicNotesAll" id="publicNotesAll" 
+                              onclick="return selectAll('public')" checked="checked" /> &nbsp; Select All </b></th>
             </tr>
             </thead>
             <%
@@ -119,10 +123,36 @@ app.controller('myCtrl', function($scope, $http) {
             %>
             <tr>
                 <td>
-                  &nbsp;&nbsp;&nbsp; <% ar.writeHtml(noteRec.getSubject()); %>
+                  &nbsp;<i class="fa fa-lightbulb-o"></i>&nbsp; <% ar.writeHtml(noteRec.getSubject()); %>
                 </td>
                 <td>
                   &nbsp;&nbsp;&nbsp; <input type="checkbox" name="publicNotes" checked="checked" value="<%ar.writeHtml(noteRec.getId());%>"  onclick="return unSelect('publicNotesAll')"/>
+                </td>
+            </tr>
+          <%
+            }
+          %>
+        </table>
+        
+        
+        <div class="generalHeading">Meetings :</div>
+        <table border="0px solid gray" class="table">
+            <thead>
+            <tr>
+               <th width="75%">&nbsp;&nbsp;&nbsp;<b>Meeting</b></th>
+                <th><b><input type="checkbox" name="meetingAll" id="meetingAll" 
+                              onclick="return selectAll('meeting')" checked="checked" /> &nbsp; Select All </b></th>
+            </tr>
+            </thead>
+            <%
+                for(MeetingRecord meetRec:ngp.getMeetings()){
+            %>
+            <tr>
+                <td>
+                  &nbsp;<i class="fa fa-gavel"></i>&nbsp; <% ar.writeHtml(meetRec.getName()); %>
+                </td>
+                <td>
+                  &nbsp;&nbsp;&nbsp; <input type="checkbox" name="meetings" checked="checked" value="<%ar.writeHtml(meetRec.getId());%>"  onclick="return unSelect('meetingAll')"/>
                 </td>
             </tr>
           <%

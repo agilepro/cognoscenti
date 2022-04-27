@@ -89,7 +89,9 @@ public class MongoDB {
             count++;
         }
         long ms = System.currentTimeMillis()-startTime;
-        System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);
+        if (count>0) {
+            System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);
+        }
         return ja;
     }
     

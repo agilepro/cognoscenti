@@ -86,20 +86,13 @@ Required parameters:
     JSONArray allLabels = ngp.getJSONLabels();
     
     List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
+    
     JSONArray allHistory = new JSONArray();
+    String trace = "Count: "+histRecs.size()+" for aid="+aid;
+    int i = 0;
     for (HistoryRecord hist : histRecs) {
+        i++;
         JSONObject jo = hist.getJSON(ngp, ar);
-        AddressListEntry ale2 = new AddressListEntry(hist.getResponsible());
-        jo.put("responsible", ale2.getJSON() );
-        UserProfile responsible = ale2.getUserProfile();
-        String imagePath = "assets/photoThumbnail.gif";
-        if(responsible!=null) {
-            String imgPath = responsible.getImage();
-            if (imgPath!=null && imgPath.length() > 0) {
-                imagePath = "icon/"+imgPath;
-            }
-        }
-        jo.put("imagePath",   imagePath );
         allHistory.put(jo);
     }
     
@@ -461,7 +454,7 @@ function copyTheLink() {
 
 <div class="col col-lg-6 col-sm-12">
     <div class="panel panel-default" ng-show="linkedTopics.length>0 && isMember">
-      <div class="panel-heading headingfont">Linked Topics
+      <div class="panel-heading headingfont">Attached To:
       </div>
       <div class="panel-body clipping">
           <div ng-repeat="topic in linkedTopics"
@@ -469,27 +462,11 @@ function copyTheLink() {
                ng-click="navigateToTopic(topic)">
             <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
           </div>
-      </div>
-    </div>
-</div>
-<div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedGoals.length>0 && isMember">
-      <div class="panel-heading headingfont">Linked Action Items
-      </div>
-      <div class="panel-body clipping">
           <div ng-repeat="act in linkedGoals"
                class="panelClickable"
                ng-click="navigateToActionItem(act)">
             <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
           </div>
-      </div>
-    </div>
-</div>
-<div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedMeetings.length>0 && isMember">
-      <div class="panel-heading headingfont">Linked Meetings
-      </div>
-      <div class="panel-body clipping">
           <div ng-repeat="meet in linkedMeetings"
                class="panelClickable"
                ng-click="navigateToMeeting(meet)">
@@ -520,12 +497,26 @@ function copyTheLink() {
     <table>
 
         <tr ng-repeat="hist in history"  >
-            <td class="projectStreamIcons" style="padding-bottom:20px;">
-                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+            <td class="projectStreamIcons" style="padding:10px;">
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" 
+                     style="width:32px;height:32px" 
+                     title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToCreator(rec.user)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
             </td>
-            <td class="projectStreamText" style="padding-bottom:10px;">
-                {{hist.time|cdate}} -
-                <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+            <td class="projectStreamText" style="padding:10px;">
+                {{hist.time|cdate}} - {{hist.responsible.name}}
                 <br/>
                 {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
                 was {{hist.event}}.
@@ -545,3 +536,8 @@ function copyTheLink() {
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 
+<pre>
+------
+<%=trace%>
+------
+</pre>

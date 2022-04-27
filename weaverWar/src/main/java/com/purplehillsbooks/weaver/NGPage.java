@@ -1755,7 +1755,7 @@ public abstract class NGPage extends ContainerCommon {
 
 
     public List<HistoryRecord>  getHistoryForResource(int contextType, String id) throws Exception {
-        List<HistoryRecord> allHist = pageProcess.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> allHist = getAllHistory();
         List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
         for (HistoryRecord hr : allHist) {
             if (contextType != hr.getContextType()) {
@@ -1774,7 +1774,7 @@ public abstract class NGPage extends ContainerCommon {
     public List<HistoryRecord> getHistoryRange(long startTime, long endTime)
             throws Exception
     {
-        List<HistoryRecord> allHist = pageProcess.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> allHist = getAllHistory();
         List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
         for (HistoryRecord hr : allHist)
         {

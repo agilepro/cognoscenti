@@ -187,35 +187,47 @@ public class WikiToPDF
     public void writeWikiAsPDF(NGWorkspace ngp, AuthRequest ar)  throws Exception {
 
         Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
+        Vector<MeetingRecord> meetings = new Vector<MeetingRecord>();
 
-        String[] publicNoteIDs = ar.req.getParameterValues("publicNotes");
+        String[] idArray = ar.req.getParameterValues("publicNotes");
 
-        if (publicNoteIDs==null) {
-            publicNoteIDs = new String[0];
+        if (idArray==null) {
+            idArray = new String[0];
         }
 
-        for (String noteId : publicNoteIDs) {
+        for (String noteId : idArray) {
             TopicRecord lrt = ngp.getDiscussionTopic(noteId);
             if (lrt!=null) {
                 memberNotes.add(lrt);
             }
         }
 
+        idArray = ar.req.getParameterValues("meetings");
+
+        if (idArray==null) {
+            idArray = new String[0];
+        }
+        for (String meetId : idArray) {
+            MeetingRecord meet = ngp.findMeetingOrNull(meetId);
+            if (meet!=null) {
+                meetings.add(meet);
+            }
+        }
+        
         includeDecisions = (ar.req.getParameter("decisions")!=null);
         includeAttachments = (ar.req.getParameter("attachments")!=null);
         includeComments = (ar.req.getParameter("comments")!=null);
         includeRoles = (ar.req.getParameter("roles")!=null);
         includeActionItems = (ar.req.getParameter("actionItems")!=null);
 
-        int totalNotes = memberNotes.size();
         pddoc = new PDDocument();
 
         //set up the print time for use in the footer
         printTime = convertDate(ar.nowTime);
 
 
-        if (totalNotes>1 || includeDecisions || includeAttachments) {
-            writeTOCPage(ngp, memberNotes);
+        if (memberNotes.size()>1 || meetings.size()>1 ||includeDecisions || includeAttachments) {
+            writeTOCPage(ngp, memberNotes, meetings);
         }
 
         int noteCount = 0;
@@ -223,6 +235,13 @@ public class WikiToPDF
             for (TopicRecord lr : memberNotes) {
                 noteCount++;
                 writeNoteToPDF(ngp, lr, noteCount);
+            }
+        }
+        noteCount = 0;
+        if(meetings.size() > 0){
+            for (MeetingRecord meet : meetings) {
+                noteCount++;
+                writeMeetingToPDF(ngp, meet, noteCount);
             }
         }
 
@@ -251,7 +270,8 @@ public class WikiToPDF
 
 
     private void writeTOCPage(NGWorkspace ngp,
-            Vector<TopicRecord> memberNoteList)  throws Exception {
+            Vector<TopicRecord> memberNoteList, 
+            Vector<MeetingRecord> meetings)  throws Exception {
         headerText = "Topic report generated from Weaver";
 
         startPage();
@@ -279,6 +299,21 @@ public class WikiToPDF
                 newLine();
                 indent=15;
                 writeWrappedLine(Integer.toString(noteCount)+". "+note.getSubject());
+            }
+        }
+        noteCount = 0;
+        if(meetings.size() > 0){
+            setPFont();
+            newLine();
+            newLine();
+            writeWrappedLine("Meetings: ");
+            for (MeetingRecord meet : meetings) {
+                noteCount++;
+                setPFont();
+                indent=0;
+                newLine();
+                indent=15;
+                writeWrappedLine(Integer.toString(noteCount)+". "+meet.getName());
             }
         }
         indent=0;
@@ -350,31 +385,87 @@ public class WikiToPDF
         writeWikiData(note.getWiki());
         if (includeComments) {
             for (CommentRecord cr : note.getComments()) {
-                if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT) {
-                    continue;
-                }
-                String content = cr.getContent();
-                if (content.length()==0) {
-                    continue;
-                }
-                long date = cr.getPostTime();
-                if (date<100) {
-                    date = cr.getTime();
-                }
-                String dateStr = convertDateAndTime(date);
-                makeHorizontalRule();
-                setPFont();
-                newLine();
-                writeWrappedLine("From:  "+cr.getUser().getName());
-                newLine();
-                writeWrappedLine("Date: " + dateStr);
-                setPFont();
-                newLine();
-                writeWikiData(content);
+                writeComment(cr);
             }
         }
     }
+    
+    public void writeMeetingToPDF(NGWorkspace ngp, MeetingRecord meet, int meetNum) throws Exception
+    {
+        NGBook site = ngp.getSite();
 
+        String meetingName = stripBadCharacters(meet.getName());
+        UserRef lastEditor = UserManager.lookupUserByAnyId(meet.getOwner());
+        String startTime = convertDateAndTime(meet.getStartTime());
+
+        headerText = "Meeting "+meetNum+": "+meetingName;
+        if(!isNewPage){
+            endPage();
+            startPage();
+        }
+        indent=0;
+
+        setH1Font();
+        newLine();
+        writeWrappedLine(meetingName);
+
+        setH1Font();
+        currentLineSize = 8;  //but really small
+        newLine();
+        writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+site.getFullName());
+        newLine();
+        writeWrappedLine("Last modified by:  "+lastEditor.getName()+" on "+startTime);
+
+        box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+        currentLineSize = 12;
+        newLine();
+
+        writeWikiData(meet.getMeetingDescription());
+        int agendaNum = 0;
+        for (AgendaItem ai : meet.getAgendaItems()) {
+            
+            if (ai.isSpacer()) {
+                continue;
+                
+            }
+            agendaNum++;
+            newLine();
+            writeWrappedLine(""+agendaNum+ ": " + ai.getSubject());
+            writeWikiData(ai.getDesc());
+            
+            if (includeComments) {
+                for (CommentRecord cr : ai.getComments()) {
+                    writeComment(cr);
+                }
+            }
+        }
+    }    
+    
+    private void writeComment(CommentRecord cr) throws Exception  {
+        if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT) {
+            return;
+        }
+        String content = cr.getContent();
+        if (content.length()==0) {
+            return;
+        }
+        long date = cr.getPostTime();
+        if (date<100) {
+            date = cr.getTime();
+        }
+        String dateStr = convertDateAndTime(date);
+        makeHorizontalRule();
+        setPFont();
+        newLine();
+        writeWrappedLine("From:  "+cr.getUser().getName());
+        newLine();
+        writeWrappedLine("Date: " + dateStr);
+        setPFont();
+        newLine();
+        writeWikiData(content);
+    }
+    
+    
     private void writeWikiData(String wiki) throws Exception {
         LineIterator li = new LineIterator(wiki);
         while (li.moreLines())
@@ -1129,7 +1220,7 @@ public class WikiToPDF
 
             createLink(x1, y1, width, height, linkAddr);
         }
-        writeWrappedLine(linkName);
+        writeWrappedLine(linkName+" ");
 
     }
 

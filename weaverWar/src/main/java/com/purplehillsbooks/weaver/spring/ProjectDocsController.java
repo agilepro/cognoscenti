@@ -49,7 +49,6 @@ import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.util.PDFUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -278,27 +277,6 @@ public class ProjectDocsController extends BaseController {
             throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
         }
     }
-
-    @RequestMapping(value="/{siteId}/{pageId}/pdf1/{docId}.{ext}", method = RequestMethod.POST)
-    public void generatePDFDocument(
-            @PathVariable String siteId,
-            @PathVariable String pageId,
-            @PathVariable String docId,
-            @PathVariable String ext,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            PDFUtil pdfUtil = new PDFUtil();
-            pdfUtil.serveUpFile(ar, siteId, pageId);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/reminders.htm", method = RequestMethod.GET)

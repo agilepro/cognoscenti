@@ -818,20 +818,13 @@ history.task.subtask.add    113
     public JSONObject getJSON(NGWorkspace ngp, AuthRequest ar) throws Exception {
         AddressListEntry ale = new AddressListEntry(getResponsible());
         JSONObject jo = new JSONObject();
-        jo.put("ctxType", getContextTypeName(getContextType()));
+        jo.put("ctxId", getContext());
         jo.put("ctxName", lookUpObjectName(ngp));
-        jo.put("ctxSite", ngp.getSiteKey());
         jo.put("ctxProject", ngp.getKey());
+        jo.put("ctxSite", ngp.getSiteKey());
+        jo.put("ctxType", getContextTypeName(getContextType()));
         jo.put("event", convertEventTypeToString(getEventType()));
-        JSONObject user = ale.getJSON();
-        UserProfile uProf = ale.getUserProfile();
-        if (uProf!=null) {
-            user.put("image", uProf.getImage());
-        }
-        else {
-            user.put("image","unknown.jpg");
-        }
-        jo.put("responsible", user);
+        jo.put("responsible", ale.getJSON());
         jo.put("time",getTimeStamp());
         jo.put("comment",getComments());
         return jo;
