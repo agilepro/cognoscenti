@@ -87,7 +87,7 @@ public class ProcessRecord extends BaseRecord
     * Generates a fully qualified, licensed,  Wf-XML link for this process
     * This is the link someone else would use to get to this process.
     * AuthRequest is needed to know the current server context path
-    */
+    *
     public LicensedURL getWfxmlLink(AuthRequest ar)
         throws Exception
     {
@@ -101,6 +101,7 @@ public class ProcessRecord extends BaseRecord
             ngp.getKey(),
             accessLicense().getId());
     }
+    */
 
 
     public LicensedURL[] getLicensedParents()
@@ -232,7 +233,7 @@ public class ProcessRecord extends BaseRecord
 
     }
 
-
+ 
 
 
     public List<HistoryRecord> getAllHistory()

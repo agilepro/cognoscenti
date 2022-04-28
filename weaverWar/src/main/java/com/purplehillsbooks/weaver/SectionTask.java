@@ -110,7 +110,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         }
     }
 
-    public void writePlainText(NGSection section, Writer out) throws Exception
+/*     public void writePlainText(NGSection section, Writer out) throws Exception
     {
         ProcessRecord process = section.parent.getProcess();
         if (process != null) {
@@ -145,7 +145,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
             SectionUtil.writeTextWithLB(String.valueOf(task.getPriority()) , out);
         }
     }
-
+ */
     public void removeTask(String taskId, NGSection section) {
         Element secElem = section.getElement();
         for (Element taskElem : DOMUtils

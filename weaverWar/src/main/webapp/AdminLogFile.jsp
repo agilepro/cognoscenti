@@ -11,7 +11,6 @@
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%@page import="com.purplehillsbooks.weaver.NGPageIndex"
 %><%@page import="com.purplehillsbooks.weaver.NGSession"
-%><%@page import="com.purplehillsbooks.weaver.rest.NGLeafServlet"
 %><%@page import="com.purplehillsbooks.weaver.rest.ServerInitializer"
 %><%
 

@@ -96,9 +96,10 @@ app.controller('myCtrl', function($scope, $http) {
                             </ul>
                           </div>
                         </td>
-                        <td>{{rec.requestId}}<br/>{{rec.status}}</td>
+                        <td>{{rec.status}}</td>
                         <td>{{rec.siteName}}<br/>
-                            <input ng-model="rec.siteId" type="text">
+                            <input ng-model="rec.siteId" type="text"/>
+                            <a href="allSites.htm?filter={{rec.siteId}}"><i class="fa fa-search"></i></a>
                             </td>
                         <td>{{rec.purpose}}</td>
                         <td>{{rec.requester}}<br/>{{rec.modTime|date}}</td>

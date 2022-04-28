@@ -43,11 +43,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
  * a fixed resource id for the page. There are other resources as well.
  *
  * http://machine:port/{application}/p/{pageid}/leaf.xml
- * http://machine:port/{application}/p/{pageid}/process.xml
- * http://machine:port/{application}/p/{pageid}/process.xpdl
- *
- * leaf.xml retrieves the page information as XML process.xml retrieves the
- * process on the page as xml process.xpdl represents that same process as xpdl
  *
  * There is a subspace for attachments using the name "a" Thus an attachment
  * "MyReport.doc" would be found at:
@@ -66,7 +61,7 @@ public class RestServlet extends javax.servlet.http.HttpServlet {
         try {
             NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
-                throw new Exception("not initialized", NGLeafServlet.initializationException);
+                throw new Exception("not initialized", ar.getCogInstance().lastFailureMsg);
             }
 
             RestHandler rh = new RestHandler(ar);

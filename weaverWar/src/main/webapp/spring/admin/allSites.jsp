@@ -6,6 +6,8 @@
     ar.assertSuperAdmin("Must be a super admin to see new site page");
     UserProfile uProf=ar.getUserProfile();
     
+    String filter = ar.defParam("filter", "");
+    
     Cognoscenti cog = Cognoscenti.getInstance(request);
     List<AddressListEntry> allEmail = new ArrayList<AddressListEntry>();
     
@@ -44,6 +46,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showSiteDate = true;
     $scope.showWSDate = true;
     $scope.showOwners = true;
+    $scope.filterChars = "<%=filter%>";
     
 
     $scope.showError = false;

@@ -56,12 +56,7 @@ import com.purplehillsbooks.streams.HTMLWriter;
  * a fixed resource id for the page. There are other resources as well.
  *
  * http://machine:port/{application}/p/{pageid}/leaf.xml
- * http://machine:port/{application}/p/{pageid}/process.xml
- * http://machine:port/{application}/p/{pageid}/process.xpdl
  * http://machine:port/{application}/p/{pageid}/process.txt
- *
- * leaf.xml retrieves the page information as XML process.xml retrieves the
- * process on the page as xml process.xpdl represents that same process as xpdl
  *
  * There is a subspace for attachments using the name "a" Thus an attachment
  * "MyReport.doc" would be found at:
@@ -76,7 +71,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     * if there is an exception during startup, it is recorded here.
     * TODO: eliminate this static variable
     */
-    public static Exception initializationException;
+    //public static Exception initializationException;
 
         //
         // HISTORIC MARKER -
@@ -268,10 +263,13 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 return;
             }
             if (resource.equals("process.xml")) {
-                ngw.genProcessData(ar);
-                return;
+                throw new Exception("NGLeafServlet does handle the (process.xml) resource: "+resource);
+                //ngw.genProcessData(ar);
+                //return;
             } 
             if (resource.endsWith("wfxml")) {
+                throw new Exception("NGLeafServlet does handle the (wfxml) resource: "+resource);
+                /*
                 System.out.println("A WFXML request has occurred");
                 if (resource.equals("process.wfxml")) {
                     ngw.genProcessData(ar);
@@ -291,6 +289,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                     ngw.genActivityData(ar, idstr);
                     return;
                 }
+                */
             }
             
             throw new Exception("NGLeafServlet does not know how to handle the resource: "+resource);

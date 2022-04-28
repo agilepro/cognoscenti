@@ -55,12 +55,12 @@ public class GoalRecord extends BaseRecord {
 
     }
 
-
+/*
     /**
      * Generates a fully qualified, licensed, Wf-XML link for this action item This is
      * the link someone else would use to get to this action item. AuthRequest is
      * needed to know the current server context path
-     */
+     *
     public LicensedURL getWfxmlLink(AuthRequest ar) throws Exception {
         NGContainer ngp = ar.ngp;
         if (ngp == null) {
@@ -71,6 +71,7 @@ public class GoalRecord extends BaseRecord {
                 + "/s/Tasks/id/" + getId() + "/data.xml", ngp.getKey()
                 + "_task" + getId(), accessLicense().getId());
     }
+*/
 
     /**
      * Get a NGRole that represents the assignees of the action item. a role is a list

@@ -33,11 +33,11 @@
          </listener>
 
 
-    <servlet>
+    <!--servlet>
         <servlet-name>NGLeafServlet</servlet-name>
         <servlet-class>com.purplehillsbooks.weaver.rest.NGLeafServlet</servlet-class>
         <load-on-startup>6</load-on-startup>
-    </servlet>
+    </servlet-->
     <servlet>
         <servlet-name>DataFeedServlet</servlet-name>
         <servlet-class>com.purplehillsbooks.weaver.rest.DataFeedServlet</servlet-class>
@@ -54,10 +54,6 @@
     <servlet>
         <servlet-name>EmergencyConfigServlet</servlet-name>
         <servlet-class>com.purplehillsbooks.weaver.rest.EmergencyConfigServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RssServlet</servlet-name>
-        <servlet-class>com.purplehillsbooks.weaver.rest.RssServlet</servlet-class>
     </servlet>
 
 
@@ -106,7 +102,7 @@
         <url-pattern>/v/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
+    <!--servlet-mapping>
         <servlet-name>NGLeafServlet</servlet-name>
         <url-pattern>/p/*</url-pattern>
     </servlet-mapping>
@@ -121,15 +117,11 @@
     <servlet-mapping>
         <servlet-name>NGLeafServlet</servlet-name>
         <url-pattern>/u/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping-->
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-    <servlet-mapping>
-        <servlet-name>RssServlet</servlet-name>
-        <url-pattern>/Tasks.rss</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>EmergencyConfigServlet</servlet-name>

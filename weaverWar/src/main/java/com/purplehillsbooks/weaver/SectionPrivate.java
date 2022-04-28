@@ -42,13 +42,13 @@ public class SectionPrivate extends SectionWiki
     {
         return "Private Format";
     }
-
+/* 
     public void writePlainText(NGSection section, Writer out) throws Exception
     {
         //don't throw exception in this case, because it can effect search function
         return;
     }
-
+ */
 
     /**
     * Converts a Wiki section to a topic, copying appropriate information

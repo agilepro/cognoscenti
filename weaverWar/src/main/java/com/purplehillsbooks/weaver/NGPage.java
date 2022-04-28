@@ -943,7 +943,7 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-
+/*
     public void genProcessData(AuthRequest ar)
         throws Exception
     {
@@ -970,7 +970,9 @@ public abstract class NGPage extends ContainerCommon {
         task.fillInWfxmlActivity(doc, actEle,processurl);
         DOMUtils.writeDom(doc, ar.w);
     }
+    */
 
+/*
     public void writePlainText(AuthRequest ar) throws Exception
     {
         for (int i=0; i<displayNames.size(); i++) {
@@ -983,6 +985,7 @@ public abstract class NGPage extends ContainerCommon {
             formatter.writePlainText(sec, ar.w);
         }
     }
+    */
 
     /**
     * Get a four digit numeric id which is unique on the page.

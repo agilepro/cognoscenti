@@ -46,7 +46,7 @@ public interface SectionFormat
     * scans the section information, and return the plain text data that can be
     * used for search.
     */
-    public void writePlainText(NGSection section, Writer out) throws Exception;
+//    public void writePlainText(NGSection section, Writer out) throws Exception;
 
     /**
     * Walk through whatever elements this owns and put all the four digit

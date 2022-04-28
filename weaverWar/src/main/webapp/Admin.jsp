@@ -44,12 +44,14 @@
     //maybe this should be done only on an error.
     ar.getSession().flushConfigCache();
 
+
     String startupProblem = "";
+/* 
     if (NGLeafServlet.initializationException!=null)
     {
         startupProblem = NGLeafServlet.initializationException.toString();
     }
-
+*/
     long lastSentTime = ar.getSuperAdminLogFile().getLastNotificationSentTime();
 
     File userFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();

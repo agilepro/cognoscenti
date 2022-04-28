@@ -47,12 +47,12 @@ public class SectionUnknown extends SectionWiki {
     }
 
 
-    public void writePlainText(NGSection section, Writer out) throws Exception
+/*     public void writePlainText(NGSection section, Writer out) throws Exception
     {
         // nothing to write
     }
 
-    public TopicRecord convertToLeaflet(NGSection noteSection,
+ */    public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
         throw new ProgramLogicError("Method convertToLeaflet not implemented for Unknown Format");

@@ -42,11 +42,11 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     }
 
 
-    public void writePlainText(NGSection section, Writer out) throws Exception {
+/*     public void writePlainText(NGSection section, Writer out) throws Exception {
         //silently ignore this request ... no text to produce.
         //necessary for search function
     }
-
+ */
     /*
      * Walk through whatever elements this owns and put all the four digit IDs
      * into the vector so that we can generate another ID and assure it does not

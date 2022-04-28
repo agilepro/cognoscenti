@@ -509,6 +509,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/subProcess.ajax", method = RequestMethod.POST)
     public void searchSubProcess(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -538,8 +539,10 @@ public class ProjectGoalController extends BaseController {
             streamException(ex,ar);
         }
     }
+    */
 
 
+    /*
     private String getLocalProcess(String siteId, String projectID,
             AuthRequest ar) throws Exception {
 
@@ -555,6 +558,7 @@ public class ProjectGoalController extends BaseController {
 
         throw new Exception("Local process for workspace '"+projectID+"' not found");
     }
+    */
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/fetchGoal.json", method = RequestMethod.GET)

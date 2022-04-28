@@ -64,7 +64,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         }
     }
 
-    //TODO: should take an AuthRequest, and WikiConverter
+/*     //TODO: should take an AuthRequest, and WikiConverter
     public void writePlainText(NGSection section, Writer out) throws Exception {
 
         if (section == null || out == null) {
@@ -78,7 +78,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
             out.write(" ");
         }
     }
-
+ */
     //TODO: should take an AuthRequest, and WikiConverter
     private void removeWikiFormattings(Writer out, String line)
             throws Exception {

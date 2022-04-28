@@ -155,7 +155,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     }
 
 
-    @Override
+    /* @Override
     public void writePlainText(NGSection section, Writer out) throws Exception
     {
         assertRightAttachmentsSection(section);
@@ -170,7 +170,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             SectionUtil.writeTextWithLB(attachment.getDescription() , out);
         }
     }
-
+ */
 
     private void assertRightAttachmentsSection(NGSection sec) throws Exception
     {

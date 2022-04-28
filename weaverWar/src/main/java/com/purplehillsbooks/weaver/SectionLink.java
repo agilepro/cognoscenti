@@ -92,7 +92,7 @@ public class SectionLink extends SectionWiki
             }
         }
     }
-
+/* 
    public void writePlainText(NGSection section, Writer out) throws Exception
    {
 
@@ -108,7 +108,7 @@ public class SectionLink extends SectionWiki
         }
    }
 
-    /**
+ */    /**
     * Converts a Link section to a topic, converting the links
     * appropriately.  The idea is that all (displayable)
     * sections will become topics in the future.

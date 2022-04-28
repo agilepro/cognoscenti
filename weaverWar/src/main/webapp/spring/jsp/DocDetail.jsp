@@ -88,10 +88,7 @@ Required parameters:
     List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
     
     JSONArray allHistory = new JSONArray();
-    String trace = "Count: "+histRecs.size()+" for aid="+aid;
-    int i = 0;
     for (HistoryRecord hist : histRecs) {
-        i++;
         JSONObject jo = hist.getJSON(ngp, ar);
         allHistory.put(jo);
     }
@@ -510,7 +507,7 @@ function copyTheLink() {
                       tabindex="-1" style="text-decoration: none;text-align:center">
                       {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                      ng-click="navigateToCreator(rec.user)">
+                      ng-click="navigateToCreator(hist.responsible)">
                       <span class="fa fa-user"></span> Visit Profile</a></li>
                 </ul>
               </span>
@@ -518,7 +515,7 @@ function copyTheLink() {
             <td class="projectStreamText" style="padding:10px;">
                 {{hist.time|cdate}} - {{hist.responsible.name}}
                 <br/>
-                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                {{hist.ctxType}} "<b>{{hist.ctxName}}</b>"
                 was {{hist.event}}.
                 <br/>
                 <i>{{hist.comments}}</i>
@@ -536,8 +533,3 @@ function copyTheLink() {
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 
-<pre>
-------
-<%=trace%>
-------
-</pre>

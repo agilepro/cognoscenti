@@ -78,10 +78,10 @@ public class SectionForNotes extends SectionWiki {
         return null;
     }
 
-    public void writePlainText(NGSection section, Writer out) throws Exception {
+/*     public void writePlainText(NGSection section, Writer out) throws Exception {
         writePlainTextForComments(section, out);
     }
-
+ */
     public void findLinks(List<String> v, NGSection section) throws Exception {
 
         for (TopicRecord cr : getAllNotesInSection(section)) {

@@ -585,7 +585,7 @@ public class WikiConverter
     * Given a block of wiki formatted text, this will strip out all the
     * formatting characters, but write out everything else as plain text.
     */
-    public void writePlainText(String wikiData) throws Exception
+/*     public void writePlainText(String wikiData) throws Exception
     {
         LineIterator li = new LineIterator(wikiData);
         while (li.moreLines())
@@ -595,8 +595,8 @@ public class WikiConverter
             ar.write(" ");
         }
     }
-
-    protected void removeWikiFormattings(String line)
+ */
+/*     protected void removeWikiFormattings(String line)
             throws Exception
     {
         if (line == null || ((line = line.trim()).length()) == 0) {
@@ -626,7 +626,7 @@ public class WikiConverter
         line = line.replaceAll("|", "");
         ar.write(line);
     }
-
+ */
     protected void fomatFontStyle(String line) throws Exception{
         boolean scan = false;
         if(line.startsWith("%%(")){

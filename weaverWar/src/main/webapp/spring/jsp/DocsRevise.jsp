@@ -177,6 +177,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             //cancel action - nothing really to do
         });
     };    
+    $scope.navigateToCreator = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+    }
 });
 </script>
 
@@ -282,14 +285,29 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <table>
 
         <tr ng-repeat="hist in history"  >
-            <td class="projectStreamIcons" style="padding-bottom:20px;">
-                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+            <td class="projectStreamIcons" style="padding:10px;">
+              <span class="dropdown" >
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" 
+                     style="width:32px;height:32px" 
+                     title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" style="text-decoration: none;text-align:center">
+                      {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToCreator(hist.responsible)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
             </td>
-            <td class="projectStreamText" style="padding-bottom:10px;">
+            <td class="projectStreamText" style="padding:10px;">
                 {{hist.time|cdate}} -
                 <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
                 <br/>
-                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                {{hist.ctxType}} "<b>{{hist.ctxName}}</b>"
                 was {{hist.event}}.
                 <br/>
                 <i>{{hist.comments}}</i>
