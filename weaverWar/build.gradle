@@ -15,6 +15,8 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -39,6 +41,11 @@ dependencies {
     //https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
     implementation 'org.mongodb:mongodb-driver-sync:4.5.0'
 
+    // https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+    //implementation 'org.apache.pdfbox:pdfbox:1.8.16'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.26'
+    // https://mvnrepository.com/artifact/com.github.ralfstuckert.pdfbox-layout/pdfbox1-layout
+    //implementation 'com.github.ralfstuckert.pdfbox-layout:pdfbox2-layout:1.0.1'
 }
 
 application {

@@ -31,7 +31,6 @@ import java.util.List;
 public class SectionDef
 {
 
-    private static final int ANON_ACCESS   = 0;
     public static final int PUBLIC_ACCESS = 1;
     public static final int MEMBER_ACCESS = 2;
     public static final int ADMIN_ACCESS  = 3;
@@ -55,8 +54,6 @@ public class SectionDef
 
     //
     private static List<SectionDef> allDefs = null;
-    private static SectionFormat defaultUnknownSectionFormat = null;
-
     public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
     {
         if (allDefs == null) {
@@ -79,67 +76,23 @@ public class SectionDef
     public synchronized static void clearAllStaticVars()
     {
         allDefs = null;
-        defaultUnknownSectionFormat = null;
     }
 
-    @SuppressWarnings("deprecation")
+
     private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
-        defaultUnknownSectionFormat = new SectionUnknown();
+        new SectionUnknown();
 
         SectionFormat cannonNotes =      new SectionForNotes();
         SectionFormat canonAttachments = new SectionAttachments();
-        SectionFormat canonFolders =     new SectionFolders();
         SectionFormat cannonTasks =      new SectionTask();
 
         allDefs.add(new SectionDef(cannonNotes, "Comments", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Notes", true));
         allDefs.add(new SectionDef(canonAttachments, "Attachments", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Attachments", true));
-        allDefs.add(new SectionDef(canonFolders, "Folders", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   false, "Folders", true));
         allDefs.add(new SectionDef(cannonTasks, "Tasks", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Tasks", true));
-
-        
-        /*
-        //the rest of these are deprecated
-        SectionFormat canonWiki = new SectionWiki();
-        SectionFormat canonLink =        new SectionLink();
-        SectionFormat canonPrivate =     new SectionPrivate();
-
-
-
-        //deprecated sections
-        allDefs.add(new SectionDef(canonLink, "See Also", ANON_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Public Links", false));
-        allDefs.add(new SectionDef(canonWiki, "Member Content", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Content", false));
-        allDefs.add(new SectionDef(canonWiki, "Description", ANON_ACCESS,   MEMBER_ACCESS,
-                                   true, "Public Description", false));
-        allDefs.add(new SectionDef(canonLink, "Links", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true, "Links", false));
-        //comments can be made private to the admin, so no need for this.
-        allDefs.add(new SectionDef(canonWiki, "Author Notes",ADMIN_ACCESS, ADMIN_ACCESS,
-                                   true, "XXX Admin Notes", false));
-        //comments can be made private, so no need for this
-        allDefs.add(new SectionDef(canonPrivate, "Private", PRIVATE_ACCESS, PRIVATE_ACCESS,
-                                   true, "XXX Private", false));
-        //comments can be made public, so no need for this
-        allDefs.add(new SectionDef(cannonNotes, "Public Comments", ANON_ACCESS, PUBLIC_ACCESS,
-                                   true, "XXX comment format", false));
-        //public content is like public description
-        allDefs.add(new SectionDef(canonWiki, "Public Content", ANON_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Public Content", false));
-        allDefs.add(new SectionDef(canonWiki, "Notes",       MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true,  "XXX Notes", false));
-        //all attachments are in the regular attachments section
-        allDefs.add(new SectionDef(canonAttachments, "Public Attachments", ANON_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Public Attachments", false));
-
-
-        // Please see NGWorkspace.createPage() to add the default sections to the newly created page.
-        */
     }
 
     public String getTypeName() throws Exception {
