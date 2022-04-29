@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.text;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
@@ -22,9 +21,9 @@ public interface DrawableText extends Area {
      *            the listener to
      *            {@link DrawListener#drawn(Object, Position, float, float)
      *            notify} on drawn objects.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
     void drawText(PDPageContentStream contentStream, Position upperLeft,
-            Alignment alignment, DrawListener drawListener) throws IOException;
+            Alignment alignment, DrawListener drawListener) throws Exception;
 }

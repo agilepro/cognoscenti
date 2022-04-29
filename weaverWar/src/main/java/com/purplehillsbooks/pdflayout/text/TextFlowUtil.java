@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,11 +37,11 @@ public class TextFlowUtil {
      * @param font
      *            the font to use.
      * @return the created text flow.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static TextFlow createTextFlow(final String text,
-            final float fontSize, final PDFont font) throws IOException {
+            final float fontSize, final PDFont font) throws Exception {
         final Iterable<CharSequence> parts = fromPlainText(text);
         return createTextFlow(parts, fontSize, font, font, font, font);
     }
@@ -61,11 +60,11 @@ public class TextFlowUtil {
      *            the base font describing the bundle of
      *            plain/blold/italic/bold-italic fonts.
      * @return the created text flow.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static TextFlow createTextFlowFromMarkup(final String markup,
-            final float fontSize, final BaseFont baseFont) throws IOException {
+            final float fontSize, final BaseFont baseFont) throws Exception {
         return createTextFlowFromMarkup(markup, fontSize,
                 baseFont.getPlainFont(), baseFont.getBoldFont(),
                 baseFont.getItalicFont(), baseFont.getBoldItalicFont());
@@ -111,13 +110,13 @@ public class TextFlowUtil {
      * @param boldItalicFont
      *            the bold-italic font.
      * @return the created text flow.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static TextFlow createTextFlowFromMarkup(final String markup,
             final float fontSize, final PDFont plainFont,
             final PDFont boldFont, final PDFont italicFont,
-            final PDFont boldItalicFont) throws IOException {
+            final PDFont boldItalicFont) throws Exception {
         final Iterable<CharSequence> parts = fromMarkup(markup);
         return createTextFlow(parts, fontSize, plainFont, boldFont, italicFont,
                 boldItalicFont);
@@ -139,14 +138,14 @@ public class TextFlowUtil {
      * @param boldItalicFont
      *            the bold-italic font.
      * @return the created text flow.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected static TextFlow createTextFlow(
             final Iterable<CharSequence> parts, final float fontSize,
             final PDFont plainFont, final PDFont boldFont,
             final PDFont italicFont, final PDFont boldItalicFont)
-            throws IOException {
+            throws Exception {
         final TextFlow result = new TextFlow();
         boolean bold = false;
         boolean italic = false;
@@ -329,7 +328,7 @@ public class TextFlowUtil {
      *            the markup to split.
      * @return the splitted and replaced sequence.
      */
-    protected static Iterable<CharSequence> splitByControlCharacter(
+    private static Iterable<CharSequence> splitByControlCharacter(
             ControlCharacterFactory controlCharacterFactory,
             final Iterable<CharSequence> markup) {
         List<CharSequence> result = new ArrayList<CharSequence>();

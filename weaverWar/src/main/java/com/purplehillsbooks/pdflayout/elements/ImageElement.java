@@ -2,7 +2,6 @@ package com.purplehillsbooks.pdflayout.elements;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
@@ -36,16 +35,16 @@ public class ImageElement implements Element, Drawable, Dividable,
         this.height = image.getHeight();
     }
 
-    public ImageElement(final InputStream inputStream) throws IOException {
+    public ImageElement(final InputStream inputStream) throws Exception {
         this(ImageIO.read(inputStream));
     }
 
-    public ImageElement(final String filePath) throws IOException {
+    public ImageElement(final String filePath) throws Exception {
         this(ImageIO.read(new File(filePath)));
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         if (width == SCALE_TO_RESPECT_WIDTH) {
             if (getMaxWidth() > 0 && image.getWidth() > getMaxWidth()) {
                 return getMaxWidth();
@@ -68,7 +67,7 @@ public class ImageElement implements Element, Drawable, Dividable,
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         if (height == SCALE_TO_RESPECT_WIDTH) {
             if (getMaxWidth() > 0 && image.getWidth() > getMaxWidth()) {
                 return getMaxWidth() / (float) image.getWidth()
@@ -94,7 +93,7 @@ public class ImageElement implements Element, Drawable, Dividable,
 
     @Override
     public Divided divide(float remainingHeight, float nextPageHeight)
-            throws IOException {
+            throws Exception {
         if (getHeight() <= nextPageHeight) {
             return new Divided(new VerticalSpacer(remainingHeight), this);
         }
@@ -128,7 +127,7 @@ public class ImageElement implements Element, Drawable, Dividable,
 
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException {
+            Position upperLeft, DrawListener drawListener) throws Exception {
         CompatibilityHelper.drawImage(image, pdDocument, contentStream,
                 upperLeft, getWidth(), getHeight());
         if (drawListener != null) {

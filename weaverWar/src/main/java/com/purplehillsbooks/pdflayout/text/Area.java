@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.text;
 
-import java.io.IOException;
 
 /**
  * Defines an area with a width and height.
@@ -9,13 +8,13 @@ public interface Area {
 
     /**
      * @return the width of the area.
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
-    float getWidth() throws IOException;
+    float getWidth() throws Exception;
 
     /**
      * @return the height of the area.
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
-    float getHeight() throws IOException;
+    float getHeight() throws Exception;
 }

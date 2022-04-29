@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
@@ -27,11 +26,11 @@ public class Indent extends ControlFragment {
      *            the indentation.
      * @param indentUnit
      *            the indentation unit.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public Indent(final float indentWidth, final SpaceUnit indentUnit)
-            throws IOException {
+            throws Exception {
         this("", indentWidth, indentUnit, DEFAULT_FONT_DESCRIPTOR,
                 Alignment.Left, Color.black);
     }
@@ -51,12 +50,12 @@ public class Indent extends ControlFragment {
      *            the font size, resp. the height of the new line.
      * @param font
      *            the font to use.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public Indent(final String label, final float indentWidth,
             final SpaceUnit indentUnit, final float fontSize, final PDFont font)
-            throws IOException {
+            throws Exception {
 
         this(label, indentWidth, indentUnit, fontSize, font, Alignment.Left,
                 Color.black);
@@ -79,12 +78,12 @@ public class Indent extends ControlFragment {
      *            the font to use.
      * @param alignment
      *            the alignment of the label.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public Indent(final String label, final float indentWidth,
             final SpaceUnit indentUnit, final float fontSize,
-            final PDFont font, final Alignment alignment) throws IOException {
+            final PDFont font, final Alignment alignment) throws Exception {
         this(label, indentWidth, indentUnit, fontSize, font, alignment,
                 Color.black);
     }
@@ -108,13 +107,13 @@ public class Indent extends ControlFragment {
      *            the alignment of the label.
      * @param color
      *            the color to use.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public Indent(final String label, final float indentWidth,
             final SpaceUnit indentUnit, final float fontSize,
             final PDFont font, final Alignment alignment, final Color color)
-            throws IOException {
+            throws Exception {
         this(label, indentWidth, indentUnit,
                 new FontDescriptor(font, fontSize), alignment, color);
     }
@@ -134,12 +133,12 @@ public class Indent extends ControlFragment {
      *            the alignment of the label.
      * @param color
      *            the color to use.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public Indent(final String label, final float indentWidth,
             final SpaceUnit indentUnit, final FontDescriptor fontDescriptor,
-            final Alignment alignment, final Color color) throws IOException {
+            final Alignment alignment, final Color color) throws Exception {
         super("INDENT", label, fontDescriptor, color);
 
         float indent = calculateIndent(indentWidth, indentUnit, fontDescriptor);
@@ -182,7 +181,7 @@ public class Indent extends ControlFragment {
 
     private float calculateIndent(final float indentWidth,
             final SpaceUnit indentUnit, final FontDescriptor fontDescriptor)
-            throws IOException {
+            throws Exception {
         if (indentWidth < 0) {
             return 0;
         }
@@ -190,7 +189,7 @@ public class Indent extends ControlFragment {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         return styledText.getWidth();
     }
 

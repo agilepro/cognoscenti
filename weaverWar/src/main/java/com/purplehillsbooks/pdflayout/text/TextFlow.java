@@ -1,12 +1,8 @@
 package com.purplehillsbooks.pdflayout.text;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
@@ -38,30 +34,21 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
  * Escape * with \* and _ with \_ in markup.
  * </pre>
  */
-public class TextFlow implements TextSequence, WidthRespecting {
+public class TextFlow extends TextSequence implements WidthRespecting {
 
     public static final float DEFAULT_LINE_SPACING = 1.2f;
-    private static final String HEIGHT = "height";
-    private static final String WIDTH = "width";
 
-    private Map<String, Object> cache = new HashMap<String, Object>();
+    private Float cachedWidth;
+    private Float cachedHeight;
 
-    private final List<TextFragment> text = new ArrayList<TextFragment>();
+    private final List<TextFragment> textList = new ArrayList<TextFragment>();
     private float lineSpacing = DEFAULT_LINE_SPACING;
     private float maxWidth = -1;
     private boolean applyLineSpacingToFirstLine = true;
 
     private void clearCache() {
-        cache.clear();
-    }
-
-    private void setCachedValue(final String key, Object value) {
-        cache.put(key, value);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getCachedValue(final String key, Class<T> type) {
-        return (T) cache.get(key);
+        cachedWidth = null;
+        cachedHeight = null;
     }
 
     /**
@@ -74,10 +61,10 @@ public class TextFlow implements TextSequence, WidthRespecting {
      *            the size of the font.
      * @param font
      *            the font to use to draw the text.
-     * @throws IOException by PDFBox
+     * @throws Exception by PDFBox
      */
     public void addText(final String text, final float fontSize,
-            final PDFont font) throws IOException {
+            final PDFont font) throws Exception {
         add(TextFlowUtil.createTextFlow(text, fontSize, font));
     }
 
@@ -91,10 +78,10 @@ public class TextFlow implements TextSequence, WidthRespecting {
      * @param baseFont
      *            the base font describing the bundle of
      *            plain/blold/italic/bold-italic fonts.
-     * @throws IOException by PDFBox
+     * @throws Exception by PDFBox
      */
     public void addMarkup(final String markup, final float fontSize,
-            final BaseFont baseFont) throws IOException {
+            final BaseFont baseFont) throws Exception {
         add(TextFlowUtil.createTextFlowFromMarkup(markup, fontSize, baseFont));
     }
 
@@ -113,11 +100,11 @@ public class TextFlow implements TextSequence, WidthRespecting {
      *            the italic font to use.
      * @param boldItalicFont
      *            the bold-italic font to use.
-     * @throws IOException by PDFBox
+     * @throws Exception by PDFBox
      */
     public void addMarkup(final String markup, final float fontSize,
             final PDFont plainFont, final PDFont boldFont,
-            final PDFont italicFont, final PDFont boldItalicFont) throws IOException {
+            final PDFont italicFont, final PDFont boldItalicFont) throws Exception {
         add(TextFlowUtil.createTextFlowFromMarkup(markup, fontSize, plainFont,
                 boldFont, italicFont, boldItalicFont));
     }
@@ -141,7 +128,7 @@ public class TextFlow implements TextSequence, WidthRespecting {
      *            the fragment to add.
      */
     public void add(final TextFragment fragment) {
-        text.add(fragment);
+        textList.add(fragment);
         clearCache();
     }
 
@@ -151,9 +138,9 @@ public class TextFlow implements TextSequence, WidthRespecting {
      * @return the removed fragment (if any).
      */
     public TextFragment removeLast() {
-        if (text.size() > 0) {
+        if (textList.size() > 0) {
             clearCache();
-            return text.remove(text.size() - 1);
+            return textList.remove(textList.size() - 1);
         }
         return null;
     }
@@ -162,9 +149,9 @@ public class TextFlow implements TextSequence, WidthRespecting {
      * @return the last added fragment (if any).
      */
     public TextFragment getLast() {
-        if (text.size() > 0) {
+        if (textList.size() > 0) {
             clearCache();
-            return text.get(text.size() - 1);
+            return textList.get(textList.size() - 1);
         }
         return null;
     }
@@ -173,12 +160,12 @@ public class TextFlow implements TextSequence, WidthRespecting {
      * @return <code>true</code> if this flow does not contain any fragments.
      */
     public boolean isEmpty() {
-        return text.isEmpty();
+        return textList.isEmpty();
     }
 
     @Override
     public Iterator<TextFragment> iterator() {
-        return text.iterator();
+        return textList.iterator();
     }
 
     @Override
@@ -238,46 +225,91 @@ public class TextFlow implements TextSequence, WidthRespecting {
     }
 
     @Override
-    public float getWidth() throws IOException {
-        Float width = getCachedValue(WIDTH, Float.class);
-        if (width == null) {
-            width = TextSequenceUtil.getWidth(this, getMaxWidth());
-            setCachedValue(WIDTH, width);
+    public float getWidth() throws Exception {
+        if (cachedWidth == null) {
+            cachedWidth = TextSequenceUtil.getWidth(this, getMaxWidth());
         }
-        return width;
+        return cachedWidth;
     }
 
     @Override
-    public float getHeight() throws IOException {
-        Float height = getCachedValue(HEIGHT, Float.class);
-        if (height == null) {
-            height = TextSequenceUtil.getHeight(this, getMaxWidth(),
+    public float getHeight() throws Exception {
+        if (cachedHeight == null) {
+            cachedHeight = TextSequenceUtil.getHeight(this, getMaxWidth(),
                     getLineSpacing(), isApplyLineSpacingToFirstLine());
-            setCachedValue(HEIGHT, height);
         }
-        return height;
+        return cachedHeight;
     }
 
     @Override
     public void drawText(PDPageContentStream contentStream, Position upperLeft,
-            Alignment alignment, DrawListener drawListener) throws IOException {
-        TextSequenceUtil.drawText(this, contentStream, upperLeft, drawListener, alignment,
+            Alignment alignment, DrawListener drawListener) throws Exception {
+        drawTextSpecial(this, contentStream, upperLeft, drawListener, alignment,
                 getMaxWidth(), getLineSpacing(),
                 isApplyLineSpacingToFirstLine());
     }
+    /**
+     * Draws the given text sequence to the PDPageContentStream at the given
+     * position.
+     *
+     * @param text
+     *            the text to draw.
+     * @param contentStream
+     *            the stream to draw to
+     * @param upperLeft
+     *            the position of the start of the first line.
+     * @param drawListener
+     *            the listener to
+     *            {@link DrawListener#drawn(Object, Position, float, float)
+     *            notify} on drawn objects.
+     * @param alignment
+     *            how to align the text lines.
+     * @param maxWidth
+     *            if &gt; 0, the text may be word-wrapped to match the width.
+     * @param lineSpacing
+     *            the line spacing factor.
+     * @param applyLineSpacingToFirstLine
+     *            indicates if the line spacing should be applied to the first
+     *            line also. Makes sense in most cases to do so.
+     * @throws Exception
+     *             by pdfbox
+     */
+    public static void drawTextSpecial(TextSequence text,
+            PDPageContentStream contentStream, Position upperLeft,
+            DrawListener drawListener, Alignment alignment, float maxWidth,
+            final float lineSpacing, final boolean applyLineSpacingToFirstLine)
+            throws Exception {
+        List<TextLine> lines = TextSequenceUtil.wordWrapToLines(text, maxWidth);
+        float maxLineWidth = Math.max(maxWidth, TextSequenceUtil.getMaxWidth(lines));
+        Position position = upperLeft;
+        float lastLineHeight = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            boolean applyLineSpacing = i > 0 || applyLineSpacingToFirstLine;
+            TextLine textLine = lines.get(i);
+            float currentLineHeight = textLine.getHeight();
+            float lead = lastLineHeight;
+            if (applyLineSpacing) {
+                lead += (currentLineHeight * (lineSpacing - 1));
+            }
+            lastLineHeight = currentLineHeight;
+            position = position.add(0, -lead);
+            textLine.drawAligned(contentStream, position, alignment, maxLineWidth, drawListener);
+        }
+
+    }
 
     public void drawTextRightAligned(PDPageContentStream contentStream,
-            Position endOfFirstLine, DrawListener drawListener) throws IOException {
+            Position endOfFirstLine, DrawListener drawListener) throws Exception {
         drawText(contentStream, endOfFirstLine.add(-getWidth(), 0),
                 Alignment.Right, drawListener);
     }
 
     /**
      * @return a copy of this text flow where all leading {@link NewLine}s are removed.
-     * @throws IOException by pdfbox.
+     * @throws Exception by pdfbox.
      */
-    public TextFlow removeLeadingEmptyLines() throws IOException {
-        if (text.size() == 0 || !(text.get(0) instanceof NewLine)) {
+    public TextFlow removeLeadingEmptyLines() throws Exception {
+        if (textList.size() == 0 || !(textList.get(0) instanceof NewLine)) {
             return this;
         }
         TextFlow result = createInstance();
@@ -298,7 +330,7 @@ public class TextFlow implements TextSequence, WidthRespecting {
 
     @Override
     public String toString() {
-        return "TextFlow [text=" + text + "]";
+        return "TextFlow [text=" + textList + "]";
     }
 
 }

@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -15,28 +14,22 @@ import com.purplehillsbooks.pdflayout.text.Position;
 public interface Drawable {
 
     /**
-     * @return the width of the drawable.
-     * @throws IOException
-     *             by pdfbox
+     * @return the width of the drawable in points
      */
-    float getWidth() throws IOException;
+    float getWidth() throws Exception;
 
     /**
-     * @return the height of the drawable.
-     * @throws IOException
-     *             by pdfbox
+     * @return the height of the drawable in points
      */
-    float getHeight() throws IOException;
+    float getHeight() throws Exception;
 
     /**
      * If an absolute position is given, the drawable will be drawn at this
      * position ignoring any {@link Layout}.
      *
      * @return the absolute position.
-     * @throws IOException
-     *             by pdfbox
      */
-    Position getAbsolutePosition() throws IOException;
+    Position getAbsolutePosition() throws Exception;
 
     /**
      * Draws the object at the given position.
@@ -51,18 +44,18 @@ public interface Drawable {
      *            the listener to
      *            {@link DrawListener#drawn(Object, Position, float, float) notify} on
      *            drawn objects.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException;
+            Position upperLeft, DrawListener drawListener) throws Exception;
 
     /**
      * @return a copy of this drawable where any leading empty vertical space is
      *         removed, if possible. This is useful for avoiding leading empty
      *         space on a new page.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    Drawable removeLeadingEmptyVerticalSpace() throws IOException;
+    Drawable removeLeadingEmptyVerticalSpace() throws Exception;
 }

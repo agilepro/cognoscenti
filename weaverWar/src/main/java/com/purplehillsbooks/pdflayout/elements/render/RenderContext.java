@@ -50,11 +50,11 @@ public class RenderContext implements Renderer, Closeable, DrawContext, DrawList
      *            the document to render.
      * @param pdDocument
      *            the underlying pdfbox document.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
     public RenderContext(PDFDoc document, PDDocument pdDocument)
-            throws IOException {
+            throws Exception {
         this.document = document;
         this.pdDocument = pdDocument;
         this.pageFormat = document.getPageFormat();
@@ -273,7 +273,7 @@ public class RenderContext implements Renderer, Closeable, DrawContext, DrawList
 
     @Override
     public boolean render(RenderContext renderContext, Element element,
-            LayoutHint layoutHint) throws IOException {
+            LayoutHint layoutHint) throws Exception {
         boolean success = getLayout()
                 .render(renderContext, element, layoutHint);
         if (success) {
@@ -333,10 +333,10 @@ public class RenderContext implements Renderer, Closeable, DrawContext, DrawList
     /**
      * Triggers a new page.
      *
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    public void newPage() throws IOException {
+    public void newPage() throws Exception {
         if (closePage()) {
             ++pageIndex;
         }
@@ -373,10 +373,10 @@ public class RenderContext implements Renderer, Closeable, DrawContext, DrawList
      * Closes the current page.
      *
      * @return <code>true</code> if the current page has not been closed before.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    public boolean closePage() throws IOException {
+    public boolean closePage() throws Exception {
         if (contentStream != null) {
 
             annotationDrawListener.afterPage(this);
@@ -398,8 +398,16 @@ public class RenderContext implements Renderer, Closeable, DrawContext, DrawList
 
     @Override
     public void close() throws IOException {
-        closePage();
-        annotationDrawListener.afterRender();
+        try {
+            closePage();
+            annotationDrawListener.afterRender();
+        }
+        catch (IOException ioe) {
+            throw ioe;
+        }
+        catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     @Override

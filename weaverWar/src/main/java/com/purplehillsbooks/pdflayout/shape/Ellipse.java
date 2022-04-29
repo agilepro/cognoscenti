@@ -1,7 +1,5 @@
 package com.purplehillsbooks.pdflayout.shape;
 
-import java.io.IOException;
-
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import com.purplehillsbooks.pdflayout.text.Position;
@@ -22,7 +20,7 @@ public class Ellipse extends RoundRect {
     @Override
     protected void addRoundRect(PDPageContentStream contentStream,
             Position upperLeft, float width, float height, float cornerRadiusX,
-            float cornerRadiusY) throws IOException {
+            float cornerRadiusY) throws Exception {
         super.addRoundRect(contentStream, upperLeft, width, height, width/2f,
                 height/2);
     }

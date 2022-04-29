@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import com.purplehillsbooks.pdflayout.util.CompatibilityHelper;
  * A text of line containing only {@link StyledText}s. It may be terminated by a
  * {@link #getNewLine() new line}.
  */
-public class TextLine implements TextSequence {
+public class TextLine extends TextSequence {
 
     /**
      * The font ascent.
@@ -111,7 +110,7 @@ public class TextLine implements TextSequence {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         Float width = getCachedValue(WIDTH, Float.class);
         if (width == null) {
             width = 0f;
@@ -124,7 +123,7 @@ public class TextLine implements TextSequence {
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         Float height = getCachedValue(HEIGHT, Float.class);
         if (height == null) {
             height = 0f;
@@ -138,10 +137,10 @@ public class TextLine implements TextSequence {
 
     /**
      * @return the (max) ascent of this line.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
-    protected float getAscent() throws IOException {
+    protected float getAscent() throws Exception {
         Float ascent = getCachedValue(ASCENT, Float.class);
         if (ascent == null) {
             ascent = 0f;
@@ -158,13 +157,13 @@ public class TextLine implements TextSequence {
 
     @Override
     public void drawText(PDPageContentStream contentStream, Position upperLeft,
-            Alignment alignment, DrawListener drawListener) throws IOException {
+            Alignment alignment, DrawListener drawListener) throws Exception {
         drawAligned(contentStream, upperLeft, alignment, getWidth(), drawListener);
     }
 
     public void drawAligned(PDPageContentStream contentStream, Position upperLeft,
             Alignment alignment, float availableLineWidth,
-            DrawListener drawListener) throws IOException {
+            DrawListener drawListener) throws Exception {
         contentStream.saveGraphicsState();
         contentStream.beginText();
 

@@ -2,7 +2,6 @@ package com.purplehillsbooks.pdflayout.elements;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -170,10 +169,10 @@ public class PDFDoc implements RenderListener {
      * Renders all elements and returns the resulting {@link PDDocument}.
      *
      * @return the resulting {@link PDDocument}
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    public PDDocument render() throws IOException {
+    public PDDocument render() throws Exception {
         PDDocument document = getPDDocument();
         RenderContext renderContext = new RenderContext(this, document);
         for (Entry<Element, LayoutHint> entry : elements) {
@@ -214,10 +213,10 @@ public class PDFDoc implements RenderListener {
      *
      * @param file
      *            the file to save to.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    public void save(final File file) throws IOException {
+    public void save(final File file) throws Exception {
         try (OutputStream out = new FileOutputStream(file)) {
             save(out);
         }
@@ -229,17 +228,16 @@ public class PDFDoc implements RenderListener {
      *
      * @param output
      *            the stream to save to.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
-    public void save(final OutputStream output) throws IOException {
+    public void save(final OutputStream output) throws Exception {
         try (PDDocument document = render()) {
             try {
                 document.save(output);
-            } catch (IOException ioe) {
-                throw ioe;
-            } catch (Exception e) {
-                throw new IOException(e);
+            } 
+            catch (Exception e) {
+                throw new Exception("Unable to save to output stream", e);
             }
         }
     }
@@ -269,14 +267,14 @@ public class PDFDoc implements RenderListener {
 
     @Override
     public void beforePage(final RenderContext renderContext)
-            throws IOException {
+            throws Exception {
         for (RenderListener listener : renderListener) {
             listener.beforePage(renderContext);
         }
     }
 
     @Override
-    public void afterPage(final RenderContext renderContext) throws IOException {
+    public void afterPage(final RenderContext renderContext) throws Exception {
         for (RenderListener listener : renderListener) {
             listener.afterPage(renderContext);
         }

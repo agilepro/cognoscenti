@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements.render;
 
-import java.io.IOException;
 
 import com.purplehillsbooks.pdflayout.elements.ControlElement;
 import com.purplehillsbooks.pdflayout.elements.Drawable;
@@ -46,7 +45,7 @@ public class ColumnLayout extends VerticalLayout {
      */
     @Override
     protected void turnPage(final RenderContext renderContext)
-            throws IOException {
+            throws Exception {
         if (++columnIndex >= columnCount) {
             renderContext.newPage();
             columnIndex = 0;
@@ -61,7 +60,7 @@ public class ColumnLayout extends VerticalLayout {
 
     @Override
     public boolean render(RenderContext renderContext, Element element,
-            LayoutHint layoutHint) throws IOException {
+            LayoutHint layoutHint) throws Exception {
         if (element == ControlElement.NEWPAGE) {
             renderContext.newPage();
             return true;
@@ -75,7 +74,7 @@ public class ColumnLayout extends VerticalLayout {
 
     @Override
     public void render(RenderContext renderContext, Drawable drawable,
-            LayoutHint layoutHint) throws IOException {
+            LayoutHint layoutHint) throws Exception {
         if (offsetY == null) {
             offsetY = renderContext.getUpperLeft().getY() - renderContext.getCurrentPosition().getY();
         }

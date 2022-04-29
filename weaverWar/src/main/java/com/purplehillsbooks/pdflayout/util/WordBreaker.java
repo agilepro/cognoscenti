@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.util;
 
-import java.io.IOException;
 
 import com.purplehillsbooks.pdflayout.text.FontDescriptor;
 
@@ -24,10 +23,10 @@ public interface WordBreaker {
      *            in case there is no suitable position for breaking it
      *            adequately.
      * @return the broken word, or <code>null</code> if it cannot be broken.
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
     Pair<String> breakWord(final String word,
             final FontDescriptor fontDescriptor, final float maxWidth,
-            final boolean breakHardIfNecessary) throws IOException;
+            final boolean breakHardIfNecessary) throws Exception;
 
 }

@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.shape;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -38,7 +37,7 @@ public class RoundRect extends AbstractShape {
 
     @Override
     public void add(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, float width, float height) throws IOException {
+            Position upperLeft, float width, float height) throws Exception {
 
         addRoundRect(contentStream, upperLeft, width, height, cornerRadiusX, cornerRadiusY);
     }
@@ -64,11 +63,11 @@ public class RoundRect extends AbstractShape {
      * @param height the height
      * @param cornerRadiusX the corner radius in x direction
      * @param cornerRadiusY the corner radius in y direction
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
     protected void addRoundRect(PDPageContentStream contentStream,
             Position upperLeft, float width, float height, float cornerRadiusX,
-            float cornerRadiusY) throws IOException {
+            float cornerRadiusY) throws Exception {
         float nettoWidth = width - 2 * cornerRadiusX;
         float nettoHeight = height - 2 * cornerRadiusY;
 
@@ -117,7 +116,7 @@ public class RoundRect extends AbstractShape {
      * way?
      */
     private void addLine(final PDPageContentStream contentStream, float x1,
-            float y1, float x2, float y2) throws IOException {
+            float y1, float x2, float y2) throws Exception {
         float xMid = (x1 + x2) / 2f;
         float yMid = (y1 + y2) / 2f;
         CompatibilityHelper.curveTo1(contentStream, xMid, yMid, x2, y2);

@@ -54,6 +54,7 @@ public class SectionDef
 
     //
     private static List<SectionDef> allDefs = null;
+    private static SectionFormat defaultUnknownSectionFormat = null;
     public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
     {
         if (allDefs == null) {
@@ -76,16 +77,18 @@ public class SectionDef
     public synchronized static void clearAllStaticVars()
     {
         allDefs = null;
+        defaultUnknownSectionFormat = null;
     }
 
 
     private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
-        new SectionUnknown();
 
+        defaultUnknownSectionFormat = new SectionUnknown();
         SectionFormat cannonNotes =      new SectionForNotes();
         SectionFormat canonAttachments = new SectionAttachments();
         SectionFormat cannonTasks =      new SectionTask();
+        SectionFormat canonFolders     = new SectionFolders();
 
         allDefs.add(new SectionDef(cannonNotes, "Comments", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Notes", true));
@@ -93,6 +96,8 @@ public class SectionDef
                                    false, "Attachments", true));
         allDefs.add(new SectionDef(cannonTasks, "Tasks", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Tasks", true));
+        allDefs.add(new SectionDef(canonFolders, "Folders", MEMBER_ACCESS, MEMBER_ACCESS,
+                false, "Folders", true));
     }
 
     public String getTypeName() throws Exception {

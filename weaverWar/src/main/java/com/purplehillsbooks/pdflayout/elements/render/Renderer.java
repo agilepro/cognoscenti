@@ -1,7 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements.render;
 
-import java.io.IOException;
-
 import com.purplehillsbooks.pdflayout.elements.Element;
 
 /**
@@ -21,10 +19,10 @@ public interface Renderer {
      * @param layoutHint
      *            the associated layout hint
      * @return <code>true</code> if the layout is able to render the element.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     boolean render(final RenderContext renderContext, final Element element,
-            final LayoutHint layoutHint) throws IOException;
+            final LayoutHint layoutHint) throws Exception;
 
 }

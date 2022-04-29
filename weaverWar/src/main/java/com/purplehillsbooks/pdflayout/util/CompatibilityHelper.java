@@ -3,7 +3,6 @@ package com.purplehillsbooks.pdflayout.util;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -62,47 +61,47 @@ public class CompatibilityHelper {
     }
 
     public static void clip(final PDPageContentStream contentStream)
-            throws IOException {
+            throws Exception {
         contentStream.clip();
     }
 
     public static void transform(final PDPageContentStream contentStream,
             float a, float b, float c, float d, float e, float f)
-            throws IOException {
+            throws Exception {
         contentStream.transform(new Matrix(a, b, c, d, e, f));
     }
 
-    public static void curveTo(final PDPageContentStream contentStream, float x1, float y1, float x2, float y2, float x3, float y3) throws IOException {
+    public static void curveTo(final PDPageContentStream contentStream, float x1, float y1, float x2, float y2, float x3, float y3) throws Exception {
         contentStream.curveTo(x1, y1, x2, y2, x3, y3);
     }
     
-    public static void curveTo1(final PDPageContentStream contentStream, float x1, float y1, float x3, float y3) throws IOException {
+    public static void curveTo1(final PDPageContentStream contentStream, float x1, float y1, float x3, float y3) throws Exception {
         contentStream.curveTo1(x1, y1, x3, y3);
     }
 
-    public static void fillNonZero(final PDPageContentStream contentStream) throws IOException {
+    public static void fillNonZero(final PDPageContentStream contentStream) throws Exception {
         contentStream.fill();
     }
 
     public static void showText(final PDPageContentStream contentStream,
-            final String text) throws IOException {
+            final String text) throws Exception {
         contentStream.showText(text);
     }
 
     public static void setTextTranslation(
             final PDPageContentStream contentStream, final float x,
-            final float y) throws IOException {
+            final float y) throws Exception {
         contentStream.setTextMatrix(Matrix.getTranslateInstance(x, y));
     }
 
     public static void moveTextPosition(
             final PDPageContentStream contentStream, final float x,
-            final float y) throws IOException {
+            final float y) throws Exception {
         contentStream.transform(new Matrix(1, 0, 0, 1, x, y));
     }
 
     public static PDPageContentStream createAppendablePDPageContentStream(
-            final PDDocument pdDocument, final PDPage page) throws IOException {
+            final PDDocument pdDocument, final PDPage page) throws Exception {
         // stay compatible with 2.0.0-RC3
         return new PDPageContentStream(pdDocument, page, true, true);
         // return new PDPageContentStream(pdDocument, page, AppendMode.APPEND,
@@ -112,7 +111,7 @@ public class CompatibilityHelper {
     public static void drawImage(final BufferedImage image,
             final PDDocument document, final PDPageContentStream contentStream,
             Position upperLeft, final float width, final float height)
-            throws IOException {
+            throws Exception {
         PDImageXObject cachedImage = getCachedImage(document, image);
         float x = upperLeft.getX();
         float y = upperLeft.getY() - height;
@@ -129,9 +128,9 @@ public class CompatibilityHelper {
      * @param pageIndex the index of the page to render.
      * @param resolution the image resolution.
      * @return the rendered image
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
-    public static BufferedImage createImageFromPage(final PDDocument document, int pageIndex, final int resolution) throws IOException {
+    public static BufferedImage createImageFromPage(final PDDocument document, int pageIndex, final int resolution) throws Exception {
         PDFRenderer pdfRenderer = new PDFRenderer(document);
         return pdfRenderer.renderImageWithDPI(pageIndex, resolution, ImageType.RGB);
     }
@@ -317,7 +316,7 @@ public class CompatibilityHelper {
 
     private static synchronized PDImageXObject getCachedImage(
             final PDDocument document, final BufferedImage image)
-            throws IOException {
+            throws Exception {
         Map<BufferedImage, PDImageXObject> imageCache = getImageCache(document);
         PDImageXObject pdxObjectImage = imageCache.get(image);
         if (pdxObjectImage == null) {

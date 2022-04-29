@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
@@ -37,12 +36,12 @@ public class ControlFragment implements TextFragment {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         return 0;
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         return getFontDescriptor() == null ? 0 : getFontDescriptor().getSize();
     }
 

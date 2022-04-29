@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -18,7 +17,7 @@ public class Cutter implements Dividable, Drawable {
     private final float viewPortY;
     private final float viewPortHeight;
 
-    public Cutter(Drawable undividableElement) throws IOException {
+    public Cutter(Drawable undividableElement) throws Exception {
         this(undividableElement, 0, undividableElement.getHeight());
     }
 
@@ -36,12 +35,12 @@ public class Cutter implements Dividable, Drawable {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         return undividable.getWidth();
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         return viewPortHeight;
     }
 
@@ -52,13 +51,13 @@ public class Cutter implements Dividable, Drawable {
 
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException {
+            Position upperLeft, DrawListener drawListener) throws Exception {
         Position viewPortOrigin = upperLeft.add(0, -viewPortY);
         undividable.draw(pdDocument, contentStream, viewPortOrigin, drawListener);
     }
 
     @Override
-    public Drawable removeLeadingEmptyVerticalSpace() throws IOException {
+    public Drawable removeLeadingEmptyVerticalSpace() throws Exception {
         return new Cutter(undividable.removeLeadingEmptyVerticalSpace());
     }
 

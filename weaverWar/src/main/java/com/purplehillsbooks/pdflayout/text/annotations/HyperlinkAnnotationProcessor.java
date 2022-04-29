@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text.annotations;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class HyperlinkAnnotationProcessor implements AnnotationProcessor {
     @Override
     public void annotatedObjectDrawn(Annotated drawnObject,
             DrawContext drawContext, Position upperLeft, float width,
-            float height) throws IOException {
+            float height) throws Exception {
 
         if (!(drawnObject instanceof AnnotatedStyledText)) {
             return;
@@ -91,7 +90,7 @@ public class HyperlinkAnnotationProcessor implements AnnotationProcessor {
     }
 
     @Override
-    public void afterRender(PDDocument document) throws IOException {
+    public void afterRender(PDDocument document) throws Exception {
         for (Entry<PDPage, List<Hyperlink>> entry : linkMap.entrySet()) {
             PDPage page = entry.getKey();
             List<Hyperlink> links = entry.getValue();

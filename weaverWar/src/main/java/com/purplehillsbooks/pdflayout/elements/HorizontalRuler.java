@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.elements;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -52,12 +51,12 @@ public class HorizontalRuler implements Drawable, Element, WidthRespecting {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         return getMaxWidth();
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         if (getStroke() == null) {
             return 0f;
         }
@@ -71,7 +70,7 @@ public class HorizontalRuler implements Drawable, Element, WidthRespecting {
 
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException {
+            Position upperLeft, DrawListener drawListener) throws Exception {
         if (getColor() != null) {
             contentStream.setStrokingColor(getColor());
         }

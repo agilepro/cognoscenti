@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,11 +87,11 @@ public class IndentCharacters {
          * @param color
          *            the color to use.
          * @return the new Indent.
-         * @throws IOException
+         * @throws Exception
          *             by pdfbox
          */
         public Indent createNewIndent(final float fontSize, final PDFont font,
-                final Color color) throws IOException {
+                final Color color) throws Exception {
             return new Indent(nextLabel(), level * indentWidth, indentUnit,
                     fontSize, font, Alignment.Right, color);
         }

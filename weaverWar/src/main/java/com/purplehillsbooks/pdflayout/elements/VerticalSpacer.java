@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -27,12 +26,12 @@ public class VerticalSpacer implements Drawable, Element, Dividable {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         return 0;
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         return height;
     }
 
@@ -43,7 +42,7 @@ public class VerticalSpacer implements Drawable, Element, Dividable {
 
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException {
+            Position upperLeft, DrawListener drawListener) throws Exception {
         if (drawListener != null) {
             drawListener.drawn(this, upperLeft, getWidth(), getHeight());
         }
@@ -51,7 +50,7 @@ public class VerticalSpacer implements Drawable, Element, Dividable {
 
     @Override
     public Divided divide(float remainingHeight, final float pageHeight)
-            throws IOException {
+            throws Exception {
         return new Divided(new VerticalSpacer(remainingHeight),
                 new VerticalSpacer(getHeight() - remainingHeight));
     }

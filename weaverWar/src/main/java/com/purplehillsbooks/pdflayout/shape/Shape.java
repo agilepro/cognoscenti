@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.shape;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -41,12 +40,12 @@ public interface Shape {
      *            the listener to
      *            {@link DrawListener#drawn(Object, Position, float, float)
      *            notify} on drawn objects.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     void draw(PDDocument pdDocument, PDPageContentStream contentStream,
             Position upperLeft, float width, float height, Color color,
-            Stroke stroke, DrawListener drawListener) throws IOException;
+            Stroke stroke, DrawListener drawListener) throws Exception;
 
     /**
      * Fills the shape.
@@ -67,12 +66,12 @@ public interface Shape {
      *            the listener to
      *            {@link DrawListener#drawn(Object, Position, float, float)
      *            notify} on drawn objects.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     void fill(PDDocument pdDocument, PDPageContentStream contentStream,
             Position upperLeft, float width, float height, Color color,
-            DrawListener drawListener) throws IOException;
+            DrawListener drawListener) throws Exception;
 
     /**
      * Adds (the path of) the shape without drawing anything.
@@ -87,10 +86,10 @@ public interface Shape {
      *            the width of the bounding box.
      * @param height
      *            the height of the bounding box.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     void add(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, float width, float height) throws IOException;
+            Position upperLeft, float width, float height) throws Exception;
 
 }

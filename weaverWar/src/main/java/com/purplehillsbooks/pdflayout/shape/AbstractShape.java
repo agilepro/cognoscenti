@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.shape;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -22,7 +21,7 @@ public abstract class AbstractShape implements Shape {
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
             Position upperLeft, float width, float height, Color color,
-            Stroke stroke, DrawListener drawListener) throws IOException {
+            Stroke stroke, DrawListener drawListener) throws Exception {
 
         add(pdDocument, contentStream, upperLeft, width, height);
 
@@ -43,7 +42,7 @@ public abstract class AbstractShape implements Shape {
     @Override
     public void fill(PDDocument pdDocument, PDPageContentStream contentStream,
             Position upperLeft, float width, float height, Color color,
-            DrawListener drawListener) throws IOException {
+            DrawListener drawListener) throws Exception {
 
         add(pdDocument, contentStream, upperLeft, width, height);
 

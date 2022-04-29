@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text.annotations;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class UnderlineAnnotationProcessor implements AnnotationProcessor {
     @Override
     public void annotatedObjectDrawn(Annotated drawnObject,
             DrawContext drawContext, Position upperLeft, float width,
-            float height) throws IOException {
+            float height) throws Exception {
 
         if (!(drawnObject instanceof StyledText)) {
             return;
@@ -53,12 +52,12 @@ public class UnderlineAnnotationProcessor implements AnnotationProcessor {
     }
 
     @Override
-    public void beforePage(DrawContext drawContext) throws IOException {
+    public void beforePage(DrawContext drawContext) throws Exception {
         linesOnPage.clear();
     }
 
     @Override
-    public void afterPage(DrawContext drawContext) throws IOException {
+    public void afterPage(DrawContext drawContext) throws Exception {
         for (Line line : linesOnPage) {
             line.draw(drawContext.getCurrentPageContentStream());
         }
@@ -66,7 +65,7 @@ public class UnderlineAnnotationProcessor implements AnnotationProcessor {
     }
 
     @Override
-    public void afterRender(PDDocument document) throws IOException {
+    public void afterRender(PDDocument document) throws Exception {
         linesOnPage.clear();
     }
 
@@ -85,7 +84,7 @@ public class UnderlineAnnotationProcessor implements AnnotationProcessor {
             this.color = color;
         }
 
-        public void draw(PDPageContentStream contentStream) throws IOException {
+        public void draw(PDPageContentStream contentStream) throws Exception {
             if (color != null) {
                 contentStream.setStrokingColor(color);
             }

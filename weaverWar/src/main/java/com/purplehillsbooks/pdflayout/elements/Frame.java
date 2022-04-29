@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.elements;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -458,19 +457,6 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
         return getMarginTop() + getMarginBottom() + getVerticalShapeSpacing();
     }
 
-    /**
-     * @return the height given to constrain the size of the shape.
-     */
-    //protected float getGivenHeight() {
-    //    return givenHeight;
-    //}
-    
-    /**
-     * @return the width given to constrain the size of the shape.
-     */
-   // protected float getGivenWidth() {
-   //     return givenWidth;
-   // }
     public void setGivenHeight(float val) {
         givenHeight = val;
     }
@@ -479,14 +465,14 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         if (givenWidth>0) {
             return givenWidth + getMarginLeft() + getMarginRight();
         }
         return getMaxWidth(innerList) + getHorizontalSpacing();
     }
 
-    protected float getMaxWidth(List<Drawable> drawableList) throws IOException {
+    protected float getMaxWidth(List<Drawable> drawableList) throws Exception {
         float max = 0;
         if (drawableList != null) {
             for (Drawable inner : drawableList) {
@@ -497,14 +483,14 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         if (givenHeight>0) {
             return givenHeight + getMarginTop() + getMarginBottom();
         }
         return getHeight(innerList) + getVerticalSpacing();
     }
 
-    protected float getHeight(List<Drawable> drawableList) throws IOException {
+    protected float getHeight(List<Drawable> drawableList) throws Exception {
         float height = 0;
         if (drawableList != null) {
             for (Drawable inner : drawableList) {
@@ -515,7 +501,7 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
     }
 
     @Override
-    public Position getAbsolutePosition() throws IOException {
+    public Position getAbsolutePosition() throws Exception {
         return absolutePosition;
     }
 
@@ -558,10 +544,10 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
      * Propagates the max width to the inner item if there is a given size, but
      * no absolute position.
      *
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
-    protected void setInnerMaxWidthIfNecessary() throws IOException {
+    protected void setInnerMaxWidthIfNecessary() throws Exception {
         if (getAbsolutePosition() == null && givenWidth>0) {
             setMaxWidth(givenWidth - getHorizontalShapeSpacing());
         }
@@ -569,7 +555,7 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
 
     @Override
     public void draw(PDDocument pdDocument, PDPageContentStream contentStream,
-            Position upperLeft, DrawListener drawListener) throws IOException {
+            Position upperLeft, DrawListener drawListener) throws Exception {
 
         setInnerMaxWidthIfNecessary();
 
@@ -608,7 +594,7 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
     }
 
     @Override
-    public Drawable removeLeadingEmptyVerticalSpace() throws IOException {
+    public Drawable removeLeadingEmptyVerticalSpace() throws Exception {
         if (innerList.size() > 0) {
             Drawable drawableWithoutLeadingVerticalSpace = innerList.get(0)
                     .removeLeadingEmptyVerticalSpace();
@@ -619,7 +605,7 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
 
     @Override
     public Divided divide(float remainingHeight, float nextPageHeight)
-            throws IOException {
+            throws Exception {
         setInnerMaxWidthIfNecessary();
 
         if (remainingHeight - getVerticalSpacing() <= 0) {
@@ -674,7 +660,7 @@ public class Frame implements Element, Drawable, WidthRespecting, Dividable {
     }
 
     private DividedList divideList(List<Drawable> items, float spaceLeft)
-            throws IOException {
+            throws Exception {
         List<Drawable> head = null;
         List<Drawable> tail = null;
         Drawable toDivide = null;

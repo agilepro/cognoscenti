@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.text.annotations;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -51,7 +50,7 @@ public class AnnotationDrawListener implements DrawListener, RenderListener {
                 annotationProcessor.annotatedObjectDrawn(
                         (Annotated) drawnObject, drawContext, upperLeft, width,
                         height);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(
                         "exception on annotation processing", e);
             }
@@ -59,11 +58,11 @@ public class AnnotationDrawListener implements DrawListener, RenderListener {
     }
 
     @Override
-    public void beforePage(RenderContext renderContext) throws IOException {
+    public void beforePage(RenderContext renderContext) throws Exception {
         for (AnnotationProcessor annotationProcessor : annotationProcessors) {
             try {
                 annotationProcessor.beforePage(drawContext);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(
                         "exception on annotation processing", e);
             }
@@ -71,11 +70,11 @@ public class AnnotationDrawListener implements DrawListener, RenderListener {
     }
 
     @Override
-    public void afterPage(RenderContext renderContext) throws IOException {
+    public void afterPage(RenderContext renderContext) throws Exception {
         for (AnnotationProcessor annotationProcessor : annotationProcessors) {
             try {
                 annotationProcessor.afterPage(drawContext);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(
                         "exception on annotation processing", e);
             }
@@ -83,11 +82,11 @@ public class AnnotationDrawListener implements DrawListener, RenderListener {
     }
 
 
-    public void afterRender() throws IOException {
+    public void afterRender() throws Exception {
         for (AnnotationProcessor annotationProcessor : annotationProcessors) {
             try {
                 annotationProcessor.afterRender(drawContext.getPdDocument());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(
                         "exception on annotation processing", e);
             }

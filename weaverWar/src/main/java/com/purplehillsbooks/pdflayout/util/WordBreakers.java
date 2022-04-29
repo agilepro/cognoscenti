@@ -3,7 +3,6 @@ package com.purplehillsbooks.pdflayout.util;
 import static com.purplehillsbooks.pdflayout.text.TextSequenceUtil.getEmWidth;
 import static com.purplehillsbooks.pdflayout.text.TextSequenceUtil.getStringWidth;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +21,7 @@ public class WordBreakers {
         @Override
         public Pair<String> breakWord(String word,
                 FontDescriptor fontDescriptor, float maxWidth,
-                boolean breakHardIfNecessary) throws IOException {
+                boolean breakHardIfNecessary) throws Exception {
             return null;
         }
 
@@ -39,7 +38,7 @@ public class WordBreakers {
         @Override
         public Pair<String> breakWord(final String word,
                 final FontDescriptor fontDescriptor, final float maxWidth,
-                final boolean breakHardIfNecessary) throws IOException {
+                final boolean breakHardIfNecessary) throws Exception {
 
             Pair<String> brokenWord = breakWordSoft(word, fontDescriptor,
                     maxWidth);
@@ -60,12 +59,12 @@ public class WordBreakers {
          * @param maxWidth
          *            the maximum width to obey.
          * @return the broken word, or <code>null</code> if it cannot be broken.
-         * @throws IOException
+         * @throws Exception
          *             by pdfbox
          */
         abstract protected Pair<String> breakWordSoft(final String word,
                 final FontDescriptor fontDescriptor, final float maxWidth)
-                throws IOException;
+                throws Exception;
 
         /**
          * Breaks the word hard at the outermost position that fits the given
@@ -78,12 +77,12 @@ public class WordBreakers {
          * @param maxWidth
          *            the maximum width to obey.
          * @return the broken word, or <code>null</code> if it cannot be broken.
-         * @throws IOException
+         * @throws Exception
          *             by pdfbox
          */
         protected Pair<String> breakWordHard(final String word,
                 final FontDescriptor fontDescriptor, final float maxWidth)
-                throws IOException {
+                throws Exception {
             int cutIndex = (int) (maxWidth / getEmWidth(fontDescriptor));
             float currentWidth = getStringWidth(word.substring(0, cutIndex),
                     fontDescriptor);
@@ -131,7 +130,7 @@ public class WordBreakers {
         @Override
         protected Pair<String> breakWordSoft(final String word,
                 final FontDescriptor fontDescriptor, final float maxWidth)
-                throws IOException {
+                throws Exception {
             Matcher matcher = breakPattern.matcher(word);
             int breakIndex = -1;
             boolean maxWidthExceeded = false;

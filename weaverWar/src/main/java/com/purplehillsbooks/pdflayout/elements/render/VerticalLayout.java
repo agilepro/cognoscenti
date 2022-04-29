@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements.render;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
@@ -54,11 +53,11 @@ public class VerticalLayout implements Layout {
      *
      * @param renderContext
      *            the render context.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
     protected void turnPage(final RenderContext renderContext)
-            throws IOException {
+            throws Exception {
         renderContext.newPage();
     }
 
@@ -74,7 +73,7 @@ public class VerticalLayout implements Layout {
 
     @Override
     public boolean render(RenderContext renderContext, Element element,
-            LayoutHint layoutHint) throws IOException {
+            LayoutHint layoutHint) throws Exception {
         if (element instanceof Drawable) {
             render(renderContext, (Drawable) element, layoutHint);
             return true;
@@ -88,7 +87,7 @@ public class VerticalLayout implements Layout {
     }
 
     public void render(final RenderContext renderContext, Drawable drawable,
-            final LayoutHint layoutHint) throws IOException {
+            final LayoutHint layoutHint) throws Exception {
         if (drawable.getAbsolutePosition() != null) {
             renderAbsolute(renderContext, drawable, layoutHint,
                     drawable.getAbsolutePosition());
@@ -108,12 +107,12 @@ public class VerticalLayout implements Layout {
      *            the layout hint used to layout.
      * @param position
      *            the left upper position to start drawing at.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected void renderAbsolute(final RenderContext renderContext,
             Drawable drawable, final LayoutHint layoutHint,
-            final Position position) throws IOException {
+            final Position position) throws Exception {
         drawable.draw(renderContext.getPdDocument(),
                 renderContext.getContentStream(), position, renderContext);
     }
@@ -131,11 +130,11 @@ public class VerticalLayout implements Layout {
      *            the drawable to draw.
      * @param layoutHint
      *            the layout hint used to layout.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected void renderReleative(final RenderContext renderContext,
-            Drawable drawable, final LayoutHint layoutHint) throws IOException {
+            Drawable drawable, final LayoutHint layoutHint) throws Exception {
         VerticalLayoutHint verticalLayoutHint = null;
         if (layoutHint instanceof VerticalLayoutHint) {
             verticalLayoutHint = (VerticalLayoutHint) layoutHint;
@@ -169,11 +168,11 @@ public class VerticalLayout implements Layout {
      *            the drawable to draw.
      * @param layoutHint
      *            the layout hint used to layout.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected void layoutAndDrawReleative(final RenderContext renderContext,
-            Drawable drawable, final LayoutHint layoutHint) throws IOException {
+            Drawable drawable, final LayoutHint layoutHint) throws Exception {
 
         float targetWidth = getTargetWidth(renderContext);
         boolean movePosition = true;
@@ -243,13 +242,13 @@ public class VerticalLayout implements Layout {
      * @param movePosition
      *            indicates if the position should be moved (vertically) after
      *            drawing.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected void drawReletivePartAndMovePosition(
             final RenderContext renderContext, Drawable drawable,
             final LayoutHint layoutHint, final boolean movePosition)
-            throws IOException {
+            throws Exception {
         PDPageContentStream contentStream = renderContext.getContentStream();
         PageFormat pageFormat = renderContext.getPageFormat();
         float offsetX = 0;
@@ -308,11 +307,11 @@ public class VerticalLayout implements Layout {
      * @param renderContext
      *            the render context.
      * @return the processed drawable
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     protected Drawable removeLeadingEmptyVerticalSpace(final Drawable drawable,
-            final RenderContext renderContext) throws IOException {
+            final RenderContext renderContext) throws Exception {
         if (isRemoveLeadingEmptyVerticalSpace()
                 && isPositionTopOfPage(renderContext)) {
             return drawable.removeLeadingEmptyVerticalSpace();

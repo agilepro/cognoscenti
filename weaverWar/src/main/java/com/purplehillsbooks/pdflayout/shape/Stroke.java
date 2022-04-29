@@ -1,6 +1,5 @@
 package com.purplehillsbooks.pdflayout.shape;
 
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
@@ -171,10 +170,10 @@ public class Stroke {
     /**
      * Applies this stroke to the given content stream.
      * @param contentStream the content stream to apply this stroke to.
-     * @throws IOException by PDFBox.
+     * @throws Exception by PDFBox.
      */
     public void applyTo(final PDPageContentStream contentStream)
-            throws IOException {
+            throws Exception {
         if (getCapStyle() != null) {
             contentStream.setLineCapStyle(getCapStyle().value());
         }

@@ -59,7 +59,6 @@ public abstract class NGPage extends ContainerCommon {
     protected List<String> existingIds = null;
 
     NGSection attParent;
-    NGSection folderParent;
     NGSection noteParent;
     NGSection attachParent;
     NGSection taskParent;
@@ -92,7 +91,6 @@ public abstract class NGPage extends ContainerCommon {
         SectionAttachments.assureSchemaMigration(attParent, (NGWorkspace)this);
 
 
-        folderParent = getRequiredSection("Folders");
         noteParent   = getRequiredSection("Comments");
         attachParent = getRequiredSection("Attachments");
         taskParent   = getRequiredSection("Tasks");

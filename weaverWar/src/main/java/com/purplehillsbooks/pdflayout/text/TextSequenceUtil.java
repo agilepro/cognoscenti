@@ -1,13 +1,9 @@
 package com.purplehillsbooks.pdflayout.text;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
-import com.purplehillsbooks.pdflayout.elements.Dividable.Divided;
-import com.purplehillsbooks.pdflayout.elements.Paragraph;
 import com.purplehillsbooks.pdflayout.util.Pair;
 import com.purplehillsbooks.pdflayout.util.WordBreakerFactory;
 
@@ -16,94 +12,7 @@ import com.purplehillsbooks.pdflayout.util.WordBreakerFactory;
  */
 public class TextSequenceUtil {
 
-    /**
-     * Dissects the given sequence into {@link TextLine}s.
-     *
-     * @param text
-     *            the text to extract the lines from.
-     * @return the list of text lines.
-     * @throws IOException
-     *             by pdfbox
-     */
-    public static List<TextLine> getLines(final TextSequence text)
-            throws IOException {
-        final List<TextLine> result = new ArrayList<TextLine>();
 
-        TextLine line = new TextLine();
-        for (TextFragment fragment : text) {
-            if (fragment instanceof NewLine) {
-                line.setNewLine((NewLine) fragment);
-                result.add(line);
-                line = new TextLine();
-            } else if (fragment instanceof ReplacedWhitespace) {
-                // ignore replaced whitespace
-            } else {
-                line.add((StyledText) fragment);
-            }
-        }
-        if (!line.isEmpty()) {
-            result.add(line);
-        }
-        return result;
-    }
-
-    /**
-     * Word-wraps and divides the given text sequence.
-     *
-     * @param text
-     *            the text to divide.
-     * @param maxWidth
-     *            the max width used for word-wrapping.
-     * @param maxHeight
-     *            the max height for divide.
-     * @return the Divided element containing the parts.
-     * @throws IOException
-     *             by pdfbox
-     */
-    public static Divided divide(final TextSequence text, final float maxWidth,
-            final float maxHeight) throws IOException {
-        TextFlow wrapped = wordWrap(text, maxWidth);
-        List<TextLine> lines = getLines(wrapped);
-
-        Paragraph first = new Paragraph();
-        Paragraph tail = new Paragraph();
-        if (text instanceof TextFlow) {
-            TextFlow flow = (TextFlow) text;
-            first.setMaxWidth(flow.getMaxWidth());
-            first.setLineSpacing(flow.getLineSpacing());
-            tail.setMaxWidth(flow.getMaxWidth());
-            tail.setLineSpacing(flow.getLineSpacing());
-        }
-        if (text instanceof Paragraph) {
-            Paragraph paragraph = (Paragraph) text;
-            first.setAlignment(paragraph.getAlignment());
-            first.setApplyLineSpacingToFirstLine(paragraph.isApplyLineSpacingToFirstLine());
-            tail.setAlignment(paragraph.getAlignment());
-            tail.setApplyLineSpacingToFirstLine(paragraph.isApplyLineSpacingToFirstLine());
-        }
-
-        int index = 0;
-        do {
-            TextLine line = lines.get(index);
-            first.add(line);
-            ++index;
-        } while (index < lines.size() && first.getHeight() < maxHeight);
-
-        if (first.getHeight() > maxHeight) {
-            // remove last line
-            --index;
-            TextLine line = lines.get(index);
-            for (@SuppressWarnings("unused")
-            TextFragment textFragment : line) {
-                first.removeLast();
-            }
-        }
-
-        for (int i = index; i < lines.size(); ++i) {
-            tail.add(lines.get(i));
-        }
-        return new Divided(first, tail);
-    }
 
     /**
      * Word-wraps the given text sequence in order to fit the max width.
@@ -113,11 +22,11 @@ public class TextSequenceUtil {
      * @param maxWidth
      *            the max width to fit.
      * @return the word-wrapped text.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static TextFlow wordWrap(final TextSequence text,
-            final float maxWidth) throws IOException {
+            final float maxWidth) throws Exception {
 
         float indentation = 0;
         TextFlow result = new TextFlow();
@@ -159,7 +68,7 @@ public class TextSequenceUtil {
     }
 
     private static WordWrapContext wordWrap(final WordWrapContext context,
-            final float maxWidth, final TextFlow result) throws IOException {
+            final float maxWidth, final TextFlow result) throws Exception {
         TextFragment word = context.getWord();
         TextFragment moreToWrap = null;
         float indentation = context.getIndentation();
@@ -282,10 +191,10 @@ public class TextSequenceUtil {
      * @param text
      *            the text to de-wrap.
      * @return the de-wrapped text.
-     * @throws IOException
+     * @throws Exception
      *             by PDFBox
      */
-    public static TextFlow deWrap(final TextSequence text) throws IOException {
+    public static TextFlow deWrap(final TextSequence text) throws Exception {
         TextFlow result = new TextFlow();
         for (TextFragment fragment : text) {
             if (fragment instanceof WrappingNewLine) {
@@ -305,20 +214,20 @@ public class TextSequenceUtil {
 
     /**
      * Convencience function that {@link #wordWrap(TextSequence, float)
-     * word-wraps} into {@link #getLines(TextSequence)}.
+     * word-wraps} into {@link TextSequence#getLines()}.
      *
      * @param text
      *            the text to word-wrap.
      * @param maxWidth
      *            the max width to fit.
      * @return the word-wrapped text lines.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static List<TextLine> wordWrapToLines(final TextSequence text,
-            final float maxWidth) throws IOException {
+            final float maxWidth) throws Exception {
         TextFlow wrapped = wordWrap(text, maxWidth);
-        List<TextLine> lines = getLines(wrapped);
+        List<TextLine> lines = wrapped.getLines();
         return lines;
     }
 
@@ -388,7 +297,7 @@ public class TextSequenceUtil {
 
     private static Pair<TextFragment> breakWord(TextFragment word,
             float wordWidth, final float remainingLineWidth, float maxWidth,
-            boolean breakHard) throws IOException {
+            boolean breakHard) throws Exception {
 
         float leftMargin = 0;
         float rightMargin = 0;
@@ -418,10 +327,10 @@ public class TextSequenceUtil {
      * Returns the width of the character <code>M</code> in the given font.
      * @param fontDescriptor font and size.
      * @return the width of <code>M</code>.
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
     public static float getEmWidth(final FontDescriptor fontDescriptor)
-            throws IOException {
+            throws Exception {
         return getStringWidth("M", fontDescriptor);
     }
 
@@ -430,63 +339,14 @@ public class TextSequenceUtil {
      * @param text the text to measure.
      * @param fontDescriptor font and size.
      * @return the width of given text.
-     * @throws IOException by pdfbox
+     * @throws Exception by pdfbox
      */
     public static float getStringWidth(final String text,
-            final FontDescriptor fontDescriptor) throws IOException {
+            final FontDescriptor fontDescriptor) throws Exception {
         return fontDescriptor.getSize()
                 * fontDescriptor.getFont().getStringWidth(text) / 1000;
     }
 
-    /**
-     * Draws the given text sequence to the PDPageContentStream at the given
-     * position.
-     *
-     * @param text
-     *            the text to draw.
-     * @param contentStream
-     *            the stream to draw to
-     * @param upperLeft
-     *            the position of the start of the first line.
-     * @param drawListener
-     *            the listener to
-     *            {@link DrawListener#drawn(Object, Position, float, float)
-     *            notify} on drawn objects.
-     * @param alignment
-     *            how to align the text lines.
-     * @param maxWidth
-     *            if &gt; 0, the text may be word-wrapped to match the width.
-     * @param lineSpacing
-     *            the line spacing factor.
-     * @param applyLineSpacingToFirstLine
-     *            indicates if the line spacing should be applied to the first
-     *            line also. Makes sense in most cases to do so.
-     * @throws IOException
-     *             by pdfbox
-     */
-    public static void drawText(TextSequence text,
-            PDPageContentStream contentStream, Position upperLeft,
-            DrawListener drawListener, Alignment alignment, float maxWidth,
-            final float lineSpacing, final boolean applyLineSpacingToFirstLine)
-            throws IOException {
-        List<TextLine> lines = wordWrapToLines(text, maxWidth);
-        float maxLineWidth = Math.max(maxWidth, getMaxWidth(lines));
-        Position position = upperLeft;
-        float lastLineHeight = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            boolean applyLineSpacing = i > 0 || applyLineSpacingToFirstLine;
-            TextLine textLine = lines.get(i);
-            float currentLineHeight = textLine.getHeight();
-            float lead = lastLineHeight;
-            if (applyLineSpacing) {
-                lead += (currentLineHeight * (lineSpacing - 1));
-            }
-            lastLineHeight = currentLineHeight;
-            position = position.add(0, -lead);
-            textLine.drawAligned(contentStream, position, alignment, maxLineWidth, drawListener);
-        }
-
-    }
 
     /**
      * Gets the (left) offset of the line with respect to the target width and
@@ -499,12 +359,12 @@ public class TextSequenceUtil {
      * @param alignment
      *            the alignment of the line.
      * @return the left offset.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static float getOffset(final TextSequence textLine,
             final float targetWidth, final Alignment alignment)
-            throws IOException {
+            throws Exception {
         switch (alignment) {
         case Right:
             return targetWidth - textLine.getWidth();
@@ -521,11 +381,11 @@ public class TextSequenceUtil {
      * @param lines
      *            the lines for which to calculate the max width.
      * @return the max width of the lines.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
     public static float getMaxWidth(final Iterable<TextLine> lines)
-            throws IOException {
+            throws Exception {
         float max = 0;
         for (TextLine line : lines) {
             max = Math.max(max, line.getWidth());
@@ -541,11 +401,11 @@ public class TextSequenceUtil {
      * @param maxWidth
      *            if &gt; 0, the text may be word-wrapped to match the width.
      * @return the width of the text.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
     public static float getWidth(final TextSequence textSequence,
-            final float maxWidth) throws IOException {
+            final float maxWidth) throws Exception {
         List<TextLine> lines = wordWrapToLines(textSequence, maxWidth);
         float max = 0;
         for (TextLine line : lines) {
@@ -567,19 +427,18 @@ public class TextSequenceUtil {
      *            indicates if the line spacing should be applied to the first
      *            line also. Makes sense in most cases to do so.
      * @return the height of the text.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox
      */
     public static float getHeight(final TextSequence textSequence,
             final float maxWidth, final float lineSpacing,
-            final boolean applyLineSpacingToFirstLine) throws IOException {
+            final boolean applyLineSpacingToFirstLine) throws Exception {
         List<TextLine> lines = wordWrapToLines(textSequence, maxWidth);
         float sum = 0;
         for (int i = 0; i < lines.size(); i++) {
-            boolean applyLineSpacing = i > 0 || applyLineSpacingToFirstLine;
             TextLine line = lines.get(i);
             float lineHeight = line.getHeight();
-            if (applyLineSpacing) {
+            if (i > 0 || applyLineSpacingToFirstLine) {
                 lineHeight *= lineSpacing;
             }
             sum += lineHeight;

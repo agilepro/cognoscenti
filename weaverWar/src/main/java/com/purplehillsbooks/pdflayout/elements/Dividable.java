@@ -1,7 +1,5 @@
 package com.purplehillsbooks.pdflayout.elements;
 
-import java.io.IOException;
-
 /**
  * If a drawable is marked as {@link Dividable}, it can be (vertically) divided
  * in case it does not fit on the (remaining) page.
@@ -21,10 +19,10 @@ public interface Dividable {
      *            how to divide best, e.g. maybe the element fits completely on
      *            the next page.
      * @return the Divided containing the first part and the tail.
-     * @throws IOException by pdfbox.
+     * @throws Exception by pdfbox.
      */
     Divided divide(final float remainingHeight, final float nextPageHeight)
-            throws IOException;
+            throws Exception;
 
     /**
      * A container for the result of a {@link Dividable#divide(float, float)}

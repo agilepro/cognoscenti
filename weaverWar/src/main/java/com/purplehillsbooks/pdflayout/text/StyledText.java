@@ -1,7 +1,6 @@
 package com.purplehillsbooks.pdflayout.text;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
@@ -151,7 +150,7 @@ public class StyledText implements TextFragment {
     }
 
     @Override
-    public float getWidth() throws IOException {
+    public float getWidth() throws Exception {
         if (width == null) {
             width = getFontDescriptor().getSize()
                     * getFontDescriptor().getFont().getStringWidth(getText())
@@ -162,21 +161,21 @@ public class StyledText implements TextFragment {
         return width;
     }
 
-    public float getWidthWithoutMargin() throws IOException {
+    public float getWidthWithoutMargin() throws Exception {
         return getWidth() - leftMargin - rightMargin;
     }
 
     @Override
-    public float getHeight() throws IOException {
+    public float getHeight() throws Exception {
         return getFontDescriptor().getSize();
     }
 
     /**
      * @return the ascent of the associated font.
-     * @throws IOException
+     * @throws Exception
      *             by pdfbox.
      */
-    public float getAsent() throws IOException {
+    public float getAsent() throws Exception {
         return getFontDescriptor().getSize()
                 * getFontDescriptor().getFont().getFontDescriptor().getAscent()
                 / 1000;
