@@ -74,10 +74,6 @@ public class WikiToPDF
     private PDFDoc document;
     
     
-    //OLD OBJECTS
-    //private PDDocument pddoc;
-    //private PDPage pdpage;
-    //private PDPageContentStream contentStream;
     private String printTime;
 
     float xPos = 200f;
@@ -285,7 +281,7 @@ public class WikiToPDF
             
             //This can throw an error, and we want to get that error before
             //we write anything to the real output stream, so buffer it
-            document.save(mf.getOutputStream());
+            document.saveToStream(mf.getOutputStream());
             
             String fileName = ngp.getKey() + ".pdf";
             ar.resp.setContentType("application/pdf");
@@ -408,8 +404,6 @@ public class WikiToPDF
             for (TopicRecord note : memberNoteList) {
                 noteCount++;
                 setPFont();
-                indent=0;
-                indent=15;
                 writeWrappedLine(frame.getNewParagraph(), Integer.toString(noteCount)+". "+note.getSubject());
             }
         }
@@ -535,7 +529,13 @@ public class WikiToPDF
                 
             }
             agendaNum++;
-            writeWrappedLine(innerFrame.getNewParagraph(), ""+agendaNum+ ": " + ai.getSubject());
+
+            para = innerFrame.getNewParagraph();
+            para.addTextCarefully(Integer.toString(agendaNum)+ ": " + ai.getSubject(), 16, PDType1Font.HELVETICA);
+
+            
+            innerFrame = frame.newInteriorFrame();
+            innerFrame.setPaddingLeft(35);
             writeWikiData(innerFrame, ai.getDesc());
             
             if (includeComments) {
