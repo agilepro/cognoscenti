@@ -294,7 +294,7 @@
           "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"LabelList.htm",
           "name":"Labels",
-          "title":"Create labels to help categorize documents, discussions, and action items.",
+          "title":"Create labels to help categorize documents, discussions, and action items."
         },
         {
           "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
@@ -355,7 +355,7 @@
       "opts": [],
       "external": true,
       "useOpts": [],
-      "readOnly": true,
+      "readOnly": true
     }
   ],
   "hidden": [

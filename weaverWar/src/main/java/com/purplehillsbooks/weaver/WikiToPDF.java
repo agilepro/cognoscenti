@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.awt.Color;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.Vector;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -381,19 +380,20 @@ public class WikiToPDF
     }
 
 
-    private void writeTOCPage(Frame frame, NGWorkspace ngp,
+    private void writeTOCPage(Frame containingFrame, NGWorkspace ngp,
             Vector<TopicRecord> memberNoteList, 
             Vector<MeetingRecord> meetings)  throws Exception {
         headerText = "Topic report generated from Weaver";
 
-        startPage();
+        Frame frame = containingFrame.newInteriorFrame();
+        frame.setPadding(36, 36, 0, 0);
+        frame.setStartNewPage(true);
 
         String projectName = ngp.getFullName();
         setPFont();
 
         writeWrappedLine(frame.getNewParagraph(), "Workspace:");
 
-        setH1Font();
         writeWrappedLine(frame.getNewParagraph(), projectName);
 
         int noteCount = 0;
@@ -422,19 +422,15 @@ public class WikiToPDF
         indent=0;
 
         if (includeDecisions) {
-            setH2Font();
             writeWrappedLine(frame.getNewParagraph(), "Decisions");
         }
         if (includeAttachments) {
-            setH2Font();
             writeWrappedLine(frame.getNewParagraph(), "Attached Documents");
         }
         if (includeActionItems) {
-            setH2Font();
             writeWrappedLine(frame.getNewParagraph(), "Action Items");
         }
         if (includeRoles) {
-            setH2Font();
             writeWrappedLine(frame.getNewParagraph(), "Roles");
         }
         endPage();
@@ -460,14 +456,14 @@ public class WikiToPDF
         
         
         Frame titleBoxFrame = mainframe.newInteriorFrame();
-        //titleBoxFrame.setBorder(Color.blue, new Stroke());
+        titleBoxFrame.setBorder(Color.blue, new Stroke());
         titleBoxFrame.setPadding(5, 5, 5, 5);
         titleBoxFrame.setMargin(0, 0, 20, 20);
         titleBoxFrame.setBackgroundColor(lightSkyBlue);
-        titleBoxFrame.removeLeadingEmptyVerticalSpace();
+        titleBoxFrame.setStartNewPage(true);
 
         Paragraph para = titleBoxFrame.getNewParagraph();
-        para.addText(subject, 24, PDType1Font.HELVETICA);
+        para.addTextCarefully(subject, 24, PDType1Font.HELVETICA);
 
         
         para = titleBoxFrame.getNewParagraph();
@@ -477,11 +473,11 @@ public class WikiToPDF
         para.addTextCarefully("Last modified by:  "+lastEditor.getName()+" on "+editTime, 8, PDType1Font.HELVETICA);
 
         titleBoxFrame = mainframe.newInteriorFrame();
-
         writeWikiData(titleBoxFrame, note.getWiki());
+        
         if (includeComments) {
             for (CommentRecord cr : note.getComments()) {
-                //writeComment(frame, cr);
+                writeComment(mainframe, cr);
             }
         }
     }
@@ -509,7 +505,7 @@ public class WikiToPDF
         titleBoxFrame.removeLeadingEmptyVerticalSpace();
 
         Paragraph para = titleBoxFrame.getNewParagraph();
-        para.addText(meetingName, 24, PDType1Font.HELVETICA);
+        para.addTextCarefully(meetingName, 24, PDType1Font.HELVETICA);
 
         para = titleBoxFrame.getNewParagraph();
         para.addTextCarefully("Workspace: "+ngp.getFullName()+", Site: "+site.getFullName(), 8, PDType1Font.HELVETICA);
@@ -561,8 +557,9 @@ public class WikiToPDF
         Frame commentBoxFrame = frame.newInteriorFrame();
         commentBoxFrame.setPadding(5, 5, 5, 5);
         commentBoxFrame.setMargin(0, 0, 20, 20);
-        commentBoxFrame.setBackgroundColor(Color.lightGray);
-        commentBoxFrame.removeLeadingEmptyVerticalSpace();
+        //commentBoxFrame.setBackgroundColor(Color.lightGray);
+        commentBoxFrame.setBorder(Color.lightGray, new Stroke());
+        commentBoxFrame.setStartNewPage(true);
         
         String dateStr = convertDateAndTime(date);
 
