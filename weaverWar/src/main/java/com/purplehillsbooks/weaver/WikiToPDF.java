@@ -240,6 +240,9 @@ public class WikiToPDF
 
         try {
             Frame tableOfContents = document.newInteriorFrame();
+            tableOfContents.headerLeft = "Table of Contents";
+            tableOfContents.footerRight = "Page {#}";
+            tableOfContents.footerLeft = printTime;
             if (memberNotes.size()>1 || meetings.size()>1 ||includeDecisions || includeAttachments) {
                 writeTOCPage(tableOfContents, ngp, memberNotes, meetings);
             }
@@ -250,6 +253,9 @@ public class WikiToPDF
             if(memberNotes.size() > 0){
                 for (TopicRecord lr : memberNotes) {
                     Frame restOfDoc = document.newInteriorFrame();
+                    restOfDoc.headerLeft = "Topic: "+lr.getSubject();
+                    restOfDoc.footerRight = "Page {#}";
+                    restOfDoc.footerLeft = printTime;
                     noteCount++;
                     writeNoteToPDF(restOfDoc, ngp, lr, noteCount);
                     document.add(ControlElement.NEWPAGE);
@@ -259,6 +265,9 @@ public class WikiToPDF
             if(meetings.size() > 0){
                 for (MeetingRecord meet : meetings) {
                     Frame restOfDoc = document.newInteriorFrame();
+                    restOfDoc.headerLeft = "Meeting: "+meet.getName();
+                    restOfDoc.footerRight = "Page {#}";
+                    restOfDoc.footerLeft = printTime;
                     noteCount++;
                     writeMeetingToPDF(restOfDoc, ngp, meet, noteCount);
                     document.add(ControlElement.NEWPAGE);
@@ -388,6 +397,7 @@ public class WikiToPDF
         Frame frame = containingFrame.newInteriorFrame();
         frame.setPadding(36, 36, 0, 0);
         frame.setStartNewPage(true);
+        frame.headerLeft = "Table of Contents";
 
         String projectName = ngp.getFullName();
         setPFont();
@@ -461,6 +471,7 @@ public class WikiToPDF
         titleBoxFrame.setMargin(0, 0, 20, 20);
         titleBoxFrame.setBackgroundColor(lightSkyBlue);
         titleBoxFrame.setStartNewPage(true);
+        titleBoxFrame.headerLeft = "Topic "+noteNum+": "+subject;
 
         Paragraph para = titleBoxFrame.getNewParagraph();
         para.addTextCarefully(subject, 24, PDType1Font.HELVETICA);
@@ -503,6 +514,7 @@ public class WikiToPDF
         titleBoxFrame.setMargin(0, 0, 20, 20);
         titleBoxFrame.setBackgroundColor(lightSkyBlue);
         titleBoxFrame.removeLeadingEmptyVerticalSpace();
+        titleBoxFrame.headerLeft = headerText;
 
         Paragraph para = titleBoxFrame.getNewParagraph();
         para.addTextCarefully(meetingName, 24, PDType1Font.HELVETICA);
@@ -583,6 +595,9 @@ public class WikiToPDF
 
 
     private void pageTop(Frame frame, NGWorkspace ngp, String title) throws Exception {
+        frame.headerLeft = title;
+        frame.footerRight = "Page {#}";
+        frame.footerLeft = printTime;
         NGBook book = ngp.getSite();
         headerText = title;
         if(!isNewPage){
@@ -607,6 +622,8 @@ public class WikiToPDF
     public void writeDecisionsToPDF(Frame frame, NGWorkspace ngp) throws Exception {
         pageTop(frame, ngp, "Decision List");
 
+        frame.headerLeft = "Decision List";
+
         for (DecisionRecord dr : ngp.getDecisions()) {
             Frame innerFrame = frame.newInteriorFrame();
             innerFrame.setBorderColor(Color.pink);
@@ -620,6 +637,7 @@ public class WikiToPDF
 
     public void writeAttachmentListToPDF(Frame frame, NGWorkspace ngp) throws Exception {
         pageTop(frame, ngp, "Attachment Documents");
+
 
         int count = 0;
         for (AttachmentRecord att : ngp.getAllAttachments()) {
