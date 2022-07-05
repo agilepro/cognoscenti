@@ -865,11 +865,27 @@ public abstract class NGPage extends ContainerCommon {
     * Find the requested action item, or throw an exception
     */
     public GoalRecord getGoalOrFail(String id) throws Exception {
-        return SectionTask.getTaskOrFail(taskParent, id);
+        GoalRecord task = getGoalOrNull(id);
+        if (task==null) {
+            throw new JSONException("Could not find a action item with the id={0}", id);
+        }
+        return task;
     }
 
     public GoalRecord getGoalOrNull(String id) throws Exception {
-        return SectionTask.getTaskOrNull(taskParent, id);
+        if (id==null) {
+            throw new Exception("getGoalOrNull requires a non-null id parameter");
+        }
+        List<GoalRecord> list = taskParent.getChildren("task", GoalRecord.class);
+        for (GoalRecord goal : list) {
+            if (id.equals(goal.getId())) {
+                return goal;
+            }
+            if (id.equals(goal.getUniversalId())) {
+                return goal;
+            }
+        }
+        return null;
     }
 
     public GoalRecord findGoalBySynopsis(String synopsis) throws Exception {

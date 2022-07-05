@@ -68,7 +68,6 @@
 %><%@page import="com.purplehillsbooks.weaver.exception.NGException"
 %><%@page import="com.purplehillsbooks.weaver.exception.ProgramLogicError"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
-%><%@page import="com.purplehillsbooks.weaver.rest.DataFeedServlet"
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%@page import="com.purplehillsbooks.json.JSONObject"

@@ -54,7 +54,7 @@ public class SectionDef
 
     //
     private static List<SectionDef> allDefs = null;
-    private static SectionFormat defaultUnknownSectionFormat = null;
+    //private static SectionFormat defaultUnknownSectionFormat = null;
     public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
     {
         if (allDefs == null) {
@@ -77,14 +77,14 @@ public class SectionDef
     public synchronized static void clearAllStaticVars()
     {
         allDefs = null;
-        defaultUnknownSectionFormat = null;
+        //defaultUnknownSectionFormat = null;
     }
 
 
     private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
 
-        defaultUnknownSectionFormat = new SectionUnknown();
+        //defaultUnknownSectionFormat = new SectionUnknown();
         SectionFormat cannonNotes =      new SectionForNotes();
         SectionFormat canonAttachments = new SectionAttachments();
         SectionFormat cannonTasks =      new SectionTask();

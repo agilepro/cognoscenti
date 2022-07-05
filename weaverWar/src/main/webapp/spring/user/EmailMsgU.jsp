@@ -2,8 +2,8 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailRecord"
 %><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
-%><%@page import="com.purplehillsbooks.weaver.mail.MailFile"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
+%><%@page import="com.purplehillsbooks.json.JSONException"
 %><%
 
     String msgSentDate = ar.reqParam("msg");
@@ -16,10 +16,14 @@
     JSONObject mailObject = new JSONObject();
     String specialBody = "";
     boolean bodyIsDeleted = false;
+    Exception errorException = null;
     if (emailMsg != null) {
         mailObject = emailMsg.getJSON();
         specialBody = emailMsg.getBodyText();
         bodyIsDeleted = specialBody.startsWith("*deleted");
+    }
+    else {
+        errorException = new Exception("Sorry, no email message with id="+msgId+" was found.  Is this a bad link URL?");
     }
 
 /* PROTOTYPE EMAIL RECORD
@@ -50,6 +54,12 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    <%if (errorException!=null) {%>
+    
+        var errorData = <%JSONException.convertToJSON(errorException, "Email message display page").write(out,2,8);%>;
+        errorPanelHandler($scope, errorData);
+    
+    <% } %>
     $scope.namePart = function(val) {
         var pos = val.indexOf('�');
         if (pos<0) {

@@ -27,11 +27,6 @@ import java.util.Vector;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.color.PDGamma;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
-
 import com.purplehillsbooks.streams.MemFile;
 
 import com.purplehillsbooks.pdflayout.elements.ControlElement;
@@ -498,7 +493,7 @@ public class WikiToPDF
         NGBook site = ngp.getSite();
 
         String meetingName = stripBadCharacters(meet.getName());
-        UserRef lastEditor = UserManager.lookupUserByAnyId(meet.getOwner());
+        UserRef lastEditor = UserManager.getStaticUserManager().lookupUserByAnyId(meet.getOwner());
         String startTime = convertDateAndTime(meet.getStartTime());
 
         headerText = "Meeting "+meetNum+": "+meetingName;
@@ -1186,15 +1181,15 @@ public class WikiToPDF
     {
         int barPos = linkURL.indexOf("|");
         String linkName = linkURL.trim();
-        String linkAddr = linkName;
+        //String linkAddr = linkName;
         if (barPos >= 0)
         {
             linkName = linkURL.substring(0,barPos).trim();
-            linkAddr = linkURL.substring(barPos+1).trim();
+            //linkAddr = linkURL.substring(barPos+1).trim();
         }
 
-        boolean isExternal = (linkAddr.startsWith("http") && linkAddr.indexOf("/")>=0);
-        boolean lookupOK = false;
+        //boolean isExternal = (linkAddr.startsWith("http") && linkAddr.indexOf("/")>=0);
+        //boolean lookupOK = false;
 
         para.addTextCarefully(linkName, currentLineSize, currentFont);
 
@@ -1219,6 +1214,7 @@ public class WikiToPDF
     }
 
 
+    /*
     private void createLink(float x, float y, float textWidth, float height, String link) throws Exception{
         PDBorderStyleDictionary borderULine = new PDBorderStyleDictionary();
         borderULine.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
@@ -1243,6 +1239,7 @@ public class WikiToPDF
         //List<PDAnnotation> annotations = pdpage.getAnnotations();
         //annotations.add(txtLink);
     }
+    */
 
 
     private String convertDateAndTime(long dateVal) throws Exception  {

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.JSONWrapper;
-import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 
 import com.purplehillsbooks.json.JSONObject;

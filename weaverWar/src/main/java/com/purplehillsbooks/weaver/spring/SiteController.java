@@ -31,7 +31,6 @@ import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.CustomRole;
 import com.purplehillsbooks.weaver.HistoricActions;
-import com.purplehillsbooks.weaver.IdGenerator;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;

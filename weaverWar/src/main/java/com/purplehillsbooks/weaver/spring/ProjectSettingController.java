@@ -45,7 +45,6 @@ import com.purplehillsbooks.weaver.RoleRequestRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.MailInst;
 
 import org.springframework.stereotype.Controller;

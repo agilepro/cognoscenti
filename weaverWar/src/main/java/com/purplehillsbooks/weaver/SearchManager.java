@@ -438,7 +438,7 @@ public class SearchManager {
         }
 
         boolean onlyOwner  = ("owner".equals(relationship));
-        boolean onlyMember = ("member".equals(relationship));
+        //boolean onlyMember = ("member".equals(relationship));
         boolean onlyOne    = ("one".equals(relationship));
 
         DirectoryReader ireader = DirectoryReader.open(directoryStore);

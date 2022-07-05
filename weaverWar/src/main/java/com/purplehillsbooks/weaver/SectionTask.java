@@ -20,12 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.Writer;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import org.w3c.dom.Element;
 
 /**
 * Implements the process and task formatting
@@ -67,6 +64,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return list;
     }
 
+    /*
     public static GoalRecord getTaskOrFail(NGSection sec, String id)
         throws Exception
     {
@@ -80,7 +78,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
 
     /**
      * Find the task by either the local id or the universal id.
-     */
+     *
     public static GoalRecord getTaskOrNull(NGSection sec, String id)
         throws Exception
     {
@@ -98,6 +96,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         }
         return null;
     }
+    */
 
 
     public void findLinks(List<String> v, NGSection sec)
@@ -110,42 +109,8 @@ public class SectionTask extends SectionUtil implements SectionFormat
         }
     }
 
-/*     public void writePlainText(NGSection section, Writer out) throws Exception
-    {
-        ProcessRecord process = section.parent.getProcess();
-        if (process != null) {
-            SectionUtil.writeTextWithLB(process.getId() , out);
-            SectionUtil.writeTextWithLB(process.getSynopsis() , out);
-            SectionUtil.writeTextWithLB(process.getDescription() , out);
-            SectionUtil.writeTextWithLB(String.valueOf(process.getState()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(process.getDueDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(process.getStartDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(process.getEndDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(process.getPriority()) , out);
 
-            LicensedURL[] pp = process.getLicensedParents();
-            for (int i=0; i<pp.length; i++) {
-                SectionUtil.writeTextWithLB(String.valueOf(pp[i].url) , out);
-            }
-        }
-
-        for (GoalRecord task : getAllTasks(section)) {
-            SectionUtil.writeTextWithLB(task.getId() , out);
-            SectionUtil.writeTextWithLB(task.getSynopsis() , out);
-            SectionUtil.writeTextWithLB(task.getDescription() , out);
-            SectionUtil.writeTextWithLB(task.getAssigneeCommaSeparatedList() , out);
-            SectionUtil.writeTextWithLB(task.getStatus() , out);
-            SectionUtil.writeTextWithLB(task.getSub() , out);
-            SectionUtil.writeTextWithLB(task.getActionScripts() , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getRank()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getState()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getDueDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getStartDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getEndDate()) , out);
-            SectionUtil.writeTextWithLB(String.valueOf(task.getPriority()) , out);
-        }
-    }
- */
+    /*
     public void removeTask(String taskId, NGSection section) {
         Element secElem = section.getElement();
         for (Element taskElem : DOMUtils
@@ -157,6 +122,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
             }
         }
     }
+    */
 
     /**
     * Walk through whatever elements this owns and put all the four digit
@@ -169,6 +135,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         }
     }
 
+    /*
     public static boolean canEditTask(NGWorkspace ngp, AuthRequest ar, String taskId) throws Exception
     {
         boolean edit = false;
@@ -196,29 +163,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         //Check if it has page licence
         return ar.isMember();
     }
+    */
 
-/*
-    public static void copyTaskRecord(GoalRecord sourceRecord, GoalRecord destinationRecord) throws Exception{
-        destinationRecord.setSynopsis(sourceRecord.getSynopsis().toString());
-        destinationRecord.setDueDate(SectionUtil.niceParseDate(String.valueOf(sourceRecord.getDueDate())));
-        destinationRecord.setAssigneeCommaSeparatedList(sourceRecord.getAssigneeCommaSeparatedList());
-        destinationRecord.setPriority(sourceRecord.getPriority());
-        destinationRecord.setDescription(sourceRecord.getDescription());
-        destinationRecord.setState(sourceRecord.getState());
-        destinationRecord.setCreator(sourceRecord.getCreator());
 
-        destinationRecord.setActionScripts(sourceRecord.getActionScripts());
-        destinationRecord.setDuration(sourceRecord.getDuration());
-        destinationRecord.setEndDate(sourceRecord.getEndDate());
-        destinationRecord.setFreePass(sourceRecord.getFreePass());
-        destinationRecord.setId(sourceRecord.getId());
-
-        destinationRecord.setStartDate(sourceRecord.getStartDate());
-        destinationRecord.setStatus(sourceRecord.getStatus());
-        destinationRecord.setRank(sourceRecord.getRank());
-        if(!"".equals(sourceRecord.getParentGoalId())){
-            destinationRecord.setParentGoal(sourceRecord.getParentGoalId());
-        }
-    }
-*/
 }

@@ -134,7 +134,7 @@ public class MailInst extends JSONWrapper {
      */
     public void setAddressee(String val) throws Exception {
         kernel.put("Addressee", val);
-        UserProfile user = UserManager.lookupUserByAnyId(val);
+        UserProfile user = UserManager.getStaticUserManager().lookupUserByAnyId(val);
         if (user!=null) {
             kernel.put("UserKey", user.getKey());
         }

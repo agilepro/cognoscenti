@@ -610,7 +610,7 @@ public class MeetingRecord extends DOMFace {
         JSONObject peopleMap = new JSONObject();
         for (String id : this.getVector("participants")) {
             AddressListEntry ale = new AddressListEntry(id);
-            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
+            peopleMap.requireJSONObject(ale.getKey());
         }
         for (String id : this.getVector("attended")) {
             AddressListEntry ale = new AddressListEntry(id);

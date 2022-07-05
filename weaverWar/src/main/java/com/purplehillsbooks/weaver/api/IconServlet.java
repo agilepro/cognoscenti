@@ -78,7 +78,7 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
         if (atPos>0 && fileName.length()>6) {
             //strip the .jpg off
             String userEmail = fileName.substring(0,fileName.length()-4);
-            user = UserManager.lookupUserByAnyId(userEmail);
+            user = UserManager.getStaticUserManager().lookupUserByAnyId(userEmail);
             if (user!=null) {
                 fileName = user.getImage();
                 //use first character of the name instead of email address

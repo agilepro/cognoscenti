@@ -135,7 +135,6 @@ public class ResponseRecord extends DOMFace
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }
         AddressListEntry owner = new AddressListEntry(this.getUserId());
-        UserProfile ownerProfile = cog.getUserManager().lookupUserByAnyId(this.getUserId());
         String detailMsg = "??";
         boolean isProposal = false;
         switch (cr.getCommentType()) {

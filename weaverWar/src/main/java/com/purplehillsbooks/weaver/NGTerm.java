@@ -143,7 +143,7 @@ public class NGTerm
         //and will be recreated later if needed.
         if (sourceLeaves.size()==0 && targetLeaves.size()==0)
         {
-            allTerms.remove(this);
+            allTerms.remove(this.sanitizedName);
         }
     }
 
@@ -156,7 +156,7 @@ public class NGTerm
         //and will be recreated later if needed.
         if (sourceLeaves.size()==0 && targetLeaves.size()==0)
         {
-            allTerms.remove(this);
+            allTerms.remove(this.sanitizedName);
         }
     }
 

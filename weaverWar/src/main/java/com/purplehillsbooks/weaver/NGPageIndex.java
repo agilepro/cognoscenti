@@ -696,7 +696,7 @@ public class NGPageIndex {
         wStats.gatherFromWorkspace(ngw);
         HashSet<String> userTempKeys = new HashSet<String>();
         for (String email : wStats.anythingPerUser.keySet()) {
-            UserProfile uProf = UserManager.lookupUserByAnyId(email);
+            UserProfile uProf = UserManager.getStaticUserManager().lookupUserByAnyId(email);
             if (uProf!=null) {
                 //only add users that actually have profiles
                 userTempKeys.add(uProf.getKey());

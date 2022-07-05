@@ -13,7 +13,6 @@
 %><%@page import="com.purplehillsbooks.weaver.SuperAdminLogFile"
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
-%><%@page import="com.purplehillsbooks.weaver.rest.TaskHelper"
 %><%@page import="org.w3c.dom.Element"
 %><%
     /*

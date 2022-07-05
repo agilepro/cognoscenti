@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.EmailSender;

@@ -55,23 +55,6 @@ public class GoalRecord extends BaseRecord {
 
     }
 
-/*
-    /**
-     * Generates a fully qualified, licensed, Wf-XML link for this action item This is
-     * the link someone else would use to get to this action item. AuthRequest is
-     * needed to know the current server context path
-     *
-    public LicensedURL getWfxmlLink(AuthRequest ar) throws Exception {
-        NGContainer ngp = ar.ngp;
-        if (ngp == null) {
-            throw new ProgramLogicError(
-                    "the NGWorkspace must be loaded into the AuthRequest for getWfxmlLink to work");
-        }
-        return new LicensedURL(ar.baseURL + "p/" + ngp.getKey()
-                + "/s/Tasks/id/" + getId() + "/data.xml", ngp.getKey()
-                + "_task" + getId(), accessLicense().getId());
-    }
-*/
 
     /**
      * Get a NGRole that represents the assignees of the action item. a role is a list
@@ -192,7 +175,7 @@ public class GoalRecord extends BaseRecord {
 
         // Is a subtask.
         if (hasParentGoal()) {
-            handleSubTaskStateChangeEvent();
+            handleSubTaskStateChangeEvent(ngw);
         }
 
         // complete all the sub tasks.
@@ -233,6 +216,7 @@ public class GoalRecord extends BaseRecord {
         setAttribute("parenttask", ptid);
     }
 
+    /*
     public GoalRecord getParentGoal() throws Exception {
         String parentGoalId = getAttribute("parenttask");
         if (parentGoalId == null || parentGoalId.length() == 0) {
@@ -240,8 +224,9 @@ public class GoalRecord extends BaseRecord {
         }
         return getProject().getGoalOrFail(parentGoalId);
     }
+    */
 
-    public boolean hasParentGoal() throws Exception {
+    private boolean hasParentGoal() throws Exception {
         if (!fEle.hasAttribute("parenttask")) {
             return false;
         }
@@ -254,12 +239,14 @@ public class GoalRecord extends BaseRecord {
         return true;
     }
 
+    /*
     public void makeAsRegularGoal() throws Exception {
         // removing the parent action item attribute would make this task a regular
         // task
         // instead of subtask.
         fEle.removeAttribute("parenttask");
     }
+    */
 
     @Override
     public void setDueDate(long newVal) throws Exception {
@@ -615,12 +602,12 @@ public class GoalRecord extends BaseRecord {
         setScalar("universalid", newID);
     }
 
-    private void handleSubTaskStateChangeEvent() throws Exception {
+    private void handleSubTaskStateChangeEvent(NGWorkspace ngw) throws Exception {
         if (hasParentGoal() == false) {
             return;
         }
 
-        GoalRecord parentTask = getParentGoal();
+        GoalRecord parentTask = ngw.getGoalOrNull(getParentGoalId());
         int state = getState();
 
         if (state == BaseRecord.STATE_COMPLETE

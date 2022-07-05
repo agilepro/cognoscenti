@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -172,6 +171,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     }
  */
 
+    /*
     private void assertRightAttachmentsSection(NGSection sec) throws Exception
     {
         //there should only be on section of type attachments, and it should
@@ -181,6 +181,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             throw new Exception("Internal error, SectionAttachments was passed a section that is not named 'Attachments' but is named '"+sec.getName()+"' instead");
         }
     }
+    */
 
 
 

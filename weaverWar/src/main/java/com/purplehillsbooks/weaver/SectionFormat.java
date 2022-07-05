@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.Writer;
 import java.util.List;
 
 /**

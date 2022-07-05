@@ -42,8 +42,6 @@ import javax.mail.UIDFolder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.mail.MailFile;
-
 import com.purplehillsbooks.json.JSONException;
 
 public class EmailListener extends TimerTask{

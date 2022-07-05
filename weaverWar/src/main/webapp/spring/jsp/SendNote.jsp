@@ -67,7 +67,7 @@ Optional Parameters:
         meetId = eGen.getMeetingId();
         boolean isMeeting = (meetId!=null && meetId.length()>0);
         if (isMeeting) {
-            MeetingRecord mr = ngw.findMeeting(meetId);
+            MeetingRecord mr = ngw.findMeetingOrNull(meetId);
             if (mr!=null) {
                 emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw, false));
                 if(mailSubject == null){
@@ -124,7 +124,7 @@ Optional Parameters:
 
         boolean isMeeting = (meetId!=null && meetId.length()>0);
         if (isMeeting) {
-            MeetingRecord mr = ngw.findMeeting(meetId);
+            MeetingRecord mr = ngw.findMeetingOrNull(meetId);
             if (mr!=null) {
                 emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw, false));
                 if(mailSubject == null){
@@ -132,8 +132,8 @@ Optional Parameters:
                 }
                 emailInfo.put("alsoTo", AddressListEntry.getJSONArrayFromIds(mr.getParticipants()));
                 meeting = mr.getFullJSON(ar, ngw, false);
+                targetRole = mr.getTargetRole();
             }
-            targetRole = mr.getTargetRole();
         }
 
         if(mailSubject == null){
