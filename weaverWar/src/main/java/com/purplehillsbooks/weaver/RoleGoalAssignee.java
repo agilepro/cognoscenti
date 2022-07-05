@@ -65,17 +65,16 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     @Override
     public void addPlayer(AddressListEntry newMember) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
-        StringBuilder newVal = new StringBuilder();
+        List<String> newList = new ArrayList<String>();
         for (AddressListEntry one : current) {
-            if (one.equals(newMember)) {
+            if (newMember.hasAnyId(one.getUniversalId())) {
                 // person is already in the list, so leave without updating
                 return;
             }
-            newVal.append(one.getUniversalId());
-            newVal.append(",");
+            newList.add(one.getUniversalId());
         }
-        newVal.append(newMember.getUniversalId());
-        setList(newVal.toString());
+        newList.add(newMember.getUniversalId());
+        goal.setAssigneeList(newList);
     }
     
     @Override
@@ -86,41 +85,33 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     }
 
 
+    @Override
     public void removePlayer(AddressListEntry oldMember) throws Exception {
+        //in this case the methods are the same as the one below
+        //however this is an interface method to implement
         removePlayerCompletely(oldMember);
     }
+    @Override
     public void removePlayerCompletely(UserRef user) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
-        StringBuilder newVal = new StringBuilder();
-        boolean needComma = false;
+        List<String> newList = new ArrayList<String>();
         boolean changed = false;
         for (AddressListEntry one : current) {
             if (user.hasAnyId(one.getUniversalId())) {
                 // person was in the list, this will remove him from it
                 changed = true;
-            } else {
-                if (needComma) {
-                    newVal.append(",");
-                }
-                newVal.append(one.getUniversalId());
-                needComma = true;
+            } 
+            else {
+                newList.add(one.getUniversalId());
             }
         }
         if (changed) {
-            setList(newVal.toString());
+            goal.setAssigneeList(newList);
         }
     }
 
     private List<String> getAssigneeList() {
-        String rawList = goal.getAssigneeCommaSeparatedList();
-        if (rawList==null || rawList.length()==0) {
-            return new ArrayList<String>();
-        }
-        return UtilityMethods.splitString(rawList, ',');
-    }
-
-    private void setList(String newVal) {
-        goal.setAssigneeCommaSeparatedList(newVal);
+        return goal.getAssigneeList();
     }
 
     protected String taskName() {
@@ -133,7 +124,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
 
     public void clear() {
         try {
-            goal.setAssigneeCommaSeparatedList("");
+            goal.clearAssigneeList();
         } catch (Exception e) {
             // this is very unlikely ...
             throw new RuntimeException("Unable to clear the action item assignees", e);
@@ -169,27 +160,27 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     public boolean replaceId(String sourceId, String destId) {
         //first a clear search path to see if one is there.
         List<String> assignees = getAssigneeList();
-        boolean foundOne = false;
-        for (String oneAss : assignees) {
-            if (oneAss.equalsIgnoreCase(sourceId)) {
-                foundOne = true;
-            }
-        }
-        if (!foundOne) {
-            return false;
-        }
 
-        //since we found one, now reconstruct the assignee list
-        StringBuilder result = new StringBuilder();
-        result.append(destId);
+        List<String> newList = new ArrayList<String>();
+        newList.add(destId);
+        boolean found = false;
         for (String oneAss : assignees) {
             //be sure not to duplicate the destId ... one might have already been in there.
-            if (!oneAss.equalsIgnoreCase(sourceId) && !oneAss.equalsIgnoreCase(destId)) {
-                result.append(",");
-                result.append(oneAss);
+            if (oneAss.equalsIgnoreCase(sourceId)) {
+                found = true;
+            } 
+            else if (oneAss.equalsIgnoreCase(destId)) {
+                //already there???
+            }
+            else {
+                newList.add(oneAss);
             }
         }
-        setList(result.toString());
+        if (!found) {
+            //if you never find the source, then ignore the command
+            return false;
+        }
+        goal.setAssigneeList(newList);
         return true;
     }
 

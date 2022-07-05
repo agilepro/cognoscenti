@@ -776,24 +776,29 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             Cognoscenti cog = ar.getCogInstance();
-            UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
+            UserProfile destinationUser = cog.getUserManager().findUserByAnyIdOrFail(userKey);
             JSONObject postObject = this.getPostedObject(ar);
 
-            AddressListEntry ale = new AddressListEntry(ar.getBestUserId());
-            OptOutAddr ooa = new OptOutAddr(ale);
-            postObject.put("from", ale.getJSON());
+            UserProfile fromUser = ar.getUserProfile();
+            postObject.put("from", fromUser.getJSON());
 
-            AddressListEntry ale2 = new AddressListEntry(user.getPreferredEmail());
-            postObject.put("to", ale2.getJSON());
+            AddressListEntry toUser = new AddressListEntry(destinationUser.getPreferredEmail());
+            OptOutAddr ooa = new OptOutAddr(toUser);
+            postObject.put("to", toUser.getJSON());
 
             postObject.put("baseURL", ar.baseURL);
             postObject.put("optout", ooa.getUnsubscribeJSON(ar));
+            
+            String subject = postObject.optString("subject");
+            if (subject==null || subject.length()==0) {
+                subject = "Email from "+fromUser.getName()+" to "+toUser.getName();
+            }
 
             File templateFile = ar.getCogInstance().getConfig().getFileFromRoot("email/DirectEmail.chtml");
 
-            MailInst mi = MailInst.genericEmail("$", "$", "Confirm your email address", "");
+            MailInst mi = MailInst.genericEmail("$", "$", subject, "");
             mi.setBodyFromTemplate(templateFile, postObject, ooa);
-            EmailSender.generalMailToOne(mi, user.getAddressListEntry(), ooa);
+            EmailSender.generalMailToOne(mi, fromUser.getAddressListEntry(), ooa);
 
             sendJson(ar, mi.getJSON());
         }catch(Exception ex){

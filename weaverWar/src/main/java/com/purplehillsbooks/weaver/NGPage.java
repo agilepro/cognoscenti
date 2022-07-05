@@ -786,53 +786,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    ////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////
 
-    /**
-    * Build in ability to test whether a page is rendered to
-    * correct XHTML.  If all is correct there is no response,
-    * bu if there is an error, an exception is thrown.
-    * This test primarily is to render the page, and then
-    * to parse the result as XML.  If the result is valid XML
-    * then we have some assurance that nothing accidental was
-    * included in the page.  Perhaps we can test the DOM and see
-    * if things are nested correctly ... in the future.
-    *
-    public void testRender(AuthRequest ar)
-        throws Exception
-    {
-        for (int limitLevel=0; limitLevel<=4; limitLevel++)
-        {
-            for (NGSection sec : getAllSections())
-            {
-                ByteArrayOutputStream buf = new ByteArrayOutputStream();
-                Writer testOut = new OutputStreamWriter(buf, "UTF-8");
-
-                AuthRequest ar4test = new AuthDummy(ar.getUserProfile(), testOut, ar.getCogInstance());
-                //ar4test.maxLevel = limitLevel;   <--no longer implemented, need to do something else
-                ar4test.setPageAccessLevels(this);
-
-                //write a dummy containing tag -- everything else will be within this
-                testOut.write("<editpage>");
-                //conclude the containing tag
-                testOut.write("</editpage>");
-                testOut.flush();
-                byte[] b = buf.toByteArray();
-                ByteArrayInputStream is = new ByteArrayInputStream(b);
-
-                //parse again
-                try {
-                    DOMUtils.convertInputStreamToDocument(is, false, false);
-                }
-                catch (Exception e) {
-                    throw new NGException("nugen.exception.error.in.section", new Object[] {
-                            sec.getName(), new String(b, "UTF-8") }, e);
-                }
-            }
-        }
-    }
-    */
 
 
     //a page always has a process, so if asked for, and we can't find
@@ -956,50 +910,6 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-
-/*
-    public void genProcessData(AuthRequest ar)
-        throws Exception
-    {
-        ProcessRecord process = getProcess();
-
-        ar.resp.setContentType("text/xml;charset=UTF-8");
-        Document doc = DOMUtils.createDocument("process");
-        String schema =  ar.baseURL + "rest/xsd/Page.xsd";
-        DOMUtils.setSchemAttribute(doc.getDocumentElement(), schema);
-        Element processEle = doc.getDocumentElement();
-        String processurl = ar.baseURL + "p/" + getKey() + "/process.wfxml";
-        process.fillInWfxmlProcess(doc, processEle, (NGWorkspace)this, processurl);
-        DOMUtils.writeDom(doc, ar.w);
-    }
-
-    public void genActivityData(AuthRequest ar, String id)
-        throws Exception
-    {
-        ar.resp.setContentType("text/xml;charset=UTF-8");
-        Document doc = DOMUtils.createDocument("activity");
-        Element actEle = doc.getDocumentElement();
-        GoalRecord task = getGoalOrFail(id);
-        String processurl = ar.baseURL + "p/" + getKey() + "/process.wfxml";
-        task.fillInWfxmlActivity(doc, actEle,processurl);
-        DOMUtils.writeDom(doc, ar.w);
-    }
-    */
-
-/*
-    public void writePlainText(AuthRequest ar) throws Exception
-    {
-        for (int i=0; i<displayNames.size(); i++) {
-            ar.write(displayNames.get(i));
-            ar.write("\n");
-        }
-
-        for (NGSection sec : getAllSections()) {
-            SectionFormat formatter = sec.getFormat();
-            formatter.writePlainText(sec, ar.w);
-        }
-    }
-    */
 
     /**
     * Get a four digit numeric id which is unique on the page.
@@ -1304,27 +1214,6 @@ public abstract class NGPage extends ContainerCommon {
         ar.write( "</a>");
     }
 
-    /*
-    @Override
-    public void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception
-    {
-        ReminderRecord att = getReminderMgr().findReminderByID( reminderId );
-        if(att==null)
-        {
-            ar.write( "(Reminder " );
-            ar.write( reminderId );
-            ar.write( ")" );
-            return;
-        }
-        String nameOfLink =  trimName(att.getFileDesc(), len);
-        writePageUrl(ar);
-        ar.write( "/sendemailReminder.htm?rid=" );
-        ar.writeURLData(reminderId);
-        ar.write( "'>" );
-        ar.writeHtml(nameOfLink);
-        ar.write( "</a>");
-    }
-    */
 
 
     @Override
@@ -1405,17 +1294,6 @@ public abstract class NGPage extends ContainerCommon {
         pageInfo.setWorkspaceMailId(id);
     }
 
-/*
-    private void scanForNewFiles() throws Exception {
-        // nothing in this class, this is overridden in the subclass NGProj
-        // to look for new file that appeared in the workspace folder
-    }
-
-    private void removeExtrasByName(String name) throws Exception {
-        // no extras in this class, this is overridden in the subclass NGProj
-        // in order to clean up file in the folder that should not be there.
-    }
-*/
 
     /**
      * Find all the tasks on this page, and assign them new, arbitrary

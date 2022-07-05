@@ -35,7 +35,6 @@ import java.util.TimeZone;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailFile;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -216,16 +215,6 @@ public class GoalRecord extends BaseRecord {
         setAttribute("parenttask", ptid);
     }
 
-    /*
-    public GoalRecord getParentGoal() throws Exception {
-        String parentGoalId = getAttribute("parenttask");
-        if (parentGoalId == null || parentGoalId.length() == 0) {
-            return null;
-        }
-        return getProject().getGoalOrFail(parentGoalId);
-    }
-    */
-
     private boolean hasParentGoal() throws Exception {
         if (!fEle.hasAttribute("parenttask")) {
             return false;
@@ -239,15 +228,6 @@ public class GoalRecord extends BaseRecord {
         return true;
     }
 
-    /*
-    public void makeAsRegularGoal() throws Exception {
-        // removing the parent action item attribute would make this task a regular
-        // task
-        // instead of subtask.
-        fEle.removeAttribute("parenttask");
-    }
-    */
-
     @Override
     public void setDueDate(long newVal) throws Exception {
         super.setDueDate(newVal);
@@ -260,89 +240,7 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-    /**
-     * Constructs an XML representation of the task for WfXML purpose
-     *
-     * @param ngc
-     *            is the container of the task if you want last modified user
-     *            and time to be generated in the output.
-     */
-    public void fillInWfxmlActivity(Document doc, Element actEle,
-            String processurl) throws Exception {
-        String actkey = "act" + getId();
-        String relaykey = "relay" + getId();
-        String activityurl = "";
-        String relayurl = "";
-        int indx1 = processurl.indexOf("/process.xml");
-        int indx2 = processurl.indexOf("/process.wfxml");
-        if (indx1 > 0) {
-            activityurl = processurl.substring(0, indx1) + "/" + actkey
-                    + ".xml";
-            relayurl = processurl.substring(0, indx1) + "/" + relaykey
-                    + "/process.xml";
-        } else if (indx2 > 0) {
-            activityurl = processurl.substring(0, indx2) + "/" + actkey
-                    + ".wfxml";
-            relayurl = processurl.substring(0, indx1) + "/" + relaykey
-                    + "/process.xml";
-        } else {
-            activityurl = actkey + ".xml";
-        }
 
-        if (doc == null || actEle == null) {
-            return;
-        }
-
-        actEle.setAttribute("id", getId());
-        DOMUtils.createChildElement(doc, actEle, "processurl", processurl);
-        DOMUtils.createChildElement(doc, actEle, "key", activityurl);
-        DOMUtils.createChildElement(doc, actEle, "display", "FrontPage.htm");
-        DOMUtils.createChildElement(doc, actEle, "synopsis", getSynopsis());
-        DOMUtils.createChildElement(doc, actEle, "description",
-                getDescription());
-        DOMUtils.createChildElement(doc, actEle, "state",
-                Integer.toString(getState()));
-        DOMUtils.createChildElement(doc, actEle, "assignee",
-                getAssigneeCommaSeparatedList());
-        UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
-        if (creatorUser != null) {
-            DOMUtils.createChildElement(doc, actEle, "creator",
-                    creatorUser.getUniversalId());
-        }
-        Element subEle = DOMUtils.createChildElement(doc, actEle, "subprocess");
-        String subKey = getSub();
-        if (subKey != null && subKey.length() > 0) {
-            DOMUtils.createChildElement(doc, subEle, "subkey", getSub());
-            DOMUtils.createChildElement(doc, subEle, "relayurl", relayurl);
-        }
-        DOMUtils.createChildElement(doc, actEle, "actionscripts",
-                this.getActionScripts());
-        DOMUtils.createChildElement(doc, actEle, "progress", getStatus());
-        DOMUtils.createChildElement(doc, actEle, "priority",
-                String.valueOf(getPriority()));
-        DOMUtils.createChildElement(doc, actEle, "duedate",
-                UtilityMethods.getXMLDateFormat(getDueDate()));
-        DOMUtils.createChildElement(doc, actEle, "startdate",
-                UtilityMethods.getXMLDateFormat(getStartDate()));
-        DOMUtils.createChildElement(doc, actEle, "duration",
-                String.valueOf(getDuration()));
-        DOMUtils.createChildElement(doc, actEle, "enddate",
-                UtilityMethods.getXMLDateFormat(getEndDate()));
-        DOMUtils.createChildElement(doc, actEle, "rank",
-                String.valueOf(getRank()));
-
-        // this added to enable synchronization of tasks
-        DOMUtils.createChildElement(doc, actEle, "modifiedtime",
-                UtilityMethods.getXMLDateFormat(getModifiedDate()));
-        DOMUtils.createChildElement(doc, actEle, "modifieduser",
-                getModifiedBy());
-        String uid = getUniversalId();
-        if (uid == null || uid.length() == 0) {
-            throw new Exception("Task " + getId() + " has no universal ID ("
-                    + getSynopsis() + ") -- nust have one!");
-        }
-        DOMUtils.createChildElement(doc, actEle, "universalid", uid);
-    }
 
     public String getFreePass() throws Exception {
         return getScalar("freepass");
@@ -361,24 +259,6 @@ public class GoalRecord extends BaseRecord {
         return safeConvertInt(stateVal);
     }
 
-    /**
-     * User may never set the percent complete. This method forces the percent
-     * complete retrieved to be zero if the task has not been started, and 100
-     * if it is completed, and it is the stored value for everything else.
-     */
-    public int getCorrectedPercentComplete() throws Exception {
-        int state = getState();
-        switch (state) {
-        case STATE_UNSTARTED:
-            return 0;
-        case STATE_COMPLETE:
-        case STATE_SKIPPED:
-            return 100;
-        default:
-            // do nothing, use stored value
-        }
-        return getPercentComplete();
-    }
 
     /**
      * A user is allowed to specify what percentage that the task is complete.
@@ -435,8 +315,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     public void writeUserLinks(AuthRequest ar) throws Exception {
-        List<String> assignees = UtilityMethods.splitString(
-                getAssigneeCommaSeparatedList(), ',');
+        List<String> assignees = getAssigneeList();
         writeLinks(ar, assignees);
     }
 
@@ -540,15 +419,25 @@ public class GoalRecord extends BaseRecord {
         setScalar("sub", newVal);
     }
 
-    //TODO: this should be changed to vector form to avoid problems with commas
-    public String getAssigneeCommaSeparatedList() {
-        return getScalar("assignee");
+    
+    public List<String> getAssigneeList() {
+        String rawList = getScalar("assignee");
+        if (rawList==null || rawList.length()==0) {
+            return new ArrayList<String>();
+        }
+        return UtilityMethods.splitString(rawList, ',');
+    }
+    
+    
+    
+    public void setAssigneeList(List<String> newList) {
+        setScalar("assignee", UtilityMethods.joinStrings(newList));        
+    }
+    public void clearAssigneeList() {
+        setScalar("assignee", null);
     }
 
-    //TODO: this should be changed to vector form to avoid problems with commas
-    public void setAssigneeCommaSeparatedList(String newVal) {
-        setScalar("assignee", newVal);
-    }
+    
 
     public String getModifiedBy() {
         return getAttribute("modifiedBy");

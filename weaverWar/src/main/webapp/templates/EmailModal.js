@@ -12,12 +12,20 @@ app.controller('EmailModalCtrl', function ($scope, $modalInstance, $modal, $inte
         $modalInstance.dismiss('cancel');
     }
     $scope.sendEmail = function() {
+        if (!$scope.subject) {
+            alert("please enter a subject for the email");
+            return;
+        }
+        if (!$scope.message) {
+            alert("please enter a message for the body of the email");
+            return;
+        }
         var updateRec = {};
-        updateRec.to = userInfo.uid;
         updateRec.subject = $scope.subject;
         updateRec.message = $scope.message;
         var postdata = angular.toJson(updateRec);
         var postURL = "sendEmail";
+        console.log("EMAIL SEND:", updateRec);
         $http.post(postURL ,postdata)
         .success( function(data) {
             $modalInstance.dismiss('cancel');

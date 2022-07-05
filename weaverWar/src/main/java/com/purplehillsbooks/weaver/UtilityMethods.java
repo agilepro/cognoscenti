@@ -115,7 +115,7 @@ public class UtilityMethods {
      * Joins a vector of strings into a comma delimited list of values Make sure
      * this is done on sets of strings that do not have commas in them!
      */
-    static public String joinStrings(Vector<String> strSet) {
+    static public String joinStrings(List<String> strSet) {
         StringBuilder res = new StringBuilder();
         boolean needsComma = false;
         for (String val : strSet) {
