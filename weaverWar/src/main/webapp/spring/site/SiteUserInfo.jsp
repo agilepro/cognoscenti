@@ -81,6 +81,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.destUser =  $scope.admin.uid;
 
     $scope.replaceUsers = function() {
         if (!$scope.replaceConfirm) {
@@ -440,10 +441,13 @@ app.filter('encode', function() {
         <td ng-hide="userDetails.lastLogin>100000">Has never logged in.</td>
         <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|cdate}} as '{{userDetails.lastLoginId}}'</td>
       </tr>
-      <tr>
-        <td class="labelColumn">Disabled</td>
-        <td ng-hide="userInfo.disabled">User is NOT Disabled</td>
-        <td ng-show="userInfo.disabled" style="background-color:yellow">User is Disabled</td>
+      <tr ng-dblclick="showUserDisabledPanel=!showUserDisabledPanel">
+        <td class="labelColumn" ng-click="showUserDisabledPanel=!showUserDisabledPanel">Disabled</td>
+        <td>
+          <div ng-hide="userInfo.disabled">User is NOT Disabled</div>
+          <div ng-show="userInfo.disabled" style="background-color:yellow">User is Disabled</div>
+          <div ng-show="showUserDisabledPanel"><i>Users can not be enabled or disabled at the site level.  Only the global administrator can enable and disable a user's global access.   Instead, at the site level, consider simply removing them from each/any workspace, or the entire site (bottom).</i></div>
+        </td>
       </tr>
       <tr>
         <td class="labelColumn" ng-click="showInvitePanel=!showInvitePanel"></td>
@@ -483,11 +487,15 @@ app.filter('encode', function() {
     
 
     <div ng-hide="showRemovePanel">
-        <button class="btn btn-raised" ng-click="showRemovePanel=true">Remove This User</button>
+        <button class="btn btn-raised" ng-click="showRemovePanel=true">Completely Remove This User</button>
     </div>
-    <div class="well" ng-show="showRemovePanel">
+    <div class="well" ng-show="showRemovePanel" style="max-width:600px">
         <h3>Eliminate all References to this User</h3>
-        <p>Existing objects owned or managed by this user need to be transferred to another.</p>
+        <p><i>Existing objects owned or managed by this user need to be transferred to another user
+              specified by email in the box below.  All workspaces will be searched,
+              and all ownership/rights/permissions will be transferred to the designated new user.
+              This is the only way to truly eliminate a user id from the site.
+        </i></p>
         <table >
           <tr>
             <td class="paddedCell">Replace With:</td>
@@ -505,7 +513,7 @@ app.filter('encode', function() {
           <tr>
             <td class="paddedCell"></td>
             <td class="paddedCell">
-                <button ng-click="replaceUsers()" class="btn btn-primary btn-raised">
+                <button ng-click="replaceUsers()" class="btn btn-danger btn-raised">
                 Transfer All Responsibilities</button>
                 <button class="btn btn-raised" ng-click="showRemovePanel=false">
                 Cancel</button>

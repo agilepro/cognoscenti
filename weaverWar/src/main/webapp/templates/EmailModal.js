@@ -25,7 +25,6 @@ app.controller('EmailModalCtrl', function ($scope, $modalInstance, $modal, $inte
         updateRec.message = $scope.message;
         var postdata = angular.toJson(updateRec);
         var postURL = "sendEmail";
-        console.log("EMAIL SEND:", updateRec);
         $http.post(postURL ,postdata)
         .success( function(data) {
             $modalInstance.dismiss('cancel');

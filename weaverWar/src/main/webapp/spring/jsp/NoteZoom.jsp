@@ -701,6 +701,87 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             //cancel action - nothing really to do
         });
     };
+    
+    
+    $scope.openModalActionItem = function (goal, start) {
+        $scope.extendBackgroundTime();
+        if (!start) {
+            start = 'status';
+        }
+        var modalInstance = $modal.open({
+          animation: false,
+          templateUrl: "<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>",
+          controller: 'ActionItemCtrl',
+          size: 'lg',
+          backdrop: "static",
+          resolve: {
+            goal: function () {
+              return goal;
+            },
+            taskAreaList: function () {
+              return [];
+            },
+            allLabels: function () {
+              return $scope.allLabels;
+            },
+            startMode: function () {
+              return start;
+            },
+            siteId: function () {
+              return $scope.siteInfo.key;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (modifiedGoal) {
+            $scope.allGoals.forEach( function(item) {
+                if (item.id == modifiedGoal.id) {
+                    item.duedate = modifiedGoal.duedate;
+                    item.status = modifiedGoal.status;
+                }
+            });
+            $scope.refreshAllGoals();
+            
+        }, function () {
+          //cancel action
+        });
+    };    
+    $scope.refreshAllGoals = function() {
+        var getURL = "allActionsList.json";
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.allGoals = data.list;
+            $scope.constructAllCheckItems();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.constructAllCheckItems = function() {
+        $scope.allGoals.forEach( function(actionItem) {
+            var list = [];
+            if (actionItem.checklist) {
+                var lines = actionItem.checklist.split("\n");
+                var idx = 0;
+                lines.forEach( function(item) {
+                    item = item.trim();
+                    if (item && item.length>0) {
+                        if (item.indexOf("x ")==0) {
+                            list.push( {name: item.substring(2), checked:true, index: idx} );
+                            idx++;
+                        }
+                        else {
+                            list.push( {name: item, checked:false, index: idx} );
+                            idx++;
+                        } 
+                    }
+                });
+            }
+            actionItem.checkitems = list;
+        });
+    }
+    $scope.constructAllCheckItems();
+    
     $scope.openFeedbackModal = function (item) {
         $scope.extendBackgroundTime();
         
@@ -962,17 +1043,49 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <tr>
     <td class="labelColumn" ng-click="openAttachAction()">Action Items:</td>
-    <td ng-dblclick="openAttachAction()">
-        <div ng-repeat="goal in getActions()">
-          <div>
-            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
-            {{goal.synopsis}}
-          </div>
-          </div>
-        </div>
-        <div ng-hide="getActions().length>0" class="doubleClickHint">
-            Double-click to add / remove action items
-        </div>
+    <td>
+          <table class="table">
+          <tr ng-repeat="goal in getActions()">
+              <td>
+                <a href="task{{goal.id}}.htm" title="access action item details">
+                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
+              </td>
+              <td ng-dblclick="openModalActionItem(goal)">
+                {{goal.synopsis}}
+              </td>
+              <td>
+                <div ng-repeat="person in goal.assignTo">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                         style="width:32px;height:32px" 
+                         title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
+                </div>
+              </td>
+              <td ng-dblclick="openModalActionItem(goal)">
+                <div>{{goal.status}}</div>
+                <div ng-repeat="ci in goal.checkitems" >
+                  <span ng-click="toggleCheckItem($event, goal, ci.index)" style="cursor:pointer">
+                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                  &nbsp; 
+                  </span>
+                  {{ci.name}}
+                </div>
+              </td>
+          </tr>
+          </table>
     </td>
 </tr>
 <tr ng-hide="editMeetingPart=='subscribers'">
@@ -1058,6 +1171,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 </div>
 
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
