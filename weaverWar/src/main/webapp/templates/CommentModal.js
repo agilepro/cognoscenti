@@ -245,16 +245,24 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 	
 	// check for updateComment() in parent scope to disable autosave
 	$scope.autosaveEnabled = true;
+    $scope.lastKeyTimestamp = new Date().getTime();
 	if ($scope.parentScope.updateComment == undefined) {
 		//$scope.autosaveEnabled = false;
     }
 	
     $scope.autosave = function() {
+        $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        $scope.secondsTillClose = 60 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        console.log("secondsTillClose: ", $scope.secondsTillClose);
+        if ($scope.secondsTillClose < 0) {
+            //it has been 1200 seconds (20 minutes) since any save or keystroke
+            //time to close this pop up dialog
+            $scope.saveAndClose();
+        }
         if ($scope.cmt.body == $scope.oldCmt.body && $scope.cmt.outcome == $scope.oldCmt.outcome) {
             //if the body or outcome has not changed, then avoid autosaving it because nothing else critical
             return;
         }
-        $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
         if ($scope.secondsTillSave > 0) {
             //user has typed in last 10 seconds to wait until 10 seconds of silence
             return;

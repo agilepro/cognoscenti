@@ -148,7 +148,7 @@
                     ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" 
                     ng-show="autosaveEnabled">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates</span>
+                <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates - {{secondsTillClose}} till close.</span>
                 <span class="text-info" ng-hide="unsaved==0">Saving changes in {{secondsTillSave}} seconds</span>
             </button>
 		</div>
