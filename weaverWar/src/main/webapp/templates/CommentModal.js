@@ -13,6 +13,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     
     // are there unsaved changes?
 	$scope.unsaved = 0;
+    $scope.saveCount = 0;
 	// controls if comment can be saved
 	$scope.saveDisabled = false;
     
@@ -45,8 +46,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         if (!newComment.notify) {
             newComment.notify = [];
         }
-        newComment.html = convertMarkdownToHtml(newComment.body);
-        newComment.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
+        $scope.bodyHtml = convertMarkdownToHtml(newComment.body);
+        $scope.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
         $scope.hasOutcome = (newComment.commentType==2 || newComment.commentType==3);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
@@ -66,14 +67,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         console.log("ERROR in ResponseModel Dialog: ", data);
     }
 	
-	// return a readable status message
-	$scope.getStatusMassage = function() {
-		switch ($scope.unsaved) {
-            case -1:    return "Autosave completed";
-            case 0:     return "No changes";
-            case 1:     return "Unsaved changes";
-        }
-	};
 	
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
@@ -84,15 +77,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         editor.on('Paste', tinymceChangeTrigger);
         editor.on('Remove', tinymceChangeTrigger);
         editor.on('Format', tinymceChangeTrigger);
-
     }
-
-    function tinymceChangeTrigger(e, editor) {
-        if (tinyMCE.activeEditor.getContent() != $scope.initialContent) {
-            $scope.unsaved = 1;
-        }
-    }
-
 
     $scope.cancel = function() {
         $modalInstance.dismiss('cancel');
@@ -154,8 +139,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         updateRec.state         = $scope.cmt.state;
         updateRec.commentType   = $scope.cmt.commentType;
         updateRec.dueDate       = $scope.cmt.dueDate;
-        updateRec.body          = HTML2Markdown($scope.cmt.html, {});
-        updateRec.outcome       = HTML2Markdown($scope.cmt.outcomeHtml, {});
+        updateRec.body          = HTML2Markdown($scope.bodyHtml, {});
+        updateRec.outcome       = HTML2Markdown($scope.outcomeHtml, {});
         updateRec.responses     = $scope.cmt.responses;
         updateRec.replyTo       = $scope.cmt.replyTo;
         updateRec.containerID   = $scope.cmt.containerID;
@@ -180,6 +165,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         console.log(postURL,updateRec);
         $http.post(postURL ,postdata)
         .success( function(data) {
+            $scope.saveCount++;
             if ("Y"==closeIt) {
                 $modalInstance.dismiss('cancel')
             }
@@ -226,6 +212,31 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         return false;
     };
 
+
+
+
+    //this fires every keystroke to maintain change flag
+    function tinymceChangeTrigger(e, editor) {
+        $scope.lastKeyTimestamp = new Date().getTime();
+        $scope.cmt.body = HTML2Markdown($scope.bodyHtml);
+        $scope.cmt.outcome = HTML2Markdown($scope.outcomeHtml);
+        if ($scope.cmt.body != $scope.oldCmt.body || $scope.cmt.outcome != $scope.oldCmt.outcome) {
+            $scope.unsaved = 1;
+        }
+        else {
+            $scope.unsaved = 0;
+        }
+    }
+	// return a readable status message
+	$scope.getStatusMassage = function() {
+		switch ($scope.unsaved) {
+            case -1:    return "Autosaving . . .";
+            case 0:     return "All Saved";
+            case 1:     return "Unsaved changes";
+        }
+	};
+
+
     /** AUTOSAVE
      * this part of the controller enables an autosave every 30 seconds
      */
@@ -235,19 +246,28 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 	// check for updateComment() in parent scope to disable autosave
 	$scope.autosaveEnabled = true;
 	if ($scope.parentScope.updateComment == undefined) {
-		$scope.autosaveEnabled = false;
+		//$scope.autosaveEnabled = false;
     }
 	
     $scope.autosave = function() {
+        if ($scope.cmt.body == $scope.oldCmt.body && $scope.cmt.outcome == $scope.oldCmt.outcome) {
+            //if the body or outcome has not changed, then avoid autosaving it because nothing else critical
+            return;
+        }
+        $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        if ($scope.secondsTillSave > 0) {
+            //user has typed in last 10 seconds to wait until 10 seconds of silence
+            return;
+        }
         var newFlat = JSON.stringify($scope.cmt);
         if (newFlat != $scope.flattenedCmt ) {
-            saveComment("N", false);
             $scope.unsaved = -1;
+            saveComment("N", false);
         }
     }
 	if ($scope.autosaveEnabled) {
-        //disable autosave almost ... set the duration to 20 minutes
-		//$scope.promiseAutosave = $interval($scope.autosave, 1200000);
+        //check for autosave every second, but only save when user pauses
+		$scope.promiseAutosave = $interval($scope.autosave, 1000);
     }
     
     $scope.loadPersonList = function(query) {

@@ -40,7 +40,7 @@
 </div>
 <div class="modal-body" style="min-height:400px">
     <div ng-show="selectedTab=='Update'">
-    	<div ui-tinymce="tinymceOptions" ng-model="cmt.html" 
+    	<div ui-tinymce="tinymceOptions" ng-model="bodyHtml" 
              class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
     </div>
     <div ng-show="selectedTab=='Settings'">
@@ -137,18 +137,20 @@
         </div>
     </div>
     <div ng-show="selectedTab=='Outcome' && (cmt.commentType==2 || cmt.commentType==3)">
-    	<div ui-tinymce="tinymceOptions" ng-model="cmt.outcomeHtml" 
+    	<div ui-tinymce="tinymceOptions" ng-model="outcomeHtml" 
              class="leafContent" style="min-height:160px;" id="theOutcomeEditor"></div>
     </div>
 </div>
 <div class="modal-footer">
 	<div class="row">
 		<div class="col-md-4 text-left" id='status'>
-            <button ng-click="save()" class="btn btn-link" ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" ng-show="autosaveEnabled">
+            <button ng-click="save()" class="btn btn-link" 
+                    ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" 
+                    ng-show="autosaveEnabled">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                <span class="text-info">{{getStatusMassage()}}</span>
+                <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates</span>
+                <span class="text-info" ng-hide="unsaved==0">Saving changes in {{secondsTillSave}} seconds</span>
             </button>
-
 		</div>
 		<div class="col-md-8 text-right">
 		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-show="cmt.state<=11">Save Draft</button>
@@ -163,7 +165,7 @@
                 Close, Send Email</button>
           <button ng-click="closeNoEmail()" class="btn btn-primary btn-raised" ng-show="cmt.state==12">
                 Close, No Email</button>
-          <button class="btn btn-warning btn-raised" ng-click="cancel()">Cancel</button>
+          <button class="btn btn-warning btn-raised" ng-click="cancel()">Close</button>
 		</div>
 	</div>
 </div>

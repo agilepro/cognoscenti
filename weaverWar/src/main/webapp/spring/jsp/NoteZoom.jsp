@@ -110,9 +110,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
     $scope.addressMode = false;
 
-    $scope.tinymceOptions = standardTinyMCEOptions();
-    $scope.tinymceOptions.height = 400;
-
     $scope.currentTime = (new Date()).getTime();
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
@@ -128,6 +125,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         cancelBackgroundTime();
         errorPanelHandler($scope, serverErr);
     };
+    $scope.secondsTillSave = 0;
+    $scope.changesToSave = false;
 
     $scope.fixUpChoices = function() {
         if ($scope.noteInfo.comments) {
@@ -194,6 +193,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.wikiEditing = $scope.noteInfo.wiki;
             $scope.htmlEditing = convertMarkdownToHtml($scope.noteInfo.wiki);
             $scope.isEditing = true;
+            $scope.changesToSave = false;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -232,8 +232,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             rec[fieldName] = $scope.noteInfo[fieldName];
         });
         if ($scope.isEditing) {
-            //$scope.noteInfo.wiki = HTML2Markdown($scope.noteInfo.html, {});
-            //rec.wiki = $scope.noteInfo.wiki;
             rec.subject = $scope.noteInfo.subject;
         }
         var postdata = angular.toJson(rec);
@@ -273,10 +271,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         $scope.htmlEditing = convertMarkdownToHtml($scope.wikiEditing);
         $scope.wikiLastSave = $scope.noteInfo.wiki;
+        $scope.changesToSave = false;
         $scope.changesToMerge = false;
     }
 
     $scope.receiveTopicRecord = function(data) {
+        $scope.lastRefreshTimestamp = new Date().getTime();
         $scope.noteInfo = data;
         if (data.wiki) {
             if ($scope.isEditing) {
@@ -805,11 +805,41 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
 
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 400;
+	$scope.tinymceOptions.init_instance_callback = function(editor) {
+        $scope.initialContent = editor.getContent();
+	    editor.on('Change', tinymceChangeTrigger);
+        editor.on('KeyUp', tinymceChangeTrigger);
+        editor.on('Paste', tinymceChangeTrigger);
+        editor.on('Remove', tinymceChangeTrigger);
+        editor.on('Format', tinymceChangeTrigger);
+    }
+    function tinymceChangeTrigger(e, editor) {
+        //this runs every keystroke in the editor
+        $scope.lastKeyTimestamp = new Date().getTime();
+        $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
+        $scope.changesToSave = ($scope.wikiEditing != $scope.wikiLastSave);
+    }
+
 
     $scope.autoIdleCount = 0;
+    $scope.autoSaveCount = 0;
 
     $scope.askingToContinue = false;
     $scope.autosave = function() {
+        if ($scope.isEditing && $scope.wikiEditing != $scope.wikiLastSave) {
+            //while editing & local change, then check every 5 seconds of idle time
+            $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        }
+        else {
+            //when not editing, refresh every 20 seconds
+            $scope.secondsTillSave = 20 - Math.floor((new Date().getTime() - $scope.lastRefreshTimestamp)/1000);
+        }
+        if ($scope.secondsTillSave > 0) {
+            //still time to wait so skip this time
+            return;
+        }
         var remainingSeconds = ($scope.bgActiveLimit - (new Date().getTime()))/1000;
         if (remainingSeconds<0) {
             console.log("AUTOSAVE deactivated");
@@ -845,6 +875,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
                 return;
             }
+            $scope.autoSaveCount++;
             $scope.mergeUpdateDoc(true);
         }
         else {
@@ -860,7 +891,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
     $scope.extendBackgroundTime();
-    $scope.promiseAutosave = $interval($scope.autosave, 15000);
+    $scope.promiseAutosave = $interval($scope.autosave, 1000);
 
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
@@ -973,6 +1004,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </div>
+    <div>Refreshing in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
 
     <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
         <div  ng-bind-html="htmlEditing"></div>
@@ -986,7 +1018,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)">Close Editor</button>
         <button ng-show="changesToMerge" class="btn btn-warning btn-raised" 
             ng-click="mergeFromOthers()">Merge Edits from other Users</button>
-            {{saveNotice}}
+        <span ng-show="changesToSave">{{saveNotice}}</span>
+        <span ng-hide="changesToSave">Changes will be saved in {{secondsTillSave}} seconds.</span>
     </div>
 <% } %>
 
@@ -1170,6 +1203,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
 </div>
+
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
