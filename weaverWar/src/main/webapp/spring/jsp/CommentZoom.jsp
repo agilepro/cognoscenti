@@ -103,6 +103,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return [];
         }
     }
+    $scope.cancelBackgroundTime = function() {
+        //does not do anything now
+    }
     $scope.extendBackgroundTime = function() {
         //does not do anything now
     }

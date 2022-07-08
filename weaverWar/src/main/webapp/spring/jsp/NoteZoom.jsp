@@ -116,13 +116,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.isEditing = false;
     $scope.item = {};
 
+    $scope.autoRefresh = true;
     $scope.bgActiveLimit = 0;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
-        cancelBackgroundTime();
+        $scope.cancelBackgroundTime();
         errorPanelHandler($scope, serverErr);
     };
     $scope.secondsTillSave = 0;
@@ -538,7 +539,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
     $scope.createDecision = function(newDecision) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
@@ -558,14 +559,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             $scope.refreshHistory();
+            $scope.extendBackgroundTime();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
+            $scope.extendBackgroundTime();
         });
     };
 
     $scope.openDecisionEditor = function (itemNotUsed, cmt) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
@@ -600,8 +603,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         decisionModalInstance.result.then(function (modifiedDecision) {
             $scope.createDecision(modifiedDecision);
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
 
@@ -640,7 +645,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.saveEdits(['docList']);
     }
     $scope.openAttachDocument = function () {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Documents can not be attached in a frozen workspace.");
@@ -666,13 +671,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         .then(function (docList) {
             //don't save, just force re-read
             $scope.saveEdits([]);
+            $scope.extendBackgroundTime();
         }, function () {
+            $scope.extendBackgroundTime();
             //cancel action - nothing really to do
         });
     };
 
     $scope.openAttachAction = function (item) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Action items can not be attached in a frozen workspace.");
@@ -697,14 +704,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         .then(function (selectedActionItems) {
             $scope.noteInfo.actionList = selectedActionItems;
             $scope.saveEdits(['actionList']);
+            $scope.extendBackgroundTime();
         }, function () {
+            $scope.extendBackgroundTime();
             //cancel action - nothing really to do
         });
     };
     
     
     $scope.openModalActionItem = function (goal, start) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         if (!start) {
             start = 'status';
         }
@@ -734,6 +743,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
 
         modalInstance.result.then(function (modifiedGoal) {
+            $scope.extendBackgroundTime();
             $scope.allGoals.forEach( function(item) {
                 if (item.id == modifiedGoal.id) {
                     item.duedate = modifiedGoal.duedate;
@@ -741,8 +751,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             $scope.refreshAllGoals();
-            
         }, function () {
+            $scope.extendBackgroundTime();
           //cancel action
         });
     };    
@@ -783,7 +793,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.constructAllCheckItems();
     
     $scope.openFeedbackModal = function (item) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         
         var attachModalInstance = $modal.open({
             animation: true,
@@ -799,8 +809,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         attachModalInstance.result
         .then(function (selectedActionItems) {
+            $scope.extendBackgroundTime();
             //not sure what to do here
         }, function () {
+            $scope.extendBackgroundTime();
             //cancel action - nothing really to do
         });
     };
@@ -828,6 +840,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.askingToContinue = false;
     $scope.autosave = function() {
+        if (!$scope.autoRefresh) {
+            //the autorefresh can be turned off and then ignored until 
+            //turned back on again.
+            return;
+        }
         if ($scope.isEditing && $scope.wikiEditing != $scope.wikiLastSave) {
             //while editing & local change, then check every 5 seconds of idle time
             $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
@@ -882,12 +899,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             refreshTopic();
         }
     }
-    function cancelBackgroundTime() {
+    $scope.cancelBackgroundTime = function() {
         console.log("BACKGROUND cancelled");
+        $scope.autoRefresh = false;
         $scope.bgActiveLimit = 0;  //already past
     }
     $scope.extendBackgroundTime = function() {
         console.log("BACKGROUND time extended");
+        $scope.autoRefresh = true;
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
     $scope.extendBackgroundTime();
@@ -1004,7 +1023,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </div>
-    <div>Refreshing in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
+    <div>Refreshing {{autoRefresh}} in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
 
     <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
         <div  ng-bind-html="htmlEditing"></div>

@@ -48,11 +48,11 @@ function setUpCommentMethods($scope, $http, $modal) {
     }
     
     $scope.openCommentEditor = function (itemNotUsed, cmt) {
-        $scope.extendBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
+        $scope.cancelBackgroundTime();
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
@@ -76,9 +76,11 @@ function setUpCommentMethods($scope, $http, $modal) {
 
         modalInstance.result.then(function (returnedCmt) {
             $scope.refreshCommentList();
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
             $scope.refreshCommentList();
+            $scope.extendBackgroundTime();
         });
     };
     

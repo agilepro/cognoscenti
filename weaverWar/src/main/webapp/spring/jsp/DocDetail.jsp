@@ -279,8 +279,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.refreshCommentList = function() {
         $scope.getDocumentInfo();
     }
+    $scope.cancelBackgroundTime = function() {
+        //does not do anything now, no refresh on this page
+    }
     $scope.extendBackgroundTime = function() {
-        //does not do anything now
+        //does not do anything now, no refresh on this page
     }
     $scope.setContainerFields = function(newComment) {
         newComment.containerType = "A";

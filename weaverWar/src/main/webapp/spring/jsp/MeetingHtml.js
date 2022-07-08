@@ -84,7 +84,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
-        cancelBackgroundTime();
+        $scope.cancelBackgroundTime();
         //console.log("Encountered problem: ",serverErr);
         errorPanelHandler($scope, serverErr);
     };
@@ -848,52 +848,57 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.extendCount = 0;
     $scope.saveCount = 0;
     $scope.lastAutoSave = new Date().getTime();
-    function cancelBackgroundTime() {
-        console.log("BACKGROUND cancelled");
-        $scope.bgActiveLimit = 0;  //already past
+    $scope.cancelBackgroundTime = function() {
+        console.log("AUTOSAVE (Meeting) cancelled");
+        $scope.bgActiveLimit = 0;  //this disables the autosave capability
     }
     $scope.extendBackgroundTime = function() {
-        console.log("BACKGROUND time extended ("+(++$scope.extendCount)+" times) because user click");
+        console.log("AUTOSAVE (Meeting) time extended ("+(++$scope.extendCount)+" times) because user click");
         $scope.bgActiveLimit = (new Date().getTime())+1200000;  //twenty minutes
     }
     $scope.extendBackgroundTime();
     $scope.refresh = function() {
+        if ($scope.bgActiveLimit<=0) {
+            //refresh is disabled, so just leave silently
+            $scope.refreshStatus = "Refreshing is disabled by logic";
+            return;
+        }
+        if ($scope.meeting.state!=2) {
+            console.log("AUTOSAVE (Meeting) avoided because meeting not in running state");
+            $scope.refreshStatus = "No refresh because meeting is not being run";
+            return;
+        }
         var currentTime = (new Date().getTime());
         var remainingSeconds = ($scope.bgActiveLimit - currentTime)/1000;
         var secondsSinceLast = (currentTime - $scope.lastAutoSave)/1000;
         if (remainingSeconds<0) {
-            console.log("AUTOSAVE deactivated");
-            if (!$scope.askingToContinue) {
-                $scope.askingToContinue = true;
-                msg = "Background refresh stopped after 20 minutes without interaction.\n"
-                           +"Click OK to manually refresh.";
-                if ($scope.bgActiveLimit<=0) {
-                    msg = "Background refresh stopped because of an error.\n"
-                           +"Click OK to manually refresh.";
-                }
-                if (confirm(msg)) {
-                    location.reload(true);
-                }
-                else {
-                    $scope.askingToContinue = false;
-                }
+            $scope.refreshStatus = "No refresh because too long without user interaction";
+            console.log("AUTOSAVE (Meeting) avoided because timed out.");
+            if ($scope.askingToContinue) {
+                return;
             }
+            $scope.askingToContinue = true;
+            msg = "Background refresh stopped after 20 minutes without interaction.\n"
+                       +"Click OK to manually refresh.";
+            console.log("AUTOSAVE (Meeting) prompting user response.");
+            if (confirm(msg)) {
+                location.reload(true);
+            }
+            else {
+                $scope.extendBackgroundTime();
+                $scope.askingToContinue = false;
+            }
+            console.log("AUTOSAVE (Meeting) received user response.");
             return;
         }
         console.log("AUTOSAVE:  refreshing after "+secondsSinceLast+" seconds ("+(++$scope.saveCount)+" times), shold stop in "+remainingSeconds+" seconds.");
         $scope.lastAutoSave = currentTime;
-        if ($scope.meeting.state!=2) {
-            console.log("AUTOSAVE: cancelled because meeting not in running state");
-            $interval.cancel($scope.promiseAutosave);
-            $scope.refreshStatus = "No refresh because meeting is not being run";
-            return;  //don't set of refresh unless in run mode
-        }
         var nowEditing = $scope.editMeetingDesc;
         if (nowEditing) {
             $scope.refreshStatus = "No refresh because currently editing";
             return;
         }
-        $scope.refreshStatus = "Refreshing";
+        $scope.refreshStatus = "Refreshing is active";
         $scope.putGetMeetingInfo( null );
         $scope.refreshCount++;
     }
@@ -1237,7 +1242,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         if (!start) {
             start = 'status';
         }
@@ -1274,8 +1279,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 }
             });
             $scope.saveGoal(modifiedGoal);
+            $scope.extendBackgroundTime();
             
         }, function () {
+            $scope.extendBackgroundTime();
           //cancel action
         });
     };
@@ -1464,7 +1471,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         var newDecision = {
             html: cmt.html,
@@ -1510,8 +1517,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
             });
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
 
@@ -1554,7 +1563,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1576,8 +1585,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         .then(function (docList) {
             //something changed, so re-read the meeting
             $scope.refreshMeetingPromise(); 
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
 
@@ -1587,7 +1598,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1609,8 +1620,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         .then(function (selectedTopics, topicName) {
             item.topics = selectedTopics;
             $scope.saveAgendaItem(item);
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
 
@@ -1619,7 +1632,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -1642,9 +1655,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             item.actionItems = selectedActionItems;
             //no need to save...
             $scope.refreshAllGoals();
+            $scope.extendBackgroundTime();
             
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
 
@@ -1668,7 +1683,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Please select an agenda item, and try again");
             return;
         }
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         
         var displayMode = 'Settings';
         if (display) {
@@ -1698,8 +1713,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         .then(function (changedAgendaItem) {
             $scope.saveAgendaItemParts(changedAgendaItem, 
                 ["subject", "descriptionMerge","duration","timerElapsed","isSpacer","presenters","proposed"]);
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
     
@@ -1975,7 +1992,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             return;
         }
         
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         
         var notesModalInstance = $modal.open({
             animation: true,
@@ -1996,8 +2013,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         notesModalInstance.result
         .then(function () {
             $scope.refreshMeetingPromise();
+            $scope.extendBackgroundTime();
         }, function () {
             //cancel action - nothing really to do
+            $scope.extendBackgroundTime();
         });
     };
     $scope.startParticipantEdit = function() {
