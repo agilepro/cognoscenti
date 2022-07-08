@@ -64,39 +64,6 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return list;
     }
 
-    /*
-    public static GoalRecord getTaskOrFail(NGSection sec, String id)
-        throws Exception
-    {
-        GoalRecord task = getTaskOrNull(sec, id);
-        if (task==null)
-        {
-            throw new NGException("nugen.exception.could.not.find.task", new Object[]{id});
-        }
-        return task;
-    }
-
-    /**
-     * Find the task by either the local id or the universal id.
-     *
-    public static GoalRecord getTaskOrNull(NGSection sec, String id)
-        throws Exception
-    {
-        if (id==null) {
-            throw new Exception("getTaskOrNull requires a non-null id parameter");
-        }
-        List<GoalRecord> list = sec.getChildren("task", GoalRecord.class);
-        for (GoalRecord task : list) {
-            if (id.equals(task.getId())) {
-                return task;
-            }
-            if (id.equals(task.getUniversalId())) {
-                return task;
-            }
-        }
-        return null;
-    }
-    */
 
 
     public void findLinks(List<String> v, NGSection sec)
@@ -110,19 +77,6 @@ public class SectionTask extends SectionUtil implements SectionFormat
     }
 
 
-    /*
-    public void removeTask(String taskId, NGSection section) {
-        Element secElem = section.getElement();
-        for (Element taskElem : DOMUtils
-                .getNamedChildrenVector(secElem, "task")) {
-            String id = taskElem.getAttribute("id");
-            if (id.equals(taskId)) {
-                secElem.removeChild(taskElem);
-                return;
-            }
-        }
-    }
-    */
 
     /**
     * Walk through whatever elements this owns and put all the four digit
@@ -134,36 +88,5 @@ public class SectionTask extends SectionUtil implements SectionFormat
             v.add(tr.getId());
         }
     }
-
-    /*
-    public static boolean canEditTask(NGWorkspace ngp, AuthRequest ar, String taskId) throws Exception
-    {
-        boolean edit = false;
-
-        ProcessRecord pr = ngp.getProcess();
-        String prlicense = pr.accessLicense().getId();
-        if(prlicense != null && prlicense.equals(ar.licenseid))
-        {
-            edit = true;
-            return edit;
-        }
-        try {
-            GoalRecord tr = ngp.getGoalOrFail(taskId.trim());
-            String trlicense = tr.accessLicense().getId();
-            if(trlicense != null && trlicense.equals(ar.licenseid))
-            {
-                edit = true;
-                return edit;
-            }
-
-        }catch(Exception e){
-            edit = false;
-            //Not a Task Licence
-        }
-        //Check if it has page licence
-        return ar.isMember();
-    }
-    */
-
 
 }
