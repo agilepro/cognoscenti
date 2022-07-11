@@ -120,6 +120,9 @@ public class CommentRecord extends DOMFace {
     /**
      * The 'outcome' is the result of a proposal, or a quick response round
      */
+    public String getOutcome(AuthRequest ar)  throws Exception {
+        return getScalar("outcome");
+    }
     public String getOutcomeHtml(AuthRequest ar)  throws Exception {
         return WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("outcome"));
     }

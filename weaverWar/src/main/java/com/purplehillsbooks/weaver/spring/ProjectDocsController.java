@@ -250,6 +250,20 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+    
+    /**
+     * This is a view that prompts the user to specify how they want the PDF to be produced.
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/exportPDF.htm", method = RequestMethod.GET)
+    public void exportPDF(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable String pageId, @PathVariable String siteId) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "exportPDF.jsp");
+    }
+
+
+
+    
 
     /**
     * note that the docid in the path is not needed, but it will be different for

@@ -99,18 +99,6 @@ public class MainTabsViewControler extends BaseController {
         showJSPMembers(ar, siteId, pageId, "History.jsp");
     }
 
-    /**
-     * This is a view that prompts the user to specify how they want the PDF to be produced.
-     */
-    @RequestMapping(value = "/{siteId}/{pageId}/exportPDF.htm", method = RequestMethod.GET)
-    public void exportPDF(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable String pageId, @PathVariable String siteId) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "exportPDF.jsp");
-    }
-
-
-
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/searchAllNotes.htm", method = RequestMethod.GET)

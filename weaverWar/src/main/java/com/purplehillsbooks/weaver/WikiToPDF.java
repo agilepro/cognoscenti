@@ -29,7 +29,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import com.purplehillsbooks.streams.MemFile;
 
-import com.purplehillsbooks.pdflayout.elements.ControlElement;
 import com.purplehillsbooks.pdflayout.elements.PDFDoc;
 import com.purplehillsbooks.pdflayout.elements.Frame;
 import com.purplehillsbooks.pdflayout.elements.Orientation;
@@ -50,6 +49,7 @@ import com.purplehillsbooks.pdflayout.shape.Stroke;
  */
 public class WikiToPDF
 {
+    final static boolean debug = true;
 
     final static int NOTHING      = 0;
     final static int PARAGRAPH    = 1;
@@ -57,7 +57,9 @@ public class WikiToPDF
     final static int HEADER       = 3;
     final static int PREFORMATTED = 4;
     
-    public final static char ESCAPE_CHAR = 'º';    
+    public final static char ESCAPE_CHAR = 'º';
+    
+    public final static Color paleYellow = new Color(252,255,226);
 
     protected AuthRequest ar;
     protected int majorState = 0;
@@ -89,8 +91,6 @@ public class WikiToPDF
     private boolean includeComments;
     private boolean includeRoles;
     private boolean includeActionItems;
-
-    boolean isNewPage;
 
 
     private class FontFamily {
@@ -177,14 +177,12 @@ public class WikiToPDF
 
 
     /**
-    * This is a thack due to code trasition.
+    * This is a hack due to code transition.
     * decodes the request parameters and then causes the PDF generation
     * try not to use this if possible.
     */
     public static void handlePDFRequest(AuthRequest ar, NGWorkspace ngp) throws Exception{
         ar.setPageAccessLevels(ngp);
-
-
 
         WikiToPDF wc = new WikiToPDF(ar);
         wc.writeWikiAsPDF(ngp, ar);
@@ -208,11 +206,11 @@ public class WikiToPDF
         includeRoles = (ar.req.getParameter("roles")!=null);
         includeActionItems = (ar.req.getParameter("actionItems")!=null);
 
-        Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
+        Vector<TopicRecord> allTopicPages = new Vector<TopicRecord>();
         for (String noteId : getVectorParam("publicNotes")) {
             TopicRecord lrt = ngp.getDiscussionTopic(noteId);
             if (lrt!=null) {
-                memberNotes.add(lrt);
+                allTopicPages.add(lrt);
             }
         }
 
@@ -232,54 +230,38 @@ public class WikiToPDF
         PageFormat letterSizePage = new PageFormat(PDRectangle.LETTER, Orientation.Portrait, 
                 (float)50.0, (float)50.0, (float)50.0, (float)50.0);
         document = new PDFDoc(letterSizePage);
+        Frame fullDocInterior = document.newInteriorFrame();
 
         try {
-            Frame tableOfContents = document.newInteriorFrame();
-            tableOfContents.headerLeft = "Table of Contents";
-            tableOfContents.footerRight = "Page {#}";
-            tableOfContents.footerLeft = printTime;
-            if (memberNotes.size()>1 || meetings.size()>1 ||includeDecisions || includeAttachments) {
-                writeTOCPage(tableOfContents, ngp, memberNotes, meetings);
-            }
+            writeTOCPage(fullDocInterior, ngp, allTopicPages, meetings);
             
-            document.add(ControlElement.NEWPAGE);
             
             int noteCount = 0;
-            if(memberNotes.size() > 0){
-                for (TopicRecord lr : memberNotes) {
-                    Frame restOfDoc = document.newInteriorFrame();
-                    restOfDoc.headerLeft = "Topic: "+lr.getSubject();
-                    restOfDoc.footerRight = "Page {#}";
-                    restOfDoc.footerLeft = printTime;
+            if(allTopicPages.size() > 0){
+                for (TopicRecord lr : allTopicPages) {
                     noteCount++;
-                    writeNoteToPDF(restOfDoc, ngp, lr, noteCount);
-                    document.add(ControlElement.NEWPAGE);
+                    writeNoteToPDF(fullDocInterior, ngp, lr, noteCount);
                 }
             }
             noteCount = 0;
             if(meetings.size() > 0){
                 for (MeetingRecord meet : meetings) {
-                    Frame restOfDoc = document.newInteriorFrame();
-                    restOfDoc.headerLeft = "Meeting: "+meet.getName();
-                    restOfDoc.footerRight = "Page {#}";
-                    restOfDoc.footerLeft = printTime;
                     noteCount++;
-                    writeMeetingToPDF(restOfDoc, ngp, meet, noteCount);
-                    document.add(ControlElement.NEWPAGE);
+                    writeMeetingToPDF(fullDocInterior, ngp, meet, noteCount);
                 }
             }
             
             if (includeDecisions) {
-                writeDecisionsToPDF(document.newInteriorFrame(), ngp);
+                writeDecisionsToPDF(fullDocInterior, ngp);
             }
             if (includeAttachments) {
-                writeAttachmentListToPDF(document.newInteriorFrame(), ngp);
+                writeAttachmentListToPDF(fullDocInterior, ngp);
             }
             if (includeActionItems) {
-                writeActionItemsToPDF(document.newInteriorFrame(), ngp);
+                writeActionItemsToPDF(fullDocInterior, ngp);
             }
             if (includeRoles) {
-                writeRolesToPDF(document.newInteriorFrame(), ngp);
+                writeRolesToPDF(fullDocInterior, ngp);
             }
             
             //This can throw an error, and we want to get that error before
@@ -298,147 +280,65 @@ public class WikiToPDF
         }
     }
     
-    public void writeWikiAsPDFzzz(NGWorkspace ngp, AuthRequest ar)  throws Exception {
-/*
-        Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
-        Vector<MeetingRecord> meetings = new Vector<MeetingRecord>();
-
-        String[] idArray = ar.req.getParameterValues("publicNotes");
-
-        if (idArray==null) {
-            idArray = new String[0];
-        }
-
-        for (String noteId : idArray) {
-            TopicRecord lrt = ngp.getDiscussionTopic(noteId);
-            if (lrt!=null) {
-                memberNotes.add(lrt);
-            }
-        }
-
-        idArray = ar.req.getParameterValues("meetings");
-
-        if (idArray==null) {
-            idArray = new String[0];
-        }
-        for (String meetId : idArray) {
-            MeetingRecord meet = ngp.findMeetingOrNull(meetId);
-            if (meet!=null) {
-                meetings.add(meet);
-            }
-        }
-        
-        includeDecisions = (ar.req.getParameter("decisions")!=null);
-        includeAttachments = (ar.req.getParameter("attachments")!=null);
-        includeComments = (ar.req.getParameter("comments")!=null);
-        includeRoles = (ar.req.getParameter("roles")!=null);
-        includeActionItems = (ar.req.getParameter("actionItems")!=null);
-
-        //pddoc = new PDDocument();
-
-        //set up the print time for use in the footer
-        printTime = convertDate(ar.nowTime);
 
 
-        if (memberNotes.size()>1 || meetings.size()>1 ||includeDecisions || includeAttachments) {
-            writeTOCPage(ngp, memberNotes, meetings);
-        }
-
-        int noteCount = 0;
-        if(memberNotes.size() > 0){
-            for (TopicRecord lr : memberNotes) {
-                noteCount++;
-                writeNoteToPDF(ngp, lr, noteCount);
-            }
-        }
-        noteCount = 0;
-        if(meetings.size() > 0){
-            for (MeetingRecord meet : meetings) {
-                noteCount++;
-                writeMeetingToPDF(ngp, meet, noteCount);
-            }
-        }
-
-        if (includeDecisions) {
-            //writeDecisionsToPDF(ngp);
-        }
-        if (includeAttachments) {
-            //writeAttachmentListToPDF(ngp);
-        }
-        if (includeActionItems) {
-            //writeActionItemsToPDF(ngp);
-        }
-        if (includeRoles) {
-            //writeRolesToPDF(ngp);
-        }
-        endPage();
-
-        String fileName = ngp.getKey() + ".pdf";
-        ar.resp.setContentType("application/pdf");
-        ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
-        OutputStream out = ar.resp.getOutputStream();
-        //pddoc.save(out);
-        //pddoc.close();
-        out.flush();
-        */
-    }
-
-
-    private void writeTOCPage(Frame containingFrame, NGWorkspace ngp,
+    private void writeTOCPage(Frame docInterior, NGWorkspace ngp,
             Vector<TopicRecord> memberNoteList, 
             Vector<MeetingRecord> meetings)  throws Exception {
-        headerText = "Topic report generated from Weaver";
+        
+        Frame tocFrame = startNamedSection(docInterior, ngp, "Table of Contents");
 
-        Frame frame = containingFrame.newInteriorFrame();
-        frame.setPadding(36, 36, 0, 0);
-        frame.setStartNewPage(true);
-        frame.headerLeft = "Table of Contents";
+        tocFrame.setPadding(36, 36, 0, 0);
+        tocFrame.setStartNewPage(true);
+        tocFrame.headerLeft = "Table of Contents";
+        if (debug) {
+            tocFrame.setBorderColor(Color.red);
+        }
 
         String projectName = ngp.getFullName();
         setPFont();
 
-        writeWrappedLine(frame.getNewParagraph(), "Workspace:");
+        writeLineNoSpacing(tocFrame, "Workspace:");
 
-        writeWrappedLine(frame.getNewParagraph(), projectName);
+        writeLineNoSpacing(tocFrame, projectName);
 
         int noteCount = 0;
 
         if(memberNoteList.size() > 0){
             setPFont();
-            writeWrappedLine(frame.getNewParagraph(), "Discussion Topics: ");
+            writeLineNoSpacing(tocFrame, "Discussion Topics: ");
             for (TopicRecord note : memberNoteList) {
                 noteCount++;
                 setPFont();
-                writeWrappedLine(frame.getNewParagraph(), Integer.toString(noteCount)+". "+note.getSubject());
+                writeLineNoSpacing(tocFrame, Integer.toString(noteCount)+". "+note.getSubject());
             }
         }
         noteCount = 0;
         if(meetings.size() > 0){
             setPFont();
-            writeWrappedLine(frame.getNewParagraph(), "Meetings: ");
+            writeLineNoSpacing(tocFrame, "Meetings: ");
             for (MeetingRecord meet : meetings) {
                 noteCount++;
                 setPFont();
                 indent=0;
                 indent=15;
-                writeWrappedLine(frame.getNewParagraph(), Integer.toString(noteCount)+". "+meet.getName());
+                writeLineNoSpacing(tocFrame, Integer.toString(noteCount)+". "+meet.getName());
             }
         }
         indent=0;
 
         if (includeDecisions) {
-            writeWrappedLine(frame.getNewParagraph(), "Decisions");
+            writeLineNoSpacing(tocFrame, "Decisions");
         }
         if (includeAttachments) {
-            writeWrappedLine(frame.getNewParagraph(), "Attached Documents");
+            writeLineNoSpacing(tocFrame, "Attached Documents");
         }
         if (includeActionItems) {
-            writeWrappedLine(frame.getNewParagraph(), "Action Items");
+            writeLineNoSpacing(tocFrame, "Action Items");
         }
         if (includeRoles) {
-            writeWrappedLine(frame.getNewParagraph(), "Roles");
+            writeLineNoSpacing(tocFrame, "Roles");
         }
-        endPage();
     }
 
 
@@ -449,10 +349,8 @@ public class WikiToPDF
     * it to HTML, outputting that to the AuthRequest that was
     * passed in when the object was constructed.
     */
-    public void writeNoteToPDF(Frame mainframe, NGWorkspace ngp, TopicRecord note, int noteNum) throws Exception
+    public void writeNoteToPDF(Frame fullDocContents, NGWorkspace ngp, TopicRecord note, int noteNum) throws Exception
     {
-        NGBook book = ngp.getSite();
-
         String subject = stripBadCharacters(note.getSubject());
         UserRef lastEditor = note.getModUser();
         String editTime = convertDateAndTime(note.getLastEdited());
@@ -460,72 +358,42 @@ public class WikiToPDF
         headerText = "Topic "+noteNum+": "+subject;
         
         
-        Frame titleBoxFrame = mainframe.newInteriorFrame();
-        titleBoxFrame.setBorder(Color.blue, new Stroke());
-        titleBoxFrame.setPadding(5, 5, 5, 5);
-        titleBoxFrame.setMargin(0, 0, 20, 20);
-        titleBoxFrame.setBackgroundColor(lightSkyBlue);
-        titleBoxFrame.setStartNewPage(true);
-        titleBoxFrame.headerLeft = "Topic "+noteNum+": "+subject;
+        Frame noteFrame = startNamedSection(fullDocContents, ngp, "Topic "+noteNum+": "+subject);
 
-        Paragraph para = titleBoxFrame.getNewParagraph();
-        para.addTextCarefully(subject, 24, PDType1Font.HELVETICA);
 
-        
-        para = titleBoxFrame.getNewParagraph();
-        para.addTextCarefully("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName(), 8, PDType1Font.HELVETICA);
-        
-        para = titleBoxFrame.getNewParagraph();
+        Paragraph para = noteFrame.getNewParagraph();
         para.addTextCarefully("Last modified by:  "+lastEditor.getName()+" on "+editTime, 8, PDType1Font.HELVETICA);
 
-        titleBoxFrame = mainframe.newInteriorFrame();
-        writeWikiData(titleBoxFrame, note.getWiki());
+        writeWikiData(noteFrame, note.getWiki());
         
         if (includeComments) {
             for (CommentRecord cr : note.getComments()) {
-                writeComment(mainframe, cr);
+                writeComment(noteFrame, cr);
             }
         }
     }
     
-    public void writeMeetingToPDF(Frame frame, NGWorkspace ngp, MeetingRecord meet, int meetNum) throws Exception
+    public void writeMeetingToPDF(Frame fullDocContents, NGWorkspace ngp, MeetingRecord meet, int meetNum) throws Exception
     {
-        NGBook site = ngp.getSite();
 
         String meetingName = stripBadCharacters(meet.getName());
         UserRef lastEditor = UserManager.getStaticUserManager().lookupUserByAnyId(meet.getOwner());
         String startTime = convertDateAndTime(meet.getStartTime());
 
         headerText = "Meeting "+meetNum+": "+meetingName;
-        if(!isNewPage){
-            endPage();
-            startPage();
-        }
         indent=0;
 
-        Frame titleBoxFrame = frame.newInteriorFrame();
-        //titleBoxFrame.setBorder(Color.blue, new Stroke());
-        titleBoxFrame.setPadding(5, 5, 5, 5);
-        titleBoxFrame.setMargin(0, 0, 20, 20);
-        titleBoxFrame.setBackgroundColor(lightSkyBlue);
-        titleBoxFrame.removeLeadingEmptyVerticalSpace();
-        titleBoxFrame.headerLeft = headerText;
+        Frame meetFrame = startNamedSection(fullDocContents, ngp, "Meeting: "+meetingName);
 
-        Paragraph para = titleBoxFrame.getNewParagraph();
-        para.addTextCarefully(meetingName, 24, PDType1Font.HELVETICA);
-
-        para = titleBoxFrame.getNewParagraph();
-        para.addTextCarefully("Workspace: "+ngp.getFullName()+", Site: "+site.getFullName(), 8, PDType1Font.HELVETICA);
-        
-        para = titleBoxFrame.getNewParagraph();
+        Paragraph para = meetFrame.getNewParagraph();
         para.addTextCarefully("Last modified by:  "+lastEditor.getName()+" on "+startTime, 8, PDType1Font.HELVETICA);
 
 
-        writeWikiData(frame, meet.getMeetingDescription());
+        writeWikiData(meetFrame, meet.getMeetingDescription());
         int agendaNum = 0;
         for (AgendaItem ai : meet.getAgendaItems()) {
             
-            Frame innerFrame = frame.newInteriorFrame();
+            Frame innerFrame = meetFrame.newInteriorFrame();
 
             if (ai.isSpacer()) {
                 continue;
@@ -535,12 +403,12 @@ public class WikiToPDF
 
             para = innerFrame.getNewParagraph();
             para.addTextCarefully(Integer.toString(agendaNum)+ ": " + ai.getSubject(), 16, PDType1Font.HELVETICA);
-
             
-            innerFrame = frame.newInteriorFrame();
+            innerFrame = meetFrame.newInteriorFrame();
             innerFrame.setPaddingLeft(35);
             writeWikiData(innerFrame, ai.getDesc());
             
+            innerFrame = meetFrame.newInteriorFrame();
             if (includeComments) {
                 for (CommentRecord cr : ai.getComments()) {
                     writeComment(innerFrame, cr);
@@ -557,28 +425,57 @@ public class WikiToPDF
         if (content.length()==0) {
             return;
         }
+        Frame commentBoxBorder = frame.newInteriorFrame();
+        commentBoxBorder.setBorder(Color.lightGray, new Stroke());
+        commentBoxBorder.setMargin(0, 0, 5, 5);
+        
         long date = cr.getPostTime();
         if (date<100) {
             date = cr.getTime();
         }
-        Frame commentBoxFrame = frame.newInteriorFrame();
-        commentBoxFrame.setPadding(5, 5, 5, 5);
-        commentBoxFrame.setMargin(0, 0, 20, 20);
-        //commentBoxFrame.setBackgroundColor(Color.lightGray);
-        commentBoxFrame.setBorder(Color.lightGray, new Stroke());
-        commentBoxFrame.setStartNewPage(true);
-        
         String dateStr = convertDateAndTime(date);
 
+        Frame firstLineShaded = commentBoxBorder.newInteriorFrame();
+        firstLineShaded.setPadding(5, 5, 5, 5);
+        firstLineShaded.setBackgroundColor(Color.lightGray);
         setPFont();
-        writeWrappedLine(commentBoxFrame.getNewParagraph(), "From:  "+cr.getUser().getName());
-        writeWrappedLine(commentBoxFrame.getNewParagraph(), "Date: " + dateStr);
+        String commentType = cr.getTypeName();
+        writeLineNoSpacing(firstLineShaded, dateStr + "  ("+commentType+")  "+cr.getUser().getName());
+
+        Frame commentInterior = commentBoxBorder.newInteriorFrame();
+        commentInterior.setPadding(5, 5, 5, 5);
         setPFont();
-        writeWikiData(commentBoxFrame, content);
+        writeWikiData(commentInterior, content);
+        for (ResponseRecord rr : cr.getResponses()) {
+            //print responses if any
+            String statement = rr.getContent();
+            String choice = rr.getChoice();
+            if (choice==null || choice.length()==0) {
+                if (statement==null || statement.length()==0) {
+                    //skip if there is no choice and no statement
+                    continue;
+                }
+            }
+            String person = rr.getUserId();
+            AddressListEntry responder = new AddressListEntry(person);
+            Frame responseFrame = commentInterior.newInteriorFrame();
+            responseFrame.setPadding(5, 5, 5, 5);
+            responseFrame.setBorder(Color.darkGray, new Stroke());
+            writeWikiData(responseFrame, responder.getName() + " -- " + choice);
+            writeWikiData(responseFrame, statement);
+        }
+        String outcome = cr.getOutcome(ar);
+        if (outcome != null && outcome.length()>0) {
+            writeWikiData(commentInterior, outcome);
+        }
     }
     
     
     private void writeWikiData(Frame frame, String wiki) throws Exception {
+        if (wiki == null || wiki.length()==0) {
+            //silently ignore nulls and empty text
+            return;
+        }
         Paragraph para = frame.getNewParagraph();
         LineIterator li = new LineIterator(wiki);
         while (li.moreLines()) {
@@ -589,74 +486,87 @@ public class WikiToPDF
     }
 
 
-    private void pageTop(Frame frame, NGWorkspace ngp, String title) throws Exception {
-        frame.headerLeft = title;
-        frame.footerRight = "Page {#}";
-        frame.footerLeft = printTime;
+    private Frame startNamedSection(Frame entireDocContents, NGWorkspace ngp, String title) throws Exception {
+        //all sections should start on a new page, so make sure
+        Frame sectionFrame = entireDocContents.newInteriorFrame();
+        //sectionFrame.setBackgroundColor(paleYellow);
+        //sectionFrame.setPadding(5, 5, 5, 5);
+        //sectionFrame.setBorder(Color.orange, new Stroke());
+        sectionFrame.setStartNewPage(true);
+        sectionFrame.headerLeft = title;
+        sectionFrame.footerRight = "Page {#}";
+        sectionFrame.footerLeft = printTime;
+        
+        Frame titleBoxFrame = sectionFrame.newInteriorFrame();
+        titleBoxFrame.setBorder(Color.blue, new Stroke());
+        titleBoxFrame.setPadding(5, 5, 5, 5);
+        titleBoxFrame.setMargin(0, 0, 0, 5);
+        titleBoxFrame.setBackgroundColor(lightSkyBlue);
+        titleBoxFrame.removeLeadingEmptyVerticalSpace();
+        titleBoxFrame.headerLeft = title;
+
         NGBook book = ngp.getSite();
         headerText = title;
-        if(!isNewPage){
-            endPage();
-            startPage();
-        }
         indent=0;
 
         setH1Font();
-        writeWrappedLine(frame.getNewParagraph(), title);
+        writeLineNoSpacing(titleBoxFrame, title);
 
         setH1Font();
         currentLineSize = 8;  //but really small
-        writeWrappedLine(frame.getNewParagraph(), "Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
-
-        //box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+        writeLineNoSpacing(titleBoxFrame, "Site / Workspace: "+book.getFullName()+" / "+ngp.getFullName());
+        
+        return sectionFrame.newInteriorFrame();
     }
 
     /**
     * Takes all the decisions and makes a page(s) with them listed.
     */
-    public void writeDecisionsToPDF(Frame frame, NGWorkspace ngp) throws Exception {
-        pageTop(frame, ngp, "Decision List");
+    public void writeDecisionsToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
+        
+        Frame decisionSection = startNamedSection(fullDocContents, ngp, "Decision List");
 
-        frame.headerLeft = "Decision List";
+        decisionSection.headerLeft = "Decision List";
 
         for (DecisionRecord dr : ngp.getDecisions()) {
-            Frame innerFrame = frame.newInteriorFrame();
+            Frame innerFrame = decisionSection.newInteriorFrame();
             innerFrame.setBorderColor(Color.pink);
+            innerFrame.setPadding(5, 5, 5, 5);
             currentLineSize = 30;
             currentLineSize = 12;
             setH1Font();
-            writeWrappedLine(innerFrame.getNewParagraph(), "Decision #"+dr.getNumber()+" - "+convertDate(dr.getTimestamp()));
+            writeLineNoSpacing(innerFrame, "Decision #"+dr.getNumber()+" - "+convertDate(dr.getTimestamp()));
             writeWikiData(innerFrame, dr.getDecision());
         }
     }
 
-    public void writeAttachmentListToPDF(Frame frame, NGWorkspace ngp) throws Exception {
-        pageTop(frame, ngp, "Attachment Documents");
-
+    public void writeAttachmentListToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
+        Frame attachmentsSection = startNamedSection(fullDocContents, ngp, "Attachment Documents");
 
         int count = 0;
         for (AttachmentRecord att : ngp.getAllAttachments()) {
-            Frame innerFrame = frame.newInteriorFrame();
+            Frame innerFrame = attachmentsSection.newInteriorFrame();
             innerFrame.setBorderColor(lightSkyBlue);
+            innerFrame.setPadding(5, 5, 5, 5);
             count++;
             currentLineSize = 16;
             setH3Font();
-            writeWrappedLine(innerFrame.getNewParagraph(), ""+count+". "+att.getDisplayName());
+            writeLineNoSpacing(innerFrame, ""+count+". "+att.getDisplayName());
             currentLineSize = 12;
             writeWikiData(innerFrame, att.getDescription());
         }
     }
 
-    public void writeActionItemsToPDF(Frame frame, NGWorkspace ngp) throws Exception {
-        pageTop(frame, ngp, "Action Items");
+    public void writeActionItemsToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
+        Frame actionsSection = startNamedSection(fullDocContents, ngp, "Action Items");
 
         int count = 0;
         for (GoalRecord actionItem : ngp.getAllGoals()) {
-            Frame innerFrame = frame.newInteriorFrame();
+            Frame innerFrame = actionsSection.newInteriorFrame();
             count++;
             currentLineSize = 16;
             setH3Font();
-            writeWrappedLine(innerFrame.getNewParagraph(), ""+count+". "+actionItem.getSynopsis()
+            writeLineNoSpacing(innerFrame, ""+count+". "+actionItem.getSynopsis()
                     +" ("+GoalRecord.stateName(actionItem.getState())+")");
             currentLineSize = 12;
             StringBuilder sb = new StringBuilder();
@@ -685,28 +595,24 @@ public class WikiToPDF
         }
     }
 
-    public void writeRolesToPDF(Frame frame, NGWorkspace ngp) throws Exception {
-        pageTop(frame, ngp, "Roles");
+    public void writeRolesToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
+        Frame rolesSection = startNamedSection(fullDocContents, ngp, "Roles");
 
         int count = 0;
         for (CustomRole role : ngp.getAllRoles()) {
-            Frame innerFrame = frame.newInteriorFrame();
+            Frame oneRoleFrame = rolesSection.newInteriorFrame();
             count++;
             currentLineSize = 16;
             setH3Font();
-            writeWrappedLine(innerFrame.getNewParagraph(), ""+count+". "+role.getName());
+            writeLineNoSpacing(oneRoleFrame, ""+count+". "+role.getName());
             currentLineSize = 12;
-            StringBuilder sb = new StringBuilder();
-            sb.append(role.getDescription());
-            sb.append("\n\n");
-            sb.append(role.getRequirements());
-            sb.append("\n\n");
-            for (AddressListEntry ale : role.getDirectPlayers()) {
-                sb.append("* "+ale.getName()+"\n \n");
-            }
 
-            writeWikiData(innerFrame, sb.toString());
-            makeHorizontalRule(innerFrame);
+            writeWikiData(oneRoleFrame, role.getDescription());
+            writeWikiData(oneRoleFrame, role.getRequirements());
+            for (AddressListEntry ale : role.getDirectPlayers()) {
+                writeWikiData(oneRoleFrame, "- "+ale.getName());
+            }
+            makeHorizontalRule(oneRoleFrame);
         }
     }
 
@@ -835,41 +741,13 @@ public class WikiToPDF
     private void writeWrappedLine(Paragraph para, String text) throws Exception {
         para.addTextCarefully(text, currentLineSize, currentFont);
     }
-
-
-    private void startPage()  throws Exception {
-        /*
-        pdpage = new PDPage();
-
-        pdpage.setMediaBox(PDRectangle.LETTER);
-        pddoc.addPage( pdpage );
-
-        xPos = LEFT_MARGIN;
-        yPos = TOP_MARGIN;   //but don't write here, do a newline first!
-
-        contentStream = new PDPageContentStream(pddoc, pdpage, true, false);
-
-        contentStream.beginText();
-        //really small font for the header and footer
-        contentStream.setFont(helvetica.getFont(false,false), 8);
-        contentStream.moveTextPositionByAmount( xPos, yPos + 20 );
-        contentStream.drawString(headerText);
-        contentStream.moveTextPositionByAmount( 0, BOTTOM_MARGIN - TOP_MARGIN - 40 );
-        contentStream.drawString("Generated: "+printTime+"  --  Page "+pageNum);
-        contentStream.moveTextPositionByAmount( 0, TOP_MARGIN + 20 - BOTTOM_MARGIN );
-
-        currentFont = currentFamily.getFont(isBold,isItalic);
-        contentStream.setFont(currentFont, currentLineSize);
-
-        isNewPage = true;
-        lineRemainder = 0f;
-        pageNum++;
-        */
+    private void writeLineNoSpacing(Frame frame, String text) throws Exception {
+        Paragraph para = frame.getNewParagraph();
+        para.setSpaceAfter(0);
+        para.setSpaceBefore(0);
+        para.addTextCarefully(text, currentLineSize, currentFont);
     }
 
-    private void endPage()  throws Exception {
-        lineRemainder = 0f;
-    }
 
 
     protected Paragraph formatText(Frame frame, Paragraph para, String line) throws Exception
@@ -899,14 +777,11 @@ public class WikiToPDF
             para = frame.getNewParagraph();
             startHeader(para, line, 1);
         } else if (line.startsWith("***")) {
-            para = frame.getNewParagraph();
-            startBullet(line, 3);
+            startBullet(frame, line, 3);
         } else if (line.startsWith("**")) {
-            para = frame.getNewParagraph();
-            startBullet(line, 2);
+            startBullet(frame, line, 2);
         } else if (line.startsWith("*")) {
-            para = frame.getNewParagraph();
-            startBullet(line, 1);
+            startBullet(frame, line, 1);
         } else if (line.startsWith(":")) {
             if (majorState == PARAGRAPH) {
                 makeLineBreak();
@@ -1010,8 +885,8 @@ public class WikiToPDF
     }
 
 
-    protected void startBullet(String line, int level) throws Exception {
-        /*
+    protected void startBullet(Frame container, String line, int level) throws Exception {
+        
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
@@ -1019,18 +894,16 @@ public class WikiToPDF
         else {
             //nothing needed at end of bullet line
         }
+
+        terminate();
         setPFont();
-        moveDown(3);   //space before the paragraph
-        paraTrailing = 3;  //no space after bullets
-        indent = 20*level;
-        newLine();     //gets you to the beginning of the line
-        contentStream.moveTextPositionByAmount( -10, 0);
-        contentStream.setFont(PDType1Font.ZAPF_DINGBATS, 6);
-        contentStream.drawString("l");
-        contentStream.moveTextPositionByAmount( 10, 0);
-        contentStream.setFont(currentFont, currentLineSize);
-        scanForStyle(line, skipSpaces(line, level));
-        */
+        Frame indentedFrame = container.newInteriorFrame();
+        indentedFrame.setMargin(20*level, 0, 0, 0);
+        indentedFrame.setBorder(Color.magenta, new Stroke());
+        Paragraph para = indentedFrame.getNewParagraph();
+        
+
+        scanForStyle(para, line, skipSpaces(line, level));        
     }
 
     protected void startHeader(Paragraph para, String line, int level)
