@@ -16,6 +16,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.saveCount = 0;
 	// controls if comment can be saved
 	$scope.saveDisabled = false;
+    $scope.promiseAutosave = null;
     
     $scope.docSpaceURL = docSpaceURL;
     $scope.attachmentList = attachmentList;
@@ -38,6 +39,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         if (!newComment.responses) {
             newComment.responses = [];
         }
+        $scope.unsaved = 0;
         newComment.suppressEmail = (newComment.suppressEmail==true);
         newComment.choices = ["Consent", "Objection"];
         if (!newComment.docList) {
@@ -51,7 +53,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $scope.hasOutcome = (newComment.commentType==2 || newComment.commentType==3);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
-        $scope.oldCmt = JSON.parse(JSON.stringify(newComment));
+        $scope.flattenedCmt = JSON.stringify(newComment);
+        $scope.oldCmt = JSON.parse($scope.flattenedCmt);
         $scope.responders = [];
         if (newComment.commentType==2 || newComment.commentType==3) {
             $scope.cmt.responses.forEach( function(item)  {
@@ -62,6 +65,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
                 });
             });
         }
+        $scope.dataReceived = new Date().getTime();
     }
     function handleHTTPError(data, status, headers, config) {
         console.log("ERROR in ResponseModel Dialog: ", data);
@@ -80,6 +84,16 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
 
     $scope.cancel = function() {
+        //bogus redirect because of caching problems
+        $scope.closeAndShutDown();
+    }
+    $scope.closeAndShutDown = function() {
+        if ($scope.promiseAutosave) {
+            console.log("AUTOSAVE == killed");
+            $interval.cancel($scope.promiseAutosave);
+        }
+        console.log("Comment popup closed.");
+        $scope.promiseAutosave = null;
         $modalInstance.dismiss('cancel');
     }
     $scope.save = function() {
@@ -167,7 +181,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         .success( function(data) {
             $scope.saveCount++;
             if ("Y"==closeIt) {
-                $modalInstance.dismiss('cancel')
+                $scope.closeAndShutDown();
             }
             else {
                 setComment(data);
@@ -218,9 +232,10 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     //this fires every keystroke to maintain change flag
     function tinymceChangeTrigger(e, editor) {
         $scope.lastKeyTimestamp = new Date().getTime();
-        $scope.cmt.body = HTML2Markdown($scope.bodyHtml);
-        $scope.cmt.outcome = HTML2Markdown($scope.outcomeHtml);
-        if ($scope.cmt.body != $scope.oldCmt.body || $scope.cmt.outcome != $scope.oldCmt.outcome) {
+        $scope.cmt.body          = HTML2Markdown($scope.bodyHtml, {});
+        $scope.cmt.outcome       = HTML2Markdown($scope.outcomeHtml, {});
+        var newFlat = JSON.stringify($scope.cmt);
+        if (newFlat != $scope.flattenedCmt ) {
             $scope.unsaved = 1;
         }
         else {
@@ -251,31 +266,44 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
 	
     $scope.autosave = function() {
-        $scope.secondsTillSave = 5 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
-        $scope.secondsTillClose = 60 - Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
-        console.log("secondsTillClose: ", $scope.secondsTillClose);
-        if ($scope.secondsTillClose < 0) {
-            //it has been 1200 seconds (20 minutes) since any save or keystroke
-            //time to close this pop up dialog
-            $scope.saveAndClose();
-        }
-        if ($scope.cmt.body == $scope.oldCmt.body && $scope.cmt.outcome == $scope.oldCmt.outcome) {
-            //if the body or outcome has not changed, then avoid autosaving it because nothing else critical
-            return;
-        }
-        if ($scope.secondsTillSave > 0) {
-            //user has typed in last 10 seconds to wait until 10 seconds of silence
-            return;
-        }
         var newFlat = JSON.stringify($scope.cmt);
         if (newFlat != $scope.flattenedCmt ) {
+            $scope.unsaved = 1;
+        }
+        else {
+            $scope.unsaved = 0;
+        }
+        var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        $scope.secondsTillSave = 20 - secondsSinceKeypress;
+        $scope.secondsTillClose = 1200 - secondsSinceKeypress;
+        if (secondsSinceKeypress > 1200) {
+            //it has been 1200 seconds (20 minutes) since any save or keystroke
+            //time to close this pop up dialog
+            console.log("Auto close time achieved, closing the dialog box", $scope);
+            $scope.saveAndClose();
+        }
+        if (secondsSinceKeypress < 20) {
+            //user has typed in last 20 seconds to wait until 20 seconds of silence
+            return;
+        }
+        if ($scope.unsaved) {
             $scope.unsaved = -1;
             saveComment("N", false);
+            return;
+        }
+        var secondsSinceLastRefresh = Math.floor((new Date().getTime() - $scope.dataReceived)/1000);
+        if (secondsSinceLastRefresh > 60) {
+            getComment();
         }
     }
 	if ($scope.autosaveEnabled) {
-        //check for autosave every second, but only save when user pauses
-		$scope.promiseAutosave = $interval($scope.autosave, 1000);
+        if ($scope.promiseAutosave) {
+            console.log("ATTEMPT TO DOUBLE START THE TIMER");
+        }
+        else {
+            //check for autosave every second, but only save when user pauses
+            $scope.promiseAutosave = $interval($scope.autosave, 1000);
+        }
     }
     
     $scope.loadPersonList = function(query) {

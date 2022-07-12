@@ -101,6 +101,8 @@ app.controller('myCtrl', function($scope, $http) {
             <td><input type="checkbox" checked="checked" name="roles"  value="roles"/></td></tr>
         <tr><td>Include Comments : </td>
             <td><input type="checkbox" checked="checked" name="comments"  value="comments"/></td></tr>
+        <tr><td>Debug Lines : </td>
+            <td><input type="checkbox" name="debugLines"  value="debugLines"/></td></tr>
         </table>
 
         <div class="generalHeading">Discussion Topics :</div>

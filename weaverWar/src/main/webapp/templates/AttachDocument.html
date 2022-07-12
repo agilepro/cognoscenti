@@ -32,6 +32,10 @@
           ng-class="selectedTab=='Upload'?'qqTabSelected':'qqTabUnselected'">
     Upload New Document
     </span>
+    <span ng-click="selectedTab='Link'"  
+          ng-class="selectedTab=='Link'?'qqTabSelected':'qqTabUnselected'">
+    New Web Link
+    </span>
   </div>
 </div>
 <div class="modal-body {{greenOnDrag()}}"  style="min-height:300px" 
@@ -118,6 +122,25 @@
         </div>
 
     </div>
+    <div ng-show="selectedTab=='Link'">
+      <div class="form-group">
+        <div>
+          <label>URL:</label>
+          <input ng-model="newLink.url" class="form-control"></input>
+        </div>
+        <div>
+          <label>Name:</label>
+          <input ng-model="newLink.name" class="form-control"></input>
+        </div>
+        <div>
+          <label>Description:</label>
+          <textarea ng-model="newLink.description" class="form-control"></textarea>
+        </div>
+        <div>
+          <button ng-click="addLink()" class="btn btn-primary btn-raised">Attach Link</button>
+        </div>
+      </div>
+    </div>    
 </div>
 <div class="modal-footer">
     <span class="instruction" style="margin-right:40px">To upload new file: Drop anywhere in panel</span>

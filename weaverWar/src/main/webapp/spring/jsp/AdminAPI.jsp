@@ -346,6 +346,7 @@ editBoxStyle {
        <li>Sample Role: <input ng-model="sampleRole"/></li>
        <li><a target="dataWindow" href="isRolePlayer.json?role={{sampleRole}}">isRolePlayer.json?role={{sampleRole}}</a></li>
        <li>Sample Topic: <input ng-model="sampleTopic"/></li>
+       <li><a target="dataWindow" href="getTopic.json?nid={{sampleTopic}}">getTopic.json?nid={{sampleTopic}}</a></li>
        <li><a target="dataWindow" href="attachedActions.json?note={{sampleTopic}}">attachedActions.json?note={{sampleTopic}}</a></li>
        <li><a target="dataWindow" href="attachedDocs.json?note={{sampleTopic}}">attachedDocs.json?note={{sampleTopic}}</a></li>
        <li>Sample Comment: <input ng-model="sampleComment"/></li>

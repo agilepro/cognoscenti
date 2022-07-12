@@ -49,7 +49,6 @@ import com.purplehillsbooks.pdflayout.shape.Stroke;
  */
 public class WikiToPDF
 {
-    final static boolean debug = true;
 
     final static int NOTHING      = 0;
     final static int PARAGRAPH    = 1;
@@ -60,6 +59,7 @@ public class WikiToPDF
     public final static char ESCAPE_CHAR = 'º';
     
     public final static Color paleYellow = new Color(252,255,226);
+    public final static Color lightBlue = new Color(178,229,255);
 
     protected AuthRequest ar;
     protected int majorState = 0;
@@ -91,6 +91,7 @@ public class WikiToPDF
     private boolean includeComments;
     private boolean includeRoles;
     private boolean includeActionItems;
+    private boolean debugLines = false;;
 
 
     private class FontFamily {
@@ -205,6 +206,7 @@ public class WikiToPDF
         includeComments = (ar.req.getParameter("comments")!=null);
         includeRoles = (ar.req.getParameter("roles")!=null);
         includeActionItems = (ar.req.getParameter("actionItems")!=null);
+        debugLines = (ar.req.getParameter("debugLines")!=null);
 
         Vector<TopicRecord> allTopicPages = new Vector<TopicRecord>();
         for (String noteId : getVectorParam("publicNotes")) {
@@ -231,6 +233,10 @@ public class WikiToPDF
                 (float)50.0, (float)50.0, (float)50.0, (float)50.0);
         document = new PDFDoc(letterSizePage);
         Frame fullDocInterior = document.newInteriorFrame();
+        fullDocInterior.setPadding(1,1,1,1);
+        if (debugLines) {
+            fullDocInterior.setBorderColor(Color.green);
+        }
 
         try {
             writeTOCPage(fullDocInterior, ngp, allTopicPages, meetings);
@@ -291,7 +297,7 @@ public class WikiToPDF
         tocFrame.setPadding(36, 36, 0, 0);
         tocFrame.setStartNewPage(true);
         tocFrame.headerLeft = "Table of Contents";
-        if (debug) {
+        if (debugLines) {
             tocFrame.setBorderColor(Color.red);
         }
 
@@ -459,10 +465,17 @@ public class WikiToPDF
             String person = rr.getUserId();
             AddressListEntry responder = new AddressListEntry(person);
             Frame responseFrame = commentInterior.newInteriorFrame();
-            responseFrame.setPadding(5, 5, 5, 5);
-            responseFrame.setBorder(Color.darkGray, new Stroke());
-            writeWikiData(responseFrame, responder.getName() + " -- " + choice);
-            writeWikiData(responseFrame, statement);
+            responseFrame.setBorder(lightBlue, new Stroke());
+            responseFrame.setMargin(0, 0, 5, 5);
+            
+            Frame responseTopFrame = responseFrame.newInteriorFrame();
+            responseTopFrame.setBackgroundColor(lightBlue);
+            responseTopFrame.setPadding(5, 5, 5, 5);
+            writeLineNoSpacing(responseTopFrame, responder.getName() + " -- " + choice);
+            
+            Frame responseBodyFrame = responseFrame.newInteriorFrame();
+            responseBodyFrame.setPadding(5, 5, 5, 5);
+            writeWikiData(responseBodyFrame, statement);
         }
         String outcome = cr.getOutcome(ar);
         if (outcome != null && outcome.length()>0) {
@@ -489,9 +502,11 @@ public class WikiToPDF
     private Frame startNamedSection(Frame entireDocContents, NGWorkspace ngp, String title) throws Exception {
         //all sections should start on a new page, so make sure
         Frame sectionFrame = entireDocContents.newInteriorFrame();
-        //sectionFrame.setBackgroundColor(paleYellow);
-        //sectionFrame.setPadding(5, 5, 5, 5);
-        //sectionFrame.setBorder(Color.orange, new Stroke());
+        if (debugLines) {
+            sectionFrame.setBackgroundColor(paleYellow);
+            sectionFrame.setPadding(5, 5, 5, 5);
+            sectionFrame.setBorder(Color.orange, new Stroke());
+        }
         sectionFrame.setStartNewPage(true);
         sectionFrame.headerLeft = title;
         sectionFrame.footerRight = "Page {#}";
@@ -530,7 +545,9 @@ public class WikiToPDF
 
         for (DecisionRecord dr : ngp.getDecisions()) {
             Frame innerFrame = decisionSection.newInteriorFrame();
-            innerFrame.setBorderColor(Color.pink);
+            if (debugLines) {
+                innerFrame.setBorderColor(Color.pink);
+            }
             innerFrame.setPadding(5, 5, 5, 5);
             currentLineSize = 30;
             currentLineSize = 12;
@@ -546,7 +563,9 @@ public class WikiToPDF
         int count = 0;
         for (AttachmentRecord att : ngp.getAllAttachments()) {
             Frame innerFrame = attachmentsSection.newInteriorFrame();
-            innerFrame.setBorderColor(lightSkyBlue);
+            if (debugLines) {
+                innerFrame.setBorderColor(lightSkyBlue);
+            }
             innerFrame.setPadding(5, 5, 5, 5);
             count++;
             currentLineSize = 16;
@@ -899,11 +918,15 @@ public class WikiToPDF
         setPFont();
         Frame indentedFrame = container.newInteriorFrame();
         indentedFrame.setMargin(20*level, 0, 0, 0);
-        indentedFrame.setBorder(Color.magenta, new Stroke());
+        if (debugLines) {
+            indentedFrame.setBorder(Color.magenta, new Stroke());
+        }
         Paragraph para = indentedFrame.getNewParagraph();
         
 
-        scanForStyle(para, line, skipSpaces(line, level));        
+        //scanForStyle(para, line, skipSpaces(line, level)); 
+        //UNTIL REAL BULLETS CAN BE CREATED use the asterisks at bullet points
+        scanForStyle(para, line, 0);
     }
 
     protected void startHeader(Paragraph para, String line, int level)

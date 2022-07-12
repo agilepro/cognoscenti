@@ -102,6 +102,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.topicId = "<%=topicId%>";
+    $scope.allDocs = [];
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canComment = <%=canComment%>;
@@ -630,9 +631,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var doc = $scope.getFullDoc(docId);
         window.location="SendNote.htm?att="+doc.id;
     }
-    $scope.downloadDocument = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;
+    }
+    $scope.navigateToLink = function(doc) {
+        window.open(doc.url, "_blank");
     }
     $scope.unattachDocFromItem = function(docId) {
         var newList = [];
@@ -644,6 +647,50 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.noteInfo.docList = newList;
         $scope.saveEdits(['docList']);
     }
+    
+    $scope.retrieveAllDocuments = function() {
+        var getURL = "docsList.json";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            var undeleted = [];
+            data.docs.forEach( function(item) {
+                if (!item.deleted) {
+                    undeleted.push(item);
+                }
+            });
+            $scope.allDocs = undeleted;
+            console.log("DOCUMENT LIST", data);
+            $scope.refreshAttachedDocs();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.refreshAttachedDocs = function() {
+        var getURL = "attachedDocs.json?note="+$scope.topicId;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.attachmentList = data.list;
+            var attachedDocTemp = [];
+            data.list.forEach( function(item) {
+                $scope.allDocs.forEach( function(aDoc) {
+                    if (aDoc.universalid == item) {
+                        attachedDocTemp.push(aDoc);
+                    }
+                });
+            });
+            $scope.attachedDocs = attachedDocTemp;
+            console.log("ATTACHED LIST", $scope.attachedDocs);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+
+    }
+    $scope.retrieveAllDocuments();
+    
+    
     $scope.openAttachDocument = function () {
         $scope.cancelBackgroundTime();
 
@@ -669,8 +716,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         attachModalInstance.result
         .then(function (docList) {
-            //don't save, just force re-read
-            $scope.saveEdits([]);
+            //force re-read
+            $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         }, function () {
             $scope.extendBackgroundTime();
@@ -1080,14 +1127,22 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <tr>
     <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
     <td ng-dblclick="openAttachDocument()">
-        <div ng-repeat="docid in noteInfo.docList" style="vertical-align: top">
-          <span ng-click="navigateToDoc(docid)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>&nbsp;
-          <span ng-click="downloadDocument(docid)"><span class="fa fa-download"></span></span>&nbsp;
-          <span ng-click="sendDocByEmail(docid)"><span class="fa fa-envelope-o"></span></span>&nbsp;
-          
-          {{getFullDoc(docid).name}}
+        <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
+          <span ng-show="doc.attType=='FILE'">
+              <span ng-click="navigateToDoc(doc.id)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              &nbsp;
+              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+          </span>
+          <span  ng-show="doc.attType=='URL'">
+              <span ng-click="navigateToDoc(doc.id)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              &nbsp;
+              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+          </span>
+          &nbsp;
+          <span ng-click="sendDocByEmail(doc.id)"><span class="fa fa-envelope-o"></span></span>&nbsp;
+          &nbsp; {{doc.name}}
         </div>
-        <div ng-hide="noteInfo.docList && noteInfo.docList.length>0" class="doubleClickHint">
+        <div ng-hide="attachedDocs && attachedDocs.length>0" class="doubleClickHint">
             Double-click to add / remove attachments
         </div>
     </td>
