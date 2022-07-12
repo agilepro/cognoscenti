@@ -23,12 +23,11 @@ package com.purplehillsbooks.weaver;
 import java.awt.Color;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.Vector;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import com.purplehillsbooks.streams.MemFile;
-
 import com.purplehillsbooks.pdflayout.elements.PDFDoc;
 import com.purplehillsbooks.pdflayout.elements.Frame;
 import com.purplehillsbooks.pdflayout.elements.Orientation;
@@ -207,7 +206,7 @@ public class WikiToPDF
         includeActionItems = (ar.req.getParameter("actionItems")!=null);
         debugLines = (ar.req.getParameter("debugLines")!=null);
 
-        Vector<TopicRecord> allTopicPages = new Vector<TopicRecord>();
+        ArrayList<TopicRecord> allTopicPages = new ArrayList<TopicRecord>();
         for (String noteId : getVectorParam("publicNotes")) {
             TopicRecord lrt = ngp.getDiscussionTopic(noteId);
             if (lrt!=null) {
@@ -215,7 +214,7 @@ public class WikiToPDF
             }
         }
 
-        Vector<MeetingRecord> meetings = new Vector<MeetingRecord>();
+        ArrayList<MeetingRecord> meetings = new ArrayList<MeetingRecord>();
         for (String meetId : getVectorParam("meetings")) {
             MeetingRecord meet = ngp.findMeetingOrNull(meetId);
             if (meet!=null) {
@@ -288,8 +287,8 @@ public class WikiToPDF
 
 
     private void writeTOCPage(Frame docInterior, NGWorkspace ngp,
-            Vector<TopicRecord> memberNoteList, 
-            Vector<MeetingRecord> meetings)  throws Exception {
+            List<TopicRecord> memberNoteList, 
+            List<MeetingRecord> meetings)  throws Exception {
         
         Frame tocFrame = startNamedSection(docInterior, ngp, "Table of Contents");
 
@@ -988,7 +987,7 @@ public class WikiToPDF
     * links within the block, and return a vector with just the
     * links in them.
     */
-    public void findLinks(Vector<String> v, NGSection section) throws Exception
+    public void findLinks(List<String> v, NGSection section) throws Exception
     {
         LineIterator li = new LineIterator(section.asText().trim());
         while (li.moreLines())
@@ -998,7 +997,7 @@ public class WikiToPDF
         }
     }
 
-    protected void scanLineForLinks(String thisLine, Vector<String> v)
+    protected void scanLineForLinks(String thisLine, List<String> v)
     {
         int bracketPos = thisLine.indexOf('[');
         int startPos = 0;

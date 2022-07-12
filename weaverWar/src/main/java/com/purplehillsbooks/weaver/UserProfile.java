@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
-
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -357,7 +355,7 @@ public class UserProfile implements UserRef
     * NOTE: this can leave the profile without any id.
     */
     public void removeId(String newId) throws Exception {
-        Vector<String> cache = new Vector<String>();
+        ArrayList<String> cache = new ArrayList<String>();
         for (String possible : emailAddresses) {
             if (!possible.equalsIgnoreCase(newId)) {
                 cache.add(possible);

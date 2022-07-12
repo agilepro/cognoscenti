@@ -23,8 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
@@ -41,7 +39,7 @@ public class UserPage extends ContainerCommon
 {
     private UserInfoRecord userInfo;
     private String    key;
-    private Vector<String> existingIds = null;
+    private List<String> existingIds = null;
 
     private DOMFace taskRefs = null;
     private List<RemoteGoal> userTaskRefs = null;
@@ -117,7 +115,7 @@ public class UserPage extends ContainerCommon
     */
     public String getUniqueOnPage() throws Exception {
         if (existingIds == null) {
-            existingIds = new Vector<String>();
+            existingIds = new ArrayList<String>();
 
             // walk through all sections and find current ids
             for (StatusReport stat : getStatusReports()) {

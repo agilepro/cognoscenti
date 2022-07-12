@@ -24,8 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
-
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import org.w3c.dom.Document;
@@ -41,7 +39,7 @@ public class UserManager
     public static int saveCount = 0;
 
     private static Hashtable<String, UserProfile> userHashByKey = new Hashtable<String, UserProfile>();
-    private static Vector<UserProfile> allUsers = new Vector<UserProfile>();
+    private static List<UserProfile> allUsers = new ArrayList<UserProfile>();
     
     //these two together allow us to 'correct' old email addresses in the files
     private static Hashtable<String, String> anyIdToKeyMap = new Hashtable<String, String>();
@@ -68,7 +66,7 @@ public class UserManager
     */
     public static synchronized void clearAllStaticVars() {
         userHashByKey = new Hashtable<String, UserProfile>();
-        allUsers      = new Vector<UserProfile>();
+        allUsers      = new ArrayList<UserProfile>();
         initialized   = false;
     }
 
@@ -102,7 +100,7 @@ public class UserManager
         jsonFileName = new File(userFolder, "UserProfs.json");
 
         //clear out any left over evidence of an earlier initialization
-        allUsers = new Vector<UserProfile>();
+        allUsers = new ArrayList<UserProfile>();
 
         //need to make sure all the same information is in the JSON file....
         readJSONFile();
@@ -128,8 +126,8 @@ public class UserManager
 
         Hashtable<String,UserProfile> keyProfMap = new Hashtable<String,UserProfile>();
         Hashtable<String,UserProfile> idProfMap = new Hashtable<String,UserProfile>();
-        ArrayList<String> idsToRemove = new ArrayList<String>();
-        Vector<UserProfile> readUsers = new Vector<UserProfile>();
+        List<String> idsToRemove = new ArrayList<String>();
+        List<UserProfile> readUsers = new ArrayList<UserProfile>();
 
         for (int i=0; i<users.length(); i++) {
             UserProfile up = new UserProfile(users.getJSONObject(i));
@@ -359,14 +357,14 @@ public class UserManager
 
 
     public synchronized List<UserProfile> getAllUserProfiles() {
-        Vector<UserProfile> res = new Vector<UserProfile>();
+        ArrayList<UserProfile> res = new ArrayList<UserProfile>();
         for (UserProfile up : allUsers) {
             res.add(up);
         }
         return res;
     }
     public synchronized List<AddressListEntry> getAllUsers() {
-        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
+        ArrayList<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (UserProfile up : allUsers) {
             res.add(new AddressListEntry(up));
         }
@@ -381,7 +379,7 @@ public class UserManager
     * disabled, and remove them from the user profile list.
     */
     public synchronized void removeDisabledUsers() throws Exception {
-        Vector<UserProfile> cache = new Vector<UserProfile>();
+        ArrayList<UserProfile> cache = new ArrayList<UserProfile>();
         for (UserProfile up : allUsers) {
             if (!up.getDisabled()) {
                 cache.add(up);
@@ -407,8 +405,8 @@ public class UserManager
     /**
      * get a list of email assignees for all server super admin users.
      */
-    public Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+    public List<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
+        ArrayList<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
             AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
             if (ale.isWellFormed()) {
@@ -449,7 +447,7 @@ public class UserManager
      * This will take the list, parse it, and return a list of AddressListEntry objects.
      */
     public static List<AddressListEntry> convertAddressList(String userIdList) throws Exception {
-        Vector<AddressListEntry> ret = new  Vector<AddressListEntry>();
+        ArrayList<AddressListEntry> ret = new  ArrayList<AddressListEntry>();
         if (userIdList == null || userIdList.length() == 0) {
             return ret;
         }

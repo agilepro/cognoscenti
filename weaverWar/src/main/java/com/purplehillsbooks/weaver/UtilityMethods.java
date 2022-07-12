@@ -31,8 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
-
 import javax.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
@@ -68,7 +66,7 @@ public class UtilityMethods {
 
     /**
      * Proper split string.
-     * Returns a Vector (list) of string
+     * Returns a List of string
      * Never returns a null, but will accept a null
      * Does not ever return a zero-length string.
      * Trims the string values of space next to delimiter

@@ -21,7 +21,6 @@
 package com.purplehillsbooks.weaver;
 
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Implements the Wiki formatting.
@@ -393,7 +392,7 @@ public class WikiConverter
     * links within the block, and return a vector with just the
     * links in them.
     */
-    public void findLinks(Vector<String> v, NGSection section) throws Exception
+    public void findLinks(List<String> v, NGSection section) throws Exception
     {
         LineIterator li = new LineIterator(section.asText().trim());
         while (li.moreLines())
@@ -403,7 +402,7 @@ public class WikiConverter
         }
     }
 
-    protected void scanLineForLinks(String thisLine, Vector<String> v)
+    protected void scanLineForLinks(String thisLine, List<String> v)
     {
         int bracketPos = thisLine.indexOf('[');
         int startPos = 0;
