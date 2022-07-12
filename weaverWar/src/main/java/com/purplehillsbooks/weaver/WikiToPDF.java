@@ -75,7 +75,6 @@ public class WikiToPDF
     float xPos = 200f;
     float yPos = 800f;
     float lineRemainder = 0f;
-    int   paraTrailing = 0;
     int   indent = 0;
 
     final static int TOP_MARGIN = 725;    //Absolute top of text
@@ -145,7 +144,7 @@ public class WikiToPDF
     protected FontFamily currentFamily = helvetica;
     protected PDType1Font currentFont   = PDType1Font.HELVETICA;
     protected int currentLineSize = 12;   //used for calculating the first line position when a new page feed
-    protected int currentTrailingSpace = 0;  //how much space to add at the end of this paragraph.
+
 
     // The layout engine works like this.  A new page is set to a specific top coordinate
     // minus the current line size == font size. The top of text should be pretty consistent.
@@ -304,9 +303,7 @@ public class WikiToPDF
         String projectName = ngp.getFullName();
         setPFont();
 
-        writeLineNoSpacing(tocFrame, "Workspace:");
-
-        writeLineNoSpacing(tocFrame, projectName);
+        writeLineNoSpacing(tocFrame, "Workspace:" + projectName);
 
         int noteCount = 0;
 
@@ -316,7 +313,7 @@ public class WikiToPDF
             for (TopicRecord note : memberNoteList) {
                 noteCount++;
                 setPFont();
-                writeLineNoSpacing(tocFrame, Integer.toString(noteCount)+". "+note.getSubject());
+                writeLineNoSpacing(tocFrame, "   "+Integer.toString(noteCount)+".  "+note.getSubject());
             }
         }
         noteCount = 0;
@@ -328,7 +325,7 @@ public class WikiToPDF
                 setPFont();
                 indent=0;
                 indent=15;
-                writeLineNoSpacing(tocFrame, Integer.toString(noteCount)+". "+meet.getName());
+                writeLineNoSpacing(tocFrame, "   "+Integer.toString(noteCount)+".  "+meet.getName());
             }
         }
         indent=0;
@@ -549,8 +546,6 @@ public class WikiToPDF
                 innerFrame.setBorderColor(Color.pink);
             }
             innerFrame.setPadding(5, 5, 5, 5);
-            currentLineSize = 30;
-            currentLineSize = 12;
             setH1Font();
             writeLineNoSpacing(innerFrame, "Decision #"+dr.getNumber()+" - "+convertDate(dr.getTimestamp()));
             writeWikiData(innerFrame, dr.getDecision());
@@ -568,10 +563,11 @@ public class WikiToPDF
             }
             innerFrame.setPadding(5, 5, 5, 5);
             count++;
-            currentLineSize = 16;
+
             setH3Font();
             writeLineNoSpacing(innerFrame, ""+count+". "+att.getDisplayName());
-            currentLineSize = 12;
+            
+            setPFont();
             writeWikiData(innerFrame, att.getDescription());
         }
     }
@@ -583,11 +579,12 @@ public class WikiToPDF
         for (GoalRecord actionItem : ngp.getAllGoals()) {
             Frame innerFrame = actionsSection.newInteriorFrame();
             count++;
-            currentLineSize = 16;
+
             setH3Font();
             writeLineNoSpacing(innerFrame, ""+count+". "+actionItem.getSynopsis()
                     +" ("+GoalRecord.stateName(actionItem.getState())+")");
-            currentLineSize = 12;
+            
+            setPFont();
             StringBuilder sb = new StringBuilder();
             sb.append(actionItem.getDescription());
             sb.append("\n\n");
@@ -621,15 +618,15 @@ public class WikiToPDF
         for (CustomRole role : ngp.getAllRoles()) {
             Frame oneRoleFrame = rolesSection.newInteriorFrame();
             count++;
-            currentLineSize = 16;
+
             setH3Font();
             writeLineNoSpacing(oneRoleFrame, ""+count+". "+role.getName());
-            currentLineSize = 12;
 
+            setPFont();
             writeWikiData(oneRoleFrame, role.getDescription());
             writeWikiData(oneRoleFrame, role.getRequirements());
             for (AddressListEntry ale : role.getDirectPlayers()) {
-                writeWikiData(oneRoleFrame, "- "+ale.getName());
+                writeLineNoSpacing(oneRoleFrame, "- "+ale.getName());
             }
             makeHorizontalRule(oneRoleFrame);
         }
@@ -680,27 +677,6 @@ public class WikiToPDF
         currentLineSize = 12;
     }
 
-
-    /**
-    * Advance down the page by the current line size.  If this is below the
-    * bottom margin, then force a new page feed and continue
-    */
-    private void newLine() throws Exception
-    {
-        Frame innerFrame = document.newInteriorFrame();
-        innerFrame.setGivenHeight(12);
-    }
-
-
-    /**
-    * adds vertical space, but does not attempt to create a new page or
-    * anything at this level.
-    */
-    private void moveDown(float amt) throws Exception
-    {
-        Frame innerFrame = document.newInteriorFrame();
-        innerFrame.setGivenHeight(amt);
-    }
 
 
     /**
@@ -780,47 +756,47 @@ public class WikiToPDF
                 terminate();
                 para = frame.getNewParagraph();
             }
-        } else if (line.equals("{{{")) {
+        } 
+        else if (line.equals("{{{")) {
             para = frame.getNewParagraph();
             startPRE();
-        } else if (line.startsWith("}}}")) {
+        } 
+        else if (line.startsWith("}}}")) {
             terminate();
             para = frame.getNewParagraph();
-        } else if (line.startsWith("!!!")) {
-            para = frame.getNewParagraph();
-            startHeader(para, line, 3);
-        } else if (line.startsWith("!!")) {
-            para = frame.getNewParagraph();
-            startHeader(para, line, 2);
-        } else if (line.startsWith("!")) {
-            para = frame.getNewParagraph();
-            startHeader(para, line, 1);
-        } else if (line.startsWith("***")) {
-            startBullet(frame, line, 3);
-        } else if (line.startsWith("**")) {
-            startBullet(frame, line, 2);
-        } else if (line.startsWith("*")) {
-            startBullet(frame, line, 1);
-        } else if (line.startsWith(":")) {
-            if (majorState == PARAGRAPH) {
-                makeLineBreak();
-            } else {
-                para = frame.getNewParagraph();
-                startParagraph();
-            }
+        } 
+        else if (line.startsWith("!!!")) {
+            para = startHeader(frame, line, 3);
+        } 
+        else if (line.startsWith("!!")) {
+            para = startHeader(frame, line, 2);
+        } 
+        else if (line.startsWith("!")) {
+            para = startHeader(frame, line, 1);
+        } 
+        else if (line.startsWith("***")) {
+            para = startBullet(frame, line, 3);
+        } 
+        else if (line.startsWith("**")) {
+            para = startBullet(frame, line, 2);
+        } 
+        else if (line.startsWith("*")) {
+            para = startBullet(frame, line, 1);
+        } 
+        else if (line.startsWith(":")) {
+            para = startParagraph(frame);
             scanForStyle(para, line, 1);
         } else if (line.startsWith("----")) {
             terminate();
-            para = frame.getNewParagraph();
             makeHorizontalRule(frame);
+            para = frame.getNewParagraph();
         } else if (isIndented) {
             // continue whatever mode there is
             scanForStyle(para, line, skipSpaces(line,0));
         }else {
 
             if (majorState != PARAGRAPH && majorState != PREFORMATTED) {
-                para = frame.getNewParagraph();
-                startParagraph();
+                para = startParagraph(frame);
             }
             scanForStyle(para, line, 0);
         }
@@ -829,36 +805,6 @@ public class WikiToPDF
 
     protected void terminate() throws Exception
     {
-        if (majorState == NOTHING) {
-            //nothing to do
-        } else if (majorState == PARAGRAPH) {
-            //nothing to do
-        } else if (majorState == PREFORMATTED) {
-            //nothing to do
-        } else if (majorState == BULLET) {
-            //nothing to do
-            while (majorLevel > 0) {
-                //nothing to do
-                majorLevel--;
-            }
-        } else if (majorState == HEADER) {
-            switch (majorLevel) {
-            case 1:
-                //nothing to do
-                break;
-            case 2:
-                //nothing to do
-                break;
-            case 3:
-                //nothing to do
-                break;
-            }
-        }
-
-        //add any additional space after paragraph end
-        moveDown(paraTrailing);
-        paraTrailing = 0;
-
         majorState = NOTHING;
         majorLevel = 0;
         isBold = false;
@@ -866,15 +812,18 @@ public class WikiToPDF
         indent = 0;
     }
 
-    protected void startParagraph() throws Exception
+    protected Paragraph startParagraph(Frame frame) throws Exception
     {
         terminate();
-        moveDown(8);   //space before the paragraph
+        
+        Paragraph para = frame.getNewParagraph();
+        para.setSpaceBefore(8);
+        para.setSpaceAfter(8);
         setPFont();
         indent = 0;
-        paraTrailing = 8;  //will be at end
         majorState = PARAGRAPH;
         majorLevel = 0;
+        return para;
     }
 
     protected void startPRE() throws Exception
@@ -884,10 +833,6 @@ public class WikiToPDF
         majorState = PREFORMATTED;
         majorLevel = 0;
         indent = 0;
-    }
-
-    protected void makeLineBreak() throws Exception {
-        newLine();
     }
 
     protected void makeHorizontalRule(Frame frame) throws Exception {
@@ -904,17 +849,13 @@ public class WikiToPDF
     }
 
 
-    protected void startBullet(Frame container, String line, int level) throws Exception {
+    protected Paragraph startBullet(Frame container, String line, int level) throws Exception {
         
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
         }
-        else {
-            //nothing needed at end of bullet line
-        }
 
-        terminate();
         setPFont();
         Frame indentedFrame = container.newInteriorFrame();
         indentedFrame.setMargin(20*level, 0, 0, 0);
@@ -927,34 +868,36 @@ public class WikiToPDF
         //scanForStyle(para, line, skipSpaces(line, level)); 
         //UNTIL REAL BULLETS CAN BE CREATED use the asterisks at bullet points
         scanForStyle(para, line, 0);
+        return para;
     }
 
-    protected void startHeader(Paragraph para, String line, int level)
+    protected Paragraph startHeader(Frame frame, String line, int level)
             throws Exception
     {
         terminate();
+        Paragraph para = frame.getNewParagraph();
         indent = 0;
         majorState = HEADER;
         majorLevel = level;
         switch (level) {
         case 3:
-            moveDown(24);       //space before the paragraph
             setH1Font();
-            paraTrailing = 8;  //will be at end
+            para.setSpaceBefore(24);
+            para.setSpaceAfter(8);
             break;
         case 2:
-            moveDown(18);   //space before the paragraph
             setH2Font();
-            paraTrailing = 8;  //will be at end
+            para.setSpaceBefore(18);
+            para.setSpaceAfter(8);
             break;
         case 1:
-            moveDown(12);   //space before the paragraph
             setH3Font();
-            paraTrailing = 8;  //will be at end
+            para.setSpaceBefore(12);
+            para.setSpaceAfter(8);
             break;
         }
-        newLine();     //gets you to the beginning of the line
         scanForStyle(para, line, skipSpaces(line, level));
+        return para;
     }
 
     protected void scanForStyle(Paragraph para, String line, int scanStart)

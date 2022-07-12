@@ -88,7 +88,7 @@
              <td>State:</td>
              <td><select class="form-control" ng-model="cmt.state">
                       <option value="11">Draft</option>
-                      <option value="12">Open</option>
+                      <option value="12" ng-show="cmt.commentType>1">Open</option>
                       <option value="13">Closed</option>
                   </select></td>
           </tr>

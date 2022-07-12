@@ -108,6 +108,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filterMap = {};
     $scope.openMap = {};
     $scope.showFilter = <%=ar.isLoggedIn()%>;
+    $scope.filterOpen = true;
+    $scope.filterClosed = true;
+    $scope.filterDraft = true;
     $scope.initialFetchDone = false;
 
     $scope.showError = false;
@@ -119,13 +122,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.getComments = function() {
-        if (!$scope.filter) {
-            return $scope.allComments;
-        }
         var retSet = [];
         var filterlist = parseLCList($scope.filter);
         $scope.allComments.forEach( function(aCmt) {
-            console.log("looking at "+aCmt.time);
+            if (aCmt.state==13) {
+                if (!$scope.filterClosed) {
+                    return;
+                }
+            }
+            else if (aCmt.state==12) {
+                if (!$scope.filterOpen) {
+                    return;
+                }
+            }
+            else if (aCmt.state==11) {
+                if (!$scope.filterDraft) {
+                    return;
+                }
+            }
             if (containsOne(aCmt.html, filterlist)) {
                 retSet.push(aCmt);
             }
@@ -150,7 +164,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.refreshCommentList = function() {
         var postURL = "getCommentList.json";
-        console.log("GET:", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
@@ -174,6 +187,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
+        <input type="checkbox" ng-model="filterDraft"> Draft &nbsp;
+        <input type="checkbox" ng-model="filterOpen"> Open &nbsp;
+        <input type="checkbox" ng-model="filterClosed"> Closed &nbsp;
     </div>
      
      
