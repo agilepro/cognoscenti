@@ -60,10 +60,11 @@ div[dropzone] {
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Upload Documents");
     window.MY_SCOPE = $scope;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.docInfo = {description: ""};
     $scope.fileProgress = [];
     $scope.browsedFile = null;
@@ -170,6 +171,9 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    
+
+    initializeLabelPicker($scope, $http, $modal);    
 
 });
 </script>
@@ -201,31 +205,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr>
             <td class="firstColumn">Labels:</td>
             <td>
-                <span class="dropdown" ng-repeat="role in allLabelFilters()">
-                    <button class="labelButton" 
-                       ng-click="toggleLabel(role)"
-                       style="background-color:{{role.color}};"
-                       ng-show="hasLabel(role.name)">
-                       {{role.name}} <i class="fa fa-close"></i></button>
-                </span>
-                <span class="dropdown">
-                    <button class="btn btn-sm btn-primary btn-raised labelButton" 
-                       type="button" 
-                       id="menu1" 
-                       data-toggle="dropdown"
-                       title="Add Label BEFORE you upload the file"
-                       style="padding:5px 10px">
-                       <i class="fa fa-plus"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                        style="width:320px;left:-130px">
-                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                                 {{rolex.name}}</button>
-                         </li>
-                    </ul>
-                </span>
-                <span style="color:lightgray"> ( before you upload )</span>
+                <%@ include file="/spring/jsp/LabelPicker.jsp"%>
             </td>
         </tr>
         <tr>
@@ -304,3 +284,6 @@ holder.ondrop = function (e) {
     scope.$apply();
 };
 </script>
+
+
+<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>

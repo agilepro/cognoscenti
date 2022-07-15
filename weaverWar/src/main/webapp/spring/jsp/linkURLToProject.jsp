@@ -12,6 +12,8 @@
         throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
            +"Please check the logic of the controller.");
     }
+    
+    NGBook site = ngp.getSite();
     String folderPart = "";
     if (folderVal!=null) {
         folderPart = "?folder="+URLEncoder.encode(folderVal, "UTF-8");
@@ -22,18 +24,16 @@
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
-    //for (CustomRole role : ngp.getAllRoles()) {
-    //    allLabels.put( role.getJSON() );
-    //}
 
 %>
 
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Link URL");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.folderMap = <%folderMap.write(out,2,4);%>;
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.newLink = {
         id: "~new~",
         labelMap:{},
@@ -93,6 +93,10 @@ app.controller('myCtrl', function($scope, $http) {
         }
         $scope.newLink.name = url;
     }
+    
+
+    initializeLabelPicker($scope, $http, $modal); 
+    
 });
 </script>
 
@@ -157,30 +161,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr>
             <td class="firstcol">Labels: </td>
             <td>
-                <span class="dropdown" ng-repeat="label in assignedLabels()" style="float:left">
-                    <button class="labelButton" ng-click="toggleLabel(label)"
-                       style="background-color:{{label.color}};"
-                       ng-show="hasLabel(label.name)">{{label.name}} <i class="fa fa-close"></i></button>
-                </span>
-                <span>
-                     <span class="dropdown" style="float:left">
-                       <button class="btn btn-sm btn-primary btn-raised labelButton" 
-                           type="button" 
-                           id="menu1" 
-                           data-toggle="dropdown"
-                           title="Add Label"
-                           style="padding:5px 10px">
-                           <i class="fa fa-plus"></i></button>
-                       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                           style="width:320px;left:-130px">
-                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                                 {{rolex.name}}</button>
-                         </li>
-                       </ul>
-                     </span>
-                </span>
+                <%@ include file="/spring/jsp/LabelPicker.jsp"%>
             </td>
         </tr>
         <tr>
@@ -192,3 +173,4 @@ app.controller('myCtrl', function($scope, $http) {
     </table>
 
 </div>
+

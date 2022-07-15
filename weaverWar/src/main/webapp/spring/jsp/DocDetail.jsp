@@ -223,6 +223,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 allLabels: function() {
                     return $scope.allLabels;
                 },
+                siteInfo: function() {
+                    return $scope.siteInfo;
+                },
                 wsUrl: function() {
                     return $scope.wsUrl;
                 }
@@ -533,6 +536,7 @@ function copyTheLink() {
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
+<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 

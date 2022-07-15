@@ -623,8 +623,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return res;
     }
 
-    $scope.navigateToDoc = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.navigateToDoc = function(doc) {
+        if (!doc.id) {
+            console.log("DOCID", doc);
+            alert("doc id is missing");
+        }
         window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(docId) {
@@ -720,8 +723,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         }, function () {
+            $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
-            //cancel action - nothing really to do
         });
     };
 
@@ -906,20 +909,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         var remainingSeconds = ($scope.bgActiveLimit - (new Date().getTime()))/1000;
         if (remainingSeconds<0) {
+            //turn all refresh and background activities off
+            $scope.autoRefresh = false;
             console.log("AUTOSAVE deactivated");
-            if (!$scope.askingToContinue) {
-                $scope.askingToContinue = true;
-                msg = "Background refresh stopped after 20 minutes without interaction.\n"
-                           +"Click OK to manually refresh.";
-                if ($scope.bgActiveLimit<=0) {
-                    msg = "Background refresh stopped because of an error.\n"
-                           +"Click OK to manually refresh.";
-                }
-                if (confirm(msg)) {
-                    location.reload(true);
-                }
-                $scope.askingToContinue = false;
+            if ($scope.askingToContinue) {
+                return;
             }
+            //this is double prevention of duplicate alert box launches
+            $scope.askingToContinue = true;
+            msg = "Background refresh stopped after 20 minutes without interaction.\n"
+                       +"Click OK to manually refresh.";
+            if (alert(msg)) {
+                location.reload(true);
+            }
+            $scope.askingToContinue = false;
             return;
         }
         console.log("AUTOSAVE:  refreshing for "+remainingSeconds+" more seconds");
@@ -986,6 +989,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var saveRec = {subscribers: $scope.subscriberBuffer, universalid: $scope.noteInfo.universalid};
         $scope.savePartial(saveRec);
     }
+    
+    
+    initializeLabelPicker($scope, $http, $modal);    
     
     //now actually get it
     refreshTopic();
@@ -1097,31 +1103,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <tr>
     <td>Labels:</td>
     <td>
-          <span class="dropdown" ng-repeat="role in allLabels">
-            <button class="labelButton" ng-click="toggleLabel(role)"
-               style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-          </span>
+        
+        <%@ include file="/spring/jsp/LabelPicker.jsp"%>
 
-        <%if (isLoggedIn) { %>
-        <span class="dropdown">
-           <button class="btn btn-sm btn-primary btn-raised labelButton"
-               type="button"
-               id="menu1"
-               data-toggle="dropdown"
-               title="Add Label"
-               style="padding:5px 10px">
-               <i class="fa fa-plus"></i></button>
-           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1"
-                   style="width:320px;left:-130px">
-               <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                   <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton"
-                           ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                       {{rolex.name}}</button>
-               </li>
-           </ul>
-        </span>
-        <% } %>
     </td>
 </tr>
 <tr>
@@ -1129,12 +1113,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <td ng-dblclick="openAttachDocument()">
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
           <span ng-show="doc.attType=='FILE'">
-              <span ng-click="navigateToDoc(doc.id)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
               &nbsp;
               <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
           </span>
           <span  ng-show="doc.attType=='URL'">
-              <span ng-click="navigateToDoc(doc.id)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
               &nbsp;
               <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
           </span>

@@ -1,6 +1,7 @@
-app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, allLabels) {
+app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, allLabels, siteInfo, $modal, $http) {
 
     $scope.decision = decision;
+    $scope.siteInfo = siteInfo;
     $scope.htmlEditing = convertMarkdownToHtml(decision.decision);
     
     $scope.allLabels = allLabels;
@@ -43,5 +44,50 @@ app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, 
             $scope.decision.reviewDate = $scope.decision.timestamp + 365*24*3600000;
         }
     }
+    
+    $scope.getAllLabels = function() {
+        var postURL = "getLabels.json";
+        $scope.showError=false;
+        $http.post(postURL, "{}")
+        .success( function(data) {
+            console.log("All labels are gotten: ", data);
+            $scope.allLabels = data.list;
+            $scope.sortAllLabels();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.sortAllLabels = function() {
+        $scope.allLabels.sort( function(a, b){
+              if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+              if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+              return 0;
+        });
+    };    
+    $scope.getAllLabels();
+    $scope.openEditLabelsModal = function (item) {
+        
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '../../../templates/EditLabels.html',
+            controller: 'EditLabelsCtrl',
+            size: 'lg',
+            resolve: {
+                siteInfo: function () {
+                  return $scope.siteInfo;
+                },
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            $scope.getAllLabels();
+        }, function () {
+            $scope.getAllLabels();
+        });
+    };
 
 });

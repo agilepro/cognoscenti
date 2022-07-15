@@ -92,11 +92,13 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         if (!$scope.itemHasDoc(doc)) {
             $scope.attachedDocs.push(doc.universalid);
         }
+        $scope.saveDocumentList(false);
     }
     $scope.removeDocFromItem = function(doc) {
         $scope.attachedDocs = $scope.attachedDocs.filter( function(docid) {
             return (docid != doc.universalid);
         });
+        $scope.saveDocumentList(false);
     }
 
     $scope.ok = function () {
@@ -279,5 +281,22 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
             $scope.reportError(data);
         });
     };
+    
+    $scope.nameMessage = function() {
+        if (!$scope.newLink.name) {
+            return "";
+        }
+        var newNameLC = $scope.newLink.name.toLowerCase();
+        var found = false;
+        $scope.docsList.forEach( function(item) {
+            if (newNameLC == item.name.toLowerCase()) {
+                found = true;
+            }
+        });
+        if (found) {
+            return "WARNING: there is already a document with that name in workspace";
+        }
+        return "";
+    }
     
 });

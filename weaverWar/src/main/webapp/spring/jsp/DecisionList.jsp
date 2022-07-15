@@ -205,6 +205,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                siteInfo: function() {
+                    return $scope.siteInfo;
                 }
             }
         });
@@ -352,6 +355,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

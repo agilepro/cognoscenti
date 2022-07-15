@@ -450,8 +450,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             startMode: function () {
               return startMode;
             },
-            siteId: function () {
-              return $scope.siteInfo.key;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });
@@ -877,5 +877,6 @@ function addvalue() {
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
+<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
 <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
 

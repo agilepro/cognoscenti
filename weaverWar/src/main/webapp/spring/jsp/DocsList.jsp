@@ -131,7 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
 
-    $scope.getAllLabels = function(doc) {
+    $scope.getLabelsForDoc = function(doc) {
         var res = [];
         $scope.allLabels.map( function(val) {
             if (doc.labelMap[val.name]) {
@@ -209,8 +209,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 docId: function () {
                     return doc.id;
                 },
-                allLabels: function() {
-                    return $scope.allLabels;
+                siteInfo: function() {
+                    return $scope.siteInfo;
                 },
                 wsUrl: function() {
                     return $scope.wsUrl;
@@ -221,9 +221,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         docsDialogInstance.result
         .then(function () {
             $scope.getDocumentList();
+            $scope.getAllLabels();
         }, function () {
             $scope.getDocumentList();
-            //cancel action - nothing really to do
+            $scope.getAllLabels();
         });
     };
     
@@ -231,6 +232,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         console.log("PLAYER:", player);
         window.open("<%= ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key),"_blank");
     }
+    
+    $scope.getAllLabels = function() {
+        var postURL = "getLabels.json";
+        $scope.showError=false;
+        $http.post(postURL, "{}")
+        .success( function(data) {
+            console.log("All labels are gotten: ", data);
+            $scope.allLabels = data.list;
+            $scope.sortAllLabels();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.sortAllLabels = function() {
+        $scope.allLabels.sort( function(a, b){
+              if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+              if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+              return 0;
+        });
+    };
+    $scope.getAllLabels();
 
 });
 
@@ -356,7 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <div>
                 <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
                 <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
-                <span ng-repeat="label in getAllLabels(rec)">
+                <span ng-repeat="label in getLabelsForDoc(rec)">
                     <button class="labelButton" 
                         ng-click="toggleLabel(label)"
                         style="background-color:{{label.color}};">{{label.name}}
@@ -406,5 +431,5 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 <div style="height:300px"></div>
 
 <script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
-
+<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
 

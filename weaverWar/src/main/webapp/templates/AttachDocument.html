@@ -129,7 +129,7 @@
           <input ng-model="newLink.url" class="form-control"></input>
         </div>
         <div>
-          <label>Name:</label>
+          <label>Name: <span style="color:red">{{nameMessage()}}</span></label>
           <input ng-model="newLink.name" class="form-control"></input>
         </div>
         <div>
@@ -137,15 +137,15 @@
           <textarea ng-model="newLink.description" class="form-control"></textarea>
         </div>
         <div>
-          <button ng-click="addLink()" class="btn btn-primary btn-raised">Attach Link</button>
+          
         </div>
       </div>
     </div>    
 </div>
 <div class="modal-footer">
     <span class="instruction" style="margin-right:40px">To upload new file: Drop anywhere in panel</span>
-    <button class="btn btn-primary btn-raised" ng-hide="unfinishedUpload()"
-        type="button" ng-click="ok()">Save</button>
+    <button ng-click="addLink()" class="btn btn-primary btn-raised" ng-show="newLink.url && newLink.name">
+        Attach Link</button>
     <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
-        Cancel</button>
+        Exit</button>
 </div>

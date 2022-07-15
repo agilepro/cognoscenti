@@ -14,10 +14,14 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
         $http.get(getURL)
         .success( function(data) {
             $scope.allActions = data.list;
+            $scope.retrieveAttachedActions();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+    }
+    
+    $scope.retrieveAttachedActions = function() {
 
         var getURL = "attachedActions.json?"+containingQueryParams;
         $http.get(getURL)
@@ -32,11 +36,18 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
     }
     $scope.retrieveActionList();
     
-    $scope.saveActions = function() {
+    $scope.saveActions = function(thenExit) {
         var getURL = "attachedActions.json?"+containingQueryParams;
         var newData = {list: $scope.selectedActions};
         console.log("AttachDocumentCtrl SAVED ACTION LIST: ", newData);
-        return $http.post(getURL, JSON.stringify(newData));
+        $http.post(getURL, JSON.stringify(newData))
+        .success( function(data) {
+            console.log("AttachDocumentCtrl VERIFIED ACTION LIST: ", data);
+            $scope.selectedActions = data.list;
+            if (thenExit) {
+                $modalInstance.close($scope.selectedActions);
+            }
+        });
     }
     
 
@@ -70,11 +81,13 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
         if (!$scope.itemHasAction(oneAct)) {
             $scope.selectedActions.push(oneAct.universalid);
         }
+        $scope.saveActions(false);
     }
     $scope.removeActionFromList = function(oneAct) {
         $scope.selectedActions = $scope.selectedActions.filter( function(actionId) {
             return (actionId != oneAct.universalid);
         });
+        $scope.saveActions(false);
     }
     
     $scope.getPeople = function(query) {
@@ -119,9 +132,8 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
             $scope.allActions.push(data);
             $scope.selectedActions.push(data.universalid);
             console.log("ACTION ITEM CREATED", data);
-            $scope.saveActions();
             $scope.newGoal = {};
-            $modalInstance.close($scope.selectedActions);
+            $scope.saveActions(true);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -129,14 +141,10 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
     };
 
     $scope.ok = function () {
-        $scope.saveActions()
-        .success( function(data) {
-            console.log("AttachDocumentCtrl VERIFIED ACTION LIST: ", data);
-            $modalInstance.close($scope.selectedActions);
-        });
+        $scope.saveActions(true);
     };
 
-    $scope.cancel = function () {
+    $scope.exitPopup = function() {
         $modalInstance.dismiss('cancel');
     };
     $scope.selectedTab = "Create";

@@ -1,6 +1,7 @@
-app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople, siteId) {
+app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople, siteInfo, $modal) {
     $scope.nowTime = new Date().getTime();
-    $scope.siteId = siteId;
+    $scope.siteInfo = siteInfo;
+    $scope.siteId = siteInfo.key;
     $scope.goalId = goal.id;
     $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0,labelMap:{}};
     $scope.taskAreaList = [];
@@ -94,4 +95,49 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
         $scope.goal.waitUntil = $scope.nowTime-100;;
         $scope.goal.state = 3;
     }
+    $scope.getAllLabels = function() {
+        var postURL = "getLabels.json";
+        $scope.showError=false;
+        $http.post(postURL, "{}")
+        .success( function(data) {
+            console.log("All labels are gotten: ", data);
+            $scope.allLabels = data.list;
+            $scope.sortAllLabels();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.sortAllLabels = function() {
+        $scope.allLabels.sort( function(a, b){
+              if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+              if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+              return 0;
+        });
+    };
+    $scope.getAllLabels();
+    $scope.openEditLabelsModal = function (item) {
+        
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '../../../templates/EditLabels.html',
+            controller: 'EditLabelsCtrl',
+            size: 'lg',
+            resolve: {
+                siteInfo: function () {
+                  return $scope.siteInfo;
+                },
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            $scope.getAllLabels();
+        }, function () {
+            $scope.getAllLabels();
+        });
+    };
+    
 });

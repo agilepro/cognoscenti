@@ -762,6 +762,30 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/getLabels.json", method = RequestMethod.POST)
+    public void getLabels(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to modify labels.");
+            
+            JSONObject ret = new JSONObject();
+            JSONArray list = new JSONArray();
+            
+            for (NGLabel label : ngp.getAllLabels()) {
+                list.put(label.getJSON());
+            }
+            ret.put("list", list);
+            
+            sendJson(ar, ret);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to supply all labels.", ex);
+            streamException(ee, ar);
+        }
+    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelUpdate.json", method = RequestMethod.POST)
     public void labelUpdate(@PathVariable String siteId,@PathVariable String pageId,

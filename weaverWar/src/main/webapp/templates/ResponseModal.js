@@ -41,7 +41,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     }
     function setComment(newComment) {
         newComment.choices = ["Consent", "Objection"];
-        newComment.html = convertMarkdownToHtml(newComment.body);
+        $scope.displayText = convertMarkdownToHtml(newComment.body + "\n\n" + newComment.outcome);
         $scope.cmt = newComment;
         $scope.cmtOriginal = JSON.parse(JSON.stringify(newComment));
         $scope.response = {"user":$scope.responseUser};
