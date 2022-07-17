@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.util.MimeTypes;
 
 public class SectionAttachments extends SectionUtil implements SectionFormat
 {

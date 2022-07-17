@@ -15,15 +15,24 @@
         <div ng-bind-html="displayText" style="max-height:200px;overflow: auto"></div>
     </div>
     <div class="leafContent">
-    	<div ui-tinymce="tinymceOptions" ng-model="response.html" 
+    	<div ui-tinymce="tinymceOptions" ng-model="responseHtml" 
              class="leafContent" style="min-height:200px;" ></div>
     </div>
 </div>
 <div class="modal-footer">
+    <div class="col-md-4 text-left" id='status'>
+        <button ng-click="saveComment('N')" class="btn btn-link" 
+                ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" 
+                ng-show="autosaveEnabled">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates - {{secondsTillClose}} till auto-exit.</span>
+            <span class="text-info" ng-hide="unsaved==0">Saving changes in {{secondsTillSave}} seconds</span>
+        </button>
+    </div>
     <button ng-repeat="choice in choices" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok(choice)">{{choice}}</button>
-    <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
-        Cancel</button>
+        type="button" ng-click="saveAndClose(choice)">{{choice}}</button>
+    <button class="btn btn-warning btn-raised" type="button" ng-click="closeAndShutDown()">
+        Exit</button>
 </div>
 </body>
 </html>

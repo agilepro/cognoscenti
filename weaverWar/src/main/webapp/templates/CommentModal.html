@@ -148,7 +148,7 @@
                     ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" 
                     ng-show="autosaveEnabled">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates - {{secondsTillClose}} till close.</span>
+                <span class="text-info" ng-show="unsaved==0">All Saved - {{saveCount}} updates - {{secondsTillClose}} till auto-exit.</span>
                 <span class="text-info" ng-hide="unsaved==0">Saving changes in {{secondsTillSave}} seconds</span>
             </button>
 		</div>
@@ -165,7 +165,7 @@
                 Close, Send Email</button>
           <button ng-click="closeNoEmail()" class="btn btn-primary btn-raised" ng-show="cmt.state==12">
                 Close, No Email</button>
-          <button class="btn btn-warning btn-raised" ng-click="closeAndShutDown()">Close</button>
+          <button class="btn btn-warning btn-raised" ng-click="closeAndShutDown()">Exit</button>
 		</div>
 	</div>
 </div>

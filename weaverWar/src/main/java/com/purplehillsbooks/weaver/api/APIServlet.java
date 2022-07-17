@@ -34,7 +34,6 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.IdGenerator;
 import com.purplehillsbooks.weaver.License;
 import com.purplehillsbooks.weaver.LicenseForUser;
-import com.purplehillsbooks.weaver.MimeTypes;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
@@ -42,7 +41,7 @@ import com.purplehillsbooks.weaver.SectionWiki;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.WikiConverter;
-
+import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;

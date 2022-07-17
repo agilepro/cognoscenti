@@ -6,7 +6,6 @@
 %><%@page import="java.util.Properties"
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"
 %><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
-%><%@page import="com.purplehillsbooks.weaver.MimeTypes"
 %><%@page import="com.purplehillsbooks.weaver.NGBook"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%@page import="com.purplehillsbooks.weaver.NGPageIndex"

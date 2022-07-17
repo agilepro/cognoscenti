@@ -85,7 +85,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     };
     
     $scope.openResponseEditor = function (cmt, user) {
-        $scope.extendBackgroundTime();
+        $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
             return;

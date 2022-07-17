@@ -1069,7 +1069,7 @@ public class NGBook extends ContainerCommon {
     }
 
     public Hashtable<String, File> allMeetingTemplates(AuthRequest ar) {
-        File siteFolder = associatedFile.getParentFile();
+        File siteFolder = getFilePath().getParentFile();
         File siteCogFolder = new File(siteFolder, ".cog");
         File siteMeetsFolder = new File(siteCogFolder, "meets");
 

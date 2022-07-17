@@ -40,7 +40,6 @@ import com.purplehillsbooks.weaver.EmailGenerator;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MeetingRecord;
-import com.purplehillsbooks.weaver.MimeTypes;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionAttachments;
@@ -49,6 +48,8 @@ import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.util.MimeTypes;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -18,13 +18,14 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.util;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.NGWorkspace;
 
 /**
 * Holds data for a Recently Used list

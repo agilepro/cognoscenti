@@ -5,6 +5,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
     $scope.siteId = siteId;
     // initial comment object
+    $scope.cmt = {};
     setComment(cmt);
     
 	// parent scope with all the crud methods
@@ -48,8 +49,16 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         if (!newComment.notify) {
             newComment.notify = [];
         }
-        $scope.bodyHtml = convertMarkdownToHtml(newComment.body);
-        $scope.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
+
+
+        //only set if the wiki value is different
+        if ($scope.cmt.body!=newComment.body) {
+            $scope.bodyHtml = convertMarkdownToHtml(newComment.body);
+        }
+        if ($scope.cmt.outcome!=newComment.outcome) {
+            $scope.outcomeHtml = convertMarkdownToHtml(newComment.outcome);
+        }
+        
         $scope.hasOutcome = (newComment.commentType==2 || newComment.commentType==3);
         $scope.unsaved = 0;
         $scope.cmt = newComment;
@@ -242,14 +251,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             $scope.unsaved = 0;
         }
     }
-	// return a readable status message
-	$scope.getStatusMassage = function() {
-		switch ($scope.unsaved) {
-            case -1:    return "Autosaving . . .";
-            case 0:     return "All Saved";
-            case 1:     return "Unsaved changes";
-        }
-	};
 
 
     /** AUTOSAVE

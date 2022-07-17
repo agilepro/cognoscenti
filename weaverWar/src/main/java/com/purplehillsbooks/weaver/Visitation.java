@@ -21,7 +21,9 @@
 package com.purplehillsbooks.weaver;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Tracks a single user visiting a site so taht we can report how many others are
@@ -68,7 +70,7 @@ public final class Visitation {
     }
 
     /**
-     * PAss a site and workspace, and returns a list of the users that have accessed that
+     * Pass a site and workspace, and returns a list of the users that have accessed that
      * site in the past 30 minutes.
      */
     static List<String> getCurrentUsers(List<Visitation> source, String vsite, String vworkspace) {
@@ -84,5 +86,23 @@ public final class Visitation {
         }
         return newList;
     }
+    
+    /**
+     * Simply produce a list of all users accessing in the past 30 minutes
+     * without regard to workspace or site
+     */
+    static Set<String> getGlobalUsers(List<Visitation> source) {
+        long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
+        Set<String> newList = new HashSet<String>();
+        for (Visitation v : source) {
+            if (v.timestamp < tooOld) {
+                continue;
+            }
+            //this will add only if not already there
+            newList.add(v.userKey);
+        }
+        return newList;
+    }
+    
 
 }

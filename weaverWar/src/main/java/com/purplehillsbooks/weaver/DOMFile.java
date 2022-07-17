@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
  * and write files.
  */
 public class DOMFile extends DOMFace {
-    File associatedFile;
+    private File associatedFile;
 
     public DOMFile(File path, Document doc) {
         super(doc, doc.getDocumentElement(), null);

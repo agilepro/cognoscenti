@@ -18,12 +18,14 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.util;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import com.purplehillsbooks.weaver.NGWorkspace;
 
 /**
 * This is a Least Recently Used Cache.
@@ -82,7 +84,7 @@ public class LRUCache
         NGWorkspace ngw = hash.get(id);
         if (ngw!=null) {
             unstore(id);
-            if (!id.equals(ngw.associatedFile)) {
+            if (!id.equals(ngw.getFilePath())) {
                 throw new RuntimeException("Retrieved object for "+id+" has a path of "+ngw.getFilePath()+"!");
             }
         }
@@ -114,7 +116,7 @@ public class LRUCache
     * will replace it.
     */
     public synchronized void store(File id, NGWorkspace ngw) {
-        if (!id.equals(ngw.associatedFile)) {
+        if (!id.equals(ngw.getFilePath())) {
             throw new RuntimeException("Trying to store object for "+id+" has a path of "+ngw.getFilePath()+"!");
         }
         NGWorkspace prev = hash.get(id);
@@ -126,7 +128,7 @@ public class LRUCache
             //then, if cache full, remove the oldest ones
             while (listOfPages.size()>=cacheSize) {
                 prev = listOfPages.remove(cacheSize-1);
-                hash.remove(prev.associatedFile);
+                hash.remove(prev.getFilePath());
             }
         }
         listOfPages.add(0,ngw);

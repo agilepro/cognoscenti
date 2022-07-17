@@ -972,7 +972,7 @@ public class NGWorkspace extends NGPage {
         int state = this.getAccessState();
         if (state == ACCESS_STATE_DELETED) {
             //delete everything
-            File cogFolder = this.associatedFile.getParentFile();
+            File cogFolder = this.getFilePath().getParentFile();
             File workspaceFolder = cogFolder.getParentFile();
 
             cog.eliminateIndexForWorkspace(this);

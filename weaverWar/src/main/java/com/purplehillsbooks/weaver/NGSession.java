@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.api.AuthStatus;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.util.RUElement;
 
 /**
 * Holds things that are persistent for a user across a session

@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.util.MimeTypes;
 
 /**
  * Holds configuration settings

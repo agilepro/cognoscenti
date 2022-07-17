@@ -18,7 +18,7 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.util;
 
 import java.io.File;
 import java.io.FileInputStream;
