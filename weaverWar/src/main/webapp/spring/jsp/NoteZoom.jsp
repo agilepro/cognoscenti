@@ -99,6 +99,7 @@ document.title="<% ar.writeJS(note.getSubject());%>";
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     window.setMainPageTitle("Discussion Topic");
+    $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.topicId = "<%=topicId%>";
@@ -108,7 +109,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.canComment = <%=canComment%>;
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
-    $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
+    $scope.nonMembers = [];
     $scope.addressMode = false;
 
     $scope.currentTime = (new Date()).getTime();
@@ -303,6 +304,65 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.fixUpChoices();
         $scope.isSubscriber = check;
         $scope.refreshHistory();
+        
+        //recalculate non-members
+        var members = getRolePlayers("Members");
+        var newNonMembers = [];
+        $scope.noteInfo.subscribers.forEach( function(subber) {
+            if (!members[subber.key]) {
+                newNonMembers.push(subber);
+            }
+        });
+        $scope.nonMembers = newNonMembers;
+    }
+    
+    function getRolePlayers(roleName) {
+        var res = {};
+        $scope.allLabels.forEach( function(role) {
+            if (role.name == roleName) {
+                role.players.forEach( function(player) {
+                    res[player.key] = player;
+                });
+            }
+        });
+        return res;
+    }
+    
+    $scope.addMember = function(newMember) {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
+        var postURL = "roleUpdate.json?op=Update";
+        var roleData = {name: "Members", addPlayers: []};
+        roleData.addPlayers.push(newMember);
+        console.log("ADD MEMBER", roleData);
+        var postdata = angular.toJson(roleData);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            console.log("ADD MEMBER RESULT", data);
+            refreshLabels();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    function refreshLabels() {
+        if ($scope.isFrozen) {
+            alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
+        $scope.showError=false;
+        $http.get("getAllLabels.json")
+        .success( function(data) {
+            console.log("ALL LABELS", data);
+            $scope.allLabels = data.list;
+            refreshTopic();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
 
     $scope.saveDocs = function() {
@@ -533,7 +593,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         newComment.containerID = $scope.topicId;
     }
     setUpCommentMethods($scope, $http, $modal);
-
 
 
 
@@ -1201,6 +1260,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             </ul>
           </span>
         </span>
+        <div ng-repeat="outcast in nonMembers"  style="padding:5px">
+          <span class="dropdown">
+            <span id="menu1" data-toggle="dropdown">
+              <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" 
+                 style="width:32px;height:32px" 
+                 title="{{outcast.name}} - {{outcast.uid}}"
+                 class="img-circle" />
+            </span>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                  tabindex="-1" style="text-decoration: none;text-align:center">
+                  {{outcast.name}}<br/>{{outcast.uid}}</a></li>
+              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                  ng-click="navigateToUser(outcast)">
+                  <span class="fa fa-user"></span> Visit Profile</a></li>
+              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                  ng-click="addMember(outcast)">
+                  <span class="fa fa-user"></span> Add to Members</a></li>
+            </ul>
+          </span>
+          {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
+        </div>
     </td>
 </tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td></tr>

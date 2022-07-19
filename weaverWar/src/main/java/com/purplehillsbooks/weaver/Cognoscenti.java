@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 
 import javax.servlet.ServletConfig;
@@ -767,6 +768,9 @@ System.out.println("Weaver Server Object == Start the Server");
     }
     public List<String> whoIsVisiting(String site, String workspace) {
         return Visitation.getCurrentUsers(visitationList, site, workspace);
+    }
+    public Set<String> whoIsLoggedIn() {
+        return Visitation.getGlobalUsers(visitationList);
     }
 
 

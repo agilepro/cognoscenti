@@ -1,7 +1,14 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailListener"
 %><%@page import="com.purplehillsbooks.json.JSONException"
+%><%@page import="java.util.Set"
 %><%@ include file="/spring/jsp/include.jsp"
+%><%
+
+    Set<String> activeUsers = Cognoscenti.getInstance(request).whoIsLoggedIn();
+
+
+
 %>
 <div class="content tab01" style="display:block;" >
     <div class="section_body">
@@ -91,4 +98,17 @@
         </p>
 
     </div>
+</div>
+
+
+<div>
+    <div class="h1">Active Users</div>
+    <ul>
+        <%
+        for (String userid : activeUsers) {
+            UserProfile user = UserManager.getUserProfileByKey(userid);
+            out.write("\n<li>"+userid+", "+user.getName()+"</li>");
+        }
+        %>
+    </ul>
 </div>

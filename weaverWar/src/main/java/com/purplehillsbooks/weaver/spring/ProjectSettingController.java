@@ -558,8 +558,6 @@ public class ProjectSettingController extends BaseController {
                 role.updateFromJSON(roleInfo);
                 if (ngc instanceof NGWorkspace) {
 
-                    ((NGWorkspace)ngc).getSite().flushUserCache();  //calculate the users again
-
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
                     String linkedRole = role.getLinkedRole();
@@ -587,6 +585,8 @@ public class ProjectSettingController extends BaseController {
                         //state of the site role to this role.
                         role.updateFromJSON(siteRole.getJSON());
                     }
+
+                    ((NGWorkspace)ngc).getSite().flushUserCache();  //calculate the users again
                 }
                 repo = role.getJSONDetail();
             }
@@ -609,7 +609,7 @@ public class ProjectSettingController extends BaseController {
                 repo.put("roles", ja);
             }
 
-            ngc.saveFile(ar, "Updated Role");
+            ngc.saveFile(ar, op + " Role ");
             if (saveSite & site!=null) {
                 site.save();
             }
@@ -620,7 +620,23 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-
+    @RequestMapping(value = "/{siteId}/{pageId}/getAllLabels.json", method = RequestMethod.GET)
+    public void getAllLabels(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            JSONObject res = new JSONObject();
+            res.put("list", ngw.getJSONLabels());
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get all labels from the workspace.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
     //pass the parameter 'role' to see if logged in user is a player of that role
     @RequestMapping(value = "/{siteId}/{pageId}/isRolePlayer.json", method = RequestMethod.GET)
     public void isRolePlayer(@PathVariable String siteId,@PathVariable String pageId,

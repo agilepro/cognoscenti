@@ -425,11 +425,23 @@ public class CustomRole extends DOMFace implements NGRole
         if (roleInfo.has("players")) {
             clear();
             JSONArray playerArray = roleInfo.getJSONArray("players");
-            int last = playerArray.length();
-            for (int i=0; i<last; i++) {
-                JSONObject addr = playerArray.getJSONObject(i);
+            for (JSONObject addr : playerArray.getJSONObjectList()) {
                 AddressListEntry newMember = AddressListEntry.fromJSON(addr);
                 this.addPlayer(newMember);
+            }
+        }
+        if (roleInfo.has("addPlayers")) {
+            JSONArray playerArray = roleInfo.getJSONArray("addPlayers");
+            for (JSONObject addr : playerArray.getJSONObjectList()) {
+                AddressListEntry newMember = AddressListEntry.fromJSON(addr);
+                this.addPlayer(newMember);
+            }
+        }
+        if (roleInfo.has("removePlayers")) {
+            JSONArray playerArray = roleInfo.getJSONArray("removePlayers");
+            for (JSONObject addr : playerArray.getJSONObjectList()) {
+                AddressListEntry oldMember = AddressListEntry.fromJSON(addr);
+                this.removePlayer(oldMember);
             }
         }
         updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");
