@@ -28,7 +28,6 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.createPdf = function() {
         document.getElementById("exportPdfFrom").submit();
-        alert("look");
     }
 });
 

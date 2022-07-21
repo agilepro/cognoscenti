@@ -4,6 +4,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     $scope.cmtId = cmtId;
     $scope.cmt = {};
     $scope.response = {};
+    $scope.lastSave = new Date().getTime();
     getComment();
     
     function reportError(data) {
@@ -27,6 +28,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         updateRec.responses.push(responseObj);
         var postdata = angular.toJson(updateRec);
         console.log("saving new comment: ",updateRec);
+        $scope.lastSave = new Date().getTime();
         $http.post(postURL ,postdata)
         .success( function(data) {
             setComment(data);
@@ -80,13 +82,9 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     }
 
 
-    $scope.saveAndClose = function (choice) {
+    $scope.saveAndExit = function (choice) {
         $scope.response.choice = choice;
         saveComment("Y");
-    };
-
-    $scope.closeAndShutDown = function () {
-        $modalInstance.dismiss('cancel');
     };
 
     $scope.commentTypeName = function() {
@@ -130,6 +128,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             $scope.unsaved = 0;
         }
         var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
+        var secondsSinceLastSave = Math.floor((new Date().getTime() - $scope.lastSave)/1000);
         $scope.secondsTillSave = 20 - secondsSinceKeypress;
         $scope.secondsTillClose = 1200 - secondsSinceKeypress;
         if (secondsSinceKeypress > 1200) {
@@ -138,7 +137,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             console.log("Auto close time achieved, closing the dialog box", $scope);
             $scope.saveAndClose();
         }
-        if (secondsSinceKeypress < 20) {
+        if (secondsSinceKeypress < 20 || secondsSinceLastSave < 20) {
             //user has typed in last 20 seconds to wait until 20 seconds of silence
             return;
         }
@@ -147,8 +146,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             saveComment("N");
             return;
         }
-        var secondsSinceLastRefresh = Math.floor((new Date().getTime() - $scope.dataReceived)/1000);
-        if (secondsSinceLastRefresh > 60) {
+        if (secondsSinceLastSave > 60) {
             getComment();
         }
     }

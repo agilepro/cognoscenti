@@ -130,7 +130,7 @@ public class ProjectGoalController extends BaseController {
             if (canAccessGoal && (!isLoggedIn || !isMember) ) {
                 ar.setParam("pageId", pageId);
                 ar.setParam("siteId", siteId);
-                streamJSPAnon(ar, "ActionItem.jsp");
+                streamJSPAnonUnwrapped(ar, "ActionItem.jsp");
             }
             else{
                 if (warnNotMember(ar)) {

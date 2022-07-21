@@ -24,6 +24,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
+import com.purplehillsbooks.json.JSONException;
+
 public class AccessControl {
 
     //TODO: this is not a good idea, to cache the entire user page for every user
@@ -45,17 +47,15 @@ public class AccessControl {
     public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngc, AttachmentRecord attachRec)
         throws Exception {
 
-        //if user is logged in, and is a member, then can access
-        if (ar.isLoggedIn()) {
-            UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
-                return true;
-            }
+        if (ar.isMember()) {
+            return true;
         }
 
         //then, check to see if there is any special condition in session
         String resourceId = "doc:"+attachRec.getId()+":"+ngc.getKey();
+        System.out.println("CAN-ACCESS-DOC: checking for resource: ("+resourceId+")");
         if (ar.hasSpecialSessionAccess(resourceId)) {
+            System.out.println("CAN-ACCESS-DOC: session has resource: ("+resourceId+")");
             return true;
         }
 
@@ -195,19 +195,20 @@ public class AccessControl {
         return "mntask=" + encodedValue;
     }
 
-    public static boolean canAccessTopic(AuthRequest ar, NGContainer ngc, TopicRecord topicRec)
+    public static boolean canAccessTopic(AuthRequest ar, NGWorkspace ngc, TopicRecord topicRec)
     throws Exception {
-        //first, anyone can access a public topic
-        //if (topicRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
-        //    return true;
-        //}
-        //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
-            if (ar.isSuperAdmin()) {
+            //if user is logged in, and is a member or superadmin, then can access
+            if (ar.isMember()) {
+                System.out.println("CAN-ACCESS-TOPIC: user is a member");
                 return true;
             }
+            
+            //if the user is a subscriber to the topic then they get special access
             UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
+            NGRole subscribers = topicRec.getSubscriberRole();
+            if (subscribers.isExpandedPlayer(user, ngc)) {
+                System.out.println("CAN-ACCESS-TOPIC: user is a subscriber");
                 return true;
             }
         }
@@ -215,26 +216,35 @@ public class AccessControl {
         //then, check to see if there is any special condition in session
         String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
         if (!ar.isLoggedIn() && ar.hasSpecialSessionAccess(resourceId)) {
+            System.out.println("CAN-ACCESS-TOPIC: user has a session flag");
             return assureTemporaryProfile(ar);
         }
 
         //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mnnote"  (magic number for note)
         String mnnote = ar.defParam("mnnote", null);
-        if (mnnote != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
-            if (!expectedMN.equals(mnnote)) {
-                return false;
-            }
+        if (mnnote == null) {
+            return false;
+        }
+        
+        String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+        if (!expectedMN.equals(mnnote)) {
+            return false;
         }
 
         //at this point, we have seen a magic number allowing access to this page
         //so set up the rest of the login credentials for one request
         ar.setSpecialSessionAccess(resourceId);
+        System.out.println("CAN-ACCESS-TOPIC: user has magic number");
         if (!ar.isLoggedIn()) {
             return assureTemporaryProfile(ar);
         }
         return true;
+    }
+    public static void assertAccessTopic(AuthRequest ar, NGWorkspace ngc, TopicRecord topicRec) throws Exception {
+        if (!canAccessTopic(ar, ngc, topicRec)) {
+            throw new JSONException("User {0} is not able to access topic {1}", ar.getBestUserId(), topicRec.getId());
+        }
     }
 
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
@@ -272,11 +282,8 @@ public class AccessControl {
     throws Exception {
 
         //then, if user is logged in, and is a member, then can access
-        if (ar.isLoggedIn()) {
-            UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
-                return true;
-            }
+        if (ar.isMember()) {
+            return true;
         }
 
         //then, check to see if there is any special condition in session
@@ -288,14 +295,15 @@ public class AccessControl {
         //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mnrolerequest"  (magic number for role request)
         String mndoc = ar.defParam("mnrolerequest", null);
-        if (mndoc != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
-            if (expectedMN.equals(mndoc)) {
-                ar.setSpecialSessionAccess(resourceId);
-                return true;
-            }
+        if (mndoc == null) {
+            return false;
         }
-
+        
+        String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+        if (expectedMN.equals(mndoc)) {
+            ar.setSpecialSessionAccess(resourceId);
+            return true;
+        }
         return false;
     }
 

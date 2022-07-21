@@ -139,7 +139,7 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td>{{bestDate(rec)|cdate}}</td>
             <td>
-                <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
+                <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/FrontPage.htm">{{rec.projectname}}</a>
             </td>
         </tr>
       </table>

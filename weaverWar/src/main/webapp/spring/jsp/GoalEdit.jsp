@@ -477,7 +477,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.inviteMsg = message.msg;
             message.userId = player.uid;
             message.name = player.name;
-            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
             $scope.sendEmailLoginRequest(message);
         }, function () {
             //cancel action - nothing really to do

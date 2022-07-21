@@ -203,7 +203,7 @@ public class CreateProjectController extends BaseController {
             if (ar.isLoggedIn()) {
                 redirectBrowser(ar, ar.getUserProfile().getKey()+"/NewSiteRequest.htm");
             }
-            streamJSPAnon(ar, "NewSiteApplication.jsp");
+            streamJSPAnonUnwrapped(ar, "NewSiteApplication.jsp");
         }
         catch(Exception ex){
             throw new Exception("Unable to display the Register New Site page", ex);

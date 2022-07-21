@@ -156,12 +156,8 @@ app.controller('myCtrl', function($scope, $http) {
         return res;
     }
 
-    $scope.makePath = function() {
-        return "<%=ar.retPath%>t/geojungl/executiveteam/frontPage.htm";
-    }
-
     $scope.ellipse = function(workspace) {
-        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontPage.htm";
+        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontPage.htm";
     }
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/$/frontTop.htm";

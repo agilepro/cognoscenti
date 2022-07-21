@@ -53,7 +53,7 @@ public class SuperAdminController extends BaseController {
              String jspName) throws Exception {
 
         if(!ar.isLoggedIn()){
-            streamJSPAnon(ar, "Admin.jsp");
+            streamJSPAnonUnwrapped(ar, "Admin.jsp");
             return;
         }
         if(!ar.isSuperAdmin()){

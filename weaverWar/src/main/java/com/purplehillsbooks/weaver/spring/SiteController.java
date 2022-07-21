@@ -64,13 +64,13 @@ public class SiteController extends BaseController {
     public void SiteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar,siteId,"SiteAdmin");
+        showJSPMemberSite(ar,siteId,"SiteAdmin.jsp");
     }
     @RequestMapping(value = "/{siteId}/$/SiteStats.htm", method = RequestMethod.GET)
     public void SiteStats(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedInSite(ar,siteId,"SiteStats");
+        showJSPLoggedInSite(ar,siteId,"SiteStats.jsp");
     }
 
 
@@ -265,7 +265,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedInSite(ar, siteId, "SiteWorkspaces");
+        showJSPLoggedInSite(ar, siteId, "SiteWorkspaces.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/$/SiteCreateWorkspace.htm", method = RequestMethod.GET)
@@ -273,7 +273,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar, siteId, "SiteCreateWorkspace");
+        showJSPMemberSite(ar, siteId, "SiteCreateWorkspace.jsp");
     }
 
 
@@ -283,7 +283,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMemberSite(ar,siteId,"SiteUsers");
+            showJSPMemberSite(ar,siteId,"SiteUsers.jsp");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -294,7 +294,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMemberSite(ar,siteId,"SiteUserInfo");
+            showJSPMemberSite(ar,siteId,"SiteUserInfo.jsp");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
         }
@@ -305,7 +305,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar, siteId, "SiteRoles");
+        showJSPMemberSite(ar, siteId, "SiteRoles.jsp");
     }
 
 

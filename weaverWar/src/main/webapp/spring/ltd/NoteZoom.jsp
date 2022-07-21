@@ -172,81 +172,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
     $scope.startEdit = function() {
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\nTopics can not be edited in a frozen workspace.");
-            return;
-        }
-        if ($scope.isEditing) {
-            //already editing so nothing to do
-            return;
-        }
-        
-        //clear from any prior edit sessions
-        $scope.saveNotice = "";
-        
-        //fetch the newest, most up to date copy to start editing
-        var postURL = "getTopic.json?nid="+$scope.topicId;
-        console.log("GET (StartEdit):", postURL);
-        $scope.showError=false;
-        $http.get(postURL)
-        .success( function(data) {
-            $scope.extendBackgroundTime();
-            $scope.receiveTopicRecord(data);
-            $scope.wikiLastSave = $scope.noteInfo.wiki;
-            $scope.wikiEditing = $scope.noteInfo.wiki;
-            $scope.htmlEditing = convertMarkdownToHtml($scope.noteInfo.wiki);
-            $scope.isEditing = true;
-            $scope.changesToSave = false;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not start edit for topic if not member of workspace");
     }
     $scope.mergeUpdateDoc = function(changeEditing) {
-        if (!changeEditing) {
-            $scope.extendBackgroundTime();
-        }
-        $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
-        
-        var rec = {};
-        rec.old = $scope.wikiLastSave;
-        rec.new = $scope.wikiEditing;
-        rec.subject = $scope.noteInfo.subject;
-        
-        var postURL = "mergeTopicDoc.json?nid="+$scope.topicId;
-        console.log("POST (Merge):", postURL);
-        $scope.showError=false;
-        $http.post(postURL, angular.toJson(rec))
-        .success( function(data) {
-            $scope.wikiLastSave = rec.new;
-            $scope.receiveTopicRecord(data);
-            $scope.isEditing = changeEditing;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not merge edit for topic if not member of workspace");
     }
     $scope.saveEdits = function(fields) {
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
-        var rec = {};
-        rec.id = $scope.topicId;
-        rec.universalid = $scope.noteInfo.universalid;
-        fields.forEach( function(fieldName) {
-            rec[fieldName] = $scope.noteInfo[fieldName];
-        });
-        if ($scope.isEditing) {
-            rec.subject = $scope.noteInfo.subject;
-        }
-        var postdata = angular.toJson(rec);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.extendBackgroundTime();
-            $scope.receiveTopicRecord(data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not save edit for topic if not member of workspace");
     };
     function refreshTopic() {
         var postURL = "getTopic.json?nid="+$scope.topicId;
@@ -264,14 +196,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     
     $scope.mergeFromOthers = function() {
-        if ($scope.isEditing) {
-            $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
-            console.log("MERGE:", "("+$scope.wikiLastSave+")", "("+$scope.wikiEditing+")", "("+$scope.noteInfo.wiki+")");
-            $scope.wikiEditing = Textmerger.get().merge($scope.wikiLastSave, $scope.wikiEditing, $scope.noteInfo.wiki);
-        }
-        else {
-            $scope.wikiEditing = $scope.noteInfo.wiki;
-        }
+        $scope.wikiEditing = $scope.noteInfo.wiki;
         $scope.htmlEditing = convertMarkdownToHtml($scope.wikiEditing);
         $scope.wikiLastSave = $scope.noteInfo.wiki;
         $scope.changesToSave = false;
@@ -329,70 +254,21 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     
     $scope.addMember = function(newMember) {
-        if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
-            return;
-        }
-        var postURL = "roleUpdate.json?op=Update";
-        var roleData = {name: "Members", addPlayers: []};
-        roleData.addPlayers.push(newMember);
-        console.log("ADD MEMBER", roleData);
-        var postdata = angular.toJson(roleData);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            console.log("ADD MEMBER RESULT", data);
-            refreshLabels();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not add a member if not member of workspace");
     }
     function refreshLabels() {
-        if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
-            return;
-        }
-        $scope.showError=false;
-        $http.get("getAllLabels.json")
-        .success( function(data) {
-            console.log("ALL LABELS", data);
-            $scope.allLabels = data.list;
-            refreshTopic();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
+
+        console.log("can not add refresh labels if not member of workspace");    }
 
     $scope.saveDocs = function() {
-        var saveRecord = {};
-        saveRecord.id = $scope.topicId;
-        saveRecord.universalid = $scope.noteInfo.universalid;
-        saveRecord.docList = $scope.noteInfo.docList;
-        $scope.savePartial(saveRecord);
+        console.log("can not save document if not member of workspace");
     }
     $scope.saveLabels = function() {
-        var saveRecord = {};
-        saveRecord.id = $scope.topicId;
-        saveRecord.universalid = $scope.noteInfo.universalid;
-        saveRecord.labelMap = $scope.noteInfo.labelMap;
-        $scope.savePartial(saveRecord);
+        console.log("can not save labels if not member of workspace");
     }
 
     $scope.savePartial = function(recordToSave) {
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
-        var postdata = angular.toJson(recordToSave);
-        $scope.showError=false;
-        $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.extendBackgroundTime();
-            $scope.myComment = "";
-            $scope.receiveTopicRecord(data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not save partial if not member of workspace");
     };
     
     $scope.allowCommentEmail = function() {
@@ -453,7 +329,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             newResponse.user = "<%ar.writeJS(currentUser);%>";
             newResponse.userName = "<%ar.writeJS(currentUserName);%>";
             cmt.responses.push(newResponse);
-            selected.push(newResponse); 
+            selected.push(newResponse);
         }
         return selected;
     }
@@ -598,77 +474,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
 
-    $scope.createDecision = function(newDecision) {
-        $scope.cancelBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-        newDecision.num="~new~";
-        newDecision.universalid="~new~";
-        var postURL = "updateDecision.json?did=~new~";
-        var postData = angular.toJson(newDecision);
-        $http.post(postURL, postData)
-        .success( function(data) {
-            $scope.extendBackgroundTime();
-            var relatedComment = data.sourceCmt;
-            $scope.noteInfo.comments.map( function(cmt) {
-                if (cmt.time == relatedComment) {
-                    cmt.decision = "" + data.num;
-                    $scope.updateComment(cmt);
-                }
-            });
-            $scope.refreshHistory();
-            $scope.extendBackgroundTime();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-            $scope.extendBackgroundTime();
-        });
-    };
-
-    $scope.openDecisionEditor = function (itemNotUsed, cmt) {
-        $scope.cancelBackgroundTime();
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
-            return;
-        }
-        if (!$scope.canComment) {
-            alert("You must be logged in to ceate a response");
-            return;
-        }
-
-        var newDecision = {
-            html: cmt.html,
-            labelMap: $scope.noteInfo.labelMap,
-            sourceId: $scope.topicId,
-            sourceType: 4,
-            sourceCmt: cmt.time
-        };
-
-        var decisionModalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html<%=templateCacheDefeater%>',
-            controller: 'DecisionModalCtrl',
-            size: 'lg',
-            resolve: {
-                decision: function () {
-                    return JSON.parse(JSON.stringify(newDecision));
-                },
-                allLabels: function() {
-                    return $scope.allLabels;
-                }
-            }
-        });
-
-        decisionModalInstance.result.then(function (modifiedDecision) {
-            $scope.createDecision(modifiedDecision);
-            $scope.extendBackgroundTime();
-        }, function () {
-            //cancel action - nothing really to do
-            $scope.extendBackgroundTime();
-        });
-    };
 
     $scope.getObjDocs = function(noteInfo) {
         var res = [];
@@ -711,170 +516,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     
     $scope.retrieveAllDocuments = function() {
-        var getURL = "docsList.json";
-        $scope.showError=false;
-        $http.get(getURL)
-        .success( function(data) {
-            var undeleted = [];
-            data.docs.forEach( function(item) {
-                if (!item.deleted) {
-                    undeleted.push(item);
-                }
-            });
-            $scope.allDocs = undeleted;
-            console.log("DOCUMENT LIST", data);
-            $scope.refreshAttachedDocs();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not retrieve all documents for topic if not member of workspace");
     }
     $scope.refreshAttachedDocs = function() {
-        var getURL = "attachedDocs.json?note="+$scope.topicId;
-        $http.get(getURL)
-        .success( function(data) {
-            $scope.attachmentList = data.list;
-            var attachedDocTemp = [];
-            data.list.forEach( function(item) {
-                $scope.allDocs.forEach( function(aDoc) {
-                    if (aDoc.universalid == item) {
-                        attachedDocTemp.push(aDoc);
-                    }
-                });
-            });
-            $scope.attachedDocs = attachedDocTemp;
-            console.log("ATTACHED LIST", $scope.attachedDocs);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-
+        console.log("can not retrieve all documents for topic if not member of workspace");
     }
     $scope.retrieveAllDocuments();
     
     
-    $scope.openAttachDocument = function () {
-        $scope.cancelBackgroundTime();
 
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Documents can not be attached in a frozen workspace.");
-            return;
-        }
-
-        var attachModalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
-            controller: 'AttachDocumentCtrl',
-            size: 'lg',
-            resolve: {
-                containingQueryParams: function() {
-                    return "note="+$scope.topicId;
-                },
-                docSpaceURL: function() {
-                    return $scope.docSpaceURL;
-                }
-            }
-        });
-
-        attachModalInstance.result
-        .then(function (docList) {
-            //force re-read
-            $scope.retrieveAllDocuments();
-            $scope.extendBackgroundTime();
-        }, function () {
-            $scope.retrieveAllDocuments();
-            $scope.extendBackgroundTime();
-        });
-    };
-
-    $scope.openAttachAction = function (item) {
-        $scope.cancelBackgroundTime();
-
-        if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Action items can not be attached in a frozen workspace.");
-            return;
-        }
-        var attachModalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
-            controller: 'AttachActionCtrl',
-            size: 'lg',
-            resolve: {
-                containingQueryParams: function() {
-                    return "note="+$scope.topicId;
-                },
-                siteId: function () {
-                  return $scope.siteInfo.key;
-                }
-            }
-        });
-
-        attachModalInstance.result
-        .then(function (selectedActionItems) {
-            $scope.noteInfo.actionList = selectedActionItems;
-            $scope.saveEdits(['actionList']);
-            $scope.extendBackgroundTime();
-        }, function () {
-            $scope.extendBackgroundTime();
-            //cancel action - nothing really to do
-        });
-    };
-    
-    
-    $scope.openModalActionItem = function (goal, start) {
-        $scope.cancelBackgroundTime();
-        if (!start) {
-            start = 'status';
-        }
-        var modalInstance = $modal.open({
-          animation: false,
-          templateUrl: "<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>",
-          controller: 'ActionItemCtrl',
-          size: 'lg',
-          backdrop: "static",
-          resolve: {
-            goal: function () {
-              return goal;
-            },
-            taskAreaList: function () {
-              return [];
-            },
-            allLabels: function () {
-              return $scope.allLabels;
-            },
-            startMode: function () {
-              return start;
-            },
-            siteId: function () {
-              return $scope.siteInfo.key;
-            }
-          }
-        });
-
-        modalInstance.result.then(function (modifiedGoal) {
-            $scope.extendBackgroundTime();
-            $scope.allGoals.forEach( function(item) {
-                if (item.id == modifiedGoal.id) {
-                    item.duedate = modifiedGoal.duedate;
-                    item.status = modifiedGoal.status;
-                }
-            });
-            $scope.refreshAllGoals();
-        }, function () {
-            $scope.extendBackgroundTime();
-          //cancel action
-        });
-    };    
     $scope.refreshAllGoals = function() {
-        var getURL = "allActionsList.json";
-        $http.get(getURL)
-        .success( function(data) {
-            $scope.allGoals = data.list;
-            $scope.constructAllCheckItems();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("can not get all goals if not member of workspace");
     }
     $scope.constructAllCheckItems = function() {
         $scope.allGoals.forEach( function(actionItem) {
@@ -1040,13 +692,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
     $scope.startSubscriberEdit = function() {
-        $scope.editMeetingPart='subscribers';
-        $scope.subscriberBuffer = $scope.noteInfo.subscribers;
+        console.log("can not edit subscriber if not member of workspace");
     }
     $scope.saveSubscriberEdit = function() {
-        $scope.editMeetingPart=null;
-        var saveRec = {subscribers: $scope.subscriberBuffer, universalid: $scope.noteInfo.universalid};
-        $scope.savePartial(saveRec);
+        console.log("can not save subscriber if not member of workspace");
     }
     
     
@@ -1163,13 +812,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <td>Labels:</td>
     <td>
         
-        <%@ include file="/spring/jsp/LabelPicker.jsp"%>
+        <%@ include file="/spring/ltd/LabelPicker.jsp"%>
 
     </td>
 </tr>
 <tr>
-    <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
-    <td ng-dblclick="openAttachDocument()">
+    <td>Attachments:</td>
+    <td >
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
           <span ng-show="doc.attType=='FILE'">
               <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
@@ -1192,7 +841,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </tr>
 
 <tr>
-    <td class="labelColumn" ng-click="openAttachAction()">Action Items:</td>
+    <td>Action Items:</td>
     <td>
           <table class="table">
           <tr ng-repeat="goal in getActions()">
@@ -1239,7 +888,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </td>
 </tr>
 <tr ng-hide="editMeetingPart=='subscribers'">
-    <td class="labelColumn" ng-click="startSubscriberEdit()">Subscribers:</td>
+    <td ng-click="startSubscriberEdit()">Subscribers:</td>
     <td ng-dblclick="editMeetingPart='subscribers'">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}"    
           style="text-align:center">
@@ -1275,9 +924,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                   ng-click="navigateToUser(outcast)">
                   <span class="fa fa-user"></span> Visit Profile</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="addMember(outcast)">
-                  <span class="fa fa-user"></span> Add to Members</a></li>
             </ul>
           </span>
           {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.

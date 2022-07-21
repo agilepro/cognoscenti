@@ -95,7 +95,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPNotFrozen(ar, siteId, pageId, "DocsAdd");
+        BaseController.showJSPNotFrozen(ar, siteId, pageId, "DocsAdd.jsp");
     }
 
     /**
@@ -130,7 +130,10 @@ public class ProjectDocsController extends BaseController {
         System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         request.setAttribute("aid", aid);
-        BaseController.showJSPDepending(ar, siteId, pageId, "DocDetail");
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        AttachmentRecord att = ngw.findAttachmentByID(aid);
+        boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
+        BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
     }
 
     // this will be DocDetails.htm??aid={aid}&lic={license}
@@ -142,7 +145,10 @@ public class ProjectDocsController extends BaseController {
         String aid = ar.reqParam("aid");
 
         request.setAttribute("aid", aid);
-        BaseController.showJSPDepending(ar, siteId, pageId, "DocDetail");
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        AttachmentRecord att = ngw.findAttachmentByID(aid);
+        boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
+        BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/DocsVersions.htm", method = RequestMethod.GET)
@@ -161,7 +167,7 @@ public class ProjectDocsController extends BaseController {
         }
 
         request.setAttribute("aid", ar.reqParam("aid"));
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsVersions");
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsVersions.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/DocsRevise.htm", method = RequestMethod.GET)
@@ -181,7 +187,7 @@ public class ProjectDocsController extends BaseController {
 
         //ngp.findAttachmentByIDOrFail(aid);
         request.setAttribute("aid", ar.reqParam("aid"));
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsRevise");
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsRevise.jsp");
     }
 
 
@@ -303,7 +309,7 @@ public class ProjectDocsController extends BaseController {
             registerRequiredProject(ar, siteId, pageId);
             showJSPMembers(ar, siteId, pageId, "reminders.jsp");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.reminder.page", new Object[]{pageId,siteId} , ex);
+            throw new JSONException("Failed to open reminder page of workspace {0} in site {1}", ex, pageId, siteId);
         }
     }
 
@@ -557,7 +563,7 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("id", id);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnon(ar, "Share.jsp");
+        streamJSPAnonUnwrapped(ar, "Share.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -592,7 +598,7 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnon(ar, "Reply.jsp");
+        streamJSPAnonUnwrapped(ar, "Reply.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -613,13 +619,13 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnon(ar, "Unsub.jsp");
+        streamJSPAnonUnwrapped(ar, "Unsub.jsp");
     }
 
     @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
     public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPAnon(ar, "Feedback.jsp");
+        streamJSPAnonUnwrapped(ar, "Feedback.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)

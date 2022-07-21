@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Properties;
@@ -109,7 +110,7 @@ public class BaseController {
     }
     protected static void showWarningAnon(AuthRequest ar, String why) throws Exception {
         ar.req.setAttribute("property_msg_key", why);
-        streamJSPAnonWrapped(ar, "NoAccess.jsp");
+        streamJSPAnon(ar, "NoAccess.jsp");
     }
 
 
@@ -169,11 +170,11 @@ public class BaseController {
         }
         if(!ar.isMember()){
             if (ar.ngp instanceof NGBook) {
-                streamJSP(ar, "WarningSite.jsp");
+                streamJSPSite(ar, "WarningSite.jsp");
                 return true;
             }
             ar.req.setAttribute("roleName", "Members");
-            streamJSP(ar, "WarningNotMember.jsp");
+            streamJSPLimited(ar, "Warning.jsp");
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
@@ -209,52 +210,54 @@ public class BaseController {
 
 
 
-    private static void assertNoWrappedJSP(AuthRequest ar, String jspName) throws Exception {
+    private static void streamWrappedJSP(AuthRequest ar, String accessLevel, String jspName) throws Exception {
         //just to make sure there are no DOUBLE pages being sent
         if (ar.req.getAttribute("wrappedJSP")!=null) {
             throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
                      +") when trying to set it to ("+jspName+")");
-        }        
+        }
+        if (jspName.endsWith(".jsp.jsp")) {
+            throw new Exception("Program Logic Error: streamJSP* called with double JSP in name");
+        }
+        
+        File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
+        File accessFolder = new File(springFolder, accessLevel);
+        File jspFile = new File(accessFolder, jspName);
+        if (!jspFile.exists()) {
+            ar.req.setAttribute("property_msg_key", "You must be a member of the workspace to access this resource.");
+            jspName = "Warning.jsp";
+        }
+        System.out.println("JSP file is: "+jspName);
+        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
     }
     protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
-        assertNoWrappedJSP(ar, jspName);
-
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/jsp/Wrapper.jsp");
+        streamWrappedJSP(ar, "jsp", jspName);
     }
+    
+    protected static void streamJSPLimited(AuthRequest ar, String jspName) throws Exception {
+        streamWrappedJSP(ar, "ltd", jspName);
+    }
+    
     protected static void streamJSPUser(AuthRequest ar, String jspName) throws Exception {
-        assertNoWrappedJSP(ar, jspName);
-
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/user/Wrapper.jsp");
+        streamWrappedJSP(ar, "user", jspName);
     }
+    
     protected static void streamJSPSite(AuthRequest ar, String jspName) throws Exception {
-        assertNoWrappedJSP(ar, jspName);
-
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/site/Wrapper.jsp");
+        streamWrappedJSP(ar, "site", jspName);
     }
+    
     public static void streamJSPAnon(AuthRequest ar, String jspName) throws Exception {
-        assertNoWrappedJSP(ar, jspName);
+        streamWrappedJSP(ar, "anon", jspName);
+    }
+
+    public static void streamJSPAnonUnwrapped(AuthRequest ar, String jspName) throws Exception {
         ar.invokeJSP("/spring/anon/"+jspName);
     }
-    public static void streamJSPAnonWrapped(AuthRequest ar, String jspName) throws Exception {
-        assertNoWrappedJSP(ar, jspName);
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/anon/Wrapper.jsp");
-    }
-
     
     
     
-    protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
-        if (warnNotLoggedIn(ar)){
-            return;
-        }
-        streamJSP(ar, jspName+".jsp");
-    }
-
-
+    
     /**
      * This is useful for pages that work on Containers, both Projects and Sites
      */
@@ -269,24 +272,29 @@ public class BaseController {
         }
     }
 
-    public static void showJSPDepending(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+    public static void showJSPDepending(AuthRequest ar, NGWorkspace ngw, String jspName, boolean specialAccess) throws Exception {
         try{
-            registerSiteOrProject(ar, siteId, pageId);
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
             if (warnSiteMoved(ar)) {
                 return;
             }
             if (!ar.isLoggedIn()) {
-                ar.setParam("pageId", pageId);
-                ar.setParam("siteId", siteId);
-                ar.req.setAttribute("wrappedJSP", jspName+".jsp");
-                ar.invokeJSP("/spring/anon/Wrapper.jsp");
+                streamJSPAnon(ar, jspName);
+            }
+            else if (ar.isMember()) {
+                streamJSP(ar, jspName);
+            }
+            else if (specialAccess) {
+                streamJSPLimited(ar, jspName);
             }
             else {
-                streamJSP(ar, jspName+".jsp");
+                warnNotMember(ar);
             }
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+            throw new JSONException("Unable to prepare JSP view of {0} for workspace: {1}/{2}", ex, jspName, ngw.getKey(), ngw.getSiteKey());
         }
     }
 
@@ -297,7 +305,10 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSP(ar, jspName+".jsp");
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
+            streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
@@ -313,7 +324,10 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSP(ar, jspName+".jsp");
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
+            streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
@@ -328,7 +342,10 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            streamJSPSite(ar, jspName+".jsp");
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
+            streamJSPSite(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
@@ -343,7 +360,7 @@ public class BaseController {
                 return;
             }
             if (!jspName.endsWith(".jsp")) {
-                jspName = jspName + ".jsp";
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
             }
             streamJSP(ar, jspName);
         }
@@ -357,7 +374,10 @@ public class BaseController {
             if (warnNotMember(ar)){
                 return;
             }
-            streamJSPSite(ar, jspName+".jsp");
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
+            streamJSPSite(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
@@ -365,6 +385,24 @@ public class BaseController {
     }
 
 
+    /**
+     * this is loggedin users who are non-members of the workspace, that have some special reason
+     * to access a part of the workspace.  e.g. topic subscriber or meeting participant
+     * @param ar
+     * @param siteId
+     * @param pageId
+     * @param jspName
+     * @throws Exception
+     */
+    public static void showJSPLimited(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            registerSiteOrProject(ar, siteId, pageId);
+            streamJSPLimited(ar, jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
 
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
@@ -372,7 +410,7 @@ public class BaseController {
             if (warnFrozenOrNotMember(ar, ngc)){
                 return;
             }
-            streamJSP(ar, jspName+".jsp");
+            streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);

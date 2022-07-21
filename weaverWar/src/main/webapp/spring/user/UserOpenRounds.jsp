@@ -119,7 +119,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/noteZoom{{rec.id}}.htm">{{rec.subject}}</a>
                 </td>
                 <td>
-                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/frontPage.htm">{{rec.workspaceName}}</a>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/FrontPage.htm">{{rec.workspaceName}}</a>
                 </td>
                 <td>
                     {{rec.modUser.name}}
@@ -148,7 +148,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/{{rec.address}}">{{rec.content}}</a>
                 </td>
                 <td>
-                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/frontPage.htm">{{rec.workspaceName}}</a>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/FrontPage.htm">{{rec.workspaceName}}</a>
                 </td>
                 <td>
                     {{rec.userName}}

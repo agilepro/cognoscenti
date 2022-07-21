@@ -9,11 +9,30 @@
     }
 
     var retPath ='<%=ar.retPath%>';
+    var headerType = '<%=headerTypeStr%>';
+    var book='';
+    var pageId = '<%=pageId%>';
     var userKey = "<%=pageUserKey%>";
     var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
 </script>
 
 
+<% if (!isSiteHeader) { %>
+    <script>
+        <% if (pageId != null && siteId != null) { %>
+          book='<%=siteId%>';
+        <% } %>
+    </script>
+
+<% } else if(isSiteHeader){ %>
+     <script>
+        <% if(accountId != null){ %>
+        var accountId='<%=accountId %>';
+        <% } else if(pageId!=null){ %>
+        var accountId='<%=pageId%>';
+        <% } %>
+     </script>
+<% } %>
 
 
 
@@ -57,7 +76,7 @@
     color: black;
 }
 </style>
-<!-- #F0D7F7;  #F2EBF4 -->
+
 
   <!-- Logo Brand -->
   <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
@@ -84,6 +103,27 @@
 <% } %>      
       
 <% if (loggedUser!=null) { %>      
+      <li class="dropdown">
+          <a class="dropdown-toggle"
+            data-target="#"
+            data-toggle="dropdown"
+            aria-expanded="false"
+            title="Workspaces">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+              <span class="dropdown-toggle-label" translate>Add</span>
+              <div class="ripple-container"></div>
+          </a>
+          <ul class="dropdown-menu pull-right tighten">
+            <li><a href="AddSomething.htm?start=meeting">Meeting</a></li>
+            <li><a href="NotesList.htm?start=create">Discussion Topic</a></li>
+            <li><a href="DocsAdd.htm">Document</a></li>
+            <li><a href="GoalStatus.htm?start=create">Action Item</a></li>
+            <li><a href="DecisionList.htm?start=create">Decision</a></li>
+            <li><a href="SendNote.htm">Email</a></li>
+            <li><a href="AddSomething.htm">Something Else</a></li>
+          </ul>
+      
+      </li>
       <li class="dropdown">
             <a class="dropdown-toggle"
             data-target="#"

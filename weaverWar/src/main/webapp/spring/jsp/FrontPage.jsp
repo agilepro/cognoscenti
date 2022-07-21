@@ -8,16 +8,16 @@ Required parameters:
 
 */
 
-    ar.assertLoggedIn("Must be logged in to see a list of meetings");
+    ar.assertMember("Must be a member for this version of the page");
 
+    Cognoscenti cog = ar.getCogInstance();
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId);
+    NGPageIndex ngpi = cog.getWSBySiteAndKeyOrFail(siteId, pageId);
     NGWorkspace ngp = ngpi.getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
-    Cognoscenti cog = ar.getCogInstance();
-    boolean isMember = ar.isMember();
+
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -66,119 +66,119 @@ Required parameters:
     JSONArray myMeetings = new JSONArray();
     JSONArray myActions = new JSONArray();
     
-    if (isMember) {
-        List<HistoryRecord> histRecs = ngp.getAllHistory();
-        int limit=10;
-        Hashtable<String,String> seenBefore = new Hashtable<String,String>();
 
-        for (HistoryRecord hist : histRecs) {
-            AddressListEntry ale = new AddressListEntry(hist.getResponsible());
-            UserProfile responsible = ale.getUserProfile();
-            String imagePath = "assets/photoThumbnail.gif";
-            if(responsible!=null) {
-                String personImage = responsible.getImage();
-                if (personImage!=null && personImage.length() > 0) {
-                    imagePath = "icon/"+personImage;
-                }
-            }
-            String objectKey = hist.getContext();
-            int contextType = hist.getContextType();
-            String key = hist.getCombinedKey();
-            String url = "";
-            String cType = HistoryRecord.getContextTypeName(contextType);
-            String objName = "Unidentified";
-            if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-                url = ar.getResourceURL(ngp, "projectAllTasks.htm");
-                objName = "";
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-                url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
-                GoalRecord gr = ngp.getGoalOrNull(objectKey);
-                if (gr!=null) {
-                    objName = gr.getSynopsis();
-                }
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-                url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
-                objName = objectKey;
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-                url = ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
-                AttachmentRecord att = ngp.findAttachmentByID(objectKey);
-                if (att!=null) {
-                    objName = att.getDisplayName();
-                }
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-                url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
-                TopicRecord nr = ngp.getDiscussionTopic(objectKey);
-                if (nr!=null) {
-                    objName = nr.getSubject();
-                }
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-                url = ar.getResourceURL(ngp, "RoleManagement.htm");
-                NGRole role = ngp.getRole(objectKey);
-                if (role!=null) {
-                    objName = role.getName();
-                }
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-                url = ar.getResourceURL(ngp, "meetingHtml.htm?id="+objectKey);
-                MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
-                if (meet!=null) {
-                    objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
-                }
-            }
-            else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-                url = ar.getResourceURL(ngp, "DecisionList.htm?id="+objectKey);
-                MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
-            }
-            JSONObject jObj = hist.getJSON(ngp,ar);
-            jObj.put("contextUrl", url );
+    List<HistoryRecord> histRecs = ngp.getAllHistory();
+    int limit=10;
+    Hashtable<String,String> seenBefore = new Hashtable<String,String>();
 
-            //elliminate duplicate objects
-            boolean seen = seenBefore.containsKey(objectKey);
-            if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-                seenBefore.put(objectKey,objectKey);
-                recentChanges.put(jObj);
-                if (limit-- < 0) {
-                    break;
-                }
+    for (HistoryRecord hist : histRecs) {
+        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        UserProfile responsible = ale.getUserProfile();
+        String imagePath = "assets/photoThumbnail.gif";
+        if(responsible!=null) {
+            String personImage = responsible.getImage();
+            if (personImage!=null && personImage.length() > 0) {
+                imagePath = "icon/"+personImage;
             }
-            topHistory.put(jObj);
         }
-        for (NGRole ngr : ngp.getAllRoles()) {
-            JSONObject jo = new JSONObject();
-            jo.put("name", ngr.getName());
-            jo.put("player", ngr.isPlayer(uProf));
-            yourRoles.put(jo);
+        String objectKey = hist.getContext();
+        int contextType = hist.getContextType();
+        String key = hist.getCombinedKey();
+        String url = "";
+        String cType = HistoryRecord.getContextTypeName(contextType);
+        String objName = "Unidentified";
+        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
+            url = ar.getResourceURL(ngp, "projectAllTasks.htm");
+            objName = "";
         }
-
-        for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
-            //used to remove the current user here, but feedback suggests
-            //that we should include the current user in this list.
-            otherMembers.put(ale.getJSON());
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
+            url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
+            GoalRecord gr = ngp.getGoalOrNull(objectKey);
+            if (gr!=null) {
+                objName = gr.getSynopsis();
+            }
         }
-
-        for (MeetingRecord meet : ngp.getMeetings()) {
-            if (meet.getState() > 1) {
-                continue;
-            }
-            myMeetings.put(meet.getListableJSON(ar));
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+            url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
+            objName = objectKey;
         }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
+            url = ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
+            AttachmentRecord att = ngp.findAttachmentByID(objectKey);
+            if (att!=null) {
+                objName = att.getDisplayName();
+            }
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
+            url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
+            TopicRecord nr = ngp.getDiscussionTopic(objectKey);
+            if (nr!=null) {
+                objName = nr.getSubject();
+            }
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+            url = ar.getResourceURL(ngp, "RoleManagement.htm");
+            NGRole role = ngp.getRole(objectKey);
+            if (role!=null) {
+                objName = role.getName();
+            }
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
+            url = ar.getResourceURL(ngp, "meetingHtml.htm?id="+objectKey);
+            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+            if (meet!=null) {
+                objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
+            }
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+            url = ar.getResourceURL(ngp, "DecisionList.htm?id="+objectKey);
+            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+        }
+        JSONObject jObj = hist.getJSON(ngp,ar);
+        jObj.put("contextUrl", url );
 
-        for (GoalRecord action : ngp.getAllGoals()) {
-            NGRole assignees = action.getAssigneeRole();
-            if (!assignees.isExpandedPlayer(uProf, ngp)) {
-                continue;
+        //elliminate duplicate objects
+        boolean seen = seenBefore.containsKey(objectKey);
+        if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+            seenBefore.put(objectKey,objectKey);
+            recentChanges.put(jObj);
+            if (limit-- < 0) {
+                break;
             }
-            int state = action.getState();
-            if (state==BaseRecord.STATE_OFFERED || state==BaseRecord.STATE_ACCEPTED) {
-                myActions.put(action.getJSON4Goal(ngp));
-            }
+        }
+        topHistory.put(jObj);
+    }
+    for (NGRole ngr : ngp.getAllRoles()) {
+        JSONObject jo = new JSONObject();
+        jo.put("name", ngr.getName());
+        jo.put("player", ngr.isPlayer(uProf));
+        yourRoles.put(jo);
+    }
+
+    for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
+        //used to remove the current user here, but feedback suggests
+        //that we should include the current user in this list.
+        otherMembers.put(ale.getJSON());
+    }
+
+    for (MeetingRecord meet : ngp.getMeetings()) {
+        if (meet.getState() > 1) {
+            continue;
+        }
+        myMeetings.put(meet.getListableJSON(ar));
+    }
+
+    for (GoalRecord action : ngp.getAllGoals()) {
+        NGRole assignees = action.getAssigneeRole();
+        if (!assignees.isExpandedPlayer(uProf, ngp)) {
+            continue;
+        }
+        int state = action.getState();
+        if (state==BaseRecord.STATE_OFFERED || state==BaseRecord.STATE_ACCEPTED) {
+            myActions.put(action.getJSON4Goal(ngp));
         }
     }
+
     
     boolean isWatching = uProf.isWatch(siteId+"|"+pageId);
 
@@ -202,7 +202,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myActions  = <%myActions.write(out,2,4);%>;
     $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
     $scope.isWatching = <%=isWatching%>;
-    $scope.isMember = <%=isMember%>;
     $scope.filter = "";
     
     function processHtml(value) {
@@ -338,12 +337,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return res;
     }
 
-    $scope.makePath = function() {
-        return "<%=ar.retPath%>t/geojungl/executiveteam/frontPage.htm";
-    }
-
     $scope.ellipse = function(workspace) {
-        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontPage.htm";
+        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontPage.htm";
     }
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontTop.htm";
@@ -361,7 +356,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         proposedMessage.msg = $scope.inviteMsg;
         proposedMessage.userId = player.uid;
         proposedMessage.name   = player.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
+        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
         
         var modalInstance = $modal.open({
             animation: false,
@@ -381,10 +376,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         modalInstance.result.then(function (actualMessage) {
             $scope.inviteMsg = actualMessage.msg;
-            //message.userId = player.uid;
-            //message.name = player.name;
-            //message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
-            //$scope.sendEmailLoginRequest(message);
         }, function () {
             //cancel action - nothing really to do
         });
@@ -429,7 +420,7 @@ a {
 
 <!-- COLUMN 1 -->
       <div class="col-md-4 col-sm-12">
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent Updates</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
@@ -444,17 +435,7 @@ a {
           </div>
         </div>
 
-        <div class="panel panel-default" ng-hide="isMember">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Access</div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            You are not a member of this workspace
-          </div>
-        </div>
-
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Planned Meetings</div>
               <div style="float:right" title="Go to a list of all meetings in the workspace">
@@ -472,7 +453,7 @@ a {
 
 
 
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Action Items</div>
               <div style="float:right" title="Access the list of all action items">
@@ -489,7 +470,7 @@ a {
 
 
 
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent History</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
@@ -624,7 +605,7 @@ a {
         </div>
         
         
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>
               <div style="float:right" title="View and manage the roles in this workspace">
@@ -648,7 +629,7 @@ a {
           </div>
         </div>
 
-        <div class="panel panel-default" ng-show="isMember">
+        <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Members</div>
               <div style="float:right" title="View and manage the roles in this workspace">
@@ -689,7 +670,7 @@ a {
           <div class="panel-heading headingfont">Parent Circle</div>
           <div class="panel-body">
             <div >
-              <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
+              <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/FrontPage.htm">{{parent.name}}</a>
             </div>
           </div>
         </div>
@@ -698,7 +679,7 @@ a {
           <div class="panel-heading headingfont">Children Circles</div>
           <div class="panel-body">
             <div ng-repeat="child in children">
-              <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/frontPage.htm">{{child.name}}</a>
+              <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/FrontPage.htm">{{child.name}}</a>
             </div>
           </div>
         </div>

@@ -44,7 +44,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     +"Weaver is supported by volunteers.  Join us and see how it works.\n";
     $scope.emailList = "";
     $scope.results = [];
-    $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
+    $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "FrontPage.htm")%>";
     $scope.addressing = true;
 
     function getAllInvites() {

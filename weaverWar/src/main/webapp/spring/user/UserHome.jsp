@@ -267,7 +267,7 @@ a {
           </div>
           <div class="panel-body">
                <div ng-repeat="item in wList | limitTo: 10" class="clipping">
-                   <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
+                   <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/FrontPage.htm">
                    {{item.name}}
                    </a>
                </div>
@@ -288,7 +288,7 @@ a {
           </div>
           <div class="panel-body">
                <div ng-repeat="item in accWSpaces | limitTo: 10" class="clipping">
-                   <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
+                   <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/FrontPage.htm">
                    {{item.name}}
                    </a>
                </div>

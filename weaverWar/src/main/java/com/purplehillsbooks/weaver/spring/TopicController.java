@@ -32,12 +32,12 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -51,34 +51,24 @@ public class TopicController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "NotesList.jsp");
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        showJSPDepending(ar, ngw, "NotesList.jsp", false);
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{lid}.htm", method = RequestMethod.GET)
-    public void displayOneLeaflet(@PathVariable String lid, @PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{topicId}.htm", method = RequestMethod.GET)
+    public void displayOneLeaflet(@PathVariable String topicId, @PathVariable String pageId,
            @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
            throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           boolean reallyLoggedIn = ar.isLoggedIn();
-           request.setAttribute("topicId", lid);
-           NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-           TopicRecord note = ngp.getNoteOrFail(lid);
-           boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-           if (reallyLoggedIn && canAccessNote) {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom.jsp");
-           }
-           else if (canAccessNote) {
-               //show to people not logged in, but with special key to access it
-               ar.setParam("pageId", pageId);
-               ar.setParam("siteId", siteId);
-               streamJSPAnon(ar, "Topic.jsp");
-           }
-           else {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom.jsp");
-           }
-       }catch(Exception ex){
-           throw new NGException("nugen.operation.fail.project.zoom.note.page", new Object[]{lid,pageId,siteId} , ex);
+           NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+           TopicRecord note = ngw.getNoteOrFail(topicId);
+           request.setAttribute("topicId", topicId);
+           boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, note);
+           showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
+       }
+       catch(Exception ex) {
+           throw new JSONException("Failed to open topic page {0} in the workspace {1} in site {2}.", ex, topicId, pageId, siteId);
        }
    }
 
@@ -94,10 +84,8 @@ public class TopicController extends BaseController {
             ar.setPageAccessLevels(ngw);
             boolean isMember = ar.isMember();
 
-            List<TopicRecord> aList = ngw.getAllDiscussionTopics();
-
             JSONArray notes = new JSONArray();
-            for (TopicRecord aNote : aList) {
+            for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
 
                 String discussionPhase = aNote.getDiscussionPhase();
 
@@ -114,10 +102,6 @@ public class TopicController extends BaseController {
                 }
                 else if (isMember) {
                     notes.put( aNote.getJSON(ngw) );
-                }
-                else {
-                    //run through all the roles here and see if any role
-                    //has access to the note
                 }
             }
 
@@ -162,21 +146,49 @@ public class TopicController extends BaseController {
     public void getTopic(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String nid = "";
+        String topicId = "";
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to get discussion topic information");
-            nid = ar.reqParam("nid");
-            TopicRecord topic = ngw.getNoteOrFail(nid);
+            topicId = ar.reqParam("nid");
+            TopicRecord topic = ngw.getNoteOrFail(topicId);
+            AccessControl.assertAccessTopic(ar, ngw, topic);
 
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get discussion topic ("+nid+") contents", ex);
+            Exception ee = new JSONException("Unable to get discussion topic {0} contents from site/workspace: {1}/{2}", ex, topicId, siteId, pageId);
             streamException(ee, ar);
         }
     }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)
+    public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        String topicId = "";
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            topicId = ar.reqParam("nid");
+            TopicRecord topic = ngw.getNoteOrFail(topicId);
+            AccessControl.assertAccessTopic(ar, ngw, topic);
+
+            JSONArray noteArray = new JSONArray();
+            for (HistoryRecord hist : topic.getNoteHistory(ngw)) {
+                noteArray.put(hist.getJSON(ngw, ar));
+            }
+            releaseLock();
+            sendJsonArray(ar, noteArray);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get history for note.", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    
+    
     @RequestMapping(value = "/{siteId}/{pageId}/mergeTopicDoc.json", method = RequestMethod.POST)
     public void mergeTopicDoc(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {

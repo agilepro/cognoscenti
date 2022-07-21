@@ -75,7 +75,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar, siteId, pageId, "FrontTop");
+        showJSPLoggedIn(ar, siteId, pageId, "FrontTop.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/FrontPage.htm", method = RequestMethod.GET)
@@ -87,7 +87,8 @@ public class MainTabsViewControler extends BaseController {
             //if this is a site instead of a workspace, display something else
             response.sendRedirect("SiteWorkspaces.htm");
         }
-        showJSPLoggedIn(ar, siteId, pageId, "../jsp/FrontPage");
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        showJSPDepending(ar, ngw, "FrontPage.jsp", true);
     }
 
 
@@ -138,10 +139,10 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
-             streamJSPAnon(ar, "Index.jsp");
+             streamJSPAnonUnwrapped(ar, "Index.jsp");
              return null;
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
+             throw new Exception("Failed to open welcome page." , ex);
          }
      }
 
@@ -152,29 +153,6 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-
-     @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)
-     public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngp);
-             ar.assertMember("Must be a member of workspace to get discussion topic history");
-             String nid = ar.reqParam("nid");
-             TopicRecord note = ngp.getNoteOrFail(nid);
-
-             JSONArray noteArray = new JSONArray();
-             for (HistoryRecord hist : note.getNoteHistory(ngp)) {
-                 noteArray.put(hist.getJSON(ngp, ar));
-             }
-             releaseLock();
-             sendJsonArray(ar, noteArray);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to get history for note.", ex);
-             streamException(ee, ar);
-         }
-     }
 
     //allow a user to change their email subscriptions, including opt out
     //even when not logged in.
@@ -187,7 +165,7 @@ public class MainTabsViewControler extends BaseController {
             ar.preserveRealRequestURL();
             streamJSP(ar, "EmailAdjustment.jsp");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
+            throw new Exception("Unable to stream EmailAdjustment.jsp", ex);
         }
     }
 
@@ -225,7 +203,7 @@ public class MainTabsViewControler extends BaseController {
 
             response.sendRedirect(go);
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
+            throw new Exception("Unable to process EmailAdjustmentAction.form", ex);
         }
     }
 

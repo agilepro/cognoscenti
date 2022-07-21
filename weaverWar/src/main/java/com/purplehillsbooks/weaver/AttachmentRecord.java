@@ -175,8 +175,7 @@ public class AttachmentRecord extends CommentContainer {
         }
 
         // consistency check, the display name and file name (in case of file)
-        // must not
-        // have any slash characters in them
+        // must not have any slash characters in them
         if (newDisplayName.indexOf("/") > 0 || newDisplayName.indexOf("\\") > 0) {
             throw new NGException("nugen.exception.display.name.have.slash",
                     new Object[] { newDisplayName });

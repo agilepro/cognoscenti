@@ -87,12 +87,12 @@ app.controller('myCtrl', function($scope, $http) {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
                 </ul>
               </div>
             </td>
             <td class="repositoryName">
-                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
+                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
                    {{rec.name}}
                    <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
                    <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>

@@ -23,8 +23,9 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -45,7 +46,7 @@ public class NGSession
     * because of using a special license.  This persists for the
     * duration of the session.
     */
-    private Hashtable<String,String> honorarium = new Hashtable<String,String>();
+    private Set<String> honorarium = new HashSet<String>();
 
     /**
     * This is the wrapped session object
@@ -131,12 +132,20 @@ public class NGSession
 
     public void addHonoraryMember(String pageId)
     {
-        honorarium.put(pageId, pageId);
+        honorarium.add(pageId);
     }
 
     public boolean isHonoraryMember(String pageId)
     {
-        return (honorarium.get(pageId)!=null);
+        return honorarium.contains(pageId);
+    }
+    
+    public List<String> honararyAccessList() {
+        List<String> res = new ArrayList<String>();
+        for (String val : honorarium) {
+            res.add(val);
+        }
+        return res;
     }
 
     /**

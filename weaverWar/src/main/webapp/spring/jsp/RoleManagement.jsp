@@ -16,7 +16,7 @@
     
     UserProfile uProf = ar.getUserProfile();
     
-    String frontPageResource = "frontPage.htm";
+    String frontPageResource = "FrontPage.htm";
     if ("$".equals(pageId)) {
         frontPageResource = "SiteWorkspaces.htm";
     }
@@ -212,7 +212,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         proposedMessage.msg = $scope.inviteMsg;
         proposedMessage.userId = player.uid;
         proposedMessage.name   = player.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
+        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "FrontPage.htm")%>";
 
         var modalInstance = $modal.open({
             animation: false,

@@ -210,7 +210,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             });
             if (inWorkspace) {
                 proposedMessage.msg += "\n* " + $scope.wsMap[workspace].name;
-                proposedMessage.return = "<%=ar.baseURL%>v/" + $scope.siteId + "/" + workspace + "/frontPage.htm";
+                proposedMessage.return = "<%=ar.baseURL%>v/" + $scope.siteId + "/" + workspace + "/FrontPage.htm";
             }
         });
                     

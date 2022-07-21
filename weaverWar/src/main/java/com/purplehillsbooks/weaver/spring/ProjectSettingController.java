@@ -70,11 +70,21 @@ public class ProjectSettingController extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, pagename+".jsp");
+        throw new Exception("Is WEFT actually used anywhere?");
     }
 
     
     //////////////////////// MAIN VIEWS ////////////////////////////
     
+    @RequestMapping(value = "/{siteId}/{pageId}/LimitedAccess.htm", method = RequestMethod.GET)
+    public void LimitedAccess(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        showJSPDepending(ar, ngw, "LimitedAccess.jsp", true);
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/AddSomething.htm", method = RequestMethod.GET)
     public void AddSomething(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
@@ -227,28 +237,6 @@ public class ProjectSettingController extends BaseController {
 
 
 
-    ////////////////////////////// REDIRECTS ///////////////////////////////////
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/permission.htm", method = RequestMethod.GET)
-    public void permission(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "RoleManagement.htm");
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/EditRole.htm", method = RequestMethod.GET)
-    public void editRole(@PathVariable String siteId,@PathVariable String pageId,
-            @RequestParam String roleName, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "RoleManagement.htm");
-    }
-
-
-
     //////////////////////// REST REQUESTS ///////////////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/personalUpdate.json", method = RequestMethod.POST)
@@ -277,20 +265,6 @@ public class ProjectSettingController extends BaseController {
             else if ("ClearWatch".equals(op)) {
                 up.clearWatch(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
-            }
-            else if ("SetTemplate".equals(op)) {
-                throw new Exception("SetTemplate is no longer a supported function");
-            /*
-                up.setProjectAsTemplate(siteWorkspaceCombo);
-                userManager.saveUserProfiles();
-            */
-            }
-            else if ("ClearTemplate".equals(op)) {
-                throw new Exception("ClearTemplate is no longer a supported function");
-            /*
-                up.removeTemplateRecord(siteWorkspaceCombo);
-                userManager.saveUserProfiles();
-            */
             }
             else if ("SetNotify".equals(op)) {
                 up.setNotification(siteWorkspaceCombo);

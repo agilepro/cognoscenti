@@ -304,7 +304,7 @@ myApp.filter('cdate', function() {
             Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
       <% } else { %>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
+        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a>
                 <span style="color:gray">
                 <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
