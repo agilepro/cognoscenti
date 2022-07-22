@@ -8,7 +8,7 @@
 
 <p>Congratulations on creating the workspace(s): 
 {% loop in $site.workspaces as $workspace %}
-<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>;
+<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/FrontPage.htm">{$workspace.name}</a></b>;
 {% onEmpty %}
 (Actually this site does not have any workspaces.)
 {% endloop %}
@@ -39,7 +39,7 @@ There are several short videos that you might find useful in learning about the 
 <ul>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
-<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteRoles.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>
 
 <div class="tm"></div>

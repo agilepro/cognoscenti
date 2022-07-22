@@ -8,7 +8,7 @@
       title="access the profile of this user, if one exists">
       {$sender.name|onempty(Unnamed Sender)|html}</a>
 &nbsp; <b>Workspace:</b> 
-   <a href="{$workspaceUrl}frontPage.htm">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>
+   <a href="{$workspaceUrl}FrontPage.htm">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>
 <div >
 {$intro|markdown}
 </div>

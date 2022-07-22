@@ -47,9 +47,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -64,13 +61,13 @@ public class SiteController extends BaseController {
     public void SiteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar,siteId,"SiteAdmin.jsp");
+        showJSPExecutives(ar,siteId,"SiteAdmin.jsp");
     }
     @RequestMapping(value = "/{siteId}/$/SiteStats.htm", method = RequestMethod.GET)
     public void SiteStats(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedInSite(ar,siteId,"SiteStats.jsp");
+        showJSPExecutives(ar,siteId,"SiteStats.jsp");
     }
 
 
@@ -265,7 +262,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedInSite(ar, siteId, "SiteWorkspaces.jsp");
+        showJSPSiteLiberal(ar, siteId, "SiteWorkspaces.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/$/SiteCreateWorkspace.htm", method = RequestMethod.GET)
@@ -273,7 +270,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar, siteId, "SiteCreateWorkspace.jsp");
+        showJSPExecutives(ar, siteId, "SiteCreateWorkspace.jsp");
     }
 
 
@@ -283,7 +280,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMemberSite(ar,siteId,"SiteUsers.jsp");
+            showJSPExecutives(ar,siteId,"SiteUsers.jsp");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -294,7 +291,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMemberSite(ar,siteId,"SiteUserInfo.jsp");
+            showJSPExecutives(ar,siteId,"SiteUserInfo.jsp");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
         }
@@ -305,20 +302,11 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMemberSite(ar, siteId, "SiteRoles.jsp");
+        showJSPExecutives(ar, siteId, "SiteRoles.jsp");
     }
 
 
-    @RequestMapping(value = "/{siteId}/$/account_settings.htm", method = RequestMethod.GET)
-    public ModelAndView showProjectSettingsTab(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = new ModelAndView(new RedirectView("Personal.htm"));
-        return modelAndView;
-    }
-
-
-
+    /*
     @RequestMapping(value = "/{siteId}/$/CreateAccountRole.form", method = RequestMethod.POST)
     public ModelAndView createRole(@PathVariable String siteId,HttpServletRequest request,
             HttpServletResponse response)
@@ -344,6 +332,7 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.account.create.role",new Object[]{siteId}, e);
         }
     }
+    */
 
 
 

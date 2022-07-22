@@ -24,7 +24,7 @@
 <ul>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the site owner (you)</li>
-<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteRoles.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>
 
 

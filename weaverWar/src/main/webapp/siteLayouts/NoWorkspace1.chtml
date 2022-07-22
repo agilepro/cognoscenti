@@ -23,7 +23,7 @@ To create your new workspace,
 <a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">click this link</a>, 
 select Options in the upper right corner of the page, select Create New Workspace, and you’re on your way.</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
-<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteRoles.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>
 
 <div class="tm"></div>

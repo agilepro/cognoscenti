@@ -91,8 +91,8 @@ app.controller('myCtrl', function($scope, $http) {
                                   <a role="menuitem" ng-click="changeStatus(rec,true)" ng-show="notDone(rec)">Grant Site</a></li>
                               <li role="presentation">
                                   <a role="menuitem" ng-click="changeStatus(rec,false)" ng-show="notDone(rec)">Deny Site</a></li>
-                              <li role="presentation">
-                                  <a role="menuitem" ng-hide="notDone(rec)">No Action Available</a></li>
+                              <li role="presentation" ng-hide="notDone(rec)">
+                                  <a role="menuitem" href="SiteMerge.htm?site={{rec.siteId}}">Review Automatic Messages</a></li>
                             </ul>
                           </div>
                         </td>

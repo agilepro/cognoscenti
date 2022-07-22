@@ -340,12 +340,16 @@ myApp.filter('cdate', function() {
           console.log('LOGGED IN', info);
       }
       function displayWelcomeMessage(info) {
-          //console.log("WELCOME:", knowWeAreLoggedIn, info)
+          console.log("WELCOME:", knowWeAreLoggedIn, info)
           var y = document.getElementById("welcomeMessage");
           if (knowWeAreLoggedIn && info.verified) {
               //nothing to do in this case
           }
           else if (knowWeAreLoggedIn && !info.verified) {
+              //this encountered only when logging out
+              window.location.reload(true);
+          }
+          else if (!knowWeAreLoggedIn && info.verified) {
               //this encountered only when logging out
               window.location.reload(true);
           }
@@ -369,6 +373,7 @@ myApp.filter('cdate', function() {
       }
 
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
+      console.log("WELCOME INIT:", knowWeAreLoggedIn);
       </script>
 
       <!-- Begin Template Content (compiled separately) -->

@@ -380,56 +380,44 @@ a {
       <div class="panel-heading headingfont">
           <div style="float:left">Vision of Workspace</div>
           <div style="float:right" title="Edit vision in this workspace">
-              <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
+              <i class="fa fa-info-circle"></i></div>
           <div style="clear:both"></div>
       </div>
       <div class="panel-body" >
-          <a href="AdminSettings.htm">
           <div ng-bind-html="visionHtml"></div>
-          </a>
       </div>
     </div>
     <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
       <div class="panel-heading headingfont">
           <div style="float:left">Mission of Workspace</div>
           <div style="float:right" title="Edit mission in this workspace">
-              <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
+              <i class="fa fa-info-circle"></i></div>
           <div style="clear:both"></div>
       </div>
       <div class="panel-body" >
-          <a href="AdminSettings.htm">
           <div ng-bind-html="missionHtml"></div>
-          </a>
       </div>
     </div>
     <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
       <div class="panel-heading headingfont">
           <div style="float:left">Aim of Workspace</div>
           <div style="float:right" title="Edit aim in this workspace">
-              <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
+              <i class="fa fa-info-circle"></i></div>
           <div style="clear:both"></div>
       </div>
       <div class="panel-body" >
-          <a href="AdminSettings.htm">
           <div ng-bind-html="purposeHtml"></div>
-          </a>
       </div>
     </div>
     <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
       <div class="panel-heading headingfont">
           <div style="float:left">Domain of Workspace</div>
           <div style="float:right" title="Edit domain in this workspace">
-              <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
+              <i class="fa fa-info-circle"></i></div>
           <div style="clear:both"></div>
       </div>
       <div class="panel-body" >
-          <a href="AdminSettings.htm">
           <div ng-bind-html="domainHtml"></div>
-          </a>
       </div>
     </div>
 

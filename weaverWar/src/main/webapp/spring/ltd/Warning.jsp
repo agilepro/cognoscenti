@@ -41,6 +41,7 @@
     }
     
 %>
+<!-- *************************** ltd / Warning.jsp *************************** -->
 <style>
 .warningBox {
     margin:30px;
@@ -91,7 +92,8 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            alert("OK, you have requested membership")
+            alert("OK, you have requested membership");
+            $scope.enterMode=false;
         })
         .error( function(data, status, headers, config) {
             console.log("GOT ERROR ",data);
@@ -120,7 +122,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<!--WarningNotMember.jsp-->
+
 <div>
 
 <%@include file="ErrorPanel.jsp"%>

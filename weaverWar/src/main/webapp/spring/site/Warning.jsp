@@ -41,6 +41,7 @@
     }
     
 %>
+<!-- *************************** site / Warning.jsp *************************** -->
 <style>
 .warningBox {
     margin:30px;
@@ -52,7 +53,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Not Member");
+    window.setMainPageTitle("Not Executive");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.atts = "ss";
     $scope.enterMode = false;
@@ -103,7 +104,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<!--WarningNotMember.jsp-->
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
@@ -125,7 +125,44 @@ app.controller('myCtrl', function($scope, $http) {
             In order to see this section, you need to be a owner or an executive 
             of the site in order to access this page.  
         </div>
-      </td></tr></table>
+        <div class="warningBox">
+            <table class="table">
+              <tr>
+                <td>
+                  Site:
+                </td>
+                <td>
+                    <b><% ar.writeHtml(ar.ngp.getFullName()); %></b>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                    Run By: 
+                </td>
+                <td>
+                <%         
+                   NGRole admins = ar.ngp.getSecondaryRole(); 
+                   boolean needsComma = false;
+                   for (AddressListEntry player : admins.getExpandedPlayers(ar.ngp)) {
+                       if (needsComma) {
+                           ar.write(", ");
+                       }
+                       ar.write("<span>");
+                       player.writeLink(ar);
+                       ar.write("</span>");
+                       needsComma = true;
+                   }
+                %>
+                </td>
+              </tr>
+              <tr>
+                <td></td><td></td>
+              </tr>
+            </table> 
+        </div>
+            </td></tr></table>
+      
+
       
       {{errorMsg}}
       

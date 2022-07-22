@@ -1,22 +1,9 @@
 <%
-    JSONObject loginConfigSetup = new JSONObject();
     String identityProvider = ar.getSystemProperty("identityProvider");
-    loginConfigSetup.put("providerUrl", identityProvider);
-    loginConfigSetup.put("serverUrl",   ar.baseURL);
-    String myPath = request.getRequestURL().toString()+"?"+request.getQueryString();
     String otherPath = ar.getCompleteURL();
-    
     String loginLink = identityProvider+"?openid.mode=quick&go="+URLEncoder.encode(otherPath, "UTF-8");
 %> 
-<script>
-SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, updateBar);
 
-function updateBar() {
-    var x = document.getElementById("nb-must-login");
-    reloadIfLoggedIn();
-} 
-
-</script>
 
 <nav class="navbar navbar-default appbar">
   <div class="container-fluid">

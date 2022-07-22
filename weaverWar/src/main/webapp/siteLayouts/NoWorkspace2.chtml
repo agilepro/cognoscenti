@@ -24,7 +24,7 @@ and at the same time familiarize yourself with other
 <ul>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - go to this link to create your first workspace. Click on Options (in the upper right corner of your screen) and select Create a Workspace.</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
-<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteRoles.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>
 
 <div class="tm"></div>

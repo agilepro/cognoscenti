@@ -145,7 +145,7 @@
        ar.write(rue.siteKey);
        ar.write("/");
        ar.write(rue.key);
-       ar.write("/frontPage.htm\">");
+       ar.write("/FrontPage.htm\">");
        ar.writeHtml(rue.displayName);
        ar.write("</a></li>");
    }

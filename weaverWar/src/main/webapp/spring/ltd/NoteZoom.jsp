@@ -887,9 +887,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           </table>
     </td>
 </tr>
-<tr ng-hide="editMeetingPart=='subscribers'">
-    <td ng-click="startSubscriberEdit()">Subscribers:</td>
-    <td ng-dblclick="editMeetingPart='subscribers'">
+<tr >
+    <td >Subscribers:</td>
+    <td>
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}"    
           style="text-align:center">
           <span class="dropdown" >
@@ -909,50 +909,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             </ul>
           </span>
         </span>
-        <div ng-repeat="outcast in nonMembers"  style="padding:5px">
-          <span class="dropdown">
-            <span id="menu1" data-toggle="dropdown">
-              <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" 
-                 style="width:32px;height:32px" 
-                 title="{{outcast.name}} - {{outcast.uid}}"
-                 class="img-circle" />
-            </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                  tabindex="-1" style="text-decoration: none;text-align:center">
-                  {{outcast.name}}<br/>{{outcast.uid}}</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="navigateToUser(outcast)">
-                  <span class="fa fa-user"></span> Visit Profile</a></li>
-            </ul>
-          </span>
-          {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
-        </div>
     </td>
 </tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
 </table>
-      <div class="well" ng-show="editMeetingPart=='subscribers'">
-          <h2>Adjust Subscribers:</h2>
-          <div>
-              <tags-input ng-model="subscriberBuffer" 
-                          placeholder="Enter users to send notification email to"
-                          display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-              </tags-input>
-          </div>
-          <div>
-          <span class="dropdown">
-              <button class="btn btn-default btn-primary btn-raised" type="button" 
-                      ng-click="saveSubscriberEdit()"
-                      title="Post this topic but don't send any email">
-              Save </button>
-          </span>
-          </div>
-      </div>
 
 
 <table style="max-width:800px">

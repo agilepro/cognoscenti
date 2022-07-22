@@ -75,7 +75,13 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar, siteId, pageId, "FrontTop.jsp");
+        if ("$".equals(pageId)) {
+            showJSPSiteLiberal(ar, siteId, "FrontTop.jsp");
+        }
+        else {
+            registerSiteOrProject(ar, siteId, pageId);
+            showJSPDepending(ar, null, "FrontTop.jsp", true);
+        }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/FrontPage.htm", method = RequestMethod.GET)

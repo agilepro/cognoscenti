@@ -20,6 +20,25 @@
     else if (siteId!=null) {
         ngb = cog.getSiteById(siteId);
     }
+    
+    
+    JSONObject loginInfoPrefetch = new JSONObject();
+    if (ar.isLoggedIn()) {
+        loginInfoPrefetch.put("userId", ar.getBestUserId());
+        loginInfoPrefetch.put("userName", ar.getUserProfile().getName());
+        loginInfoPrefetch.put("verified", true);
+        loginInfoPrefetch.put("msg", "Previously logged into server");
+    }
+    else {
+        //use this to indicate the very first display, before the page knows anything
+        loginInfoPrefetch.put("haveNotCheckedYet", true);
+    }
+    JSONObject loginConfigSetup = new JSONObject();
+    loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    loginConfigSetup.put("serverUrl",   ar.baseURL);
+    
+    boolean expectedLoginState = ar.isLoggedIn();
+
 
 %>
 
@@ -104,15 +123,18 @@ myApp.filter('cdate', function() {
   };
 });
 
-function reloadIfLoggedIn() {
-    if (SLAP.loginInfo.verified) {
+function reloadIfLoggedIn(info) {
+    //the deal is: this Wrapper.jsp is designed for people who are not logged in
+    //but if we ever discover we are logged in, we need to refresh to get the new display.
+    if (SLAP.loginInfo.verified && !<%=expectedLoginState%>) {
         window.location = "<%= ar.getCompleteURL() %>";
     }
 }
+SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, reloadIfLoggedIn);
 
 function setMainPageTitle(str) {
     document.getElementById("mainPageTitle").innerHTML = str;
-    document.title = "X" + str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
+    document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
 }
 
  </script>

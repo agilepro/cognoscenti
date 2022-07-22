@@ -110,7 +110,15 @@ public class BaseController {
     }
     protected static void showWarningAnon(AuthRequest ar, String why) throws Exception {
         ar.req.setAttribute("property_msg_key", why);
-        streamJSPAnon(ar, "NoAccess.jsp");
+        streamJSPAnon(ar, "Warning.jsp");
+    }
+    protected static void showWarningLtd(AuthRequest ar, String why) throws Exception {
+        ar.req.setAttribute("property_msg_key", why);
+        streamJSPLimited(ar, "Warning.jsp");
+    }
+    protected static void showWarningSite(AuthRequest ar, String why) throws Exception {
+        ar.req.setAttribute("property_msg_key", why);
+        streamJSPSite(ar, "Warning.jsp");
     }
 
 
@@ -126,7 +134,7 @@ public class BaseController {
      */
     protected static boolean warnNotLoggedIn(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
-            showWarningAnon(ar, "nugen.project.login.msg");
+            showWarningAnon(ar, "In order to see this section, you need to be logged in.");
             return true;
         }
         if (needsToSetName(ar)) {
@@ -170,11 +178,11 @@ public class BaseController {
         }
         if(!ar.isMember()){
             if (ar.ngp instanceof NGBook) {
-                streamJSPSite(ar, "WarningSite.jsp");
-                return true;
+                showWarningSite(ar, "In order to see this section, you need to be a site executive.");
             }
-            ar.req.setAttribute("roleName", "Members");
-            streamJSPLimited(ar, "Warning.jsp");
+            else {
+                showWarningLtd(ar, "In order to see this section, you need to be a workspace member.");
+            }
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
@@ -182,6 +190,27 @@ public class BaseController {
             return true;
         }
         if (warnSiteMoved(ar)) {
+            return true;
+        }
+        return false;
+    }
+    protected static boolean warnNotExecutive(AuthRequest ar) throws Exception {
+        if (warnNotLoggedIn(ar)) {
+            return true;
+        }
+        if (ar.ngp==null) {
+            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
+        }
+        if (ar.isSuperAdmin()) {
+            //super admin is automatically a member of every group, no need to check further
+            return false;
+        }
+        if(!ar.isMember()){
+            showWarningSite(ar, "In order to see this section, you need to be a site executive.");
+            return true;
+        }
+        if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
+            showWarningView(ar, "nugen.missingSuperAdmin");
             return true;
         }
         return false;
@@ -216,6 +245,9 @@ public class BaseController {
             throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
                      +") when trying to set it to ("+jspName+")");
         }
+        if (!jspName.endsWith(".jsp")) {
+            throw new Exception("Program Logic Error: streamJSP* called without JSP in name");
+        }
         if (jspName.endsWith(".jsp.jsp")) {
             throw new Exception("Program Logic Error: streamJSP* called with double JSP in name");
         }
@@ -224,10 +256,15 @@ public class BaseController {
         File accessFolder = new File(springFolder, accessLevel);
         File jspFile = new File(accessFolder, jspName);
         if (!jspFile.exists()) {
-            ar.req.setAttribute("property_msg_key", "You must be a member of the workspace to access this resource.");
+            if (ar.isLoggedIn()) {
+                warnNotLoggedIn(ar);
+            }
+            else {
+                ar.req.setAttribute("property_msg_key", "You must be logged in to access this resource.");
+            }
             jspName = "Warning.jsp";
         }
-        System.out.println("JSP file is: "+jspName);
+        System.out.println("JSP file is: "+accessLevel+"/"+jspName);
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
     }
@@ -297,6 +334,25 @@ public class BaseController {
             throw new JSONException("Unable to prepare JSP view of {0} for workspace: {1}/{2}", ex, jspName, ngw.getKey(), ngw.getSiteKey());
         }
     }
+    public static void showJSPDependingSite(AuthRequest ar, String jspName) throws Exception {
+        try{
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
+            }
+            if (!ar.isLoggedIn()) {
+                streamJSPAnon(ar, jspName);
+            }
+            else if (ar.isMember()) {
+                streamJSPSite(ar, jspName);
+            }
+            else {
+                warnNotMember(ar);
+            }
+        }
+        catch(Exception ex){
+            throw new JSONException("Unable to prepare JSP view of {0}", ex, jspName);
+        }
+    }
 
 
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
@@ -304,9 +360,6 @@ public class BaseController {
             registerSiteOrProject(ar, siteId, pageId);
             if (warnSiteMoved(ar)) {
                 return;
-            }
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
             }
             streamJSP(ar, jspName);
         }
@@ -324,26 +377,21 @@ public class BaseController {
             if (warnSiteMoved(ar)) {
                 return;
             }
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
-            }
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-    public static void showJSPLoggedInSite(AuthRequest ar, String siteId, String jspName) throws Exception {
+    
+    /*
+     * As long as the user is logged in, this will show information from a site.
+     */
+    public static void showJSPSiteLiberal(AuthRequest ar, String siteId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, null);
             if (warnNotLoggedIn(ar)){
                 return;
-            }
-            if (warnSiteMoved(ar)) {
-                return;
-            }
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
             }
             streamJSPSite(ar, jspName);
         }
@@ -359,23 +407,17 @@ public class BaseController {
             if (warnNotMember(ar)){
                 return;
             }
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
-            }
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-    public static void showJSPMemberSite(AuthRequest ar, String siteId, String jspName) throws Exception {
+    public static void showJSPExecutives(AuthRequest ar, String siteId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, null);
-            if (warnNotMember(ar)){
+            if (warnNotExecutive(ar)){
                 return;
-            }
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
             }
             streamJSPSite(ar, jspName);
         }

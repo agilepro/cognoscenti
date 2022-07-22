@@ -49,34 +49,30 @@ import com.purplehillsbooks.json.JSONObject;
 public class SuperAdminController extends BaseController {
 
 
-     private static void streamAdminJSP(AuthRequest ar,
-             String jspName) throws Exception {
-
-        if(!ar.isLoggedIn()){
-            streamJSPAnonUnwrapped(ar, "Admin.jsp");
+    private static void streamAdminJSP(AuthRequest ar, String jspName) throws Exception {
+        if (!ar.isLoggedIn()) {
+            showWarningAnon(ar, "In order to see this section, you need to be logged in.");
             return;
         }
-        if(!ar.isSuperAdmin()){
-            throw new NGException("nugen.exceptionhandling.system.admin.rights",null);
+        if (!ar.isSuperAdmin()) {
+            showWarningAnon(ar, "In order to see this section, you need to be a system administrator.");
+            return;
         }
-        ar.req.setAttribute("wrappedJSP", jspName+".jsp");
+        ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/admin/Wrapper.jsp");
     }
 
 
+    @RequestMapping(value = "/su/errorLog.htm", method = RequestMethod.GET)
+    public void errorLogPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            streamAdminJSP(ar, "errorLog.jsp");
 
-     @RequestMapping(value = "/su/errorLog.htm", method = RequestMethod.GET)
-     public void errorLogPage(HttpServletRequest request,
-             HttpServletResponse response)
-     throws Exception {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "errorLog");
-
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
-         }
-     }
+        } catch (Exception ex) {
+            throw new NGException("nugen.operation.fail.administration.page", new Object[] { ar.getBestUserId() }, ex);
+        }
+    }
 
      @RequestMapping(value = "/su/testEmail.htm", method = RequestMethod.GET)
      public void testEmail(HttpServletRequest request,
@@ -84,7 +80,7 @@ public class SuperAdminController extends BaseController {
      throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "testEmail");
+             streamAdminJSP(ar, "testEmail.jsp");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
@@ -98,7 +94,7 @@ public class SuperAdminController extends BaseController {
 
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "emailListnerSettings");
+             streamAdminJSP(ar, "emailListnerSettings.jsp");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
@@ -110,7 +106,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "lastNotificationSend");
+             streamAdminJSP(ar, "lastNotificationSend.jsp");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
@@ -122,7 +118,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "newUsers");
+             streamAdminJSP(ar, "newUsers.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -133,7 +129,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "requestedAccounts");
+             streamAdminJSP(ar, "requestedAccounts.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -144,7 +140,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "allSites");
+             streamAdminJSP(ar, "allSites.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -155,7 +151,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "oneSite");
+             streamAdminJSP(ar, "oneSite.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -166,7 +162,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "EmailScanner");
+             streamAdminJSP(ar, "EmailScanner.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -178,7 +174,7 @@ public class SuperAdminController extends BaseController {
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "EmailMsgA");
+             streamAdminJSP(ar, "EmailMsgA.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -309,7 +305,7 @@ public class SuperAdminController extends BaseController {
              ar.setParam("errorId", errorId);
              ar.setParam("errorDate", searchByDate);
              ar.setParam("goURL", ar.getCompleteURL());
-             streamAdminJSP(ar, "detailsErrorLog");
+             streamAdminJSP(ar, "detailsErrorLog.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.error.detail.page", null , ex);
          }
@@ -348,7 +344,7 @@ public class SuperAdminController extends BaseController {
              siteId = ar.reqParam("site");
              prepareSiteView(ar, siteId);
 
-             streamAdminJSP(ar, "SiteMerge");
+             streamAdminJSP(ar, "SiteMerge.jsp");
          }catch(Exception ex){
              throw new JSONException("Unable to perform SiteMerge with site {0}", ex, siteId);
          }
