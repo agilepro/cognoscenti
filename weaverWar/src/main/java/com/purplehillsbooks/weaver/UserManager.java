@@ -421,7 +421,7 @@ public class UserManager
 
     public synchronized UserPage findOrCreateUserPage(String userKey)  throws Exception {
         if (userKey==null || userKey.length()==0) {
-            throw new NGException("nugen.exception.cant.create.user.page",null);
+            throw new Exception("Program logic error: findOrCreateUserPage needs a non-null user key");
         }
         File userFolder = cog.getConfig().getUserFolderOrFail();
         File newPlace = new File(userFolder, userKey+".user");

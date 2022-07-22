@@ -71,8 +71,11 @@ public class UserController extends BaseController {
 
     public void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
             String userKey, String viewName) throws Exception {
+        if (!viewName.endsWith(".jsp")) {
+            throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
+        }
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPUserLoggedIn(ar, userKey, viewName+".jsp");
+        streamJSPUserLoggedIn(ar, userKey, viewName);
     }
 
 
@@ -84,14 +87,14 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{userKey}/UserHome.htm", method = RequestMethod.GET)
     public void userHome(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserHome");
+        streamJSPUserLogged2(request, response, userKey, "UserHome.jsp");
     }
     
     //this one just in case someone had bookmarked the old value
     @RequestMapping(value = "/{userKey}/userHome.htm", method = RequestMethod.GET)
     public void userHome2(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserHome");
+        streamJSPUserLogged2(request, response, userKey, "UserHome.jsp");
     }
 
 
@@ -99,7 +102,7 @@ public class UserController extends BaseController {
     public void watchedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "WatchedProjects");
+        streamJSPUserLogged2(request, response, userKey, "WatchedProjects.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/notifiedProjects.htm", method = RequestMethod.GET)
@@ -107,14 +110,14 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        streamJSPUserLogged2(request, response, userKey, "NotifiedProjects");
+        streamJSPUserLogged2(request, response, userKey, "NotifiedProjects.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/OwnerProjects.htm", method = RequestMethod.GET)
     public void ownerProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "OwnerProjects");
+        streamJSPUserLogged2(request, response, userKey, "OwnerProjects.jsp");
     }
 
 
@@ -122,13 +125,13 @@ public class UserController extends BaseController {
     public void participantProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "ParticipantProjects");
+        streamJSPUserLogged2(request, response, userKey, "ParticipantProjects.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/AllProjects.htm", method = RequestMethod.GET)
     public void allProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "AllProjects");
+        streamJSPUserLogged2(request, response, userKey, "AllProjects.jsp");
     }
 
 
@@ -136,46 +139,46 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{userKey}/UserAlerts.htm", method = RequestMethod.GET)
     public void loadUserAlerts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserAlerts");
+        streamJSPUserLogged2(request, response, userKey, "UserAlerts.jsp");
     }
 
 
     @RequestMapping(value = "/{userKey}/UserActiveTasks.htm", method = RequestMethod.GET)
     public void userActiveTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserActiveTasks");
+        streamJSPUserLogged2(request, response, userKey, "UserActiveTasks.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/userMissingResponses.htm", method = RequestMethod.GET)
     public void userMissingResponses(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserMissingResponses");
+        streamJSPUserLogged2(request, response, userKey, "UserMissingResponses.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/userOpenRounds.htm", method = RequestMethod.GET)
     public void userOpenRounds(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserOpenRounds");
+        streamJSPUserLogged2(request, response, userKey, "UserOpenRounds.jsp");
     }
 
 
     @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)
     public void ShareRequests(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "ShareRequests");
+        streamJSPUserLogged2(request, response, userKey, "ShareRequests.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/userSites.htm", method = RequestMethod.GET)
     public void loadUserAccounts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "UserAccounts");
+        streamJSPUserLogged2(request, response, userKey, "UserAccounts.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/UserProfileEdit.htm")
     public void changeUserProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        streamJSPUserLogged2(request, response, userKey, "UserProfileEdit");
+        streamJSPUserLogged2(request, response, userKey, "UserProfileEdit.jsp");
     }
 
 
@@ -184,23 +187,29 @@ public class UserController extends BaseController {
     public void searchAllNotes(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        streamJSPUserLogged2(request, response, userKey, "SearchAllNotes");
+        streamJSPUserLogged2(request, response, userKey, "SearchAllNotes.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/EmailUser.htm")
     public void emailUser(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        streamJSPUserLogged2(request, response, userKey, "EmailUser");
+        streamJSPUserLogged2(request, response, userKey, "EmailUser.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/EmailMsgU.htm")
     public void emailMsgU(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        streamJSPUserLogged2(request, response, userKey, "EmailMsgU");
+        streamJSPUserLogged2(request, response, userKey, "EmailMsgU.jsp");
     }
 
+    @RequestMapping(value = "/{userKey}/Facilitators.htm")
+    public void facilitators(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        streamJSPUserLogged2(request, response, userKey, "Facilitators.jsp");
+    }
 
 
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
@@ -623,7 +632,7 @@ public class UserController extends BaseController {
 
                 request.setAttribute("userName",userName);
             }
-            streamJSPUserLogged2(request, response, userKey, "UserSettings");
+            streamJSPUserLogged2(request, response, userKey, "UserSettings.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -832,6 +841,48 @@ public class UserController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{userKey}/GetFacilitatorInfo.json", method = RequestMethod.GET)
+    public void getFacilitatorInfo(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            String key = request.getParameter("key");
+            Cognoscenti cog = ar.getCogInstance();
+            UserCache user = cog.getUserCacheMgr().getCache(key);
+
+            JSONObject repo = user.getFacilitatorFields();
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    @RequestMapping(value = "/{userKey}/UpdateFacilitatorInfo.json", method = RequestMethod.POST)
+    public void updateFacilitatorInfo(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            String key = request.getParameter("key");
+            Cognoscenti cog = ar.getCogInstance();
+            UserCache user = cog.getUserCacheMgr().getCache(key);
+            UserProfile uProf = UserManager.getUserProfileByKey(key);
+            JSONObject posted = getPostedObject(ar);
+            
+            user.updateFacilitator(posted);
+            user.save();
+            
+            uProf.setFacilitator(posted.getBoolean("isActive"));
+            cog.getUserManager().saveUserProfiles();
+            
+            
+            JSONObject repo = user.getFacilitatorFields();
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
 
 
 }

@@ -10,7 +10,7 @@ public class UserCache {
     String userKey;
     File userCacheFile;
 
-    UserCache(Cognoscenti cog, String _userKey) throws Exception {
+    public UserCache(Cognoscenti cog, String _userKey) throws Exception {
         userKey = _userKey;
         File userFolder = cog.getConfig().getUserFolderOrFail();
         userCacheFile = new File(userFolder, userKey+".user.json");
@@ -275,4 +275,29 @@ public class UserCache {
         return foundIt;
     }
 
+    
+    //////////////// FACILITATOR ///////////////////////
+    
+    public boolean isFacilitator() throws Exception {
+        JSONObject facilitator = cacheObj.requireJSONObject("facilitator");
+        return facilitator.getBoolean("isActive");
+    }
+    
+    public JSONObject getFacilitatorFields() throws Exception {
+        return cacheObj.requireJSONObject("facilitator");
+    }
+    
+    public void updateFacilitator(JSONObject newFacFields) throws Exception {
+        JSONObject facilitator = cacheObj.requireJSONObject("facilitator");
+        if (newFacFields.has("isActive")) {
+            facilitator.put("isActive", newFacFields.getBoolean("isActive"));
+        }
+        if (newFacFields.has("phone")) {
+            facilitator.put("phone", newFacFields.getString("phone"));
+        }
+        if (newFacFields.has("region")) {
+            facilitator.put("region", newFacFields.getString("region"));
+        }
+    }
+    
 }

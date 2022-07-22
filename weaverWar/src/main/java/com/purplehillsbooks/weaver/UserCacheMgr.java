@@ -34,6 +34,7 @@ public class UserCacheMgr {
 
     public UserCache getCache(String userKey) throws Exception {
         UserCache theCache = new UserCache(cog, userKey);
+        /*
         if (needsRecalc.contains(userKey)) {
             System.out.println("USERCACHE: refreshed cache for: "+userKey+" - "+SectionUtil.currentTimeString());
             theCache.refreshCache(cog);
@@ -43,6 +44,7 @@ public class UserCacheMgr {
         else {
             System.out.println("USERCACHE: did not refresh cache this time for: "+userKey);
         }
+        */
         return theCache;
     }
 

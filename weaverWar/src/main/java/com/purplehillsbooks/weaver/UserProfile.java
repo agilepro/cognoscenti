@@ -49,6 +49,7 @@ public class UserProfile implements UserRef
     private List<String> emailAddresses = null;
     private String timeZone = "America/Los_Angeles";
     private JSONObject wsSettings = new JSONObject();
+    private boolean isFacilitator = false;
 
     public UserProfile(String preferredEmail) throws Exception {
         userKey = IdGenerator.generateKey();
@@ -95,6 +96,7 @@ public class UserProfile implements UserRef
         notifyTime    = fullJO.optLong("notifyTime",0);
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
+        isFacilitator = fullJO.optBoolean("isFacilitator", false);
 
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
@@ -197,6 +199,7 @@ public class UserProfile implements UserRef
         if (fullJO.has("wsSettings")) {
             throw new Exception("program logic error: convertOldWSSettings should be called only on objects with wsSettings");
         }
+        System.out.println("FOUND USER WITH OLD DATA: wsSettings is the old way somehow -- this should no longer be happening.");
         wsSettings = new JSONObject();
 
         if (fullJO.has("watchList")) {
@@ -222,14 +225,6 @@ public class UserProfile implements UserRef
             fullJO.remove("notifyList");
         }
         if (fullJO.has("templateList")) {
-        /*
-            JSONArray templateList = fullJO.getJSONArray("templateList");
-            for (int i=0; i<templateList.length(); i++) {
-                String siteWorkspaceCombo = templateList.getString(i);
-                JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
-                settingObj.put("isTemplate", true);
-            }
-        */
             fullJO.remove("templateList");
         }
 
@@ -832,7 +827,8 @@ public class UserProfile implements UserRef
         jObj.put("image",       getImage());
         jObj.put("ids",         getAllEmailAddresses());
 
-        jObj.put("wsSettings", wsSettings);
+        jObj.put("wsSettings",  wsSettings);
+        jObj.put("isFacilitator", isFacilitator);
         return jObj;
     }
 
@@ -879,7 +875,9 @@ public class UserProfile implements UserRef
         if (input.has("timeZone")) {
             timeZone = input.getString("timeZone");
         }
-
+        if (input.has("isFacilitator")) {
+            isFacilitator = input.getBoolean("isFacilitator");
+        }
     }
 
     /**
@@ -929,4 +927,13 @@ public class UserProfile implements UserRef
         JSONObject res = this.assureSettings(siteWorkspaceCombo);
         return res;
     }
+    
+    //fast access to whether they are a facilitator for listing, etc.
+    public boolean isFacilitator() {
+        return isFacilitator;
+    }
+    public void setFacilitator(boolean isNow) {
+        isFacilitator = isNow;
+    }
+    
 }

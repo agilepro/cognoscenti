@@ -4,9 +4,11 @@
 %><%
 
     ar.assertLoggedIn("Must be logged in to see anything about a user");
-
+    Cognoscenti cog = ar.getCogInstance();
+    
     String userKey = ar.reqParam("userKey");
-    UserProfile uProf = UserManager.getUserProfileByKey(userKey);
+    UserProfile uProf = cog.getUserManager().getUserProfileByKey(userKey);
+    UserCache uc = cog.getUserCacheMgr().getCache(userKey);
     UserProfile runningUser = ar.getUserProfile();
     if (uProf == null) {
         throw new NGException("nugen.exception.cant.find.user",null);
@@ -38,6 +40,11 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Profile Settings");
     $scope.userInfo = <%userInfo.write(out,2,4);%>;
+    $scope.userCache = <%uc.getAsJSON().write(out,2,4);%>;
+    if (!$scope.userCache.facilitator) {
+        $scope.userCache.facilitator = {isActive: false};
+    }
+    console.log("USER CACHE: ", $scope.userCache);
     $scope.providerUrl = SLAP.loginConfig.providerUrl;
 
     $scope.editAgent=false;
@@ -113,6 +120,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+    }
+        
+    $scope.updateFacilitator = function() {
+        console.log("USER CACHE: ", $scope.userCache);
+        var postURL = "UpdateFacilitatorInfo.json?key="+$scope.userInfo.key;
+        //postURL = "QueryUserEmail.json";
+        if (!$scope.userCache.facilitator) {
+            $scope.userCache.facilitator = {};
+        }
+        var body = JSON.stringify($scope.userCache.facilitator);
+        console.log("UpdateFacilitatorInfo", body, $scope.userCache);
+        $http.post(postURL, body)
+        .success( function(data) {
+            console.log("UpdateFacilitatorInfo RECEIVED", data);
+            $scope.userCache.facilitator = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+       
     }
     
 });
@@ -252,6 +279,52 @@ if (ar.isLoggedIn()) { %>
               <div class="guideVocal thinnerGuide">
                 The time zone setting is used when sending email so that you see the right date and time appropriate to your normal location.  <br/>
                 All dates and times displayed in the browser will be in the timezone of that browser computer.  For email, however, we don't know what the timezone of the place where the email will be delivered, so you need to set it here.
+              </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Facilitator:</td>
+            <td>
+                <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
+                
+            </td>
+            <td ng-hide="helpFacilitator">
+                <button class="btn" ng-click="helpFacilitator=!helpFacilitator">?</button>
+            </td>
+            <td ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+              <div class="guideVocal thinnerGuide">
+                This indicates that you are a facilitator, and would like to be contacted
+                by people looking for a facilitator.
+              </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Phone:</td>
+            <td>
+                <input type="text" ng-model="userCache.facilitator.phone" ng-blur="updateFacilitator()"/> 
+                
+            </td>
+            <td ng-hide="helpFacilitatorPhone">
+                <button class="btn" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">?</button>
+            </td>
+            <td ng-show="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
+              <div class="guideVocal thinnerGuide">
+                A phone number of people to contact you at
+              </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Facilitator:</td>
+            <td>
+                <input type="text" ng-model="userCache.facilitator.region" ng-blur="updateFacilitator()"/> 
+                
+            </td>
+            <td ng-hide="helpFacilitatorRegion">
+                <button class="btn" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">?</button>
+            </td>
+            <td ng-show="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
+              <div class="guideVocal thinnerGuide">
+                Your region and how you might access meetings
               </div>
             </td>
         </tr>
