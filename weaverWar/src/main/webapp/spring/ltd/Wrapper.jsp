@@ -212,6 +212,9 @@
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
     <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
@@ -347,10 +350,13 @@ myApp.filter('cdate', function() {
           }
           else if (knowWeAreLoggedIn && !info.verified) {
               //this encountered only when logging out
+              alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
               window.location.reload(true);
           }
           else if (!knowWeAreLoggedIn && info.verified) {
               //this encountered only when logging out
+              
+              alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
               window.location.reload(true);
           }
           else if (info.haveNotCheckedYet) {

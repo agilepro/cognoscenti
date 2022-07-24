@@ -101,6 +101,9 @@
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
     <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">

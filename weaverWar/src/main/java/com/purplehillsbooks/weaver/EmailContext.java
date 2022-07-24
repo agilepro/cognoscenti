@@ -80,11 +80,13 @@ public class EmailContext {
     
     public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
         if (discussionTopic!=null) {
-            return ar.getResourceURL(ngw,  "reply/"+discussionTopic.getId()+"/"+commentId+".htm?") 
+            return ar.getResourceURL(ngw,  "Reply.htm?topicId="+discussionTopic.getId()+"&commentId="+commentId)+"&" 
                     + AccessControl.getAccessTopicParams(ngw, discussionTopic);
         }
         else if (meet!=null) {
-            return ar.getResourceURL(ngw,  "reply/"+meet.getId()+"-"+agenda.getId()+"/"+commentId+".htm?") 
+            return ar.getResourceURL(ngw,  "Reply.htm?meetId="+meet.getId()
+                    +"&agendaId="+agenda.getId()
+                    +"&commentId="+commentId)+"&"
                     + AccessControl.getAccessMeetParams(ngw, meet);
         }
         else {

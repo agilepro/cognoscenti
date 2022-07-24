@@ -878,5 +878,4 @@ function addvalue() {
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
 <script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
-<script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
 

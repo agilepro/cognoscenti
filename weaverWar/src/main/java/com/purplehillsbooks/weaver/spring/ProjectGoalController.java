@@ -465,7 +465,7 @@ public class ProjectGoalController extends BaseController {
                 throw new Exception("Program Logic Error: improperly constructed request mntask = "+mntask);
             }
             UserProfile uProf = UserManager.getUserProfileByKey(ukey);
-            ar.setUserForOneRequest(uProf);
+            ar.setPossibleUser(uProf);
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             String accomp = "";
 

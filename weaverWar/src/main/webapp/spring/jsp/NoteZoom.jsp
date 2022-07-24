@@ -91,6 +91,12 @@ Required parameter:
 .labelColumn:hover {
     background-color:#ECB6F9;
 }
+.bordereddiv {
+    margin:15px;
+    border: 2px skyblue solid;
+    border-radius:15px;
+    padding:20px;
+}
 </style>
 
 <script type="text/javascript">
@@ -1135,10 +1141,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </div>
-    <div>Refreshing {{autoRefresh}} in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
 
-    <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
-        <div  ng-bind-html="htmlEditing"></div>
+    <div class="bordereddiv">
+        <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
+            <div  ng-bind-html="htmlEditing"></div>
+        </div>
     </div>
 <%if (isLoggedIn) { %>
     <div class="leafContent" ng-show="isEditing">
@@ -1340,6 +1347,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 </table>
 
+
+
+    <div>Refreshing {{autoRefresh}} in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
 
 </div>
 

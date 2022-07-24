@@ -182,7 +182,7 @@ public class ResourceDecoder {
             }
             //check that user is in the role of this license
             //as long as this does not throw exception, everything is ok
-            ar.setUserForOneRequest(up);
+            ar.setPossibleUser(up);
             getLicensedRoles();
         }
     }

@@ -1345,6 +1345,12 @@ public abstract class NGPage extends ContainerCommon {
         throw new JSONException("Could not find a meeting with the id={0}", id);
     }
     public MeetingRecord findMeetingOrNull(String id) throws Exception {
+        if (id==null) {
+            throw new Exception("Program Logic Error: attempt to find meeting but passed null id value");
+        }
+        if (id.length()==0) {
+            throw new Exception("Program Logic Error: attempt to find meeting but passed null-string id value");
+        }
         for (MeetingRecord m : getMeetings()) {
             if (id.equals(m.getId())) {
                 return m;

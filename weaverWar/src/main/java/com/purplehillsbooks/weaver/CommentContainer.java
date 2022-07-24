@@ -63,7 +63,13 @@ public abstract class CommentContainer extends DOMFace {
     public CommentRecord addComment(AuthRequest ar)  throws Exception {
         CommentRecord newCR = createChild("comment", CommentRecord.class);
         newCR.setTime(ar.nowTime);
-        newCR.setUser(ar.getUserProfile());
+        //remember that we allow comment creation by anonymous users as long
+        //as an email has been supplied
+        UserProfile user = ar.getPossibleUser();
+        if (user==null) {
+            throw new Exception("Unable to create a comment anonymously");
+        }
+        newCR.setUser(user);
         addContainerFields(newCR);
         return newCR;
     }
@@ -153,6 +159,10 @@ public abstract class CommentContainer extends DOMFace {
     }
 
     private void updateAllComments(JSONArray allComments, AuthRequest ar) throws Exception  {
+        UserProfile uProf = ar.getPossibleUser();
+        if (uProf==null) {
+            throw new Exception("Attempt to update comments without having a user set");
+        }
         for (int i=0; i<allComments.length(); i++) {
             JSONObject oneComment = allComments.getJSONObject(i);
             long timeStamp = oneComment.getLong("time");
@@ -170,7 +180,6 @@ public abstract class CommentContainer extends DOMFace {
                 linkReplyToSource(cr);
 
                 //if you add a comment, then you also get this project on your watch list
-                UserProfile uProf = ar.getUserProfile();
                 NGWorkspace ngw = (NGWorkspace) ar.ngp;
                 uProf.assureWatch(ngw.getCombinedKey());
             }

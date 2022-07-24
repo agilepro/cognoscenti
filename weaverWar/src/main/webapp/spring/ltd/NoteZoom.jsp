@@ -4,13 +4,7 @@
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
-%><%/*
-Required parameter:
-
-    1. pageId : This is the id of a Workspace and used to retrieve NGWorkspace.
-    2. topicId: This is id of note (TopicRecord).
-
-*/
+%><%
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
@@ -76,7 +70,7 @@ Required parameter:
                 + "&emailId=" + URLEncoder.encode(ar.getBestUserId(), "UTF-8");
 
 %>
-
+<!-- ******************************** ltd/NoteZoom.jsp ******************************** -->
 <style>
 .ta-editor {
     min-height: 150px;

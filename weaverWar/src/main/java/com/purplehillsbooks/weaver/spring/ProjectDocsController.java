@@ -45,7 +45,6 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
-import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -120,23 +119,7 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2.jsp");
     }
 
-    //This is the OLD pattern we want to get rid of with aid embedded in the page name
-    //instead use DocDetails.htm?aid={aid}
-    @Deprecated
-    @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
-    private void docInfoView(@PathVariable String siteId,
-             @PathVariable String pageId, @PathVariable String aid,
-             HttpServletRequest request,  HttpServletResponse response) throws Exception {
-        System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        request.setAttribute("aid", aid);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-        AttachmentRecord att = ngw.findAttachmentByID(aid);
-        boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
-        BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
-    }
-
-    // this will be DocDetails.htm??aid={aid}&lic={license}
+    // this will be DocDetail.htm??aid={aid}&lic={license}
     @RequestMapping(value = "/{siteId}/{pageId}/DocDetail.htm", method = RequestMethod.GET)
     protected void docDetail(@PathVariable String siteId,
              @PathVariable String pageId,
@@ -162,7 +145,7 @@ public class ProjectDocsController extends BaseController {
         //and from there they can decide whether to log in or not, and then to list the versions.
         //Seems better than just saying you are not logged in.
         if (!ar.isLoggedIn()) {
-            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(ar.reqParam("aid"), "UTF-8")+".htm");
+            ar.resp.sendRedirect("DocDetail.htm?aid="+URLEncoder.encode(ar.reqParam("aid"), "UTF-8"));
             return;
         }
 
@@ -181,7 +164,7 @@ public class ProjectDocsController extends BaseController {
         //and from there they can decide whether to log in or not, and then to add a new version.
         //Seems better than just saying you are not logged in.
         if (!ar.isLoggedIn()) {
-            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(ar.reqParam("aid"), "UTF-8")+".htm");
+            ar.resp.sendRedirect("DocDetail.htm?aid="+URLEncoder.encode(ar.reqParam("aid"), "UTF-8"));
             return;
         }
 
@@ -566,39 +549,85 @@ public class ProjectDocsController extends BaseController {
         streamJSPAnonUnwrapped(ar, "Share.jsp");
     }
 
+    
+    //this is the old pattern, harder to accommodate in the ring scheme, so change to a
+    //new one which is more the regular pattern.   This needed in case there are 
+    //old emails around with the old pattern.
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
-    public void specialReply(@PathVariable String siteId,
+    public void forwardReply(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String topicId,
             @PathVariable String commentId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
 
         int hyphenPos = topicId.indexOf("-");
+        String meetId = null;
+        String agendaId = null;
         if (hyphenPos>0) {
-            String meetingId = topicId.substring(0,hyphenPos);
-            String agendaId = topicId.substring(hyphenPos+1);
-            MeetingRecord meet = ngp.findMeeting(meetingId);
+            meetId = topicId.substring(0,hyphenPos);
+            agendaId = topicId.substring(hyphenPos+1);
+            topicId = null;
+        }
+        String responseUrl = "../../Reply.htm?commentId=" +URLEncoder.encode(commentId, "UTF-8");
+        if (topicId!=null) {
+            responseUrl += "&topicId="+URLEncoder.encode(topicId, "UTF-8");
+        }
+        if (meetId!=null) {
+            responseUrl += "&meetId="+URLEncoder.encode(meetId, "UTF-8");
+        }
+        if (agendaId!=null) {
+            responseUrl += "&agendaId="+URLEncoder.encode(agendaId, "UTF-8");
+        }
+        String emailId = ar.defParam("emailId", null);
+        if (emailId!=null) {
+            responseUrl += "&emailId="+URLEncoder.encode(emailId, "UTF-8");
+        }
+        String mnnote = ar.defParam("mnnote", null);
+        if (mnnote!=null) {
+            responseUrl += "&mnnote="+URLEncoder.encode(mnnote, "UTF-8");
+        }
+        String mnm = ar.defParam("mnm", null);
+        if (mnm!=null) {
+            responseUrl += "&mnm="+URLEncoder.encode(mnm, "UTF-8");
+        }
+
+        ar.resp.sendRedirect(responseUrl);
+    }
+    
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/Reply.htm", method = RequestMethod.GET)
+    public void specialReply(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+
+        String topicId = ar.defParam("topicId", null);
+        String commentId = ar.defParam("commentId", null);
+        String meetId = ar.defParam("meetId", null);
+        String agendaId = ar.defParam("agendaId", null);
+        String emailId = ar.defParam("emailId", null);
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+
+        boolean specialAccess = false;
+        if (meetId!=null) {
+            MeetingRecord meet = ngw.findMeeting(meetId);
             meet.findAgendaItem(agendaId);
-            boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngp, meet);
-            if (!canAccessMeet) {
-                ar.assertMember("must have permission to make a reply");
-            }
+            specialAccess  = AccessControl.canAccessMeeting(ar, ngw, meet);
         }
         else {
-            TopicRecord note = ngp.getNoteOrFail(topicId);
+            TopicRecord note = ngw.getNoteOrFail(topicId);
             //normally the permission comes from a license in the URL for anonymous access
-            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-            if (!canAccessNote) {
-                ar.assertMember("must have permission to make a reply");
-            }
+            specialAccess  = AccessControl.canAccessTopic(ar, ngw, note);
         }
         ar.setParam("topicId", topicId);
+        ar.setParam("meetId", meetId);
+        ar.setParam("agendaId", agendaId);
+        ar.setParam("emailId", emailId);
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnonUnwrapped(ar, "Reply.jsp");
+        showJSPDepending(ar, ngw, "Reply.jsp", specialAccess);
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
@@ -628,11 +657,9 @@ public class ProjectDocsController extends BaseController {
         streamJSPAnonUnwrapped(ar, "Feedback.jsp");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/{siteId}/{pageId}/SaveReply.json", method = RequestMethod.POST)
     public void specialReplySave(@PathVariable String siteId,
             @PathVariable String pageId,
-            @PathVariable String topicId,
-            @PathVariable String commentId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
@@ -643,12 +670,14 @@ public class ProjectDocsController extends BaseController {
             if (!input.has("comments")) {
                 throw new Exception("posted object to specialReplySave needs to have a comments list");
             }
-            int hyphenPos = topicId.indexOf("-");
+            String topicId = input.optString("topicId");
+            //String commentId = input.optString("commentId", null);
+            String meetId = input.optString("meetId", null);
+            String agendaId = input.optString("agendaId", null);
+            //String emailId = input.optString("emailId", null);
             JSONObject repo =null;
-            if (hyphenPos>0) {
-                String meetingId = topicId.substring(0,hyphenPos);
-                String agendaId = topicId.substring(hyphenPos+1);
-                MeetingRecord meet = ngw.findMeeting(meetingId);
+            if (meetId!=null && meetId.length()>0) {
+                MeetingRecord meet = ngw.findMeeting(meetId);
                 AgendaItem ai = meet.findAgendaItem(agendaId);
                 boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngw, meet);
                 if (!canAccessMeet) {
@@ -667,18 +696,11 @@ public class ProjectDocsController extends BaseController {
                 note.updateCommentsFromJSON(input, ar);
                 repo = note.getJSONWithComments(ar, ngw);
             }
-            //String emailId = ar.reqParam("emailId");
-            UserProfile up = ar.getUserProfile();
-            if (up==null) {
-                throw new Exception("something wrong, user profile is null");
-            }
-
-            ngw.saveFile(ar, "saving comment using special reply");
-
+            ngw.saveFile(ar, "saving comment using SaveReply");
             sendJson(ar, repo);
         }
         catch (Exception ex) {
-            Exception ee = new Exception("Unable to update the comment in specialReplySave", ex);
+            Exception ee = new Exception("Unable to update the comment in SaveReply", ex);
             streamException(ee, ar);
         }
     }
@@ -948,4 +970,36 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ///////////////////// DEPRECATED ////////////////////////////
+    
+    //This is the OLD pattern we want to get rid of with aid embedded in the page name
+    //instead use DocDetails.htm?aid={aid}
+    @Deprecated
+    @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
+    private void docInfoView(@PathVariable String siteId,
+             @PathVariable String pageId, @PathVariable String aid,
+             HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        request.setAttribute("aid", aid);
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        AttachmentRecord att = ngw.findAttachmentByID(aid);
+        boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
+        BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
+    }
+
+    
 }

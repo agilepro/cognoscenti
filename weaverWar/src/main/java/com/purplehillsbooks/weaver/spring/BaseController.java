@@ -256,17 +256,19 @@ public class BaseController {
         File accessFolder = new File(springFolder, accessLevel);
         File jspFile = new File(accessFolder, jspName);
         if (!jspFile.exists()) {
-            if (ar.isLoggedIn()) {
+            System.out.println("JSP file does not exist: "+jspFile.getAbsolutePath());
+            if (!ar.isLoggedIn()) {
                 warnNotLoggedIn(ar);
             }
             else {
-                ar.req.setAttribute("property_msg_key", "You must be logged in to access this resource.");
+                showWarningAnon(ar, "Unable to access resource "+accessLevel+"/"+jspName);
             }
-            jspName = "Warning.jsp";
         }
-        System.out.println("JSP file is: "+accessLevel+"/"+jspName);
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
+        else {
+            System.out.println("JSP file exists: "+accessLevel+"/"+jspName);
+            ar.req.setAttribute("wrappedJSP", jspName);
+            ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
+        }
     }
     protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
         streamWrappedJSP(ar, "jsp", jspName);
@@ -311,6 +313,7 @@ public class BaseController {
 
     public static void showJSPDepending(AuthRequest ar, NGWorkspace ngw, String jspName, boolean specialAccess) throws Exception {
         try{
+            System.out.println("SHOWING DEPENDING: "+jspName+", SpecialAccess="+specialAccess);
             if (!jspName.endsWith(".jsp")) {
                 throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
             }
@@ -318,7 +321,12 @@ public class BaseController {
                 return;
             }
             if (!ar.isLoggedIn()) {
-                streamJSPAnon(ar, jspName);
+                if (specialAccess) {
+                    streamJSPAnon(ar, jspName);
+                }
+                else {
+                    warnNotLoggedIn(ar);
+                }
             }
             else if (ar.isMember()) {
                 streamJSP(ar, jspName);

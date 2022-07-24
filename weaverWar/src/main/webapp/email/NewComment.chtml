@@ -10,8 +10,8 @@
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
 Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 <br/>
-Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a> 
- has a <a href="{$commentURL}">{$opType} <b>{$cmtType}</b> (view online)</a>.
+Item <a href="{$replyUrl}">{$parentName|onempty(No Name)|html}</a> 
+ has a <a href="{$replyUrl}">{$opType} <b>{$cmtType}</b> (view online)</a>.
 </p>
 <hr/>
 
@@ -40,9 +40,9 @@ Item <a href="{$parentURL}">{$parentName|onempty(No Name)|html}</a>
 {% endif %}
 {% if ($cmtType=="comment") %}
 <div style="color:grey;font-weight:bold;">ACTION:  
-    <span><a href="{$replyUrl}">Reply to this</a>
+    <span><a href="{$replyUrl}#QuickReply"><button>Reply to this</button></a>
     or you can 
-    <a href="{$unsubUrl}">unsubscribe</a> from this thread.
+    <a href="{$replyUrl}#Unsub"><button>unsubscribe</button></a> from this thread.
     </span>
 </div>
 {% endif %}

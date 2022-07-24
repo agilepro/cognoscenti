@@ -214,21 +214,24 @@ public class AccessControl {
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
+        String resourceId = "topic:"+topicRec.getId()+":"+ngc.getKey();
         if (!ar.isLoggedIn() && ar.hasSpecialSessionAccess(resourceId)) {
             System.out.println("CAN-ACCESS-TOPIC: user has a session flag");
-            return assureTemporaryProfile(ar);
+            assureTemporaryProfile(ar);
+            return true;
         }
 
         //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mnnote"  (magic number for note)
         String mnnote = ar.defParam("mnnote", null);
         if (mnnote == null) {
+            System.out.println("CAN-ACCESS-TOPIC: not allowed because mnnote is missing ");
             return false;
         }
         
         String expectedMN = ngc.emailDependentMagicNumber(resourceId);
         if (!expectedMN.equals(mnnote)) {
+            System.out.println("CAN-ACCESS-TOPIC: not allowed because ("+mnnote+") is not ("+expectedMN+")");
             return false;
         }
 
@@ -237,7 +240,7 @@ public class AccessControl {
         ar.setSpecialSessionAccess(resourceId);
         System.out.println("CAN-ACCESS-TOPIC: user has magic number");
         if (!ar.isLoggedIn()) {
-            return assureTemporaryProfile(ar);
+            assureTemporaryProfile(ar);
         }
         return true;
     }
@@ -248,6 +251,7 @@ public class AccessControl {
     }
 
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
+        
         if (ar.isLoggedIn()) {
             throw new Exception("PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
         }
@@ -264,16 +268,17 @@ public class AccessControl {
         if (licensedUser == null) {
             throw new Exception("For some reason the user manager did not create the profile.");
         }
-        ar.setUserForOneRequest(licensedUser);
-        UserProfile up = ar.getUserProfile();
+        ar.setPossibleUser(licensedUser);
+        UserProfile up = ar.getPossibleUser();
         if (up==null) {
             throw new Exception("something wrong, user profile is null after setUserForOneRequest ");
         }
+        
         return true;
     }
 
     public static String getAccessTopicParams(NGContainer ngc, TopicRecord topicRec) throws Exception{
-        String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
+        String resourceId = "topic:"+topicRec.getId()+":"+ngc.getKey();
         String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
         return "mnnote=" + encodedValue;
     }

@@ -101,6 +101,7 @@ public class CommentRecord extends DOMFace {
         return WikiConverterForWYSIWYG.makeHtmlString(ar, getContent());
     }
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
+        System.out.println("OLD comment setContentHtml being used ... should be eliminated");
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
     
@@ -670,12 +671,13 @@ public class CommentRecord extends DOMFace {
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         NGWorkspace ngw = (NGWorkspace) ar.ngp;
-        if (input.has("html")) {
-            String html = input.getString("html");
-            setContentHtml(ar, html);
-        }
+        
         if (input.has("body")) {
             setContent(input.getString("body"));
+        }
+        else if (input.has("html")) {
+            //only use the HTML if the body does not exist
+            setContentHtml(ar, input.getString("html"));
         }
         if (input.has("outcomeHtml")) {
             setOutcomeHtml(ar, input.getString("outcomeHtml"));

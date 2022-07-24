@@ -103,6 +103,7 @@ public class AuthRequest
     protected Cognoscenti                cog;
 
     protected UserProfile user;
+    protected UserProfile possibleUser;
     public String licenseid;
     public int nestingCount = 0;
 
@@ -589,14 +590,30 @@ public class AuthRequest
         return cog.getUserManager().findOrCreateUserPage("ANONYMOUS_REQUESTS");
     }
 
+    
     /**
-     * This is for licensed requests, you can set the user for this request
-     * with setting any form of session parameters or cookies.
-     * It allows the code to properly attribute the actions to a user
-     * without all the rest of the overhead of logging in a user.
+     * Not an authenticated user, but a hint for a user from the 
+     * URL parameter or such can be specified here for use in 
+     * non-private situations.
      */
-    public void setUserForOneRequest(UserProfile licensedUser) {
-        user = licensedUser;
+    public void setPossibleUser(UserProfile hintedUser) {
+        possibleUser = hintedUser;
+    }
+     /**
+     * Technically this user is not logged in (they have not 
+     * fully authenticated, however we have some idea who they 
+     * are from either a link parameter or a session attribute.
+     * The pages that serve unauthenticated requests might use
+     * this value to help make the UI easier to use for these
+     * people without forcing login.
+     * 
+     * Returns logged in user if logged in.
+     */
+    public UserProfile getPossibleUser() {
+        if (user!=null) {
+            return user;
+        }
+        return possibleUser;
     }
 
     /**
