@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.util.ThreeWayMerge;
 
 public class UserCache {
     JSONObject cacheObj;
@@ -297,6 +298,26 @@ public class UserCache {
         }
         if (newFacFields.has("region")) {
             facilitator.put("region", newFacFields.getString("region"));
+        }
+    }
+
+    
+    //////////////// SCRATCHPAD ///////////////////////
+    
+    public String getScratchPad() throws Exception {
+        return cacheObj.optString("scratchpad", "");
+    }
+    
+    public void updateScratchPad(JSONObject newFacFields) throws Exception {
+        if (newFacFields.has("scratchpad")) {
+            cacheObj.put("scratchpad", newFacFields.getString("scratchpad"));
+        }
+        if (newFacFields.has("oldScratchpad") && newFacFields.has("newScratchpad")) {
+            String curDoc = cacheObj.optString("scratchpad", "");
+            String oldValue = newFacFields.getString("oldScratchpad");
+            String newValue = newFacFields.getString("newScratchpad");
+            String result = ThreeWayMerge.mergeThem(curDoc, oldValue, newValue);
+            cacheObj.put("scratchpad", result);
         }
     }
     

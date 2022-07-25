@@ -15,6 +15,9 @@
         border:1px solid gray;
         height:200px;
     }
+    .smallType {
+        font-size:10px;
+    }
 </style>
 <div class="modal-header qqTabHeader">
   <div class="qqTabBand">
@@ -24,7 +27,7 @@
     </span>
     <span ng-click="selectedTab='Settings'"  
           ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
-    {{commentTypeName()}} Settings
+    Settings
     </span>
     <span ng-click="selectedTab='Responders'"  
           ng-class="selectedTab=='Responders'?'qqTabSelected':'qqTabUnselected'"
@@ -35,6 +38,10 @@
           ng-class="selectedTab=='Outcome'?'qqTabSelected':'qqTabUnselected'"
           ng-show="cmt.commentType==2 || cmt.commentType==3">
     Outcome
+    </span>
+    <span ng-click="selectedTab='Scratch'" 
+          ng-class="selectedTab=='Scratch'?'qqTabSelected':'qqTabUnselected'">
+    Scratch
     </span>
   </div>
 </div>
@@ -139,6 +146,12 @@
     <div ng-show="selectedTab=='Outcome' && (cmt.commentType==2 || cmt.commentType==3)">
     	<div ui-tinymce="tinymceOptions" ng-model="outcomeHtml" 
              class="leafContent" style="min-height:160px;" id="theOutcomeEditor"></div>
+    </div>
+    <div ng-show="selectedTab=='Scratch'">
+    	<div ui-tinymce="tinymceOptions" ng-model="scratchHtml" 
+             class="leafContent" style="min-height:150px;" id="theOnlyEditor"
+             title="This is a private scratch pad where you can type things, and only you will see or have access to them.   Use it for copy/paste storage of things you might need elsewhere."></div>
+        <div class="smallType">This is a private scratch pad where you can type things, and only you will see or have access to them.   Use it for copy/paste storage of things you might need elsewhere.</div>
     </div>
 </div>
 <div class="modal-footer">

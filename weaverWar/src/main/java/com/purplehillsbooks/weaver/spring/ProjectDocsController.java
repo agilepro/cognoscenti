@@ -45,6 +45,7 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -972,6 +973,48 @@ public class ProjectDocsController extends BaseController {
     }
     
     
+    @RequestMapping(value = "/{siteId}/{pageId}/GetScratchpad.json", method = RequestMethod.GET)
+    public void getScratchpad(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertLoggedIn("ScratchPad is available only when logged in.");
+            Cognoscenti cog = ar.getCogInstance();
+            String key = ar.getUserProfile().getKey();
+            UserCache uc = cog.getUserCacheMgr().getCache(key);
+
+            JSONObject repo = new JSONObject();
+            repo.put("scratchpad", uc.getScratchPad());
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/UpdateScratchpad.json", method = RequestMethod.POST)
+    public void updateScratchpad(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertLoggedIn("ScratchPad is available only when logged in.");
+            Cognoscenti cog = ar.getCogInstance();
+            String key = ar.getUserProfile().getKey();
+            UserCache uc = cog.getUserCacheMgr().getCache(key);
+
+            JSONObject posted = getPostedObject(ar);
+            uc.updateScratchPad(posted);
+            uc.save();
+            
+            JSONObject repo = new JSONObject();
+            repo.put("scratchpad", uc.getScratchPad());
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
     
     
     

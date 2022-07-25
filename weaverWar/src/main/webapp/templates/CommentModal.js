@@ -26,6 +26,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.selectedTab = (cmt.state>11 && $scope.hasOutcome)?"Outcome":"Update";
     getComment();
 
+    $scope.scratchHtml = "";
+    $scope.scratchWiki = "";
+    $scope.oldScratchWiki = "";
 
     function getComment() {
         if ($scope.cmt.time>0) {
@@ -106,9 +109,11 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $modalInstance.dismiss('cancel');
     }
     $scope.save = function() {
+        $scope.saveScratch();
 		saveComment("N", false);
     }
     $scope.saveAndClose = function () {
+        $scope.saveScratch();
 		saveComment("Y", false);
     };
     $scope.saveReopen = function () {
@@ -241,8 +246,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     //this fires every keystroke to maintain change flag
     function tinymceChangeTrigger(e, editor) {
         $scope.lastKeyTimestamp = new Date().getTime();
-        $scope.cmt.body          = HTML2Markdown($scope.bodyHtml, {});
-        $scope.cmt.outcome       = HTML2Markdown($scope.outcomeHtml, {});
+        $scope.cmt.body       = HTML2Markdown($scope.bodyHtml, {});
+        $scope.cmt.outcome    = HTML2Markdown($scope.outcomeHtml, {});
+        $scope.scratchWiki    = HTML2Markdown($scope.scratchHtml);
         var newFlat = JSON.stringify($scope.cmt);
         if (newFlat != $scope.flattenedCmt ) {
             $scope.unsaved = 1;
@@ -268,7 +274,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 	
     $scope.autosave = function() {
         var newFlat = JSON.stringify($scope.cmt);
-        if (newFlat != $scope.flattenedCmt ) {
+        if (newFlat != $scope.flattenedCmt) {
             $scope.unsaved = 1;
         }
         else {
@@ -287,6 +293,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             //user has typed in last 20 seconds to wait until 20 seconds of silence
             return;
         }
+        $scope.saveScratch();
         if ($scope.unsaved) {
             $scope.unsaved = -1;
             saveComment("N", false);
@@ -367,5 +374,44 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         });
     };
 
+    $scope.getScratch = function() {
+        var postURL = "GetScratchpad.json";
+        $http.get(postURL)
+        .success( function(data) {
+            if ($scope.scratchWiki != data.scratchpad) {
+                //avoid setting it, if it is the same, to avoid editor problems
+                $scope.scratchWiki = data.scratchpad;
+                $scope.scratchHtml = convertMarkdownToHtml(data.scratchpad);
+            }
+            $scope.oldScratchWiki = $scope.scratchWiki;
+        })
+        .error( handleHTTPError );
+    }
+    $scope.saveScratch = function() {
+        $scope.scratchWiki = HTML2Markdown($scope.scratchHtml);
+        if ($scope.scratchWiki == $scope.oldScratchWiki)  {
+            //don't bother trying to save if no change
+            console.log("SAVESCRATCH- no change");
+            return;
+        }
 
+        var postURL = "UpdateScratchpad.json";
+        var data = {
+            oldScratchpad:  $scope.oldScratchWiki,
+            newScratchpad:  $scope.scratchWiki
+        }
+        var lastSave = $scope.scratchWiki;
+        $http.post(postURL, angular.toJson(data))
+        .success( function(data) {
+            if (lastSave != data.scratchpad) {
+                //avoid setting it, if it is the same, to avoid editor problems
+                $scope.scratchWiki = Textmerger.get().merge(lastSave, $scope.scratchWiki, data.scratchpad);
+                $scope.scratchHtm = convertMarkdownToHtml(data.scratchpad);
+            }
+            $scope.oldScratchWiki = $scope.scratchWiki;
+        })
+        .error( handleHTTPError );
+    }
+    
+    $scope.getScratch();
 });
