@@ -502,8 +502,13 @@ public class ProjectSettingController extends BaseController {
             //get this early so that the error message is proper
             op = ar.reqParam("op");
             ar.setPageAccessLevels(ngc);
-            //maybe this should be for admins?
-            ar.assertUpdateWorkspace("Must be a member to modify roles.");
+            
+            if (ngc instanceof NGWorkspace) {
+                ar.assertUpdateWorkspace("Must be a member to modify roles.");
+            }
+            else {
+                ar.assertExecutive("Must be an executive of site to modify roles.");
+            }
             ar.assertNotReadOnly("Cannot modify roles");
             JSONObject roleInfo = getPostedObject(ar);
             JSONObject repo = new JSONObject();

@@ -200,10 +200,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <input type="checkbox" ng-model="role.canUpdateWorkspace" class="form-control" placeholder="Enter requirements"/>
             </div>
             <div class="guideVocal" ng-show="updateHelp" ng-click="updateHelp=false">
-                This checkbox confers the ability for the members of this role to be able to 
-                update the workspace.  Any person in a role checked like this will be able 
-                to see and modify resources in the workspace.   People who are not in any
-                update role, but in another role, will have read-only access.   Please note:
+                This checkbox confers the ability for the players of this role to be able to 
+                update the workspace.  
+                A person in any role will be able to see the workspace. 
+                Any person in a role checked like this will be able 
+                to modify resources in the workspace.   
+                People who are not in any update role, but in another role, will have read-only access.   
+                Please note:
                 the administrator at the site level can set which users are allowed to have
                 update and which users are restricted to read-only, and that takes precidence.
             </div>

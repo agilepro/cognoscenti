@@ -751,7 +751,6 @@ public class AuthRequest
         NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
-            //yes logged in, everything is OK
             throw new JSONException("User is not logged in, not a member of workspace. {0}", opDescription);
         }
 
@@ -768,6 +767,27 @@ public class AuthRequest
         //check the container rules on who can be a member
         if (!ngw.canAccessWorkspace(user)) {
             throw new JSONException("User is not a member of this workspace. {0}", opDescription);
+        }
+    }
+    public void assertExecutive(String opDescription) throws Exception {
+        if (ngp==null) {
+            throw new ProgramLogicError("'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
+        }
+        if (!(ngp instanceof NGBook)) {
+            throw new Exception("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
+        }
+        if (!isLoggedIn()) {
+            throw new JSONException("User is not logged in, not an executive of site. {0}", opDescription);
+        }
+        NGBook ngb = (NGBook) ngp;
+
+
+        if (isSuperAdmin()) {
+            return;
+        }
+
+        if (!ngb.isSiteExecutive(user)) {
+            throw new JSONException("User is not executive of this site. {0}", opDescription);
         }
     }
 

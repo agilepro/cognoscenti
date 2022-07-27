@@ -118,7 +118,7 @@ public interface NGRole extends NGLabel {
     public void removePlayerCompletely(UserRef user) throws Exception;
 
     /**
-    * Remove all direct members of this role.
+    * Remove all direct players of this role.
     */
     public void clear();
 

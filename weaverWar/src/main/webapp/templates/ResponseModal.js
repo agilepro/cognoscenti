@@ -83,7 +83,9 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
 
 
     $scope.saveAndExit = function (choice) {
-        $scope.response.choice = choice;
+        if (choice) {
+            $scope.response.choice = choice;
+        }
         saveComment("Y");
     };
 

@@ -22,6 +22,7 @@ Required parameter:
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
+    ar.assertLoggedIn("Page designed only for logged in user, should never see this message");
     JSONObject workspaceInfo = ngw.getConfigJSON();
 
     boolean isLoggedIn = ar.isLoggedIn();
@@ -32,16 +33,10 @@ Required parameter:
 
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
-    String currentUser = "NOBODY";
-    String currentUserName = "NOBODY";
-    String currentUserKey = "NOBODY";
-    if (isLoggedIn) {
-        //this page can be viewed when not logged in, possibly with special permissions.
-        //so you can't assume that uProf is non-null
-        currentUser = uProf.getUniversalId();
-        currentUserName = uProf.getName();
-        currentUserKey = uProf.getKey();
-    }
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
+    boolean canUpdate = ar.canUpdateWorkspace();
 
     String topicId = ar.reqParam("topicId");
     TopicRecord note = ngw.getNoteOrFail(topicId);
@@ -117,6 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.nonMembers = [];
     $scope.addressMode = false;
+    $scope.canUpdate = <%=canUpdate%>;
 
     $scope.currentTime = (new Date()).getTime();
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
@@ -178,6 +174,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
     $scope.startEdit = function() {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\nTopics can not be edited in a frozen workspace.");
             return;
@@ -209,6 +209,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     }
     $scope.mergeUpdateDoc = function(changeEditing) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         if (!changeEditing) {
             $scope.extendBackgroundTime();
         }
@@ -233,6 +237,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     }
     $scope.saveEdits = function(fields) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
         var rec = {};
         rec.id = $scope.topicId;
@@ -605,6 +613,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
     $scope.createDecision = function(newDecision) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
@@ -634,6 +646,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
 
     $scope.openDecisionEditor = function (itemNotUsed, cmt) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
@@ -671,7 +687,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.createDecision(modifiedDecision);
             $scope.extendBackgroundTime();
         }, function () {
-            $scope.refreshTopic();
+            refreshTopic();
             $scope.extendBackgroundTime();
         });
     };
@@ -760,6 +776,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     
     $scope.openAttachDocument = function () {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         $scope.cancelBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
@@ -788,13 +808,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         }, function () {
-            $scope.refreshTopic();
+            refreshTopic();
             $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         });
     };
 
     $scope.openAttachAction = function (item) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         $scope.cancelBackgroundTime();
 
         if ($scope.workspaceInfo.frozen) {
@@ -822,13 +846,18 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.saveEdits(['actionList']);
             $scope.extendBackgroundTime();
         }, function () {
-            $scope.refreshTopic();
+            $scope.refreshAllGoals();
+            refreshTopic();
             $scope.extendBackgroundTime();
         });
     };
     
     
     $scope.openModalActionItem = function (goal, start) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update topic because you are a READ-ONLY user");
+            return;
+        }
         $scope.cancelBackgroundTime();
         if (!start) {
             start = 'status';
@@ -867,10 +896,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             $scope.refreshAllGoals();
-            $scope.refreshTopic();
+            refreshTopic();
         }, function () {
             $scope.refreshAllGoals();
-            $scope.refreshTopic();
+            refreshTopic();
             $scope.extendBackgroundTime();
         });
     };    
@@ -927,10 +956,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         attachModalInstance.result
         .then(function (selectedActionItems) {
-            $scope.refreshTopic();
+            refreshTopic();
             $scope.extendBackgroundTime();
         }, function () {
-            $scope.refreshTopic();
+            refreshTopic();
             $scope.extendBackgroundTime();
         });
     };

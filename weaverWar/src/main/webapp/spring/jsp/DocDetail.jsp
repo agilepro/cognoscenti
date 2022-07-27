@@ -119,8 +119,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.myComment = "";
     $scope.canAccess = <%=canAccessDoc%>;
-    $scope.isMember = <%=ar.isMember()%>;
-    $scope.readonly = <%=ar.isReadOnly()%>;
+    $scope.isMember = <%=ar.canAccessWorkspace()%>;
+    $scope.canUpdate = <%=ar.canUpdateWorkspace()%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -396,23 +396,19 @@ function copyTheLink() {
       This document has been put into the <i class="fa fa-trash"></i> trash and will 
       be deleted soon.
   </div>
-  <div ng-show="!isMember">
-      You are are not a member of this workspace.  
-      <span ng-show="canAccess">You can access this document because you received a special link allowing non-members to access the document.<span>
-  </div>
-  <div ng-show="isMember && readonly">
-      You are a read-only member of this site.  
+  <div ng-hide="canUpdate">
+      You are a read-only member of this site. 
       If you wish to update this document, ask the site administrator to make you
       an active (writeable) member of the site.
   </div>
-  <div ng-show="isMember && !readonly">
+  <div ng-show="canUpdate">
     <button class="btn btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
     <p>Edit the document details, like name and description.  The name and description tell
     others what the purpose of the document is, and ultimately whether they
     want to access the document or not.<p>
   </div>
   <div ng-show="isMember">
-    <button class="btn btn-raised" ng-click="makeLink = !makeLink">Create a link</button>
+    <button class="btn btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
     <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.<p>
     <div ng-show="makeLink">
       <div class="roomy">

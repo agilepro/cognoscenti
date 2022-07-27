@@ -18,7 +18,7 @@ Required parameter:
     
     NGBook site = ar.getCogInstance().getSiteByIdOrFail(accountKey);
     ar.setPageAccessLevelsWithoutVisit(site);
-    ar.assertMember("Must be an executive of a site to create a new workspace");
+    ar.assertExecutive("Must be an executive of a site to create a new workspace");
     String debugMessage = "";
     if (ar.canUpdateWorkspace()) {
         debugMessage += ar.getBestUserId() + " can update "+ar.ngp.getFullName();

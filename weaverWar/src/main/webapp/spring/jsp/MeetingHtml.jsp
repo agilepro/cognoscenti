@@ -10,8 +10,8 @@
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     String mode   = ar.defParam("mode", "Items");
-    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.assertLoggedIn("Meeting page designed for people logged in");
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -34,20 +34,11 @@
         throw new Exception("Please log in to see this meeting.");
     }
 
-    if (ar.ngp==null) {
-        throw new Exception("NGP should not be null!!!!!!");
-    }
-    
     NGBook site = ngw.getSite();
-    boolean isLoggedIn = (uProf!=null);
-    String currentUser = "";
-    String currentUserName = "Unknown";
-    String currentUserKey = "";
-    if (isLoggedIn) {
-        currentUser = uProf.getUniversalId();
-        currentUserName = uProf.getName();
-        currentUserKey = uProf.getKey();
-    }
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
+    boolean canUpdate = ngw.canUpdateWorkspace(uProf);
 
     String targetRole = mRec.getTargetRole();
     if (targetRole==null || targetRole.length()==0) {
@@ -212,6 +203,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 embeddedData.mode     = "<%ar.writeJS(mode);%>";
 embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
+embeddedData.canUpdate = <%=canUpdate%>;
 
 
 

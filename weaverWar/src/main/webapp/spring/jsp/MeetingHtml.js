@@ -362,6 +362,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.savePendingEdits = function(parts) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!parts) {
             parts = [];
         }
@@ -497,6 +501,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
     
     $scope.changeMeetingState = function(newState) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.meeting.state == newState) {
             //nothing changed, so ignore this
             return;
@@ -514,6 +522,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         startAgendaRunning(agendaItem);
     }
     $scope.changeGoalState = function(goal, newState) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         goal.prospects = newState;
         $scope.saveGoal(goal);
     };
@@ -522,6 +534,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.putGetMeetingInfo($scope.meeting);
     };
     $scope.savePartialMeeting = function(fieldList) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var saveRecord = {};
         for (var j=0; j<fieldList.length; j++) {
             saveRecord[fieldList[j]] = $scope.meeting[fieldList[j]];
@@ -530,6 +546,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.stopEditing();
     };
     $scope.saveAgendaItem = function(agendaItem) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         agendaItem.clearLock = "true";
         var saveRecord = {};
         saveRecord.agenda = [agendaItem];
@@ -537,6 +557,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.stopEditing();
     };
     $scope.saveAgendaItemParts = function(agendaItem, fieldList) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         agendaItem.presenters = [];
         agendaItem.presenterList.forEach( function(user) {
             if (user.uid) {
@@ -567,6 +591,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.putGetMeetingInfo = function(readyToSave) {
         var promise;
         if (readyToSave) {
+            if (!embeddedData.canUpdate) {
+                alert("Unable to update meeting because you are a READ-ONLY user");
+                return;
+            }
             if (readyToSave.participants) {
                 readyToSave.participants.forEach( function(item) {
                     if (!item.uid) {
@@ -791,6 +819,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     
     
     $scope.createAgendaItem = function() {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var newAgenda = {
             id:"~new~",
             duration:10,
@@ -822,6 +854,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
     $scope.saveGoal = function(goal) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "updateGoal.json?gid="+goal.id;
         var objForUpdate = {};
         objForUpdate.id = goal.id;
@@ -938,6 +974,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     };
     $scope.postMinutes = function() {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!$scope.meeting.minutesId) {
             alert("program logic error: don't know about any minutes to change the state of");
             return;
@@ -1117,6 +1157,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
     }    
     $scope.addAttendee = function() {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!$scope.newAttendee) {
             return;
         }
@@ -1126,6 +1170,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.newAttendee = "";
     }
     $scope.removeAttendee  = function(person) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var promise = $scope.refreshMeetingPromise();
         promise.success( function() {
             if (confirm("Remove "+person.name+" from attendee list?")) {
@@ -1182,6 +1230,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
     $scope.removeParticipant = function(pers) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.meeting.people[pers.key]) {
             delete $scope.meeting.people[pers.key];
             let newParticipants = [];
@@ -1195,6 +1247,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
     }
     $scope.addParticipants = function() {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         $scope.participantEditCopy.forEach( function(newPers) {
             let found = false;
             $scope.meeting.participants.forEach( function(already) {
@@ -1211,6 +1267,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
     $scope.deleteItem = function(item) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!confirm("Are you sure you want to delete agenda item: "+item.subject)) {
             return;
         }
@@ -1238,6 +1298,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
     $scope.openModalActionItem = function (item, goal, start) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1311,6 +1375,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     }
     $scope.toggleCheckItem = function($event, item, changeIndex) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         item.checkitems.forEach( function(item) {
             if (item.index==changeIndex) {
                 item.checked = !item.checked;
@@ -1389,6 +1457,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         return (whatNot!=null);
     }
     $scope.moveItem = function(item,amt) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var thisPos = item.position;
         var otherPos = thisPos + amt;
         if (otherPos<=0) {
@@ -1467,6 +1539,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openDecisionEditor = function (item, cmt) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1559,6 +1635,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.saveAgendaItemParts(item, ['docList']);
     }
     $scope.openAttachDocument = function (item) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1594,6 +1674,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAttachTopics = function (item) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1628,6 +1712,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
     $scope.openAttachAction = function (item) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1679,6 +1767,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
     $scope.openAgenda = function (agendaItem, display) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!agendaItem || !agendaItem.id) {
             alert("Please select an agenda item, and try again");
             return;
@@ -1785,6 +1877,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.refreshMeetingPromise(); 
 
     $scope.openEditor = function() {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         $scope.extendBackgroundTime();
         if ($scope.meeting.state < 1) {
             alert("Post the meeting before entering any minutes / notes.");
@@ -1799,6 +1895,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     
     $scope.createTime = function(fieldName,newTime) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         //first, ignore new duplicate values
         let found = false;
         $scope.meeting.timeSlots.forEach( function(timeSlot) {
@@ -1844,6 +1944,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     }
     $scope.removeTime = function(time) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var hasSetting = false;
         if ($scope.meeting.timeSlots) {
             $scope.meeting.timeSlots.forEach( function(aTime) {
@@ -1987,6 +2091,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
     
     $scope.openNotesDialog = function (agendaItem) {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         if (!agendaItem || !agendaItem.id) {
             alert("Please select an agenda item, and try again");
             return;

@@ -30,6 +30,7 @@
     }
 
     UserProfile uProf = ar.getUserProfile();
+    boolean canUpdate = ar.canUpdateWorkspace();
 
     JSONArray allLabels = ngp.getJSONLabels();
 
@@ -112,6 +113,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.mineOnly = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[],id:"~new~",labelMap:{}};
+    $scope.canUpdate= <%=canUpdate%>;
 
     $scope.newPerson = "";
 
@@ -274,6 +276,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.constructAllCheckItems();
     }
     $scope.saveGoal = function(goal) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "updateGoal.json?gid="+goal.id;
         var objForUpdate = {};
         objForUpdate.id = goal.id;
@@ -294,6 +300,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.saveArea = function(area) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "taskArea"+area.id+".json";
         var postdata = angular.toJson(area);
         $scope.showError=false;
@@ -306,6 +316,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.saveGoals = function(goalList) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "updateMultiGoal.json";
         var objectList = [];
 
@@ -334,6 +348,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
     $scope.makeState = function(rec, newState) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         var newRec = {};
         newRec.id = rec.id;
         newRec.universalid = rec.universalid;
@@ -426,6 +444,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.openModalActionItem = function (goal, startMode) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.isFrozen) {
             alert("You are not able to edit an action item because this workspace is frozen");
             return;
@@ -546,6 +568,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     
     $scope.openTaskAreaEditor = function (ta) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.isFrozen) {
             alert("You are not able to edit task areas because this workspace is frozen");
             return;
