@@ -176,7 +176,7 @@ public class BaseController {
             //super admin is automatically a member of every group, no need to check further
             return false;
         }
-        if(!ar.isMember()){
+        if(!ar.canAccessWorkspace()){
             if (ar.ngp instanceof NGBook) {
                 showWarningSite(ar, "In order to see this section, you need to be a site executive.");
             }
@@ -205,7 +205,7 @@ public class BaseController {
             //super admin is automatically a member of every group, no need to check further
             return false;
         }
-        if(!ar.isMember()){
+        if(!ar.canAccessWorkspace()){
             showWarningSite(ar, "In order to see this section, you need to be a site executive.");
             return true;
         }
@@ -310,7 +310,45 @@ public class BaseController {
             return registerRequiredProject(ar, siteId, pageId );
         }
     }
+    /**
+     * This is a convenience function for all handlers that have the account and project
+     * in the URL.
+     *
+     * (1) This will validate those values.
+     * (2) Read the project.
+     * (3) Sets the access level to the page
+     * (4) Set the header type to be project
+     * (5) Throws and exception if anything is wrong.
+     *
+     * Will ALSO set two request attributes needed by the JSP files.
+     */
+    public static NGWorkspace registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
+    {
+        ar.req.setAttribute("headerType", "project");
+        ar.req.setAttribute("siteId",     siteId);
+        ar.req.setAttribute("pageId",     pageId);
+        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        if (!siteId.equals(ngw.getSiteKey())) {
+            throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
+        }
+        ar.setPageAccessLevels(ngw);
+        ar.req.setAttribute("title", ngw.getFullName());
+        return ngw;
+    }
 
+    public static NGBook prepareSiteView(AuthRequest ar, String siteId) throws Exception
+    {
+        ar.req.setAttribute("headerType", "site");
+        ar.req.setAttribute("siteId",    siteId);
+        ar.req.setAttribute("pageId",    "$");
+        NGBook site = ar.getCogInstance().getSiteByIdOrFail( siteId );
+        ar.setPageAccessLevels(site);
+        ar.req.setAttribute("title", site.getFullName());
+        return site;
+    }
+
+    
+    
     public static void showJSPDepending(AuthRequest ar, NGWorkspace ngw, String jspName, boolean specialAccess) throws Exception {
         try{
             System.out.println("SHOWING DEPENDING: "+jspName+", SpecialAccess="+specialAccess);
@@ -327,8 +365,10 @@ public class BaseController {
                 else {
                     warnNotLoggedIn(ar);
                 }
+                return;
             }
-            else if (ar.isMember()) {
+            UserProfile user = ar.getUserProfile();
+            if (ngw.canAccessWorkspace(user)) {
                 streamJSP(ar, jspName);
             }
             else if (specialAccess) {
@@ -350,7 +390,7 @@ public class BaseController {
             if (!ar.isLoggedIn()) {
                 streamJSPAnon(ar, jspName);
             }
-            else if (ar.isMember()) {
+            else if (ar.canAccessWorkspace()) {
                 streamJSPSite(ar, jspName);
             }
             else {
@@ -423,7 +463,7 @@ public class BaseController {
     }
     public static void showJSPExecutives(AuthRequest ar, String siteId, String jspName) throws Exception {
         try{
-            registerSiteOrProject(ar, siteId, null);
+            prepareSiteView(ar, siteId);
             if (warnNotExecutive(ar)){
                 return;
             }
@@ -468,42 +508,6 @@ public class BaseController {
     }
 
 
-    /**
-     * This is a convenience function for all handlers that have the account and project
-     * in the URL.
-     *
-     * (1) This will validate those values.
-     * (2) Read the project.
-     * (3) Sets the access level to the page
-     * (4) Set the header type to be project
-     * (5) Throws and exception if anything is wrong.
-     *
-     * Will ALSO set two request attributes needed by the JSP files.
-     */
-    public static NGWorkspace registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
-    {
-        ar.req.setAttribute("headerType", "project");
-        ar.req.setAttribute("siteId",     siteId);
-        ar.req.setAttribute("pageId",     pageId);
-        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-        if (!siteId.equals(ngw.getSiteKey())) {
-            throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
-        }
-        ar.setPageAccessLevels(ngw);
-        ar.req.setAttribute("title", ngw.getFullName());
-        return ngw;
-    }
-
-    public static NGBook prepareSiteView(AuthRequest ar, String siteId) throws Exception
-    {
-        ar.req.setAttribute("headerType", "site");
-        ar.req.setAttribute("siteId",    siteId);
-        ar.req.setAttribute("pageId",    "$");
-        NGBook site = ar.getCogInstance().getSiteByIdOrFail( siteId );
-        ar.setPageAccessLevels(site);
-        ar.req.setAttribute("title", site.getFullName());
-        return site;
-    }
 
 
     public static AuthRequest getLoggedInAuthRequest(HttpServletRequest request,
@@ -566,7 +570,7 @@ public class BaseController {
         if(warnNotLoggedIn(ar)){
             return true;
         }
-        if(!ar.isMember()){
+        if(!ar.canAccessWorkspace()){
             ar.req.setAttribute("roleName", "Executive");
             showWarningView(ar, "nugen.project.executive.msg");
             return true;

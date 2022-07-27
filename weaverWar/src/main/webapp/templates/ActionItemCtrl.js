@@ -12,6 +12,10 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     });
     $scope.allLabels = allLabels;
     $scope.editMode = startMode;
+    function reportError(errData) {
+        $scope.error = JSON.stringify(errData);
+        $scope.editMode = "error";
+    }
 
     $scope.ok = function () {
         $scope.saveAndClose();
@@ -57,7 +61,7 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
             $scope.goal = data;
         })
         .error( function(data, status, headers, config) {
-            alert("problem handling get: "+JSON.stringify(data));
+            reportError(data);
         });
     };
     if ($scope.goalId != "~new~") {
@@ -77,7 +81,7 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
             $modalInstance.close($scope.goal);
         })
         .error( function(data, status, headers, config) {
-            alert("problem handling get: "+JSON.stringify(data));
+            reportError(data);
         });
     };
     $scope.loadPersonList = function(query) {
@@ -105,7 +109,7 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
             $scope.sortAllLabels();
         })
         .error( function(data, status, headers, config) {
-            $scope.reportError(data);
+            reportError(data);
         });
     };
     $scope.sortAllLabels = function() {

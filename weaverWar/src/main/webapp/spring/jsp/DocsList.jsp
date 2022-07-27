@@ -11,7 +11,6 @@
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Documents are available only to members");
     NGBook site = ngp.getSite();
-    boolean isMember = ar.isMember();
     String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
 
     JSONArray attachments = new JSONArray();
@@ -270,7 +269,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="docsFolder.htm">
+          <li role="presentation"><a role="menuitem" href="DocsFolder.htm">
               Show Folders</a>
           </li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="DocsAdd.htm">
@@ -279,7 +278,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           <li role="presentation"><a role="menuitem" tabindex="-1" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="sharePorts.htm">
+          <li role="presentation"><a role="menuitem" href="SharePorts.htm">
               Share Ports</a>
           </li>
           

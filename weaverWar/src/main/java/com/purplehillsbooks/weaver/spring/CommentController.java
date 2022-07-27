@@ -66,9 +66,11 @@ public class CommentController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to get comment");
+            ar.assertAccessWorkspace("must be a member to get comment");
+            
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
             CommentRecord topic = ngw.getCommentOrFail(cid);
+
 
             JSONObject repo = topic.getHtmlJSON(ar);
             sendJson(ar, repo);
@@ -85,7 +87,7 @@ public class CommentController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to get comment list");
+            ar.assertAccessWorkspace("must havea access to workspace to get comment list");
             
             JSONArray allComments = new JSONArray();
             for (CommentRecord cmt : ngw.getAllComments()) {
@@ -109,7 +111,7 @@ public class CommentController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("must be a member to update comment");
+            ar.assertAccessWorkspace("must be a member to update comment");
             JSONObject postObject = this.getPostedObject(ar);
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
             JSONObject repo = null;
@@ -166,7 +168,7 @@ public class CommentController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             countComments(ngw);
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to access workspace information.");
+            ar.assertAccessWorkspace("Must be a member to access workspace information.");
             boolean isPost = request.getMethod().equalsIgnoreCase("POST");
             JSONObject postObject = null;
             if (isPost) {

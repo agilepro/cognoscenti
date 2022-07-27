@@ -1182,8 +1182,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             startMode: function () {
               return start;
             },
-            siteId: function () {
-              return $scope.siteInfo.key;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });
@@ -1197,7 +1197,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             });
             $scope.saveGoal(modifiedGoal);
         }, function () {
-          //cancel action
+            $scope.putGetMeetingInfo( null );
         });
     };
 

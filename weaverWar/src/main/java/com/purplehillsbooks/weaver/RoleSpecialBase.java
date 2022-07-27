@@ -127,5 +127,12 @@ public abstract class RoleSpecialBase implements NGRole {
     public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {
         return null;
     }
+    
+    public boolean allowUpdateWorkspace() {
+        return false;
+    }
+    public void setUpdateWorkspace(boolean alllowed) {
+        throw new RuntimeException("AllowsEdit can not be set on special style role.");
+    }
 
 }

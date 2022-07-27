@@ -8,7 +8,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
-        if (!<%=ar.isMember()%>) {
+        if (!<%=ar.canUpdateWorkspace()%>) {
             alert("You must be a member of workspace to make a comment.");
             return;
         }

@@ -133,7 +133,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     };
     $scope.defineRole = function () {
         $scope.parentScope.saveCreatedRole($scope.roleInfo);
-        window.location = "roleDefine.htm?role="+$scope.roleInfo.name;
+        window.location = "RoleDefine.htm?role="+$scope.roleInfo.name;
     };
     $scope.deleteAndClose = function () {
         $scope.parentScope.deleteRole($scope.roleInfo);

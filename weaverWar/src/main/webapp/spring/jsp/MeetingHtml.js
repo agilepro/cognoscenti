@@ -1265,8 +1265,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             startMode: function () {
               return start;
             },
-            siteId: function () {
-              return $scope.siteInfo.key;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });
@@ -1282,8 +1282,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             $scope.extendBackgroundTime();
             
         }, function () {
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
-          //cancel action
         });
     };
 
@@ -1519,7 +1519,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             });
             $scope.extendBackgroundTime();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
         });
     };
@@ -1587,7 +1587,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             $scope.refreshMeetingPromise(); 
             $scope.extendBackgroundTime();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
         });
     };
@@ -1622,7 +1622,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             $scope.saveAgendaItem(item);
             $scope.extendBackgroundTime();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
         });
     };
@@ -1658,7 +1658,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             $scope.extendBackgroundTime();
             
         }, function () {
-            //cancel action - nothing really to do
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
         });
     };
@@ -1715,7 +1715,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 ["subject", "descriptionMerge","duration","timerElapsed","isSpacer","presenters","proposed"]);
             $scope.extendBackgroundTime();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.putGetMeetingInfo( null );
             $scope.extendBackgroundTime();
         });
     };

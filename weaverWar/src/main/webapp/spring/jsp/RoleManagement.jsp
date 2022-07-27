@@ -33,6 +33,7 @@
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
     boolean isFrozen = ngw.isFrozen();
+    boolean canUpdate = ar.canUpdateWorkspace();
 
 %>
 
@@ -48,6 +49,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     //this map tells whether to display the role in detail mode.   All roles
     //start in non-detailed mode
     $scope.roleDetailToggle = {};
+    $scope.canUpdate = <%=canUpdate%>;
     
     AllPeople.clearCache($scope.siteInfo.key);
 
@@ -119,6 +121,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("You are not able to update this role because this workspace is frozen");
             return;
         }
+        if (!$scope.canUpdate) {
+            alert("You are not able to update this role because you are a read-only user");
+            return;
+        }
         var key = role.name;
         var postURL = "roleUpdate.json?op=Update";
         role.players.forEach( function(item) {
@@ -141,6 +147,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.removePlayer = function(role, player) {
         if ($scope.isFrozen) {
             alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
+        if (!$scope.canUpdate) {
+            alert("You are not able to remove player from this role because you are a read only user");
             return;
         }
         var newPlayers = [];
@@ -166,6 +176,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.deleteRole = function(role) {
         if ($scope.isFrozen) {
             alert("You are not able to update this role because this workspace is frozen");
+            return;
+        }
+        if (!$scope.canUpdate) {
+            alert("You are not able to delete this role because you are a read only user");
             return;
         }
         var key = role.name;
@@ -207,6 +221,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("You are not able to invite because this workspace is frozen");
             return;
         }
+        if (!$scope.canUpdate) {
+            alert("You are not able to update this role because you are a read only user");
+            return;
+        }
 
         var proposedMessage = {}
         proposedMessage.msg = $scope.inviteMsg;
@@ -239,8 +257,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     
     $scope.openRoleModal = function (role) {
+        if (!$scope.canUpdate) {
+            alert("You are not able to edit this role because you are a read only user");
+            return;
+        }
         if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
+            alert("You are not able to edit this role because this workspace is frozen");
             return;
         }
         var isNew = false;
@@ -276,12 +298,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("You are not able to update this role because this workspace is frozen");
             return;
         }
+        if (!$scope.canUpdate) {
+            alert("You are not able to update this role because you are a read only user");
+            return;
+        }
         if (!role.terms) {
             role.terms = [];
         }
         if (role.terms.length > 0) {
             var selTerm = role.terms[role.terms.length-1];
-            window.location = "roleNomination.htm?role="+role.name+"&term="+selTerm.key;
+            window.location = "RoleNomination.htm?role="+role.name+"&term="+selTerm.key;
             return;
         }
         
@@ -310,7 +336,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             data.terms.forEach( function(aTerm) {
                 if (aTerm.termStart == proposeBegin) {
                     createdTerm = true;
-                    window.location = "roleNomination.htm?role="+role.name+"&term="+aTerm.key;
+                    window.location = "RoleNomination.htm?role="+role.name+"&term="+aTerm.key;
                 }
             });
             if (!createdTerm) {
@@ -331,6 +357,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+
+<% if (canUpdate) { %>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -348,6 +376,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </ul>
       </span>
     </div>
+<% } %>
 
     <style>
     .spacey tr td{
@@ -365,6 +394,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <table class="spacey table">
         <tr ng-repeat="role in allRoles">
             <td>
+<% if (canUpdate) { %>
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn"
                         type="button" id="menu4" data-toggle="dropdown">
@@ -374,7 +404,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       ng-click="openRoleModal(role)">
                       <span class="fa fa-edit"></span> Edit All Players </a></li>
                   <li role="presentation"><a role="menuitem" 
-                      href="roleDefine.htm?role={{role.name}}">
+                      href="RoleDefine.htm?role={{role.name}}">
                       <span class="fa fa-street-view"></span> Define Role </a></li>
                   <li role="presentation"><a role="menuitem" 
                       ng-click="goNomination(role)">
@@ -388,6 +418,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       <span class="fa fa-times"></span> Delete Role</a></li>
                 </ul>
               </div>
+<% } %>
             </td>
             <td ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
@@ -477,8 +508,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </tr>
     </table>
 
+<% if (canUpdate) { %>
     <button class="btn btn-primary btn-raised" ng-click="openRoleModal(null)" style="float:right;">
         <span class="fa fa-plus"></span> Create Role</button>
+<% } %>
         
     <div style="height:150px"></div>
 

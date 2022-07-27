@@ -51,8 +51,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -61,19 +59,6 @@ public class ProjectSettingController extends BaseController {
 
 
 
-    //////////////////////// WEFT HANDLER ////////////////////////////
-
-    @RequestMapping(value = "/{siteId}/{pageId}/{pagename}.weft", method = RequestMethod.GET)
-    public void handleWeft(@PathVariable String siteId,
-            @PathVariable String pageId, @PathVariable String pagename, 
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, pagename+".jsp");
-        throw new Exception("Is WEFT actually used anywhere?");
-    }
-
-    
     //////////////////////// MAIN VIEWS ////////////////////////////
     
     @RequestMapping(value = "/{siteId}/{pageId}/LimitedAccess.htm", method = RequestMethod.GET)
@@ -117,7 +102,7 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "MultiInvite.jsp");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/roleDefine.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/RoleDefine.htm", method = RequestMethod.GET)
     public void roleDefine(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -125,7 +110,7 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleDefine.jsp");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/roleNomination.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/RoleNomination.htm", method = RequestMethod.GET)
     public void roleNomination(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -147,7 +132,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerSiteOrProject(ar, siteId, pageId);
+        registerRequiredProject(ar, siteId, pageId);
         if (ar.isAdmin()) {
             streamJSP(ar, "AdminSettings.jsp");
         }
@@ -160,7 +145,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerSiteOrProject(ar, siteId, pageId);
+        registerRequiredProject(ar, siteId, pageId);
         showJSPMembers(ar, siteId, pageId, "AdminStats.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/AdminAPI.htm", method = RequestMethod.GET)
@@ -168,7 +153,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerSiteOrProject(ar, siteId, pageId);
+        registerRequiredProject(ar, siteId, pageId);
         showJSPMembers(ar, siteId, pageId, "AdminAPI.jsp");
     }
 
@@ -196,7 +181,7 @@ public class ProjectSettingController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/emailMsg.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/EmailMsg.htm", method = RequestMethod.GET)
     public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -325,7 +310,7 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            NGWorkspace ngw = (NGWorkspace) registerSiteOrProject(ar, siteId, pageId );
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
             ar.assertNotFrozen(ngw);
@@ -457,7 +442,7 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleName= "Unknown";
         try{
-            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            NGWorkspace ngc = registerRequiredProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
             ar.assertNotFrozen(ngc);
             JSONObject personalInfo = getPostedObject(ar);
@@ -518,7 +503,7 @@ public class ProjectSettingController extends BaseController {
             op = ar.reqParam("op");
             ar.setPageAccessLevels(ngc);
             //maybe this should be for admins?
-            ar.assertMember("Must be a member to modify roles.");
+            ar.assertUpdateWorkspace("Must be a member to modify roles.");
             ar.assertNotReadOnly("Cannot modify roles");
             JSONObject roleInfo = getPostedObject(ar);
             JSONObject repo = new JSONObject();
@@ -618,7 +603,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String roleName = "";
         try{
-            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            NGWorkspace ngc = registerRequiredProject(ar, siteId, pageId );
             ar.assertLoggedIn("Must be logged in to check your role membership");
             ar.setPageAccessLevels(ngc);
             roleName = ar.reqParam("role");
@@ -647,7 +632,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to create an email generator.");
+            ar.assertUpdateWorkspace("Must be able to update workspace to create an email generator.");
             ar.assertNotReadOnly("Cannot generate email");
             ar.assertNotFrozen(ngw);
             JSONObject eGenInfo = getPostedObject(ar);
@@ -708,7 +693,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to render an email.");
+            ar.assertAccessWorkspace("Must be a member to render an email.");
             JSONObject eGenInfo = getPostedObject(ar);
 
             id = eGenInfo.getString("id");
@@ -759,7 +744,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to modify labels.");
+            ar.assertAccessWorkspace("Must be able to access workspace to get labels.");
             
             JSONObject ret = new JSONObject();
             JSONArray list = new JSONArray();
@@ -785,7 +770,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to modify labels.");
+            ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
             ar.assertNotFrozen(ngp);
             op = ar.reqParam("op");
@@ -837,9 +822,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            if (!ar.isMember() && !ar.isSuperAdmin()) {
-                throw new Exception("Project email list is accessible only by members or administrator.");
-            }
+            ar.assertAccessWorkspace("Project email list is accessible only by members or administrator.");
             JSONObject posted = this.getPostedObject(ar);
 
             JSONObject repo = EmailSender.queryWorkspaceEmail(ngw, posted);

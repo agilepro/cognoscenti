@@ -9,7 +9,6 @@
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
-    boolean isMember = ar.isMember();
 
     JSONArray attachments = new JSONArray();
 

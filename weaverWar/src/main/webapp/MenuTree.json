@@ -93,6 +93,13 @@
           "name":"Attendance",
           "title":"A list of who attended which meetings",
           "readOnly": true
+        },
+        {
+          "use": ["MeetingList.jsp","MeetingHtml.jsp","MeetingAttendees.jsp"],
+          "href":"CommentList.htm",
+          "name":"Comments",
+          "title":"View all the comments in this workspace",
+          "readOnly": true
         }
       ],
       "useOpts": ["MeetingList.jsp", "MeetingAttendees.jsp"],
@@ -127,6 +134,13 @@
           "name":"Search",
           "title":"Search through all the topics",
           "readOnly": true
+        },
+        {
+          "use": ["NotesList.jsp", "NoteZoom.jsp"],
+          "href":"CommentList.htm",
+          "name":"Comments",
+          "title":"View all the comments in this workspace",
+          "readOnly": true
         }
       ],
       "useOpts": ["NotesList.jsp", "NoteZoom.jsp"],
@@ -145,14 +159,14 @@
         },
         {
           "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
-          "href":"docsFolder.htm",
+          "href":"DocsFolder.htm",
           "name":"Folders",
           "title":"Display documents grouped into folders",
           "readOnly": true
         },
         {
           "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
-          "href":"sharePorts.htm",
+          "href":"SharePorts.htm",
           "name":"Share Ports",
           "title":"Display share ports"
         },

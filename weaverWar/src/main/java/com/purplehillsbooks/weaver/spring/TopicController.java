@@ -80,7 +80,7 @@ public class TopicController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            boolean isMember = ar.isMember();
+            boolean canAccessWorkspace = ar.canAccessWorkspace();
 
             JSONArray notes = new JSONArray();
             for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
@@ -98,7 +98,7 @@ public class TopicController extends BaseController {
                         notes.put( aNote.getJSON(ngw) );
                     }
                 }
-                else if (isMember) {
+                else if (canAccessWorkspace) {
                     notes.put( aNote.getJSON(ngw) );
                 }
             }
@@ -118,7 +118,7 @@ public class TopicController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            boolean isMember = ar.isMember();
+            boolean isMember = ar.canAccessWorkspace();
 
             JSONArray allTopics = new JSONArray();
             for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
@@ -225,7 +225,7 @@ public class TopicController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to update a topic contents.");
+            ar.assertUpdateWorkspace("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update a topic");
             nid = ar.reqParam("nid");
@@ -265,7 +265,7 @@ public class TopicController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to update a topic contents.");
+            ar.assertUpdateWorkspace("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update a topic");
             nid = ar.reqParam("nid");
@@ -351,7 +351,7 @@ public class TopicController extends BaseController {
             TopicRecord topic = ngw.getDiscussionTopic(nid);
             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
             if (!canAccessTopic) {
-                ar.assertMember("must have permission to subscribe to a topic");
+                ar.assertAccessWorkspace("must have permission to subscribe to a topic");
             }
             UserProfile up = ar.getUserProfile();
             AddressListEntry ale;

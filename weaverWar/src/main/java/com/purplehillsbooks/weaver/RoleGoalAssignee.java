@@ -183,5 +183,5 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         goal.setAssigneeList(newList);
         return true;
     }
-
+    
 }

@@ -53,7 +53,7 @@
 
 
 
-
+/*
     //don't need this method any more
     public static boolean isMember(AuthRequest ar, NGContainer ngc)
             throws Exception {
@@ -64,6 +64,6 @@
             throws Exception {
         return ar.isAdmin();
     }
-
+*/
 
 %>

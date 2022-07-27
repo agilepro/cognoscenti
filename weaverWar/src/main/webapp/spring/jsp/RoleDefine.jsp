@@ -22,7 +22,7 @@
     CustomRole theRole = ngc.getRole(roleName);
     JSONObject role = theRole.getJSONDetail();
 
-
+    boolean canUpdate = ar.canUpdateWorkspace();
 
 %>
 
@@ -32,6 +32,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.role = <%role.write(out,2,4);%>;
     $scope.showInput = false;
+    $scope.canUpdate = <%=canUpdate%>;
 
     window.setMainPageTitle("Define Role: "+$scope.role.name);
     $scope.showInput = false;
@@ -44,7 +45,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     
     $scope.goNominate = function(aterm) {
-        window.location = "roleNomination.htm?role="+$scope.role.name+"&term="+aterm.key;
+        window.location = "RoleNomination.htm?role="+$scope.role.name+"&term="+aterm.key;
     }
     $scope.deleteResponsibility = function(resp) {
         if (confirm("Are you sure you want to delete this responsibility?")) {
@@ -193,8 +194,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 are eligibility requirements, like having participated in the group for a period
                 of time before they can be considered for the roles.
             </div>
+            <div class="form-group">
+                <label for="synopsis">Can Update:</label>
+                <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span>
+                <input type="checkbox" ng-model="role.canUpdateWorkspace" class="form-control" placeholder="Enter requirements"/>
+            </div>
+            <div class="guideVocal" ng-show="updateHelp" ng-click="updateHelp=false">
+                This checkbox confers the ability for the members of this role to be able to 
+                update the workspace.  Any person in a role checked like this will be able 
+                to see and modify resources in the workspace.   People who are not in any
+                update role, but in another role, will have read-only access.   Please note:
+                the administrator at the site level can set which users are allowed to have
+                update and which users are restricted to read-only, and that takes precidence.
+            </div>
             <div style="margin-bottom:40px">
+<% if (canUpdate) { %>
                 <button ng-click="updateRole(role)" class="btn btn-default btn-raised">Save</button>
+<% } %>
             </div>
             <div class="form-group">
                 <label for="synopsis">Responsibilities:</label>
@@ -220,9 +236,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
             <div>
+<% if (canUpdate) { %>
                 <button ng-click="openResponsibilityModal()" class="btn btn-default btn-raised">
                     Create Responsibility
                 </button>
+<% } %>
                 <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span>
             </div>
             <div class="guideVocal" ng-show="respHelp" ng-click="respHelp=false">
@@ -274,8 +292,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
             <div>
+<% if (canUpdate) { %>
                 <button ng-click="createTerm()" class="btn btn-default btn-raised">Create Term</button>
                 <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
+<% } %>
             </div>
             <div class="guideVocal" ng-show="termHelp || role.terms.length==0" ng-click="termHelp=false">
                 You can create a 'term of office' for this role, those are particular time periods for which 

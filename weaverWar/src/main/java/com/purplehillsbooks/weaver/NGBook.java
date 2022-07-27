@@ -760,8 +760,8 @@ public class NGBook extends ContainerCommon {
 
     private void assertPermissionToCreateProject(AuthRequest ar) throws Exception {
         if (ar.isLoggedIn()) {
-            if (!primaryPermission(ar.getUserProfile())) {
-                throw new Exception("Must be an owner of the site to create new projects");
+            if (!isSiteExecutive(ar.getUserProfile())) {
+                throw new Exception("Must be an executive of the site to create new projects");
             }
             return;
         }
@@ -817,14 +817,10 @@ public class NGBook extends ContainerCommon {
         NGWorkspace newWorkspace = new NGWorkspace(newFilePath, newDoc, this);
         newWorkspace.setKey(newKey);
 
-        // make the current user to ALL key roles of the new page
-        newWorkspace.addPlayerToRole("Administrators", up.getUniversalId());
-        newWorkspace.addPlayerToRole("Members", up.getUniversalId());
-        newWorkspace.addPlayerToRole("Facilitator", up.getUniversalId());
-        newWorkspace.addPlayerToRole("Circle Administrator", up.getUniversalId());
-        newWorkspace.addPlayerToRole("Operations Leader", up.getUniversalId());
-        newWorkspace.addPlayerToRole("Representative", up.getUniversalId());
-        newWorkspace.addPlayerToRole("External Expert", up.getUniversalId());
+        // make the current user to ALL roles of the new page
+        for (NGRole role : newWorkspace.getAllRoles()) {
+            role.addPlayer(up.getAddressListEntry());
+        }
 
         // register this into the page index
         cog.makeIndexForWorkspace(newWorkspace);
@@ -1311,6 +1307,23 @@ public class NGBook extends ContainerCommon {
                 }
                 userInfo.put("wscount", wsMap.length());
             }
+        }
+    }
+    
+    public boolean isSiteOwner(UserRef user) throws Exception {
+        return this.primaryPermission(user);
+    }
+    public boolean isSiteExecutive(UserRef user) throws Exception {
+        return this.primaryOrSecondaryPermission(user);
+    }
+    public void assertSiteOwner(UserRef user, String descript) throws Exception {
+        if (!isSiteOwner(user)) {
+            throw new JSONException("User {0} is not an owner of the site. {1}", user.getUniversalId(), descript);
+        }
+    }
+    public void assertSiteExecutive(UserRef user, String descript) throws Exception {
+        if (!isSiteOwner(user)) {
+            throw new JSONException("User {0} is not an executive of the site. {1}", user.getUniversalId(), descript);
         }
     }
 

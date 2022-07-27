@@ -735,10 +735,20 @@ public class AuthRequest
         }
     }
 
+    public void assertAccessWorkspace(String opDescription) throws Exception {
+        assertMember(opDescription);
+    }
+    public void assertUpdateWorkspace(String opDescription) throws Exception {
+        assertMember(opDescription);
+    }
     public void assertMember(String opDescription) throws Exception {
         if (ngp==null) {
             throw new ProgramLogicError("'assertMember' is being called, but no page has been associated with the AuthRequest object");
         }
+        if (!(ngp instanceof NGWorkspace)) {
+            throw new Exception("Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
+        }
+        NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
             //yes logged in, everything is OK
@@ -756,7 +766,7 @@ public class AuthRequest
         }
 
         //check the container rules on who can be a member
-        if (!ngp.primaryOrSecondaryPermission(user)) {
+        if (!ngw.canAccessWorkspace(user)) {
             throw new JSONException("User is not a member of this workspace. {0}", opDescription);
         }
     }
@@ -799,7 +809,7 @@ public class AuthRequest
         }
         else if (ngp instanceof NGWorkspace) {
             NGWorkspace workspace = ((NGWorkspace)ngp);
-            return workspace.getSite().userReadOnly(getBestUserId());
+            return !workspace.canUpdateWorkspace(user);
         }
         return true;
     }
@@ -810,9 +820,7 @@ public class AuthRequest
         }
     }
 
-    //checks the registered page and if there is on, returns true
-    //if you are a member of the page, false otherwise.
-    public boolean isMember() throws Exception {
+    public boolean canAccessWorkspace() throws Exception {
         if (!isLoggedIn())
         {
             return false;
@@ -823,6 +831,28 @@ public class AuthRequest
         }
         if (isSuperAdmin()) {
             return true;
+        }
+        if (ngp instanceof NGWorkspace) {
+            NGWorkspace ngw = (NGWorkspace) ngp;
+            return ngw.canAccessWorkspace(user);
+        }
+        return (ngp.primaryOrSecondaryPermission(user));
+    }
+    public boolean canUpdateWorkspace() throws Exception {
+        if (!isLoggedIn())
+        {
+            return false;
+        }
+        if (ngp==null)
+        {
+            return false;
+        }
+        if (isSuperAdmin()) {
+            return true;
+        }
+        if (ngp instanceof NGWorkspace) {
+            NGWorkspace ngw = (NGWorkspace) ngp;
+            return ngw.canUpdateWorkspace(user);
         }
         return (ngp.primaryOrSecondaryPermission(user));
     }

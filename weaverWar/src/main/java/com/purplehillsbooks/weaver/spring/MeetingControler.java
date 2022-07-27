@@ -89,7 +89,7 @@ public class MeetingControler extends BaseController {
                 streamJSPAnonUnwrapped(ar, "MeetingAnon.jsp");
                 return;
             }
-            if (ar.isMember() || canAccess) {
+            if (ar.canAccessWorkspace() || canAccess) {
                 streamJSP(ar, "MeetingFull.jsp");
                 return;
             }
@@ -126,20 +126,9 @@ public class MeetingControler extends BaseController {
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
-            if (!canAccess) {
-                showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
-                return;
-            }
-
-            ar.setParam("pageId", pageId);
-            ar.setParam("siteId", siteId);
-            if(!ar.isLoggedIn()) {
-                streamJSPAnonUnwrapped(ar, "MeetingAnon.jsp");
-                return;
-            }
-
-            streamJSP(ar, "MeetingHtml.jsp");
-        }catch(Exception ex){
+            showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
+        }
+        catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
@@ -340,9 +329,9 @@ public class MeetingControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to create a meeting.");
               ar.assertNotFrozen(ngw);
               ar.assertNotReadOnly("Cannot create a meeting");
+              
               JSONObject meetingInfo = getPostedObject(ar);
               String name = meetingInfo.getString("name");
               if (name==null || name.length()==0) {
@@ -592,9 +581,10 @@ public class MeetingControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to delete a meeting.");
+              ar.assertUpdateWorkspace("Must be able to update a workspace to delete a meeting.");
               ar.assertNotFrozen(ngw);
               ar.assertNotReadOnly("Cannot delete a meeting");
+              
               JSONObject meetingInfo = getPostedObject(ar);
               meetingId = meetingInfo.getString("id");
               ngw.removeMeeting(meetingId);

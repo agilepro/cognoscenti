@@ -123,11 +123,11 @@ public class ProjectGoalController extends BaseController {
 
             //TODO: why does login not work?
             //System.out.println("task page logged in: "+isLoggedIn);
-            boolean isMember   = ar.isMember();
+            boolean canAccessWorkspace   = ar.canAccessWorkspace();
             boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
 
             request.setAttribute("taskId", taskId);
-            if (canAccessGoal && (!isLoggedIn || !isMember) ) {
+            if (canAccessGoal && (!isLoggedIn || !canAccessWorkspace) ) {
                 ar.setParam("pageId", pageId);
                 ar.setParam("siteId", siteId);
                 streamJSPAnonUnwrapped(ar, "ActionItem.jsp");
@@ -229,7 +229,7 @@ public class ProjectGoalController extends BaseController {
     {
        // final boolean updateTask =  true;
         ar.setPageAccessLevels(ngp);
-        ar.assertMember("Must be a member of a workspace to manipulate tasks.");
+        ar.assertUpdateWorkspace("Must be a member of a workspace to manipulate tasks.");
         ar.assertNotFrozen(ngp);
         ar.assertNotReadOnly("Cannot update an action item");
 
@@ -287,7 +287,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception
     {
         ar.setPageAccessLevels(ngp);
-        ar.assertMember("Must be a member of a workspace to manipulate tasks.");
+        ar.assertUpdateWorkspace("Must be a member of a workspace to manipulate tasks.");
         ar.assertNotFrozen(ngp);
         ar.assertNotReadOnly("Cannot create an action item");
 
@@ -377,7 +377,7 @@ public class ProjectGoalController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to reassign task.");
             NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-            ar.assertMember("Must be a member of a workspace to update action items.");
+            ar.assertUpdateWorkspace("Must be able to update workspace to update action items.");
             ar.assertNotFrozen(ngp);
             ar.assertNotReadOnly("Cannot update an action item");
 
@@ -566,7 +566,7 @@ public class ProjectGoalController extends BaseController {
         try{
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to see a action item.");
+            ar.assertAccessWorkspace("Must have access to workspace to see a action item.");
             gid = ar.reqParam("gid");
             GoalRecord gr = null;
             gr = ngp.getGoalOrFail(gid);
@@ -595,7 +595,7 @@ public class ProjectGoalController extends BaseController {
             boolean isNew = "~new~".equals(gid);
             if (isNew) {
                 //if it is a new goal you MUST be a member
-                ar.assertMember("Need to be Member or assignee of task");
+                ar.assertUpdateWorkspace("Need to be Member or assignee of task");
                 ar.assertNotReadOnly("Cannot create an action item");
                 gr = ngp.createGoal(ar.getBestUserId());
                 goalInfo.put("universalid", gr.getUniversalId());
@@ -667,7 +667,7 @@ public class ProjectGoalController extends BaseController {
         try{
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to create a action item.");
+            ar.assertUpdateWorkspace("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
             ar.assertNotReadOnly("Cannot update an action item");
 
@@ -718,7 +718,7 @@ public class ProjectGoalController extends BaseController {
             GoalRecord gr = ngp.getGoalOrFail(gid);
             boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
             if (!canAccessGoal) {
-                ar.assertMember("Need to be Member or assignee of task");
+                ar.assertAccessWorkspace("Need to have access to workspace to see action item history");
             }
 
             JSONArray repo = new JSONArray();
@@ -740,7 +740,7 @@ public class ProjectGoalController extends BaseController {
         try{
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to update a decision.");
+            ar.assertUpdateWorkspace("Must be a member to update a decision.");
             ar.assertNotFrozen(ngp);
             ar.assertNotReadOnly("Cannot update a decision");
             did = ar.reqParam("did");
@@ -917,12 +917,14 @@ public class ProjectGoalController extends BaseController {
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
 
+            UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
-            ar.assertMember("You must be the member of the workspace you are copying to");
-            ar.assertNotReadOnly("Cannot move an action item");
+            thisWS.assertUpdateWorkspace(user, "You must be the member of the workspace you are copying to");
             ar.assertNotFrozen(thisWS);
+            ar.assertNotReadOnly("Cannot move an action item");
+            
             ar.setPageAccessLevels(fromWS);
-            ar.assertMember("You must be the member of the workspace you are copying from");
+            fromWS.assertAccessWorkspace(user, "You must have access to the workspace you are copying from");
 
             GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
             if (oldGoal==null) {

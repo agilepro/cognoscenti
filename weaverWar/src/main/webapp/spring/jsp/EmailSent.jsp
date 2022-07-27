@@ -155,7 +155,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr ng-repeat="rec in emailList">
                 <td>{{offset+$index+1}}</td>
                 <td>{{namePart(rec.From)}}</td>
-                <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
+                <td><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
                 <td>{{rec.Addressee}}</td>
                 <td>{{rec.Status}}</td>
                 <td>{{bestDate(rec) |cdate}}</td>

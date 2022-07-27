@@ -22,7 +22,7 @@
 
     //there might be a better way to measure this that takes into account
     //magic numbers and tokens
-    boolean canComment = ar.isMember();
+    boolean canComment = ar.canUpdateWorkspace();
 
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();

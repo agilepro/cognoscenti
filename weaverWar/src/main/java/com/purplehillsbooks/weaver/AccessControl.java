@@ -47,7 +47,7 @@ public class AccessControl {
     public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngc, AttachmentRecord attachRec)
         throws Exception {
 
-        if (ar.isMember()) {
+        if (ar.canAccessWorkspace()) {
             return true;
         }
 
@@ -199,7 +199,7 @@ public class AccessControl {
     throws Exception {
         if (ar.isLoggedIn()) {
             //if user is logged in, and is a member or superadmin, then can access
-            if (ar.isMember()) {
+            if (ar.canAccessWorkspace()) {
                 System.out.println("CAN-ACCESS-TOPIC: user is a member");
                 return true;
             }
@@ -287,7 +287,7 @@ public class AccessControl {
     throws Exception {
 
         //then, if user is logged in, and is a member, then can access
-        if (ar.isMember()) {
+        if (ar.canAccessWorkspace()) {
             return true;
         }
 
@@ -379,7 +379,7 @@ public class AccessControl {
             }
 
             //members of the workspace always allowed in
-            if (ar.isMember()) {
+            if (ar.canAccessWorkspace()) {
                 return true;
             }
 
@@ -397,6 +397,16 @@ public class AccessControl {
                     return true;
                 }
             }
+            
+            //also walk through and allow any presenters access as well
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (AddressListEntry ale : ai.getPresenters()) {
+                    if (user.hasAnyId(ale.getUniversalId())) {
+                        return true;
+                    }
+                }
+            }
+            
         }
 
 

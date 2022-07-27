@@ -60,6 +60,19 @@ public interface NGRole extends NGLabel {
     public String getColor();
     public void setColor(String reqs);
 
+    /**
+    * Each role specifies whether the person is allowed to edit the contents 
+    * of the workspace or not.   This is a least-permission mode, that is, 
+    * if not specifically allowed, then the user gets read only.  
+    * The user need be in only one role that allows edit, and they get 
+    * edit capability.   They are read only if none of their roles
+    * allows edit.   Also note: there is a global setting by the administrator
+    * that specifies a user as a read-only user for the entire site, and that
+    * takes precidence.   Someone marked by admin as read only can never edit 
+    * anything on the site.
+    */
+    public boolean allowUpdateWorkspace();
+    public void setUpdateWorkspace(boolean alllowed);
 
     /**
     * A description of the purpose of the role, suitable for display to user.

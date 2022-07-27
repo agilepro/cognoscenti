@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AgendaItem;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.CustomRole;
 import com.purplehillsbooks.weaver.MeetingRecord;
@@ -50,16 +51,24 @@ public class MeetingNotesCache {
             CustomRole meetRole = ngw.getRole(targetRole);
             List<AddressListEntry> targetPlayers = meetRole.getExpandedPlayers(ngw);
 
-            //now add the regular workspace members
-            NGRole memberRole = ngw.getPrimaryRole();
-            for (AddressListEntry one : memberRole.getExpandedPlayers(ngw)) {
-                AddressListEntry.addIfNotPresent(targetPlayers,one);
+            //now add all players of all roles, because they have basic access to meetings
+            for (NGRole memberRole : ngw.getAllRoles()) {
+                for (AddressListEntry one : memberRole.getExpandedPlayers(ngw)) {
+                    AddressListEntry.addIfNotPresent(targetPlayers,one);
+                }
             }
 
             //now add the participants if any
             MeetingRecord meet = ngw.findMeeting(this.meetingId);
             for (String part : meet.getParticipants()) {
                 AddressListEntry.addIfNotPresent(targetPlayers, new AddressListEntry(part));
+            }
+            
+            //now add any presenters if not already here
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (AddressListEntry ale : ai.getPresenters()) {
+                    AddressListEntry.addIfNotPresent(targetPlayers, ale);
+                }
             }
             members = targetPlayers;
         }

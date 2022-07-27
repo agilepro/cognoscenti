@@ -40,6 +40,7 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.HTMLWriter;
 
@@ -68,7 +69,10 @@ public class NGWorkspace extends NGPage {
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
-        //System.out.println("     - LOADING: "+theFile.getParentFile().getParentFile().getName());
+        //eliminate any attachments to topics from documents that have been deleted
+        for (TopicRecord tr : this.getAllDiscussionTopics()) {
+            tr.verifyAllAttachments(this);
+        }
         
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
         
@@ -134,6 +138,135 @@ public class NGWorkspace extends NGPage {
         }
     }
 
+    
+    ///////////////// TOPICS //////////////////////
+
+    public List<TopicRecord> getAllDiscussionTopics() throws Exception {
+        return noteParent.getChildren("note", TopicRecord.class);
+    }
+
+    public List<TopicRecord> getDraftNotes(AuthRequest ar)
+    throws Exception {
+        List<TopicRecord> list=new ArrayList<TopicRecord>();
+        if (ar.isLoggedIn()) {
+            List<TopicRecord> fullList = getAllDiscussionTopics();
+            UserProfile thisUserId = ar.getUserProfile();
+            for (TopicRecord note : fullList) {
+                if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
+                    list.add(note);
+                }
+            }
+        }
+        return list;
+    }
+
+
+    public TopicRecord getDiscussionTopic(String topicId) throws Exception {
+        for (TopicRecord lr : getAllDiscussionTopics()) {
+            if (topicId.equals(lr.getId())) {
+                return lr;
+            }
+        }
+        return null;
+    }
+
+
+    public TopicRecord getNoteOrFail(String noteId) throws Exception {
+        TopicRecord ret =  getDiscussionTopic(noteId);
+        if (ret==null) {
+            throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
+        }
+        return ret;
+    }
+
+    public TopicRecord getNoteByUidOrNull(String universalId) throws Exception {
+        if (universalId==null) {
+            return null;
+        }
+        for (TopicRecord lr : getAllDiscussionTopics()) {
+            if (universalId.equals(lr.getUniversalId())) {
+                return lr;
+            }
+        }
+        return null;
+    }
+
+
+    /** mark deleted, don't actually deleting the Topic. */
+    public void deleteNote(String id,AuthRequest ar) throws Exception {
+        TopicRecord ei = getDiscussionTopic( id );
+
+        ei.setTrashPhase( ar );
+    }
+
+    public void unDeleteNote(String id,AuthRequest ar) throws Exception {
+        TopicRecord ei = getDiscussionTopic( id );
+        ei.clearTrashPhase(ar);
+    }
+
+
+
+    public List<TopicRecord> getDeletedNotes(AuthRequest ar)
+    throws Exception {
+        List<TopicRecord> list=new ArrayList<TopicRecord>();
+        List<TopicRecord> fullList = getAllDiscussionTopics();
+
+        for (TopicRecord note : fullList) {
+            if (note.isDeleted()) {
+                list.add(note);
+            }
+        }
+        return list;
+    }
+
+
+    public TopicRecord createNote() throws Exception {
+        TopicRecord note = noteParent.createChild("note", TopicRecord.class);
+        String localId = getUniqueOnPage();
+        note.setId( localId );
+        note.setUniversalId(getContainerUniversalId() + "@" + localId);
+        NGRole subscribers = note.getSubscriberRole();
+        NGRole workspaceMembers = this.getPrimaryRole();
+        subscribers.addPlayersIfNotPresent(workspaceMembers.getExpandedPlayers(this));
+        return note;
+    }
+
+    
+    
+    /**
+    * Get a four digit numeric id which is unique on the page.
+    */
+    @Override
+    public String getUniqueOnPage()
+        throws Exception
+    {
+        existingIds = new ArrayList<String>();
+
+        //this is not to be trusted any more
+        for (NGSection sec : getAllSections()) {
+            sec.findIDs(existingIds);
+        }
+
+        //these added to be sure.  There is no harm in
+        //being redundant.
+        for (TopicRecord note : getAllDiscussionTopics()) {
+            existingIds.add(note.getId());
+        }
+        for (AttachmentRecord att : getAllAttachments()) {
+            existingIds.add(att.getId());
+        }
+        for (GoalRecord task : getAllGoals()) {
+            existingIds.add(task.getId());
+        }
+        for (MeetingRecord meeting : this.getMeetings()) {
+            existingIds.add(meeting.getId());
+            for (AgendaItem ai : meeting.getAgendaItems()) {
+                existingIds.add(ai.getId());
+            }
+        }
+        return IdGenerator.generateFourDigit(existingIds);
+    }
+    
 
     /**
      * Need to inject the saving of the JSON file at this point
@@ -1157,4 +1290,63 @@ public class NGWorkspace extends NGPage {
     
     
     
+    @Override
+    public NGRole getPrimaryRole() throws Exception {
+        return getRequiredRole("Members");
+    }
+    @Override
+    public NGRole getSecondaryRole() throws Exception {
+        return getRequiredRole("Administrators");
+    }
+
+    public NGRole getMuteRole() throws Exception {
+        return pageInfo.requireChild("muteRole", CustomRole.class);
+    }
+
+
+    
+    
+    
+    /**
+     * This gives a definitive response of whether this workspace can be updated
+     * by the given user.  It checks all roles, and anyone in any role will be 
+     * able to have read-only access, but if the role is a role that allows update
+     * then they will have update access.     
+     */
+    public boolean canUpdateWorkspace(UserRef user) throws Exception {
+        //The administrator can control which users are update users and 
+        //which users are read only.
+        if (getSite().userReadOnly(user.getUniversalId())) {
+            return false;
+        }
+        //now look through all the roles and see if this person plays any
+        //that allow update
+        for (NGRole role : this.getAllRoles()) {
+            if (role.allowUpdateWorkspace()) {
+                if (role.isExpandedPlayer(user, this)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean canAccessWorkspace(UserRef user) throws Exception {
+        for (NGRole role : this.getAllRoles()) {
+            if (role.isExpandedPlayer(user, this)) {
+                    return true;
+            }
+        }
+        return false;
+    }
+    public void assertUpdateWorkspace(UserRef user, String descript)  throws Exception {
+        if (!canUpdateWorkspace(user)) {
+            throw new JSONException("User {0} can not update this workspace. {1}", user.getUniversalId(), descript);
+        }
+    }
+    public void assertAccessWorkspace(UserRef user, String descript)  throws Exception {
+        if (!canAccessWorkspace(user)) {
+            throw new JSONException("User {0} can not access this workspace. {1}", user.getUniversalId(), descript);
+        }
+    }
+
 }

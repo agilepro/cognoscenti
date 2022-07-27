@@ -20,11 +20,11 @@ Required parameter:
     ar.setPageAccessLevelsWithoutVisit(site);
     ar.assertMember("Must be an executive of a site to create a new workspace");
     String debugMessage = "";
-    if (ar.isMember()) {
-        debugMessage += ar.getBestUserId() + " is a member of "+ar.ngp.getFullName();
+    if (ar.canUpdateWorkspace()) {
+        debugMessage += ar.getBestUserId() + " can update "+ar.ngp.getFullName();
     }
     else {
-        debugMessage += ar.getBestUserId() + " is NOT a member of "+ar.ngp.getFullName();
+        debugMessage += ar.getBestUserId() + " can not update "+ar.ngp.getFullName();
     }
     debugMessage += "\nisSuperAdmin: "+ar.isSuperAdmin();
     debugMessage += "\nPRIMARY permission: "+site.primaryPermission(curUser);

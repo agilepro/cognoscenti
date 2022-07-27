@@ -40,7 +40,6 @@ Required parameters:
     String fileSize = String.format("%,d", fileSizeInt);
 
     boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngp, attachment);
-    boolean isMember = ar.isMember();
 
     String relativeLink = "a/"+attachment.getNiceName()+"?version="+attachment.getVersion();
     String permaLink = ar.getResourceURL(ngp, relativeLink);
@@ -119,7 +118,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.myComment = "";
     $scope.canAccess = <%=canAccessDoc%>;
-    $scope.isMember = <%=ar.isMember()%>;
+    $scope.isMember = <%=ar.canUpdateWorkspace()%>;
     $scope.readonly = <%=ar.isReadOnly()%>;
 
     $scope.showError = false;

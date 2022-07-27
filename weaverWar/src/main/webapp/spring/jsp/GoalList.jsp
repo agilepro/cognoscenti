@@ -371,8 +371,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             startMode: function () {
               return startMode;
             },
-            siteId: function () {
-              return $scope.siteInfo.key;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });

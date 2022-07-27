@@ -226,7 +226,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         if (role.terms.length > 0) {
             var selTerm = role.terms[role.terms.length-1];
-            window.location = "roleNomination.htm?role="+role.name+"&term="+selTerm.key;
+            window.location = "RoleNomination.htm?role="+role.name+"&term="+selTerm.key;
             return;
         }
         
@@ -255,7 +255,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             data.terms.forEach( function(aTerm) {
                 if (aTerm.termStart == proposeBegin) {
                     createdTerm = true;
-                    window.location = "roleNomination.htm?role="+role.name+"&term="+aTerm.key;
+                    window.location = "RoleNomination.htm?role="+role.name+"&term="+aTerm.key;
                 }
             });
             if (!createdTerm) {

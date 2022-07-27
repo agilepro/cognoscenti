@@ -120,7 +120,7 @@ public abstract class NGContainer extends DOMFile
     */
     public boolean primaryPermission(UserRef user) throws Exception {
         if (user==null) {
-            throw new ProgramLogicError("primaryPermission called with null user object.");
+            return false;
         }
         return getPrimaryRole().isExpandedPlayer(user, this);
     }
@@ -131,16 +131,16 @@ public abstract class NGContainer extends DOMFile
     * permissions.  This method checks both roles easily.
     */
     public boolean primaryOrSecondaryPermission(UserRef user) throws Exception {
-        if (primaryPermission(user))
-        {
+        if (user==null) {
+            return false;
+        }
+        if (primaryPermission(user)) {
             return true;
         }
-        if (secondaryPermission(user))
-        {
+        if (secondaryPermission(user)) {
             return true;
         }
-        if (this instanceof NGWorkspace)
-        {
+        if (this instanceof NGWorkspace) {
             throw new ProgramLogicError("NGWorkspace overrides this, so this should never happen");
         }
         return false;

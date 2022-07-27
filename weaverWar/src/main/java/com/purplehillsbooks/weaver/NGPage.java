@@ -173,11 +173,6 @@ public abstract class NGPage extends ContainerCommon {
         }
         
         
-        //eliminate any attachments to topics from documents that have been deleted
-        for (TopicRecord tr : this.getAllDiscussionTopics()) {
-            tr.verifyAllAttachments(this);
-        }
-        
         //eliminate old meetings that were just backlog containers
         //added Dec 2021 cleanup schema migration
         for (MeetingRecord meet: getMeetings()) {
@@ -652,9 +647,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     public void findTags(List<String> v) throws Exception {
-        for (TopicRecord note : getAllDiscussionTopics()) {
-            note.findTags(v);
-        }
+        //Tags not implemented any more
     }
 
 
@@ -912,39 +905,6 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-    /**
-    * Get a four digit numeric id which is unique on the page.
-    */
-    @Override
-    public String getUniqueOnPage()
-        throws Exception
-    {
-        existingIds = new ArrayList<String>();
-
-        //this is not to be trusted any more
-        for (NGSection sec : getAllSections()) {
-            sec.findIDs(existingIds);
-        }
-
-        //these added to be sure.  There is no harm in
-        //being redundant.
-        for (TopicRecord note : getAllDiscussionTopics()) {
-            existingIds.add(note.getId());
-        }
-        for (AttachmentRecord att : getAllAttachments()) {
-            existingIds.add(att.getId());
-        }
-        for (GoalRecord task : getAllGoals()) {
-            existingIds.add(task.getId());
-        }
-        for (MeetingRecord meeting : this.getMeetings()) {
-            existingIds.add(meeting.getId());
-            for (AgendaItem ai : meeting.getAgendaItems()) {
-                existingIds.add(ai.getId());
-            }
-        }
-        return IdGenerator.generateFourDigit(existingIds);
-    }
 
 
     //Override
@@ -956,20 +916,6 @@ public abstract class NGPage extends ContainerCommon {
             reminderMgr = requireChild("reminders", ReminderMgr.class);
         }
         return reminderMgr;
-    }
-
-
-    @Override
-    public NGRole getPrimaryRole() throws Exception {
-        return getRequiredRole("Members");
-    }
-    @Override
-    public NGRole getSecondaryRole() throws Exception {
-        return getRequiredRole("Administrators");
-    }
-
-    public NGRole getMuteRole() throws Exception {
-        return pageInfo.requireChild("muteRole", CustomRole.class);
     }
 
 
@@ -1067,98 +1013,6 @@ public abstract class NGPage extends ContainerCommon {
         return requestList;
     }
 
-    ///////////////// NOTES //////////////////////
-
-    public List<TopicRecord> getAllDiscussionTopics() throws Exception {
-        return noteParent.getChildren("note", TopicRecord.class);
-    }
-
-    public List<TopicRecord> getDraftNotes(AuthRequest ar)
-    throws Exception {
-        List<TopicRecord> list=new ArrayList<TopicRecord>();
-        if (ar.isLoggedIn()) {
-            List<TopicRecord> fullList = getAllDiscussionTopics();
-            UserProfile thisUserId = ar.getUserProfile();
-            for (TopicRecord note : fullList) {
-                if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
-                    list.add(note);
-                }
-            }
-        }
-        return list;
-    }
-
-
-    public TopicRecord getDiscussionTopic(String topicId) throws Exception {
-        for (TopicRecord lr : getAllDiscussionTopics()) {
-            if (topicId.equals(lr.getId())) {
-                return lr;
-            }
-        }
-        return null;
-    }
-
-
-    public TopicRecord getNoteOrFail(String noteId) throws Exception {
-        TopicRecord ret =  getDiscussionTopic(noteId);
-        if (ret==null) {
-            throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
-        }
-        return ret;
-    }
-
-    public TopicRecord getNoteByUidOrNull(String universalId) throws Exception {
-        if (universalId==null) {
-            return null;
-        }
-        for (TopicRecord lr : getAllDiscussionTopics()) {
-            if (universalId.equals(lr.getUniversalId())) {
-                return lr;
-            }
-        }
-        return null;
-    }
-
-
-    /** mark deleted, don't actually deleting the Topic. */
-    public void deleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getDiscussionTopic( id );
-
-        ei.setTrashPhase( ar );
-    }
-
-    public void unDeleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getDiscussionTopic( id );
-        ei.clearTrashPhase(ar);
-    }
-
-
-
-    public List<TopicRecord> getDeletedNotes(AuthRequest ar)
-    throws Exception {
-        List<TopicRecord> list=new ArrayList<TopicRecord>();
-        List<TopicRecord> fullList = getAllDiscussionTopics();
-
-        for (TopicRecord note : fullList) {
-            if (note.isDeleted()) {
-                list.add(note);
-            }
-        }
-        return list;
-    }
-
-
-    public TopicRecord createNote() throws Exception {
-        TopicRecord note = noteParent.createChild("note", TopicRecord.class);
-        String localId = getUniqueOnPage();
-        note.setId( localId );
-        note.setUniversalId(getContainerUniversalId() + "@" + localId);
-        NGRole subscribers = note.getSubscriberRole();
-        NGRole workspaceMembers = this.getPrimaryRole();
-        subscribers.addPlayersIfNotPresent(workspaceMembers.getExpandedPlayers(this));
-        return note;
-    }
-
 
 
 
@@ -1236,30 +1090,6 @@ public abstract class NGPage extends ContainerCommon {
         ar.write( "</a>");
     }
 
-    @Override
-    public void writeNoteLink(AuthRequest ar,String noteId, int len) throws Exception{
-        TopicRecord note = getDiscussionTopic( noteId );
-        if(note==null){
-            if ("x".equals(noteId))
-            {
-                ar.write("(attached documents only)");
-            }
-            else
-            {
-                ar.write( "(Topic " );
-                ar.write( noteId );
-                ar.write( ")" );
-            }
-            return;
-        }
-        String nameOfLink =  trimName(note.getSubject(), len);
-        writePageUrl(ar);
-        ar.write("/noteZoom");
-        ar.writeURLData(note.getId());
-        ar.write(".htm\">" );
-        ar.writeHtml(nameOfLink);
-        ar.write( "</a>");
-    }
 
 
     private void writePageUrl(AuthRequest ar) throws Exception{

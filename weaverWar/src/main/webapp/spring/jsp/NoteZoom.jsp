@@ -28,7 +28,7 @@ Required parameter:
 
     //there might be a better way to measure this that takes into account
     //magic numbers and tokens
-    boolean canComment = ar.isMember();
+    boolean canComment = ar.canUpdateWorkspace();
 
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
@@ -671,7 +671,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.createDecision(modifiedDecision);
             $scope.extendBackgroundTime();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.refreshTopic();
             $scope.extendBackgroundTime();
         });
     };
@@ -788,6 +788,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         }, function () {
+            $scope.refreshTopic();
             $scope.retrieveAllDocuments();
             $scope.extendBackgroundTime();
         });
@@ -821,8 +822,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.saveEdits(['actionList']);
             $scope.extendBackgroundTime();
         }, function () {
+            $scope.refreshTopic();
             $scope.extendBackgroundTime();
-            //cancel action - nothing really to do
         });
     };
     
@@ -851,8 +852,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             startMode: function () {
               return start;
             },
-            siteId: function () {
-              return $scope.siteInfo.key;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });
@@ -866,9 +867,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             $scope.refreshAllGoals();
+            $scope.refreshTopic();
         }, function () {
+            $scope.refreshAllGoals();
+            $scope.refreshTopic();
             $scope.extendBackgroundTime();
-          //cancel action
         });
     };    
     $scope.refreshAllGoals = function() {
@@ -924,11 +927,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         attachModalInstance.result
         .then(function (selectedActionItems) {
+            $scope.refreshTopic();
             $scope.extendBackgroundTime();
-            //not sure what to do here
         }, function () {
+            $scope.refreshTopic();
             $scope.extendBackgroundTime();
-            //cancel action - nothing really to do
         });
     };
 
@@ -1142,8 +1145,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         {{noteInfo.subject}}
     </div>
 
-    <div class="bordereddiv">
-        <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
+    <div class="bordereddiv" ng-hide="isEditing" >
+        <div class="leafContent" ng-dblclick="startEdit()">
             <div  ng-bind-html="htmlEditing"></div>
         </div>
     </div>

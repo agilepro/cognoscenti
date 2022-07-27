@@ -54,11 +54,6 @@ public class MainTabsViewControler extends BaseController {
 
     //////////////////////////////// REDIRECTS ///////////////////////////////////
 
-    @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
-    public void redFrontPage(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)throws Exception {
-        response.sendRedirect("FrontPage.htm");
-    }
     @RequestMapping(value = "/{siteId}/{pageId}/", method = RequestMethod.GET)
     public void redIndex(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
@@ -79,8 +74,8 @@ public class MainTabsViewControler extends BaseController {
             showJSPSiteLiberal(ar, siteId, "FrontTop.jsp");
         }
         else {
-            registerSiteOrProject(ar, siteId, pageId);
-            showJSPDepending(ar, null, "FrontTop.jsp", true);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            showJSPDepending(ar, ngw, "FrontTop.jsp", true);
         }
     }
 
@@ -118,7 +113,7 @@ public class MainTabsViewControler extends BaseController {
             if (warnNotLoggedIn(ar)) {
                 return;
             }
-            registerSiteOrProject(ar, siteId, pageId);
+            registerRequiredProject(ar, siteId, pageId);
             streamJSP(ar, "SearchAllNotes.jsp");
 
         }catch(Exception ex){
@@ -329,7 +324,6 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to create a action item.");
               ar.assertNotFrozen(ngw);
               ar.assertNotReadOnly("Cannot create a action item");
 

@@ -26,8 +26,6 @@
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
-    
-    boolean isMember = ar.isMember();
 
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -41,7 +39,7 @@
     String currentUserKey = up.getKey();
 
     JSONArray allLabels = ngw.getJSONLabels();
-    boolean canComment = ar.isMember();
+    boolean canComment = ar.canUpdateWorkspace();
 
 
 

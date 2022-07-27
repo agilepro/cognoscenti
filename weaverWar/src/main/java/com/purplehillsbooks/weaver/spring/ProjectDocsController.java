@@ -46,6 +46,7 @@ import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserCache;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -71,7 +72,7 @@ public class ProjectDocsController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsFolder.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsFolder.htm", method = RequestMethod.GET)
     public void docsFolder(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -333,9 +334,9 @@ public class ProjectDocsController extends BaseController {
             did = ar.reqParam("did");
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member to update a document information.");
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update a document.");
+            
             JSONObject docInfo = getPostedObject(ar);
             int historyEventType = 0;
 
@@ -376,7 +377,7 @@ public class ProjectDocsController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertMember("Must be a member of workspace to get the document list.");
+            ngw.assertAccessWorkspace(ar.getUserProfile(), "Must have access to a workspace to get the document list.");
 
             JSONArray attachmentList = new JSONArray();
             for (AttachmentRecord doc : ngw.getAllAttachments()) {
@@ -417,12 +418,13 @@ public class ProjectDocsController extends BaseController {
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
 
+            UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
             ar.assertNotFrozen(thisWS);
-            ar.assertMember("You must be the member of the workspace you are copying to");
+            thisWS.assertUpdateWorkspace(user, "You must be able to update the workspace you are copying to");
             ar.assertNotReadOnly("Cannot copy a document");
             ar.setPageAccessLevels(fromWS);
-            ar.assertMember("You must be the member of the workspace you are copying from");
+            fromWS.assertAccessWorkspace(user, "You must be able to access the workspace you are copying from");
 
             AttachmentRecord oldDoc = fromWS.findAttachmentByID(docId);
             if (oldDoc==null) {
@@ -476,7 +478,7 @@ public class ProjectDocsController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/SharePorts.htm", method = RequestMethod.GET)
     public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);

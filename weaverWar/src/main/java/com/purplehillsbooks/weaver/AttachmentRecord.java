@@ -677,6 +677,7 @@ public class AttachmentRecord extends CommentContainer {
      * Admin role and Member role are assumed automatically, and are not in this list.
      * This list contains only the extra roles that have access for non-members.
      */
+    /*
     public List<NGRole> getAccessRoles() throws Exception {
         if (container==null) {
             throw new ProgramLogicError("call to rolesWithAccess must be made AFTER the container is set.");
@@ -693,6 +694,7 @@ public class AttachmentRecord extends CommentContainer {
         }
         return res;
     }
+    */
 
 
     /**
@@ -906,7 +908,7 @@ public class AttachmentRecord extends CommentContainer {
         }
         thisDoc.put("comments",  allCommentss);
         
-        if (ar.isMember()) {
+        if (ar.canAccessWorkspace()) {
             //this should only be given to members, it allows them to give 
             //others access to the document.  Some people getting document
             //info do not have access to the document, and therefor this prevents

@@ -396,6 +396,7 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = getJSON();
         jObj.put("perpetual", this.getAttributeBool("perpetual"));
         extractAttributeInt(jObj, "termLength");
+        extractAttributeBool(jObj, "canUpdateWorkspace");
 
         List<RoleTerm> allTerms = getAllTerms();
         JSONArray termArray = new JSONArray();
@@ -418,6 +419,7 @@ public class CustomRole extends DOMFace implements NGRole
         updateAttributeString("linkedRole", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
+        updateAttributeBool("canUpdateWorkspace", roleInfo);
         if (roleInfo.has("requirements")) {
             //internal key is not same as external
             setRequirements(roleInfo.getString("requirements"));
@@ -447,4 +449,18 @@ public class CustomRole extends DOMFace implements NGRole
         updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");
         updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
     }
+    
+    public boolean allowUpdateWorkspace() {
+        //Traditionally, the Members role has allowed edit, while no other role
+        //did, so this condition provides backward compatibility, and also assures
+        //that the members role is ALWAYS a update role forever.
+        if ("Members".equals(getName())) {
+            return true;
+        }
+        return getAttributeBool("canUpdateWorkspace");
+    }
+    public void setUpdateWorkspace(boolean allowed) {
+        setAttributeBool("canUpdateWorkspace", allowed);
+    }
+
 }

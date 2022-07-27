@@ -111,11 +111,8 @@
     }
 
 
-//TODO: determine what this does.
-    String deletedWarning = "";
 
-    NGContainer ngp =null;
-    NGBook ngb=null;
+/*
     UserProfile userPageUser = null;
     String pageUserName = "";
     if(isUserHeader && pageUserKey!=null){
@@ -124,34 +121,23 @@
             pageUserName = userPageUser.getName();
         }
     }
+*/
 
-//TODO: why test for pageTitle being null here?
-    if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
-    }
+    NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
+    NGBook ngb = ngw.getSite();
 
 
     boolean isFrozen=false;
     boolean isDeleted=false;    
-    if (ngp!=null) {
-        ar.setPageAccessLevels(ngp);
-        pageTitle = ngp.getFullName();
-        if(ngp instanceof NGWorkspace) {
-            ngb = ((NGWorkspace)ngp).getSite();
-            showExperimental = ngb.getShowExperimental();
-            if (loggedUser!=null) {
-                ((NGWorkspace)ngp).registerJoining(loggedUser);
-            }
-        }
-        else if(ngp instanceof NGBook) {
-            ngb = ((NGBook)ngp);
-            showExperimental = ngb.getShowExperimental();
-        }
-        if (ngp.isDeleted()) {
+    String deletedWarning = "";
+    if (ngw!=null) {
+        ar.setPageAccessLevels(ngw);
+        pageTitle = ngw.getFullName();
+        if (ngw.isDeleted()) {
             isDeleted = true;
             deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
         }
-        else if (ngp.isFrozen()) {
+        else if (ngw.isFrozen()) {
             isFrozen=true;
             deletedWarning = " &#10052; (Frozen)";
         }
@@ -306,19 +292,13 @@ myApp.filter('cdate', function() {
       <ol class="title">
       <% if(!ar.isLoggedIn()) { %>
           <!-- user is not logged in, don't display any breadcrumbs -->
-      <% } else if(isUserHeader) { %>
-        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></div></li>
-      <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
-            Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
       <% } else { %>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
-            <%ar.writeHtml(ngp.getFullName());%></a>
+        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngw.getKey());%>/FrontPage.htm">
+            <%ar.writeHtml(ngw.getFullName());%></a>
                 <span style="color:gray">
-                <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
-                  else if (ngp.isFrozen()) {ar.write(" (FROZEN) ");}%>
+                <%if (ngw.isDeleted()) {ar.write(" (DELETED) ");}
+                  else if (ngw.isFrozen()) {ar.write(" (FROZEN) ");}%>
                 </span>
             </li>
       <% } %>
@@ -327,7 +307,7 @@ myApp.filter('cdate', function() {
       <script>
       function setMainPageTitle(str) {
           document.getElementById("mainPageTitle").innerHTML = str;
-          document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
+          document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
       }
       </script>
       <!-- BEGIN Title and Breadcrump -->

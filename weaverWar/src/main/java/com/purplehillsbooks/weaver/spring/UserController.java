@@ -409,7 +409,7 @@ public class UserController extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGContainer ngc =  registerSiteOrProject(ar, siteId, pageId);
+            NGWorkspace ngc =  registerRequiredProject(ar, siteId, pageId);
 
             String requestId = ar.reqParam("requestId");
             RoleRequestRecord roleRequestRecord = ngc.getRoleRequestRecordById(requestId);

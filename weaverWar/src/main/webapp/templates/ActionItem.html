@@ -256,6 +256,12 @@
     </div>
     <div style="clear:both"></div>
   </div>
+  <div ng-show="editMode=='error'">
+    <h2>An error occurred</h2>
+    <div style="text-align:center">
+      {{error}}
+    </div>
+  </div>  
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary btn-raised" ng-click="ok()">Save</button>

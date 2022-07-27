@@ -40,7 +40,7 @@ Required parameters:
     String fileSize = String.format("%,d", fileSizeInt);
 
     boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngp, attachment);
-    boolean isMember = ar.isMember();
+    boolean isMember = ar.canUpdateWorkspace();
 
     String relativeLink = "a/"+attachment.getNiceName()+"?version="+attachment.getVersion();
     String permaLink = ar.getResourceURL(ngp, relativeLink);

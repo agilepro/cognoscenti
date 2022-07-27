@@ -58,7 +58,7 @@ public class CreateProjectController extends BaseController {
         try{
             NGBook site = ar.getCogInstance().getSiteById(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertMember("Must be an executive of a site to create a new workspace");
+            site.assertSiteExecutive(ar.getUserProfile(), "Must be an executive of a site to create a new workspace");
 
             JSONObject newConfig = getPostedObject(ar);
             String workspaceName = newConfig.getString("newName");

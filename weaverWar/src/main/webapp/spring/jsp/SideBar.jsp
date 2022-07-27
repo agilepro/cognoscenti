@@ -34,21 +34,11 @@
     
     JSONArray fullMenu = new JSONArray();
     
-    if(isSiteHeader) {
-        fullMenu.addAll(allMenu.getJSONArray("siteMode"));
-    }
-    else if(!isUserHeader) {
-        fullMenu.addAll(allMenu.getJSONArray("workMode"));
-    }
+    fullMenu.addAll(allMenu.getJSONArray("workMode"));
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
-    boolean userIsReadOnly = false;
-    if (site!=null) {
-        userIsReadOnly = ar.isReadOnly(); 
-    }
-    else if (ngp!=null) {
-        //userIsReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId());
-    }
+    boolean userIsReadOnly = !ngw.canUpdateWorkspace(ar.getUserProfile());
+
 %>
 
 <!-- Side Bar -->

@@ -30,6 +30,7 @@ Required parameters:
 
     JSONArray allLabels = ngp.getJSONLabels();
     boolean isFrozen = ngp.isFrozen();
+    boolean canUpdate = ar.canUpdateWorkspace();
 
 
 /*** PROTOTYPE
@@ -62,6 +63,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.startMode = "<%ar.writeJS(startMode);%>";
     $scope.filter = "";
     $scope.filterMap = {};
+    $scope.canUpdate = <%=canUpdate%>;
 
     $scope.newPerson = "";
 
@@ -109,7 +111,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.startCreating = function() {
         if ($scope.isFrozen) {
-            alert("You are not able to create a new decisions because this workspace is frozen");
+            alert("You are not able to create a new decision because this workspace is frozen");
+            return;
+        }
+        if (!$scope.canUpdate) {
+            alert("You are not able to create a new decision because you are a READ-ONLY user");
             return;
         }
         var newDec = {num:"~new~",universalid:"~new~",timestamp:new Date().getTime(),labelMap:{}}
@@ -117,6 +123,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.saveDecision = function(newRec) {
+        if (!$scope.canUpdate) {
+            alert("You are not able to save a new decision because you are a READ-ONLY user");
+            return;
+        }
         var isPreserved = (!newRec.deleteMe)
         var postURL = "updateDecision.json?did="+newRec.num;
         var postData = angular.toJson(newRec);
@@ -192,7 +202,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("You are not able to edit decisions because this workspace is frozen");
             return;
         }
-
+        if (!$scope.canUpdate) {
+            alert("You are not able to edit decisions because you are a READ-ONLY user");
+            return;
+        }
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: "<%=ar.retPath%>templates/DecisionModal.html?t="+new Date().getTime(),
@@ -233,6 +246,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.advanceDate = function(decision) {
         if ($scope.isFrozen) {
             alert("You are not able to change due dates on decisions because the workspace is frozen");
+            return;
+        }
+        if (!$scope.canUpdate) {
+            alert("You are not able to change due dates on decisions because you are a READ-ONLY user");
             return;
         }
         decision.reviewDate = decision.reviewDate + (365*24*60*60*1000);
@@ -295,6 +312,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
          <tr ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)"
              style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
                 <td style="padding:3px;vertical-align:top;margin:5px;">
+<% if (canUpdate) { %>
                   <div class="dropdown" style="padding:4px">
                     <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
                         data-toggle="dropdown"> <span class="caret"></span> </button>
@@ -309,6 +327,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           Advance Review Date 1 Year</a></li>
                     </ul>
                   </div>
+<% } %>
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;" id="DEC{{rec.num}}">
                   <a href="DecisionList.htm#DEC{{rec.num}}"><span style="font-size:200%;">{{rec.num}}</span></a>

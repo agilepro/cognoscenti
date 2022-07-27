@@ -134,6 +134,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Item Details");
     $scope.siteId = "<%ar.writeJS(siteId);%>";
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
@@ -506,8 +507,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             startMode: function () {
               return startMode;
             },
-            siteId: function () {
-              return $scope.siteId;
+            siteInfo: function () {
+              return $scope.siteInfo;
             }
           }
         });

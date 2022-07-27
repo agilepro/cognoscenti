@@ -11,13 +11,14 @@
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
+    boolean canUpdate = ar.canUpdateWorkspace();
     
     JSONObject siteInfo = ngb.getConfigJSON();
     siteInfo.put("frozen", ngb.isFrozen());
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
     
-    boolean isMember = ar.isMember();
+    boolean isMember = ar.canUpdateWorkspace();
 
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -111,6 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openMap = {};
     $scope.showFilter = <%=ar.isLoggedIn()%>;
     $scope.initialFetchDone = false;
+    $scope.canUpdate = <%=canUpdate%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -215,13 +217,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return res;
     }
     $scope.toggleNoteDel = function(rec) {
-        newRec = {};
+
+        if (!$scope.canUpdate) {
+            alert("You are not able to update this topic because you are a READ-ONLY user");
+            return;
+        }        newRec = {};
         newRec.id = rec.id;
         newRec.universalid = rec.universalid;
         newRec.deleted = !rec.deleted;
         $scope.updateNote(newRec);
     }
     $scope.updateNote = function(rec) {
+
+        if (!$scope.canUpdate) {
+            alert("You are not able to update this topic because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "updateNote.json?nid="+rec.id;
         var postdata = angular.toJson(rec);
         $scope.showError=false;
@@ -247,6 +258,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openTopicCreator = function() {
         
+        if (!$scope.canUpdate) {
+            alert("You are not able to create a topic because you are a READ-ONLY user");
+            return;
+        }
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\nNew discussion topics can not be created in a frozen workspace.");
             return;

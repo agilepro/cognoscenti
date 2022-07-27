@@ -42,13 +42,6 @@
     }
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
-    boolean userIsReadOnly = false;
-    if (site!=null) {
-        userIsReadOnly = ar.isReadOnly(); 
-    }
-    else if (ngp!=null) {
-        //userIsReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId());
-    }
 %>
 
 <!-- Side Bar -->
@@ -58,7 +51,7 @@
       
       <li><a href="https://s06.circleweaver.com/TutorialList.html" title="Lots of videos on YouTube to help you learn how to use Weaver." target="_blank">Training <i class="fa fa-external-link"></i></a></li>
       
-      <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
+      <li style="color:black">  LIMITED</li>
     
   </ul>
 

@@ -621,6 +621,7 @@ public class TopicRecord extends CommentContainer {
       * Admin role and Member role are assumed automatically, and are not in this list.
       * This list contains only the extra roles that have access for non-members.
       */
+     /*
      public List<NGRole> getAccessRoles(NGContainer ngp) throws Exception {
          List<NGRole> res = new ArrayList<NGRole>();
          List<String> roleNames = getVector("accessRole");
@@ -634,6 +635,7 @@ public class TopicRecord extends CommentContainer {
          }
          return res;
      }
+     */
 
 
      /**
