@@ -377,7 +377,7 @@ public class ProjectDocsController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ngw.assertAccessWorkspace(ar.getUserProfile(), "Must have access to a workspace to get the document list.");
+            ar.assertAccessWorkspace("Must have access to a workspace to get the document list.");
 
             JSONArray attachmentList = new JSONArray();
             for (AttachmentRecord doc : ngw.getAllAttachments()) {
@@ -421,10 +421,10 @@ public class ProjectDocsController extends BaseController {
             UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
             ar.assertNotFrozen(thisWS);
-            thisWS.assertUpdateWorkspace(user, "You must be able to update the workspace you are copying to");
+            ar.assertUpdateWorkspace("You must be able to update the workspace you are copying to");
             ar.assertNotReadOnly("Cannot copy a document");
             ar.setPageAccessLevels(fromWS);
-            fromWS.assertAccessWorkspace(user, "You must be able to access the workspace you are copying from");
+            ar.assertAccessWorkspace("You must be able to access the workspace you are copying from");
 
             AttachmentRecord oldDoc = fromWS.findAttachmentByID(docId);
             if (oldDoc==null) {
@@ -642,11 +642,6 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
         ngp.getNoteOrFail(topicId);
-        //normally the permission comes from a license in the URL for anonymous access
-        //boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-        //if (!canAccessNote) {
-        //    ar.assertMember("must have permission to make a reply");
-        //}
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
@@ -684,7 +679,7 @@ public class ProjectDocsController extends BaseController {
                 AgendaItem ai = meet.findAgendaItem(agendaId);
                 boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngw, meet);
                 if (!canAccessMeet) {
-                    ar.assertMember("must have permission to make a reply");
+                    ar.assertAccessWorkspace("must have permission to make a reply");
                 }
                 ai.updateCommentsFromJSON(input, ar);
                 repo = ai.getJSON(ar, ngw, meet, true);
@@ -694,7 +689,7 @@ public class ProjectDocsController extends BaseController {
                 //normally the permission comes from a license in the URL for anonymous access
                 boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngw, note);
                 if (!canAccessNote) {
-                    ar.assertMember("must have permission to make a reply");
+                    ar.assertAccessWorkspace("must have permission to make a reply");
                 }
                 note.updateCommentsFromJSON(input, ar);
                 repo = note.getJSONWithComments(ar, ngw);

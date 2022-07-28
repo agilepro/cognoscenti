@@ -1338,15 +1338,5 @@ public class NGWorkspace extends NGPage {
         }
         return false;
     }
-    public void assertUpdateWorkspace(UserRef user, String descript)  throws Exception {
-        if (!canUpdateWorkspace(user)) {
-            throw new JSONException("User {0} can not update this workspace. {1}", user.getUniversalId(), descript);
-        }
-    }
-    public void assertAccessWorkspace(UserRef user, String descript)  throws Exception {
-        if (!canAccessWorkspace(user)) {
-            throw new JSONException("User {0} can not access this workspace. {1}", user.getUniversalId(), descript);
-        }
-    }
 
 }

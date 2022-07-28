@@ -18,7 +18,7 @@
     String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see meetings");
+    ar.assertAccessWorkspace("Must be a member to see meetings");
     NGBook site = ngp.getSite();
 
     List<GoalRecord> allGoalsRaw = ngp.getAllGoals();
@@ -230,6 +230,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return src;
     };    
     $scope.swapItems = function(item, amt) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         let movingUp = (amt<0);
         var list = $scope.findGoalsInArea(item.taskArea);
 
@@ -433,11 +437,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.setProspects = function(goal, newVal, $event) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         goal.prospects = newVal;
         $scope.saveGoal(goal);
         $event.stopPropagation();
     }
     $scope.setProspectArea = function(area, newVal, $event) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         area.prospects = newVal;
         $scope.saveArea(area);
         $event.stopPropagation();
@@ -545,6 +557,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     }
     $scope.toggleCheckItem = function($event,item, changeIndex) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update action item because you are a READ-ONLY user");
+            return;
+        }
         item.checkitems.forEach( function(item) {
             if (item.index==changeIndex) {
                 item.checked = !item.checked;

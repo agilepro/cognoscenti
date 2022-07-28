@@ -9,7 +9,7 @@
 %>
 <%
     ar.assertLoggedIn("Must be logged in to see admin options");
-    ar.assertMember("This VIEW only for members in use cases");
+    ar.assertAccessWorkspace("This VIEW only for members in use cases");
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");

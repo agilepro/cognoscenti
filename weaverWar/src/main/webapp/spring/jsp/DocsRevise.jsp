@@ -11,7 +11,7 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to upload documents");
+    ar.assertAccessWorkspace("Must be a member to upload documents");
     NGBook site = ngp.getSite();
     boolean canUpdate = ar.canUpdateWorkspace();
 

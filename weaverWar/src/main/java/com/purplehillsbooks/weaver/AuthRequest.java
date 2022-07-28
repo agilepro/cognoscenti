@@ -735,15 +735,22 @@ public class AuthRequest
         }
     }
 
-    public void assertAccessWorkspace(String opDescription) throws Exception {
-        assertMember(opDescription);
-    }
     public void assertUpdateWorkspace(String opDescription) throws Exception {
-        assertMember(opDescription);
+        if (isSuperAdmin()) {
+            return;
+        }
+        //you have to access before you can update
+        assertAccessWorkspace(opDescription);
+        
+        //check the container rules on who can update
+        NGWorkspace ngw = (NGWorkspace) ngp;
+        if (!ngw.canUpdateWorkspace(user)) {
+            throw new JSONException("User is not in an update role for the workspace. {0}", opDescription);
+        }
     }
-    public void assertMember(String opDescription) throws Exception {
+    public void assertAccessWorkspace(String opDescription) throws Exception {
         if (ngp==null) {
-            throw new ProgramLogicError("'assertMember' is being called, but no page has been associated with the AuthRequest object");
+            throw new ProgramLogicError("'assertAccessWorkspace' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGWorkspace)) {
             throw new Exception("Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
@@ -751,7 +758,7 @@ public class AuthRequest
         NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
-            throw new JSONException("User is not logged in, not a member of workspace. {0}", opDescription);
+            throw new JSONException("User is not logged in, not a role of workspace. {0}", opDescription);
         }
 
         if (isSuperAdmin()) {
@@ -840,6 +847,21 @@ public class AuthRequest
         }
     }
 
+    public boolean canAccessSite() throws Exception {
+        if (!isLoggedIn()) {
+            return false;
+        }
+        if (ngp==null) {
+            return false;
+        }
+        if (isSuperAdmin()) {
+            return true;
+        }
+        if (!(ngp instanceof NGBook)) {
+            throw new Exception("Program Logic Error: canAccessSite is called when not manipulating a site.");
+        }
+        return (ngp.primaryOrSecondaryPermission(user));
+    }
     public boolean canAccessWorkspace() throws Exception {
         if (!isLoggedIn())
         {

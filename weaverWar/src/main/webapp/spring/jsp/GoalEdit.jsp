@@ -26,7 +26,7 @@ Required parameters:
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see this task");
+    ar.assertAccessWorkspace("Must be a member to see this task");
     boolean canUpdate = ar.canUpdateWorkspace();
 
     String taskId = ar.reqParam("taskId");
@@ -137,6 +137,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
+    $scope.fullDocList = [];
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.subGoals  = <%subGoals.write(out,2,4);%>;
@@ -274,37 +275,51 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var postdata = angular.toJson($scope.goalInfo);
         $scope.showError=false;
         $scope.editGoalInfo=false;
-        $scope.showAccomplishment=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.goalInfo = data;
-            $scope.constructCheckItems();
-            $scope.refreshHistory();
+            setGoalData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
-    $scope.undoGoalChanges = function() {
+    $scope.refreshActionItem = function() {
         var postURL = "fetchGoal.json?gid="+$scope.goalInfo.id;
         $scope.showError=false;
         $scope.editGoalInfo=false;
-        $scope.showAccomplishment=false;
         $http.get(postURL)
         .success( function(data) {
-            $scope.goalInfo = data;
-            $scope.constructCheckItems();
-            $scope.refreshHistory();
+            setGoalData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
+    function setGoalData(newGoal) {
+        let tempList = [];
+        newGoal.docLinks.forEach( function(docid) {
+            tempList.push($scope.getFullDoc(docid));
+        });
+        $scope.fullDocList = tempList;
+        $scope.goalInfo = newGoal;
+        $scope.constructCheckItems();
+        $scope.refreshHistory();
+    }
+    
+    
     $scope.saveAccomplishment = function() {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         $scope.goalInfo.newAccomplishment = $scope.newAccomplishment;
         $scope.saveGoal();
     }
     $scope.addPerson = function() {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var player = $scope.newPerson;
         if (typeof player == "string") {
             var pos = player.lastIndexOf(" ");
@@ -319,6 +334,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.tagEntry = cleanUserList($scope.tagEntry);
     }    
     $scope.removePerson = function(person) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var res = $scope.goalInfo.assignTo.filter( function(one) {
             return (person.uid != one.uid);
         });
@@ -346,6 +365,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     }
     $scope.changeRYG = function(newRAG) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         $scope.goalInfo.prospects = newRAG;
         $scope.saveGoal();
         $scope.refreshHistory();
@@ -390,19 +413,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return res;
     }
 
-    $scope.refreshDocumentList = function() {
-        alert("PLE: Should refresh the workspace document list");
-        /*
-        var getURL = "??workspacedocs??.json";
-        $http.get(getURL)
-        .success( function(data) {
-            $scope.attachedDocs = data.list;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-        */
-    }
     $scope.getDocs = function() {
         return $scope.attachmentList.filter( function(oneDoc) {
             return $scope.itemHasDoc(oneDoc);
@@ -418,19 +428,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return doc;
     }
-    $scope.navigateToDoc = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.navigateToDoc = function(doc) {
         window.location="DocDetail.htm?aid="+doc.id;
     }
-    $scope.sendDocByEmail = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.sendDocByEmail = function(doc) {
         window.location="SendNote.htm?att="+doc.id;
     }
-    $scope.downloadDocument = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;
     }
     $scope.unattachDocFromItem = function(docId) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var newList = [];
         $scope.goalInfo.docLinks.forEach( function(iii) {
             if (iii != docId) {
@@ -466,7 +477,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.goalInfo.docLinks = docList;
             $scope.saveGoal(['docLinks']);
         }, function () {
-            //cancel action - nothing really to do
+            $scope.refreshActionItem();
         });
     };
 
@@ -499,7 +510,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
             $scope.sendEmailLoginRequest(message);
         }, function () {
-            //cancel action - nothing really to do
+            $scope.refreshActionItem();
         });
     };
     
@@ -539,9 +550,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.goalInfo = modifiedGoal;
             $scope.constructCheckItems();
         }, function () {
-          //cancel action
+            $scope.refreshActionItem();
         });
     };
+    $scope.refreshActionItem();
     
 });
 
@@ -578,12 +590,6 @@ function addvalue() {
               href="GoalStatus.htm">List Action Items</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="#" ng-click="startEdit('details')">Edit Details</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#" ng-click="showAccomplishment=!showAccomplishment;editGoalInfo=false;">Record Accomplishment</a></li>
-          <!--li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#" ng-click="showCreateSubGoal=!showCreateSubGoal">Create Sub Action</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="#" ng-click="showCreateSubProject=!showCreateSubProject">Convert to Workspace</a></li-->
         </ul>
       </span>
     </div>
@@ -623,19 +629,29 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed.">
-            <td >Assigned To:</td>
+        <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed." class="clickable">
+            <td  ng-click="startEdit('assignee')" >Assigned To:</td>
             <td>
-              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
-                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                      on-tag-added="updatePlayers()" 
-                      on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)"  min-length="1"></auto-complete>
-              </tags-input>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                   <li role="presentation"><a role="menuitem" title="{{add}}"
-                      ng-click="">Remove Label:<br/>{{role.name}}</a></li>
-                </ul>
+                <div ng-repeat="player in goalInfo.assignTo"  style="height:40px">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
+                  <span>{{player.name}}</span>
+                </div>
+                
             </td>
         </tr>
         <tr ng-show="selectedPersonShow">
@@ -662,7 +678,7 @@ function addvalue() {
         </tr>
         <tr class="clickable"  
             title="Manage the check list of items to do for this action">
-            <td ng-click="startEdit('assignee')" >Checklist:</td>
+            <td ng-click="startEdit('status')" >Checklist:</td>
             <td>
                 <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
                     <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
@@ -693,7 +709,7 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr class="clickable" ng-click="startEdit('status')" 
+        <tr class="clickable" ng-click="startEdit('details')" 
             ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0"
             title="Click here to update the dates of this action item">
             <td ></td>
@@ -737,11 +753,6 @@ function addvalue() {
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
                           </a>
                       </li>
-                      <!--li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(4)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small4.gif"> Waiting
-                          </a>
-                      </li-->
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
@@ -752,52 +763,33 @@ function addvalue() {
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
                           </a>
                       </li>
-                      <!--li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(7)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small7.gif"> Reviewing
-                          </a>
-                      </li-->
-                      <!--li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(8)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small8.gif"> Paused
-                          </a>
-                      </li-->
                     </ul>
                 </span>
             </td>
         </tr>
-        <tr>
-              <td>Attachments: </td>
-              <td ><span ng-repeat="docid in goalInfo.docLinks" style="vertical-align: top">
-                  <span class="dropdown" title="Access this attachment">
-                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
-                      {{getFullDoc(docid).name | limitTo : 15}}</button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-                        <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem" 
-                            title="This is the full name of the document"
-                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" 
-                            title="Use DRAFT to set the meeting without any notifications going out"
-                            ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use PLAN to allow everyone to get prepared for the meeting"
-                            ng-click="downloadDocument(docid)">Download Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="unattachDocFromItem(docid)">Un-attach</a></li>
-                      </ul>
+        <tr class="clickable" >
+            <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
+            <td ng-dblclick="openAttachDocument()">
+                <div ng-repeat="doc in fullDocList" style="vertical-align: top">
+                  <span ng-show="doc.attType=='FILE'">
+                      <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                      &nbsp;
+                      <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
                   </span>
-              </span>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
-                  title="Attach a document">
-                  ADD </button>
-           </td>
-        </tr>
+                  <span  ng-show="doc.attType=='URL'">
+                      <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                      &nbsp;
+                      <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+                  </span>
+                  &nbsp;
+                  <span ng-click="sendDocByEmail(doc)"><span class="fa fa-envelope-o"></span></span>&nbsp;
+                  &nbsp; {{doc.name}}
+                </div>
+                <div ng-hide="fullDocList && fullDocList.length>0" class="doubleClickHint">
+                    Double-click to add / remove attachments
+                </div>
+            </td>
+        </tr>        
         <tr>
             <td title="On the discussion topic page, you can link action items, and those topics will appear here">Linked Topics:</td>
             <td title="On the discussion topic page, you can link action items, and those topics will appear here">
@@ -828,24 +820,6 @@ function addvalue() {
 
 
 
-    <table width="100%"  ng-show="showAccomplishment" class="well">
-
-        <tr><td height="20px"></td></tr>
-        <tr>
-            <td >Accomplishments:</td>
-            <td style="width:20px;"></td>
-            <td><textarea ng-model="newAccomplishment" class="form-control"></textarea></td>
-            <td style="width:40px;"></td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr><td></td><td></td>
-            <td>
-                <button class="btn btn-primary btn-raised" ng-click="saveAccomplishment()">Save Accomplishment</button>
-                <button class="btn btn-primary btn-raised" ng-click="showAccomplishment=false">Cancel</button>
-            </td>
-        </tr>
-        <tr><td height="20px"></td></tr>
-    </table>
 
     <table width="100%">
         <tr><td height="20px"></td></tr>

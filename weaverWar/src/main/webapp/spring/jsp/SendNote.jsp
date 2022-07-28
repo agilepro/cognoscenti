@@ -39,7 +39,7 @@ Optional Parameters:
     String mailSubject  = ar.defParam("subject", null);
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
-    ar.assertMember("Must be a member to send email");
+    ar.assertAccessWorkspace("Must be a member to send email");
     UserProfile uProf = ar.getUserProfile();
     AddressListEntry uAle = new AddressListEntry(uProf);
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);

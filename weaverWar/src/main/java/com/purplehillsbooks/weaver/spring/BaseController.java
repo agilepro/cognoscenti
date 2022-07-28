@@ -165,7 +165,7 @@ public class BaseController {
      * address, and must be a member of the page, so the page has to be set as well.
      * @return a boolean: true means it produced a UI output, and false means it didnt
      */
-    protected static boolean warnNotMember(AuthRequest ar) throws Exception {
+    protected static boolean warnNoAccess(AuthRequest ar) throws Exception {
         if (warnNotLoggedIn(ar)) {
             return true;
         }
@@ -223,7 +223,7 @@ public class BaseController {
      * @throws Exception
      */
     protected static boolean warnFrozenOrNotMember(AuthRequest ar, NGContainer ngc) throws Exception {
-        if (warnNotMember(ar)) {
+        if (warnNoAccess(ar)) {
             return true;
         }
         boolean frozen = ngc.isFrozen();
@@ -367,15 +367,14 @@ public class BaseController {
                 }
                 return;
             }
-            UserProfile user = ar.getUserProfile();
-            if (ngw.canAccessWorkspace(user)) {
+            if (ar.canAccessWorkspace()) {
                 streamJSP(ar, jspName);
             }
             else if (specialAccess) {
                 streamJSPLimited(ar, jspName);
             }
             else {
-                warnNotMember(ar);
+                warnNoAccess(ar);
             }
         }
         catch(Exception ex){
@@ -390,11 +389,11 @@ public class BaseController {
             if (!ar.isLoggedIn()) {
                 streamJSPAnon(ar, jspName);
             }
-            else if (ar.canAccessWorkspace()) {
+            else if (ar.canAccessSite()) {
                 streamJSPSite(ar, jspName);
             }
             else {
-                warnNotMember(ar);
+                warnNoAccess(ar);
             }
         }
         catch(Exception ex){
@@ -452,7 +451,7 @@ public class BaseController {
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
-            if (warnNotMember(ar)){
+            if (warnNoAccess(ar)){
                 return;
             }
             streamJSP(ar, jspName);

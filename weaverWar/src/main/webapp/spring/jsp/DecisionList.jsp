@@ -17,7 +17,7 @@ Required parameters:
     String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see decisions");
+    ar.assertAccessWorkspace("Must be a member to see decisions");
     NGBook site = ngp.getSite();
 
     JSONArray allDecisions = new JSONArray();

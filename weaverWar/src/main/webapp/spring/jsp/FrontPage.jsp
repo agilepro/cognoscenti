@@ -8,7 +8,7 @@ Required parameters:
 
 */
 
-    ar.assertMember("Must be a member for this version of the page");
+    ar.assertAccessWorkspace("Must be a member for this version of the page");
 
     Cognoscenti cog = ar.getCogInstance();
     String pageId = ar.reqParam("pageId");

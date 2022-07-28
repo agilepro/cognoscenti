@@ -9,7 +9,7 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Documents are available only to members");
+    ar.assertAccessWorkspace("Documents are available only to members");
     NGBook site = ngp.getSite();
     String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
 

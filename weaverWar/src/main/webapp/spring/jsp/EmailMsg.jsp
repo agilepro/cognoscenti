@@ -13,7 +13,7 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see meetings");
+    ar.assertAccessWorkspace("Must be a member to see meetings");
     NGBook ngb = ngp.getSite();
 
     MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);

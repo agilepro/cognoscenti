@@ -43,7 +43,7 @@ Optional Parameters:
     }
     ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Can not send email.");
+    ar.assertAccessWorkspace("Can not send email.");
     UserProfile uProf = ar.getUserProfile();
     String userFromAddress = uProf.getEmailWithName();
 

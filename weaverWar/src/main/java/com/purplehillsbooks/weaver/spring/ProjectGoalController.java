@@ -133,7 +133,7 @@ public class ProjectGoalController extends BaseController {
                 streamJSPAnonUnwrapped(ar, "ActionItem.jsp");
             }
             else{
-                if (warnNotMember(ar)) {
+                if (warnNoAccess(ar)) {
                     return;
                 }
                 streamJSP(ar, "GoalEdit.jsp");
@@ -588,15 +588,15 @@ public class ProjectGoalController extends BaseController {
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertNotFrozen(ngp);
+            ar.assertNotReadOnly("Cannot update action item");
             gid = ar.reqParam("gid");
             JSONObject goalInfo = getPostedObject(ar);
             GoalRecord gr = null;
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             boolean isNew = "~new~".equals(gid);
             if (isNew) {
-                //if it is a new goal you MUST be a member
+                //if it is a new goal you MUST be in an update role
                 ar.assertUpdateWorkspace("Need to be Member or assignee of task");
-                ar.assertNotReadOnly("Cannot create an action item");
                 gr = ngp.createGoal(ar.getBestUserId());
                 goalInfo.put("universalid", gr.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
@@ -606,9 +606,8 @@ public class ProjectGoalController extends BaseController {
                 gr = ngp.getGoalOrFail(gid);
                 boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
                 if (!canAccessGoal) {
-                    ar.assertMember("Need to be Member or assignee of task");
+                    ar.assertUpdateWorkspace("Need to be Member or assignee of task");
                 }
-                ar.assertNotReadOnly("Cannot update an action item");
             }
 
             int previousState = gr.getState();
@@ -919,12 +918,12 @@ public class ProjectGoalController extends BaseController {
 
             UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
-            thisWS.assertUpdateWorkspace(user, "You must be the member of the workspace you are copying to");
+            ar.assertUpdateWorkspace("You must be the member of the workspace you are copying to");
             ar.assertNotFrozen(thisWS);
             ar.assertNotReadOnly("Cannot move an action item");
             
             ar.setPageAccessLevels(fromWS);
-            fromWS.assertAccessWorkspace(user, "You must have access to the workspace you are copying from");
+            ar.assertAccessWorkspace("You must have access to the workspace you are copying from");
 
             GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
             if (oldGoal==null) {

@@ -351,7 +351,7 @@ public class TopicController extends BaseController {
             TopicRecord topic = ngw.getDiscussionTopic(nid);
             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
             if (!canAccessTopic) {
-                ar.assertAccessWorkspace("must have permission to subscribe to a topic");
+                ar.assertUpdateWorkspace("must have permission to subscribe to a topic");
             }
             UserProfile up = ar.getUserProfile();
             AddressListEntry ale;

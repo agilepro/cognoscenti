@@ -37,7 +37,7 @@
     JSONObject fromWorkspace = fromWS.getJSON4List();
     NGWorkspace fromWorkspaceObj = fromWS.getWorkspace();
     ar.setPageAccessLevels(fromWorkspaceObj);
-    ar.assertMember("Must be a member of the workspace you want to copy or move from");
+    ar.assertAccessWorkspace("Must be a member of the workspace you want to copy or move from");
 
     JSONArray allLabels = ngp.getJSONLabels();
     

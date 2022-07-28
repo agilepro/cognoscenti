@@ -698,7 +698,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAccessWorkspace("Must be a member to render an email.");
+            ar.assertAccessWorkspace("Must be a role player to render an email.");
             JSONObject eGenInfo = getPostedObject(ar);
 
             id = eGenInfo.getString("id");
@@ -827,7 +827,7 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAccessWorkspace("Project email list is accessible only by members or administrator.");
+            ar.assertAccessWorkspace("Project email list is accessible only by role players.");
             JSONObject posted = this.getPostedObject(ar);
 
             JSONObject repo = EmailSender.queryWorkspaceEmail(ngw, posted);

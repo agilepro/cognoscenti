@@ -33,7 +33,7 @@ Required parameter:
     ar.setPageAccessLevels(ngp);
 
     pageTitle = "Send Email: "+ngp.getFullName();
-    ar.assertMember("Can not send email reminder");
+    ar.assertAccessWorkspace("Can not send email reminder");
 
     ReminderMgr rMgr = ngp.getReminderMgr();
     ReminderRecord rRec= rMgr.findReminderByID(rid);
