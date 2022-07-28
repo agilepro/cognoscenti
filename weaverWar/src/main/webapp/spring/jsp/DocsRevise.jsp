@@ -13,6 +13,7 @@
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to upload documents");
     NGBook site = ngp.getSite();
+    boolean canUpdate = ar.canUpdateWorkspace();
 
     AttachmentRecord attachRec = ngp.findAttachmentByIDOrFail(aid);
     JSONObject docInfo = attachRec.getJSON4Doc(ar, ngp);
@@ -89,6 +90,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.history = <%allHistory.write(out,2,4);%>;
     $scope.fileProgress = [];
     $scope.docId = "<%ar.writeHtml(aid);%>";
+    $scope.canUpdate = <%=canUpdate%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -149,7 +151,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.openDocDialog = function (doc) {
-        
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var docsDialogInstance = $modal.open({
             animation: true,
             templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
@@ -203,7 +208,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
     
 
-    <div id="TheNewDocument" class="well">
+    <div id="TheNewDocument" class="well" ng-show="canUpdate">
         <div>
             <table>
                 <tr>
@@ -252,7 +257,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </div>
     </div>
 
-    <div>
+    <div ng-show="canUpdate">
         <button ng-click="openDocDialog(attachInfo)" class="btn btn-default btn-raised">
             Document Settings</button>
     </div>

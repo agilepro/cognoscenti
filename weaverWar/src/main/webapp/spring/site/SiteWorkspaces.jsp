@@ -5,12 +5,12 @@
     Cognoscenti cog = ar.getCogInstance();
     
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
-    String accountKey = ar.reqParam("siteId");
-    NGBook site = cog.getSiteByIdOrFail(accountKey);
+    String siteId = ar.reqParam("siteId");
+    NGBook site = cog.getSiteByIdOrFail(siteId);
     boolean showExperimental = site.getShowExperimental();
 
     JSONArray projList = new JSONArray();
-    for (NGPageIndex ngpi : cog.getAllProjectsInSite(accountKey)) {
+    for (NGPageIndex ngpi : cog.getAllProjectsInSite(siteId)) {
         if (!ngpi.isWorkspace()) {
             continue;
         }
@@ -20,7 +20,7 @@
         if (!ngpi.isWorkspace()) {
             continue;
         }
-        if (!accountKey.equals(ngpi.wsSiteKey)) {
+        if (!siteId.equals(ngpi.wsSiteKey)) {
             // only consider if the project is in the site we look for
             continue;
         }

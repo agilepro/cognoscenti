@@ -272,7 +272,7 @@ public class WikiToPDF
             //we write anything to the real output stream, so buffer it
             document.saveToStream(mf.getOutputStream());
             
-            String fileName = ngp.getKey() + ".pdf";
+            String fileName = SectionUtil.sanitize(ngp.getFullName()) + ".pdf";
             ar.resp.setContentType("application/pdf");
             ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
             OutputStream out = ar.resp.getOutputStream();

@@ -5,10 +5,7 @@
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
 
-    String loggedKey = "";
-    if (ar.isLoggedIn()) {
-        loggedKey = loggedUser.getKey();
-    }
+    ar.assertLoggedIn("User must be logged in to see SITE pages");
 
 
     //this is the most important setting .. it is the name of the JSP file
@@ -40,9 +37,6 @@
 //this indicates a workspace page
     String pageId = (String)request.getAttribute("pageId");
     String siteId = (String)request.getAttribute("siteId");
-
-//this also indicates a site id
-    String accountId = (String)request.getAttribute("siteId");
 
 //apparently this is calculated elsewhere and passed in.
     String viewingSelfStr = (String)request.getAttribute("viewingSelf");
@@ -86,7 +80,6 @@
 
     String mainWorkspaceId = "";
     String mainSiteId = "";
-    String mainSiteName = "";
     if (ar.isLoggedIn()) {
         List<WatchRecord> wl = loggedUser.getWatchList();
         if (wl.size()>0) {
@@ -99,20 +92,15 @@
             if (ngpi!=null) {
                 mainSiteId = ngpi.wsSiteKey;
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
-                mainSiteName = site.getFullName();
             }
         }
     }
-    String accountKey = ar.defParam("siteId", null);
-    NGBook site = null;
-    if (accountKey!=null) {
-        site = cog.getSiteByIdOrFail(accountKey);
-        mainSiteName = site.getFullName();
+    if (siteId==null) {
+        throw new Exception("Site page without a specified siteId");
     }
+    NGBook site = cog.getSiteByIdOrFail(siteId);
+    String mainSiteName = site.getFullName();
 
-
-//TODO: determine what this does.
-    String deletedWarning = "";
 
     NGContainer ngp =null;
     NGBook ngb=null;
@@ -125,14 +113,6 @@
         }
     }
 
-//TODO: why test for pageTitle being null here?
-    if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
-    }
-
-
-    boolean isFrozen=false;
-    boolean isDeleted=false;    
     if (ngp!=null) {
         ar.setPageAccessLevels(ngp);
         pageTitle = ngp.getFullName();
@@ -146,14 +126,6 @@
         else if(ngp instanceof NGBook) {
             ngb = ((NGBook)ngp);
             showExperimental = ngb.getShowExperimental();
-        }
-        if (ngp.isDeleted()) {
-            isDeleted = true;
-            deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
-        }
-        else if (ngp.isFrozen()) {
-            isFrozen=true;
-            deletedWarning = " &#10052; (Frozen)";
         }
     }
     //this is the base path for the all of the menu options.
@@ -275,7 +247,7 @@ myApp.filter('cdate', function() {
 
 
 </head>
-<body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
+<body ng-app="myApp" ng-controller="myCtrl">
   <div class="bodyWrapper">
 
 <!-- Begin AppBar -->
@@ -303,7 +275,7 @@ myApp.filter('cdate', function() {
         <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
             User: <% ar.writeHtml(pageUserName); %></a></div></li>
       <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
+      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(siteId);%>/$/SiteWorkspaces.htm">
             Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
       <% } else { %>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>

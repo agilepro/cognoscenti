@@ -46,6 +46,7 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
+import com.purplehillsbooks.streams.StreamHelper;
 
 /**
  * This servlet serves up pages using the following URL format:
@@ -722,7 +723,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         ar.resp.setContentType(MimeTypes.getMimeType(att.getNiceName()));
         AttachmentVersion aVer = att.getLatestVersion(resDec.workspace);
         File realPath = aVer.getLocalFile();
-        UtilityMethods.streamFileContents(realPath, ar.resp.out);
+        StreamHelper.copyFileToOutput(realPath, ar.resp.out);
     }
 
     private void genGoalInfo(AuthRequest ar, ResourceDecoder resDec) throws Exception {
@@ -758,7 +759,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         File tempFile = new File(folder, resDec.tempName);
         InputStream is = ar.req.getInputStream();
         FileOutputStream fos = new FileOutputStream(tempFile);
-        UtilityMethods.streamToStream(is,fos);
+        StreamHelper.copyInputToOutput(is, fos);
         fos.flush();
         fos.close();
         

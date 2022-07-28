@@ -256,7 +256,7 @@ function reloadIfLoggedIn() {
 
     <div ng-repeat="cmt in otherComments">
      <div class="comment-outer">
-      <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
+      <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
       <div class="comment-inner">
         <div ng-bind-html="cmt.html"></div>
       </div>

@@ -7,8 +7,8 @@
 %><%
 
     ar.assertLoggedIn("");
-    String accountId = ar.reqParam("siteId");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
+    String siteId = ar.reqParam("siteId");
+    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
     JSONObject siteInfo = ngb.getConfigJSON();
 
     WorkspaceStats wStats = ngb.getRecentStats();

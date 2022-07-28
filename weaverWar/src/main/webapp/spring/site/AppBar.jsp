@@ -18,11 +18,7 @@
 
 
      <script>
-        <% if(accountId != null){ %>
-        var accountId='<%=accountId %>';
-        <% } else if(pageId!=null){ %>
-        var accountId='<%=pageId%>';
-        <% } %>
+        var accountId='<%=siteId %>';
      </script>
 
 

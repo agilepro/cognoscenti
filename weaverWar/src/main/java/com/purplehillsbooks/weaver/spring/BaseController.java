@@ -701,11 +701,22 @@ public class BaseController {
         NGPageIndex.clearLocksHeldByThisThread();
     }
     
+    
+    
+    public void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
+            String userKey, String viewName) throws Exception {
+        if (!viewName.endsWith(".jsp")) {
+            throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
+        }
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        streamJSPUserLoggedIn(ar, userKey, viewName);
+    }
+    
     public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
         try {
             if(!ar.isLoggedIn()){
                 ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSP(ar, "Warning.jsp");
+                streamJSPAnon(ar, "Warning.jsp");
                 return;
             }
             UserProfile up = UserManager.getUserProfileOrFail(userKey);

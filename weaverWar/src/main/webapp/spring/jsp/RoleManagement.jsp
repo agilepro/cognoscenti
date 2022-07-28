@@ -423,6 +423,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
+                <div ng-show="role.canUpdateWorkspace">UPDATE</div>
+                <div ng-hide="role.canUpdateWorkspace">READ ONLY</div>
             </td>
             <td style="width:200px">
               <div ng-hide="roleDetailToggle[role.name]">

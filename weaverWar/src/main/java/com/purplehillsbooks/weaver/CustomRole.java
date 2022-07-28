@@ -384,6 +384,9 @@ public class CustomRole extends DOMFace implements NGRole
             playerArray.put( player.getJSON() );
         }
         jObj.put("players", playerArray);
+        
+        //this does some special things for Members and Administrators
+        jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
 
         return jObj;
     }
@@ -396,7 +399,6 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = getJSON();
         jObj.put("perpetual", this.getAttributeBool("perpetual"));
         extractAttributeInt(jObj, "termLength");
-        extractAttributeBool(jObj, "canUpdateWorkspace");
 
         List<RoleTerm> allTerms = getAllTerms();
         JSONArray termArray = new JSONArray();
@@ -419,7 +421,10 @@ public class CustomRole extends DOMFace implements NGRole
         updateAttributeString("linkedRole", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
-        updateAttributeBool("canUpdateWorkspace", roleInfo);
+        
+        //this does some special things for Members and Administrators
+        setUpdateWorkspace(roleInfo.optBoolean("canUpdateWorkspace"));
+        
         if (roleInfo.has("requirements")) {
             //internal key is not same as external
             setRequirements(roleInfo.getString("requirements"));
@@ -457,10 +462,24 @@ public class CustomRole extends DOMFace implements NGRole
         if ("Members".equals(getName())) {
             return true;
         }
+        //Same for Adminisrators
+        if ("Administrators".equals(getName())) {
+            return true;
+        }
         return getAttributeBool("canUpdateWorkspace");
     }
     public void setUpdateWorkspace(boolean allowed) {
-        setAttributeBool("canUpdateWorkspace", allowed);
+        //Members is always an update role
+        if ("Members".equals(getName())) {
+            setAttributeBool("canUpdateWorkspace", true);
+        }
+        //Same for Adminisrators
+        else if ("Administrators".equals(getName())) {
+            setAttributeBool("canUpdateWorkspace", true);
+        }
+        else {
+            setAttributeBool("canUpdateWorkspace", allowed);
+        }
     }
 
 }

@@ -7,6 +7,9 @@
         String configDest = ar.retPath + "init/config.htm?go="+URLEncoder.encode(go);
         response.sendRedirect(configDest);
     }
+    JSONObject loginConfigSetup = new JSONObject();
+    loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    loginConfigSetup.put("serverUrl",   ar.baseURL);
 
 %>
 
@@ -62,9 +65,12 @@ app.controller('myCtrl', function($scope, $http) {
 
 function reloadIfLoggedIn() {
     if (SLAP.loginInfo.verified) {
-        window.location = "..";
+        window.location = "<%=ar.retPath%>";
     }
 }
+
+SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, reloadIfLoggedIn);
+
 </script>
 
 <style>

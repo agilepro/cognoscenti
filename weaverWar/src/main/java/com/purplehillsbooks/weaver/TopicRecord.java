@@ -965,6 +965,8 @@ public class TopicRecord extends CommentContainer {
              specialMeetingComment.put("emailSent", true);
              specialMeetingComment.put("meet", meet.getListableJSON(ar));
              specialMeetingComment.put("time", meet.getStartTime());
+             specialMeetingComment.put("containerType", "T");
+             specialMeetingComment.put("containerId", this.getId());
              specialMeetingComment.put("commentType", 4);
              comments.put(specialMeetingComment);
          }

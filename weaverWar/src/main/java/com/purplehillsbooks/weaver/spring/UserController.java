@@ -69,16 +69,6 @@ public class UserController extends BaseController {
 
 
 
-    public void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
-            String userKey, String viewName) throws Exception {
-        if (!viewName.endsWith(".jsp")) {
-            throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
-        }
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPUserLoggedIn(ar, userKey, viewName);
-    }
-
-
 
 
     ////////////////////// MAIN VIEWS /////////////////////////

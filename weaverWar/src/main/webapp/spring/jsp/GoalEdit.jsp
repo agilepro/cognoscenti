@@ -27,6 +27,7 @@ Required parameters:
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see this task");
+    boolean canUpdate = ar.canUpdateWorkspace();
 
     String taskId = ar.reqParam("taskId");
     GoalRecord currentTaskRecord=ngp.getGoalOrFail(taskId);
@@ -145,6 +146,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
+    $scope.canUpdate = <%=canUpdate%>;
 
     $scope.newPerson = "";
     $scope.selectedPersonShow = false;
@@ -241,6 +243,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.checkitems = list;
     }
     $scope.toggleCheckItem = function(changeIndex) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         $scope.checkitems.forEach( function(item) {
             if (item.index==changeIndex) {
                 item.checked = !item.checked;
@@ -260,6 +266,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.constructCheckItems();
     $scope.saveGoal = function() {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
         var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
         var postdata = angular.toJson($scope.goalInfo);
         $scope.showError=false;
@@ -431,6 +441,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.saveGoal(['docLinks']);
     }
     $scope.openAttachDocument = function () {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -457,6 +471,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
     $scope.openInviteSender = function (player) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,
@@ -487,6 +505,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     
     $scope.openModalActionItem = function (startMode) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update meeting because you are a READ-ONLY user");
+            return;
+        }
 
         var modalInstance = $modal.open({
           animation: false,

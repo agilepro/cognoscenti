@@ -230,13 +230,13 @@ function outputProperLink(linkContentText) {
     var barPos = linkContentText.indexOf("|");
     var linkText = linkContentText;
     var linkAddr = linkContentText;
-    var titleValue = linkContentText;
     
     if (barPos >= 0) {
         //We have both a link text, and a link address, so use them.
         linkText = linkContentText.substring(0,barPos).trim();
         linkAddr = linkContentText.substring(barPos+1).trim();
     }
+    var titleValue = stripQuotesFromText(linkText);
 
     var isExternal = (linkAddr.indexOf("http")==0 && linkAddr.indexOf("/") >= 0);
     var target = null;
@@ -286,3 +286,24 @@ function textToHtml(line) {
     return res;
 }
 
+function stripQuotesFromText(source) {
+    var trim = source;
+    if (trim.length>50) {
+        trim = source.substring(0,50);
+    }
+    var cleaned = "";
+    for (var i=0; i<trim.length; i++) {
+        var ch = trim.charAt(i);
+        if (ch=="\"") {
+            //do nothing
+        }
+        else if (ch=="\'") {
+            //do nothing
+        }
+        else {
+            cleaned = cleaned + ch;
+        }
+    }
+    console.log("CLEAN", source, cleaned);
+    return cleaned;
+}

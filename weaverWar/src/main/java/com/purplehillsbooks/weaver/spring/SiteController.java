@@ -306,36 +306,6 @@ public class SiteController extends BaseController {
     }
 
 
-    /*
-    @RequestMapping(value = "/{siteId}/$/CreateAccountRole.form", method = RequestMethod.POST)
-    public ModelAndView createRole(@PathVariable String siteId,HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return null;
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return null;
-            }
-
-            String roleName=ar.reqParam("rolename");
-            String des=ar.reqParam("description");
-
-            site.createRole(roleName,des);
-            site.saveFile(ar, "Add New Role "+roleName+" to roleList");
-
-            return new ModelAndView(new RedirectView("RoleManagement.htm"));
-        } catch (Exception e) {
-            throw new NGException("nugen.operation.fail.account.create.role",new Object[]{siteId}, e);
-        }
-    }
-    */
-
-
-
 
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
     public void replaceUsers(@PathVariable String siteId,

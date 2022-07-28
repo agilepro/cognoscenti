@@ -1,22 +1,20 @@
 <%@ include file="/spring/jsp/include.jsp"
 %><%@ include file="/spring/jsp/functions.jsp"
-%><%!
-    String pageTitle="";
 %><%
 /*
 Required parameter:
 
-    1. accountId : This is the id of a site and used to retrieve NGBook.
+    1. siteId : This is the id of a site and used to retrieve NGBook.
 
 */
 
-    String accountKey = ar.reqParam("siteId");
+    String siteId = ar.reqParam("siteId");
     
     //this page should only be called when logged in and having access to the site
     ar.assertLoggedIn("Must be logged in to create a workspace");
     UserProfile curUser = ar.getUserProfile();
     
-    NGBook site = ar.getCogInstance().getSiteByIdOrFail(accountKey);
+    NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
     ar.setPageAccessLevelsWithoutVisit(site);
     ar.assertExecutive("Must be an executive of a site to create a new workspace");
     String debugMessage = "";
@@ -84,7 +82,6 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
-    $scope.accountKey = "<%ar.writeJS(accountKey);%>";
     $scope.selectedTemplate = "";
     $scope.newWorkspace = <% newWorkspace.write(ar.w,2,4); %>;
 

@@ -230,6 +230,9 @@ function setUpCommentMethods($scope, $http, $modal) {
         else if (cmt.containerType=="A") {
             return "DocDetail.htm?aid="+cmt.containerID;
         }
+        else if (cmt.commentType==4) {
+            //this is a meeting fake comment record
+        }
         else {
             console.log("Sorry, I can't understand this comment", cmt);
         }
@@ -261,7 +264,7 @@ function setUpCommentMethods($scope, $http, $modal) {
 
 
   <td style="width:50px;vertical-align:top;padding:15px">
-      <span class="dropdown" >
+      <span class="dropdown" ng-show="cmt.commentType!=4">
         <span id="menu1" data-toggle="dropdown">
           <img class="img-circle" 
              ng-src="<%=ar.retPath%>icon/{{cmt.userKey}}.jpg" 
@@ -341,7 +344,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         <span ng-show="cmt.commentType==6" style="color:green">
             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
         <span style="float:right" >&nbsp;<a href="CommentZoom.htm?cid={{cmt.time}}"><i class="fa fa-external-link"></i></a></span>
-        <span style="float:right" >&nbsp;<a href="{{containerLink(cmt)}}"><i class="fa fa-bullseye"></i></a></span>
+        <span style="float:right" ng-show="containerLink(cmt)">&nbsp;<a href="{{containerLink(cmt)}}"><i class="fa fa-bullseye"></i></a></span>
         <span style="float:right;color:green;" title="Due {{cmt.dueDate|cdate}}">{{calcDueDisplay(cmt)}}</span>
         <div style="clear:both"></div>
       </div>
