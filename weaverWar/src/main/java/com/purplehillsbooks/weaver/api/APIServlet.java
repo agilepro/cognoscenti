@@ -39,13 +39,11 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionWiki;
 import com.purplehillsbooks.weaver.TopicRecord;
-import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.WikiConverter;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.streams.StreamHelper;
 
 /**
@@ -118,7 +116,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        //this is an API to be read by others, so you have to set the CORS to
+         //this is an API to be read by others, so you have to set the CORS to
         //allow scripts to read this data from a browser.
         String origin = req.getHeader("Origin");
         if (origin==null || origin.length()==0) {
@@ -134,6 +132,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
+            throw new RuntimeException("API Servlet is probably no longer used");
+            /*
             NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
@@ -141,6 +141,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
 
             doAuthenticatedGet(ar);
+            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
@@ -156,6 +157,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private void doAuthenticatedGet(AuthRequest ar)  throws Exception {
 
         try {
+            throw new RuntimeException("API Servlet is probably no longer used");
+            /*
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
             if (resDec.isSwagger){
@@ -180,6 +183,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 throw new JSONException("don't understand that resource URL: "+ar.getCompleteURL());
             }
             ar.flush();
+            */
 
         } catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
@@ -196,6 +200,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
+            throw new RuntimeException("API Servlet is probably no longer used");
+            /*
             System.out.println("API_PUT: "+ar.getCompleteURL());
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
@@ -212,6 +218,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
             }
             ar.flush();
+            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle PUT to {0}", e, ar.getCompleteURL());
@@ -228,6 +235,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
+            throw new RuntimeException("API Servlet is probably no longer used");
+            /*
             System.out.println("API_POST: "+ar.getCompleteURL());
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
@@ -252,6 +261,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
             responseObj.write(ar.resp.getWriter(), 2, 0);
             ar.flush();
+            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle POST to {0}", e, ar.getCompleteURL());
@@ -430,7 +440,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         if ("newNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
-            if (!resDec.hasFullMemberAccess()) {
+            if (!ar.canUpdateWorkspace()) {
                 throw new JSONException("The license ({0}) does not have full member access which is needed in order to create a new topic.", resDec.licenseId);
             }
             TopicRecord newNote = resDec.workspace.createNote();
@@ -502,21 +512,12 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 }
             }
             else {
-                if (!resDec.hasFullMemberAccess()) {
+                if (!ar.canUpdateWorkspace()) {
                     tempFile.delete();
                     throw new JSONException("The license ({0}) does not have right to create new documents.", resDec.licenseId);
                 }
                 String newName = newDocObj.getString("name");
                 att = ngp.findAttachmentByName(newName);
-                if ("updateDoc".equals(op)) {
-                    //updateDoc requires that the universalID be set and be correct
-                    //uploadDoc will allow a similarly named files to become new versions
-                    if (att!=null && newUid!=null && !newUid.equals(att.getUniversalId())) {
-                        throw new JSONException("Attempt to update a document with the name {0} with information from another document with the same name, but different universal ID. "
-                                +" Something is wrong with upstream/downstream exchange.", newName);
-                    }
-                    updateReason = "From downstream workspace by synchronization license "+resDec.licenseId;
-                }
                 if (att==null) {
                     att = resDec.workspace.createAttachment();
                     if (newUid==null || newUid.length()==0) {
@@ -674,7 +675,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         root.put("siteui", siteUI);
 
         JSONArray goals = new JSONArray();
-        if (resDec.hasFullMemberAccess()) {
+        if (ar.canAccessWorkspace()) {
             for (GoalRecord goal : resDec.workspace.getAllGoals()) {
                 goals.put(goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic));
             }

@@ -184,6 +184,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.setDocumentData = function(data) {
+        data.comments.forEach( function(cmt) {
+            $scope.generateCommentHtml(cmt);
+        });        
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         if (data.id == $scope.docId) {
             data.html = convertMarkdownToHtml(data.description);

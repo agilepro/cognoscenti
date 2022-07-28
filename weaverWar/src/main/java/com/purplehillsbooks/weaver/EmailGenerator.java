@@ -483,7 +483,7 @@ public class EmailGenerator extends DOMFace {
             data.put("noteName", selectedNote.getSubject());
 
 
-            JSONObject noteObj = selectedNote.getJSONWithHtml(ar, ngp);
+            JSONObject noteObj = selectedNote.getJSONWithMarkdown(ngp);
             noteObj.put("noteUrl", licensedUrl);
             AttachmentRecord.addEmailStyleAttList(noteObj, ar, ngp, selectedNote.getDocList());
 
@@ -601,7 +601,7 @@ public class EmailGenerator extends DOMFace {
         if (noteId!=null && noteId.length()>0) {
             TopicRecord nr = ngw.getNoteByUidOrNull(noteId);
             if (nr!=null) {
-                obj.put("noteInfo", nr.getJSONWithWiki(ngw));
+                obj.put("noteInfo", nr.getJSONWithMarkdown(ngw));
             }
         }
         String meetingId = getMeetingId();

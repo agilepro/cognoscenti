@@ -238,7 +238,7 @@ public class TopicController extends BaseController {
                 for (int i=0; i<numCmts; i++) {
                     JSONObject aCmt = commentsToUpdate.getJSONObject(i);
                     if (aCmt.getLong("time")<=0) {
-                        String comment = GetFirstHundredNoHtml(aCmt.getString("html"));
+                        String comment = GetFirstHundredNoHtml(aCmt.getString("body"));
                         HistoryRecord.createHistoryRecord(ngw, note.getId(),
                                 HistoryRecord.CONTEXT_TYPE_LEAFLET,
                                 HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
@@ -285,7 +285,6 @@ public class TopicController extends BaseController {
             }
 
             note.updateNoteFromJSON(noteInfo, ar);
-            note.updateHtmlFromJSON(ar, noteInfo);
             note.setLastEdited(ar.nowTime);
             note.setModUser(new AddressListEntry(ar.getBestUserId()));
             if (!isAutoSave) {

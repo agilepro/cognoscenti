@@ -73,6 +73,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.comment = <%comment.write(out,2,4);%>;
+    
     $scope.commentExists = <%=selectedComment!=null%>;
     $scope.canComment = <%=canComment%>;
     $scope.cid = <%= cid %>;
@@ -136,19 +137,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return true;
     }
     $scope.refreshCommentList = function() {
-        console.log("REFRESHING single comment");
         var postURL = "getComment.json?cid="+$scope.cid;
-        console.log("GET:", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
             $scope.comment = data;
+            $scope.generateCommentHtml($scope.comment);
         })
         .error( function(data, status, headers, config) {
             console.log("   FAILED"+ status, data);
             $scope.reportError(data);
         });
     }
+    $scope.generateCommentHtml($scope.comment);
 });
 
 </script>

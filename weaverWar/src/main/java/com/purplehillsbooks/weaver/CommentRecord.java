@@ -94,16 +94,6 @@ public class CommentRecord extends DOMFace {
     public void setContent(String newVal) {
         setScalar("content", newVal);
     }
-    public String getContentHtml(AuthRequest ar)  throws Exception {
-        if (ar.ngp==null) {
-            throw new Exception("getContentHtml requires the AuthRequest to have a ngp object");
-        }
-        return WikiConverterForWYSIWYG.makeHtmlString(ar, getContent());
-    }
-    public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
-        System.out.println("OLD comment setContentHtml being used ... should be eliminated");
-        setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
-    }
     
     public String getAllSearchableText() throws Exception {
         StringBuilder sb = new StringBuilder();
@@ -123,12 +113,6 @@ public class CommentRecord extends DOMFace {
      */
     public String getOutcome(AuthRequest ar)  throws Exception {
         return getScalar("outcome");
-    }
-    public String getOutcomeHtml(AuthRequest ar)  throws Exception {
-        return WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("outcome"));
-    }
-    public void setOutcomeHtml(AuthRequest ar, String newHtml) throws Exception {
-        setScalar("outcome", HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
 
     public AddressListEntry getUser()  {
@@ -269,12 +253,6 @@ public class CommentRecord extends DOMFace {
             rr.setUserId(user.getUniversalId());
         }
         return rr;
-    }
-    public void setResponse(AuthRequest ar, UserRef user, String choice, String htmlContent) throws Exception  {
-        ResponseRecord rr = getOrCreateResponse(user);
-        rr.setChoice(choice);
-        rr.setTime(ar.nowTime);
-        rr.setHtml(ar, htmlContent);
     }
     public void removeResponse(UserRef user) throws Exception  {
         this.removeChildrenByNameAttrVal("response", "uid", user.getUniversalId());
@@ -586,9 +564,6 @@ public class CommentRecord extends DOMFace {
         data.put("isClosed", isClosed);
         data.put("outcome", getScalar("outcome"));
         
-        //TODO: get rid of this
-        data.put("outcomeHtml", this.getOutcomeHtml(clone));
-        
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
         data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
@@ -654,10 +629,8 @@ public class CommentRecord extends DOMFace {
         }
         JSONObject commInfo = getJSON();
         commInfo.put("containerName", containerName);
-        commInfo.put("html", getContentHtml(ar));     //REMOVE THIS SOME DAY
         commInfo.put("body", getContent());
         commInfo.put("outcome", getScalar("outcome"));
-        commInfo.put("outcomeHtml", getOutcomeHtml(ar));     //REMOVE THIS SOME DAY
         JSONArray responseArray = new JSONArray();
         for (ResponseRecord rr : getResponses()) {
             responseArray.put(rr.getJSON(ar));
@@ -674,13 +647,6 @@ public class CommentRecord extends DOMFace {
         
         if (input.has("body")) {
             setContent(input.getString("body"));
-        }
-        else if (input.has("html")) {
-            //only use the HTML if the body does not exist
-            setContentHtml(ar, input.getString("html"));
-        }
-        if (input.has("outcomeHtml")) {
-            setOutcomeHtml(ar, input.getString("outcomeHtml"));
         }
         if (input.has("outcome")) {
             setScalar("outcome", input.getString("outcome"));

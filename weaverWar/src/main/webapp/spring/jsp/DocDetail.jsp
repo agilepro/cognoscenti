@@ -104,7 +104,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.docId   = "<%=aid%>";
-    $scope.docInfo = <% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>;
+    $scope.docInfo = {};
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
@@ -185,6 +185,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.setDocumentData = function(data) {
+        data.comments.forEach( function(cmt) {
+            $scope.generateCommentHtml(cmt);
+        });
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         if (data.id == $scope.docId) {
             data.html = convertMarkdownToHtml(data.description);
@@ -294,6 +297,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     setUpCommentMethods($scope, $http, $modal);
+    $scope.setDocumentData(<% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>);
+    
 });
 
 function copyTheLink() {

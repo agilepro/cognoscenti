@@ -198,6 +198,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.receiveTopicRecord = function(data) {
+        data.comments.forEach( function(cmt) {
+            $scope.generateCommentHtml(cmt);
+        });
         $scope.lastRefreshTimestamp = new Date().getTime();
         $scope.noteInfo = data;
         if (data.wiki) {

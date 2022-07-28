@@ -51,7 +51,7 @@
 <tr><td></td>
 <td>
 <hr>
-<div>{$cmnt.html}</div>
+<div>{$cmnt.html2}</div>
 <table>
 {% loop in $cmnt.responses as $response %}
 <tr>

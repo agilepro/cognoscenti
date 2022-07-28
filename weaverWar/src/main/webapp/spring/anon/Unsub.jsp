@@ -93,6 +93,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var newCounts = {};
         var allOthers = [];
         $scope.topicInfo.comments.forEach( function(cmt) {
+            cmt.html2 = convertMarkdownToHtml(cmt.body);
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
             }
@@ -257,7 +258,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="comment-outer">
               <div>{{focusComment.userName}} - {{focusComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
               <div class="comment-inner">
-                <div ng-bind-html="focusComment.html"></div>
+                <div ng-bind-html="focusComment.html2"></div>
               </div>
             </div>
         </div>
@@ -265,7 +266,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div ng-repeat="cmt in otherComments" class="comment-outer">
           <div>{{cmt.userName}} - {{cmt.time|date:'MMM dd, yyyy - HH:mm'}}</div>
           <div class="comment-inner">
-            <div ng-bind-html="cmt.html"></div>
+            <div ng-bind-html="cmt.html2"></div>
           </div>
         </div>
         
@@ -273,7 +274,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
         <div class="comment-outer">
           <div class="comment-inner">
-            <div ng-bind-html="topicInfo.html"></div>
+            <div ng-bind-html="topicInfo.html2"></div>
           </div>
         </div>
         

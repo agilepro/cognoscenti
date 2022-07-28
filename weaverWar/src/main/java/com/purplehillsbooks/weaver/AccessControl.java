@@ -200,7 +200,7 @@ public class AccessControl {
         if (ar.isLoggedIn()) {
             //if user is logged in, and is a member or superadmin, then can access
             if (ar.canAccessWorkspace()) {
-                System.out.println("CAN-ACCESS-TOPIC: user is a member");
+                System.out.println("CAN-ACCESS-TOPIC: user can access the workspace");
                 return true;
             }
             

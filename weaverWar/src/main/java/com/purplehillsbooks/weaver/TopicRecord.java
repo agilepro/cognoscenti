@@ -62,6 +62,9 @@ public class TopicRecord extends CommentContainer {
     //should be cancelled or ignored.  If the server stays on a long this value will
     //not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7L*24*60*60*1000;
+    
+    private int repliesMade = -1;
+    private int repliesNeeded = -1;
 
     public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
@@ -99,7 +102,6 @@ public class TopicRecord extends CommentContainer {
         full.put("id", getId());
         full.put("universalid", getUniversalId());
         updateNoteFromJSON(full, ar);
-        updateHtmlFromJSON(ar, full);
     }
 
 
@@ -680,10 +682,6 @@ public class TopicRecord extends CommentContainer {
           return htmlChunk.toString();
       }
 
-      public void setNoteFromHtml(AuthRequest ar, String htmlInput) throws Exception {
-          String wikiText = HtmlToWikiConverter.htmlToWiki(ar.baseURL,htmlInput);
-          setWiki(wikiText);
-      }
 
       
       
@@ -895,7 +893,7 @@ public class TopicRecord extends CommentContainer {
           data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this)
                    + "?" + AccessControl.getAccessTopicParams(ngp, this)
                    + "&emailId=" +URLEncoder.encode(ooa.getEmail(), "UTF-8"));
-          data.put("topic", this.getJSONWithHtml(ar, ngp));
+          data.put("topic", this.getJSONWithMarkdown(ngp));
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
@@ -952,13 +950,13 @@ public class TopicRecord extends CommentContainer {
           thisNote.put("subscribers", subs);
           return thisNote;
      }
-     public JSONObject getJSONWithHtml(AuthRequest ar, NGWorkspace ngw) throws Exception {
+     public JSONObject getJSONWithMarkdown(NGWorkspace ngw) throws Exception {
          JSONObject noteData = getJSON(ngw);
          noteData.put("wiki", getWiki());
          return noteData;
      }
      public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
-         JSONObject noteData = getJSONWithHtml(ar, ngw);
+         JSONObject noteData = getJSONWithMarkdown(ngw);
          JSONArray comments = getAllComments(ar);
          for (MeetingRecord meet : getLinkedMeetings(ngw)) {
              JSONObject specialMeetingComment = new JSONObject();
@@ -971,12 +969,8 @@ public class TopicRecord extends CommentContainer {
              comments.put(specialMeetingComment);
          }
          noteData.put("comments", comments);
-         return noteData;
-     }
-
-     public JSONObject getJSONWithWiki(NGWorkspace ngp) throws Exception {
-         JSONObject noteData = getJSON(ngp);
-         noteData.put("wiki", getWiki());
+         noteData.put("repliesNeeded", getRepliesNeeded());
+         noteData.put("repliesMade", getRepliesMade());
          return noteData;
      }
      
@@ -1084,11 +1078,6 @@ public class TopicRecord extends CommentContainer {
          subRole.addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
 
      }
-     public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
-         if (noteObj.has("html")) {
-             setNoteFromHtml(ar, noteObj.getString("html"));
-         }
-     }
      
      
      public void mergeDoc(String oldMarkDown, String newMarkDown) {
@@ -1179,6 +1168,37 @@ public class TopicRecord extends CommentContainer {
              return "(Note) "+note.getSubject();
          }
      }
+     
+     public int getRepliesMade() throws Exception {
+         if (repliesMade<0) {
+             calcReplies();
+         }
+         return repliesMade;
+     }
+     public int getRepliesNeeded() throws Exception {
+         if (repliesNeeded<0) {
+             calcReplies();
+         }
+         return repliesNeeded;
+     }
 
+    private void calcReplies() throws Exception {
+        int newRepliesMade = 0;
+        int newRepliesNeeded = 0;
+        for (CommentRecord cr : this.getComments()) {
+            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_PROPOSAL ||
+                    cr.getCommentType()==CommentRecord.COMMENT_TYPE_REQUEST) {
+                for (ResponseRecord response : cr.getResponses()) {
+                    newRepliesNeeded++;
+                    String content = response.getContent();
+                    if (content!=null && content.length()>0) {
+                        newRepliesMade++;
+                    }
+                }
+            }
+        }
+        repliesMade = newRepliesMade;
+        repliesNeeded = newRepliesNeeded;
+    }
 
 }

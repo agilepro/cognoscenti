@@ -706,6 +706,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             item.descriptionHtml = convertMarkdownToHtml(item.description);
             //make sure this is not appearing anywhere
             item.desc = "N/A";
+            item.comments.forEach( function(cmt) {
+                $scope.generateCommentHtml(cmt);
+            });
         });
         
         data.agendaDuration = totalAgendaTime;
@@ -1550,7 +1553,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.cancelBackgroundTime();
 
         var newDecision = {
-            html: cmt.html,
+            decision: cmt.body,
             labelMap: {},
             sourceId: $scope.meeting.id,
             sourceType: 7,

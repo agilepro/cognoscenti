@@ -950,12 +950,14 @@ public class AttachmentRecord extends CommentContainer {
             changed = true;
         }
         //TODO: this is probably not needed any more
+        /*
         if (docInfo.has("newComment")) {
             String newValue = docInfo.getString("newComment");
             CommentRecord newCr = addComment(ar);
             newCr.setContentHtml(ar, newValue);
             changed = true;
         }
+        */
 
         if (docInfo.has("url")) {
             if ("URL".equals(getType())) {

@@ -390,7 +390,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     </style>
     
-    <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
+<% if (canUpdate) { %>    <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
+<% } %>
     <table class="spacey table">
         <tr ng-repeat="role in allRoles">
             <td>

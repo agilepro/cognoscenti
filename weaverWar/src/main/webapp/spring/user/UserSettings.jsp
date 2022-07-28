@@ -25,8 +25,6 @@
         photoSrc = ar.retPath+"icon/"+profImage;
     }
 
-    String remoteProfileURL = ar.baseURL+"apu/"+uProf.getKey()+"/user.json?lic="+uProf.getLicenseToken();
-
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
@@ -394,10 +392,6 @@ if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol">Password:</td>
             <td><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></td>
-        </tr>
-        <tr>
-            <td class="firstcol">Remote URL:</td>
-            <td><a href="<%=remoteProfileURL%>"><%=remoteProfileURL%></a></td>
         </tr>
         <tr>
             <td class="firstcol">API Token:</td>

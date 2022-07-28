@@ -52,14 +52,6 @@ public class DecisionRecord extends DOMFace {
     public void setDecision(String newVal) throws Exception {
         setScalar("decision", newVal);
     }
-    /*
-    public String getContentHtml(AuthRequest ar)  throws Exception {
-        return WikiConverterForWYSIWYG.makeHtmlString(ar, getDecision());
-    }
-    public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
-        setDecision(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
-    }
-    */
 
 
     public long getTimestamp() throws Exception {
@@ -155,7 +147,6 @@ public class DecisionRecord extends DOMFace {
         }
         extractScalarString(thisDecision, "decision");
         thisDecision.put("labelMap",  labelMap);
-        //thisDecision.put("html", getContentHtml(ar));
         thisDecision.put("sourceUrl", getSourceUrl(ar, ngp));
         extractAttributeString(thisDecision, "sourceId");
         extractAttributeInt(thisDecision, "sourceType");

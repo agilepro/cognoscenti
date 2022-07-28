@@ -27,7 +27,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             $scope.defaultProposalAssignees().forEach( function(item) {
                 newComment.responses.push({
                     "choice": "None",
-                    "html": "",
+                    "body": "",
                     "user": item.uid,
                     "key": item.key,
                     "userName": item.name,
@@ -36,13 +36,12 @@ function setUpCommentMethods($scope, $http, $modal) {
         }
         
         if (replyComment) {
-            console.log("This is a REPLY");
             newComment.replyTo = replyComment.time;
             newComment.containerID = replyComment.containerID;
             newComment.containerType = replyComment.containerType;
         }
         if (defaultBody) {
-            newComment.html = defaultBody;
+            newComment.body = defaultBody;
         }
         $scope.openCommentEditor({}, newComment);
     }
@@ -147,7 +146,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         return "Completed";
     }
     $scope.createModifiedProposal = function(cmt) {
-        $scope.openCommentCreator({},2,cmt.time,cmt.html);  //proposal
+        $scope.openCommentCreator({},2,cmt.time,cmt.body);  //proposal
     }
     $scope.replyToComment = function(cmt) {
         $scope.openCommentCreator({},1,cmt.time);  //simple comment
@@ -237,6 +236,15 @@ function setUpCommentMethods($scope, $http, $modal) {
             console.log("Sorry, I can't understand this comment", cmt);
         }
     }
+    
+    $scope.generateCommentHtml = function(cmt) {
+        cmt.html2 = convertMarkdownToHtml(cmt.body);
+        cmt.outcomeHtml = convertMarkdownToHtml(cmt.outcome);
+        cmt.responses.forEach( function(item) {
+            item.html = convertMarkdownToHtml(item.body);
+        });
+    }
+    
     $scope.getOutcomeHtml = function(cmt) {
         if (cmt.outcomeHtml) {
             return cmt.outcomeHtml;
@@ -304,7 +312,7 @@ function setUpCommentMethods($scope, $http, $modal) {
               <a role="menuitem" ng-click="openCommentCreator(item,1,cmt)">
               Reply</a></li>
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="openCommentCreator(item,2,cmt,cmt.html)">
+              <a role="menuitem" ng-click="openCommentCreator(item,2,cmt,cmt.body)">
               Make Modified Proposal</a></li>
             <li role="presentation">
               <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">
@@ -353,7 +361,7 @@ function setUpCommentMethods($scope, $http, $modal) {
       </div>
       <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6"
            ng-dblclick="openCommentEditor(item,cmt)">
-        <div ng-bind-html="cmt.html"></div>
+        <div ng-bind-html="cmt.html2"></div>
       </div>
       <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToMeeting(cmt.meet)">

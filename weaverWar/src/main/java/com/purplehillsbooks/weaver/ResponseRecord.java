@@ -91,14 +91,6 @@ public class ResponseRecord extends DOMFace
         setScalar("content", content);
     }
 
-    public String getHtml(AuthRequest ar) throws Exception {
-        return WikiConverterForWYSIWYG.makeHtmlString(ar, getContent());
-    }
-    public void setHtml(AuthRequest ar, String newHtml) throws Exception {
-        setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
-    }
-
-
     public void responseEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         noteOrMeet.appendTargetEmails(sendTo, ngw);
@@ -168,10 +160,8 @@ public class ResponseRecord extends DOMFace
         data.put("wsName", ngw.getFullName());
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
         data.put("userName", owner.getName());
-        
-        data.put("outcomeHtml", cr.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
-
+        
         File emailFolder = cog.getConfig().getFileFromRoot("email");
         File templateFile = new File(emailFolder, "NewResponse.chtml");
         if (!templateFile.exists()) {
@@ -200,7 +190,6 @@ public class ResponseRecord extends DOMFace
         jo.put("userName", ale.getName());
         jo.put("choice",  getChoice());
         jo.put("body", getContent());
-        jo.put("html", getHtml(ar));     //REMOVE THIS SOME DAY
         jo.put("time", getTime());
         return jo;
     }
@@ -208,9 +197,6 @@ public class ResponseRecord extends DOMFace
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         //can not change the user id since that is the key field.
         //user name and key is not stored here either
-        if (input.has("html")) {
-            setHtml(ar, input.getString("html"));
-        }
         if (input.has("body")) {
             setContent(input.getString("body"));
         }

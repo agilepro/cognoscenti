@@ -37,7 +37,7 @@
     fullMenu.addAll(allMenu.getJSONArray("workMode"));
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
-    boolean userIsReadOnly = !ngw.canUpdateWorkspace(ar.getUserProfile());
+    boolean userIsReadOnly = !ar.canUpdateWorkspace();
 
 %>
 

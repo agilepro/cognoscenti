@@ -317,7 +317,7 @@ a {
           <div style="clear:both"></div>
       </div>
       <div class="panel-body">
-        You are not a member of this workspace
+        You do not play any role in this workspace.
       </div>
     </div>
 

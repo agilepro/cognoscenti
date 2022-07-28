@@ -112,9 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 return;
             }
             //assure that the HTML exists
-            if (cmt.body) {
-                cmt.html = convertMarkdownToHtml(cmt.body);
-            }
+            $scope.generateCommentHtml(cmt);
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
             }
@@ -148,7 +146,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     });
 
     $scope.saveIt = function() {
-        $scope.newComment.body = HTML2Markdown($scope.newComment.html, {});
+        $scope.newComment.body = HTML2Markdown($scope.newComment.html2, {});
         $scope.newComment.user = $scope.emailId;
         
         var postObj = {comments:[]};
@@ -258,18 +256,18 @@ function reloadIfLoggedIn() {
      <div class="comment-outer">
       <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
       <div class="comment-inner">
-        <div ng-bind-html="cmt.html"></div>
+        <div ng-bind-html="cmt.html2"></div>
       </div>
     </div>
    </div>
 
-        <div ng_show="focusComment.html">
+        <div ng_show="focusComment.html2">
             <h1>You are replying to:</h1>
 
             <div class="comment-outer">
               <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
               <div class="comment-inner">
-                <div ng-bind-html="focusComment.html"></div>
+                <div ng-bind-html="focusComment.html2"></div>
               </div>
             </div>
         </div>
@@ -294,7 +292,7 @@ function reloadIfLoggedIn() {
             </td></tr>
 <% } %>
             </table>
-            <div ui-tinymce="tinymceOptions" ng-model="newComment.html"
+            <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
                  class="leafContent" style="max-height:250px;" id="theOnlyEditor"></div>
        </div>
         <div ng-show="sentAlready">
@@ -307,7 +305,7 @@ function reloadIfLoggedIn() {
             <div class="comment-outer">
               <div>{{newComment.userName}} - {{newComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
               <div class="comment-inner">
-                <div ng-bind-html="newComment.html"></div>
+                <div ng-bind-html="newComment.html2"></div>
               </div>
             </div>
             

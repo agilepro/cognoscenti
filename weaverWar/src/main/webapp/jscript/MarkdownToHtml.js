@@ -304,6 +304,5 @@ function stripQuotesFromText(source) {
             cleaned = cleaned + ch;
         }
     }
-    console.log("CLEAN", source, cleaned);
     return cleaned;
 }

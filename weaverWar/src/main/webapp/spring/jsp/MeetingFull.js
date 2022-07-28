@@ -1298,7 +1298,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.openDecisionEditor = function (item, cmt) {
 
         var newDecision = {
-            html: cmt.html,
+            decision: cmt.body,
             labelMap: {},
             sourceId: $scope.meeting.id,
             sourceType: 7,

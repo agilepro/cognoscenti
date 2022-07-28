@@ -57,7 +57,7 @@
 var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.topic = <%topicObject.write(out,2,4);%>;
-    $scope.topic.html = convertMarkdownToHtml($scope.topic.wiki);
+    $scope.topic.html2 = convertMarkdownToHtml($scope.topic.wiki);
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.nowTime = new Date().getTime();
     
@@ -119,7 +119,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         <div class="comment-outer">
           <div class="comment-inner">
-            <div ng-bind-html="topic.html"></div>
+            <div ng-bind-html="topic.html2"></div>
           </div>
         </div>
 

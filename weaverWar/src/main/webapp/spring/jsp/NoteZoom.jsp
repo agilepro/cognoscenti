@@ -293,6 +293,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.receiveTopicRecord = function(data) {
+        data.comments.forEach( function(cmt) {
+            $scope.generateCommentHtml(cmt);
+        });
         $scope.lastRefreshTimestamp = new Date().getTime();
         $scope.noteInfo = data;
         if (data.wiki) {
@@ -661,7 +664,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
 
         var newDecision = {
-            html: cmt.html,
+            decision: cmt.body,
             labelMap: $scope.noteInfo.labelMap,
             sourceId: $scope.topicId,
             sourceType: 4,

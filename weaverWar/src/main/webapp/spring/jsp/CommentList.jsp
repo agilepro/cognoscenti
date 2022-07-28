@@ -138,7 +138,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return;
                 }
             }
-            if (containsOne(aCmt.html, filterlist)) {
+            if (containsOne(aCmt.body, filterlist)) {
                 retSet.push(aCmt);
             }
         });
@@ -166,12 +166,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $http.get(postURL)
         .success( function(data, status, headers, config) {
             $scope.allComments = data.list;
+            generateAllHtml();
         })
         .error( function(data, status, headers, config) {
             console.log("   FAILED"+ status, data);
             $scope.reportError(data);
         });
     }
+    
+    function generateAllHtml() {
+        $scope.allComments.forEach( function(cmt) {
+            $scope.generateCommentHtml(cmt);
+        });
+    }
+    generateAllHtml();
     
 });
 
