@@ -87,7 +87,7 @@ Optional Parameters:
         emailInfo.put("alsoTo", new JSONArray());
         emailInfo.put("excludeResponders", false);
         emailInfo.put("makeMembers", false);
-        emailInfo.put("includeBody", false);
+        emailInfo.put("includeBody", true);
         emailInfo.put("scheduleTime", new Date().getTime());
         
         if (layout!=null) {
@@ -104,7 +104,7 @@ Optional Parameters:
             if(mailSubject==null || mailSubject.trim().length()==0){
                 mailSubject = "Sending Topic from Workspace";
             }
-            emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar, ngw));
+            emailInfo.put("noteInfo", noteRec.getJSONWithComments(ar, ngw));
 
             targetRole = noteRec.getTargetRole();
             emailInfo.put("alsoTo", AddressListEntry.getJSONArray(noteRec.getSubscriberRole().getExpandedPlayers(ngw)));

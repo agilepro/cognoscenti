@@ -40,7 +40,7 @@ Item <a href="{$replyUrl}">{$parentName|onempty(No Name)|html}</a>
 {% endif %}
 {% if ($cmtType=="comment") %}
 <div style="color:grey;font-weight:bold;">ACTION:  
-    <span><a href="{$replyUrl}#QuickReply"><button>Reply to this</button></a>
+    <span><a href="{$replyUrl}#QuickReply"><button title="Using this button will allow you to comment on-line and avoid having to track endless chains of email in your inbox">Reply to this</button></a>
     or you can 
     <a href="{$replyUrl}#Unsub"><button>unsubscribe</button></a> from this thread.
     </span>

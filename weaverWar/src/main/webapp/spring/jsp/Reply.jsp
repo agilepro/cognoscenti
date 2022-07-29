@@ -102,7 +102,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.originalTopic = convertMarkdownToHtml($scope.originalWiki);
     
-
+ 
+    $scope.generateCommentHtml = function(cmt) { 
+        cmt.html2 = convertMarkdownToHtml(cmt.body);
+        cmt.outcomeHtml = convertMarkdownToHtml(cmt.outcome);
+        cmt.responses.forEach( function(item) {
+            item.html = convertMarkdownToHtml(item.body);
+        });
+    }
     $scope.distributeComments = function() {
         var newCounts = {};
         var allOthers = [];
@@ -111,7 +118,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 //ignore phase change comments of any kind
                 return;
             }
-            //assure that the HTML exists
             $scope.generateCommentHtml(cmt);
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
@@ -199,7 +205,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         console.log("SENDING:", url);
         $http.get(url)
         .success( function(data) {
-            console.log("GOT BACK:", data);
+            console.log("GOT BACK:", data); 
             $scope.subscribers = data.subscribers;
             $scope.distributeComments();
         } )
@@ -254,7 +260,7 @@ function reloadIfLoggedIn() {
 
     <div ng-repeat="cmt in otherComments">
      <div class="comment-outer">
-      <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
+      <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
       <div class="comment-inner">
         <div ng-bind-html="cmt.html2"></div>
       </div>

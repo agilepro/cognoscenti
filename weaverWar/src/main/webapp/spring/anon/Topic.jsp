@@ -11,7 +11,7 @@
 
     JSONArray allLabels = ngw.getJSONLabels();
     TopicRecord topic = ngw.getDiscussionTopic(topicId);
-    JSONObject topicObject = topic.getJSONWithHtml(ar, ngw);
+    JSONObject topicObject = topic.getJSONWithMarkdown(ar, ngw);
         
 %>
 
