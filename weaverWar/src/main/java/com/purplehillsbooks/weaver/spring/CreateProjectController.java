@@ -100,7 +100,7 @@ public class CreateProjectController extends BaseController {
             if (templateWorkspace!=null) {
                 newWorkspace.injectTemplate(ar, templateWorkspace);
             }
-            newWorkspace.saveContent(ar, "Workspace created from web api");
+            newWorkspace.saveModifiedWorkspace(ar, "Workspace created from web api");
 
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);

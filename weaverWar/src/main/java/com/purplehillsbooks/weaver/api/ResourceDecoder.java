@@ -21,7 +21,6 @@ import java.util.List;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.License;
 import com.purplehillsbooks.weaver.LicenseForUser;
 import com.purplehillsbooks.weaver.NGBook;
@@ -99,6 +98,8 @@ public class ResourceDecoder {
         projId = path.substring(curPos, slashPos);
 
         if ("$".equals(projId)) {
+            throw new Exception("ResourceDecoder Access to SITE is not supported");
+            /*
             isSite = true;
             if (licenseId==null) {
                 throw new JSONException("Can not access the site '{0}' without any license.", site.getKey());
@@ -109,6 +110,7 @@ public class ResourceDecoder {
             }
             setUserFromLicense(ar);
             return;
+            */
         }
         workspace = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,projId).getWorkspace();
         ar.setPageAccessLevels(workspace);
@@ -127,6 +129,14 @@ public class ResourceDecoder {
             isListing = true;
             return;
         }
+        if (resource.startsWith("temp")) {
+            //needed for receiving temporary files
+            isTempDoc = true;
+            tempName = resource.substring(slashPos);
+            return;
+        }
+        throw new Exception("ResourceDecoder Unable to handle resource="+resource);
+        /*
         if (resource.startsWith("doc")) {
             isDoc = true;
             if (slashPos<=3) {
@@ -163,10 +173,7 @@ public class ResourceDecoder {
             goalId = resource.substring(4, slashPos);
             return;
         }
-        if (resource.startsWith("temp")) {
-            isTempDoc = true;
-            tempName = resource.substring(slashPos);
-        }
+        */
     }
 
     private void setUserFromLicense(AuthRequest ar) throws Exception {
@@ -191,21 +198,21 @@ public class ResourceDecoder {
      * License is for full member access if the name of the role is "Members"
      * and the user is a member or an owner.
      */
-    public boolean hasFullMemberAccess() throws Exception {
+    private boolean hasFullMemberAccess() throws Exception {
         if (workspace==null || lic==null) {
             return false;
         }
         return lic.getRole().equalsIgnoreCase("Members") && ownerIsMemberofWorkspace();
     }
 
-    public boolean ownerIsMemberofWorkspace() throws Exception {
+    private boolean ownerIsMemberofWorkspace() throws Exception {
         if (workspace==null || lic==null || licenseOwner==null) {
             return false;
         }
         return workspace.primaryOrSecondaryPermission(licenseOwner);
     }
 
-    public List<NGRole> getLicensedRoles() throws Exception {
+    private List<NGRole> getLicensedRoles() throws Exception {
         List<NGRole> licensedRoles = new ArrayList<NGRole>();
         String restrictRole = lic.getRole();
 

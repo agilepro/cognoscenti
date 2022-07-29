@@ -553,18 +553,6 @@ public class AuthRequest
 
     }
 
-    public boolean checkMagicNo(NGContainer ngp) throws Exception{
-        String magicNumber = defParam("mn", null);
-        String emailId = defParam("emailId", null);
-        if(magicNumber != null && emailId != null){
-            String expectedMN = ngp.emailDependentMagicNumber(emailId);
-            if(magicNumber.equals(expectedMN)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public UserProfile getUserProfile()
     {
         return user;

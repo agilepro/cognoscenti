@@ -477,42 +477,6 @@ public class NGBook extends ContainerCommon {
         return displayNames.get(0);
     }
 
-    // /////////////// Role Requests/////////////////////
-
-    @Override
-    public RoleRequestRecord createRoleRequest(String roleName, String requestedBy,
-            long modifiedDate, String modifiedBy, String requestDescription) throws Exception {
-        DOMFace rolelist = siteInfoRec.requireChild("Role-Requests", DOMFace.class);
-        RoleRequestRecord newRoleRequest = rolelist
-                .createChild("requests", RoleRequestRecord.class);
-        newRoleRequest.setRequestId(IdGenerator.generateKey());
-        newRoleRequest.setModifiedDate(modifiedDate);
-        newRoleRequest.setModifiedBy(modifiedBy);
-        newRoleRequest.setState("Requested");
-        newRoleRequest.setCompleted(false);
-        newRoleRequest.setRoleName(roleName);
-        newRoleRequest.setRequestedBy(requestedBy);
-        newRoleRequest.setRequestDescription(requestDescription);
-        newRoleRequest.setResponseDescription("");
-
-        return newRoleRequest;
-    }
-
-    @Override
-    public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
-        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
-        List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
-        DOMFace rolelist = siteInfoRec.requireChild("Role-Requests", DOMFace.class);
-        List<RoleRequestRecord> children = rolelist.getChildren("requests",
-                RoleRequestRecord.class);
-        for (RoleRequestRecord rrr : children) {
-            if (rrr.getModifiedDate() > tooOld) {
-                //only add requests that are not too old
-                requestList.add(rrr);
-            }
-        }
-        return requestList;
-    }
 
     // ////////////////// ROLES /////////////////////////
 
@@ -545,7 +509,7 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.setModUser(ar.getBestUserId());
     }
 
-    @Override
+    //Override
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         try {
             setLastModify(ar);
@@ -557,8 +521,8 @@ public class NGBook extends ContainerCommon {
         }
     }
 
-    @Override
-    public void saveContent(AuthRequest ar, String comment) throws Exception {
+    //override
+    public void saveModifiedSite(AuthRequest ar, String comment) throws Exception {
         saveFile(ar, comment);
     }
 
@@ -567,8 +531,8 @@ public class NGBook extends ContainerCommon {
         return displayNames;
     }
 
-    @Override
-    public void setContainerNames(List<String> newNames) {
+
+    private void setContainerNames(List<String> newNames) {
         if (newNames==null) {
             throw new RuntimeException("setSiteNames was passed a null string array");
         }
@@ -599,30 +563,6 @@ public class NGBook extends ContainerCommon {
         throw new Exception("Can not change the visibility of a note on a book, because there are no notes on books");
     }
 
-    @Override
-    public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception {
-        throw new Exception("writeDocumentLink should no longer be used on an Site");
-    }
-
-    /*
-    @Override
-    public void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception {
-        throw new Exception("writeReminderLink should no longer be used on an Site");
-    }
-    */
-
-
-    @Override
-    public void writeTaskLink(AuthRequest ar, String taskId, int len) throws Exception {
-        throw new ProgramLogicError("This site does not have a task '" + taskId
-                + "' or any other task.  Sites don't have tasks.");
-    }
-
-
-    @Override
-    public void writeNoteLink(AuthRequest ar, String noteId, int len) throws Exception {
-        throw new ProgramLogicError("Sites do not have topics and writeNoteLink not implemented");
-     }
 
 
 
@@ -742,7 +682,7 @@ public class NGBook extends ContainerCommon {
 
     // //////////////////// DEPRECATED METHODS//////////////////
 
-    @Override
+    //Override
     public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
         try {
             siteInfoRec.setModTime(modTime);
@@ -1047,22 +987,6 @@ public class NGBook extends ContainerCommon {
         return System.currentTimeMillis() + 31000000000L;
     }
     
-    @Override
-    public EmailRecord createEmail() throws Exception {
-        //prove this point
-        throw new Exception("Site does not have any email created.");
-    }
-
-    @Override
-    public void writeContainerLink(AuthRequest ar, int len) throws Exception
-    {
-        ar.write("<a href=\"");
-        ar.write(ar.retPath);
-        ar.write(ar.getDefaultURL(this));
-        ar.write("\">");
-        ar.writeHtml(trimName(getFullName(), len));
-        ar.write( "</a>");
-    }
 
     public Hashtable<String, File> allMeetingTemplates(AuthRequest ar) {
         File siteFolder = getFilePath().getParentFile();

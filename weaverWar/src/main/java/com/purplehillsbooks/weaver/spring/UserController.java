@@ -399,14 +399,14 @@ public class UserController extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngc =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
 
             String requestId = ar.reqParam("requestId");
-            RoleRequestRecord roleRequestRecord = ngc.getRoleRequestRecordById(requestId);
+            RoleRequestRecord roleRequestRecord = ngw.getRoleRequestRecordById(requestId);
             if (roleRequestRecord==null) {
                 throw new Exception("Unable to find a role request record with id="+requestId);
             }
-            boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngc, roleRequestRecord);
+            boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngw, roleRequestRecord);
 
             if(!canAccessPage){
                 if (ar.isLoggedIn()) {

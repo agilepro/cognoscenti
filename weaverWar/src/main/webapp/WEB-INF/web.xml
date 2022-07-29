@@ -44,14 +44,14 @@
     
     
 
-    <!--servlet>
+    <servlet>
         <servlet-name>apiServlet</servlet-name>
         <servlet-class>com.purplehillsbooks.weaver.api.APIServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>apiServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
-    </servlet-mapping-->
+    </servlet-mapping>
     
     
     <!--servlet>

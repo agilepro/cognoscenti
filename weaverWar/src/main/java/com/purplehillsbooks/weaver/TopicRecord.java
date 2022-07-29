@@ -948,6 +948,8 @@ public class TopicRecord extends CommentContainer {
               subs.put(ale.getJSON());
           }
           thisNote.put("subscribers", subs);
+          thisNote.put("responsesNeeded", getRepliesNeeded());
+          thisNote.put("responsesMade", getRepliesMade());
           return thisNote;
      }
      public JSONObject getJSONWithMarkdown(NGWorkspace ngw) throws Exception {
@@ -969,8 +971,6 @@ public class TopicRecord extends CommentContainer {
              comments.put(specialMeetingComment);
          }
          noteData.put("comments", comments);
-         noteData.put("repliesNeeded", getRepliesNeeded());
-         noteData.put("repliesMade", getRepliesMade());
          return noteData;
      }
      

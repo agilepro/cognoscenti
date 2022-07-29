@@ -388,7 +388,7 @@ public class ProjectSettingController extends BaseController {
 
 
     private static void sendRoleRequestEmail(AuthRequest ar,
-            RoleRequestRecord roleRequestRecord, NGWorkspace container)
+            RoleRequestRecord roleRequestRecord, NGWorkspace ngw)
             throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
@@ -399,27 +399,27 @@ public class ProjectSettingController extends BaseController {
 
         //This is a magic URL that contains a magic token that will allow people
         //who are not logged in, to approve this request.
-        String resourceURL = ar.getResourceURL(container, "approveOrRejectRoleReqThroughMail.htm")
+        String resourceURL = ar.getResourceURL(ngw, "approveOrRejectRoleReqThroughMail.htm")
             +"?requestId="  + roleRequestRecord.getRequestId()
             + "&isAccessThroughEmail=yes&"
-            + AccessControl.getAccessRoleRequestParams(container, roleRequestRecord);
+            + AccessControl.getAccessRoleRequestParams(ngw, roleRequestRecord);
 
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
-        OptOutAddr.appendUsersFromRole(container, container.getPrimaryRole().getName(), initialList);
-        OptOutAddr.appendUsersFromRole(container, container.getSecondaryRole().getName(), initialList);
+        OptOutAddr.appendUsersFromRole(ngw, ngw.getPrimaryRole().getName(), initialList);
+        OptOutAddr.appendUsersFromRole(ngw, ngw.getSecondaryRole().getName(), initialList);
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
         data.put("requester", ar.getUserProfile().getJSON());
-        data.put("wsURL", ar.baseURL + ar.getDefaultURL(container));
-        data.put("wsName", container.getFullName());
+        data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngw));
+        data.put("wsName", ngw.getFullName());
         data.put("roleName", roleRequestRecord.getRoleName());
         data.put("comment", roleRequestRecord.getRequestDescription());
         data.put("resourceURL", ar.baseURL + resourceURL);
 
         File templateFile = cog.getConfig().getFileFromRoot("email/RoleRequest.chtml");
 
-        MailInst msg = container.createMailInst();
+        MailInst msg = ngw.createMailInst();
         msg.setSubject("Role Requested by " + ar.getBestUserId());
         AddressListEntry from =  ar.getUserProfile().getAddressListEntry();
         
@@ -442,15 +442,15 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleName= "Unknown";
         try{
-            NGWorkspace ngc = registerRequiredProject(ar, siteId, pageId );
-            ar.setPageAccessLevels(ngc);
-            ar.assertNotFrozen(ngc);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId );
+            ar.setPageAccessLevels(ngw);
+            ar.assertNotFrozen(ngw);
             JSONObject personalInfo = getPostedObject(ar);
             op = personalInfo.getString("op");
             String roleRequestId = personalInfo.getString("rrId");
-            RoleRequestRecord rrr = ngc.getRoleRequestRecordById(roleRequestId);
+            RoleRequestRecord rrr = ngw.getRoleRequestRecordById(roleRequestId);
             roleName = rrr.getRoleName();
-            boolean canAccess = AccessControl.canAccessRoleRequest(ar, ngc, rrr);
+            boolean canAccess = AccessControl.canAccessRoleRequest(ar, ngw, rrr);
 
             if (!canAccess) {
                 throw new Exception("Unable to access that RoleRequestRecord.  You might need to be logged in.");
@@ -458,7 +458,7 @@ public class ProjectSettingController extends BaseController {
 
             if ("Approve".equals(op)) {
                 String requestedBy = rrr.getRequestedBy();
-                ngc.addPlayerToRole(roleName,requestedBy);
+                ngw.addPlayerToRole(roleName,requestedBy);
                 rrr.setState("Approved");
                 rrr.setCompleted(true);
             }
@@ -471,10 +471,10 @@ public class ProjectSettingController extends BaseController {
             }
 
             if (ar.isLoggedIn()) {
-                ngc.saveFile(ar, "Resolved role "+roleName);
+                ngw.saveFile(ar, "Resolved role "+roleName);
             }
             else {
-                ngc.saveWithoutAuthenticatedUser("Unknown", ar.nowTime, "Resolved role "+roleName, ar.getCogInstance());
+                ngw.saveWithoutAuthenticatedUser("Unknown", ar.nowTime, "Resolved role "+roleName, ar.getCogInstance());
             }
             JSONObject repo = new JSONObject();
             repo.put("state", rrr.getState());
@@ -573,7 +573,12 @@ public class ProjectSettingController extends BaseController {
                 repo.put("roles", ja);
             }
 
-            ngc.saveFile(ar, op + " Role ");
+            if (ngc instanceof NGWorkspace) {
+                ((NGWorkspace)ngc).saveModifiedWorkspace(ar, op + " Role ");
+            }
+            else {
+                ((NGBook)ngc).saveModifiedSite(ar, op + " Role ");
+            }
             if (saveSite & site!=null) {
                 site.save();
             }

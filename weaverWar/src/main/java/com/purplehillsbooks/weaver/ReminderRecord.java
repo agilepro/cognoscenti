@@ -270,8 +270,8 @@ public class ReminderRecord extends DOMFace
             getModifiedDate(), event, ar, comment);
     }
 
-    //TODO: this should be only for a project, not container
-    public void writeReminderEmailBody(AuthRequest ar, NGContainer ngp) throws Exception {
+
+    public void writeReminderEmailBody(AuthRequest ar, NGWorkspace ngp) throws Exception {
         String userName = getModifiedBy();
         AddressListEntry ale = new AddressListEntry(userName);
 
@@ -355,7 +355,7 @@ public class ReminderRecord extends DOMFace
                     HistoryRecord.EVENT_DOC_UPDATED, ar, "Reminder Emailed to "
                             + emailto);
         }
-        ngw.saveContent(ar, "sending reminder email");
+        ngw.saveModifiedWorkspace(ar, "sending reminder email");
     }
 
 }

@@ -393,23 +393,6 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-    @Override
-    public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception
-    {
-        AttachmentRecord att = findAttachmentByID(documentId);
-        if(att==null)
-        {
-            ar.write( "(Document " );
-            ar.write( documentId );
-            ar.write( ")" );
-            return;
-        }
-        ar.write(ar.baseURL);
-        ar.write(att.getEmailURL(ar, this));
-        ar.write("\">" );
-        ar.writeHtml(trimName(att.getDisplayName(), len));
-        ar.write( "</a>");
-    }
 
 
     public List<AttachmentRecord> getAllAttachments() throws Exception {
@@ -424,16 +407,6 @@ public class NGWorkspace extends NGPage {
                 if (attName==null || attName.length()==0) {
                     System.out.println("Found attachement without name, id="+att.getId()+" in project ("+this.getCombinedKey()+")");
                 }
-                
-                //consider removing this check as unnecessary, project folder files
-                //eliminated in Oct 2021 and so at some point remove this unnecessary check.
-                /*
-                File attPath = new File(containingFolder, attName);
-                if (attPath.exists()) {
-                    throw new Exception("There is a copy in the main folder, it should not be there: "
-                        +attPath.getAbsolutePath());
-                }
-                */
             }
             else if (atype.equals("GONE")) {
                 //old state no longer supported, this correction was in the code

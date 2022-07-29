@@ -864,7 +864,7 @@ public class ProjectGoalController extends BaseController {
                 needSave = true;
             }
             if (needSave) {
-                ngw.saveContent(ar, "updating the TaskArea");
+                ngw.saveModifiedWorkspace(ar, "updating the TaskArea");
             }
             JSONObject repo = ta.getMinJSON();
             sendJson(ar, repo);
@@ -916,7 +916,6 @@ public class ProjectGoalController extends BaseController {
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
 
-            UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
             ar.assertUpdateWorkspace("You must be the member of the workspace you are copying to");
             ar.assertNotFrozen(thisWS);
@@ -946,7 +945,7 @@ public class ProjectGoalController extends BaseController {
             //get rid of the old copy
             oldGoal.setState(GoalRecord.STATE_SKIPPED);
             oldGoal.setDescription("This task was moved to another workspace: "+thisWS.getFullName());
-            fromWS.saveContent(ar, "Action Item moved to another workspace: "+thisWS.getFullName());
+            fromWS.saveModifiedWorkspace(ar, "Action Item moved to another workspace: "+thisWS.getFullName());
 
             JSONObject repo = new JSONObject();
             repo.put("created", newCopy.getJSON4Goal(thisWS));
@@ -1006,7 +1005,7 @@ public class ProjectGoalController extends BaseController {
             for (AddressListEntry ale : contactList) {
                 role.addPlayerIfNotPresent(ale);
             }
-            up.saveFile(ar, "Added contacts");
+            up.saveUserPage(ar, "Added contacts");
         }
     }
 
@@ -1019,7 +1018,7 @@ public class ProjectGoalController extends BaseController {
                 AddressListEntry ale = AddressListEntry
                         .newEntryFromStorage(emailIds);
                 role.removePlayer(ale);
-                up.saveFile(ar, "removed user " + emailIds + " from role "
+                up.saveUserPage(ar, "removed user " + emailIds + " from role "
                         + role.getName());
             } else if (op.equals("Add")) {
 

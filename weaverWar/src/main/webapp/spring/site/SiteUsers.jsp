@@ -120,8 +120,6 @@ app.filter('encode', function() {
           <li role="presentation"><a role="menuitem"
               href="SiteAdmin.htm">Site Admin</a></li>
           <li role="presentation"><a role="menuitem"
-              href="SiteRoleRequest.htm">Role Requests</a></li>
-          <li role="presentation"><a role="menuitem"
               href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteStats.htm">Site Statistics</a></li>

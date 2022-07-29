@@ -201,7 +201,7 @@ public class CommentController extends BaseController {
         if (postObject != null) {
             cr.updateFromJSON(postObject, ar);
             
-            ngw.saveContent(ar, "updated comment "+cid);
+            ngw.saveModifiedWorkspace(ar, "updated comment "+cid);
             //now we have to tell the meeting controlled to update cache if meeting comment
             if (cr.containerType == CommentRecord.CONTAINER_TYPE_MEETING) {
                 int pos = cr.containerID.indexOf(":");

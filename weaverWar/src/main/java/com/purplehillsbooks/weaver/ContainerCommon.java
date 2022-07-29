@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 /**
@@ -197,23 +195,7 @@ public abstract class ContainerCommon extends NGContainer
 
     ////////////////////// WRITE LINKS //////////////////////////
 
-    public void writeContainerLink(AuthRequest ar, int len) throws Exception{
-        throw new ProgramLogicError("writeContainerLink not implemented");
-    }
-
-    public void writeDocumentLink(AuthRequest ar, String id, int len) throws Exception{
-        throw new ProgramLogicError("not implemented");
-    }
-
-    public void writeTaskLink(AuthRequest ar, String id, int len) throws Exception{
-        throw new ProgramLogicError("writeTaskLink not implemented");
-    }
-
-    public void writeNoteLink(AuthRequest ar, String id, int len) throws Exception{
-        throw new ProgramLogicError("writeNoteLink not implemented");
-    }
-
-
+ 
     public String trimName(String nameOfLink, int len)
     {
         if (nameOfLink.length()>len)
@@ -372,56 +354,6 @@ public abstract class ContainerCommon extends NGContainer
         return gen.toString();
     }
 
-    public RoleRequestRecord getRoleRequestRecordById(String requestId) throws Exception{
-        RoleRequestRecord requestRecord = null;
-        for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {
-            if(roleRequestRecord.getAttribute("id").equalsIgnoreCase(requestId)){
-                requestRecord = roleRequestRecord;
-                break;
-            }
-        }
-        return requestRecord;
-    }
-
-    public List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception{
-        List<RoleRequestRecord> resultList = new ArrayList<RoleRequestRecord>();
-        for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {
-            if(roleRequestRecord.getState().equalsIgnoreCase(state)
-                    && completedReq == roleRequestRecord.isCompleted()){
-                resultList.add(roleRequestRecord);
-            }
-        }
-        return resultList;
-    }
-
-    public boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception{
-        for (RoleRequestRecord roleRequestRecord : getAllRoleRequestByState("Requested", false)) {
-            if(requestedBy.equals(roleRequestRecord.getRequestedBy())
-                    && roleName.equals(roleRequestRecord.getRoleName())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //TODO: If there are two, it gets the latest, ignoring earlier requests.
-    //how do they get removed??
-    //Are they reused??
-    public RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception {
-        RoleRequestRecord requestRecord = null;
-        long modifiedDate = 0;
-        for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {
-            if(requestedBy.equals(roleRequestRecord.getRequestedBy())
-                    && roleName.equals(roleRequestRecord.getRoleName())
-                    && modifiedDate < roleRequestRecord.getModifiedDate()){
-
-                    requestRecord = roleRequestRecord;
-                    modifiedDate = roleRequestRecord.getModifiedDate();
-            }
-        }
-        return requestRecord;
-    }
-
     public String getContainerUniversalId() {
         //TODO: get rid of this static method use
         return Cognoscenti.getServerGlobalId() + "@" + getKey();
@@ -444,19 +376,7 @@ public abstract class ContainerCommon extends NGContainer
         throw new Exception("There is no email record with id="+id+" on container "+getKey());
     }
 
-    @Override
-    public EmailRecord createEmail() throws Exception {
-        DOMFace mail = requireChild("mail", DOMFace.class);
-        EmailRecord email = mail.createChild("email", EmailRecord.class);
-        email.setId(IdGenerator.generateKey());
-        return email;
-    }
 
-
-
-    public abstract boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception;
-    
-    
     /**
     * Pages have a set of licenses
     */

@@ -530,7 +530,7 @@ public class ProjectDocsController extends BaseController {
                 needSave = true;
             }
             if (needSave) {
-                ngw.saveContent(ar, "updating the share ports");
+                ngw.saveModifiedWorkspace(ar, "updating the share ports");
             }
             JSONObject repo = spr.getFullJSON(ngw);
             sendJson(ar, repo);

@@ -22,29 +22,23 @@ Optional Parameter:
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
-    NGContainer ngc = null;
-    if ("$".equals(pageId)) {
-        ngc = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    }
-    else {
-        ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,pageId).getWorkspace();
-        ar.setPageAccessLevels(ngc);
-    }
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,pageId).getWorkspace();
+    ar.setPageAccessLevels(ngw);
 
     boolean isAccessThroughEmail = "yes".equals(ar.defParam("isAccessThroughEmail","no"));
     boolean canAccessPage = false;
     String requestId = null;
     if (isAccessThroughEmail){
         requestId = ar.reqParam("requestId");
-        RoleRequestRecord roleRequestRecord = ngc.getRoleRequestRecordById(requestId);
-        canAccessPage = AccessControl.canAccessRoleRequest(ar, ngc, roleRequestRecord);
+        RoleRequestRecord roleRequestRecord = ngw.getRoleRequestRecordById(requestId);
+        canAccessPage = AccessControl.canAccessRoleRequest(ar, ngw, roleRequestRecord);
     }
     String roleRequestId = null;
     String roleRequest_State = "";
 
     JSONArray allRoleRequests = new JSONArray();
     
-    List<RoleRequestRecord> allRRs = ngc.getAllRoleRequest();
+    List<RoleRequestRecord> allRRs = ngw.getAllRoleRequest();
     for (RoleRequestRecord rrr : allRRs) {
         JSONObject nrrr = new JSONObject();
         String reqBy = rrr.getRequestedBy();
@@ -68,7 +62,7 @@ Optional Parameter:
         nrrr.put("completed", rrr.isCompleted());
         nrrr.put("description", rrr.getRequestDescription());
         nrrr.put("response", rrr.getResponseDescription());
-        nrrr.put("mn", AccessControl.getAccessRoleRequestParams(ngc, rrr));
+        nrrr.put("mn", AccessControl.getAccessRoleRequestParams(ngw, rrr));
         allRoleRequests.put(nrrr);
     }
 

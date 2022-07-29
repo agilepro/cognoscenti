@@ -48,16 +48,6 @@ public abstract class NGContainer extends DOMFile
     public abstract  String getKey();
 
 
-    /*
-     * output links to display in history logs
-     */
-    public abstract void writeContainerLink(AuthRequest ar, int len) throws Exception;
-    public abstract void writeNoteLink(    AuthRequest ar, String noteId,     int len) throws Exception;
-    public abstract void writeTaskLink(    AuthRequest ar, String taskId,     int len) throws Exception;
-    public abstract void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
-
-
-
 
 
     /**
@@ -88,18 +78,9 @@ public abstract class NGContainer extends DOMFile
     public abstract List<NGRole> findRolesOfPlayer(UserRef user) throws Exception;
 
 
-    public abstract RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception;
-    public abstract List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception;
-    public abstract RoleRequestRecord getRoleRequestRecordById(String requestId)throws Exception;
-    public abstract List<RoleRequestRecord> getAllRoleRequest() throws Exception;
-    public abstract RoleRequestRecord createRoleRequest(String roleName, String requestedBy,long modifiedDate, String modifiedBy, String requestDescription) throws Exception;
-
-
 
 
     ////////////// Other container bookkeeping methods ////////////////////
-
-    public abstract void saveContent(AuthRequest ar, String comment)  throws Exception;
 
     public abstract  License getLicense(String id) throws Exception;
 
@@ -112,7 +93,6 @@ public abstract class NGContainer extends DOMFile
     public abstract long getLastModifyTime()throws Exception;
 
     public abstract List<String> getContainerNames();
-    public abstract void setContainerNames(List<String> nameSet);
 
 
     /**
@@ -195,11 +175,6 @@ public abstract class NGContainer extends DOMFile
 
     public abstract boolean isFrozen() throws Exception;
 
-    public abstract boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception;
-
-
-    public abstract void saveFile(AuthRequest ar, String comment) throws Exception;
-    public abstract void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;
 
     /**
     * Returns a globally unique for the container (project/book/userpage) by combining
@@ -213,17 +188,6 @@ public abstract class NGContainer extends DOMFile
      * returns all the email records in this container
      */
     public abstract List<EmailRecord> getAllEmail() throws Exception;
-
-    /**
-     * creates an email record and sets the ID to a unique value for this project
-     */
-    public abstract EmailRecord createEmail() throws Exception;
-
-    /**
-     * Scan through the email on this project, and return the number of
-     * email messages on the page that have not been sent yet.
-     */
-    //public abstract boolean hasEmailToSend() throws Exception;
 
     /**
      * figure out when the next background event is scheduled

@@ -14,7 +14,7 @@
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     
-    JSONObject workspaceInfo = ngw.getConfigJSON();
+    JSONObject workspaceInfo = ngw.getConfigJSON(); 
     
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);

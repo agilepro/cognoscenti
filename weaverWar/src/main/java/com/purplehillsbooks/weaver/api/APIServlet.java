@@ -44,6 +44,7 @@ import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.streams.StreamHelper;
 
 /**
@@ -132,8 +133,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
-            throw new RuntimeException("API Servlet is probably no longer used");
-            /*
             NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
@@ -141,7 +140,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
 
             doAuthenticatedGet(ar);
-            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
@@ -157,33 +155,35 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private void doAuthenticatedGet(AuthRequest ar)  throws Exception {
 
         try {
-            throw new RuntimeException("API Servlet is probably no longer used");
-            /*
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
-            if (resDec.isSwagger){
-                genSwagger(ar, resDec);
-            }
-            else if (resDec.isSite){
-                genSiteListing(ar, resDec);
-            }
-            else if (resDec.isListing){
-                getWorkspaceListing(ar, resDec);
-            }
-            else if (resDec.isDoc) {
+            if (resDec.isDoc) {
                 streamDocument(ar, resDec);
             }
+            else if (resDec.isSwagger){
+                throw new JSONException("don't understand that isSwagger resource URL: "+ar.getCompleteURL());
+                //genSwagger(ar, resDec);
+            }
+            else if (resDec.isSite){
+                throw new JSONException("don't understand that isSite resource URL: "+ar.getCompleteURL());
+                //genSiteListing(ar, resDec);
+            }
+            else if (resDec.isListing){
+                throw new JSONException("don't understand that isListing resource URL: "+ar.getCompleteURL());
+                //getWorkspaceListing(ar, resDec);
+            }
             else if (resDec.isGoal) {
-                genGoalInfo(ar, resDec);
+                throw new JSONException("don't understand that isGoal resource URL: "+ar.getCompleteURL());
+                //genGoalInfo(ar, resDec);
             }
             else if (resDec.isNote) {
-                streamNote(ar, resDec);
+                throw new JSONException("don't understand that isNote resource URL: "+ar.getCompleteURL());
+                //streamNote(ar, resDec);
             }
             else {
                 throw new JSONException("don't understand that resource URL: "+ar.getCompleteURL());
             }
             ar.flush();
-            */
 
         } catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
@@ -200,8 +200,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-            throw new RuntimeException("API Servlet is probably no longer used");
-            /*
             System.out.println("API_PUT: "+ar.getCompleteURL());
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
@@ -218,7 +216,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
             }
             ar.flush();
-            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle PUT to {0}", e, ar.getCompleteURL());
@@ -235,8 +232,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-            throw new RuntimeException("API Servlet is probably no longer used");
-            /*
             System.out.println("API_POST: "+ar.getCompleteURL());
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
@@ -261,7 +256,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
             responseObj.write(ar.resp.getWriter(), 2, 0);
             ar.flush();
-            */
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle POST to {0}", e, ar.getCompleteURL());

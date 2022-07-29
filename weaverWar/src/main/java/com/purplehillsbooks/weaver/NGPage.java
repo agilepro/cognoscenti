@@ -251,15 +251,11 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    @Override
+    //Override
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         try {
             setLastModify(ar);
-            saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, comment, ar.getCogInstance());
-
-            //if (prjSite!=null) {
-            //    prjSite.saveFile(ar, comment);
-            //}
+            saveWithoutMarkingModified(ar.getBestUserId(), comment, ar.getCogInstance());
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",
@@ -268,7 +264,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     //Added new method without using ar parameter to save contents (Need to discuss)
-    @Override
+    //Override
     public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception
     {
         pageInfo.setModTime(modTime);
@@ -962,62 +958,16 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    @Override
-    public RoleRequestRecord createRoleRequest(String roleName, String requestedBy, long modifiedDate, String modifiedBy, String requestDescription) throws Exception
-    {
-        //remove any old requests more than 90 days old, before creating a new one
-        List<String> removalList = new ArrayList<String>();
-        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
-        DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
-        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
-        for (RoleRequestRecord rrr: children) {
-            if (rrr.getModifiedDate() < tooOld) {
-                removalList.add(rrr.getRequestId());
-            }
-        }
-        //now clean up the removals.
-        for (String oldId : removalList) {
-            rolelist.removeChildrenByNameAttrVal("requests", "id", oldId);
-        }
-
-        RoleRequestRecord newRoleRequest = rolelist.createChild("requests", RoleRequestRecord.class);
-        newRoleRequest.setRequestId(generateKey());
-        newRoleRequest.setModifiedDate(modifiedDate);
-        newRoleRequest.setModifiedBy(modifiedBy);
-        newRoleRequest.setState("Requested");
-        newRoleRequest.setCompleted(false);
-        newRoleRequest.setRoleName(roleName);
-        newRoleRequest.setRequestedBy(requestedBy);
-        newRoleRequest.setRequestDescription(requestDescription);
-        newRoleRequest.setResponseDescription("");
-
-        return newRoleRequest;
-    }
 
     public synchronized static String generateKey() {
         return IdGenerator.generateKey();
     }
 
-    @Override
-    public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
-        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
-        List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
-        DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
-        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
-        for (RoleRequestRecord rrr: children) {
-            if (rrr.getModifiedDate() > tooOld) {
-                //only add requests that are not too old
-                requestList.add(rrr);
-            }
-        }
-        return requestList;
-    }
 
 
 
-
-    @Override
-    public void saveContent(AuthRequest ar, String comment) throws Exception{
+    //Override
+    public void saveModifiedWorkspace(AuthRequest ar, String comment) throws Exception{
         saveFile( ar, comment );
     }
 
@@ -1027,11 +977,6 @@ public abstract class NGPage extends ContainerCommon {
         return getPageNames();
     }
 
-
-    @Override
-    public void setContainerNames(List<String> nameSet) {
-         setPageNames(nameSet);
-    }
 
 
 
@@ -1058,7 +1003,6 @@ public abstract class NGPage extends ContainerCommon {
         return pageInfo;
     }
 
-    @Override
     public void writeContainerLink(AuthRequest ar, int len) throws Exception
     {
         ar.write("<a href=\"");
@@ -1071,35 +1015,6 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-    @Override
-    public void writeTaskLink(AuthRequest ar, String taskId, int len) throws Exception
-    {
-        GoalRecord task = getGoalOrNull(taskId);
-        if(task==null)
-        {
-            ar.write( "(Task " );
-            ar.writeHtml( taskId );
-            ar.write( ")" );
-            return;
-        }
-        String nameOfLink = trimName(task.getSynopsis(), len);
-
-        writePageUrl(ar);
-        ar.write("/FrontPage.htm\">" );
-        ar.writeHtml(nameOfLink);
-        ar.write( "</a>");
-    }
-
-
-
-    private void writePageUrl(AuthRequest ar) throws Exception{
-        ar.write( "<a href=\"" );
-        ar.writeHtml(ar.baseURL );
-        ar.write( "t/" );
-        ar.writeHtml(getSiteKey());
-        ar.write( "/" );
-        ar.writeHtml(getKey());
-    }
 
 
     public void deleteRoleRequest(String requestId) throws Exception {
@@ -1554,6 +1469,83 @@ public abstract class NGPage extends ContainerCommon {
             return null;
         }
         return allSortedHist.get(0);
+    }
+
+
+    public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
+        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
+        List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
+        DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
+        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
+        for (RoleRequestRecord rrr: children) {
+            if (rrr.getModifiedDate() > tooOld) {
+                //only add requests that are not too old
+                requestList.add(rrr);
+            }
+        }
+        return requestList;
+    }
+
+    
+    
+    public RoleRequestRecord getRoleRequestRecordById(String requestId) throws Exception{
+        RoleRequestRecord requestRecord = null;
+        for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {
+            if(roleRequestRecord.getAttribute("id").equalsIgnoreCase(requestId)){
+                requestRecord = roleRequestRecord;
+                break;
+            }
+        }
+        return requestRecord;
+    }
+
+    //TODO: If there are two, it gets the latest, ignoring earlier requests.
+    //how do they get removed??
+    //Are they reused??
+    public RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception {
+        RoleRequestRecord requestRecord = null;
+        long modifiedDate = 0;
+        for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {
+            if(requestedBy.equals(roleRequestRecord.getRequestedBy())
+                    && roleName.equals(roleRequestRecord.getRoleName())
+                    && modifiedDate < roleRequestRecord.getModifiedDate()){
+
+                    requestRecord = roleRequestRecord;
+                    modifiedDate = roleRequestRecord.getModifiedDate();
+            }
+        }
+        return requestRecord;
+    }
+
+    public RoleRequestRecord createRoleRequest(String roleName, String requestedBy, long modifiedDate, String modifiedBy, String requestDescription) throws Exception
+    {
+        //remove any old requests more than 90 days old, before creating a new one
+        List<String> removalList = new ArrayList<String>();
+        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
+        DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
+        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
+        for (RoleRequestRecord rrr: children) {
+            if (rrr.getModifiedDate() < tooOld) {
+                removalList.add(rrr.getRequestId());
+            }
+        }
+        //now clean up the removals.
+        for (String oldId : removalList) {
+            rolelist.removeChildrenByNameAttrVal("requests", "id", oldId);
+        }
+
+        RoleRequestRecord newRoleRequest = rolelist.createChild("requests", RoleRequestRecord.class);
+        newRoleRequest.setRequestId(generateKey());
+        newRoleRequest.setModifiedDate(modifiedDate);
+        newRoleRequest.setModifiedBy(modifiedBy);
+        newRoleRequest.setState("Requested");
+        newRoleRequest.setCompleted(false);
+        newRoleRequest.setRoleName(roleName);
+        newRoleRequest.setRequestedBy(requestedBy);
+        newRoleRequest.setRequestDescription(requestDescription);
+        newRoleRequest.setResponseDescription("");
+
+        return newRoleRequest;
     }
 
 

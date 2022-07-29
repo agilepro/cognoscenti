@@ -64,6 +64,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.canUpdate = <%=canUpdate%>;
+    $scope.onlyNeedReview = false;
 
     $scope.newPerson = "";
 
@@ -90,6 +91,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.findDecisions = function() {
         var filterlist = parseLCList($scope.filter);
         var src = $scope.allDecisions;
+        var curTime = new Date().getTime();
+        if ($scope.onlyNeedReview) {
+            var res = [];
+            src.forEach( function(item) {
+                if (item.reviewDate>0 && item.reviewDate < curTime) {
+                    res.push(item);
+                }
+            });
+            src = res;
+        }
         $scope.allLabelFilters().map( function(label) {
             var res = [];
             src.map( function(item) {
@@ -302,6 +313,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                  </li>
                </ul>
              </span>
+        </span>
+        <span>
+            <input type="checkbox" ng-model="onlyNeedReview"/> Only Overdue
         </span>
     </div>
 

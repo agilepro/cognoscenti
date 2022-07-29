@@ -30,7 +30,7 @@
     templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
-    if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
+    if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) { 
         throw new Exception("Please log in to see this meeting.");
     }
 

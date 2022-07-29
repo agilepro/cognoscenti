@@ -37,9 +37,6 @@ public class SearchResultRecord
     private String noteSubject = "";
     private String noteLink = "";
 
-    public String getNoteLink() {
-        return noteLink;
-    }
     public void setNoteLink(String noteLink) {
         this.noteLink = noteLink;
     }

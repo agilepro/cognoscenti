@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -87,17 +86,11 @@ public class UserPage extends ContainerCommon
 
 
     public void saveUserPage(AuthRequest ar, String comment) throws Exception {
-        saveFile(ar,comment);
-    }
-
-    public void saveFile(AuthRequest ar, String comment) throws Exception {
         setLastModify(ar);
         save();
     }
 
-
-    public void setLastModify(AuthRequest ar)
-    {
+    private void setLastModify(AuthRequest ar) {
         userInfo.setModTime(ar.nowTime);
         userInfo.setModUser(ar.getBestUserId());
     }
@@ -141,23 +134,6 @@ public class UserPage extends ContainerCommon
     }
 
 
-    public List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception
-    {
-        throw new ProgramLogicError("getAllRoleRequestByState not implemented on UserPage");
-    }
-    public RoleRequestRecord getRoleRequestRecordById(String requestId)throws Exception
-    {
-        throw new ProgramLogicError("getAllRoleRequest not implemented on UserPage");
-    }
-    public List<RoleRequestRecord> getAllRoleRequest() throws Exception
-    {
-        throw new ProgramLogicError("getAllRoleRequest not implemented on UserPage");
-    }
-    public RoleRequestRecord createRoleRequest(String roleName, String requestedBy,
-        long modifiedDate, String modifiedBy, String requestDescription) throws Exception
-    {
-        throw new ProgramLogicError("createRoleRequest not implemented on UserPage");
-    }
     public void saveContent(AuthRequest ar, String comment)  throws Exception
     {
         throw new ProgramLogicError("saveContent not implemented on UserPage");
@@ -179,29 +155,13 @@ public class UserPage extends ContainerCommon
     }
 
 
-    public String getNoteLink(AuthRequest ar, String noteId) throws Exception {
-        throw new ProgramLogicError("Not Implemented");
-    }
-
-
     public String getTaskLink(AuthRequest ar, String taskId) throws Exception {
        throw new ProgramLogicError("Not Implemented");
     }
 
 
-    public String getDocumentLink(AuthRequest ar, String documentId)
-            throws Exception {
-        throw new ProgramLogicError("Not Implemented");
-    }
-
-
     public String getReminderLink(AuthRequest ar, String reminderId) throws Exception {
         throw new ProgramLogicError("Not Implemented");
-    }
-
-
-    public void setContainerNames(List<String> nameSet) {
-        throw new ProgramLogicError("You can not set the container names of a user page");
     }
 
 
@@ -219,15 +179,6 @@ public class UserPage extends ContainerCommon
         return role;
     }
 
-
-    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)
-            throws Exception {
-        userInfo.setModTime(modTime);
-        userInfo.setModUser(modUser);
-
-        //TODO: save the comment someplace ... a history capability?
-        save();
-    }
 
     public List<StatusReport> getStatusReports() throws Exception {
 
@@ -411,21 +362,6 @@ public class UserPage extends ContainerCommon
 
         return list;
     }
-
-
-    @Override
-    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception {
-        //there is no user email to send
-        return false;
-    }
-    @Override
-    public EmailRecord createEmail() throws Exception {
-        //prove this point
-        throw new Exception("UserPage does not have any email created.");
-    }
-
-
-
 
 
 }

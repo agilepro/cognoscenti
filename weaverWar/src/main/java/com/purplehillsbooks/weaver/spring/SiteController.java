@@ -233,30 +233,6 @@ public class SiteController extends BaseController {
 
 
 
-    /**
-    * This displays the page of site requests that have been made by others
-    * and their current status.  Thus, only current executives and owners should see this.
-    */
-    @RequestMapping(value = "/{siteId}/$/SiteRoleRequest.htm", method = RequestMethod.GET)
-    public void siteRoleRequest(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return;
-            }
-            streamJSPSite(ar, "SiteRoleRequest.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.role.request.page", new Object[]{siteId} , ex);
-        }
-    }
-
-
     @RequestMapping(value = "/{siteId}/$/SiteWorkspaces.htm", method = RequestMethod.GET)
     public void showSiteTaskTab(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)

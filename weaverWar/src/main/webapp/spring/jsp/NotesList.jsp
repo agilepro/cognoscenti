@@ -521,6 +521,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         </span>
                       </td>
                     </tr>
+                    <tr class="infoRow">
+                      <td>Responses:</td>
+                      <td>Needed: {{rec.responsesNeeded}},  Made: {{rec.responsesMade}}</td>
+                    </tr>
                     </table>
                 </div>
             </div>

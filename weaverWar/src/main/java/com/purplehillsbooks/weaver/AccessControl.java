@@ -44,7 +44,7 @@ public class AccessControl {
     * Side Effect: if the right magic number is found in URL, the session is marked
     * and this special access capability will persist as long as the session does.
     */
-    public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngc, AttachmentRecord attachRec)
+    public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngw, AttachmentRecord attachRec)
         throws Exception {
 
         if (ar.canAccessWorkspace()) {
@@ -52,7 +52,7 @@ public class AccessControl {
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "doc:"+attachRec.getId()+":"+ngc.getKey();
+        String resourceId = "doc:"+attachRec.getId()+":"+ngw.getKey();
         System.out.println("CAN-ACCESS-DOC: checking for resource: ("+resourceId+")");
         if (ar.hasSpecialSessionAccess(resourceId)) {
             System.out.println("CAN-ACCESS-DOC: session has resource: ("+resourceId+")");
@@ -63,7 +63,7 @@ public class AccessControl {
         //url must have "mndoc"  (magic number for doc)
         String mndoc = ar.defParam("mndoc", null);
         if (mndoc != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+            String expectedMN = ngw.emailDependentMagicNumber(resourceId);
             if (expectedMN.equals(mndoc)) {
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -72,8 +72,8 @@ public class AccessControl {
 
         //now check to see if you have any special access to a MEETING that has attached
         //this document.  In that case you are allowed access as well!
-        for (MeetingRecord meet : attachRec.getLinkedMeetings(ngc)) {
-            if (canAccessMeeting(ar, ngc, meet)) {
+        for (MeetingRecord meet : attachRec.getLinkedMeetings(ngw)) {
+            if (canAccessMeeting(ar, ngw, meet)) {
                 //have to remember that you have access to this attachment to allow download
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -82,8 +82,8 @@ public class AccessControl {
 
         //now check to see if you have any special access to a Discussion Topic that has attached
         //this document.  In that case you are allowed access as well!
-        for (TopicRecord note : attachRec.getLinkedTopics(ngc)) {
-            if (canAccessTopic(ar, ngc, note)) {
+        for (TopicRecord note : attachRec.getLinkedTopics(ngw)) {
+            if (canAccessTopic(ar, ngw, note)) {
                 //have to remember that you have access to this attachment to allow download
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -92,8 +92,8 @@ public class AccessControl {
 
         //now check to see if you have any special access to a Action Item that has attached
         //this document.  In that case you are allowed access as well!
-        for (GoalRecord goal : attachRec.getLinkedGoals(ngc)) {
-            if (canAccessGoal(ar, ngc, goal)) {
+        for (GoalRecord goal : attachRec.getLinkedGoals(ngw)) {
+            if (canAccessGoal(ar, ngw, goal)) {
                 //have to remember that you have access to this attachment to allow download
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -109,19 +109,19 @@ public class AccessControl {
         return "mndoc=" + encodedValue;
     }
 
-    public static boolean canAccessReminder(AuthRequest ar, NGContainer ngc, ReminderRecord reminderRecord)
+    public static boolean canAccessReminder(AuthRequest ar, NGWorkspace ngw, ReminderRecord reminderRecord)
     throws Exception {
 
         //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
             UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
+            if (user!=null && ngw.primaryOrSecondaryPermission(user)) {
                 return true;
             }
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "reminder:"+reminderRecord.getId()+":"+ngc.getKey();
+        String resourceId = "reminder:"+reminderRecord.getId()+":"+ngw.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
             return true;
         }
@@ -130,7 +130,7 @@ public class AccessControl {
         //url must have "mnremider"  (magic number for remider)
         String mndoc = ar.defParam("mnremider", null);
         if (mndoc != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+            String expectedMN = ngw.emailDependentMagicNumber(resourceId);
             if (expectedMN.equals(mndoc)) {
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -146,13 +146,13 @@ public class AccessControl {
         return "mnremider=" + encodedValue;
     }
 
-    public static boolean canAccessGoal(AuthRequest ar, NGContainer ngc, GoalRecord gr)
+    public static boolean canAccessGoal(AuthRequest ar, NGWorkspace ngw, GoalRecord gr)
             throws Exception {
 
         //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
             UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
+            if (user!=null && ngw.primaryOrSecondaryPermission(user)) {
                 return true;
             }
 
@@ -163,7 +163,7 @@ public class AccessControl {
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "goal:"+gr.getId()+":"+ngc.getKey();
+        String resourceId = "goal:"+gr.getId()+":"+ngw.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
             return true;
         }
@@ -172,7 +172,7 @@ public class AccessControl {
         //url must have "mntask"  (magic number for task)
         String mntask = ar.defParam("mntask", null);
         if (mntask != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+            String expectedMN = ngw.emailDependentMagicNumber(resourceId);
             if (expectedMN.equals(mntask)) {
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -195,7 +195,7 @@ public class AccessControl {
         return "mntask=" + encodedValue;
     }
 
-    public static boolean canAccessTopic(AuthRequest ar, NGWorkspace ngc, TopicRecord topicRec)
+    public static boolean canAccessTopic(AuthRequest ar, NGWorkspace ngw, TopicRecord topicRec)
     throws Exception {
         if (ar.isLoggedIn()) {
             //if user is logged in, and is a member or superadmin, then can access
@@ -207,14 +207,14 @@ public class AccessControl {
             //if the user is a subscriber to the topic then they get special access
             UserProfile user = ar.getUserProfile();
             NGRole subscribers = topicRec.getSubscriberRole();
-            if (subscribers.isExpandedPlayer(user, ngc)) {
+            if (subscribers.isExpandedPlayer(user, ngw)) {
                 System.out.println("CAN-ACCESS-TOPIC: user is a subscriber");
                 return true;
             }
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "topic:"+topicRec.getId()+":"+ngc.getKey();
+        String resourceId = "topic:"+topicRec.getId()+":"+ngw.getKey();
         if (!ar.isLoggedIn() && ar.hasSpecialSessionAccess(resourceId)) {
             System.out.println("CAN-ACCESS-TOPIC: user has a session flag");
             assureTemporaryProfile(ar);
@@ -229,7 +229,7 @@ public class AccessControl {
             return false;
         }
         
-        String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+        String expectedMN = ngw.emailDependentMagicNumber(resourceId);
         if (!expectedMN.equals(mnnote)) {
             System.out.println("CAN-ACCESS-TOPIC: not allowed because ("+mnnote+") is not ("+expectedMN+")");
             return false;
@@ -283,7 +283,7 @@ public class AccessControl {
         return "mnnote=" + encodedValue;
     }
 
-    public static boolean canAccessRoleRequest(AuthRequest ar, NGContainer ngc, RoleRequestRecord roleRequestRecord)
+    public static boolean canAccessRoleRequest(AuthRequest ar, NGWorkspace ngw, RoleRequestRecord roleRequestRecord)
     throws Exception {
 
         //then, if user is logged in, and is a member, then can access
@@ -292,7 +292,7 @@ public class AccessControl {
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "rolerequest:"+ngc.getKey()+":"+roleRequestRecord.getRequestId();
+        String resourceId = "rolerequest:"+ngw.getKey()+":"+roleRequestRecord.getRequestId();
         if (ar.hasSpecialSessionAccess(resourceId)) {
             return true;
         }
@@ -304,7 +304,7 @@ public class AccessControl {
             return false;
         }
         
-        String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+        String expectedMN = ngw.emailDependentMagicNumber(resourceId);
         if (expectedMN.equals(mndoc)) {
             ar.setSpecialSessionAccess(resourceId);
             return true;
@@ -312,10 +312,10 @@ public class AccessControl {
         return false;
     }
 
-    public static String getAccessRoleRequestParams(NGContainer ngc, RoleRequestRecord roleRequestRecord) throws Exception{
+    public static String getAccessRoleRequestParams(NGWorkspace ngw, RoleRequestRecord roleRequestRecord) throws Exception{
         String accessDocParam = "mnrolerequest=";
-        String resourceId = "rolerequest:"+ngc.getKey()+":"+roleRequestRecord.getRequestId();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        String resourceId = "rolerequest:"+ngw.getKey()+":"+roleRequestRecord.getRequestId();
+        String encodedValue = URLEncoder.encode(ngw.emailDependentMagicNumber(resourceId), "UTF-8");
         accessDocParam += encodedValue;
         return accessDocParam;
     }
@@ -370,11 +370,11 @@ public class AccessControl {
         return accessDocParam;
     }
 
-    public static boolean canAccessMeeting(AuthRequest ar, NGContainer ngc, MeetingRecord meet) throws Exception {
+    public static boolean canAccessMeeting(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) throws Exception {
         //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
             UserProfile user = ar.getUserProfile();
-            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
+            if (user!=null && ngw.primaryOrSecondaryPermission(user)) {
                 return true;
             }
 
@@ -384,8 +384,8 @@ public class AccessControl {
             }
 
             //players of the target role are always allowed in as well
-            NGRole targetRole = ngc.getRole(meet.getTargetRole());
-            if (targetRole!=null && targetRole.isExpandedPlayer(user, ngc)) {
+            NGRole targetRole = ngw.getRole(meet.getTargetRole());
+            if (targetRole!=null && targetRole.isExpandedPlayer(user, ngw)) {
                 return true;
             }
 
@@ -411,7 +411,7 @@ public class AccessControl {
 
 
         //then, check to see if there is any special condition in session
-        String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
+        String resourceId = "meet:"+meet.getId()+":"+ngw.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
             return true;
         }
@@ -420,7 +420,7 @@ public class AccessControl {
         //url must have "mndoc"  (magic number for doc)
         String mnm = ar.defParam("mnm", null);
         if (mnm != null) {
-            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+            String expectedMN = ngw.emailDependentMagicNumber(resourceId);
             if (expectedMN.equals(mnm)) {
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
