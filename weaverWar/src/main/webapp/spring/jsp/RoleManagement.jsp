@@ -390,7 +390,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     </style>
     
-<% if (canUpdate) { %>    <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
+<% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p>
 <% } %>
     <table class="spacey table">
         <tr ng-repeat="role in allRoles">
@@ -492,14 +492,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <div ng-hide="roleDetailToggle[role.name]"> 
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
-                    {{role.description}}
+                    <div ng-bind-html="role.description|wiki"></div>
                 </div>
                 <div ng-show="role.linkedRole">
                     <b>Linked: </b> {{role.linkedRole}}
                 </div>
                 <div ng-show="role.requirements">
                     <b>Eligibility:</b><br/>
-                    {{role.requirements}}
+                    <div ng-bind-html="role.requirements|wiki"></div>
                 </div>
               </div>
               <div ng-show="roleDetailToggle[role.name]"> 

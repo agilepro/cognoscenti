@@ -25,11 +25,12 @@
     </span>
   </div>
 </div>
-<div class="modal-body">
+<div class="modal-body" style="max-height:600px; overflow: auto">
     <table ng-hide="isNew || editMode=='expert'" class="spaceyTable">
         <tr>
             <td ><label>Color:</label></td>
             <td>
+                <table><tr><td>
                 <div style="position:relative">
                 <button class="btn btn-default btn-raised dropdown dropdown-toggle" type="button"
                         id="menu3"
@@ -41,6 +42,8 @@
                         ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
                 </ul>
                 </div>
+                </td><td>Access: {{accessType()}}</td>
+                </tr></table>
             </td>
             <td style="width:30px;"></td>
         </tr>
@@ -58,7 +61,9 @@
         </tr>
         <tr>
              <td class="gridTableColummHeader">Description:</td>
-             <td colspan="2">{{roleInfo.description}}</td>
+             <td colspan="2">
+                 <div ng-bind-html="roleInfo.description|wiki"></div>
+             </td>
         </tr>
         <tr>
              <td >Term:</td>
@@ -73,19 +78,11 @@
         <tr>
              <td >Responsibities:</td>
              <td colspan="2">
-                 <span ng-repeat="resp in roleInfo.responsibilities">
-                      {{resp.text}}, </span>
-                 <span ng-show="roleInfo.responsibilities.length==0">
-                     <i>No responsibilities have been set for this role.</i></span>
+                 <div ng-repeat="resp in roleInfo.responsibilities">
+                      <div ng-bind-html="resp.text|wiki"></div> </div>
+                 <div ng-show="roleInfo.responsibilities.length==0">
+                     <i>No responsibilities have been set for this role.</i></div>
              </td>
-        </tr>
-        <tr>
-            <td ></td>
-            <td colspan="2">
-                <div style="float: right;">
-                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
-                </div>
-            </td>
         </tr>
     </table>
     <table ng-hide="isNew || editMode=='main'" class="spaceyTable">
@@ -117,14 +114,6 @@
                  <button ng-click="makeLink()" class="btn button-default btn-raised">Make Link</button>
              </td>
         </tr>
-        <tr>
-            <td ></td>
-            <td colspan="2">
-                <div style="float: right;">
-                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
-                </div>
-            </td>
-        </tr>
     </table>
     <table class="spaceyTable" ng-show="isNew">
         <tr><td style="height:10px" colspan="3"></td></tr>
@@ -151,18 +140,14 @@
                </select>
             </td>
         </tr>
-        <tr>
-            <td class="gridTableColummHeader"></td>
-            <td>
-                <button ng-click="cancel()" class="btn btn-default btn-raised">Cancel</button> &nbsp; &nbsp; 
-                <button ng-click="createAndClose()" class="btn btn-primary btn-raised">Create Role</button>
-            </td>
-        </tr>
     </table>
  
 </div>
 <div class="modal-footer">
-    
+    <div style="float: right; padding:10px">
+        <button ng-click="createAndClose()" class="btn btn-primary btn-raised" ng-show="isNew">Create Role</button>
+        <button ng-click="cancel()" class="btn btn-warning btn-raised">Exit</button>
+    </div>
 </div>
 </body>
 </html>

@@ -7,27 +7,23 @@
     AddressListEntry ale = up.getAddressListEntry();
     String description = "";
     
-    NGContainer ngc = ar.ngp;
+    if (!(ar.ngp instanceof NGWorkspace)) {
+        throw new Exception("SITE request was directed to a JSP folder page inappropriately");
+    }
+    NGWorkspace ngw = (NGWorkspace) ar.ngp;
+    NGBook site = ngw.getSite();
+    
     boolean isRequested = false;
     String requestState = "";
     String requestMsg = "";
     long latestDate = 0;
-    NGBook site;
-    if (!(ngc instanceof NGWorkspace)) {
-        site = (NGBook)ngc;
-    }
-    else {
-        site = ((NGWorkspace)ngc).getSite();
-    }
     
-    String purpose = "";
-    if (ngc instanceof NGWorkspace) {
-        purpose = ((NGWorkspace)ngc).getProcess().getDescription();
-    }
-    NGRole primRole = ngc.getPrimaryRole();
+    String purpose = ngw.getProcess().getDescription();
+
+    NGRole primRole = ngw.getPrimaryRole();
     String primRoleName = primRole.getName();
     
-    for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
+    for (RoleRequestRecord rrr : ngw.getAllRoleRequest()) {
         if (up.hasAnyId(rrr.getRequestedBy())) {
             if (rrr.getModifiedDate()>latestDate) {
                 isRequested = true;

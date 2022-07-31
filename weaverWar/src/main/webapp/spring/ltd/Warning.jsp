@@ -7,18 +7,14 @@
     AddressListEntry ale = up.getAddressListEntry();
     String description = "";
     
-    NGContainer ngc = ar.ngp;
+    NGWorkspace ngc = (NGWorkspace) ar.ngp;
+    NGBook site = ngc.getSite();
+    
     boolean isRequested = false;
     String requestState = "";
     String requestMsg = "";
     long latestDate = 0;
-    NGBook site;
-    if (!(ngc instanceof NGWorkspace)) {
-        site = (NGBook)ngc;
-    }
-    else {
-        site = ((NGWorkspace)ngc).getSite();
-    }
+
     
     String purpose = "";
     if (ngc instanceof NGWorkspace) {

@@ -8,7 +8,7 @@
     }
 
 %>
-<!-- Warning.jsp -->
+<!-- jsp/Warning.jsp -->
 <script>
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {

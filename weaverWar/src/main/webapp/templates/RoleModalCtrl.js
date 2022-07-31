@@ -5,6 +5,8 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
 
     // initial comment object
     $scope.roleInfo = roleInfo;
+    console.log("ROLE", roleInfo);
+    
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     $scope.allRoles = [];
@@ -184,5 +186,13 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         console.log("UPDATING LINKED ROLE: ",role);
         $scope.updateRole(role);
         $scope.getCurrentTerm();
-    }    
+    }
+    $scope.accessType = function() {
+        if ($scope.roleInfo.canUpdateWorkspace) {
+            return "WRITEABLE";
+        }
+        else {
+            return "READ ONLY";
+        }
+    }
 });

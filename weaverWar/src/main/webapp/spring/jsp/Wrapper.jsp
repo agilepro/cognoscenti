@@ -256,7 +256,11 @@ myApp.filter('cdate', function() {
     return moment(x).format("DD-MMM @ HH:mm");
   };
 });
-
+myApp.filter('wiki', function() {
+  return function(x) {
+    return convertMarkdownToHtml(x);
+  };
+});
  </script>
 
 <style>

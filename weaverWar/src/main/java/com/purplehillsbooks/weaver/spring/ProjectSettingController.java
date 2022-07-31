@@ -821,7 +821,46 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
+    @RequestMapping(value = "/{siteId}/{pageId}/copyLabels.json", method = RequestMethod.POST)
+    public void copyLabels(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String op = "";
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
+            ar.assertNotReadOnly("Cannot modify labels");
+            ar.assertNotFrozen(ngw);
 
+            JSONArray newLabelsCreated = new JSONArray();
+            Cognoscenti cog = ar.getCogInstance();
+            JSONObject pojb = getPostedObject(ar);
+            String sourceProject = pojb.getString("from");
+            NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( sourceProject ).getWorkspace();
+
+            for (NGLabel aLabel : fromWS.getAllLabels() ) {
+                boolean found = false;
+                for (NGLabel alreadyThere : ngw.getAllLabels() ) {
+                    if (aLabel.getName().equals( alreadyThere.getName() )) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    ngw.findOrCreateLabelRecord(aLabel.getName(), aLabel.getColor());
+                    newLabelsCreated.put(aLabel.getJSON());
+                }
+            }
+
+            ngw.saveFile(ar, "Labels Copied from another project");
+            JSONObject repo = new JSONObject();
+            repo.put("list", newLabelsCreated);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to modify "+op+" label.", ex);
+            streamException(ee, ar);
+        }
+    }
 
     ///////////////////////// Eamil ///////////////////////
 

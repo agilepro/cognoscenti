@@ -8,37 +8,16 @@
     String description = "";
     
     NGContainer ngc = ar.ngp;
-    boolean isRequested = false;
-    String requestState = "";
-    String requestMsg = "";
-    long latestDate = 0;
     NGBook site;
-    if (!(ngc instanceof NGWorkspace)) {
+    if (ngc instanceof NGBook) {
         site = (NGBook)ngc;
     }
     else {
+        //this should never happen with this page.
         site = ((NGWorkspace)ngc).getSite();
     }
     
-    String purpose = "";
-    if (ngc instanceof NGWorkspace) {
-        purpose = ((NGWorkspace)ngc).getProcess().getDescription();
-    }
-    NGRole primRole = ngc.getPrimaryRole();
-    String primRoleName = primRole.getName();
-    String oldRequestEmail = "";
     
-    for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
-        if (up.hasAnyId(rrr.getRequestedBy())) {
-            if (rrr.getModifiedDate()>latestDate) {
-                isRequested = true;
-                requestMsg = rrr.getRequestDescription();
-                requestState = rrr.getState();
-                latestDate = rrr.getModifiedDate();
-                oldRequestEmail = rrr.getRequestedBy();
-            }
-        }
-    }
     
 %>
 <!-- *************************** site / Warning.jsp *************************** -->
@@ -58,11 +37,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.atts = "ss";
     $scope.enterMode = false;
     $scope.alternateEmailMode = false;
-    $scope.enterRequest = "<% ar.writeJS(requestMsg); %>";
-    $scope.requestState = "<% ar.writeJS(requestState); %>";
-    $scope.oldRequestEmail = "<% ar.writeJS(oldRequestEmail); %>";
-    $scope.isRequested = <%=isRequested%>;
-    $scope.requestDate = <%=latestDate%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -72,33 +46,7 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
     
-    $scope.takeStep = function() {
-        $scope.enterMode = true;
-        $scope.alternateEmailMode = false;
-    }
-    $scope.anotherAddress = function() {
-        $scope.enterMode = false;
-        $scope.alternateEmailMode = true;
-    }
     
-    $scope.roleChange = function() {
-        var data = {};
-        data.op = 'Join';
-        data.roleId = '<%ar.writeJS(primRoleName);%>';
-        data.desc = $scope.enterRequest;
-        console.log("Requesting to ",data);
-        var postURL = "rolePlayerUpdate.json";
-        var postdata = angular.toJson(data);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            alert("OK, you have requested membership")
-        })
-        .error( function(data, status, headers, config) {
-            console.log("GOT ERROR ",data);
-            $scope.reportError(data);
-        });
-    };
 
 });
 
@@ -114,7 +62,7 @@ app.controller('myCtrl', function($scope, $http) {
         <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">
       </td><td>
         <div class="warningBox">
-            <% ale.writeLink(ar); %> ( <% ar.writeHtml(up.getPreferredEmail()); %> ) is not in "<b class="red"><%ar.writeHtml(primRoleName);%></b>" role of this workspace.
+            <% ale.writeLink(ar); %> ( <% ar.writeHtml(up.getPreferredEmail()); %> ) is not playing a role at the site level, and does not have permission to see this page.
         </div>
       </td></tr>
       <tr><td>

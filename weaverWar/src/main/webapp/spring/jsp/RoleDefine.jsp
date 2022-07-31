@@ -175,7 +175,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="form-group">
                 <label for="synopsis">Description:</label>
                 <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span>
-                <textarea ng-model="role.description" class="form-control" placeholder="Enter description"></textarea>
+                <textarea ng-model="role.description" class="form-control markDownEditor" placeholder="Enter description"></textarea>
             </div>
             <div class="guideVocal" ng-show="descHelp" ng-click="descHelp=false">
                 The description is something for everyone to see to give a basic understanding of 
@@ -186,7 +186,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="form-group">
                 <label for="synopsis">Eligibility:</label>
                 <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span>
-                <textarea ng-model="role.requirements" class="form-control" placeholder="Enter requirements"></textarea>
+                <textarea ng-model="role.requirements" class="form-control markDownEditor" placeholder="Enter requirements"></textarea>
             </div>
             <div class="guideVocal" ng-show="eligHelp" ng-click="eligHelp=false">
                 The eligibility is a little more detail about what qualities one would expected
@@ -225,7 +225,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                             <span class="fa fa-edit"></span>
                         </button>
                     </td>
-                    <td ng-click="openResponsibilityModal(aresp)">{{aresp.text}}</td>
+                    <td ng-click="openResponsibilityModal(aresp)">
+                        <div ng-bind-html="aresp.text|wiki"></div>
+                    </td>
                     <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
                                 ng-click="deleteResponsibility(aresp)">

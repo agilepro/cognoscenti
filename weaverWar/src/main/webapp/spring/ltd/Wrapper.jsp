@@ -350,13 +350,13 @@ myApp.filter('cdate', function() {
           }
           else if (knowWeAreLoggedIn && !info.verified) {
               //this encountered only when logging out
-              alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
+              //alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
               window.location.reload(true);
           }
           else if (!knowWeAreLoggedIn && info.verified) {
               //this encountered only when logging out
               
-              alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
+              //alert("Reloading because knowWeAreLoggedIn="+knowWeAreLoggedIn+" && info.verified="+info.verified);
               window.location.reload(true);
           }
           else if (info.haveNotCheckedYet) {
