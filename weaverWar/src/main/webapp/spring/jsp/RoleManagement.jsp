@@ -388,6 +388,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     .spacey {
         width: 100%;
     }
+    .updateStyle {
+        padding:5px;
+        color:grey;
+        border-radius:15px;
+        font-size:10px;
+    }
     </style>
     
 <% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p>
@@ -424,8 +430,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
-                <div ng-show="role.canUpdateWorkspace">UPDATE</div>
-                <div ng-hide="role.canUpdateWorkspace">READ ONLY</div>
+                <div ng-show="role.canUpdateWorkspace" class="updateStyle">UPDATE</div>
+                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">READ ONLY</div>
             </td>
             <td style="width:200px">
               <div ng-hide="roleDetailToggle[role.name]">

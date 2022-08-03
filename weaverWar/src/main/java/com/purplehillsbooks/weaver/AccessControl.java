@@ -200,7 +200,6 @@ public class AccessControl {
         if (ar.isLoggedIn()) {
             //if user is logged in, and is a member or superadmin, then can access
             if (ar.canAccessWorkspace()) {
-                System.out.println("CAN-ACCESS-TOPIC: user can access the workspace");
                 return true;
             }
             
@@ -208,7 +207,6 @@ public class AccessControl {
             UserProfile user = ar.getUserProfile();
             NGRole subscribers = topicRec.getSubscriberRole();
             if (subscribers.isExpandedPlayer(user, ngw)) {
-                System.out.println("CAN-ACCESS-TOPIC: user is a subscriber");
                 return true;
             }
         }
@@ -216,7 +214,6 @@ public class AccessControl {
         //then, check to see if there is any special condition in session
         String resourceId = "topic:"+topicRec.getId()+":"+ngw.getKey();
         if (!ar.isLoggedIn() && ar.hasSpecialSessionAccess(resourceId)) {
-            System.out.println("CAN-ACCESS-TOPIC: user has a session flag");
             assureTemporaryProfile(ar);
             return true;
         }
@@ -225,7 +222,6 @@ public class AccessControl {
         //url must have "mnnote"  (magic number for note)
         String mnnote = ar.defParam("mnnote", null);
         if (mnnote == null) {
-            System.out.println("CAN-ACCESS-TOPIC: not allowed because mnnote is missing ");
             return false;
         }
         
@@ -238,7 +234,6 @@ public class AccessControl {
         //at this point, we have seen a magic number allowing access to this page
         //so set up the rest of the login credentials for one request
         ar.setSpecialSessionAccess(resourceId);
-        System.out.println("CAN-ACCESS-TOPIC: user has magic number");
         if (!ar.isLoggedIn()) {
             assureTemporaryProfile(ar);
         }

@@ -97,7 +97,7 @@
         %></li><% 
     }
     %>
-    <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
+    <li style="color:blue">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>CAN UPDATE<% } %></li>
     
   </ul>
   <%if (false) {ar.write(wrappedJSP);} %>

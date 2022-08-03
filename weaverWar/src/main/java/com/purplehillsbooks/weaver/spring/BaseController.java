@@ -265,7 +265,6 @@ public class BaseController {
             }
         }
         else {
-            System.out.println("JSP file exists: "+accessLevel+"/"+jspName);
             ar.req.setAttribute("wrappedJSP", jspName);
             ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
         }
