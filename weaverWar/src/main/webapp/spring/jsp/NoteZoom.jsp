@@ -188,7 +188,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         
         //clear from any prior edit sessions
-        $scope.saveNotice = "";
+        $scope.saveNotice = "All Saved";
         
         //fetch the newest, most up to date copy to start editing
         var postURL = "getTopic.json?nid="+$scope.topicId;
@@ -288,8 +288,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         $scope.htmlEditing = convertMarkdownToHtml($scope.wikiEditing);
         $scope.wikiLastSave = $scope.noteInfo.wiki;
-        $scope.changesToSave = false;
         $scope.changesToMerge = false;
+        $scope.changesToSave = ($scope.wikiEditing != $scope.wikiLastSave);
     }
 
     $scope.receiveTopicRecord = function(data) {
@@ -331,6 +331,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             }
         });
         $scope.nonMembers = newNonMembers;
+        $scope.changesToSave = ($scope.wikiEditing != $scope.wikiLastSave);
     }
     
     function getRolePlayers(roleName) {
@@ -1026,7 +1027,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         console.log("AUTOSAVE:  refreshing for "+remainingSeconds+" more seconds");
-        $scope.saveNotice = "Saved at "+new Date().toLocaleTimeString();
+        $scope.saveNotice = "All Saved at "+new Date().toLocaleTimeString();
         if ($scope.isEditing) {
             if (!$scope.lastAuto) {
                 $scope.lastAuto = {};
@@ -1047,6 +1048,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         else {
             refreshTopic();
+            $scope.refreshAttachedDocs();
         }
     }
     $scope.cancelBackgroundTime = function() {
@@ -1188,11 +1190,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <div style="height:15px"></div>
         <div ui-tinymce="tinymceOptions" ng-model="htmlEditing"></div>
         <div style="height:15px"></div>
-        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)">Close Editor</button>
+        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)" 
+                ng-show="changesToSave">Save & Close</button>
+        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)"
+                ng-hide="changesToSave">Close Editor</button>
         <button ng-show="changesToMerge" class="btn btn-warning btn-raised" 
             ng-click="mergeFromOthers()">Merge Edits from other Users</button>
-        <span ng-show="changesToSave">{{saveNotice}}</span>
-        <span ng-hide="changesToSave">Changes will be saved in {{secondsTillSave}} seconds.</span>
+        <span ng-hide="changesToSave">{{saveNotice}}</span>
+        <span ng-show="changesToSave">Changes will be saved in {{secondsTillSave}} seconds.</span>
     </div>
 <% } %>
 

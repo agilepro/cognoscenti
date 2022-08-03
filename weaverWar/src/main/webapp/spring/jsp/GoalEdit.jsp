@@ -620,8 +620,8 @@ function addvalue() {
             title="Click here to update the description of this action item">
             <td >Summary:</td>
             <td>
-                <b>{{goalInfo.synopsis}}</b>
-                ~ {{goalInfo.description}}
+                <div><b>{{goalInfo.synopsis}}</b></div>
+                <div ng-bind-html="goalInfo.description|wiki"></div>
                 <span ng-repeat="label in getGoalLabels(goalInfo)">
                   <button class="labelButton" style="background-color:{{label.color}};">
                     {{label.name}}

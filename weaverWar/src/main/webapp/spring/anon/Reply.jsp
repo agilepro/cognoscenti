@@ -198,9 +198,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.changeSubscription = function(onOff) {
-        var url = "../../topicSubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
+        if (!$scope.isLoggedIn) {
+            alert("Please log in in order to verify that you are the owner of this email address before you change subscription status.");
+            return;
+        }
+        var url = "topicSubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
         if (!onOff) {
-            url = "../../topicUnsubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
+            url = "topicUnsubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
         }
         console.log("SENDING:", url);
         $http.get(url)
@@ -278,7 +282,7 @@ function reloadIfLoggedIn() {
             </div>
         </div>
 
-
+    <div style="height:460px>
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
             <td><h2 id="QuickReply">Quick&nbsp;Reply:</h2></td>
@@ -299,7 +303,7 @@ function reloadIfLoggedIn() {
 <% } %>
             </table>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
-                 class="leafContent" style="max-height:250px;" id="theOnlyEditor"></div>
+                 class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
        </div>
         <div ng-show="sentAlready">
             <table class="spacey"><tr>
@@ -316,8 +320,8 @@ function reloadIfLoggedIn() {
             </div>
             
         </div>
-
-    <table class="table">
+    </div>
+    <table class="table" style="max-width:800px">
         <tr ng-show="topicSubject">
             <td>Discussion Topic</td>
             <td>{{topicSubject}}</td>
@@ -332,20 +336,42 @@ function reloadIfLoggedIn() {
         </tr>
         <tr ng-show="topicSubject">
             <td>Subscribers</td>
-            <td><span ng-repeat="sub in subscribers">{{sub.name}}, </span></td>
+            <td>
+                The following people will receive email if you reply:
+                <ul>
+                <li ng-repeat="sub in subscribers">{{sub.name}}</li>
+                </ul>
+            </td>
         </tr>
-        <tr ng-show="topicSubject"  id="Unsub">
+        <tr ng-show="topicSubject">
             <td>Your Participation</td>
             <td>
-                <button ng-click="changeSubscription(false)" ng-show="isSubscriber"
+              <div ng-show="isSubscriber">
+                <div>You are currently subscribed to this discussion topic
+                <b>{{topicSubject}}</b>.</div>
+                <button ng-click="changeSubscription(false)" 
                         class="btn btn-default btn-raised"
                         title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
                         Unsubscribe</button>
-                <button ng-click="changeSubscription(true)" ng-hide="isSubscriber"
+                <div>
+                    If you unsubscribe, then you will stop receiving any email
+                    when a new comment is added to the discussion.  Unsubscribe if
+                    you no longer want to see comments on this topic.
+                </div>
+              </div>
+              <div ng-hide="isSubscriber">
+                <div>You are NOT subscribed to this discussion topic
+                <b>{{topicSubject}}</b>.</div>
+                <button ng-click="changeSubscription(true)" 
                         class="btn btn-default btn-raised"
                         title="Click to remove add youself to the list and start getting notifications from this discussion topic">
                         Subscribe</button>
-                <span style="color:lightgray">&nbsp; Controls future email messages</span>
+                <div>
+                    If you subscribe, you will receive email
+                    every time a new comment is added to the discussion.  
+                    Subscribe if you want to see comments on this topic.
+                </div>
+              </div>
             </td>
         </tr>
         <tr>
@@ -353,8 +379,8 @@ function reloadIfLoggedIn() {
             <td>{{comments.length}} comments</td>
         </tr>
         <tr>
-            <td>Contributors</td>
-            <td><span ng-repeat="(user,cnt) in userCounts">{{user}} {{cnt}},  &nbsp;</span></td>
+            <td id="Unsub">Contributors</td>
+            <td id="Unsub"><span ng-repeat="(user,cnt) in userCounts">{{user}} {{cnt}},  &nbsp;</span></td>
         </tr>
         <tr>
             <td>Reply as</td>
