@@ -38,6 +38,7 @@ Required parameters:
     String topicSubject = "";
     JSONArray comments = new JSONArray();
     JSONArray subscribers = new JSONArray();
+    String originalSubject = "";
 
     if (meetId!=null) {
         MeetingRecord meet = ngw.findMeeting(meetId);
@@ -45,6 +46,10 @@ Required parameters:
         emailContext = new EmailContext(meet, ai);
         meetingTitle = meet.getName();
         agendaItem = ai.getSubject();
+        originalTopic = ai.getDesc();
+        originalSubject = "Agenda: " + ai.getSubject();
+        JSONObject meetInfo = meet.getFullJSON(ar, ngw, false);
+        subscribers = meetInfo.getJSONArray("participants");
     }
     else {
         TopicRecord topic = ngw.getDiscussionTopic(topicId);
@@ -54,10 +59,9 @@ Required parameters:
         specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
                     + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
         emailContext = new EmailContext(topic);
-        topicSubject = topic.getSubject();
+        originalSubject = "Topic: " + topic.getSubject();
     }
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
-    String originalSubject = emailContext.emailSubject();
     for (CommentRecord comm : emailContext.getPeerComments()) {
         comments.put(comm.getHtmlJSON(ar));
     }
@@ -70,7 +74,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    window.setMainPageTitle("Discussion Reply");
+    window.setMainPageTitle("<%ar.writeJS(originalSubject);%>");
     $scope.topicId = "<%ar.writeJS(topicId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.agendaId = "<%ar.writeJS(agendaId);%>";
@@ -113,6 +117,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.distributeComments = function() {
         var newCounts = {};
         var allOthers = [];
+        console.log("COMMENTS", $scope.comments);
         $scope.comments.forEach( function(cmt) {
             if (cmt.newPhase) {
                 //ignore phase change comments of any kind
@@ -180,7 +185,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $http.post(postURL, postData)
         .success( function(data) {
             console.log("result", data);
-            $scope.topicInfo = data;
+            $scope.comments = data.comments;
             $scope.distributeComments();
         })
         .error( function(data, status, headers, config) {
@@ -242,12 +247,6 @@ function reloadIfLoggedIn() {
 
 
 <div ng-app="myApp" ng-controller="myCtrl" style="max-width:800px">
-    <div class="page-name">
-        <h1 id="mainPageTitle"
-            title="This is the title of the discussion topic and comment thread">
-            Topic: {{originalSubject}} 
-        </h1>
-    </div>
     
     <div class="comment-outer comment-state-active">
       <div class="comment-inner">
@@ -281,8 +280,8 @@ function reloadIfLoggedIn() {
               </div>
             </div>
         </div>
-
-    <div style="height:460px>
+    SENT ALREADY: {{sentAlready}}
+    <div style="height:460px">
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
             <td><h2 id="QuickReply">Quick&nbsp;Reply:</h2></td>
@@ -334,7 +333,7 @@ function reloadIfLoggedIn() {
             <td>Agenda Item</td>
             <td>{{agendaItem}}</td>
         </tr>
-        <tr ng-show="topicSubject">
+        <tr >
             <td>Subscribers</td>
             <td>
                 The following people will receive email if you reply:
@@ -370,6 +369,24 @@ function reloadIfLoggedIn() {
                     If you subscribe, you will receive email
                     every time a new comment is added to the discussion.  
                     Subscribe if you want to see comments on this topic.
+                </div>
+              </div>
+            </td>
+        </tr>
+        <tr ng-show="agendaItem">
+            <td>Your Participation</td>
+            <td>
+              <div ng-show="isSubscriber">
+                <div>You are currently a participant of the meeting
+                <b>{{meetingTitle}}</b>.</div>
+                
+                <div>
+                    As a participant, you will receive email for comments
+                    made on meeting agenda items.  
+                    <i>At the current time there is no option here to 
+                    withdraw from participating in the meeting, but 
+                    if you choose to go to the full discussion and 
+                    change your participation there.</i>
                 </div>
               </div>
             </td>

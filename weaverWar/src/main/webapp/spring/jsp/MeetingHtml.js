@@ -659,8 +659,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         
         //create HTML for description
         data.descriptionHtml = convertMarkdownToHtml(data.description);
-        console.log("GOT PARTICIPANTS: ", data.participants);
-        console.log("GOT PEOPLE: ", data.people);
+        console.log("GOT MEETING: ", data);
         if (!data.participants) {
             data.participants = [];
         }

@@ -683,6 +683,8 @@ public class ProjectDocsController extends BaseController {
                 }
                 ai.updateCommentsFromJSON(input, ar);
                 repo = ai.getJSON(ar, ngw, meet, true);
+                //make sure the meeting cache is refreshed with latest
+                MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetId);
             }
             else {
                 TopicRecord note = ngw.getNoteOrFail(topicId);
