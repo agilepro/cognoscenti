@@ -2,6 +2,7 @@ app.controller('CreateTopicModalCtrl', function ($scope, $modalInstance) {
 
     $scope.topic = {};
 	$scope.topic.subject="";
+	$scope.topic.wiki="";
 	$scope.topic.html="";
 	$scope.topic.phase="Draft";
 	
@@ -9,6 +10,7 @@ app.controller('CreateTopicModalCtrl', function ($scope, $modalInstance) {
     $scope.tinymceOptions1.height = 150;
     
     $scope.ok = function () {
+        $scope.topic.wiki = HTML2Markdown($scope.topic.html);
         $modalInstance.close($scope.topic);
     };
 

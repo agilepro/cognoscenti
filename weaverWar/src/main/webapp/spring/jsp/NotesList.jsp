@@ -280,7 +280,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         modalInstance.result.then(function (createdTopic) {
             var newTopic = {}
             newTopic.id = "~new~";
-            newTopic.html = createdTopic.html;
+            newTopic.wiki = HTML2Markdown(createdTopic.html);
             newTopic.subject = createdTopic.subject;
             newTopic.discussionPhase = createdTopic.phase;
             newTopic.modUser = {};

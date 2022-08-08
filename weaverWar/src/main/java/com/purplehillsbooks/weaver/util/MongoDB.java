@@ -12,6 +12,7 @@ import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.UpdateResult;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 
 /**
  * Isolate the arcate Mongo specific classes here if possible
@@ -54,7 +55,7 @@ public class MongoDB {
         while (count++ < limit && cursor.hasNext()) {
             Document d = cursor.next();
             
-            JSONObject jo = new JSONObject(d.toJson());
+            JSONObject jo = new JSONObject(new JSONTokener( d.toJson() ));
             ja.put(jo);
         }
         return ja;
@@ -84,7 +85,7 @@ public class MongoDB {
         int count = 0;
         while (cursor.hasNext() && count < batchSize) {
             Document d = cursor.next();
-            JSONObject jo = new JSONObject(d.toJson());
+            JSONObject jo = new JSONObject(new JSONTokener(d.toJson()));
             ja.put(jo);
             count++;
         }

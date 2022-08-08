@@ -46,7 +46,6 @@ import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserCache;
-import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -418,7 +417,6 @@ public class ProjectDocsController extends BaseController {
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
 
-            UserProfile user = ar.getUserProfile();
             ar.setPageAccessLevels(thisWS);
             ar.assertNotFrozen(thisWS);
             ar.assertUpdateWorkspace("You must be able to update the workspace you are copying to");

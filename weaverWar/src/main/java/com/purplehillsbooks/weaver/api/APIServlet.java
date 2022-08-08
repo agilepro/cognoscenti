@@ -29,19 +29,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.IdGenerator;
 import com.purplehillsbooks.weaver.License;
-import com.purplehillsbooks.weaver.LicenseForUser;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionWiki;
 import com.purplehillsbooks.weaver.TopicRecord;
-import com.purplehillsbooks.weaver.WikiConverter;
 import com.purplehillsbooks.weaver.util.MimeTypes;
-import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
@@ -263,6 +259,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
+    /*
     private void genSwagger(AuthRequest ar, ResourceDecoder resDec) throws Exception {
 
         JSONObject root = new JSONObject();
@@ -343,6 +340,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private JSONObject getExternalDocObject() throws Exception {
         return new JSONObject();
     }
+    */
 
 
     private JSONObject getSitePostResponse(AuthRequest ar, ResourceDecoder resDec,
@@ -636,6 +634,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         ar.flush();
     }
 
+    /*
     private void getWorkspaceListing(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         JSONObject root = new JSONObject();
 
@@ -708,6 +707,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         root.write(ar.resp.getWriter(), 2, 0);
         ar.flush();
     }
+    */
 
     private void streamDocument(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         AttachmentRecord att = resDec.workspace.findAttachmentByIDOrFail(resDec.docId);
@@ -721,6 +721,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         StreamHelper.copyFileToOutput(realPath, ar.resp.out);
     }
 
+    /*
     private void genGoalInfo(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         GoalRecord goal = resDec.workspace.getGoalOrFail(resDec.goalId);
         JSONObject goalObj = goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic);
@@ -748,6 +749,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         }
         ar.flush();
     }
+    */
 
     private void receiveTemp(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         File folder = resDec.workspace.getContainingFolder();
