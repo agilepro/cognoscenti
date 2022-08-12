@@ -18,7 +18,7 @@
     
     JSONArray allComments = new JSONArray();
     for (CommentRecord comm : ngw.getAllComments()) {
-        allComments.put(comm.getHtmlJSON(ar));
+        allComments.put(comm.getHtmlJSON());
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -186,7 +186,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

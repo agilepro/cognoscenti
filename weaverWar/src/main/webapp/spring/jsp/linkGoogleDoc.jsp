@@ -239,7 +239,7 @@ function onSuccessFunc(user) {
 
 
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

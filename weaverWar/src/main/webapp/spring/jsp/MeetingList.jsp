@@ -163,7 +163,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

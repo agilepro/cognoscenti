@@ -368,8 +368,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
         attachModalInstance.result
         .then(function (docList) {
-            $scope.cmt.docList = docList;
+            getComment();
         }, function () {
+            getComment();
             //cancel action - nothing really to do
         });
     };

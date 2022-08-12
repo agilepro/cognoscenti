@@ -283,8 +283,12 @@ if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol">Facilitator:</td>
             <td>
-                <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
-                
+                <div>
+                  <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
+                </div>
+                <div>
+                  <a href="FacSettings.htm" ng-show="userCache.facilitator.isActive"><button class="btn btn-default btn-raised">Configure Settings</button></a>
+                </div>
             </td>
             <td ng-hide="helpFacilitator">
                 <button class="btn" ng-click="helpFacilitator=!helpFacilitator">?</button>

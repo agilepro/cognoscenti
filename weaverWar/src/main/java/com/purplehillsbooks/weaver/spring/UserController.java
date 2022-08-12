@@ -592,39 +592,15 @@ public class UserController extends BaseController {
     public void userSettings(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(ar.isLoggedIn()){
-                UserManager.getUserProfileOrFail(userKey);
-                UserProfile loggedInUser = ar.getUserProfile();
+        streamJSPUserLogged2(request, response, userKey, "UserSettings.jsp");
+    }
+    
+    
+    @RequestMapping(value = "/{userKey}/FacSettings.htm", method = RequestMethod.GET)
+    public void facSettings(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-                String userName = loggedInUser.getName();
-
-                if (userName==null || userName.length()==0) {
-                    userName = loggedInUser.getKey();
-                }
-                if (userName.length()>28) {
-                    userName = userName.substring(0,28);
-                }
-
-                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-                String bookForNewProject = ar.defParam( "bookKey", null );
-
-                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                    if(foundPages.size()>0){
-                        NGPageIndex foundPage = foundPages.get( 0 );
-                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/FrontPage.htm" );
-                        return;
-                    }
-                }
-
-                request.setAttribute("userName",userName);
-            }
-            streamJSPUserLogged2(request, response, userKey, "UserSettings.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
-        }
+        streamJSPUserLogged2(request, response, userKey, "FacSettings.jsp");
     }
 
 

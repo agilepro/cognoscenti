@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div style="padding:50px">
+<div style="padding:50px" ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

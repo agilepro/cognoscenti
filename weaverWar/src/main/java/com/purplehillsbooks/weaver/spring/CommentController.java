@@ -72,7 +72,7 @@ public class CommentController extends BaseController {
             CommentRecord topic = ngw.getCommentOrFail(cid);
 
 
-            JSONObject repo = topic.getHtmlJSON(ar);
+            JSONObject repo = topic.getHtmlJSON();
             sendJson(ar, repo);
         }
         catch(Exception ex){
@@ -91,7 +91,7 @@ public class CommentController extends BaseController {
             
             JSONArray allComments = new JSONArray();
             for (CommentRecord cmt : ngw.getAllComments()) {
-                allComments.put(cmt.getHtmlJSON(ar));
+                allComments.put(cmt.getHtmlJSON());
             }
 
             JSONObject jo = new JSONObject();
@@ -124,7 +124,7 @@ public class CommentController extends BaseController {
                 CommentRecord topic = ngw.getCommentOrFail(cid);
                 topic.updateFromJSON(postObject, ar);
     
-                repo = topic.getHtmlJSON(ar);
+                repo = topic.getHtmlJSON();
             }
             
             //re-link (or unlink) replies links to all comments
@@ -210,7 +210,7 @@ public class CommentController extends BaseController {
             }
             System.out.println("Comment Controller: workspace is saved for: "+cid);
         }
-        return cr.getHtmlJSON(ar);
+        return cr.getHtmlJSON();
     }
 
     private CommentRecord createNewComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {

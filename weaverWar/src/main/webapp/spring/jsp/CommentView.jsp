@@ -208,12 +208,26 @@ function setUpCommentMethods($scope, $http, $modal) {
     }
     $scope.getFullDoc = function(docId) {
         var doc = {};
-        $scope.attachmentList.filter( function(item) {
+        $scope.attachmentList.forEach( function(item) {
             if (item.universalid == docId) {
                 doc = item;
             }
         });
         return doc;
+    }
+    $scope.navigateCmtToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        if (!doc.id) {
+            console.log("navigateToDoc: "+docId, doc);
+            alert("Can not find doc to navigate to");
+            return;
+        }
+        if (doc.attType=='URL') {
+            window.open(doc.url, "_blank");
+        }
+        else {
+            window.location="DocDetail.htm?aid="+doc.id;
+        }
     }
 
     $scope.containerLink = function(cmt) {
@@ -410,7 +424,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         </tr>
       </table>
       <div ng-show="cmt.docList">
-          <span class="btn btn-sm btn-default btn-raised" ng-repeat="docId in cmt.docList" ng-click="navigateToDoc(docId)">
+          <span class="btn btn-sm btn-default btn-raised" ng-repeat="docId in cmt.docList" ng-click="navigateCmtToDoc(docId)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docId).name}} 
           </span>
       </div>
@@ -445,4 +459,5 @@ function setUpCommentMethods($scope, $http, $modal) {
 
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>  
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <!-- end CommentView.jsp -->

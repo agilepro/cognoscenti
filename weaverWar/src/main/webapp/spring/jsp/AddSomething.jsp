@@ -86,7 +86,7 @@ table tr td {
 }
 </style>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

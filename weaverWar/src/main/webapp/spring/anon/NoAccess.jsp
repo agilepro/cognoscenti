@@ -55,7 +55,7 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
-<div>
+<div ng-cloak>
 <%@include file="ErrorPanel.jsp"%> 
 
 <div class="col col-lg-6 col-md-6 col-sm-12">

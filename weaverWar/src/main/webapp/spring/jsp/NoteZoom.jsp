@@ -759,7 +759,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var getURL = "attachedDocs.json?note="+$scope.topicId;
         $http.get(getURL)
         .success( function(data) {
-            $scope.attachmentList = data.list;
+            $scope.noteInfo.docList = data.list;
+            
             var attachedDocTemp = [];
             data.list.forEach( function(item) {
                 $scope.allDocs.forEach( function(aDoc) {
@@ -1102,7 +1103,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

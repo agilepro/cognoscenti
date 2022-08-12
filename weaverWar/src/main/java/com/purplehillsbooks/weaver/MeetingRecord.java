@@ -323,6 +323,24 @@ public class MeetingRecord extends DOMFace {
         }
         return allItems;
     }
+    public List<String> getDocListIncludeComments() throws Exception {
+        List<String> allDocList = new ArrayList<String>();
+        for (AgendaItem ai : this.getSortedAgendaItems()) {
+            for (String docId :ai.getDocList()) {
+                if (!allDocList.contains(docId)) {
+                    allDocList.add(docId);
+                }
+            }
+            for (CommentRecord comm : ai.getComments()) {
+                for (String docId : comm.getDocList()) {
+                    if (!allDocList.contains(docId)) {
+                        allDocList.add(docId);
+                    }
+                }
+            }
+        }
+        return allDocList;
+    }
 
 
     public void startTimer(String itemId) throws Exception {

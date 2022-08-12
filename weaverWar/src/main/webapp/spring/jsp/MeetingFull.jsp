@@ -272,7 +272,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 }
 </style>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

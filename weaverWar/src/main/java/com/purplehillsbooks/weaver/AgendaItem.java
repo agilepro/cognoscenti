@@ -2,7 +2,6 @@ package com.purplehillsbooks.weaver;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -186,6 +185,22 @@ public class AgendaItem extends CommentContainer {
     }
     public void setDocList(List<String> newVal) throws Exception {
         setVector("docList", newVal);
+    }
+    public List<String> getDocListIncludeComments() throws Exception {
+        List<String> allDocList = new ArrayList<String>();
+        for (String docId : getDocList()) {
+            if (!allDocList.contains(docId)) {
+                allDocList.add(docId);
+            }
+        }
+        for (CommentRecord comm : this.getComments()) {
+            for (String docId : comm.getDocList()) {
+                if (!allDocList.contains(docId)) {
+                    allDocList.add(docId);
+                }
+            }
+        }
+        return allDocList;
     }
 
     public List<AddressListEntry> getPresenters()  throws Exception {

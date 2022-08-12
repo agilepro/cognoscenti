@@ -904,7 +904,7 @@ public class AttachmentRecord extends CommentContainer {
 
         JSONArray allCommentss = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCommentss.put(cr.getHtmlJSON(ar));
+            allCommentss.put(cr.getHtmlJSON());
         }
         thisDoc.put("comments",  allCommentss);
         

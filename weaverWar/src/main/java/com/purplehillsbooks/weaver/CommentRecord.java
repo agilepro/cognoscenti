@@ -437,6 +437,9 @@ public class CommentRecord extends DOMFace {
     public void setDocList(List<String> newVal) throws Exception {
         setVector("docList", newVal);
     }
+    public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) throws Exception {
+        return ngw.getListedAttachments(getDocList());
+    }
 
 
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, EmailSender mailFile) throws Exception {
@@ -552,7 +555,7 @@ public class CommentRecord extends DOMFace {
         data.put("parentURL", fullURLtoContext);
         data.put("parentName", noteOrMeet.emailSubject());
         data.put("commentURL", ar.baseURL + clone.getResourceURL(ngp, "CommentZoom.htm?cid=" + getTime()));
-        data.put("comment", this.getHtmlJSON(clone));
+        data.put("comment", this.getHtmlJSON());
         data.put("wsFrontPage", ar.baseURL + clone.getDefaultURL(ngp));
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngp));
         data.put("wsName", ngp.getFullName());
@@ -623,17 +626,14 @@ public class CommentRecord extends DOMFace {
         commInfo.put("poll", getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
         return commInfo;
     }
-    public JSONObject getHtmlJSON(AuthRequest ar) throws Exception {
-        if (ar.ngp==null) {
-            throw new Exception("getHtmlJSON requires an AuthRequest object with a NGP member set");
-        }
+    public JSONObject getHtmlJSON() throws Exception {
         JSONObject commInfo = getJSON();
         commInfo.put("containerName", containerName);
         commInfo.put("body", getContent());
         commInfo.put("outcome", getScalar("outcome"));
         JSONArray responseArray = new JSONArray();
         for (ResponseRecord rr : getResponses()) {
-            responseArray.put(rr.getJSON(ar));
+            responseArray.put(rr.getJSON());
         }
         commInfo.put("responses", responseArray);
         commInfo.put("choices", constructJSONArray(getChoices()));

@@ -577,7 +577,7 @@ function addvalue() {
 
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

@@ -86,28 +86,28 @@ public abstract class CommentContainer extends DOMFace {
 /////////////////////////// JSON ///////////////////////////////
 
 
-    public JSONArray getAllComments(AuthRequest ar) throws Exception {
+    public JSONArray getAllComments() throws Exception {
         JSONArray allCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCmts.put(cr.getHtmlJSON(ar));
+            allCmts.put(cr.getHtmlJSON());
         }
         return allCmts;
     }
-    public JSONArray getIncludedComments(AuthRequest ar) throws Exception {
+    public JSONArray getIncludedComments() throws Exception {
         JSONArray includedCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
             if (cr.getAttributeBool("includeInMinutes")) {
-                includedCmts.put(cr.getHtmlJSON(ar));
+                includedCmts.put(cr.getHtmlJSON());
             }
         }
         return includedCmts;
     }
     public void addJSONComments(AuthRequest ar, JSONObject thisContainer, boolean allComments) throws Exception {
         if (allComments) {
-            thisContainer.put("comments",  getAllComments(ar));
+            thisContainer.put("comments",  getAllComments());
         }
         else {
-            thisContainer.put("comments",  getIncludedComments(ar));
+            thisContainer.put("comments",  getIncludedComments());
             
         }
         
@@ -140,7 +140,7 @@ public abstract class CommentContainer extends DOMFace {
                 //ignore comment created before or after the period
                 continue;
             }
-            allCommentss.put(cr.getHtmlJSON(ar));
+            allCommentss.put(cr.getHtmlJSON());
         }
         return allCommentss;
     }

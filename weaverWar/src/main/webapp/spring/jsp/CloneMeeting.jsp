@@ -217,7 +217,7 @@ function GetFirstHundredNoHtml(input) {
 }
 </style>
 
-<div>
+<div ng-cloak>
 
   <%@include file="ErrorPanel.jsp"%>
   

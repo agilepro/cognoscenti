@@ -308,7 +308,7 @@ editBoxStyle {
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

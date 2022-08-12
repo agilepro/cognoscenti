@@ -113,7 +113,7 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
     <div class="upRightOptions rightDivContent">

@@ -152,8 +152,8 @@ public class ResponseRecord extends DOMFace
         data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw));
         data.put("parentName", noteOrMeet.emailSubject());
         data.put("commentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw)+ "#cmt" + getTime());
-        data.put("comment", cr.getHtmlJSON(ar));
-        data.put("response", this.getJSON(ar));
+        data.put("comment", cr.getHtmlJSON());
+        data.put("response", this.getJSON());
         data.put("choice", this.getChoice());
         data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));
         data.put("isProposal", isProposal);
@@ -178,7 +178,7 @@ public class ResponseRecord extends DOMFace
         mailFile.createEmailRecordInDB(mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
-    public JSONObject getJSON(AuthRequest ar) throws Exception {
+    public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
         AddressListEntry ale = new AddressListEntry(getUserId());
         jo.put("alt", ale.getJSON());

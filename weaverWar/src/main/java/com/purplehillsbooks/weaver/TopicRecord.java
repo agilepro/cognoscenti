@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -685,13 +684,16 @@ public class TopicRecord extends CommentContainer {
 
       
       
-      public void verifyAllAttachments(NGPage ngw) throws Exception {
+      public void verifyAllAttachments(NGWorkspace ngw) throws Exception {
           List<String> attached = getDocList();
           List<String> newList = new ArrayList<String>();
           List<AttachmentRecord> attaches = ngw.getAllAttachments();
           boolean changed = false;
           for (String attId : attached) {
               boolean found = false;
+              if (newList.contains(attId)) {
+                  continue;
+              }
               for (AttachmentRecord aRec : attaches) {
                   if (aRec.getUniversalId().equals(attId)) {
                       found = true;
@@ -717,6 +719,34 @@ public class TopicRecord extends CommentContainer {
       public void setDocList(List<String> newVal) {
           setVector("docList", newVal);
       }
+      public List<String> getDocListIncludeComments() throws Exception {
+          List<String> allDocList = new ArrayList<String>();
+          for (String docId : getDocList()) {
+              if (!allDocList.contains(docId)) {
+                  allDocList.add(docId);
+              }
+          }
+          for (CommentRecord comm : this.getComments()) {
+              for (String docId : comm.getDocList()) {
+                  if (!allDocList.contains(docId)) {
+                      allDocList.add(docId);
+                  }
+              }
+          }
+          return allDocList;
+      }
+      
+      public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) throws Exception {
+          return ngw.getListedAttachments(getDocList());
+      }
+      public List<AttachmentRecord> getAttachedDocsIncludeComments(NGWorkspace ngw) throws Exception {
+          return ngw.getListedAttachments(getDocListIncludeComments());
+      }
+      
+      
+      
+      
+      
 
       public List<String> getActionList() {
           return getVector("actionList");
@@ -959,7 +989,7 @@ public class TopicRecord extends CommentContainer {
      }
      public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
          JSONObject noteData = getJSONWithMarkdown(ngw);
-         JSONArray comments = getAllComments(ar);
+         JSONArray comments = getAllComments();
          for (MeetingRecord meet : getLinkedMeetings(ngw)) {
              JSONObject specialMeetingComment = new JSONObject();
              specialMeetingComment.put("emailSent", true);

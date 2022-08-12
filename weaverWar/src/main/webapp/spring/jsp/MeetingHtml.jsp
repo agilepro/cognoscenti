@@ -265,8 +265,6 @@ embeddedData.canUpdate = <%=canUpdate%>;
     
 <div ng-cloak>
 
-
-
 <%@include file="ErrorPanel.jsp"%>
 
 

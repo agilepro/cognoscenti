@@ -38,6 +38,7 @@ Required parameters:
     String topicSubject = "";
     JSONArray comments = new JSONArray();
     JSONArray subscribers = new JSONArray();
+    JSONArray attachments = new JSONArray();
     String originalSubject = "";
 
     if (meetId!=null) {
@@ -50,6 +51,7 @@ Required parameters:
         originalSubject = "Agenda: " + ai.getSubject();
         JSONObject meetInfo = meet.getFullJSON(ar, ngw, false);
         subscribers = meetInfo.getJSONArray("participants");
+        
     }
     else {
         TopicRecord topic = ngw.getDiscussionTopic(topicId);
@@ -60,10 +62,14 @@ Required parameters:
                     + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
         emailContext = new EmailContext(topic);
         originalSubject = "Topic: " + topic.getSubject();
+        
+        for (AttachmentRecord att : topic.getAttachedDocsIncludeComments(ngw)) {
+             attachments.put(att.getMinJSON(ngw));
+        }
     }
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
     for (CommentRecord comm : emailContext.getPeerComments()) {
-        comments.put(comm.getHtmlJSON(ar));
+        comments.put(comm.getHtmlJSON());
     }
 
 
@@ -103,6 +109,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.meetingTitle = "<%ar.writeJS(meetingTitle);%>";
     $scope.topicSubject = "<%ar.writeJS(topicSubject);%>";
     $scope.agendaItem = "<%ar.writeJS(agendaItem);%>";
+    $scope.attachments = <%attachments.write(out,2,4);%>;
     
     $scope.originalTopic = convertMarkdownToHtml($scope.originalWiki);
     
@@ -159,6 +166,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.saveIt = function() {
         $scope.newComment.body = HTML2Markdown($scope.newComment.html2, {});
         $scope.newComment.user = $scope.emailId;
+        var thisTime = $scope.newComment.time;
         
         var postObj = {comments:[]};
         postObj.commentId = $scope.focusId;
@@ -186,6 +194,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .success( function(data) {
             console.log("result", data);
             $scope.comments = data.comments;
+            
+            //now find the comment from the server and place back in new comment variable
+            data.comments.forEach(  function( oneComm ) {
+                if (oneComme.time == thisTime) {
+                    $scope.newComment = oneComm;
+                }
+            });
             $scope.distributeComments();
         })
         .error( function(data, status, headers, config) {
@@ -222,6 +237,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             console.log("ERROR",data);
         });
     }
+    $scope.navigateToDoc = function(doc) {
+        if (!doc.id) {
+            console.log("DOCID", doc);
+            alert("doc id is missing");
+        }
+        window.location="DocDetail.htm?aid="+doc.id;
+    }
+    $scope.navigateToLink = function(doc) {
+        window.open(doc.url, "_blank");
+    }
 
 });
 
@@ -253,6 +278,22 @@ function reloadIfLoggedIn() {
         <div ng-bind-html="originalTopic"></div>
       </div>
     </div>
+    <div ng-show="attachments">
+      <div><b>Attachments</b></div>
+      <div ng-repeat="doc in attachments"  style="vertical-align: top">
+          <span ng-show="doc.attType=='FILE'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              &nbsp;
+              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+          </span>
+          <span  ng-show="doc.attType=='URL'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              &nbsp;
+              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+          </span>
+          &nbsp; {{doc.name}}
+      </div>
+    </div>
     
     <div class="page-name">
         <h1 id="mainPageTitle"
@@ -281,7 +322,7 @@ function reloadIfLoggedIn() {
             </div>
         </div>
     SENT ALREADY: {{sentAlready}}
-    <div style="height:460px">
+    <div style="min-height:460px">
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
             <td><h2 id="QuickReply">Quick&nbsp;Reply:</h2></td>

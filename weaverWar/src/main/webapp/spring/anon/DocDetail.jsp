@@ -282,7 +282,7 @@ function copyTheLink() {
 </style>
 
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%> 
 

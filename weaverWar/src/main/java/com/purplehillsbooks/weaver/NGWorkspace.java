@@ -416,7 +416,19 @@ public class NGWorkspace extends NGPage {
         }
         return list;
     }
+    public List<AttachmentRecord> getListedAttachments(List<String> idList) throws Exception {
+        List<AttachmentRecord> list = new ArrayList<AttachmentRecord>();
+        for (AttachmentRecord aRec : getAllAttachments()) {
+            for (String universalId : idList) {
+                if (aRec.getUniversalId().equals(universalId)) {
+                    list.add(aRec);
+                }
+            }
+        }
+        return list;
+    }
 
+    
     public AttachmentRecord createAttachment() throws Exception {
         String newId = getUniqueOnPage();
         AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);

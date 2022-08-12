@@ -21,7 +21,7 @@
     CommentRecord selectedComment = ngw.getCommentOrNull(cid);
     JSONObject comment = new JSONObject();
     if (selectedComment!=null) {
-        comment = selectedComment.getHtmlJSON(ar);
+        comment = selectedComment.getHtmlJSON();
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -155,7 +155,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

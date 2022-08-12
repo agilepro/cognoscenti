@@ -343,7 +343,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 </script>
 
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

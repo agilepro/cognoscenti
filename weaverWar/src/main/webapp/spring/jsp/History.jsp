@@ -108,7 +108,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
