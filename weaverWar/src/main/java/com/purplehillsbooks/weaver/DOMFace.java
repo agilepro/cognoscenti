@@ -158,6 +158,9 @@ public class DOMFace
         return testValue.equals(val);
     }
 
+    public void clearScalar(String memberName) {
+        setScalar(memberName, null);
+    }
     public void setScalar(String memberName, String value) {
         if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"

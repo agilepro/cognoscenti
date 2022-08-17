@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
@@ -44,26 +43,6 @@ public class SectionForNotes extends SectionWiki {
     private static List<TopicRecord> getAllNotesInSection(NGSection section)
             throws Exception {
         return section.getChildren(LEAFLET_NODE_NAME, TopicRecord.class);
-    }
-
-    public static List<TopicRecord> getVisibleComments(NGSection section, int desiredViz,
-            UserProfile up) throws Exception {
-        List<TopicRecord> nl = new ArrayList<TopicRecord>();
-        for (TopicRecord cr : getAllNotesInSection(section)) {
-            int visibility = cr.getVisibility();
-            if (visibility != desiredViz || cr.isDeleted()) {
-                continue;
-            }
-            if (visibility == 4) {
-                // must test ownership
-                if (!up.hasAnyId(cr.getOwner())) {
-                    continue;
-                }
-            }
-            nl.add(cr);
-        }
-        TopicRecord.sortNotesInPinOrder(nl);
-        return nl;
     }
 
     public static TopicRecord getLeaflet(String cmtId, NGSection section)
@@ -117,7 +96,6 @@ public class SectionForNotes extends SectionWiki {
             newNote.setEffectiveDate(cr.getEffectiveDate());
             newNote.setSubject(cr.getSubject());
             newNote.setWiki(cr.getWiki());
-            newNote.setVisibility(cr.getVisibility());
         }
         return null;
     }

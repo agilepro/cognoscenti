@@ -166,18 +166,17 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
-<!-- MAIN CONTENT SECTION START -->
+<!-- MAIN CONTENT jsp/FrontTop.jsp -->
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
     <style>
-      .tripleColumn {
+      .siteMapColumn {
           border: 1px solid white;
           border-radius:5px;
           padding:5px;
-          background-color:#FFFFFF;
-          margin:6px
+          margin:6px;
       }
     </style>
 
@@ -193,7 +192,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     <div style="width:1200px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
+       <div class="siteMapColumn">
            <svg height="{{maxLength}}px" width="{{maxWidth}}px">
                 <ellipse cx="50" cy="50" rx="21" ry="20" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" ></ellipse>

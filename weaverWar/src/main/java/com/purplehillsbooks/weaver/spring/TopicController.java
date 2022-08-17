@@ -60,9 +60,9 @@ public class TopicController extends BaseController {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-           TopicRecord note = ngw.getNoteOrFail(topicId);
+           TopicRecord topic = ngw.getNoteOrFail(topicId);
            request.setAttribute("topicId", topicId);
-           boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, note);
+           boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);
            showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
        }
        catch(Exception ex) {
@@ -80,30 +80,16 @@ public class TopicController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            boolean canAccessWorkspace = ar.canAccessWorkspace();
 
-            JSONArray notes = new JSONArray();
-            for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
+            JSONArray topicList = new JSONArray();
+            for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
 
-                String discussionPhase = aNote.getDiscussionPhase();
-
-                if (aNote.isPublic()) {
-                    notes.put( aNote.getJSON(ngw) );
-                }
-                else if (!ar.isLoggedIn()) {
-                    continue;
-                }
-                else if ("Draft".equals(discussionPhase)) {
-                    if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
-                        notes.put( aNote.getJSON(ngw) );
-                    }
-                }
-                else if (canAccessWorkspace) {
-                    notes.put( aNote.getJSON(ngw) );
+                if (!topic.isDeleted()) {
+                    topicList.put( topic.getJSON(ngw) );
                 }
             }
 
-            sendJsonArray(ar, notes);
+            sendJsonArray(ar, topicList);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to fetch the list of topics", ex);
             streamException(ee, ar);
@@ -121,12 +107,12 @@ public class TopicController extends BaseController {
             boolean isMember = ar.canAccessWorkspace();
 
             JSONArray allTopics = new JSONArray();
-            for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
-                if (!isMember && !aNote.isPublic()) {
-                    //skip non public if not member
+            for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
+                if (!isMember || topic.isDeleted()) {
+                    //skip deleted if not member
                     continue;
                 }
-                allTopics.put(aNote.getJSON(ngw));
+                allTopics.put(topic.getJSON(ngw));
             }
 
             JSONObject repo = new JSONObject();
@@ -230,7 +216,7 @@ public class TopicController extends BaseController {
             ar.assertNotReadOnly("Cannot update a topic");
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
-            TopicRecord note = ngw.getDiscussionTopic(nid);
+            TopicRecord topic = ngw.getDiscussionTopic(nid);
 
             if (noteInfo.has("comments")) {
                 JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
@@ -239,16 +225,16 @@ public class TopicController extends BaseController {
                     JSONObject aCmt = commentsToUpdate.getJSONObject(i);
                     if (aCmt.getLong("time")<=0) {
                         String comment = GetFirstHundredNoHtml(aCmt.getString("body"));
-                        HistoryRecord.createHistoryRecord(ngw, note.getId(),
+                        HistoryRecord.createHistoryRecord(ngw, topic.getId(),
                                 HistoryRecord.CONTEXT_TYPE_LEAFLET,
                                 HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
                     }
                 }
             };
 
-            note.updateNoteFromJSON(noteInfo, ar);
+            topic.updateNoteFromJSON(noteInfo, ar);
 
-            JSONObject repo = note.getJSONWithComments(ar, ngw);
+            JSONObject repo = topic.getJSONWithComments(ar, ngw);
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
             sendJson(ar, repo);
         }catch(Exception ex){
@@ -273,26 +259,26 @@ public class TopicController extends BaseController {
 
             boolean isAutoSave = noteInfo.has("saveMode") && "autosave".equals(noteInfo.getString("saveMode"));
 
-            TopicRecord note = null;
+            TopicRecord topic = null;
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             if ("~new~".equals(nid)) {
-                note = ngw.createNote();
-                noteInfo.put("universalid", note.getUniversalId());
+                topic = ngw.createNote();
+                noteInfo.put("universalid", topic.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
             }
             else {
-                note = ngw.getDiscussionTopic(nid);
+                topic = ngw.getDiscussionTopic(nid);
             }
 
-            note.updateNoteFromJSON(noteInfo, ar);
-            note.setLastEdited(ar.nowTime);
-            note.setModUser(new AddressListEntry(ar.getBestUserId()));
+            topic.updateNoteFromJSON(noteInfo, ar);
+            topic.setLastEdited(ar.nowTime);
+            topic.setModUser(new AddressListEntry(ar.getBestUserId()));
             if (!isAutoSave) {
-                HistoryRecord.createHistoryRecord(ngw, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
+                HistoryRecord.createHistoryRecord(ngw, topic.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
                     0, eventType, ar, "");
             }
 
-            JSONObject repo = note.getJSONWithComments(ar, ngw);
+            JSONObject repo = topic.getJSONWithComments(ar, ngw);
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
 
             repo.write(ar.w, 2, 2);

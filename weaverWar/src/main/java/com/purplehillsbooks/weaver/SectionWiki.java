@@ -180,7 +180,6 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         newNote.setEffectiveDate(wikiSection.getLastModifyTime());
         newNote.setSubject(def.displayName + " - " + wikiSection.parent.getFullName());
         newNote.setWiki(data);
-        newNote.setVisibility(def.viewAccess);
         return newNote;
     }
 

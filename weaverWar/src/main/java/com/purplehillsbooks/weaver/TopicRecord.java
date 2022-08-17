@@ -67,13 +67,10 @@ public class TopicRecord extends CommentContainer {
 
     public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
-
-        //assure that visibility is set, default to the visibility to member
-        int viz = getVisibility();
-        if (viz<1 || viz>4) {
-            setVisibility(2);
-        }
-
+        
+        //get rid of visibility entry if any, schema migration, clean up, delete after 2023
+        clearScalar("visibility");
+        
         //convert to using discussion phase instead of older deleted indicator
         //NGWorkspace schema 101 -> 102 migration
         String currentPhase = getDiscussionPhase();
@@ -154,13 +151,11 @@ public class TopicRecord extends CommentContainer {
     }
 
 
-    public long getLastEdited()
-    {
-        return safeConvertLong(getScalar("created"));
+    public long getLastEdited() {
+        return getScalarLong("created");
     }
-    public void setLastEdited(long newCreated)
-    {
-        setScalar("created", Long.toString(newCreated));
+    public void setLastEdited(long newCreated) {
+        setScalarLong("created", newCreated);
     }
 
     public AddressListEntry getModUser() {
@@ -210,7 +205,7 @@ public class TopicRecord extends CommentContainer {
     * SectionDef.AUTHOR_ACCESS = 3;
     * SectionDef.PRIVATE_ACCESS = 4;
     *
-    */
+    *
     public int getVisibility() {
         return (int) safeConvertLong(getScalar("visibility"));
     }
@@ -224,20 +219,24 @@ public class TopicRecord extends CommentContainer {
         }
         setScalar("visibility", Integer.toString(newData));
     }
+    */
+    
+    
     /**
      * Visibility value of 1 means that this topic is publicly viewable.
      * This convenience method makes the test for this easy.
      * Also, deleted topics are never considered public (for obvious reasons)
-     */
+     *
     public boolean isPublic() {
-        return (getVisibility()==1) && !isDeleted();
+        return !isDeleted();
     }
+    */
 
     /**
     * given a display level and a user (AuthRequest) tells whether
     * this topic is to be displayed at that level.  Note this is
     * an "exact" match to a level, not a "greater than" match.
-    */
+    *
     public boolean isVisible(AuthRequest ar, int displayLevel)
         throws Exception
     {
@@ -253,6 +252,7 @@ public class TopicRecord extends CommentContainer {
         // must test ownership
         return (ar.getUserProfile().hasAnyId(getOwner()));
     }
+    */
 
 
 
@@ -266,14 +266,14 @@ public class TopicRecord extends CommentContainer {
     * These will be the same a lot of the time.
     */
     public long getEffectiveDate() {
-        long effDate = safeConvertLong(getScalar("effective"));
+        long effDate = getScalarLong("effective");
         if (effDate==0)  {
             return getLastEdited();
         }
         return effDate;
     }
     public void setEffectiveDate(long newEffective) {
-        setScalar("effective", Long.toString(newEffective));
+        setScalarLong("effective", newEffective);
     }
 
     /**
@@ -286,7 +286,7 @@ public class TopicRecord extends CommentContainer {
     * Default: 0
     */
     public long getPinOrder() {
-        long pin = safeConvertLong(getScalar("pin"));
+        long pin = getScalarLong("pin");
         if (pin < 0) {
             pin = 0;
         }
@@ -404,10 +404,8 @@ public class TopicRecord extends CommentContainer {
     /**
     * output a HTML link to this topic, truncating the name (subject)
     * to maxlength if it is longer than that.
-    */
-    public void writeLink(AuthRequest ar, int maxLength)
-        throws Exception
-    {
+    *
+    public void writeLink(AuthRequest ar, int maxLength) throws Exception {
         ar.write("<a href=\"");
         ar.write(ar.retPath);
         ar.write("\">");
@@ -419,11 +417,11 @@ public class TopicRecord extends CommentContainer {
         ar.writeHtml(name);
         ar.write("</a>");
     }
+    */
 
 
-    public void findTags(List<String> v)
-        throws Exception
-    {
+    /*
+    public void findTags(List<String> v) throws Exception {
         String tv = getWiki();
         LineIterator li = new LineIterator(tv);
         while (li.moreLines())
@@ -432,7 +430,9 @@ public class TopicRecord extends CommentContainer {
             scanLineForTags(thisLine, v);
         }
     }
+    */
 
+    /*
     protected void scanLineForTags(String thisLine, List<String> v) {
         int hashPos = thisLine.indexOf('#');
         int startPos = 0;
@@ -456,7 +456,7 @@ public class TopicRecord extends CommentContainer {
             hashPos = thisLine.indexOf('#', startPos);
         }
     }
-
+    */
 
 
     public static void sortNotesInPinOrder(List<TopicRecord> v) {
@@ -617,7 +617,7 @@ public class TopicRecord extends CommentContainer {
      }
 
 
-     /**
+     /*
       * getAccessRoles retuns a list of NGRoles which have access to this document.
       * Admin role and Member role are assumed automatically, and are not in this list.
       * This list contains only the extra roles that have access for non-members.
@@ -958,7 +958,6 @@ public class TopicRecord extends CommentContainer {
           thisNote.put("modTime",   getLastEdited());
           thisNote.put("modUser",   getModUser().getJSON());
           thisNote.put("universalid", getUniversalId());
-          thisNote.put("public",    isPublic());
           thisNote.put("deleted",   isDeleted());
           thisNote.put("draft",     isDraftNote());
           thisNote.put("discussionPhase", getDiscussionPhase());
@@ -1026,17 +1025,6 @@ public class TopicRecord extends CommentContainer {
          if (noteObj.has("modifieduser") && noteObj.has("modifiedtime")) {
              setLastEdited(noteObj.getLong("modTime"));
              setModUser(AddressListEntry.fromJSON(noteObj.getJSONObject("modUser")));
-         }
-         if (noteObj.has("public")) {
-             if (noteObj.getBoolean("public")) {
-                 //public
-                 setVisibility(1);
-             }
-             else {
-                 //only non-public option is member only.  Other visibility
-                 //options should not be considered by sync mechanism at all.
-                 setVisibility(2);
-             }
          }
          if (noteObj.has("deleted")) {
              if (noteObj.getBoolean("deleted")) {

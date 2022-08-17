@@ -361,11 +361,12 @@ public class CommentRecord extends DOMFace {
             //never send email for minutes
             return false;
         }
-        if (getTime()<1456272000000L) {
-            //if this was created before Feb 24, 2016, then don't send any email
+        if (getEmailSent()) {
             return false;
         }
-        if (getEmailSent()) {
+        if (getTime()<1456272000000L) {
+            //if this was created before Feb 24, 2016, then don't send any email
+            setEmailSent(true);
             return false;
         }
         //so we have something to send, but is it time yet?
@@ -679,10 +680,12 @@ public class CommentRecord extends DOMFace {
             setReplyTo(source);
             ngw.assureRepliesSet(source, this.getTime());
         }
+        /*
         if (input.has("replies")) {
             //this should probably never be used, but left in just in case
             setReplies(constructVectorLong(input.getJSONArray("replies")));
         }
+        */
         if (input.has("postTime")) {
             setPostTime(input.getLong("postTime"));
         }

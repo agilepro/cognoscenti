@@ -41,11 +41,14 @@ import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionAttachments;
 import com.purplehillsbooks.weaver.SharePortRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserCache;
+import com.purplehillsbooks.weaver.UserManager;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -670,7 +673,30 @@ public class ProjectDocsController extends BaseController {
             //String commentId = input.optString("commentId", null);
             String meetId = input.optString("meetId", null);
             String agendaId = input.optString("agendaId", null);
-            //String emailId = input.optString("emailId", null);
+            
+            if (!ar.isLoggedIn()) {
+                String emailId = input.optString("emailId", null);
+                UserManager userMgr = UserManager.getStaticUserManager();
+                UserProfile possUser = userMgr.lookupUserByAnyId(emailId);
+                if (possUser == null) {
+                    //what to do here?  User has created or updated a comment on an email address
+                    //that does not have a user profile.   Create one.
+
+                    possUser = userMgr.createUserWithId(emailId);
+                    possUser.setName(input.optString("userName", ""));
+                    possUser.setDescription("Profile created by entering an anonymous reply to a comment in workspace: "+ngw.getFullName());
+                    userMgr.saveUserProfiles();
+                }
+                else {
+                    //not logged in, but if user object does not have a name try to set it
+                    String currentName = possUser.getName();
+                    if (currentName==null || currentName.length()==0) {
+                        possUser.setName(input.optString("userName", ""));
+                        userMgr.saveUserProfiles();
+                    }
+                }
+                ar.setPossibleUser(possUser);
+            }
             JSONObject repo =null;
             if (meetId!=null && meetId.length()>0) {
                 MeetingRecord meet = ngw.findMeeting(meetId);
@@ -693,6 +719,15 @@ public class ProjectDocsController extends BaseController {
                 }
                 note.updateCommentsFromJSON(input, ar);
                 repo = note.getJSONWithComments(ar, ngw);
+                
+                //check and see if this person is subscriber, if not add them.
+                if (ar.isLoggedIn()) {
+                    NGRole subscribers = note.getSubscriberRole();
+                    UserProfile user = ar.getUserProfile();
+                    if (!subscribers.isExpandedPlayer(user, ngw)) {
+                        subscribers.addPlayer(user.getAddressListEntry());
+                    }
+                }
             }
             ngw.saveFile(ar, "saving comment using SaveReply");
             sendJson(ar, repo);

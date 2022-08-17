@@ -55,11 +55,11 @@ Required parameters:
     }
     else {
         TopicRecord topic = ngw.getDiscussionTopic(topicId);
+        topicSubject = topic.getSubject();
         JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
         originalTopic = topicInfo.getString("wiki");
         subscribers = topicInfo.getJSONArray("subscribers");
-        specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
-                    + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
+        specialAccess = AccessControl.getAccessTopicParams(ngw, topic);
         emailContext = new EmailContext(topic);
         originalSubject = "Topic: " + topic.getSubject();
         
@@ -75,7 +75,7 @@ Required parameters:
 
 %>
 
-<!-- ************************ anon/Reply.jsp ************************ -->
+<!-- ************************ xxx/Reply.jsp ************************ -->
 <script type="text/javascript">
 
 var app = angular.module('myApp');
@@ -92,15 +92,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.newComment = {html:"",state:11};
     $scope.newComment.time = new Date().getTime();
     
-    $scope.emailId = "<%ar.writeJS(emailId);%>";
+    $scope.linkedEmailId = "<%ar.writeJS(linkedEmailId);%>";
     
-
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 250;
     $scope.isLoggedIn = <%=ar.isLoggedIn()%>;
+    
+    
+    <% if (ar.isLoggedIn()) {%>
+    $scope.loggedUserIds = <%ar.getUserProfile().getFullJSON().getJSONArray("ids").write(out,2,4);%>;
+    $scope.emailId = "<%ar.writeJS(emailId);%>";
+    $scope.userName = "<%ar.writeJS(ar.getUserProfile().getName());%>";
+    <% } else {%>
+    $scope.loggedUserIds = [];
+    $scope.emailId = localStorage.getItem('userEmail');
+    $scope.userName = localStorage.getItem('userName');
+    <% } %>
     $scope.sentAlready = false;
     $scope.userCounts = {};
-    $scope.linkedEmailId = "<%ar.writeJS(linkedEmailId);%>";
     $scope.isSubscriber = true;
     $scope.specialAccess = "<%ar.writeJS(specialAccess);%>";
     $scope.subscribers = <%subscribers.write(out,2,4);%>;
@@ -149,11 +158,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         $scope.otherComments = allOthers;
         $scope.userCounts = newCounts;
+        
+        //this test is not good enough if user has multiple email addresses
         var isSub = false;
         $scope.subscribers.forEach( function(sub) {
-            if ($scope.emailId.toLowerCase() == sub.uid.toLowerCase()) {
-                isSub = true;
-            }
+            var subIdLC = $scope.emailId.toLowerCase();
+            $scope.loggedUserIds.forEach( function(anId) {
+                console.log("TESTING", anId, subIdLC);
+                if (subIdLC == anId.toLowerCase()) {
+                    isSub = true;
+                    console.log("TESTING FOUND IT", anId);
+                }
+            });
         });
         $scope.isSubscriber = isSub;
     }
@@ -163,9 +179,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return (a.time-b.time);
     });
 
+    $scope.sendIt = function() {
+        if (!$scope.emailId) {
+            alert("Please specify your email address");
+            return;
+        }
+        if (!$scope.userName) {
+            alert("Please specify your full name");
+            return;
+        }
+        localStorage.setItem('userEmail', $scope.emailId);
+        localStorage.setItem('userName', $scope.userName);
+        console.log("SENDING:",$scope.newComment); 
+        $scope.sentAlready = true;
+        $scope.newComment.state=13;
+        $scope.saveIt();
+    }
     $scope.saveIt = function() {
         $scope.newComment.body = HTML2Markdown($scope.newComment.html2, {});
         $scope.newComment.user = $scope.emailId;
+        $scope.newComment.replyTo = $scope.focusId;
         var thisTime = $scope.newComment.time;
         
         var postObj = {comments:[]};
@@ -174,6 +207,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         postObj.meetId = $scope.meetId;
         postObj.agendaId = $scope.agendaId;
         postObj.emailId = $scope.emailId;
+        postObj.userName = $scope.userName;
         postObj.comments.push($scope.newComment)
         var postData = angular.toJson(postObj);
         var postURL = "SaveReply.json?" + $scope.specialAccess;
@@ -189,7 +223,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if ($scope.emailId) {
             postURL = postURL + "&emailId="+$scope.emailId;
         }
-        console.log("REQUEST URL", postURL, postData)
+        console.log("REQUEST URL", postURL, postObj)
         $http.post(postURL, postData)
         .success( function(data) {
             console.log("result", data);
@@ -197,7 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             
             //now find the comment from the server and place back in new comment variable
             data.comments.forEach(  function( oneComm ) {
-                if (oneComme.time == thisTime) {
+                if (oneComm.time == thisTime) {
                     $scope.newComment = oneComm;
                 }
             });
@@ -206,12 +240,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .error( function(data, status, headers, config) {
             console.log("ERROR", data, status)
         });
-    }
-    $scope.sendIt = function() {
-        console.log("SENDING:",$scope.newComment); 
-        $scope.sentAlready = true;
-        $scope.newComment.state=13;
-        $scope.saveIt();
     }
     $scope.goToDiscussion = function() {
         window.location = "<%ar.writeJS(goToUrl);%>";
@@ -257,10 +285,8 @@ function reloadIfLoggedIn() {
 }
 </script>
 
-</head>
 
-<body>
-  <div class="bodyWrapper"  style="margin:50px">
+<div class="bodyWrapper"  style="margin:50px">
 
 
 <style>
@@ -271,7 +297,7 @@ function reloadIfLoggedIn() {
 </style>
 
 
-<div ng-app="myApp" ng-controller="myCtrl" style="max-width:800px">
+<div style="max-width:800px">
     
     <div class="comment-outer comment-state-active">
       <div class="comment-inner">
@@ -321,7 +347,7 @@ function reloadIfLoggedIn() {
               </div>
             </div>
         </div>
-    SENT ALREADY: {{sentAlready}}
+
     <div style="min-height:460px">
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
@@ -336,10 +362,15 @@ function reloadIfLoggedIn() {
             </tr>
 <% if (!ar.isLoggedIn()) { %>
             <tr><td colspan="3">
-                <h3>Verify/correct your email address:</h3>
+                Your Name:
             </td><td colspan="2">
-                <h3><input type="form-control" ng-model="emailId"/></h3>
+                Your Email:
             </td></tr>
+            <tr><td colspan="3">
+                <input type="form-control" ng-model="userName"/>
+            </td><td colspan="2">
+                <input type="form-control" ng-model="emailId"/>
+            </td></tr>            
 <% } %>
             </table>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
@@ -383,8 +414,8 @@ function reloadIfLoggedIn() {
                 </ul>
             </td>
         </tr>
-        <tr ng-show="topicSubject">
-            <td>Your Participation</td>
+        <tr ng-show="topicSubject && isLoggedIn">
+            <td>Your Subscription</td>
             <td>
               <div ng-show="isSubscriber">
                 <div>You are currently subscribed to this discussion topic

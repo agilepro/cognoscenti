@@ -173,7 +173,7 @@
 
     %>
 
-<!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->
+<!-- BEGIN Wrapper.jsp Layout wrapping (jsp/<%=wrappedJSP%>) -->
 <html>
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
