@@ -131,6 +131,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
     $scope.distributeComments = function() {
+        if (!$scope.emailId) {
+            $scope.emailId = "";
+        }
+        if (!$scope.userName) {
+            $scope.userName = "";
+        }
         var newCounts = {};
         var allOthers = [];
         console.log("COMMENTS", $scope.comments);
@@ -162,12 +168,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         //this test is not good enough if user has multiple email addresses
         var isSub = false;
         $scope.subscribers.forEach( function(sub) {
-            var subIdLC = $scope.emailId.toLowerCase();
+            var subIdLC = sub.uid.toLowerCase();
             $scope.loggedUserIds.forEach( function(anId) {
-                console.log("TESTING", anId, subIdLC);
                 if (subIdLC == anId.toLowerCase()) {
                     isSub = true;
-                    console.log("TESTING FOUND IT", anId);
                 }
             });
         });

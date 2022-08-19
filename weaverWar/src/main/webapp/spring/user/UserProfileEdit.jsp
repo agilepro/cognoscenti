@@ -171,53 +171,8 @@ myApp.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-    <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >
-        <input type="hidden" name="action" id="actionUploadPhoto" value='' />
-        <table class="spacey">
-            <tr>
-                <td class="firstcol">Profile Photo:</td>
-                <td valign="bottom">
-                    <input type="file" name="fname" id="fname" class="btn btn-default btn-raised"/>
-                </td>
-                <td>You must upload a JPG file.</br>Please choose one around 100x100 pixels if possible</td>
-            </tr>
-            <tr>
-                <td class="firstcol"></td>
-                <td colspan="2">
-                    <button class="btn btn-primary btn-raised"
-                    onclick="javascript:uploadUserPhoto();">Upload Photo</button></td>
-            </tr>
-            <tr>
-                <td class="firstcol">(current)</td>
-                <td>
-                    <img src="<%ar.writeHtml(photoSource);%>" width="100" height="100" alt="user photo" />
-                    &nbsp; &nbsp;
-                    <img src="<%ar.writeHtml(photoSource);%>" class="img-circle" style="width:50px;height:50px" alt="user photo" />
-                    &nbsp; &nbsp;
-                    <img src="<%ar.writeHtml(photoSource);%>" class="img-circle" style="width:32px;height:32px" alt="user photo" />
-                </td>
-            </tr>
-        </table>
-    </form>
-    <div style="height:50px"></div>
 
     <table class="spacey table">
-        <tr>
-            <td class="firstcol">Full Name:</td>
-            <td><input type="text" class="form-control" ng-model="profile.name" /></td>
-        </tr>
-        <tr>
-            <td class="firstcol">Description:</td>
-            <td><textarea rows="4" class="form-control markDownEditor" ng-model="profile.description"></textarea></td>
-        </tr>
-        <tr>
-            <td class="firstcol">Notify Period:</td>
-            <td>
-                <input type="radio" value="1"  ng-model="profile.notifyPeriod" /> Daily
-                <input type="radio" value="7"  ng-model="profile.notifyPeriod" /> Weekly
-                <input type="radio" value="30"  ng-model="profile.notifyPeriod" /> Monthly
-            </td>
-        </tr>
         <tr>
             <td class="firstcol"></td>
             <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
@@ -294,10 +249,3 @@ myApp.controller('myCtrl', function($scope, $http) {
 
 %>
 
-<div class="well">
-    <form id="upload_user2" action="uploadImage.form" method="post" enctype="multipart/form-data" >
-       <input type="file" name="fname" id="fname"/>
-       <button onclick="document.getElementById('upload_user2').submit();">Upload Photo</button>
-    </form>
-
-</div>

@@ -309,6 +309,10 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn( "Must be logged in in order to upload an image file.");
+            String go = request.getParameter("go");
+            if (go==null || go.length()==0) {
+                go = "UserSettings.htm";
+            }
             if (fileInPost.getSize() == 0) {
                 throw new NGException("nugen.exceptionhandling.no.file.attached",null);
             }
@@ -381,7 +385,7 @@ public class UserController extends BaseController {
             profile.setLastUpdated(ar.nowTime);
             ar.getCogInstance().getUserManager().saveUserProfiles();
 
-            redirectBrowser(ar,"UserProfileEdit.htm?u="+userKey);
+            redirectBrowser(ar,go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.upload.user.image.page",
                     new Object[]{userKey} , ex);

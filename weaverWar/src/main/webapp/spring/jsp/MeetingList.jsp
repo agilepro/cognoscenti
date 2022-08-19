@@ -30,6 +30,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
     $scope.meetings = [];
     $scope.wsProxy.getMeetingList(data => {$scope.meetings = data.meetings});
+    $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
     $scope.getMeetings = function() {
         return $scope.meetings;
@@ -185,7 +186,7 @@ app.controller('myCtrl', function($scope, $http) {
             <th width="100px">Actions</th>
             <th width="50px">Agenda</th>
             <th width="200px">Meeting</th>
-            <th width="200px">Date ({{0|date: "'GMT'Z"}})</th>
+            <th width="200px">Date ({{browserZone}})</th>
             <th width="50px">Minutes</th>
             <th width="80px">State</th>
             <th width="80px">Duration</th>
