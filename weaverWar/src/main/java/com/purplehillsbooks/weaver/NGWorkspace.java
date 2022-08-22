@@ -161,6 +161,10 @@ public class NGWorkspace extends NGPage {
 
 
     public TopicRecord getDiscussionTopic(String topicId) throws Exception {
+        if (topicId==null) {
+            //this is a program logic error so let it be known
+            throw new Exception("Attempt to getDiscussionTopic but a NULL was passed as the topic id");
+        }
         for (TopicRecord lr : getAllDiscussionTopics()) {
             if (topicId.equals(lr.getId())) {
                 return lr;

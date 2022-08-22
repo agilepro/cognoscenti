@@ -580,7 +580,7 @@ public class CommentRecord extends DOMFace {
         
         AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
-        File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
+        File templateFile = ar.findChunkTemplate("NewComment.chtml");
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
         

@@ -934,8 +934,7 @@ public class TopicRecord extends CommentContainer {
 
           AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
-          File emailFolder = cog.getConfig().getFileFromRoot("email");
-          File templateFile = new File(emailFolder, "NewTopic.chtml");
+          File templateFile = ar.findChunkTemplate("NewTopic.chtml");
 
           ChunkTemplate.streamIt(clone.w, templateFile, data, commenterProfile.getCalendar());
           clone.flush();

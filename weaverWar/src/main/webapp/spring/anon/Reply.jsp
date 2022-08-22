@@ -122,14 +122,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.originalTopic = convertMarkdownToHtml($scope.originalWiki);
     
- 
-    $scope.generateCommentHtml = function(cmt) { 
-        cmt.html2 = convertMarkdownToHtml(cmt.body);
-        cmt.outcomeHtml = convertMarkdownToHtml(cmt.outcome);
-        cmt.responses.forEach( function(item) {
-            item.html = convertMarkdownToHtml(item.body);
-        });
-    }
+
     $scope.distributeComments = function() {
         if (!$scope.emailId) {
             $scope.emailId = "";
@@ -145,7 +138,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 //ignore phase change comments of any kind
                 return;
             }
-            $scope.generateCommentHtml(cmt);
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
             }
@@ -297,7 +289,6 @@ function reloadIfLoggedIn() {
 .spacey tr td {
     padding: 5px 5px;
 }
-
 </style>
 
 
@@ -336,7 +327,17 @@ function reloadIfLoggedIn() {
      <div class="comment-outer">
       <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
       <div class="comment-inner">
-        <div ng-bind-html="cmt.html2"></div>
+        <div ng-bind-html="cmt.body|wiki"></div>
+      </div>
+      <table ng-show="cmt.responses" class="spacey">
+        <tr ng-repeat="resp in cmt.responses" ng-show="resp.body">
+          <td><b>{{resp.choice}}</b></td>
+          <td><i>{{resp.userName}}</i></td>
+          <td><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
+        </tr>
+      </table>
+      <div class="comment-inner" ng-show="cmt.outcome">
+        <div ng-bind-html="cmt.outcome|wiki"></div>
       </div>
     </div>
    </div>
@@ -347,7 +348,10 @@ function reloadIfLoggedIn() {
             <div class="comment-outer">
               <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
               <div class="comment-inner">
-                <div ng-bind-html="focusComment.html2"></div>
+                <div ng-bind-html="focusComment.body|wiki"></div>
+              </div>
+              <div class="comment-inner" ng-show="focusComment.outcome">
+                <div ng-bind-html="focusComment.outcome|wiki"></div>
               </div>
             </div>
         </div>

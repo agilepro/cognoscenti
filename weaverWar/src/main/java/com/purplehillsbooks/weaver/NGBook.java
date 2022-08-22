@@ -988,32 +988,7 @@ public class NGBook extends ContainerCommon {
     }
     
 
-    public Hashtable<String, File> allMeetingTemplates(AuthRequest ar) {
-        File siteFolder = getFilePath().getParentFile();
-        File siteCogFolder = new File(siteFolder, ".cog");
-        File siteMeetsFolder = new File(siteCogFolder, "meets");
-
-        File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
-        Hashtable<String, File> allTemplates = new Hashtable<String, File>();
-
-        File[] children = siteMeetsFolder.listFiles();
-        if (children!=null) {
-            for (File tempName: children) {
-                allTemplates.put(tempName.getName(), tempName);
-            }
-        }
-        children = templateFolder.listFiles();
-        if (children!=null) {
-            for (File tempName: children) {
-                if (!allTemplates.contains(tempName.getName())) {
-                    allTemplates.put(tempName.getName(), tempName);
-                }
-            }
-        }
-        return allTemplates;
-    }
-
-
+/*
     public static List<File> getAllLayouts(AuthRequest ar) {
 
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");
@@ -1048,6 +1023,7 @@ public class NGBook extends ContainerCommon {
         }
         return meetingLayoutFile;
     }
+    */
 
     public List<SiteMailGenerator> getAllSiteMail() throws Exception {
         List<SiteMailGenerator> requestList = new ArrayList<SiteMailGenerator>();

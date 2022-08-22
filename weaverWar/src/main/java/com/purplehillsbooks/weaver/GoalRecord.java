@@ -1085,8 +1085,7 @@ public class GoalRecord extends BaseRecord {
         data.put("stateName", stateName(getState()));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-        File emailFolder = cog.getConfig().getFileFromRoot("email");
-        File templateFile = new File(emailFolder, "ActionItem.chtml");
+        File templateFile = ar.findChunkTemplate("ActionItem.chtml");
 
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();

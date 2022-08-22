@@ -97,6 +97,8 @@ app.controller('myCtrl', function($scope, $http) {
               href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem" 
               href="SiteStats.htm">Site Statistics</a></li>
+          <li role="presentation"><a role="menuitem" 
+              href="TemplateEdit.htm">Template Edit</a></li>
         </ul>
       </span>
     </div>

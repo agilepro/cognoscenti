@@ -126,6 +126,14 @@ myApp.filter('cdate', function() {
     return moment(x).format("DD-MMM @ HH:mm");
   };
 });
+myApp.filter('wiki', function() {
+  return function(x) {
+    return convertMarkdownToHtml(x);
+  };
+});
+app.filter('encode', function() {
+  return window.encodeURIComponent;
+});
 
 function reloadIfLoggedIn(info) {
     //the deal is: this Wrapper.jsp is designed for people who are not logged in

@@ -1397,20 +1397,8 @@ public class MeetingRecord extends DOMFace {
         return allTemplates;
     }
 
-    public static File findMeetingLayout(AuthRequest ar, NGWorkspace ngw, String layoutName) {
-        File meetingLayoutFile = null;
-        for (File aLayout : getAllLayouts(ar,ngw)) {
-            if (aLayout.getName().equals(layoutName)) {
-                meetingLayoutFile = aLayout;
-            }
-        }
-        if (meetingLayoutFile==null) {
-            if ("FullDetail.chtml".equals(layoutName)) {
-                throw new RuntimeException("Required file FullDetail.chtml does not appear to be installed in the system.");
-            }
-            //This one must always exist...
-            return findMeetingLayout(ar, ngw, "FullDetail.chtml");
-        }
+    public static File findMeetingLayout(AuthRequest ar, NGWorkspace ngw, String layoutName) throws Exception {
+        File meetingLayoutFile = ar.findChunkTemplate(layoutName);
         return meetingLayoutFile;
     }
     

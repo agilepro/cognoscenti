@@ -517,6 +517,17 @@ public class AuthRequest
         }
         setPageAccessLevelsWithoutVisit(newNgp);
     }
+    
+    public NGWorkspace findAndSetWorkspace(String siteId, String pageId) throws Exception {
+        NGWorkspace ngw = getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId ).getWorkspace();
+        ngp = ngw;
+        return ngw;
+    }
+    public NGBook findAndSetSite(String siteId) throws Exception {
+        NGBook site = getCogInstance().getSiteByIdOrFail(siteId);
+        ngp = site;
+        return site;
+    }
 
     /**
      * If you want to throw away all the changes that might have been made to the copy
@@ -1851,6 +1862,45 @@ public class AuthRequest
      }
      public List<String> whoIsVisiting(String site, String workspace) {
          return cog.whoIsVisiting(site, workspace);
+     }
+     
+     public File findChunkTemplate(String templateName) throws Exception {
+         
+         //first look to see if there is a custom one
+         if (ngp!=null) {
+             NGBook site;
+             if (ngp instanceof NGWorkspace) {
+                 site = ((NGWorkspace) ngp).getSite();
+             }
+             else if (ngp instanceof NGBook) {
+                 site = (NGBook)ngp;
+             }
+             else {
+                 throw new Exception("No idea what ngp is at this attempt to findChunkTemplate");
+             }
+             
+             File cogFolder = new File(site.getSiteRootFolder(), ".cog");
+             File customTemplate = new File(cogFolder, templateName);
+             if (customTemplate.exists()) {
+                 return customTemplate;
+             }
+         }
+         
+         //get the default one from the email folder
+         File emailFolder = getCogInstance().getConfig().getFileFromRoot("email");
+         File stdTemplate = new File(emailFolder, templateName);
+         if (stdTemplate.exists()) {
+             return stdTemplate;
+         }
+         
+         //or maybe the meets folder
+         File meetsFolder = getCogInstance().getConfig().getFileFromRoot("meets");
+         stdTemplate = new File(meetsFolder, templateName);
+         if (stdTemplate.exists()) {
+             return stdTemplate;
+         }
+         
+         throw new JSONException("The standard chunk template '{0}' does not exist!", templateName);
      }
 
 }

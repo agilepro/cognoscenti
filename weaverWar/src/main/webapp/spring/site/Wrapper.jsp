@@ -242,6 +242,14 @@ myApp.filter('cdate', function() {
     return moment(x).format("DD-MMM @ HH:mm");
   };
 });
+myApp.filter('encode', function() {
+  return window.encodeURIComponent;
+});
+myApp.filter('wiki', function() {
+  return function(x) {
+    return convertMarkdownToHtml(x);
+  };
+});
 
  </script>
 

@@ -104,7 +104,7 @@ public class ErrorLogDetails extends DOMFace {
             jo.put("baseURL", ar.baseURL);
             jo.put("admin", up.getJSON());
 
-            File templateFile = cog.getConfig().getFileFromRoot("email/Feedback.chtml");
+            File templateFile = ar.findChunkTemplate("Feedback.chtml");
             MemFile body = new MemFile();
             Writer w = body.getWriter();
             ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());

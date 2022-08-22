@@ -96,7 +96,7 @@ public class HistoricActions {
         jo.put("admin", ar.getUserProfile().getJSON());
         jo.put("baseURL", ar.baseURL);
 
-        File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequestStatus.chtml");
+        File templateFile = ar.findChunkTemplate("SiteRequestStatus.chtml");
         MemFile body = new MemFile();
         Writer w = body.getWriter();
         ChunkTemplate.streamIt(w, templateFile, jo, ooir.getCalendar());

@@ -162,11 +162,8 @@ public class ResponseRecord extends DOMFace
         data.put("userName", owner.getName());
         data.put("optout", ooa.getUnsubscribeJSON(clone));
         
-        File emailFolder = cog.getConfig().getFileFromRoot("email");
-        File templateFile = new File(emailFolder, "NewResponse.chtml");
-        if (!templateFile.exists()) {
-            throw new Exception("Strange, the template file is missing: "+templateFile);
-        }
+
+        File templateFile =ar.findChunkTemplate("NewResponse.chtml");
 
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();

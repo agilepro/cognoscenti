@@ -88,6 +88,9 @@ Required parameter:
 .labelColumn:hover {
     background-color:#ECB6F9;
 }
+.spacey tr td {
+    padding:5px;
+}
 </style>
 
 <script type="text/javascript">
@@ -127,13 +130,24 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.cancelBackgroundTime();
         errorPanelHandler($scope, serverErr);
     };
+    
+    $scope.shownComments = [];
+    $scope.noteInfo.comments.forEach( function (cmt) {
+        if (cmt.newPhase) {
+            //ignore phase change comments of any kind
+            return;
+        }
+        if (cmt.state==12 || cmt.state==13) {
+            $scope.shownComments.push(cmt);
+        }
+    });
 
 });
 
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div style="padding:50px" ng-cloak>
+<div style="padding:50px;max-width:1000px" ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -145,44 +159,36 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         {{noteInfo.subject}}
     </div>
 
+    <div class="comment-outer comment-state-active">
+      <div class="comment-inner">
+        <div ng-bind-html="noteInfo.wiki|wiki"></div>
+      </div>
+    </div>
+
+    <div ng-repeat="cmt in shownComments">
         <div class="comment-outer">
+          <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
           <div class="comment-inner">
-            <div ng-bind-html="mainTopicHtml"></div>
+            <div ng-bind-html="cmt.body|wiki"></div>
+          </div>
+          <table ng-show="cmt.responses" class="spacey">
+            <tr ng-repeat="resp in cmt.responses" ng-show="resp.body">
+              <td><i>{{resp.userName}}</i></td>
+              <td style="min-width:400px"><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
+              <td ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></td>
+            </tr>
+          </table>
+          <div class="comment-inner" ng-show="cmt.outcome">
+            <div ng-bind-html="cmt.outcome|wiki"></div>
           </div>
         </div>
-
-
-<table style="max-width:800px">
-  <tr ng-repeat="cmt in getComments()">
-
-     <%@ include file="/spring/jsp/CommentView.jsp"%>
-
-  </tr>
-
-
-    <tr><td style="height:20px;"></td></tr>
-
-    <tr>
-    <td></td>
-    <td>
-    <div ng-show="canComment && !isEditing">
-        <div style="margin:20px;">
-            <button ng-click="openCommentCreator({},1)" class="btn btn-default btn-raised">
-                Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator({},2)" class="btn btn-default btn-raised">
-                Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator({},3)" class="btn btn-default btn-raised">
-                Create New <i class="fa  fa-question-circle"></i> Round</button>
-        </div>
     </div>
-    <div ng-hide="canComment">
-        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
+
+    <div>
+      <a href="Reply.htm?topicId=<%=topicId%>&mnnote=<%=mnnote%>#QuickReply"><button class="btn btn-primary btn-raised">Make a Reply</button></a>
+      &nbsp;
+      <i>Login to see all options.</i>
     </div>
-    </td>
-    </tr>
-
-</table>
-
 
 </div>
 

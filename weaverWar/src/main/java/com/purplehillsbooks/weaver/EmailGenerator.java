@@ -565,7 +565,7 @@ public class EmailGenerator extends DOMFace {
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
-        File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.chtml");
+        File myTemplate = ar.findChunkTemplate("DiscussionTopicManual.chtml");
         ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getCalendar());
     }
 

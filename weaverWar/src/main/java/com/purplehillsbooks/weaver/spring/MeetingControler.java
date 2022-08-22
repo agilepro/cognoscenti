@@ -180,11 +180,7 @@ public class MeetingControler extends BaseController {
 
             JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
             
-            Hashtable<String, File> templates = site.allMeetingTemplates(ar);
-            File templateFile = templates.get(template);
-            if (templateFile == null) {
-                templateFile = templates.get("FullDetail.chtml");
-            }
+            File templateFile = ar.findChunkTemplate(template);
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
             
             UserProfile uProf = ar.getUserProfile();

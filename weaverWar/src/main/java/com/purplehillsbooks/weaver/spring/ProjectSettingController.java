@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 
 @Controller
 public class ProjectSettingController extends BaseController {
@@ -747,19 +748,20 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
+
+    
     @RequestMapping(value = "/{siteId}/{pageId}/getLabels.json", method = RequestMethod.POST)
     public void getLabels(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
             ar.assertAccessWorkspace("Must be able to access workspace to get labels.");
             
             JSONObject ret = new JSONObject();
             JSONArray list = new JSONArray();
             
-            for (NGLabel label : ngp.getAllLabels()) {
+            for (NGLabel label : ngw.getAllLabels()) {
                 list.put(label.getJSON());
             }
             ret.put("list", list);
@@ -778,24 +780,23 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
             ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             op = ar.reqParam("op");
             JSONObject labelInfo = getPostedObject(ar);
             String labelName = labelInfo.getString("name");
 
-            NGLabel label = ngp.getLabelRecordOrNull(labelName);
+            NGLabel label = ngw.getLabelRecordOrNull(labelName);
             if ("Create".equals(op)) {
                 String editedName = labelInfo.getString("editedName");
-                NGLabel other = ngp.getLabelRecordOrNull(editedName);
+                NGLabel other = ngw.getLabelRecordOrNull(editedName);
                 if (label==null) {
                     if (other!=null) {
                         throw new Exception("Cannot create label '"+editedName+"' because a label already exists with that name.");
                     }
-                    label = ngp.findOrCreateLabelRecord(editedName, labelInfo.getString("color"));
+                    label = ngw.findOrCreateLabelRecord(editedName, labelInfo.getString("color"));
                 }
                 else {
                     if (!editedName.equals(labelName)) {
@@ -809,11 +810,11 @@ public class ProjectSettingController extends BaseController {
             }
             else if ("Delete".equals(op)) {
                 if (label!=null && label instanceof LabelRecord) {
-                    ngp.removeLabelRecord((LabelRecord)label);
+                    ngw.removeLabelRecord((LabelRecord)label);
                 }
             }
 
-            ngp.saveFile(ar, "Updated Agenda Item");
+            ngw.saveFile(ar, "Updated Agenda Item");
             JSONObject repo = label.getJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
@@ -827,8 +828,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngw);
+            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
             ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
             ar.assertNotFrozen(ngw);

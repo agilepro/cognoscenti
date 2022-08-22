@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 
 @Controller
 public class SiteController extends BaseController {
@@ -58,16 +59,22 @@ public class SiteController extends BaseController {
     ////////////////////// MAIN VIEWS ///////////////////////
 
     @RequestMapping(value = "/{siteId}/$/SiteAdmin.htm", method = RequestMethod.GET)
-    public void SiteAdmin(@PathVariable String siteId,
+    public void siteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPExecutives(ar,siteId,"SiteAdmin.jsp");
     }
     @RequestMapping(value = "/{siteId}/$/SiteStats.htm", method = RequestMethod.GET)
-    public void SiteStats(@PathVariable String siteId,
+    public void siteStats(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPExecutives(ar,siteId,"SiteStats.jsp");
+    }
+    @RequestMapping(value = "/{siteId}/$/TemplateEdit.htm", method = RequestMethod.GET)
+    public void templateEdit(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPExecutives(ar,siteId,"TemplateEdit.jsp");
     }
 
 
@@ -577,6 +584,45 @@ public class SiteController extends BaseController {
         }
     }
     
+    @RequestMapping(value = "/{siteId}/$/getChunkTemplate.chtml", method = RequestMethod.GET)
+    public void getChunkTemplate(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.findAndSetSite( siteId );
+            ar.assertExecutive("to retrieve the site template files you must be a site Executive");
+            String templateName = ar.reqParam("t");
+            File templateFile = ar.findChunkTemplate(templateName);
+            StreamHelper.copyFileToOutput(templateFile, ar.resp.out);
+            ar.resp.out.flush();
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to put the chunk template.", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/$/putChunkTemplate.chtml", method = RequestMethod.PUT)
+    public void putChunkTemplate(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.findAndSetSite( siteId );
+            ar.assertExecutive("to edit the site template files you must be a site Executive");
+            String templateName = ar.reqParam("t");
+            File cogFolder = new File(site.getSiteRootFolder(), ".cog");
+            File templateFile = new File(cogFolder, templateName);
+            if (templateFile.exists()) {
+                templateFile.delete();
+            }
+            StreamHelper.copyStreamToFile(ar.req.getInputStream(), templateFile);
+            ar.write("Template saved correctly: "+templateName);
+            ar.flush();
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to put the chunk template.", ex);
+            streamException(ee, ar);
+        }
+    }    
     
     ///////////////////////// Eamil ///////////////////////
 
