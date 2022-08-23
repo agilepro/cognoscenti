@@ -1048,7 +1048,6 @@ public class GoalRecord extends BaseRecord {
             return;  //ignore users without email addresses
         }
 
-        Cognoscenti cog = ar.getCogInstance();
         //note that assignee means two different things in this next line
         boolean recipientIsAssignedTask = isAssignee(ooa.getAssignee());
 
@@ -1085,9 +1084,7 @@ public class GoalRecord extends BaseRecord {
         data.put("stateName", stateName(getState()));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-        File templateFile = ar.findChunkTemplate("ActionItem.chtml");
-
-        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
+        ChunkTemplate.streamAuthRequest(clone.w, ar, "ActionItem", data, ooa.getCalendar());
         clone.flush();
 
         String stateNameStr = stateName(getState());

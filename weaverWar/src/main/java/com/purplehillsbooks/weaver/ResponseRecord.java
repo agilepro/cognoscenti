@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +120,6 @@ public class ResponseRecord extends DOMFace
             return;  //ignore users without email addresses
         }
 
-        Cognoscenti cog = ar.getCogInstance();
         UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
         if (toProfile!=null) {
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
@@ -161,11 +159,8 @@ public class ResponseRecord extends DOMFace
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
         data.put("userName", owner.getName());
         data.put("optout", ooa.getUnsubscribeJSON(clone));
-        
 
-        File templateFile =ar.findChunkTemplate("NewResponse.chtml");
-
-        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
+        ChunkTemplate.streamAuthRequest(clone.w, ar, "NewResponse", data, ooa.getCalendar());
         clone.flush();
 
         MailInst mailMsg = ngw.createMailInst();

@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import java.io.Writer;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -104,10 +103,9 @@ public class ErrorLogDetails extends DOMFace {
             jo.put("baseURL", ar.baseURL);
             jo.put("admin", up.getJSON());
 
-            File templateFile = ar.findChunkTemplate("Feedback.chtml");
             MemFile body = new MemFile();
             Writer w = body.getWriter();
-            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
+            ChunkTemplate.streamAuthRequest(w, ar, "Feedback", jo, up.getCalendar());
             w.flush();
 
             OptOutAddr ooa = new OptOutSuperAdmin(up.getAddressListEntry());

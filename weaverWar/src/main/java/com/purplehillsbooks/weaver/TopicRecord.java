@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -910,7 +909,6 @@ public class TopicRecord extends CommentContainer {
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
               UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
-          Cognoscenti cog = ar.getCogInstance();
           if (!ooa.hasEmailAddress()) {
               return;  //ignore users without email addresses
           }
@@ -934,9 +932,7 @@ public class TopicRecord extends CommentContainer {
 
           AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
-          File templateFile = ar.findChunkTemplate("NewTopic.chtml");
-
-          ChunkTemplate.streamIt(clone.w, templateFile, data, commenterProfile.getCalendar());
+          ChunkTemplate.streamAuthRequest(clone.w, ar, "NewTopic", data, commenterProfile.getCalendar());
           clone.flush();
 
           MailInst mailMsg = ngp.createMailInst();

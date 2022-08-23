@@ -1,6 +1,5 @@
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -526,7 +525,6 @@ public class CommentRecord extends DOMFace {
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
-        Cognoscenti cog = ar.getCogInstance();
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -580,8 +578,7 @@ public class CommentRecord extends DOMFace {
         
         AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
-        File templateFile = ar.findChunkTemplate("NewComment.chtml");
-        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
+        ChunkTemplate.streamAuthRequest(clone.w, ar, "NewComment", data, ooa.getCalendar());
         clone.flush();
         
         MailInst mailMsg = ngp.createMailInst();

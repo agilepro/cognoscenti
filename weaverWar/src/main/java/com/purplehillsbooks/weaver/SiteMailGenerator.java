@@ -216,8 +216,9 @@ public class SiteMailGenerator extends DOMFace {
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
-        File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts/"+getLayoutName());
-        ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getCalendar());
+        String templateName = getLayoutName();
+        String baseName = templateName.substring(0, templateName.length()-6);
+        ChunkTemplate.streamAuthRequest(ar.w, ar, baseName, data, ooa.getCalendar());
     }
 
     public JSONObject getJSON() throws Exception {

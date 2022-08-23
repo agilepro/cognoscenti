@@ -389,9 +389,9 @@ public class EmailGenerator extends DOMFace {
                 }
 
                 String meetingLayout = this.getScalar("meetingLayout");
-                File meetingLayoutFile = MeetingRecord.findMeetingLayout(ar,  ngw,  meetingLayout);
+                String baseName = meetingLayout.substring(0, meetingLayout.length()-6);
                 MemFile meetingOutput = new MemFile();
-                ChunkTemplate.streamIt(meetingOutput.getWriter(), meetingLayoutFile, meeting.getFullJSON(ar, ngw, false), ooa.getCalendar());
+                ChunkTemplate.streamAuthRequest(meetingOutput.getWriter(), ar, baseName, meeting.getFullJSON(ar, ngw, false), ooa.getCalendar());
                 meetingString = meetingOutput.toString();
             }
         }
@@ -565,8 +565,7 @@ public class EmailGenerator extends DOMFace {
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
-        File myTemplate = ar.findChunkTemplate("DiscussionTopicManual.chtml");
-        ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getCalendar());
+        ChunkTemplate.streamAuthRequest(ar.w, ar, "DiscussionTopicManual", data, ooa.getCalendar());
     }
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {

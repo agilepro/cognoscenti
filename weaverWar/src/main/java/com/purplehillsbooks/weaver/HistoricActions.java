@@ -1,6 +1,5 @@
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,10 +95,9 @@ public class HistoricActions {
         jo.put("admin", ar.getUserProfile().getJSON());
         jo.put("baseURL", ar.baseURL);
 
-        File templateFile = ar.findChunkTemplate("SiteRequestStatus.chtml");
         MemFile body = new MemFile();
         Writer w = body.getWriter();
-        ChunkTemplate.streamIt(w, templateFile, jo, ooir.getCalendar());
+        ChunkTemplate.streamAuthRequest(w, ar, "SiteRequestStatus", jo, ooir.getCalendar());
         w.flush();
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();

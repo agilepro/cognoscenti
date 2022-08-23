@@ -42,7 +42,7 @@
 
 %>
 
-<!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->  
+<!-- BEGIN anon/Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->  
 <html>
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
@@ -131,7 +131,7 @@ myApp.filter('wiki', function() {
     return convertMarkdownToHtml(x);
   };
 });
-app.filter('encode', function() {
+myApp.filter('encode', function() {
   return window.encodeURIComponent;
 });
 

@@ -12,7 +12,9 @@ import java.util.Set;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.weaver.AuthRequest;
 import com.x5.template.Chunk;
+import com.x5.template.ContentSource;
 import com.x5.template.Theme;
 
 
@@ -121,7 +123,7 @@ public class ChunkTemplate {
         if (fileName.toLowerCase().endsWith(".chtml")) {
             fileName = fileName.substring(0,fileName.length()-6);
         }
-        //TemplateSet tempSet = new TemplateSet(templateFile.getParentFile().toString(), "chtml", 5);
+        
         Theme theme = new Theme();
         theme.setTemplateFolder(templateFile.getParentFile().toString());
         theme.setDefaultFileExtension("chtml");
@@ -135,6 +137,42 @@ public class ChunkTemplate {
         
         finishUp(w,c,data);
     }
+    
+    /**
+     * in Weaver default templates are stored in the code repository, but these can be 
+     * overridden by custom templates in the site.   Streaming the template this way
+     * assures that the template is found in the site when overridden.
+     * @param w is the writer that will be written to
+     * @param ar the AuthRequest initialized with a workspace on it for finding template
+     * @param templateName without the file extension
+     * @param data the JSON data
+     * @param cal the personal calendar of the person receiving the result
+     * @throws Exception
+     */
+    public static void streamAuthRequest(Writer w, AuthRequest ar, String templateName, JSONObject data, Calendar cal) throws Exception {
+        ar.assertAccessWorkspace("Template streaming to email is available only on workspaces when set on AuthRequest object");
+        String nameWithExtension = templateName + ".chtml";
+        
+        TemplateProviderWeaver provider = new TemplateProviderWeaver(ar);
+        
+        //this will throw an exception if template file does not exist
+        ar.findChunkTemplate(nameWithExtension);
+        
+        Theme theme = new Theme((ContentSource)provider);
+        //theme.setTemplateFolder(templateFile.getParentFile().toString());
+        //theme.setDefaultFileExtension("chtml");
+        theme.setEncoding("UTF-8");
+
+        //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
+        theme.registerFilter(new ChunkFilterDate(cal));
+        theme.registerFilter(new ChunkFilterMarkdown());
+
+        Chunk c = theme.makeChunk(templateName);
+        
+        finishUp(w,c,data);
+    }
+    
+    
     public static String streamToString(File templateFile, JSONObject data, Calendar cal) throws Exception {
         MemFile mf = new MemFile();
         Writer w = mf.getWriter();

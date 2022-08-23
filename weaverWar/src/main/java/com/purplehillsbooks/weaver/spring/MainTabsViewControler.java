@@ -87,6 +87,7 @@ public class MainTabsViewControler extends BaseController {
         if ("$".equals(pageId)) {
             //if this is a site instead of a workspace, display something else
             response.sendRedirect("SiteWorkspaces.htm");
+            return;
         }
         NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
         showJSPDepending(ar, ngw, "FrontPage.jsp", true);

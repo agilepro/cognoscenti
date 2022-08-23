@@ -20,12 +20,10 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -41,7 +39,6 @@ import com.purplehillsbooks.weaver.BaseRecord;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MeetingRecord;
-import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
@@ -164,7 +161,6 @@ public class MeetingControler extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-            NGBook site = ngw.getSite();
 
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
@@ -172,6 +168,7 @@ public class MeetingControler extends BaseController {
             if (!template.endsWith("chtml")) {
                 throw new JSONException("Meeting template must end with 'chtml'.  Do you have the right file name? {0}", template);
             }
+            String baseTemplateName = template.substring(0, template.length()-6);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
                 showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
@@ -180,17 +177,16 @@ public class MeetingControler extends BaseController {
 
             JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
             
-            File templateFile = ar.findChunkTemplate(template);
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
             
             UserProfile uProf = ar.getUserProfile();
             if (uProf != null) {
             	//if a user is logged in, stream with their calendar (timezone)
-            	ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, uProf.getCalendar() );
+            	ChunkTemplate.streamAuthRequest(ar.w, ar, baseTemplateName,   meetingJSON, uProf.getCalendar() );
             }
             else {
             	//not logged in gets the system default calendar
-            	ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, Calendar.getInstance() );
+            	ChunkTemplate.streamAuthRequest(ar.w, ar, baseTemplateName,   meetingJSON, Calendar.getInstance() );
             }
 
         }catch(Exception ex){
