@@ -12,7 +12,6 @@ public class TemplateProviderWeaver extends TemplateProvider {
     
     public TemplateProviderWeaver(AuthRequest _ar) throws Exception {
         ar = _ar;
-        ar.assertAccessWorkspace("Chunk Template Provider MUST have a workspace on the AuthRequest object");
     }
     
     /**

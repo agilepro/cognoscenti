@@ -81,8 +81,8 @@ public class DecisionRecord extends DOMFace {
         setAttributeLong("sourceCmt", newVal);
     }
 
-    public String getSourceUrl(AuthRequest ar, NGWorkspace ngp) throws Exception {
-        return HistoryRecord.lookUpResourceURL(ar, ngp, getSourceType(), getSourceId())
+    public String getSourceUrl(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        return HistoryRecord.lookUpResourceURL(ar, ngw, getSourceType(), getSourceId())
                 + "#cmt" + getSourceCmt();
     }
 
@@ -108,10 +108,10 @@ public class DecisionRecord extends DOMFace {
      * get the labels on a document -- only labels valid in the project,
      * and no duplicates
      */
-    public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
+    public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
-            NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+            NGLabel aLabel = ngw.getLabelRecordOrNull(name);
             if (aLabel!=null) {
                 if (!res.contains(aLabel)) {
                     res.add(aLabel);
@@ -136,18 +136,18 @@ public class DecisionRecord extends DOMFace {
     }
 
 
-    public JSONObject getJSON4Decision(NGWorkspace ngp, AuthRequest ar) throws Exception {
+    public JSONObject getJSON4Decision(NGWorkspace ngw, AuthRequest ar) throws Exception {
         JSONObject thisDecision = new JSONObject();
         thisDecision.put("universalid", getUniversalId());
         thisDecision.put("num", getNumber());
         extractAttributeLong(thisDecision, "timestamp");
         JSONObject labelMap = new JSONObject();
-        for (NGLabel lRec : getLabels(ngp) ) {
+        for (NGLabel lRec : getLabels(ngw) ) {
             labelMap.put(lRec.getName(), true);
         }
         extractScalarString(thisDecision, "decision");
         thisDecision.put("labelMap",  labelMap);
-        thisDecision.put("sourceUrl", getSourceUrl(ar, ngp));
+        thisDecision.put("sourceUrl", getSourceUrl(ar, ngw));
         extractAttributeString(thisDecision, "sourceId");
         extractAttributeInt(thisDecision, "sourceType");
         extractAttributeLong(thisDecision, "sourceCmt");
@@ -155,7 +155,7 @@ public class DecisionRecord extends DOMFace {
         return thisDecision;
     }
 
-    public void updateDecisionFromJSON(JSONObject decisionObj, NGWorkspace ngp, AuthRequest ar) throws Exception {
+    public void updateDecisionFromJSON(JSONObject decisionObj, NGWorkspace ngw, AuthRequest ar) throws Exception {
         String universalid = decisionObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -174,7 +174,7 @@ public class DecisionRecord extends DOMFace {
         if (decisionObj.has("labelMap")) {
             JSONObject labelMap = decisionObj.getJSONObject("labelMap");
             List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
-            for (NGLabel stdLabel : ngp.getAllLabels()) {
+            for (NGLabel stdLabel : ngw.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {
                     selectedLabels.add(stdLabel);

@@ -112,7 +112,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         return "Attachments Format";
     }
 
-
+/*
     public static void moveAttachmentsFromDeprecatedSection(NGPage ngw) throws Exception
     {
         NGSection oldSec = ngw.getSection("Public Attachments");
@@ -131,6 +131,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             allSourceAttachments.removeChild(oldRec);
         }
     }
+    */
 
     /**
     * pass ar=null if you do not want any history records created

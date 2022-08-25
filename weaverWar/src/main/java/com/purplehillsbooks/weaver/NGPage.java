@@ -1435,12 +1435,12 @@ public abstract class NGPage extends ContainerCommon {
         return newHist;
     }
 
-    /**
+    /*
     * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
     * history for that resource will be copied to the current container for a new context id.
     * The history records are left in the old container.
     * The history records in the new page will have the new ID.
-    */
+    *
     public void copyHistoryForResource(NGPage ngc, int contextType, String oldID, String newID) throws Exception
     {
         for (HistoryRecord oldHist : ngc.getAllHistory())
@@ -1459,6 +1459,7 @@ public abstract class NGPage extends ContainerCommon {
             newHist.setContext(newID);
         }
     }
+    */
 
 
 

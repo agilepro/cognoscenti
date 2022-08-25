@@ -36,7 +36,7 @@ public class RestHandler {
     String projectId;
     String resource;
     NGBook prjSite;
-    NGWorkspace ngp;
+    NGWorkspace ngw;
 
     /**
      * This servlet handles REST style requests for XML content
@@ -72,7 +72,7 @@ public class RestHandler {
             throw new ProgramLogicError("could not find a third slash in: " + path);
         }
         projectId = path.substring(slashPos+1, nextSlashPos);
-        ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, projectId).getWorkspace();
+        ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, projectId).getWorkspace();
 
         resource = path.substring(nextSlashPos+1);
         if (!"case.xml".equals(resource)) {

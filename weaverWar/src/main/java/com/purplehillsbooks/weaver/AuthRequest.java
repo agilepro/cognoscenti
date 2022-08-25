@@ -1887,18 +1887,26 @@ public class AuthRequest
          }
          
          //get the default one from the email folder
-         File emailFolder = getCogInstance().getConfig().getFileFromRoot("email");
-         File stdTemplate = new File(emailFolder, templateName);
+         File templateFolder = getCogInstance().getConfig().getFileFromRoot("email");
+         File stdTemplate = new File(templateFolder, templateName);
          if (stdTemplate.exists()) {
              return stdTemplate;
          }
          
          //or maybe the meets folder
-         File meetsFolder = getCogInstance().getConfig().getFileFromRoot("meets");
-         stdTemplate = new File(meetsFolder, templateName);
+         templateFolder = getCogInstance().getConfig().getFileFromRoot("meets");
+         stdTemplate = new File(templateFolder, templateName);
          if (stdTemplate.exists()) {
              return stdTemplate;
          }
+         
+         //or maybe the meets folder
+         templateFolder = getCogInstance().getConfig().getFileFromRoot("siteLayouts");
+         stdTemplate = new File(templateFolder, templateName);
+         if (stdTemplate.exists()) {
+             return stdTemplate;
+         }
+         
          
          throw new JSONException("The standard chunk template '{0}' does not exist!", templateName);
      }

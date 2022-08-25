@@ -988,7 +988,7 @@ public class NGBook extends ContainerCommon {
     }
     
 
-/*
+
     public static List<File> getAllLayouts(AuthRequest ar) {
 
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");
@@ -1023,7 +1023,7 @@ public class NGBook extends ContainerCommon {
         }
         return meetingLayoutFile;
     }
-    */
+    
 
     public List<SiteMailGenerator> getAllSiteMail() throws Exception {
         List<SiteMailGenerator> requestList = new ArrayList<SiteMailGenerator>();

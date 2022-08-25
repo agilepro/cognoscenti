@@ -644,14 +644,14 @@ public class UserController extends BaseController {
 
 
 
-    private static void removeFromRole(NGWorkspace ngp, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
+    private static void removeFromRole(NGWorkspace ngw, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
         if(stopRolePlayer != null && stopRolePlayer.length > 0){
             NGRole role = null;
             for (String roleName : stopRolePlayer) {
-                role = ngp.getRoleOrFail(roleName);
+                role = ngw.getRoleOrFail(roleName);
                 role.removePlayer(ale);
             }
-            ngp.getSite().flushUserCache();
+            ngw.getSite().flushUserCache();
         }
     }
 

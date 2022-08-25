@@ -294,12 +294,12 @@ public class MainTabsViewControler extends BaseController {
          try {
              ar.assertLoggedIn("Must be logged in to create a topic.");
              String p = ar.reqParam("p");
-             NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
-             ar.setPageAccessLevels(ngp);
+             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+             ar.setPageAccessLevels(ngw);
 
              String oid = ar.reqParam("oid");
              JSONObject paramMap = new JSONObject();
-             TopicRecord note = ngp.getNoteOrFail(oid);
+             TopicRecord note = ngw.getNoteOrFail(oid);
              if(note.isDeleted()){
                  paramMap.put("msgType", "yes");
              }else{

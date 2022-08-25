@@ -374,18 +374,18 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String projectName = objIn.getString("projectName");
             String projectKey = SectionWiki.sanitize(projectName);
             projectKey = site.genUniqueWSKeyInSite(projectKey);
-            NGWorkspace ngp = site.createWorkspaceByKey(ar, projectKey);
+            NGWorkspace ngw = site.createWorkspaceByKey(ar, projectKey);
 
-            License lr = ngp.createLicense(ar.getBestUserId(), "Admin",
+            License lr = ngw.createLicense(ar.getBestUserId(), "Admin",
                     ar.nowTime + 1000*60*60*24*365, false);
-            ngp.saveFile(ar, "workspace created through API by "+ar.getBestUserId());
+            ngw.saveFile(ar, "workspace created through API by "+ar.getBestUserId());
 
-            String newLink = ar.baseURL + "api/" + resDec.siteId + "/" + ngp.getKey()
+            String newLink = ar.baseURL + "api/" + resDec.siteId + "/" + ngw.getKey()
                     + "/summary.json?lic=" + lr.getId();
 
-            responseOK.put("key", ngp.getKey());
+            responseOK.put("key", ngw.getKey());
             responseOK.put("site", site.getKey());
-            responseOK.put("name", ngp.getFullName());
+            responseOK.put("name", ngw.getFullName());
             responseOK.put("link", newLink);
             return responseOK;
         }
@@ -405,14 +405,14 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             return objIn;
         }
 
-        NGWorkspace ngp = resDec.workspace;
-        if (ngp == null) {
+        NGWorkspace ngw = resDec.workspace;
+        if (ngw == null) {
             throw new JSONException("Unable to find a workspace with the id {0}",resDec.projId);
         }
         if (resDec.lic == null) {
             throw new JSONException("Unable to find a license with the id {0}",resDec.licenseId);
         }
-        if (!ngp.isValidLicense(resDec.lic, ar.nowTime)) {
+        if (!ngw.isValidLicense(resDec.lic, ar.nowTime)) {
             throw new JSONException("The license ({0}) has expired.  "
                     +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
@@ -509,11 +509,11 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                     throw new JSONException("The license ({0}) does not have right to create new documents.", resDec.licenseId);
                 }
                 String newName = newDocObj.getString("name");
-                att = ngp.findAttachmentByName(newName);
+                att = ngw.findAttachmentByName(newName);
                 if (att==null) {
                     att = resDec.workspace.createAttachment();
                     if (newUid==null || newUid.length()==0) {
-                        newUid = ngp.getContainerUniversalId() + "@" + att.getId();
+                        newUid = ngw.getContainerUniversalId() + "@" + att.getId();
 
                     }
                     att.setUniversalId(newUid);

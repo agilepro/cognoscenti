@@ -113,9 +113,9 @@ public class ProjectGoalController extends BaseController {
     {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
 
-            GoalRecord goal = ngp.getGoalOrFail(taskId);
+            GoalRecord goal = ngw.getGoalOrFail(taskId);
             if(goal.isPassive()) {
                 throw new Exception("Passive goals are not supported any more");
             }
@@ -124,7 +124,7 @@ public class ProjectGoalController extends BaseController {
             //TODO: why does login not work?
             //System.out.println("task page logged in: "+isLoggedIn);
             boolean canAccessWorkspace   = ar.canAccessWorkspace();
-            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
+            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngw, goal);
 
             request.setAttribute("taskId", taskId);
             if (canAccessGoal && (!isLoggedIn || !canAccessWorkspace) ) {
@@ -186,11 +186,11 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to manipulate tasks.");
 
             //TODO: taskId should really be parentTaskId
-            taskActionCreate(ar, ngp, request, taskId);
+            taskActionCreate(ar, ngw, request, taskId);
 
             String assignto= ar.defParam("assignto", "");
             updateUserContactAndSaveUserPage(ar, "Add",assignto);
@@ -224,13 +224,13 @@ public class ProjectGoalController extends BaseController {
     }
 
     //TODO: is this still used?
-    private void taskActionUpdate(AuthRequest ar, NGWorkspace ngp, String parentTaskId)
+    private void taskActionUpdate(AuthRequest ar, NGWorkspace ngw, String parentTaskId)
             throws Exception
     {
        // final boolean updateTask =  true;
-        ar.setPageAccessLevels(ngp);
+        ar.setPageAccessLevels(ngw);
         ar.assertUpdateWorkspace("Must be a member of a workspace to manipulate tasks.");
-        ar.assertNotFrozen(ngp);
+        ar.assertNotFrozen(ngw);
         ar.assertNotReadOnly("Cannot update an action item");
 
         UserProfile userProfile = ar.getUserProfile();
@@ -238,7 +238,7 @@ public class ProjectGoalController extends BaseController {
         String taskState = ar.reqParam("state");
         String priority = ar.reqParam("priority");
 
-        GoalRecord task = ngp.getGoalOrFail(parentTaskId);
+        GoalRecord task = ngw.getGoalOrFail(parentTaskId);
         int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
         task.setSynopsis(ar.reqParam("taskname_update"));
 
@@ -275,20 +275,20 @@ public class ProjectGoalController extends BaseController {
         task.setModifiedDate(ar.nowTime);
         task.setModifiedBy(ar.getBestUserId());
 
-        HistoryRecord.createHistoryRecord(ngp, task.getId(),
+        HistoryRecord.createHistoryRecord(ngw, task.getId(),
                         HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, "");
 
-        ngp.saveFile(ar, CREATE_TASK);
+        ngw.saveFile(ar, CREATE_TASK);
     }
 
 
-    private void taskActionCreate(AuthRequest ar, NGWorkspace ngp,
+    private void taskActionCreate(AuthRequest ar, NGWorkspace ngw,
             HttpServletRequest request, String parentTaskId)
             throws Exception
     {
-        ar.setPageAccessLevels(ngp);
+        ar.setPageAccessLevels(ngw);
         ar.assertUpdateWorkspace("Must be a member of a workspace to manipulate tasks.");
-        ar.assertNotFrozen(ngp);
+        ar.assertNotFrozen(ngw);
         ar.assertNotReadOnly("Cannot create an action item");
 
         UserProfile userProfile = ar.getUserProfile();
@@ -301,11 +301,11 @@ public class ProjectGoalController extends BaseController {
 
         boolean isSubTask = (parentTaskId != null && parentTaskId.length() > 0);
         if (isSubTask) {
-            parentTask = ngp.getGoalOrFail(parentTaskId);
-            task = ngp.createSubGoal(parentTask, ar.getBestUserId());
+            parentTask = ngw.getGoalOrFail(parentTaskId);
+            task = ngw.createSubGoal(parentTask, ar.getBestUserId());
             eventType = HistoryRecord.EVENT_TYPE_SUBTASK_CREATED;
         } else {
-            task = ngp.createGoal(ar.getBestUserId());
+            task = ngw.createGoal(ar.getBestUserId());
             eventType = HistoryRecord.EVENT_TYPE_CREATED;
         }
         task.setSynopsis(ar.reqParam("taskname"));
@@ -362,9 +362,9 @@ public class ProjectGoalController extends BaseController {
         task.setModifiedDate(ar.nowTime);
         task.setModifiedBy(ar.getBestUserId());
 
-        HistoryRecord.createHistoryRecord(ngp, task.getId(),
+        HistoryRecord.createHistoryRecord(ngw, task.getId(),
                         HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, "");
-        ngp.saveFile(ar, CREATE_TASK);
+        ngw.saveFile(ar, CREATE_TASK);
     }
 
 
@@ -376,13 +376,13 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to reassign task.");
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             ar.assertUpdateWorkspace("Must be able to update workspace to update action items.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update an action item");
 
             String taskId = ar.reqParam("taskid");
-            GoalRecord task = ngp.getGoalOrFail(taskId);
+            GoalRecord task = ngw.getGoalOrFail(taskId);
             String go = ar.reqParam("go");
 
             String assignee = null;
@@ -409,11 +409,11 @@ public class ProjectGoalController extends BaseController {
 
             task.setModifiedDate(ar.nowTime);
             task.setModifiedBy(ar.getBestUserId());
-            HistoryRecord.createHistoryRecord(ngp, task.getId(),
+            HistoryRecord.createHistoryRecord(ngw, task.getId(),
                     HistoryRecord.CONTEXT_TYPE_TASK,
                     HistoryRecord.EVENT_TYPE_MODIFIED, ar, "");
 
-            ngp.saveFile(ar, CREATE_TASK);
+            ngw.saveFile(ar, CREATE_TASK);
 
             redirectBrowser(ar,go);
         }catch(Exception ex){
@@ -430,10 +430,10 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to update task.");
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             String go = ar.reqParam("go");
 
-            taskActionUpdate(ar, ngp, taskId);
+            taskActionUpdate(ar, ngw, taskId);
 
             redirectBrowser(ar,go);
         }catch(Exception ex){
@@ -453,15 +453,15 @@ public class ProjectGoalController extends BaseController {
             //note: this form is for people NOT logged in!
             //ukey specifies user, and mntask verifies they have a proper link to the action item
 
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             String taskId = ar.reqParam("taskId");
             String mntask = ar.reqParam("mntask");
             String ukey = ar.reqParam("ukey");
             String go = ar.reqParam("go");
             String cmd = ar.reqParam("cmd");
 
-            GoalRecord goal  = ngp.getGoalOrFail(taskId);
-            if (!AccessControl.isMagicNumber(ar, ngp, goal, mntask)) {
+            GoalRecord goal  = ngw.getGoalOrFail(taskId);
+            if (!AccessControl.isMagicNumber(ar, ngw, goal, mntask)) {
                 throw new Exception("Program Logic Error: improperly constructed request mntask = "+mntask);
             }
             UserProfile uProf = UserManager.getUserProfileByKey(ukey);
@@ -496,9 +496,9 @@ public class ProjectGoalController extends BaseController {
 
             goal.setModifiedDate(ar.nowTime);
             goal.setModifiedBy(ar.getBestUserId());
-            HistoryRecord.createHistoryRecord(ngp, goal.getId(),
+            HistoryRecord.createHistoryRecord(ngw, goal.getId(),
                     HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, accomp);
-            ngp.save();
+            ngw.save();
 
             redirectBrowser(ar,go);
         }catch(Exception ex){
@@ -564,13 +564,13 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("Must have access to workspace to see a action item.");
             gid = ar.reqParam("gid");
             GoalRecord gr = null;
-            gr = ngp.getGoalOrFail(gid);
-            JSONObject repo = gr.getJSON4Goal(ngp);
+            gr = ngw.getGoalOrFail(gid);
+            JSONObject repo = gr.getJSON4Goal(ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to fetch Action Item ("+gid+")", ex);
@@ -585,9 +585,9 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
-            ar.assertNotFrozen(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update action item");
             gid = ar.reqParam("gid");
             JSONObject goalInfo = getPostedObject(ar);
@@ -597,14 +597,14 @@ public class ProjectGoalController extends BaseController {
             if (isNew) {
                 //if it is a new goal you MUST be in an update role
                 ar.assertUpdateWorkspace("Need to be Member or assignee of task");
-                gr = ngp.createGoal(ar.getBestUserId());
+                gr = ngw.createGoal(ar.getBestUserId());
                 goalInfo.put("universalid", gr.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
             }
             else {
                 //you might be an assignee to gain access
-                gr = ngp.getGoalOrFail(gid);
-                boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
+                gr = ngw.getGoalOrFail(gid);
+                boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngw, gr);
                 if (!canAccessGoal) {
                     ar.assertUpdateWorkspace("Need to be Member or assignee of task");
                 }
@@ -615,7 +615,7 @@ public class ProjectGoalController extends BaseController {
             long previousDue = gr.getDueDate();
             String previousProspects = gr.getProspects();
 
-            gr.updateGoalFromJSON(goalInfo, ngp, ar);
+            gr.updateGoalFromJSON(goalInfo, ngw, ar);
 
             //now make the history description of what just happened
             StringBuilder inventedComment = new StringBuilder(goalInfo.optString("newAccomplishment"));
@@ -645,13 +645,13 @@ public class ProjectGoalController extends BaseController {
                 String comments = inventedComment.toString();
 
                 //create the history record here.
-                HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+                HistoryRecord.createHistoryRecord(ngw, gr.getId(),
                         HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
                         comments);
             }
-            ngp.renumberGoalRanks();
-            ngp.saveFile(ar, "Updated action item "+gid);
-            JSONObject repo = gr.getJSON4Goal(ngp);
+            ngw.renumberGoalRanks();
+            ngw.saveFile(ar, "Updated action item "+gid);
+            JSONObject repo = gr.getJSON4Goal(ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
@@ -664,10 +664,10 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertUpdateWorkspace("Must be a member to create a action item.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update an action item");
 
             JSONObject goalEnvelope = getPostedObject(ar);
@@ -681,22 +681,22 @@ public class ProjectGoalController extends BaseController {
                 GoalRecord gr = null;
                 boolean isNew = "~new~".equals(gid);
                 if (isNew) {
-                    gr = ngp.createGoal(ar.getBestUserId());
+                    gr = ngw.createGoal(ar.getBestUserId());
                     goalInfo.put("universalid", gr.getUniversalId());
                 }
                 else {
-                    gr = ngp.getGoalOrFail(gid);
+                    gr = ngw.getGoalOrFail(gid);
                 }
 
-                gr.updateGoalFromJSON(goalInfo, ngp, ar);
-                responseList.put(gr.getJSON4Goal(ngp));
+                gr.updateGoalFromJSON(goalInfo, ngw, ar);
+                responseList.put(gr.getJSON4Goal(ngw));
             }
 
             //TODO: maybe this should return ALL the goals since they all
             //might change when renumbered
-            ngp.renumberGoalRanks();
+            ngw.renumberGoalRanks();
 
-            ngp.saveFile(ar, "Updated multiple action items");
+            ngw.saveFile(ar, "Updated multiple action items");
             JSONObject repo = new JSONObject();
             repo.put("list",  responseList);
             sendJson(ar, repo);
@@ -711,18 +711,18 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             String gid = ar.reqParam("gid");
-            GoalRecord gr = ngp.getGoalOrFail(gid);
-            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
+            GoalRecord gr = ngw.getGoalOrFail(gid);
+            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngw, gr);
             if (!canAccessGoal) {
                 ar.assertAccessWorkspace("Need to have access to workspace to see action item history");
             }
 
             JSONArray repo = new JSONArray();
-            for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
-                repo.put(hist.getJSON(ngp, ar));
+            for (HistoryRecord hist : gr.getTaskHistory(ngw)) {
+                repo.put(hist.getJSON(ngw, ar));
             }
             sendJsonArray(ar, repo);
         }catch(Exception ex){
@@ -737,10 +737,10 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String did = "";
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertUpdateWorkspace("Must be a member to update a decision.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update a decision");
             did = ar.reqParam("did");
             JSONObject decisionInfo = getPostedObject(ar);
@@ -748,35 +748,35 @@ public class ProjectGoalController extends BaseController {
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             boolean isNew = "~new~".equals(did);
             if (isNew) {
-                dr = ngp.createDecision();
+                dr = ngw.createDecision();
                 decisionInfo.put("universalid", dr.getUniversalId());
                 dr.setTimestamp(ar.nowTime);
                 decisionInfo.put("timestamp", ar.nowTime);
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
-                dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
+                dr.updateDecisionFromJSON(decisionInfo, ngw, ar);
             }
             else if (decisionInfo.has("deleteMe")) {
                 int didVal = DOMFace.safeConvertInt(did);
-                dr = ngp.findDecisionOrFail(didVal);
-                ngp.deleteDecision(didVal);
+                dr = ngw.findDecisionOrFail(didVal);
+                ngw.deleteDecision(didVal);
             }
             else {
                 int didVal = DOMFace.safeConvertInt(did);
                 if (didVal<=0) {
                     throw new Exception("Don't understand the decision number: "+didVal);
                 }
-                dr = ngp.findDecisionOrFail(didVal);
-                dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
+                dr = ngw.findDecisionOrFail(didVal);
+                dr.updateDecisionFromJSON(decisionInfo, ngw, ar);
             }
 
 
             //create the history record here.
-            HistoryRecord.createHistoryRecord(ngp, Integer.toString(dr.getNumber()),
+            HistoryRecord.createHistoryRecord(ngw, Integer.toString(dr.getNumber()),
                     HistoryRecord.CONTEXT_TYPE_DECISION, eventType, ar,
                     "update decision");
 
-            ngp.saveFile(ar, "Updated decision "+did);
-            JSONObject repo = dr.getJSON4Decision(ngp, ar);
+            ngw.saveFile(ar, "Updated decision "+did);
+            JSONObject repo = dr.getJSON4Decision(ngw, ar);
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update Decision ("+did+")", ex);

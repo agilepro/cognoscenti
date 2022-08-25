@@ -209,10 +209,10 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    public String getLicensedAccessURL(AuthRequest ar, NGWorkspace ngp, String licenseId)
+    public String getLicensedAccessURL(AuthRequest ar, NGWorkspace ngw, String licenseId)
             throws Exception {
         String relativeLink = "a/" + SectionUtil.encodeURLData(getNiceName());
-        LicensedURL attPath = new LicensedURL(ar.baseURL + ar.getResourceURL(ngp, relativeLink),
+        LicensedURL attPath = new LicensedURL(ar.baseURL + ar.getResourceURL(ngw, relativeLink),
                 null, licenseId);
         return attPath.getCombinedRepresentation();
     }
@@ -317,9 +317,9 @@ public class AttachmentRecord extends CommentContainer {
         return val;
     }
 
-    public void createHistory(AuthRequest ar, NGWorkspace ngp, int event, String comment)
+    public void createHistory(AuthRequest ar, NGWorkspace ngw, int event, String comment)
             throws Exception {
-        HistoryRecord.createHistoryRecord(ngp, getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+        HistoryRecord.createHistoryRecord(ngw, getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                 getModifiedDate(), event, ar, comment);
     }
 
@@ -723,10 +723,10 @@ public class AttachmentRecord extends CommentContainer {
         if (!(container instanceof NGWorkspace)) {
             throw new ProgramLogicError("Container must be a Workspace style container.");
         }
-        NGWorkspace ngp = container;
+        NGWorkspace ngw = container;
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
-            NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+            NGLabel aLabel = ngw.getLabelRecordOrNull(name);
             if (aLabel!=null) {
                 if (!res.contains(aLabel)) {
                     res.add(aLabel);
@@ -855,15 +855,15 @@ public class AttachmentRecord extends CommentContainer {
     }
     
     
-    public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGWorkspace ngp, List<String> docUIDs) throws Exception {
+    public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGWorkspace ngw, List<String> docUIDs) throws Exception {
         JSONArray attachInfo = new JSONArray();
         for (String docUID : docUIDs) {
-            AttachmentRecord att = ngp.findAttachmentByUidOrNull(docUID);
+            AttachmentRecord att = ngw.findAttachmentByUidOrNull(docUID);
             if (att!=null) {
                 JSONObject jatt = new JSONObject();
                 jatt.put("name", att.getNiceName());
-                jatt.put("url", ar.baseURL + ar.getResourceURL(ngp, "DocDetail.htm?aid=" + att.getId())
-                        + "&" + AccessControl.getAccessDocParams(ngp, att));
+                jatt.put("url", ar.baseURL + ar.getResourceURL(ngw, "DocDetail.htm?aid=" + att.getId())
+                        + "&" + AccessControl.getAccessDocParams(ngw, att));
                 attachInfo.put(jatt);
             }
         }
@@ -874,7 +874,7 @@ public class AttachmentRecord extends CommentContainer {
         return true;
     }
 
-    public JSONObject getMinJSON(NGWorkspace ngp) throws Exception {
+    public JSONObject getMinJSON(NGWorkspace ngw) throws Exception {
         JSONObject thisDoc = new JSONObject();
         String univ = getUniversalId();
         thisDoc.put("universalid",  univ);
@@ -882,7 +882,7 @@ public class AttachmentRecord extends CommentContainer {
         thisDoc.put("name",         getNiceName());
         thisDoc.put("description",  getDescription());
         thisDoc.put("attType",      getType());
-        thisDoc.put("size",         getFileSize(ngp));
+        thisDoc.put("size",         getFileSize(ngw));
         thisDoc.put("deleted",      isDeleted());
         thisDoc.put("modifiedtime", getModifiedDate());
         thisDoc.put("modifieduser", getModifiedBy());
@@ -899,8 +899,8 @@ public class AttachmentRecord extends CommentContainer {
         return thisDoc;
     }
 
-    public JSONObject getJSON4Doc(AuthRequest ar, NGWorkspace ngp) throws Exception {
-        JSONObject thisDoc = getMinJSON(ngp);
+    public JSONObject getJSON4Doc(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        JSONObject thisDoc = getMinJSON(ngw);
 
         JSONArray allCommentss = new JSONArray();
         for (CommentRecord cr : getComments()) {
@@ -913,11 +913,11 @@ public class AttachmentRecord extends CommentContainer {
             //others access to the document.  Some people getting document
             //info do not have access to the document, and therefor this prevents
             //them from giving themselves (or anyone else) access.
-            thisDoc.put("magicNumber", AccessControl.getAccessDocParams(ngp, this));
+            thisDoc.put("magicNumber", AccessControl.getAccessDocParams(ngw, this));
         }
 
         JSONArray versions = new JSONArray();
-        for (AttachmentVersion av : getVersions(ngp)) {
+        for (AttachmentVersion av : getVersions(ngw)) {
             versions.put(av.getJSON());
         }
         thisDoc.put("versions",  versions);
@@ -926,7 +926,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    private boolean updateFromJSON(JSONObject docInfo, NGWorkspace ngp, AuthRequest ar) throws Exception {
+    private boolean updateFromJSON(JSONObject docInfo, NGWorkspace ngw, AuthRequest ar) throws Exception {
         boolean changed = false;
 
         if (docInfo.has("description")) {
@@ -940,7 +940,7 @@ public class AttachmentRecord extends CommentContainer {
         if (docInfo.has("labelMap")) {
             JSONObject labelMap = docInfo.getJSONObject("labelMap");
             List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
-            for (NGLabel stdLabel : ngp.getAllLabels()) {
+            for (NGLabel stdLabel : ngw.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {
                     selectedLabels.add(stdLabel);
@@ -977,8 +977,8 @@ public class AttachmentRecord extends CommentContainer {
 
 
 
-    public JSONObject getJSON4Doc(NGWorkspace ngp, AuthRequest ar, String urlRoot, License license) throws Exception {
-        JSONObject thisDoc = getJSON4Doc(ar, ngp);
+    public JSONObject getJSON4Doc(NGWorkspace ngw, AuthRequest ar, String urlRoot, License license) throws Exception {
+        JSONObject thisDoc = getJSON4Doc(ar, ngw);
         String contentUrl = urlRoot + "doc" + getId() + "/"
                     + URLEncoder.encode(getNiceName(), "UTF-8") + "?lic="+ license.getId();
         thisDoc.put("content", contentUrl);
@@ -1011,6 +1011,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     public boolean updateDocFromJSON(JSONObject docInfo, AuthRequest ar) throws Exception {
+        ar.assertAccessWorkspace("AuthRequest must be initialized on a Workspace");
         String universalid = docInfo.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -1068,8 +1069,8 @@ public class AttachmentRecord extends CommentContainer {
      * evidence of a file from the storage.  After calling this
      * the documents are really, truly deleted.
      */
-    public void purgeAllVersions(NGWorkspace ngc) throws Exception {
-        for (AttachmentVersion av : getVersions(ngc)) {
+    public void purgeAllVersions(NGWorkspace ngw) throws Exception {
+        for (AttachmentVersion av : getVersions(ngw)) {
             av.purgeLocalFile();
         }
     }

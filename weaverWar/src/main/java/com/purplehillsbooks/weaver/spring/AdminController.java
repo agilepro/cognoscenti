@@ -41,19 +41,19 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertAdmin("Must be an admin to change workspace info.");
             //ar.assertNotFrozen(ngp);
             JSONObject newConfig = getPostedObject(ar);
 
-            ngp.updateConfigJSON(ar, newConfig);
+            ngw.updateConfigJSON(ar, newConfig);
 
             //note: this save does not set the "last changed" metadata
             //configuration changes are not content changes and should not
             //appear as being updated.
-            ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
-            JSONObject repo = ngp.getConfigJSON();
+            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
+            JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
         }
         catch(Exception ex){
@@ -68,20 +68,20 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertAdmin("Must be an admin to change workspace info.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             JSONObject newData = getPostedObject(ar);
 
             String newName = newData.getString("newName");
-            ngp.setNewName(newName);
+            ngw.setNewName(newName);
 
             //note: this save does not set the "last changed" metadata
             //configuration changes are not content changes and should not
             //appear as being updated.
-            ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
-            JSONObject repo = ngp.getConfigJSON();
+            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
+            JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
         }
         catch(Exception ex){
@@ -94,20 +94,20 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertAdmin("Must be an admin to change workspace info.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             JSONObject newData = getPostedObject(ar);
 
             String oldName = newData.getString("oldName");
-            ngp.deleteOldName(oldName);
+            ngw.deleteOldName(oldName);
 
             //note: this save does not set the "last changed" metadata
             //configuration changes are not content changes and should not
             //appear as being updated.
-            ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
-            JSONObject repo = ngp.getConfigJSON();
+            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
+            JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
         }
         catch(Exception ex){

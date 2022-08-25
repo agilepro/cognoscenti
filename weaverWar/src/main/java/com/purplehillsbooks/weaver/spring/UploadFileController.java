@@ -205,9 +205,9 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
 
-            if (warnFrozenOrNotMember(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
             }
 
@@ -224,9 +224,9 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
 
-            if (warnFrozenOrNotMember(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
             }
 
@@ -245,14 +245,14 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
 
-            if (warnFrozenOrNotMember(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
             }
 
             request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("title", ngp.getFullName());
+            request.setAttribute("title", ngw.getFullName());
             showJSPMembers(ar, siteId, pageId, "emailreminder_form.jsp");
 
         }catch(Exception ex){

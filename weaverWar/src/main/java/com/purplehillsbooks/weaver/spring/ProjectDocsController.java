@@ -276,10 +276,10 @@ public class ProjectDocsController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
 
             //this constructs and outputs the PDF file to the output stream
-            WikiToPDF.handlePDFRequest(ar, ngp);
+            WikiToPDF.handlePDFRequest(ar, ngw);
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
@@ -641,8 +641,8 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String commentId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-        ngp.getNoteOrFail(topicId);
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        ngw.getNoteOrFail(topicId);
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);

@@ -150,7 +150,6 @@ public class ChunkTemplate {
      * @throws Exception
      */
     public static void streamAuthRequest(Writer w, AuthRequest ar, String templateName, JSONObject data, Calendar cal) throws Exception {
-        ar.assertAccessWorkspace("Template streaming to email is available only on workspaces when set on AuthRequest object");
         String nameWithExtension = templateName + ".chtml";
         
         TemplateProviderWeaver provider = new TemplateProviderWeaver(ar);

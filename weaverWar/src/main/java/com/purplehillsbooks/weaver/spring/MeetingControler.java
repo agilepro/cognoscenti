@@ -352,7 +352,7 @@ public class MeetingControler extends BaseController {
        * of the meeting.  Completed or skipped action items should NOT be dragged along.
        * They are no longer useful.
        */
-      private void removeCompletedActionItems(NGWorkspace ngp, JSONObject meetingInfo) throws Exception {
+      private void removeCompletedActionItems(NGWorkspace ngw, JSONObject meetingInfo) throws Exception {
           if (!meetingInfo.has("agenda")) {
               return;
           }
@@ -366,7 +366,7 @@ public class MeetingControler extends BaseController {
               JSONArray approvedItems = new JSONArray();
               for (int j=0; j<actionItems.length(); j++) {
                   String universalId = actionItems.getString(j);
-                  GoalRecord gr = ngp.getGoalOrNull(universalId);
+                  GoalRecord gr = ngw.getGoalOrNull(universalId);
                   if (gr==null) {
                       continue;
                   }

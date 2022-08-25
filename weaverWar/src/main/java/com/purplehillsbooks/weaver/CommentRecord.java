@@ -523,7 +523,7 @@ public class CommentRecord extends DOMFace {
         throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, EmailContext noteOrMeet, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -536,10 +536,10 @@ public class CommentRecord extends DOMFace {
         clone.retPath = ar.baseURL;
 
         //this is needed for the HTML conversion.
-        if (ngp==null) {
+        if (ngw==null) {
             throw new Exception("constructEmailRecordOneUser requires NGP non null");
         }
-        clone.ngp = ngp;
+        clone.ngp = ngw;
 
         String opType = "New ";
         if (isClosed) {
@@ -550,14 +550,14 @@ public class CommentRecord extends DOMFace {
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        String fullURLtoContext = ar.baseURL + noteOrMeet.getEmailURL(clone, ngp);
+        String fullURLtoContext = ar.baseURL + noteOrMeet.getEmailURL(clone, ngw);
         data.put("parentURL", fullURLtoContext);
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", ar.baseURL + clone.getResourceURL(ngp, "CommentZoom.htm?cid=" + getTime()));
+        data.put("commentURL", ar.baseURL + clone.getResourceURL(ngw, "CommentZoom.htm?cid=" + getTime()));
         data.put("comment", this.getHtmlJSON());
-        data.put("wsFrontPage", ar.baseURL + clone.getDefaultURL(ngp));
-        data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngp));
-        data.put("wsName", ngp.getFullName());
+        data.put("wsFrontPage", ar.baseURL + clone.getDefaultURL(ngw));
+        data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
+        data.put("wsName", ngw.getFullName());
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
         data.put("userName", owner.getName());
 
@@ -568,20 +568,20 @@ public class CommentRecord extends DOMFace {
         
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
+        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngw,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
-        data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngp,this.getTime())
+        data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngw,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
 
         //deprecated value remove
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));   //remove this when templates no longer use
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));   //remove this when templates no longer use
         
-        AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
+        AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 
         ChunkTemplate.streamAuthRequest(clone.w, ar, "NewComment", data, ooa.getCalendar());
         clone.flush();
         
-        MailInst mailMsg = ngp.createMailInst();
+        MailInst mailMsg = ngw.createMailInst();
         mailMsg.setSubject(noteOrMeet.emailSubject()+": "+opType+cmtType);
         mailMsg.setBodyText(body.toString());
 

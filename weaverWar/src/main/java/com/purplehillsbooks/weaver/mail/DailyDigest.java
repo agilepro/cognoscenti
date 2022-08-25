@@ -213,18 +213,18 @@ public class DailyDigest {
                     //ignore any deleted workspaces
                     continue;
                 }
-                NGWorkspace ngp = ngpi.getWorkspace();
-                if (ngp.isDeleted()) {
+                NGWorkspace ngw = ngpi.getWorkspace();
+                if (ngw.isDeleted()) {
                     //ignore any deleted workspaces
                     continue;
                 }
-                NGBook site = ngp.getSite();
+                NGBook site = ngw.getSite();
                 if (site.isDeleted() || site.isMoved()) {
                     //ignore any workspaces in deleted or moved sites.
                     continue;
                 }
 
-                List<HistoryRecord> histRecs = ngp.getHistoryRange(
+                List<HistoryRecord> histRecs = ngw.getHistoryRange(
                         historyStartTime, processingStartTime);
                 if (histRecs.size() == 0) {
                     // skip this if there is no history
@@ -233,7 +233,7 @@ public class DailyDigest {
                 JSONObject oneWorkspace = ngpi.getJSON4List();
                 JSONArray history = new JSONArray();
                 for (HistoryRecord oneHist : histRecs) {
-                    history.put(oneHist.getJSON(ngp, clone));
+                    history.put(oneHist.getJSON(ngw, clone));
                 }
                 oneWorkspace.put("history",history);
                 notifyList.put(oneWorkspace);
@@ -607,8 +607,8 @@ public class DailyDigest {
         ar.writeURLData(gr.getId());
         ar.write(".htm");
         ar.write("?");
-        NGWorkspace ngp = ngpi.getWorkspace();
-        ar.write(AccessControl.getAccessGoalParams(ngp, gr));
+        NGWorkspace ngw = ngpi.getWorkspace();
+        ar.write(AccessControl.getAccessGoalParams(ngw, gr));
         ar.write("&ukey=");
         ar.writeURLData(up.getKey());
     }
