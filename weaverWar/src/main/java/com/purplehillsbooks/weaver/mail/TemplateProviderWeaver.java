@@ -2,11 +2,8 @@ package com.purplehillsbooks.weaver.mail;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.x5.template.Snippet;
 import com.x5.template.providers.TemplateProvider;
 
 public class TemplateProviderWeaver extends TemplateProvider {
@@ -29,7 +26,7 @@ public class TemplateProviderWeaver extends TemplateProvider {
     @Override
     public boolean provides(String templateName) {
         try {
-            System.out.println("TemplateProviderWeaver.provides request for template="+templateName);
+            //System.out.println("TemplateProviderWeaver.provides request for template="+templateName);
             String nameWithExtension = templateName + ".chtml";
             File templateFile = ar.findChunkTemplate(nameWithExtension);
             return templateFile.exists();
@@ -38,7 +35,7 @@ public class TemplateProviderWeaver extends TemplateProvider {
             System.out.println("TemplateProviderWeaver.provides EXCEPTION for "+templateName);
             e.printStackTrace(System.out);
         }
-        System.out.println("TemplateProviderWeaver.provides returned FALSE for template="+templateName);
+        //System.out.println("TemplateProviderWeaver.provides returned FALSE for template="+templateName);
         return false;
     }
     
@@ -60,17 +57,19 @@ public class TemplateProviderWeaver extends TemplateProvider {
     @Override
     public String loadContainerDoc(String templateName) throws IOException {
         try {
-            System.out.println("TemplateProviderWeaver.loadContainerDoc called for template="+templateName);
+            //System.out.println("TemplateProviderWeaver.loadContainerDoc called for template="+templateName);
             if (!templateName.endsWith(".chtml")) {
                 throw new Exception("Something is wrong, the file should end with .chtml");
             }
             File templateFile = ar.findChunkTemplate(templateName);
-            System.out.println("TemplateProviderWeaver found template="+templateFile.getAbsolutePath());
+            //System.out.println("TemplateProviderWeaver found template="+templateFile.getAbsolutePath());
             MemFile mf = new MemFile();
             mf.fillWithFile(templateFile);
             return mf.toString();
         }
         catch (Exception e) {
+            
+            //I am not sure that this exception is not swallowed someplace, so print it here.
             System.out.println("TemplateProviderWeaver.loadContainerDoc EXCEPTION for "+templateName);
             e.printStackTrace(System.out);
             throw new IOException("Error in TemplateProviderWeaver reading of template: "+templateName, e);

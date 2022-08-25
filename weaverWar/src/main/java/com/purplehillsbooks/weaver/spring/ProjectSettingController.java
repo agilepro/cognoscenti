@@ -75,6 +75,11 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
+        if (ngw.isFrozen()) {
+            showJSPMembers(ar, siteId, pageId, "WarningFrozen.jsp");
+            return;
+        }
         showJSPMembers(ar, siteId, pageId, "AddSomething.jsp");
     }
 

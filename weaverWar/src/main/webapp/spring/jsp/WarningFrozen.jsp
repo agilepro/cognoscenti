@@ -13,32 +13,22 @@
     NGWorkspace ngw = (NGWorkspace) ar.ngp;
     NGBook site = ngw.getSite();
     
-    boolean isRequested = false;
-    String requestState = "";
-    String requestMsg = "";
-    long latestDate = 0;
     
     String purpose = ngw.getProcess().getDescription();
-
-    NGRole primRole = ngw.getPrimaryRole();
-    String primRoleName = primRole.getName();
+    boolean isDeleted = ngw.isDeleted();
+    boolean isFrozen = ngw.isFrozen();
     
-    for (RoleRequestRecord rrr : ngw.getAllRoleRequest()) {
-        if (up.hasAnyId(rrr.getRequestedBy())) {
-            if (rrr.getModifiedDate()>latestDate) {
-                isRequested = true;
-                requestMsg = rrr.getRequestDescription();
-                requestState = rrr.getState();
-                latestDate = rrr.getModifiedDate();
-            }
-        }
+    String mainMessage = "This workspace has been frozen to prevent change.";
+    if (isDeleted) {
+        mainMessage = "This workspace is marked as deleted.  A deleted workspace is frozen to prevent change.";
     }
     
 %>
 <style>
 .warningBox {
     margin:30px;
-    font-size:14px;
+    font-size:20px;
+    font-weight:300;
     width:500px;
 }
 </style>
@@ -46,14 +36,8 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Not Member");
+    window.setMainPageTitle("Frozen Workspace");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.atts = "ss";
-    $scope.enterMode = false;
-    $scope.enterRequest = "<% ar.writeJS(requestMsg); %>";
-    $scope.requestState = "<% ar.writeJS(requestState); %>";
-    $scope.isRequested = <%=isRequested%>;
-    $scope.requestDate = <%=latestDate%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -61,35 +45,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
-    };
-    
-    $scope.takeStep = function() {
-        if (!$scope.enterMode) {
-            $scope.enterMode = true;
-            return;
-        }
-        else {
-            $scope.roleChange();
-        }
-    }
-
-    $scope.roleChange = function() {
-        var data = {};
-        data.op = 'Join';
-        data.roleId = '<%ar.writeJS(primRoleName);%>';
-        data.desc = $scope.enterRequest;
-        console.log("Requesting to ",data);
-        var postURL = "rolePlayerUpdate.json";
-        var postdata = angular.toJson(data);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            alert("OK, you have requested membership")
-        })
-        .error( function(data, status, headers, config) {
-            console.log("GOT ERROR ",data);
-            $scope.reportError(data);
-        });
     };
     
     
@@ -108,16 +63,22 @@ app.controller('myCtrl', function($scope, $http) {
         <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">
       </td><td>
         <div class="generalContent warningBox">
-            This workspace is frozen and can not be modified.
+            Sorry, we can't do that operation.
         </div>
       </td></tr>
       <tr><td>
       </td><td>
         <div class="generalContent warningBox">
-            You are currently logged in as <% ale.writeLink(ar); %>.  If this is not 
-            correct then choose logout and log in as the correct user.
-            In order to see this section, you need to be a member of the workspace.  
+            <%=mainMessage %>
         </div>
+            
+        <div class="generalContent warningBox">
+            Frozen workspaces can not be altered or updated in any way.
+            A frozen workspace can be unfrozen by the administrator.
+        </div>
+      </td></tr>
+      <tr><td>
+      </td><td>
         <div class="generalContent warningBox">
             <table class="table">
               <tr>
@@ -130,7 +91,7 @@ app.controller('myCtrl', function($scope, $http) {
               </tr>
               <tr>
                 <td>
-                    Run By: 
+                    Admins: 
                 </td>
                 <td>
                 <%         

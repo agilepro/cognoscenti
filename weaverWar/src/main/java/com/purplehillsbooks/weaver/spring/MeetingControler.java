@@ -394,7 +394,10 @@ public class MeetingControler extends BaseController {
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngw.findMeeting(id);
               if (!AccessControl.canAccessMeeting(ar, ngw, meeting)) {
-                  throw new Exception("Not able to access meeting "+id);
+                  if (ar.isLoggedIn()) {
+                      throw new Exception("User "+ar.getBestUserId()+" not able to access meeting "+id);
+                  }
+                  throw new Exception("Anonymous not able to access meeting "+id);
               }
 
               JSONObject meetingInfo = getPostedObject(ar);

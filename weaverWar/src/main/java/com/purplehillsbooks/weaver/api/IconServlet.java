@@ -82,7 +82,10 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
             if (user!=null) {
                 fileName = user.getImage();
                 //use first character of the name instead of email address
-                firstChar = user.getName().substring(0,1).toLowerCase();
+                String userName = user.getName();
+                if (userName!=null && userName.length()>0) {
+                    firstChar = userName.substring(0,1).toLowerCase();
+                }
             }
         }
         

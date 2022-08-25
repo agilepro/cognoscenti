@@ -389,6 +389,9 @@ public class EmailGenerator extends DOMFace {
                 }
 
                 String meetingLayout = this.getScalar("meetingLayout");
+                if (meetingLayout==null || meetingLayout.length()<=6) {
+                    meetingLayout = "FullDetail.chtml";
+                }
                 String baseName = meetingLayout.substring(0, meetingLayout.length()-6);
                 MemFile meetingOutput = new MemFile();
                 ChunkTemplate.streamAuthRequest(meetingOutput.getWriter(), ar, baseName, meeting.getFullJSON(ar, ngw, false), ooa.getCalendar());

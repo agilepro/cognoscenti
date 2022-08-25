@@ -199,48 +199,6 @@ public class UploadFileController extends BaseController {
 
 
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/createLinkURL.form", method = RequestMethod.POST)
-    protected void createLinkURL(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.link.url");
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
-            ar.assertNotFrozen(ngw);
-
-            String comment = ar.reqParam("comment");
-            String taskUrl = ar.reqParam("taskUrl");
-            String ftype = ar.reqParam("ftype");
-
-            AttachmentRecord attachment = ngw.createAttachment();
-            String proposedName = taskUrl;
-
-            if(taskUrl.contains("/")){
-                proposedName = taskUrl.substring(taskUrl.lastIndexOf("/")+1);
-            }
-
-            AttachmentHelper.setDisplayName(ngw, attachment, proposedName);
-
-            attachment.setDescription(comment);
-            attachment.setModifiedBy(ar.getBestUserId());
-            attachment.setModifiedDate(ar.nowTime);
-            attachment.setType(ftype);
-
-            HistoryRecord.createHistoryRecord(ngw, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
-                    ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Created Link URL");
-
-            attachment.setURLValue(taskUrl);
-            ngw.saveFile(ar, "Created Link URL");
-
-            response.sendRedirect("DocsList.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.create.link.url.to.project", new Object[]{pageId,siteId} , ex);
-        }
-    }
-    */
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/linkURLToProject.htm", method = RequestMethod.GET)
     protected void getLinkURLToProjectForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
