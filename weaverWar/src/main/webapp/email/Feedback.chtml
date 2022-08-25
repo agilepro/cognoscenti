@@ -16,7 +16,7 @@
         <td><b>{$req.errNo|html}</b></td></tr>
     <tr><td>Comment by: &nbsp; </td>
         <td>
-            <a href="{$baseURL}v/FindPerson.htm?uid={$req.requester}" title="access the profile of this user, if one exists">
+            <a href="{$baseURL}v/FindPerson.htm?key={$req.requester}" title="access the profile of this user, if one exists">
                 <span class="red">{$req.modUser|html}</span>
             </a>
         </td></tr>
@@ -27,7 +27,7 @@
     <tr><td>Date: &nbsp;</td>
         <td>{$req.modTime|date("MMM dd, YYYY")}</td></tr>
     </table>
-    <p>User <a href="{$baseURL}v/FindPerson.htm?uid={$admin.uid}">{$admin.name|html}</a> is a <b>Super Admin</b> of the Weaver console, so you get a copy of this user feedback.</p>
+    <p>User <a href="{$baseURL}v/FindPerson.htm?key={$admin.key}">{$admin.name|html}</a> is a <b>Super Admin</b> of the Weaver console, so you get a copy of this user feedback.</p>
 </div>
 
 <!--pre>

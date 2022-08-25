@@ -96,7 +96,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         });
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
     }
     $scope.filteredRecs = function(){
         var filterList = parseLCList($scope.filter);

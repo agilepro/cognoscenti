@@ -61,6 +61,7 @@ public class WikiToPDF
     public final static Color lightBlue = new Color(178,229,255);
 
     protected AuthRequest ar;
+    private NGWorkspace ngw;
     protected int majorState = 0;
     protected int majorLevel = 0;
     protected String userKey;
@@ -159,8 +160,9 @@ public class WikiToPDF
     /**
     * Construct on the AuthRequest that output will be to
     */
-    public WikiToPDF(AuthRequest newar) throws Exception {
-        ar = newar;
+    public WikiToPDF(AuthRequest _ar, NGWorkspace _ngw) throws Exception {
+        ar = _ar;
+        ngw = _ngw;
         userKey = "xxxx";
         UserProfile up = ar.getUserProfile();
         if (up!=null) {
@@ -180,11 +182,11 @@ public class WikiToPDF
     * decodes the request parameters and then causes the PDF generation
     * try not to use this if possible.
     */
-    public static void handlePDFRequest(AuthRequest ar, NGWorkspace ngp) throws Exception{
-        ar.setPageAccessLevels(ngp);
+    public static void handlePDFRequest(AuthRequest ar, NGWorkspace ngw) throws Exception{
+        ar.setPageAccessLevels(ngw);
 
-        WikiToPDF wc = new WikiToPDF(ar);
-        wc.writeWikiAsPDF(ngp, ar);
+        WikiToPDF wc = new WikiToPDF(ar, ngw);
+        wc.writeWikiAsPDF();
     }
 
 
@@ -197,7 +199,7 @@ public class WikiToPDF
         return idArray;
     }
 
-    public void writeWikiAsPDF(NGWorkspace ngp, AuthRequest ar)  throws Exception {
+    private void writeWikiAsPDF()  throws Exception {
         
         includeDecisions = (ar.req.getParameter("decisions")!=null);
         includeAttachments = (ar.req.getParameter("attachments")!=null);
@@ -208,7 +210,7 @@ public class WikiToPDF
 
         ArrayList<TopicRecord> allTopicPages = new ArrayList<TopicRecord>();
         for (String noteId : getVectorParam("publicNotes")) {
-            TopicRecord lrt = ngp.getDiscussionTopic(noteId);
+            TopicRecord lrt = ngw.getDiscussionTopic(noteId);
             if (lrt!=null) {
                 allTopicPages.add(lrt);
             }
@@ -216,7 +218,7 @@ public class WikiToPDF
 
         ArrayList<MeetingRecord> meetings = new ArrayList<MeetingRecord>();
         for (String meetId : getVectorParam("meetings")) {
-            MeetingRecord meet = ngp.findMeetingOrNull(meetId);
+            MeetingRecord meet = ngw.findMeetingOrNull(meetId);
             if (meet!=null) {
                 meetings.add(meet);
             }
@@ -237,42 +239,42 @@ public class WikiToPDF
         }
 
         try {
-            writeTOCPage(fullDocInterior, ngp, allTopicPages, meetings);
+            writeTOCPage(fullDocInterior, allTopicPages, meetings);
             
             
             int noteCount = 0;
             if(allTopicPages.size() > 0){
                 for (TopicRecord lr : allTopicPages) {
                     noteCount++;
-                    writeNoteToPDF(fullDocInterior, ngp, lr, noteCount);
+                    writeNoteToPDF(fullDocInterior, lr, noteCount);
                 }
             }
             noteCount = 0;
             if(meetings.size() > 0){
                 for (MeetingRecord meet : meetings) {
                     noteCount++;
-                    writeMeetingToPDF(fullDocInterior, ngp, meet, noteCount);
+                    writeMeetingToPDF(fullDocInterior, meet, noteCount);
                 }
             }
             
             if (includeDecisions) {
-                writeDecisionsToPDF(fullDocInterior, ngp);
+                writeDecisionsToPDF(fullDocInterior);
             }
             if (includeAttachments) {
-                writeAttachmentListToPDF(fullDocInterior, ngp);
+                writeAttachmentListToPDF(fullDocInterior);
             }
             if (includeActionItems) {
-                writeActionItemsToPDF(fullDocInterior, ngp);
+                writeActionItemsToPDF(fullDocInterior);
             }
             if (includeRoles) {
-                writeRolesToPDF(fullDocInterior, ngp);
+                writeRolesToPDF(fullDocInterior);
             }
             
             //This can throw an error, and we want to get that error before
             //we write anything to the real output stream, so buffer it
             document.saveToStream(mf.getOutputStream());
             
-            String fileName = SectionUtil.sanitize(ngp.getFullName()) + ".pdf";
+            String fileName = SectionUtil.sanitize(ngw.getFullName()) + ".pdf";
             ar.resp.setContentType("application/pdf");
             ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
             OutputStream out = ar.resp.getOutputStream();
@@ -286,11 +288,11 @@ public class WikiToPDF
     
 
 
-    private void writeTOCPage(Frame docInterior, NGWorkspace ngp,
+    private void writeTOCPage(Frame docInterior,
             List<TopicRecord> memberNoteList, 
             List<MeetingRecord> meetings)  throws Exception {
         
-        Frame tocFrame = startNamedSection(docInterior, ngp, "Table of Contents");
+        Frame tocFrame = startNamedSection(docInterior, "Table of Contents");
 
         tocFrame.setPadding(36, 36, 0, 0);
         tocFrame.setStartNewPage(true);
@@ -299,7 +301,7 @@ public class WikiToPDF
             tocFrame.setBorderColor(Color.red);
         }
 
-        String projectName = ngp.getFullName();
+        String projectName = ngw.getFullName();
         setPFont();
 
         writeLineNoSpacing(tocFrame, "Workspace:" + projectName);
@@ -351,7 +353,7 @@ public class WikiToPDF
     * it to HTML, outputting that to the AuthRequest that was
     * passed in when the object was constructed.
     */
-    public void writeNoteToPDF(Frame fullDocContents, NGWorkspace ngp, TopicRecord note, int noteNum) throws Exception
+    private void writeNoteToPDF(Frame fullDocContents, TopicRecord note, int noteNum) throws Exception
     {
         String subject = stripBadCharacters(note.getSubject());
         UserRef lastEditor = note.getModUser();
@@ -360,7 +362,7 @@ public class WikiToPDF
         headerText = "Topic "+noteNum+": "+subject;
         
         
-        Frame noteFrame = startNamedSection(fullDocContents, ngp, "Topic "+noteNum+": "+subject);
+        Frame noteFrame = startNamedSection(fullDocContents, "Topic "+noteNum+": "+subject);
 
 
         Paragraph para = noteFrame.getNewParagraph();
@@ -375,7 +377,7 @@ public class WikiToPDF
         }
     }
     
-    public void writeMeetingToPDF(Frame fullDocContents, NGWorkspace ngp, MeetingRecord meet, int meetNum) throws Exception
+    private void writeMeetingToPDF(Frame fullDocContents, MeetingRecord meet, int meetNum) throws Exception
     {
 
         String meetingName = stripBadCharacters(meet.getName());
@@ -385,7 +387,7 @@ public class WikiToPDF
         headerText = "Meeting "+meetNum+": "+meetingName;
         indent=0;
 
-        Frame meetFrame = startNamedSection(fullDocContents, ngp, "Meeting: "+meetingName);
+        Frame meetFrame = startNamedSection(fullDocContents, "Meeting: "+meetingName);
 
         Paragraph para = meetFrame.getNewParagraph();
         para.addTextCarefully("Last modified by:  "+lastEditor.getName()+" on "+startTime, 8, PDType1Font.HELVETICA);
@@ -495,7 +497,7 @@ public class WikiToPDF
     }
 
 
-    private Frame startNamedSection(Frame entireDocContents, NGWorkspace ngp, String title) throws Exception {
+    private Frame startNamedSection(Frame entireDocContents, String title) throws Exception {
         //all sections should start on a new page, so make sure
         Frame sectionFrame = entireDocContents.newInteriorFrame();
         if (debugLines) {
@@ -516,7 +518,7 @@ public class WikiToPDF
         titleBoxFrame.removeLeadingEmptyVerticalSpace();
         titleBoxFrame.headerLeft = title;
 
-        NGBook book = ngp.getSite();
+        NGBook book = ngw.getSite();
         headerText = title;
         indent=0;
 
@@ -525,7 +527,7 @@ public class WikiToPDF
 
         setH1Font();
         currentLineSize = 8;  //but really small
-        writeLineNoSpacing(titleBoxFrame, "Site / Workspace: "+book.getFullName()+" / "+ngp.getFullName());
+        writeLineNoSpacing(titleBoxFrame, "Site / Workspace: "+book.getFullName()+" / "+ngw.getFullName());
         
         return sectionFrame.newInteriorFrame();
     }
@@ -533,13 +535,13 @@ public class WikiToPDF
     /**
     * Takes all the decisions and makes a page(s) with them listed.
     */
-    public void writeDecisionsToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
+    private void writeDecisionsToPDF(Frame fullDocContents) throws Exception {
         
-        Frame decisionSection = startNamedSection(fullDocContents, ngp, "Decision List");
+        Frame decisionSection = startNamedSection(fullDocContents, "Decision List");
 
         decisionSection.headerLeft = "Decision List";
 
-        for (DecisionRecord dr : ngp.getDecisions()) {
+        for (DecisionRecord dr : ngw.getDecisions()) {
             Frame innerFrame = decisionSection.newInteriorFrame();
             if (debugLines) {
                 innerFrame.setBorderColor(Color.pink);
@@ -551,11 +553,11 @@ public class WikiToPDF
         }
     }
 
-    public void writeAttachmentListToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
-        Frame attachmentsSection = startNamedSection(fullDocContents, ngp, "Attachment Documents");
+    private void writeAttachmentListToPDF(Frame fullDocContents) throws Exception {
+        Frame attachmentsSection = startNamedSection(fullDocContents, "Attachment Documents");
 
         int count = 0;
-        for (AttachmentRecord att : ngp.getAllAttachments()) {
+        for (AttachmentRecord att : ngw.getAllAttachments()) {
             Frame innerFrame = attachmentsSection.newInteriorFrame();
             if (debugLines) {
                 innerFrame.setBorderColor(lightSkyBlue);
@@ -571,11 +573,11 @@ public class WikiToPDF
         }
     }
 
-    public void writeActionItemsToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
-        Frame actionsSection = startNamedSection(fullDocContents, ngp, "Action Items");
+    private void writeActionItemsToPDF(Frame fullDocContents) throws Exception {
+        Frame actionsSection = startNamedSection(fullDocContents, "Action Items");
 
         int count = 0;
-        for (GoalRecord actionItem : ngp.getAllGoals()) {
+        for (GoalRecord actionItem : ngw.getAllGoals()) {
             Frame innerFrame = actionsSection.newInteriorFrame();
             count++;
 
@@ -610,11 +612,11 @@ public class WikiToPDF
         }
     }
 
-    public void writeRolesToPDF(Frame fullDocContents, NGWorkspace ngp) throws Exception {
-        Frame rolesSection = startNamedSection(fullDocContents, ngp, "Roles");
+    private void writeRolesToPDF(Frame fullDocContents) throws Exception {
+        Frame rolesSection = startNamedSection(fullDocContents, "Roles");
 
         int count = 0;
-        for (CustomRole role : ngp.getAllRoles()) {
+        for (CustomRole role : ngw.getAllRoles()) {
             Frame oneRoleFrame = rolesSection.newInteriorFrame();
             count++;
 

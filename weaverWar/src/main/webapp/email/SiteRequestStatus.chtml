@@ -18,7 +18,7 @@
     <td>You requested a new site.</td></tr>
 <tr><td>Updated by: &nbsp;</td>
     <td>
-        <a href="{$baseURL}v/FindPerson.htm?uid={$admin.uid}" title="access the profile of this user, if one exists">
+        <a href="{$baseURL}v/FindPerson.htm?key={$admin.key}" title="access the profile of this user, if one exists">
             <span>{$admin.name|html}</span>
         </a>
     </td></tr>
@@ -32,7 +32,7 @@
     <td>{$req.purpose|html}</td></tr>
 <tr><td>Requested by: &nbsp; </td>
     <td>
-        <a href="{$baseURL}v/FindPerson.htm?uid={$req.requester.uid}" title="access the profile of this user, if one exists">
+        <a href="{$baseURL}v/FindPerson.htm?key={$req.requester.key}" title="access the profile of this user, if one exists">
             <span class="red">{$req.requester|html}</span>
         </a>
     </td></tr>

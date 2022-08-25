@@ -345,7 +345,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.saveGoal();
     }
     $scope.visitPlayer = function(player) {
-        window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.key;
+        window.location = "<%=ar.retPath%>v/FindPerson.htm?key="+player.key;
     }
     $scope.bestName = function(person) {
         if (person.name) {
@@ -400,7 +400,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location="meetingHtml.htm?id="+encodeURIComponent(meet.id);
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
     }
 
     $scope.itemHasDoc = function(doc) {

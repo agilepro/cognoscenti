@@ -49,8 +49,16 @@ public class OptOutSiteExec extends OptOutAddr {
 
     public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
         for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
-            OptOutAddr ooa = new OptOutSiteExec(ale);
-            collector.add(ooa);
+            boolean found = false;
+            for (OptOutAddr existing : collector) {
+                if (ale.equals(existing.getAssignee())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                OptOutAddr ooa = new OptOutSiteExec(ale);
+                collector.add(ooa);
+            }
         }
     }    
     

@@ -739,10 +739,10 @@ public class GoalRecord extends BaseRecord {
      * get the labels on a document -- only labels valid in the project,
      * and no duplicates
      */
-    public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
+    public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
-            NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+            NGLabel aLabel = ngw.getLabelRecordOrNull(name);
             if (aLabel!=null) {
                 if (!res.contains(aLabel)) {
                     res.add(aLabel);
@@ -780,7 +780,7 @@ public class GoalRecord extends BaseRecord {
 
 
 
-    public JSONObject getJSON4Goal(NGWorkspace ngp) throws Exception {
+    public JSONObject getJSON4Goal(NGWorkspace ngw) throws Exception {
         JSONObject thisGoal = new JSONObject();
         thisGoal.put("universalid", getUniversalId());
         thisGoal.put("id", getId());
@@ -800,13 +800,13 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("needEmail", needSendEmail());
         extractScalarString(thisGoal, "taskArea");
 
-        thisGoal.put("projectname", ngp.getFullName());
-        thisGoal.put("projectKey", ngp.getKey());
+        thisGoal.put("projectname", ngw.getFullName());
+        thisGoal.put("projectKey", ngw.getKey());
 
         NGRole assignees = getAssigneeRole();
         JSONArray peopleList = new JSONArray();
         JSONArray assignTo = new JSONArray();
-        for (AddressListEntry ale : assignees.getExpandedPlayers(ngp)) {
+        for (AddressListEntry ale : assignees.getExpandedPlayers(ngw)) {
             peopleList.put(ale.getUniversalId());
             assignTo.put(ale.getJSON());
         }
@@ -817,12 +817,12 @@ public class GoalRecord extends BaseRecord {
         creatorArray.put(getCreator());
         thisGoal.put("requesters", creatorArray);
 
-        NGBook site = ngp.getSite();
+        NGBook site = ngw.getSite();
         thisGoal.put("sitename", site.getFullName());
         thisGoal.put("siteKey", site.getKey());
 
         JSONObject labelMap = new JSONObject();
-        for (NGLabel lRec : getLabels(ngp) ) {
+        for (NGLabel lRec : getLabels(ngw) ) {
             labelMap.put(lRec.getName(), true);
         }
         thisGoal.put("labelMap",  labelMap);
@@ -834,18 +834,18 @@ public class GoalRecord extends BaseRecord {
 
         return thisGoal;
     }
-    public JSONObject getJSON4Goal(NGWorkspace ngp, String baseURL, License license) throws Exception {
+    public JSONObject getJSON4Goal(NGWorkspace ngw, String baseURL, License license) throws Exception {
         if (license==null) {
             throw new Exception("getJSON4Goal needs a license object");
         }
-        JSONObject thisGoal = getJSON4Goal(ngp);
-        String urlRoot = baseURL + "api/" + ngp.getSiteKey() + "/" + ngp.getKey() + "/";
+        JSONObject thisGoal = getJSON4Goal(ngw);
+        String urlRoot = baseURL + "api/" + ngw.getSiteKey() + "/" + ngw.getKey() + "/";
         String goalinfo = urlRoot + "goal" + getId() + "/goal.json?lic=" + license.getId();
         LicenseForUser lfu = LicenseForUser.getUserLicense(license);
-        String siteRoot = baseURL + "api/" + ngp.getSiteKey() + "/$/?lic=" + lfu.getId();
+        String siteRoot = baseURL + "api/" + ngw.getSiteKey() + "/$/?lic=" + lfu.getId();
         String uiUrl = getRemoteUpdateURL();
         if (uiUrl==null || uiUrl.length()==0) {
-            uiUrl = baseURL + "t/" + ngp.getSiteKey() + "/" + ngp.getKey()
+            uiUrl = baseURL + "t/" + ngw.getSiteKey() + "/" + ngw.getKey()
                 + "/task" + getId() + ".htm";
         }
         thisGoal.put("projectinfo", urlRoot+"?lic="+license.getId());
@@ -856,7 +856,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     //TODO: looks like this can be used to update a JSON from the UI
-    public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngp, AuthRequest ar) throws Exception {
+    public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngw, AuthRequest ar) throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -944,7 +944,7 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("labelMap")) {
             JSONObject labelMap = goalObj.getJSONObject("labelMap");
             List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
-            for (NGLabel stdLabel : ngp.getAllLabels()) {
+            for (NGLabel stdLabel : ngw.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {
                     selectedLabels.add(stdLabel);
@@ -980,7 +980,7 @@ public class GoalRecord extends BaseRecord {
 
     ////////////////////////// EMAIL /////////////////////////////
 
-    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngp, EmailSender mailFile) throws Exception {
+    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
         try {
             if (!needSendEmail()) {
                 throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
@@ -988,7 +988,7 @@ public class GoalRecord extends BaseRecord {
             boolean isStarted = isStarted(getState());
 
             NGRole assigneeRole = getAssigneeRole();
-            List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngp);
+            List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngw);
             if (players.size()==0 && !isStarted) {
                 System.out.println("no assignee yet, and not started .... so wait");
                 clearSendEmail();
@@ -1000,8 +1000,8 @@ public class GoalRecord extends BaseRecord {
             UserProfile creatorProfile = null;
             if (creator==null || creator.length()==0) {
                 //if action item not set correctly, then use the owner of the page as the 'from' person
-                NGRole owners = ngp.getSecondaryRole();
-                List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngp);
+                NGRole owners = ngw.getSecondaryRole();
+                List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngw);
                 if (ownerList.size()==0) {
                     throw new Exception("Action Item has no requester, and the Workspace has no owner");
                 }
@@ -1032,7 +1032,7 @@ public class GoalRecord extends BaseRecord {
                 if (toProfile!=null) {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
-                constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile, mailFile);
+                constructEmailRecordOneUser(ar, ngw, ooa, creatorProfile, mailFile);
             }
             System.out.println("Marking ActionItem as SENT: "+getSynopsis());
             clearSendEmail();
@@ -1042,7 +1042,7 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa,
             UserProfile requesterProfile, EmailSender mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -1066,17 +1066,17 @@ public class GoalRecord extends BaseRecord {
         clone.retPath = ar.baseURL;
 
         data.put("baseURL", ar.baseURL);
-        data.put("actionItemURL", ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm"));
+        data.put("actionItemURL", ar.baseURL + clone.getResourceURL(ngw, "task"+getId()+".htm"));
         if (ooa.isUserWithProfile()) {
             UserProfile recipient = ooa.getAssignee().getUserProfile();
             LicenseForUser lfu = new LicenseForUser(recipient);
-            data.put("actionItem", this.getJSON4Goal(ngp, ar.baseURL, lfu));
+            data.put("actionItem", this.getJSON4Goal(ngw, ar.baseURL, lfu));
         }
         else {
-            data.put("actionItem", this.getJSON4Goal(ngp));
+            data.put("actionItem", this.getJSON4Goal(ngw));
         }
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
-        data.put("wsName", ngp.getFullName());
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));
+        data.put("wsName", ngw.getFullName());
         data.put("isFinal", isFinal(getState()));
         data.put("isFuture", isFuture(getState()));
         data.put("recipientIsAssignedTask", recipientIsAssignedTask);
@@ -1096,13 +1096,13 @@ public class GoalRecord extends BaseRecord {
 
         ArrayList<File> attachments = new ArrayList<File>();
         if (this.getDueDate()>0) {
-            File projectFolder = ngp.getContainingFolder();
+            File projectFolder = ngw.getContainingFolder();
             File cogFolder = new File(projectFolder, ".cog");
             File icsFile = new File(cogFolder, "actitem"+this.getId()+".ics");
             File icsFileTmp = new File(cogFolder, "meet"+this.getId()+".ics~tmp"+System.currentTimeMillis());
             FileOutputStream fos = new FileOutputStream(icsFileTmp);
             Writer w = new OutputStreamWriter(fos, "UTF-8");
-            streamICSFile(ar, w, ngp);
+            streamICSFile(ar, w, ngw);
             w.close();
             if (icsFile.exists()) {
                 icsFile.delete();
@@ -1111,7 +1111,7 @@ public class GoalRecord extends BaseRecord {
             attachments.add(icsFile);
         }
         
-        MailInst mailMsg = ngp.createMailInst();
+        MailInst mailMsg = ngw.createMailInst();
         mailMsg.setSubject("Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr);
         mailMsg.setBodyText(body.toString());
 
@@ -1159,11 +1159,11 @@ public class GoalRecord extends BaseRecord {
         return sb.toString();
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp,
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw,
             ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         //don't send email if there is no assignee.  Wait till there is an assignee
         if (needSendEmail()) {
-            resList.add(new GScheduledNotification(ngp, this));
+            resList.add(new GScheduledNotification(ngw, this));
         }
     }
     public String getAllSearchableText() throws Exception  {
@@ -1171,11 +1171,11 @@ public class GoalRecord extends BaseRecord {
     }
 
     private class GScheduledNotification implements ScheduledNotification {
-        NGWorkspace ngp;
-        GoalRecord goal;
+        private NGWorkspace ngw;
+        private GoalRecord goal;
 
         public GScheduledNotification( NGWorkspace _ngp, GoalRecord _goal) {
-            ngp  = _ngp;
+            ngw  = _ngp;
             goal = _goal;
         }
         @Override
@@ -1198,7 +1198,7 @@ public class GoalRecord extends BaseRecord {
 
         @Override
         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
-            goal.goalEmailRecord(ar, ngp, mailFile);
+            goal.goalEmailRecord(ar, ngw, mailFile);
             if (goal.needSendEmail()) {
                 System.out.println("ERROR: for some reason it did not get move to the mailFile?");
             }

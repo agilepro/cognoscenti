@@ -341,11 +341,11 @@ public class HistoryRecord extends DOMFace
     /**
     * @deprecated: remove this method when there is a chance.
     */
-    public static HistoryRecord createHistoryRecord(NGWorkspace ngp,
+    public static HistoryRecord createHistoryRecord(NGWorkspace ngw,
         String context, int contextType, int eventType,
         AuthRequest ar, String comments) throws Exception
     {
-        return createHistoryRecord(ngp, context, contextType, 0, eventType, ar, comments);
+        return createHistoryRecord(ngw, context, contextType, 0, eventType, ar, comments);
     }
 
     /**
@@ -786,7 +786,7 @@ history.task.subtask.add    113
     }
 
 
-    public void writeLocalizedHistoryMessage(NGWorkspace ngp, AuthRequest ar) throws Exception {
+    public void writeLocalizedHistoryMessage(NGWorkspace ngw, AuthRequest ar) throws Exception {
         /*
          * Previously, we used a way where the object type and the action type were combined to a
          * key which then brought up a record from the messages bundle.  However, this didn't
@@ -798,9 +798,9 @@ history.task.subtask.add    113
         ar.writeHtml(getContextTypeName(getContextType()));
         ar.write(" <a href=\"");
         ar.write(ar.baseURL);
-        ar.write(lookUpURL(ar, ngp));
+        ar.write(lookUpURL(ar, ngw));
         ar.write("\">");
-        ar.writeHtml(lookUpObjectName(ngp));
+        ar.writeHtml(lookUpObjectName(ngw));
         ar.write("</a> was ");
         ar.writeHtml(convertEventTypeToString(getEventType()));
         ar.write(" by ");
@@ -815,13 +815,13 @@ history.task.subtask.add    113
         }
     }
 
-    public JSONObject getJSON(NGWorkspace ngp, AuthRequest ar) throws Exception {
+    public JSONObject getJSON(NGWorkspace ngw, AuthRequest ar) throws Exception {
         AddressListEntry ale = new AddressListEntry(getResponsible());
         JSONObject jo = new JSONObject();
         jo.put("ctxId", getContext());
-        jo.put("ctxName", lookUpObjectName(ngp));
-        jo.put("ctxProject", ngp.getKey());
-        jo.put("ctxSite", ngp.getSiteKey());
+        jo.put("ctxName", lookUpObjectName(ngw));
+        jo.put("ctxProject", ngw.getKey());
+        jo.put("ctxSite", ngw.getSiteKey());
         jo.put("ctxType", getContextTypeName(getContextType()));
         jo.put("event", convertEventTypeToString(getEventType()));
         jo.put("responsible", ale.getJSON());
@@ -830,14 +830,14 @@ history.task.subtask.add    113
         return jo;
     }
 
-    public String lookUpObjectName(NGWorkspace ngp) throws Exception {
+    public String lookUpObjectName(NGWorkspace ngw) throws Exception {
         int contextType = getContextType();
         String objectKey = getContext();
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
             return "";
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-            GoalRecord gr = ngp.getGoalOrNull(objectKey);
+            GoalRecord gr = ngw.getGoalOrNull(objectKey);
             if (gr!=null) {
                 return gr.getSynopsis();
             }
@@ -846,31 +846,31 @@ history.task.subtask.add    113
             return objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            AttachmentRecord att = ngp.findAttachmentByID(objectKey);
+            AttachmentRecord att = ngw.findAttachmentByID(objectKey);
             if (att!=null) {
                 return att.getDisplayName();
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            TopicRecord nr = ngp.getDiscussionTopic(objectKey);
+            TopicRecord nr = ngw.getDiscussionTopic(objectKey);
             if (nr!=null) {
                 return nr.getSubject();
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            NGRole role = ngp.getRole(objectKey);
+            NGRole role = ngw.getRole(objectKey);
             if (role!=null) {
                 return role.getName();
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+            MeetingRecord meet = ngw.findMeetingOrNull(objectKey);
             if (meet!=null) {
                 return meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-            DecisionRecord dr = ngp.findDecisionOrNull(safeConvertInt(objectKey));
+            DecisionRecord dr = ngw.findDecisionOrNull(safeConvertInt(objectKey));
             if (dr!=null) {
                 String val = dr.getDecision();
                 if (val.length()>30) {
@@ -882,45 +882,45 @@ history.task.subtask.add    113
         return "Unknown";
     }
 
-    public String lookUpURL(AuthRequest ar, NGWorkspace ngp) throws Exception {
-        return lookUpResourceURL(ar, ngp, getContextType(), getContext());
+    public String lookUpURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        return lookUpResourceURL(ar, ngw, getContextType(), getContext());
     }
 
     /**
      * Get a 'standard' URL for accessing object based on their type and ID.
      * Only work on a single project workspace.
      */
-    public static String lookUpResourceURL(AuthRequest ar, NGWorkspace ngp,
+    public static String lookUpResourceURL(AuthRequest ar, NGWorkspace ngw,
             int contextType, String contextKey) throws Exception {
 
         //always encode to avoid problems with injection
         String objectKey = URLEncoder.encode(contextKey, "UTF-8");
 
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            return ar.getResourceURL(ngp, "projectAllTasks.htm");
+            return ar.getResourceURL(ngw, "projectAllTasks.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-            return  ar.getResourceURL(ngp, "task"+objectKey+".htm");
+            return  ar.getResourceURL(ngw, "task"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            return ar.getResourceURL(ngp, "findUser.htm?id=")+objectKey;
+            return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            return ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
+            return ar.getResourceURL(ngw, "DocDetail.htm?aid="+objectKey);
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            return ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
+            return ar.getResourceURL(ngw, "noteZoom"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            return ar.getResourceURL(ngp, "RoleManagement.htm");
+            return ar.getResourceURL(ngw, "RoleManagement.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            return ar.getResourceURL(ngp, "meetingHtml.htm?id=")+objectKey;
+            return ar.getResourceURL(ngw, "meetingHtml.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-            return ar.getResourceURL(ngp, "DecisionList.htm#DEC")+objectKey;
+            return ar.getResourceURL(ngw, "DecisionList.htm#DEC")+objectKey;
         }
-        return ar.getResourceURL(ngp, "FrontPage.htm");
+        return ar.getResourceURL(ngw, "FrontPage.htm");
     }
 
 

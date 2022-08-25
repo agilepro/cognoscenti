@@ -430,7 +430,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.getLink = function(uid) {
         var person = $scope.getPeople(uid);
-        return "<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(uid);
+        return "<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(uid);
     }
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
@@ -620,7 +620,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
     }
     
     if ($scope.startMode=="create") {

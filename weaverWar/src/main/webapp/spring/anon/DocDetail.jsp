@@ -210,7 +210,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "fake-"+ch+".jpg";
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
     }
     $scope.composeEmail = function() {
         window.location="SendNote.htm?att="+$scope.docInfo.id;

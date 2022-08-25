@@ -314,7 +314,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
     }
     $scope.sendNoteByMail = function(note) {
         if ("Draft" == note.discussionPhase) {

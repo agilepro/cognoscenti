@@ -1286,7 +1286,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.navigateToUser = function(player) {
-        window.open(embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.key),"_blank");
+        window.open(embeddedData.retPath+"v/FindPerson.htm?key="+encodeURIComponent(player.key),"_blank");
     }
 
     $scope.allowCommentEmail = function() {

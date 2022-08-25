@@ -343,7 +343,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.getLink = function(uid) {
         var person = $scope.getPeople(uid);
-        return "<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(uid);
+        return "<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(uid);
     }
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
@@ -578,7 +578,7 @@ function addvalue() {
                 </span>
 
                 <div class="taskOverview">Assigned to:
-                   <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>, </span>
+                   <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass}}">{{getName(ass)}}</a>, </span>
 
                 </div>
                 <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">

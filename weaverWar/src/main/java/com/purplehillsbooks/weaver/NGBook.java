@@ -876,8 +876,8 @@ public class NGBook extends ContainerCommon {
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
-            NGWorkspace ngp = ngpi.getWorkspace();
-            siteStats.gatherFromWorkspace(ngp);
+            NGWorkspace ngw = ngpi.getWorkspace();
+            siteStats.gatherFromWorkspace(ngw);
             siteStats.numWorkspaces++;
         }
         saveStatsFile(siteStats);

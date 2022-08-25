@@ -22,7 +22,7 @@
 <td style="width:100px">Participants:</td>
     <td>
     {% loop in $participants as $part %}
-    <a href="FindPerson.htm?email={$part.key}">{$part.name}</a>{% divider %}<br/>{% enddivider %}
+    <a href="FindPerson.htm?key={$part.key}">{$part.name}</a>{% divider %}<br/>{% enddivider %}
     {% onEmpty %}
     <i>(none specified)</i>
     {% endloop %}

@@ -277,7 +277,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         return "<span style=\"color:lightgrey\">No response provided</span>";
     }
     $scope.navigateToCommentor = function(cmt) {
-        window.open("<%= ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(cmt.userKey),"_blank");
+        window.open("<%= ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(cmt.userKey),"_blank");
     }
     
 }

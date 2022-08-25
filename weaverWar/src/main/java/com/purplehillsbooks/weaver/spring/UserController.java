@@ -666,7 +666,12 @@ public class UserController extends BaseController {
             if (warnNotLoggedIn(ar)) {
                 return;
             }
-            String userKey = ar.reqParam("uid");
+            
+            //new parameter 'key' but support old 'uid' in case still there somewhere
+            String userKey = ar.defParam("key", null);
+            if (userKey==null) {
+                userKey = ar.defParam("uid", null);
+            }
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page

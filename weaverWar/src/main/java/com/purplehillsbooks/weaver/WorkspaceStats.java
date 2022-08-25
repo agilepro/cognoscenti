@@ -29,20 +29,20 @@ public class WorkspaceStats {
     public NameCounter unrespondedPerUser = new NameCounter();
     public NameCounter anythingPerUser    = new NameCounter();
 
-    public void gatherFromWorkspace(NGWorkspace ngp) throws Exception {
+    public void gatherFromWorkspace(NGWorkspace ngw) throws Exception {
 
-        long changed = ngp.getLastModifyTime();
+        long changed = ngw.getLastModifyTime();
         if (changed > recentChange) {
             recentChange = changed;
         }
-        for (TopicRecord topic : ngp.getAllDiscussionTopics()) {
+        for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
             numTopics++;
             AddressListEntry modUser = topic.getModUser();
             String uid = modUser.getUniversalId();
             topicsPerUser.increment(uid);
             countComments(topic.getComments());
         }
-        for (AttachmentRecord doc : ngp.getAllAttachments()) {
+        for (AttachmentRecord doc : ngw.getAllAttachments()) {
             numDocs++;
             if (!doc.isDeleted()) {
                 AddressListEntry modUser = new AddressListEntry(doc.getModifiedBy());
@@ -50,7 +50,7 @@ public class WorkspaceStats {
                 docsPerUser.increment(uid);
             }
             int version = doc.getVersion();
-            for (AttachmentVersion ver : doc.getVersions(ngp)) {
+            for (AttachmentVersion ver : doc.getVersions(ngw)) {
                 if (ver.getNumber()==version) {
                     sizeDocuments += ver.getFileSize();
                 }
@@ -60,7 +60,7 @@ public class WorkspaceStats {
             }
             countComments(doc.getComments());
         }
-        for (MeetingRecord meet : ngp.getMeetings()) {
+        for (MeetingRecord meet : ngw.getMeetings()) {
             numMeetings++;
             AddressListEntry modUser = new AddressListEntry(meet.getOwner());
             String owner = modUser.getUniversalId();
@@ -71,29 +71,29 @@ public class WorkspaceStats {
                 countComments(ai.getComments());
             }
         }
-        for (@SuppressWarnings("unused") DecisionRecord dr : ngp.getDecisions()) {
+        for (@SuppressWarnings("unused") DecisionRecord dr : ngw.getDecisions()) {
             numDecisions++;
         }
         
         //count assignees of all active action items as members
-        for (GoalRecord gr : ngp.getAllGoals()) {
+        for (GoalRecord gr : ngw.getAllGoals()) {
             if (GoalRecord.isFinal(gr.getState())) {
                 continue;
             }
-            for (AddressListEntry ale: gr.getAssigneeRole().getExpandedPlayers(ngp)) {
+            for (AddressListEntry ale: gr.getAssigneeRole().getExpandedPlayers(ngw)) {
                 anythingPerUser.increment(ale.getUniversalId());
             }
         }
 
         //count all the users in all roles
-        for (CustomRole role : ngp.getAllRoles()) {
-            for (AddressListEntry ale: role.getExpandedPlayers(ngp)) {
+        for (CustomRole role : ngw.getAllRoles()) {
+            for (AddressListEntry ale: role.getExpandedPlayers(ngw)) {
                 anythingPerUser.increment(ale.getUniversalId());
             }
         }
         
         //now, let's clean out any old temp documents polluting the space left by a broken upload
-        File containingFolder = ngp.containingFolder;
+        File containingFolder = ngw.containingFolder;
         long beforeYesterday = System.currentTimeMillis() - 24L*60*60*1000;
         for (File child : containingFolder.listFiles()) {
             if (child.getName().startsWith("~tmp~")) {

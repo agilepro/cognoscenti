@@ -170,7 +170,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.name}}</td>
         <td title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">
-                <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.key}}">{{ass.name}}</div>
+                <a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass.key}}">{{ass.name}}</div>
         </td>
         <td style="width:150px" title="Red-Yellow-Green assessment of status">
           <span>
