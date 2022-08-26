@@ -270,13 +270,19 @@ public class WikiToPDF
                 writeRolesToPDF(fullDocInterior);
             }
             
+            //determine the best name
+            String defaultName = ngw.getFullName();
+            if (allTopicPages.size()==1) {
+                defaultName = allTopicPages.get(0).getSubject();
+            }
+            defaultName = SectionUtil.sanitize(defaultName) + ".pdf";
+            
             //This can throw an error, and we want to get that error before
             //we write anything to the real output stream, so buffer it
             document.saveToStream(mf.getOutputStream());
             
-            String fileName = SectionUtil.sanitize(ngw.getFullName()) + ".pdf";
             ar.resp.setContentType("application/pdf");
-            ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
+            ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + defaultName + "\"" );
             OutputStream out = ar.resp.getOutputStream();
             mf.outToOutputStream(out);
             out.flush();
