@@ -55,7 +55,12 @@ app.controller('myCtrl', function($scope, $http) {
             console.log("ERROR", data, status)
         });
     }
-    console.log("loaded this app");
+    $scope.eraseTemplate = function() {
+        if (confirm("Are you sure you want to remove this template, and go back to the default template?")) {
+            $scope.templateBody = "";
+            $scope.saveTemplate();
+        }
+    }
 });
 </script>
 
@@ -77,6 +82,7 @@ app.controller('myCtrl', function($scope, $http) {
 <div>
 <button ng-click="saveTemplate()" class="btn btn-primary btn-raised">Update Server</button>
 <button ng-click="getTemplate()" class="btn btn-primary btn-raised">Get from Server</button>
+<button ng-click="eraseTemplate()" class="btn btn-primary btn-raised">Erase Template</button>
 </div>
 
 </div>

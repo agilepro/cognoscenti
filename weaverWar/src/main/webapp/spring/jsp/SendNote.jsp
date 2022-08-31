@@ -9,7 +9,7 @@
     String pageTitle="Compose EMail";
 %><%
 /*
-Required parameters:
+Required parameters:  
 
     1. pageId  : This is the id of a Workspace and used to retrieve NGWorkspace.
 

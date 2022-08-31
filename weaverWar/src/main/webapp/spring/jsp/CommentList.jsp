@@ -18,7 +18,7 @@
     
     JSONArray allComments = new JSONArray();
     for (CommentRecord comm : ngw.getAllComments()) {
-        allComments.put(comm.getHtmlJSON());
+        allComments.put(comm.getCompleteJSON());
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -154,6 +154,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return [];
     }
     
+    $scope.tuneNewComment = function(newComment) {
+        //can't reallly do anything here
+    }
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = cmt.containerID;
+        newDecision.sourceType = 4;
+        if (cmt.containerType=="M") {
+            newDecision.sourceType = 7;
+        }
+        if (cmt.containerType=="D") {
+            newDecision.sourceType = 8;
+        }
+    }
     setUpCommentMethods($scope, $http, $modal);
 
     
@@ -247,8 +260,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

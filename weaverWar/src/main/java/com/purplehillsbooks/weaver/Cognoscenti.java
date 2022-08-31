@@ -223,7 +223,7 @@ System.out.println("Weaver Server Object == Start the Server");
             if (backgroundTimer!=null) {
                 EmailSender.initSender(backgroundTimer, this);
                 //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
-                EmailListener.initListener(backgroundTimer);
+                EmailListener.initListener(backgroundTimer, this);
             }
 
             //make sure that all the workspace references include a site
@@ -813,4 +813,20 @@ System.out.println("Weaver Server Object == Start the Server");
         return res;
     }
 
+    
+    private static long lastTimeValue = System.currentTimeMillis();
+    /**
+     * This returns the current time EXCEPT it guarantees
+     * that it never returns the same time twice, incrementing
+     * the time if necessary by a few milliseconds to achieve this.
+     */
+    public static synchronized long getUniqueTime() {
+        long newTime = System.currentTimeMillis();
+        if (newTime<=lastTimeValue) {
+            newTime = lastTimeValue+1;
+        }
+        lastTimeValue = newTime;
+        return newTime;
+    }
+    
 }

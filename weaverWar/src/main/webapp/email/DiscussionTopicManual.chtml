@@ -50,8 +50,7 @@
 
 {% if ($note) %}
 {% if ($includeTopic) %}
-<p>
-  ACCESS: <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
+<p>ACCESS: <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
     <button title="Use this link to read and update this topic online">{$note.subject|onempty(No Name)|html}</button></a> <i>The topic is copied below. Use the access button (left) to see the latest version:</i> </p>
 <hr/>
 <div>{$note.wiki|markdown}</div>
@@ -62,8 +61,8 @@
 {% endif %}
 
 
-<div style="color:grey;font-weight:bold;">ACTION:  
-    <span><a href="{$replyUrl}#QuickReply"><button title="Using this button will allow you to comment on-line and avoid having to track endless chains of email in your inbox">Comment on this</button></a>.
+<div id="trimPoint" style="color:grey;font-weight:bold;">ACTION:  
+    <span><a href="{$workspaceUrl}Reply.htm?msg={$emailLocator}#QuickReply"><button title="Using this button will allow you to comment on-line and avoid having to track endless chains of email in your inbox">Comment on this</button></a>.
     </span>
 </div>
 {% endif %}
@@ -110,10 +109,10 @@
 
 {% include OptOut %}
 
-{!--
+
 <pre>
 {$debugDump|html}
 </pre>
---}
+
 
 </body></html>

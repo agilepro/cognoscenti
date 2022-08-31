@@ -34,6 +34,7 @@ import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
+import com.purplehillsbooks.weaver.CommentContainer;
 import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.EmailGenerator;
@@ -51,6 +52,8 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 
 import org.springframework.stereotype.Controller;
@@ -602,6 +605,85 @@ public class ProjectDocsController extends BaseController {
     
     @RequestMapping(value = "/{siteId}/{pageId}/Reply.htm", method = RequestMethod.GET)
     public void specialReply(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+
+        String msgLocator = ar.defParam("msg", null);
+        System.out.println("Reply.htm - got message locator="+msgLocator);
+        if (msgLocator==null) {
+            //preserve old behavior just in case
+            specialReplyOld(siteId, pageId, request, response);
+            return;
+        }
+        
+        long msgId = MailInst.getCreateDateFromLocator(msgLocator);
+        if (msgId==0) {
+            showJSPDepending(ar, ngw, "ReplyNoEmail.jsp", false);
+            return;
+        }
+        if (msgId<=0) {
+            throw new Exception("Can not understand the msg locator: "+msgLocator);
+        }
+        long commentId = MailInst.getCommentIdFromLocator(msgLocator);
+        
+        MailInst foundMsg = EmailSender.findEmailById(msgId);
+        if (foundMsg==null) {
+            throw new Exception("Can not find the message from locator: "+msgLocator);
+        }
+
+        String containerKey = foundMsg.getCommentContainer();
+        if (containerKey==null) {
+            throw new Exception("stored email message is missing container key,   msgLocator="+msgLocator);
+        }
+        
+        //check for consistency as a way to avoid hacking
+        if (commentId>0 && commentId != foundMsg.getCommentId()) {
+            throw new Exception("Can msg locator has wrong comment id in it: "+msgLocator);
+        }
+        
+        //if you get here, then you have a link and the email msg id and the comment id match
+        //which means you are not a hacker, so we can allow access to the content.
+        
+        CommentContainer container = CommentContainer.findContainerByKey(ngw, containerKey);
+        if (container==null) {
+            throw new Exception("Unable to find a container comment with key="+containerKey);
+        }
+        if (!containerKey.contentEquals(container.getGlobalContainerKey(ngw))) {
+            throw new Exception("Something is wrong, container keys don't match: "+containerKey+" AND "+container.getGlobalContainerKey(ngw));
+        }
+
+        boolean specialAccess = false;
+        if (container instanceof AgendaItem) {
+            AgendaItem ai = (AgendaItem)container;
+            MeetingRecord meet = ai.meeting;
+            specialAccess  = AccessControl.canAccessMeeting(ar, ngw, meet);
+            ar.setParam("meetId", meet.getId());
+            ar.setParam("agendaId", ai.getId());
+        }
+        else if (container instanceof TopicRecord) {
+            TopicRecord topic = (TopicRecord)container;
+            //normally the permission comes from a license in the URL for anonymous access
+            specialAccess  = AccessControl.canAccessTopic(ar, ngw, topic);
+            ar.setParam("topicId", topic.getId());
+        }
+        else if (container instanceof AttachmentRecord) {
+            AttachmentRecord doc =(AttachmentRecord)container;
+            //normally the permission comes from a license in the URL for anonymous access
+            specialAccess  = AccessControl.canAccessDoc(ar, ngw, doc);
+        }
+        else {
+            throw new Exception("Can not understand why comment container is a "+container.getClass().getCanonicalName());
+        }
+        ar.setParam("emailId", foundMsg.getFromAddress());
+        ar.setParam("commentId", commentId);
+        ar.setParam("msgId", msgId);
+        ar.setParam("pageId", pageId);
+        ar.setParam("siteId", siteId);
+        showJSPDepending(ar, ngw, "Reply.jsp", specialAccess);
+    }
+    public void specialReplyOld(@PathVariable String siteId,
             @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);

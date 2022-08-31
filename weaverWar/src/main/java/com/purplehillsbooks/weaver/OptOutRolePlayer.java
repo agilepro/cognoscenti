@@ -103,7 +103,7 @@ public class OptOutRolePlayer extends OptOutAddr {
             +"&email="+URLEncoder.encode(emailId,"UTF-8")
             +"&mn="+URLEncoder.encode(ngw.emailDependentMagicNumber(emailId),"UTF-8"));
         jo.put("roleName",  roleName);
-        jo.put("wsURL", ar.baseURL + ar.getDefaultURL(ngpi));
+        jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);
         return jo;
     }

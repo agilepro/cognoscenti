@@ -422,6 +422,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                siteInfo: function() {
+                    return $scope.siteInfo;
                 }
             }
         });

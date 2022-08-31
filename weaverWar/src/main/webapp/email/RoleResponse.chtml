@@ -25,7 +25,7 @@
 </p>
 
 You requested to join the role <b>'{$roleName}'</b> on the workspace 
-'<a href="{$wsURL}">{$wsName|html}</a>'.</p>
+'<a href="{$wsBaseURL}FrontPage.htm">{$wsName|html}</a>'.</p>
 
 <p>
 {% if ($isApproved) %}

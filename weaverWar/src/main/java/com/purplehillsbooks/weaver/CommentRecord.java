@@ -525,6 +525,7 @@ public class CommentRecord extends DOMFace {
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
+        CommentContainer container = noteOrMeet.getcontainer();
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -547,15 +548,19 @@ public class CommentRecord extends DOMFace {
         }
         String cmtType = commentTypeName();
         AddressListEntry owner = getUser();
+        
+        MailInst mailMsg = ngw.createMailInst();
+        mailMsg.setCommentContainer(container.getGlobalContainerKey(ngw));
+        mailMsg.setCommentId(getTime());
 
         JSONObject data = new JSONObject();
+        mailMsg.addFieldsForRender(data);
         data.put("baseURL", ar.baseURL);
         String fullURLtoContext = ar.baseURL + noteOrMeet.getEmailURL(clone, ngw);
         data.put("parentURL", fullURLtoContext);
         data.put("parentName", noteOrMeet.emailSubject());
         data.put("commentURL", ar.baseURL + clone.getResourceURL(ngw, "CommentZoom.htm?cid=" + getTime()));
-        data.put("comment", this.getHtmlJSON());
-        data.put("wsFrontPage", ar.baseURL + clone.getDefaultURL(ngw));
+        data.put("comment", this.getCompleteJSON());
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
         data.put("wsName", ngw.getFullName());
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
@@ -568,20 +573,18 @@ public class CommentRecord extends DOMFace {
         
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngw,this.getTime())
+        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngw,this.getTime(), mailMsg)
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
         data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngw,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
 
-        //deprecated value remove
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));   //remove this when templates no longer use
-        
         AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 
         ChunkTemplate.streamAuthRequest(clone.w, ar, "NewComment", data, ooa.getCalendar());
         clone.flush();
         
-        MailInst mailMsg = ngw.createMailInst();
+        CommentContainer cc = noteOrMeet.getcontainer();
+        
         mailMsg.setSubject(noteOrMeet.emailSubject()+": "+opType+cmtType);
         mailMsg.setBodyText(body.toString());
 
@@ -624,7 +627,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("poll", getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
         return commInfo;
     }
-    public JSONObject getHtmlJSON() throws Exception {
+    public JSONObject getCompleteJSON() throws Exception {
         JSONObject commInfo = getJSON();
         commInfo.put("containerName", containerName);
         commInfo.put("body", getContent());

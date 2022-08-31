@@ -2,6 +2,8 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
+import com.purplehillsbooks.weaver.mail.MailInst;
+
 /**
  * What a mess!
  * 
@@ -78,7 +80,7 @@ public class EmailContext {
         }
     }
     
-    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId, MailInst msg) throws Exception {
         if (discussionTopic!=null) {
             return ar.getResourceURL(ngw,  "Reply.htm?topicId="+discussionTopic.getId()+"&commentId="+commentId)+"&" 
                     + AccessControl.getAccessTopicParams(ngw, discussionTopic);
@@ -90,7 +92,7 @@ public class EmailContext {
                     + AccessControl.getAccessMeetParams(ngw, meet);
         }
         else {
-            return attach.getEmailURL(ar, ngw) + "#cmt"+commentId;
+            return ar.getResourceURL(ngw,  "CommentZoom.htm?cid="+commentId);
         }
     }
     
@@ -151,6 +153,19 @@ public class EmailContext {
         else {
             return attach.getComments();
         }
+    }
+    
+    public CommentContainer getcontainer() {
+        if (discussionTopic!=null) {
+            return discussionTopic;
+        }
+        if (agenda!=null) {
+            return agenda;
+        }
+        if (attach!=null) {
+            return attach;
+        }
+        throw new RuntimeException("Program Logic Error: EmailContext is missing the CommentContainer for some reason.");
     }
     
 }

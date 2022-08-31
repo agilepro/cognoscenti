@@ -1540,69 +1540,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
 
 
-    $scope.openDecisionEditor = function (item, cmt) {
-        if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are a READ-ONLY user");
-            return;
-        }
-        if (!item || !item.id) {
-            alert("Please select an agenda item, and try again");
-            return;
-        }
-        $scope.cancelBackgroundTime();
-
-        var newDecision = {
-            decision: cmt.body,
-            labelMap: {},
-            sourceId: $scope.meeting.id,
-            sourceType: 7,
-            sourceCmt: cmt.time
-        };
-
-        var decisionModalInstance = $modal.open({
-            animation: false,
-            templateUrl: embeddedData.retPath+"templates/DecisionModal.html"+templateCacheDefeater,
-            controller: 'DecisionModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                decision: function () {
-                    return JSON.parse(JSON.stringify(newDecision));
-                },
-                allLabels: function() {
-                    return $scope.allLabels;
-                }
-            }
-        });
-
-        decisionModalInstance.result
-        .then(function (newDecision) {
-            newDecision.num="~new~";
-            newDecision.sourceType = 7;
-            newDecision.universalid="~new~";
-            var postURL = "updateDecision.json?did=~new~";
-            var postData = angular.toJson(newDecision);
-            $http.post(postURL, postData)
-            .success( function(data) {
-                var relatedComment = data.sourceCmt;
-                item.comments.map( function(cmt) {
-                    if (cmt.time == relatedComment) {
-                        cmt.decision = "" + data.num;
-                        $scope.saveComment(item, cmt);
-                    }
-                });
-            })
-            .error( function(data, status, headers, config) {
-                $scope.reportError(data);
-            });
-            $scope.extendBackgroundTime();
-        }, function () {
-            $scope.putGetMeetingInfo( null );
-            $scope.extendBackgroundTime();
-        });
-    };
-
-
     $scope.getSelectedDocList = function(docId) {
         var doc = [];
         $scope.attachmentList.forEach( function(item) {
@@ -2143,15 +2080,23 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
         return found;
     }
-     $scope.setContainerFields = function(newComment) {
-        newComment.containerType = "M";
-        newComment.containerID = $scope.meetId+":"+$scope.selectedItem.id;
-    }
     $scope.refreshCommentList = function() {
         console.log("REFRESH comment list");
         $scope.refreshMeetingPromise(true);
     }
 
+    $scope.tuneNewComment = function(newComment) {
+        newComment.containerType = "M";
+        newComment.containerID = $scope.meetId+":"+$scope.selectedItem.id;
+    }
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = $scope.meeting.id;
+        newDecision.sourceType = 7;
+    }
+    $scope.refreshCommentContainer = function() {
+        $scope.refreshMeetingPromise(true);
+        $scope.extendBackgroundTime();
+    }
     setUpCommentMethods($scope, $http, $modal);
     
     //this is the display state of the meeting for user

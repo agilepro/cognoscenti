@@ -69,7 +69,7 @@ Required parameters:
     }
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
     for (CommentRecord comm : emailContext.getPeerComments()) {
-        comments.put(comm.getHtmlJSON());
+        comments.put(comm.getCompleteJSON());
     }
 
 
@@ -120,16 +120,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.agendaItem = "<%ar.writeJS(agendaItem);%>";
     $scope.attachments = <%attachments.write(out,2,4);%>;
     
-    $scope.originalTopic = convertMarkdownToHtml($scope.originalWiki);
-    
  
-    $scope.generateCommentHtml = function(cmt) { 
-        cmt.html2 = convertMarkdownToHtml(cmt.body);
-        cmt.outcomeHtml = convertMarkdownToHtml(cmt.outcome);
-        cmt.responses.forEach( function(item) {
-            item.html = convertMarkdownToHtml(item.body);
-        });
-    }
     $scope.distributeComments = function() {
         if (!$scope.emailId) {
             $scope.emailId = "";
@@ -145,7 +136,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 //ignore phase change comments of any kind
                 return;
             }
-            $scope.generateCommentHtml(cmt);
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
             }
@@ -301,11 +291,11 @@ function reloadIfLoggedIn() {
 </style>
 
 
-<div style="max-width:800px">
+<div style="max-width:800px;scroll-margin-top:50px">
     
     <div class="comment-outer comment-state-active">
       <div class="comment-inner">
-        <div ng-bind-html="originalTopic"></div>
+        <div ng-bind-html="originalWiki|wiki"></div>
       </div>
     </div>
     <div ng-show="attachments">
@@ -333,29 +323,49 @@ function reloadIfLoggedIn() {
     </div>
 
     <div ng-repeat="cmt in otherComments">
-     <div class="comment-outer">
-      <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
-      <div class="comment-inner">
-        <div ng-bind-html="cmt.html2"></div>
+      <div class="comment-outer">
+        <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
+        <div class="comment-inner">
+          <div ng-bind-html="cmt.body|wiki"></div>
+        </div>
+        <table ng-show="cmt.responses" class="spacey">
+          <tr ng-repeat="resp in cmt.responses" ng-show="resp.body">
+            <td><b>{{resp.choice}}</b></td>
+            <td><i>{{resp.userName}}</i></td>
+            <td><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
+          </tr>
+        </table>
+        <div class="comment-inner" ng-show="cmt.outcome">
+          <div ng-bind-html="cmt.outcome|wiki"></div>
+        </div>
       </div>
     </div>
-   </div>
+    <div id="Comment" style="scroll-margin-top:80px;scroll-padding-top:80px"></div>
+    <div ng_show="focusComment.body" >
+        <h1 >You are replying to:</h1>
 
-        <div ng_show="focusComment.html2">
-            <h1>You are replying to:</h1>
-
-            <div class="comment-outer">
-              <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
-              <div class="comment-inner">
-                <div ng-bind-html="focusComment.html2"></div>
-              </div>
-            </div>
+        <div class="comment-outer">
+          <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
+          <div class="comment-inner">
+            <div ng-bind-html="focusComment.body|wiki"></div>
+          </div>
+          <table ng-show="focusComment.responses" class="spacey">
+            <tr ng-repeat="resp in focusComment.responses" ng-show="resp.body">
+              <td><b>{{resp.choice}}</b></td>
+              <td><i>{{resp.userName}}</i></td>
+              <td><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
+            </tr>
+          </table>
+          <div class="comment-inner" ng-show="focusComment.outcome">
+            <div ng-bind-html="focusComment.outcome|wiki"></div>
+          </div>
         </div>
+    </div>
 
     <div style="min-height:460px">
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
-            <td><h2 id="QuickReply">Quick&nbsp;Reply:</h2></td>
+            <td><h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2></td>
             <td><button class="btn btn-default btn-raised" ng-click="saveIt()"
                 title="Send the comment into the discussion topic">Save Draft</button></td>
             <td><button class="btn btn-primary btn-raised" ng-click="sendIt()"
@@ -390,7 +400,7 @@ function reloadIfLoggedIn() {
             <div class="comment-outer">
               <div>{{newComment.userName}} - {{newComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
               <div class="comment-inner">
-                <div ng-bind-html="newComment.html2"></div>
+                <div ng-bind-html="newComment.body|wiki"></div>
               </div>
             </div>
             

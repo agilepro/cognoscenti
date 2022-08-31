@@ -461,9 +461,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.refreshCommentList = function() {
         refreshTopic();
     }
-    $scope.setContainerFields = function(newComment) {
+    $scope.tuneNewComment = function(newComment) {
         newComment.containerType = "T";
         newComment.containerID = $scope.topicId;
+    }
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = $scope.topicId;
+        newDecision.sourceType = 4;
     }
     setUpCommentMethods($scope, $http, $modal);
 
@@ -927,11 +931,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <td>
     <div ng-show="canComment && !isEditing">
         <div style="margin:20px;">
-            <button ng-click="openCommentCreator({},1)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(null,1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator({},2)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(null,2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator({},3)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(null,3)" class="btn btn-default btn-raised">
                 Create New <i class="fa  fa-question-circle"></i> Round</button>
         </div>
     </div>
@@ -948,9 +952,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/Feedback.js"></script>

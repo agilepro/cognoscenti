@@ -150,9 +150,6 @@ public class ChunkTemplate {
      * @throws Exception
      */
     public static void streamAuthRequest(Writer w, AuthRequest ar, String templateName, JSONObject data, Calendar cal) throws Exception {
-        Exception debug = new Exception("streamAuthRequest called with this stack trace template="+templateName);
-        debug.printStackTrace(System.out);
-        
         String nameWithExtension = templateName + ".chtml";
         
         TemplateProviderWeaver provider = new TemplateProviderWeaver(ar);

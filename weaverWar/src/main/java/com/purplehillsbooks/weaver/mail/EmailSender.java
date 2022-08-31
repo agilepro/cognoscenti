@@ -61,9 +61,6 @@ public class EmailSender extends TimerTask {
     private MongoDB db;
     private long lastEmailCreateDate = 0;
 
-    // this says where the file is, but it ALSO serves as the lock object
-    // for manipulating this file.  Always use synchronized on this object
-    private static File userFolder;
 
     // expressed in milliseconds
     private final static long TWICE_PER_MINUTE = 30000;
@@ -136,47 +133,7 @@ public class EmailSender extends TimerTask {
     }
     
     
-    public void migrateFromFileIfNeeded() throws Exception {
-        File globalMailArchive = new File(userFolder, "GlobalEmailArchive.json");
-        //if there is a global email archive file, then the records need to be 
-        //transferred to the database.   If not, there is nothing to do.
-        if (!globalMailArchive.exists()) {
-            return;
-        }
-        
-        MailFile globalArchive = MailFile.readOrCreate(globalMailArchive, 1);
-        List<MailInst> oldMessages = globalArchive.getAllMessages();
-        //returned records sorted by created date
-        long lastId = System.currentTimeMillis();
-        for (MailInst msg : oldMessages) {
-            long id = msg.getCreateDate();
-            if (id >= lastId) {
-                System.out.println("EMAIL: SORT PROBLEM had to change id from "+id+" to "+(lastId-1));
-                //keep them in order and unique
-                id = lastId-1;
-                msg.setCreateDate(id);
-            }
-            lastId = id;
-            updateEmailInDB(msg);
-        }
-        
-        File newName = new File( globalMailArchive.getParentFile(), globalMailArchive.getName()+".movedToDB");
-        if (newName.exists()) {
-            newName.delete();
-        }
-        globalMailArchive.renameTo(newName);
-    }
-    
     public void updateEmailInDB(MailInst msg) throws Exception {
-        //check
-        /*
-        if (msg.getWorkspaceKey()==null || msg.getWorkspaceKey().length()==0) {
-            throw new Exception("the workspace is not set");
-        }
-        if (msg.getSiteKey()==null || msg.getSiteKey().length()==0) {
-            throw new Exception("the site is not set");
-        }
-        */
         long id = msg.getCreateDate();
         JSONObject mailObj = msg.getJSON();
         JSONObject query = new JSONObject();
@@ -219,12 +176,9 @@ public class EmailSender extends TimerTask {
      */
     public static void initSender(Timer timer, Cognoscenti cog) throws Exception {
 
-        userFolder = cog.getConfig().getUserFolderOrFail();
-
         // apparently a timer task can not be reused by a Timer, or in another
         // Timer.  You have to create them every time you schedule them.
         singletonSender = new EmailSender(cog);
-        singletonSender.migrateFromFileIfNeeded();
 
         // As long as the server is up, the mail should
         // always be sent within 20 minutes of the time it was scheduled to go.
@@ -542,7 +496,8 @@ public class EmailSender extends TimerTask {
     public static void generalMailToList(MailInst msg, AddressListEntry from, List<OptOutAddr> addresses) throws Exception {
         try {
             for (OptOutAddr ooa : addresses) {
-                singletonSender.createEmailRecordInDB(msg, from, ooa.getEmail());
+                MailInst msgCopy = msg.cloneMsg();
+                singletonSender.createEmailRecordInDB(msgCopy, from, ooa.getEmail());
             }
         }
         catch (Exception e) {
@@ -627,14 +582,14 @@ public class EmailSender extends TimerTask {
     }
 
     public MailInst createEmailRecordInDB (
-                MailInst msg,
+                MailInst emailRec,
                 AddressListEntry from,
                 String addressee) throws Exception {
         try {
-            if (msg.getSubject() == null || msg.getSubject().length() == 0) {
+            if (emailRec.getSubject() == null || emailRec.getSubject().length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'subject' parameter");
             }
-            if (msg.getBodyText() == null || msg.getBodyText().length() == 0) {
+            if (emailRec.getBodyText() == null || emailRec.getBodyText().length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'body' parameter");
             }
             if (addressee == null || addressee.length() == 0) {
@@ -644,35 +599,12 @@ public class EmailSender extends TimerTask {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
             }
 
-            MailInst emailRec = msg.cloneMsg();
             emailRec.setStatus(EmailRecord.READY_TO_GO);
             emailRec.setFromName(from.getName());
             emailRec.setFromAddress(from.getEmail());
-            long id = getUniqueTime();
-            emailRec.setCreateDate(id);
             emailRec.setAddressee(addressee);
         
-            //for some reason email is not able to handle the upper ascii
-            //even though it seems to correctly encoded, the decoding seems to
-            //be confused on the other end.   Just escape for HTML and all
-            //should be OK.
-            //This is a horrible horrible hack ... but it works reliably.
-            //The problem seems to be the order of decoding the stream and the
-            //quoted printable encoding.
-            String emailBody = msg.getBodyText();
-            StringBuilder sb = new StringBuilder();
-            for (int i=0; i<emailBody.length(); i++) {
-                char ch = emailBody.charAt(i);
-                if (ch<128) {
-                    sb.append(ch);
-                }
-                else {
-                    sb.append("&#");
-                    sb.append(Integer.toString(ch));
-                    sb.append(';');
-                }
-            }
-            emailRec.setBodyText(sb.toString());
+            
             updateEmailInDB(emailRec);
             return emailRec;
         }

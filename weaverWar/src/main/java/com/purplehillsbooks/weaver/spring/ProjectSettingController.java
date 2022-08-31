@@ -416,7 +416,7 @@ public class ProjectSettingController extends BaseController {
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
         data.put("requester", ar.getUserProfile().getJSON());
-        data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngw));
+        data.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         data.put("wsName", ngw.getFullName());
         data.put("roleName", roleRequestRecord.getRoleName());
         data.put("comment", roleRequestRecord.getRequestDescription());
@@ -736,11 +736,12 @@ public class ProjectSettingController extends BaseController {
 
                 //would be better if we could capture the actual relationship
                 OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar,  ngw, sampleUser);
+                MailInst mail = new MailInst();
+                mail.markNotReal();
+                eGen.generateEmailBody(ar, ngw, sampleAddressee, mail);
 
-                String[] subjAndBody = eGen.generateEmailBody(ar, ngw, sampleAddressee);
-
-                repo.put("subject", subjAndBody[0]);
-                repo.put("html", subjAndBody[1]);
+                repo.put("subject", mail.getSubject());
+                repo.put("html", mail.getBodyText());
                 repo.put("addressees", addressees);
             }
 

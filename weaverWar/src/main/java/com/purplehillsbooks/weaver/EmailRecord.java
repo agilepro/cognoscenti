@@ -55,6 +55,7 @@ public class EmailRecord extends DOMFace
     public static final String SENT = "Sent";
     public static final String FAILED = "Failed";
     public static final String SKIPPED = "Skipped";
+    public static final String RECEIVED = "Received";
 
     private Hashtable<String, MemFile> attachmentContents;
     private Hashtable<String, File>    attachmentPaths;

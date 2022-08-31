@@ -98,11 +98,11 @@ public class NGSession
 
 
 
-    public void addVisited(NGWorkspace ngp, long currentTime) {
-        if (ngp==null) {
+    public void addVisited(NGWorkspace ngw, long currentTime) {
+        if (ngw==null) {
             throw new ProgramLogicError("addVisited was called with a null parameter.  That should not happen");
         }
-        RUElement rue = new RUElement(ngp,  currentTime);
+        RUElement rue = new RUElement(ngw,  currentTime);
         RUElement.addToRUVector(recentlyVisited, rue, currentTime, 12);
     }
 

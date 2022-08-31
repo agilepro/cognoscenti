@@ -8,10 +8,11 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
-Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
+Workspace: <a href="{$wsBaseURL}FrontPage.htm">{$wsName|onempty(No Name)|html}</a>
+Message: <a href="{$wsBaseURL}EmailMsg.htm?msg={$msgId}">View Online</a>
 <br/>
-Item <a href="{$replyUrl}">{$parentName|onempty(No Name)|html}</a> 
- has a <a href="{$replyUrl}">{$opType} <b>{$cmtType}</b> (view online)</a>.
+Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No Name)|html}</a> 
+ has a <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#Comment">{$opType} <b>{$cmtType}</b> (view online)</a>.
 </p>
 <hr/>
 
@@ -39,10 +40,10 @@ Item <a href="{$replyUrl}">{$parentName|onempty(No Name)|html}</a>
 {% endif %}
 {% endif %}
 {% if ($cmtType=="comment") %}
-<div style="color:grey;font-weight:bold;">ACTION:  
-    <span><a href="{$replyUrl}#QuickReply"><button title="Using this button will allow you to comment on-line and avoid having to track endless chains of email in your inbox">Reply to this</button></a>
+<div id="trimPoint" style="color:grey;font-weight:bold;">ACTION:  
+    <span><a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#QuickReply"><button title="Click to comment on-line and avoid endless chains of email in your inbox">Reply to this</button></a>
     or you can 
-    <a href="{$replyUrl}#Unsub"><button>unsubscribe</button></a> from this thread.
+    <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#Unsub"><button>unsubscribe</button></a> from this thread.
     </span>
 </div>
 {% endif %}
@@ -67,7 +68,8 @@ Item <a href="{$replyUrl}">{$parentName|onempty(No Name)|html}</a>
 
 {% include OptOut %}
 
-<script>
-//{-dollar- debugDump}
-</script>
+<pre>
+{$debugDump|html}
+</pre>
+
 </body></html>

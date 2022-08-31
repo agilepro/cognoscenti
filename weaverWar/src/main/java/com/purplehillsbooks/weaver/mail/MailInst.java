@@ -23,6 +23,8 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.Cognoscenti;
+import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.EmailRecord;
 import com.purplehillsbooks.weaver.MemFileDataSource;
 import com.purplehillsbooks.weaver.OptOutAddr;
@@ -54,8 +56,11 @@ public class MailInst extends JSONWrapper {
 
 
 
-    public MailInst() {
+    public MailInst() throws Exception {
         super(new JSONObject());
+        //this is the ID of the message, each message has a unique create time, which is 
+        //the time that this code is run, and the record saved in the DB.
+        setCreateDate(Cognoscenti.getUniqueTime());
     }
     public MailInst(JSONObject _kernel) {
         super(_kernel);
@@ -68,6 +73,7 @@ public class MailInst extends JSONWrapper {
         w.flush();
         JSONObject clonedJson = JSONObject.readFromReader(mf.getReader());
         MailInst clone = new MailInst(clonedJson);
+        clone.setCreateDate(Cognoscenti.getUniqueTime());
         return clone;
     }
     
@@ -79,6 +85,28 @@ public class MailInst extends JSONWrapper {
         msg.setBodyText(body);
         return msg;
     }
+    
+    /**
+     * The CreateDate is the ID of the message, it is tracked through all
+     * the placed by create date.
+     */
+    public long getCreateDate() throws Exception {
+        return kernel.getLong("CreateDate");
+    }
+    private void setCreateDate(long val) throws Exception {
+        kernel.put("CreateDate", val);
+    }
+    
+    /**
+     * Some email message object get created, but are not stored in
+     * the database.  Instead, they are needed to create temporary 
+     * results.   This sets the create date to -1 so that rendered 
+     * output can identify that the message is not stored in the DB.
+     */
+    public void markNotReal() throws Exception {
+        kernel.put("CreateDate", 0);
+    }
+
 
     public String getStatus() throws Exception {
         return kernel.getString("Status");
@@ -112,13 +140,6 @@ public class MailInst extends JSONWrapper {
         kernel.put("SMTPCallDuration", val);
     }
 
-
-    public long getCreateDate() throws Exception {
-        return kernel.getLong("CreateDate");
-    }
-    public void setCreateDate(long val) throws Exception {
-        kernel.put("CreateDate", val);
-    }
 
     public String getAddressee() throws Exception {
         return kernel.getString("Addressee");
@@ -201,6 +222,52 @@ public class MailInst extends JSONWrapper {
         kernel.put("exception", JSONException.convertToJSON(e, context));
     }
 
+    public long getCommentId() {
+        return kernel.optLong("CommentId");
+    }
+    public void setCommentId(long val) throws Exception {
+        kernel.put("CommentId", val);
+    }
+    
+    public String getEmailLocator() throws Exception {
+        long cmt = getCommentId();
+        
+        if (cmt>0) {
+            return Long.toString(getCreateDate()) + "-" + cmt;
+        }
+        else {
+            return Long.toString(getCreateDate());
+        }
+    }
+    
+    public static long getCreateDateFromLocator(String locator) {
+        int dashPos = locator.indexOf("-");
+        if (dashPos>0) {
+            locator = locator.substring(0, dashPos);
+        }
+        return DOMFace.safeConvertLong(locator);
+    }
+    public static long getCommentIdFromLocator(String locator) {
+        int dashPos = locator.indexOf("-");
+        if (dashPos>0) {
+            locator = locator.substring(dashPos+1);
+            return DOMFace.safeConvertLong(locator);
+        }
+        else {
+            return -1;
+        }
+        
+    }
+    
+    
+    public String getCommentContainer() {
+        return kernel.optString("CommentContainer");
+    }
+    public void setCommentContainer(String val) throws Exception {
+        kernel.put("CommentContainer", val);
+    }
+        
+    
     public boolean containsValue(String s) throws Exception {
         if ((s==null) || s.length()==0) {
             return true;
@@ -260,7 +327,7 @@ public class MailInst extends JSONWrapper {
      */
     public boolean sendPreparedMessageImmediately(Properties mailProps) {
 
-        long sendStart = MailFile.getUniqueTime();
+        long sendStart = Cognoscenti.getUniqueTime();
         Transport transport = null;
         String addressee = "UNSPECIFIED";
 
@@ -274,6 +341,33 @@ public class MailInst extends JSONWrapper {
 
             transport = mailSession.getTransport();
             transport.connect();
+            
+
+            //for some reason email is not able to handle the upper ascii
+            //even though it seems to correctly encoded, the decoding seems to
+            //be confused on the other end.   Just escape for HTML and all
+            //should be OK.
+            //This is a horrible horrible hack ... but it works reliably.
+            //The problem seems to be the order of decoding the stream and the
+            //quoted printable encoding.
+            String safeEmailBody = getBodyText();
+            StringBuilder sb = new StringBuilder();
+            for (int i=0; i<safeEmailBody.length(); i++) {
+                char ch = safeEmailBody.charAt(i);
+                if (ch<128) {
+                    sb.append(ch);
+                }
+                else {
+                    sb.append("&#");
+                    sb.append(Integer.toString(ch));
+                    sb.append(';');
+                }
+            }
+            safeEmailBody = sb.toString();
+
+
+
+
 
 
             MimeMessage message = new MimeMessage(mailSession);
@@ -297,12 +391,17 @@ public class MailInst extends JSONWrapper {
             //add identifying character (※) in front of name
             message.setFrom(makeAddress("\u203B "+fromName, stdFromAddress)[0]);
 
-            String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
-            message.setSubject(encodedSubjectLine);
+            String emailLocator = getEmailLocator();
+            String rawSubject = this.getSubject();
+            if (emailLocator!=null && emailLocator.length()>3) {
+                rawSubject = rawSubject + " [$" + emailLocator + "]";
+            }
+            
+            message.setSubject(MimeUtility.encodeText(rawSubject, "utf-8", "B"));
 
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setHeader("Content-Type", "text/html; charset=\"utf-8\"");
-            textPart.setText(getBodyText(), "UTF-8");
+            textPart.setText(safeEmailBody, "UTF-8");
             textPart.setHeader("Content-Transfer-Encoding", "quoted-printable");
             // apparently using 'setText' can change the content type for
             // you automatically, so re-set it.
@@ -409,11 +508,10 @@ public class MailInst extends JSONWrapper {
         MemFile mf = new MemFile();
         mf.fillWithInputStream(message.getInputStream());
         this.setBodyText(mf.toString());
-        this.setCreateDate(safeGetTime(message.getSentDate()));
         this.setLastSentDate(safeGetTime(message.getReceivedDate()));
     }
 
-    private long safeGetTime(Date d) {
+    private static long safeGetTime(Date d) {
         if (d==null) {
             return 0;
         }
@@ -482,13 +580,18 @@ public class MailInst extends JSONWrapper {
         e2.put("From",         kernel.optString("From", "unknown"));
         e2.put("FromName",     kernel.optString("FromName", "unknown"));
         e2.put("LastSentDate", kernel.optLong("LastSentDate",0));
-        e2.put("Status",       kernel.optString("Status", "Unknown Status"));
-        e2.put("Subject",      kernel.optString("Subject", "Unknown Subject"));
-        e2.put("Site",         kernel.optString("Site", "Unknown Site"));
-        e2.put("Workspace",    kernel.optString("Workspace", "Unknown Workspace"));
+        e2.put("Status",       kernel.optString("Status",     "Unknown Status"));
+        e2.put("Subject",      kernel.optString("Subject",    "Unknown Subject"));
+        e2.put("Site",         kernel.optString("Site",       "Unknown Site"));
+        e2.put("Workspace",    kernel.optString("Workspace",  "Unknown Workspace"));
+        e2.put("CommentLoc",   kernel.optString("CommentLoc", "Unknown Comment Location"));
+        e2.put("CommentId",    kernel.optString("CommentId"));
         return e2;
     }
 
-
+    public void addFieldsForRender(JSONObject data) throws Exception {
+        data.put("msgId",        getCreateDate());
+        data.put("emailLocator", getEmailLocator());        
+    }
 
 }

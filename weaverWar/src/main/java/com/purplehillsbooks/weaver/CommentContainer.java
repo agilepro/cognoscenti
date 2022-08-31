@@ -89,7 +89,7 @@ public abstract class CommentContainer extends DOMFace {
     public JSONArray getAllComments() throws Exception {
         JSONArray allCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCmts.put(cr.getHtmlJSON());
+            allCmts.put(cr.getCompleteJSON());
         }
         return allCmts;
     }
@@ -97,7 +97,7 @@ public abstract class CommentContainer extends DOMFace {
         JSONArray includedCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
             if (cr.getAttributeBool("includeInMinutes")) {
-                includedCmts.put(cr.getHtmlJSON());
+                includedCmts.put(cr.getCompleteJSON());
             }
         }
         return includedCmts;
@@ -140,7 +140,7 @@ public abstract class CommentContainer extends DOMFace {
                 //ignore comment created before or after the period
                 continue;
             }
-            allCommentss.put(cr.getHtmlJSON());
+            allCommentss.put(cr.getCompleteJSON());
         }
         return allCommentss;
     }
@@ -216,6 +216,33 @@ public abstract class CommentContainer extends DOMFace {
             //did not find the other, but otherwise silently ignore the problem
             System.out.println("New comment reply to time value, cannot find corresponding comment: "+replyto);
         }
+    }
+    
+    public String getGlobalContainerKey(NGWorkspace ngw) {
+        return "BOGUS";
+    }
+    
+    public static CommentContainer findContainerByKey(NGWorkspace ngw, String searchKey) throws Exception {
+        
+        for (MeetingRecord meet : ngw.getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                if (searchKey.equals(ai.getGlobalContainerKey(ngw))) {
+                    return ai;
+                }
+            }
+        }
+        for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
+            if (searchKey.equals(topic.getGlobalContainerKey(ngw))) {
+                return topic;
+            }
+        }
+        for (AttachmentRecord att : ngw.getAllAttachments()) {
+            if (searchKey.equals(att.getGlobalContainerKey(ngw))) {
+                return att;
+            }
+        }
+        System.out.println("COMMENT-CONTAINER: attempt to find container not found: "+searchKey);
+        return null;
     }
 
 }

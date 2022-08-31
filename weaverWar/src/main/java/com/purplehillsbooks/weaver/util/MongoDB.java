@@ -15,7 +15,7 @@ import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 
 /**
- * Isolate the arcate Mongo specific classes here if possible
+ * Isolate the arcane Mongo specific classes here if possible
  */
 public class MongoDB {
 
@@ -46,7 +46,7 @@ public class MongoDB {
      * simple default query that gets all the records up to a limit
      * probably only useful for testing/debugging
      */
-    public JSONArray findAllRecords(int limit) throws Exception {
+    public JSONArray findAllRecords() throws Exception {
         FindIterable<Document> resultSet = emaildb.find();
         MongoCursor<Document> cursor = resultSet.iterator();
         

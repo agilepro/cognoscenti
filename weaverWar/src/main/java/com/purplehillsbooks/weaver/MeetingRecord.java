@@ -165,8 +165,8 @@ public class MeetingRecord extends DOMFace {
         }
         return null;
     }
-    public AgendaItem createAgendaItem(NGWorkspace ngp) throws Exception {
-        AgendaItem ai = createChildWithID("agenda", AgendaItem.class, "id", ngp.getUniqueOnPage());
+    public AgendaItem createAgendaItem(NGWorkspace ngw) throws Exception {
+        AgendaItem ai = createChildWithID("agenda", AgendaItem.class, "id", ngw.getUniqueOnPage());
         ai.setMeeting(this);
         ai.setPosition(99999);   //position it at the end
         return ai;
@@ -848,7 +848,7 @@ public class MeetingRecord extends DOMFace {
         return getName() + " @ " + formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)");
     }
 
-    public String generateWikiRep(AuthRequest ar, NGWorkspace ngp) throws Exception {
+    public String generateWikiRep(AuthRequest ar, NGWorkspace ngw) throws Exception {
         StringBuilder sb = new StringBuilder();
         Calendar cal = getOwnerCalendar();
 
@@ -905,7 +905,7 @@ public class MeetingRecord extends DOMFace {
         return Calendar.getInstance();
     }
 
-    public String generateMinutes(AuthRequest ar, NGWorkspace ngp) throws Exception {
+    public String generateMinutes(AuthRequest ar, NGWorkspace ngw) throws Exception {
         Calendar cal = getOwnerCalendar();
 
         StringBuilder sb = new StringBuilder();
@@ -920,7 +920,7 @@ public class MeetingRecord extends DOMFace {
         sb.append(getNameAndDate(cal));
         sb.append("|");
         sb.append(ar.baseURL);
-        sb.append(ar.getResourceURL(ngp, "meetingHtml.htm?id="+getId()));
+        sb.append(ar.getResourceURL(ngw, "meetingHtml.htm?id="+getId()));
         sb.append("]");
 
         sb.append("\n\n!!!Agenda");
@@ -967,24 +967,24 @@ public class MeetingRecord extends DOMFace {
             */
 
             for (String actionItemId : ai.getActionItems()) {
-                GoalRecord gr = ngp.getGoalOrNull(actionItemId);
+                GoalRecord gr = ngw.getGoalOrNull(actionItemId);
                 if (gr!=null) {
                     sb.append("\n\n* Action Item: [");
                     sb.append(gr.getSynopsis());
                     sb.append("|");
                     sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
+                    sb.append(ar.getResourceURL(ngw, "task"+gr.getId()+".htm"));
                     sb.append("]");
                 }
             }
             for (String doc : ai.getDocList()) {
-                AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                AttachmentRecord aRec = ngw.findAttachmentByUidOrNull(doc);
                 if (aRec!=null) {
                     sb.append("\n\n* Attachment: [");
                     sb.append(aRec.getNiceName());
                     sb.append("|");
                     sb.append(ar.baseURL);
-                    sb.append(aRec.getEmailURL(ar, ngp));
+                    sb.append(aRec.getEmailURL(ar, ngw));
                     sb.append("]");
                 }
             }
@@ -1132,7 +1132,7 @@ public class MeetingRecord extends DOMFace {
 
     public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
         //don't know how to go straight into unsub mode, so just go to the meeting
-        return getEmailURL(ar, ngw) + "#cmt"+commentId;
+        return ar.getResourceURL(ngw,  "CommentZoom.htm?cid="+commentId);
     }
     public String selfDescription() throws Exception {
         return "(Meeting) "+getName()+" @ " + formatDate(getStartTime(), getOwnerCalendar(), "yyyy-MM-dd HH:mm", "(to be determined)");
@@ -1145,13 +1145,13 @@ public class MeetingRecord extends DOMFace {
         //there is no subscribers for meetings
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
-        MScheduledNotification sn = new MScheduledNotification(ngp, this);
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+        MScheduledNotification sn = new MScheduledNotification(ngw, this);
         if (sn.needsSendingBefore(timeout)) {
             resList.add(sn);
         }
         for (AgendaItem ai : this.getSortedAgendaItems()) {
-            ai.gatherUnsentScheduledNotification(ngp, new EmailContext(this,ai), resList, timeout);
+            ai.gatherUnsentScheduledNotification(ngw, new EmailContext(this,ai), resList, timeout);
         }
     }
 

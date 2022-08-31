@@ -428,6 +428,9 @@ public class AgendaItem extends CommentContainer {
             ac.gatherUnsentScheduledNotification(ngw, meet, resList, timeout);
         }
     }
+    public String getGlobalContainerKey(NGWorkspace ngw) {
+        return "M"+meeting.getId()+"|A"+getId();
+    }
 
 
 }

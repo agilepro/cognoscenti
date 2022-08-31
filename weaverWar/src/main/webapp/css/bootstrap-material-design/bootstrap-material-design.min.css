@@ -1772,14 +1772,8 @@ output {
 	border-radius: 0
 }
 
-.form-control.specialweaver::-moz-placeholder,
-.form-group.specialweaver .form-control.specialweaver::-moz-placeholder {
-	color: #BDBDBD;
-	font-weight: 400
-}
 
-.form-control.specialweaver:-ms-input-placeholder,
-.form-group.specialweaver .form-control.specialweaver:-ms-input-placeholder {
+.form-group.specialweaver .form-control.specialweaver::-moz-placeholder {
 	color: #BDBDBD;
 	font-weight: 400
 }
@@ -1964,12 +1958,7 @@ fieldset[disabled] .form-group.specialweaver .form-control.specialweaver {
 	font-weight: 400
 }
 
-.form-control.specialweaver:-ms-input-placeholder {
-	font-size: 16px;
-	line-height: 1.42857143;
-	color: #BDBDBD;
-	font-weight: 400
-}
+
 
 .form-control.specialweaver::-webkit-input-placeholder {
 	font-size: 16px;
@@ -2009,13 +1998,6 @@ label.control-label {
 }
 
 .form-group.specialweaver .form-control.specialweaver::-moz-placeholder {
-	font-size: 16px;
-	line-height: 1.42857143;
-	color: #BDBDBD;
-	font-weight: 400
-}
-
-.form-group.specialweaver .form-control.specialweaver:-ms-input-placeholder {
 	font-size: 16px;
 	line-height: 1.42857143;
 	color: #BDBDBD;
@@ -2089,12 +2071,6 @@ label.control-label {
 	font-weight: 400
 }
 
-.form-group.specialweaver.form-group.specialweaver-sm .form-control.specialweaver:-ms-input-placeholder {
-	font-size: 11px;
-	line-height: 1.5;
-	color: #BDBDBD;
-	font-weight: 400
-}
 
 .form-group.specialweaver.form-group.specialweaver-sm .form-control.specialweaver::-webkit-input-placeholder {
 	font-size: 11px;
@@ -2163,12 +2139,6 @@ label.control-label {
 	font-weight: 400
 }
 
-.form-group.specialweaver.form-group.specialweaver-lg .form-control.specialweaver:-ms-input-placeholder {
-	font-size: 18px;
-	line-height: 1.3333333;
-	color: #BDBDBD;
-	font-weight: 400
-}
 
 .form-group.specialweaver.form-group.specialweaver-lg .form-control.specialweaver::-webkit-input-placeholder {
 	font-size: 18px;
@@ -2592,12 +2562,8 @@ fieldset[disabled] .navbar .btn-link:hover {
 	color: rgba(255, 255, 255, .84)
 }
 
-.navbar .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar .navbar-form input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-default .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-default .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
+
+
 
 .navbar .navbar-form .form-group.specialweaver input.form-control.specialweaver::-webkit-input-placeholder,
 .navbar .navbar-form input.form-control.specialweaver::-webkit-input-placeholder,
@@ -2648,11 +2614,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 	color: #fff
 }
 
-.navbar.navbar-inverse .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-inverse .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
-	color: #fff
-}
-
 .navbar.navbar-inverse .navbar-form .form-group.specialweaver input.form-control.specialweaver::-webkit-input-placeholder,
 .navbar.navbar-inverse .navbar-form input.form-control.specialweaver::-webkit-input-placeholder {
 	color: #fff
@@ -2690,11 +2651,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 
 .navbar.navbar-primary .navbar-form .form-group.specialweaver input.form-control.specialweaver::-moz-placeholder,
 .navbar.navbar-primary .navbar-form input.form-control.specialweaver::-moz-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
-
-.navbar.navbar-primary .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-primary .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
 	color: rgba(255, 255, 255, .84)
 }
 
@@ -2738,11 +2694,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 	color: rgba(255, 255, 255, .84)
 }
 
-.navbar.navbar-success .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-success .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
-
 .navbar.navbar-success .navbar-form .form-group.specialweaver input.form-control.specialweaver::-webkit-input-placeholder,
 .navbar.navbar-success .navbar-form input.form-control.specialweaver::-webkit-input-placeholder {
 	color: rgba(255, 255, 255, .84)
@@ -2780,11 +2731,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 
 .navbar.navbar-info .navbar-form .form-group.specialweaver input.form-control.specialweaver::-moz-placeholder,
 .navbar.navbar-info .navbar-form input.form-control.specialweaver::-moz-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
-
-.navbar.navbar-info .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-info .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
 	color: rgba(255, 255, 255, .84)
 }
 
@@ -2828,11 +2774,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 	color: rgba(255, 255, 255, .84)
 }
 
-.navbar.navbar-warning .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-warning .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
-
 .navbar.navbar-warning .navbar-form .form-group.specialweaver input.form-control.specialweaver::-webkit-input-placeholder,
 .navbar.navbar-warning .navbar-form input.form-control.specialweaver::-webkit-input-placeholder {
 	color: rgba(255, 255, 255, .84)
@@ -2870,11 +2811,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 
 .navbar.navbar-danger .navbar-form .form-group.specialweaver input.form-control.specialweaver::-moz-placeholder,
 .navbar.navbar-danger .navbar-form input.form-control.specialweaver::-moz-placeholder {
-	color: rgba(255, 255, 255, .84)
-}
-
-.navbar.navbar-danger .navbar-form .form-group.specialweaver input.form-control.specialweaver:-ms-input-placeholder,
-.navbar.navbar-danger .navbar-form input.form-control.specialweaver:-ms-input-placeholder {
 	color: rgba(255, 255, 255, .84)
 }
 

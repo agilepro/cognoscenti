@@ -74,7 +74,7 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         NGWorkspace ngw = ngpi.getWorkspace();
         jo.put("topicName",  topic.getSubject());
         jo.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, "noteZoom"+topic.getId()+".htm"));
-        jo.put("wsURL", ar.baseURL + ar.getDefaultURL(ngpi));
+        jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);
         return jo;
     }

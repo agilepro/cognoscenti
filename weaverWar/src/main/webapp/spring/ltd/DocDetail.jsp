@@ -290,11 +290,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.extendBackgroundTime = function() {
         //does not do anything now, no refresh on this page
     }
-    $scope.setContainerFields = function(newComment) {
+    $scope.tuneNewComment = function(newComment) {
         newComment.containerType = "A";
         newComment.containerID = $scope.docId;
     }
     
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = $scope.docId;
+        newDecision.sourceType = 8;
+    }
     setUpCommentMethods($scope, $http, $modal);
 });
 
@@ -533,9 +537,6 @@ function copyTheLink() {
     </table>
 </div>
 
-<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
 <script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>

@@ -811,8 +811,8 @@ public class NGPageIndex {
     private void initIndexForHashTags(NGContainer container) throws Exception {
         List<String> tagVals = new ArrayList<String>();
         if (container instanceof NGWorkspace) {
-            NGWorkspace ngp = (NGWorkspace) container;
-            ngp.findTags(tagVals);
+            NGWorkspace ngw = (NGWorkspace) container;
+            ngw.findTags(tagVals);
         }
         List<NGTerm> hashTagsTmp = new ArrayList<NGTerm>();
         for (String hashVal : tagVals) {

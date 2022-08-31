@@ -262,16 +262,16 @@ public class ReminderRecord extends DOMFace
         return sendNotification;
     }
 
-    public void createHistory(AuthRequest ar, NGWorkspace ngp, int event,
+    public void createHistory(AuthRequest ar, NGWorkspace ngw, int event,
         String comment) throws Exception
     {
-        HistoryRecord.createHistoryRecord(ngp,getId(),
+        HistoryRecord.createHistoryRecord(ngw,getId(),
             HistoryRecord.CONTEXT_TYPE_DOCUMENT,
             getModifiedDate(), event, ar, comment);
     }
 
 
-    public void writeReminderEmailBody(AuthRequest ar, NGWorkspace ngp) throws Exception {
+    public void writeReminderEmailBody(AuthRequest ar, NGWorkspace ngw) throws Exception {
         String userName = getModifiedBy();
         AddressListEntry ale = new AddressListEntry(userName);
 
@@ -279,12 +279,12 @@ public class ReminderRecord extends DOMFace
         ar.write("<p>From: ");
         ale.writeLink(ar);
         ar.write(", &nbsp; Workspace: ");
-        ngp.writeContainerLink(ar, 100);
+        ngw.writeContainerLink(ar, 100);
         ar.write("</p>\n");
         ar.write("<p>You have been invited to upload a file so that it can ");
         ar.write("be shared (in a controlled manner) with others in ");
         ar.write("the workspace \"");
-        ar.writeHtml(ngp.getFullName());
+        ar.writeHtml(ngw.getFullName());
         ar.write("\". Uploading the file will stop the email reminders. </p>\n<hr/>");
         ar.write("\n<p><b>Instructions:</b> ");
         ar.writeHtml(getInstructions());
@@ -293,17 +293,17 @@ public class ReminderRecord extends DOMFace
         ar.write("web browser to access the page for uploading the file:</p>");
         ar.write("\n<p><a href=\"");
         ar.write(ar.baseURL);
-        ar.write(ar.getResourceURL(ngp, ""));
+        ar.write(ar.getResourceURL(ngw, ""));
         ar.write("remindAttachment.htm?");
-        ar.write(AccessControl.getAccessReminderParams(ngp, this));
+        ar.write(AccessControl.getAccessReminderParams(ngw, this));
         ar.write("&rid=");
         ar.writeURLData(getId());
         ar.write("\">");
 
         ar.write(ar.baseURL);
-        ar.write(ar.getResourceURL(ngp, ""));
+        ar.write(ar.getResourceURL(ngw, ""));
         ar.write("remindAttachment.htm?");
-        ar.write(AccessControl.getAccessReminderParams(ngp, this));
+        ar.write(AccessControl.getAccessReminderParams(ngw, this));
         ar.write("&rid=");
         ar.writeURLData(getId());
 

@@ -29,25 +29,33 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.mail.Address;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.UIDFolder;
+import javax.mail.internet.MimeBodyPart;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONException;
 
 public class EmailListener extends TimerTask{
 
     private static EmailListener singletonListener = null;
-
+    private MongoDB db;
+    
     public static Exception threadLastCheckException = null;
 
     //expressed in milliseconds
@@ -63,21 +71,23 @@ public class EmailListener extends TimerTask{
     //TODO: this can probably be eliminated, and replaced with the PAUSE/REINIT model
     public static boolean propertiesChanged = false;
     public static long lastFolderRead;
+    private Cognoscenti cog;
 
-    private EmailListener() throws Exception
-    {
+    private EmailListener(Cognoscenti _cog) throws Exception {
         this.ar = AuthDummy.serverBackgroundRequest();
         this.emailPropFile = this.ar.getCogInstance().getConfig().getFile("EmailNotification.properties");
         setEmailProperties(emailPropFile);
+        db = new MongoDB();
+        cog = _cog;
     }
 
     /**
      * This is an initialization routine, and should only be called once, when the
      * server starts up.  There are some error checks to make sure that this is the case.
      */
-     public static void initListener(Timer timer) throws Exception
+     public static void initListener(Timer timer, Cognoscenti _cog) throws Exception
      {
-         singletonListener = new EmailListener();
+         singletonListener = new EmailListener(_cog);
          String user = emailProperties.getProperty("mail.pop3.user");
          if (user==null || user.length()==0) {
              System.out.println("Email listener: no configuration for mail.pop3.user");
@@ -268,7 +278,7 @@ public class EmailListener extends TimerTask{
     private void handlePOP3Folder() throws Exception {
         Folder popFolder = null;
         try {
-
+            System.out.println("WEAVERPOP handlePOP3Folder "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             popFolder = connectToMailServer();
 
             if (!popFolder.isOpen()) {
@@ -284,24 +294,51 @@ public class EmailListener extends TimerTask{
             fp.add(UIDFolder.FetchProfileItem.UID);
             popFolder.fetch(messages, fp);
 
+            System.out.println("WEAVERPOP handlePOP3Folder found "+messages.length+" messages.");
             for (int i = 0; i < messages.length; i++) {
                 Message message = messages[i];
-
+                String subject = message.getSubject();
+                
                 // most of the POP mail servers/providers does not support flags
                 // for other then delete
                 if (message.isSet(Flag.DELETED)) {
                     continue;
                 }
-
-                String signature = message.getSubject() + message.getSentDate();
+                
+                //this just makes sure we avoid multiple processing when DELETE is not working
+                String signature = subject + message.getSentDate();
                 if (alreadyProcessed.contains(signature)) {
                     //skip processing of messages already seen
                     continue;
                 }
                 alreadyProcessed.add(signature);
 
+                
+                
+                MailInst msg = new MailInst();
+                msg.setSiteKey("~");
+                msg.setWorkspaceKey("~");
+                msg.setSubject(subject);
+                msg.setStatus(EmailRecord.RECEIVED);
+                
+                //returns an array, but keep just the first one if any
+                Address[] from = message.getFrom();
+                if (from!=null) {
+                    for (Address oneFrom : from) {
+                        msg.setFromAddress(oneFrom.toString());
+                        break;
+                    }
+                }
+                
+                parseAndSetBody(msg, message);
+                parseLinkKey(msg, subject);
+                
+                System.out.println("WEAVERPOP handlePOP3Folder message "+i+"-----------------\n"+msg.getListableJSON().toString(2)+"\n-----------------");
+
+
                 try {
-                    processEmailMsg(message);
+                    processEmailMsg(msg);
+                    message.setFlag(Flag.DELETED, true);
                 }
                 catch (Exception e) {
                     //failure of one message should not stop the processing of other email messages
@@ -324,25 +361,163 @@ public class EmailListener extends TimerTask{
             }
         }
     }
+    
+    private MailInst parseLinkKey(MailInst msg, String subject) throws Exception {
+        
+        int bracketPos = subject.indexOf("[$");
+        if (bracketPos < 0) {
+            System.out.println("WEAVERPOP ******* FAIL: No start token in subject: "+subject);
+            return null;
+        }
+        int endPos = subject.indexOf("]", bracketPos);
+        if (endPos<0) {
+            System.out.println("WEAVERPOP ******* FAIL: No end token in subject: "+subject);
+            return null;
+        }
+        String emailLocator = subject.substring(bracketPos+2, endPos);
+        
+        long oldMsgId = MailInst.getCreateDateFromLocator(emailLocator);
+        
+        MailInst oldMail = EmailSender.findEmailById(oldMsgId);
+        
+        if (oldMail==null) {
+            System.out.println("WEAVERPOP ********** FAIL: got email reply, but original email not found: "+oldMsgId);
+            return null;
+        }
+        
 
-    private void processEmailMsg(Message message) throws Exception {
+        System.out.println("WEAVERPOP  Found old email and processing: "+emailLocator);
+        msg.setCommentContainer(oldMail.getCommentContainer());
+        msg.setSiteKey(oldMail.getSiteKey());
+        msg.setWorkspaceKey(oldMail.getWorkspaceKey());
+        return oldMail;
+    }
+    
+    private void parseAndSetBody(MailInst msg, Message message) throws Exception {
+        String body = null;
+        Object messageContent = message.getContent();
+        if (!(messageContent instanceof Multipart)) {
+            System.out.println("WEAVERPOP ********** FAIL: unknown message type: "+messageContent.getClass().getCanonicalName());
+            msg.setBodyText("Message received had an unknown message type: "+messageContent.getClass().getCanonicalName());
+            return;
+        }
+        Multipart multipart = (Multipart) messageContent;
+        int count = multipart.getCount();
+        for (int ii=0; ii<count; ii++) {
+            BodyPart bp = multipart.getBodyPart(ii);
+            if (!(bp instanceof MimeBodyPart))  {
+                System.out.println("WEAVERPOP ********** FAIL: unknown body part type: "+bp.getClass().getCanonicalName());
+                continue;
+            }
+            MimeBodyPart mbp = (MimeBodyPart) bp;
+            Object mbpContent = mbp.getContent();
+            if (!(mbpContent instanceof String)) {
+                System.out.println("WEAVERPOP ********** FAIL: unknown body part content type: "+mbpContent.getClass().getCanonicalName());
+                continue;
+            }
+            body = (String) mbpContent;
+        }
+        
+        if (body==null) {
+            System.out.println("WEAVERPOP ********** FAIL: message did not have any body parts: ");
+            msg.setBodyText("Message received did not have any body parts: ");
+            return;
+        }
+        
+        //System.out.println("WEAVERPOP DUMP body text\n"+body+"\n=========================");
+        
+        //This is currently the text that we put at the start of the bottom of the comment message
+        //if we find this exact phrase, then delete it and everything after it.
+        //we can be somewhat confident that everything after this is not user text.
+        String trailerBlock = "<b>ACTION: <a href";
+        int trailerPos = body.indexOf(trailerBlock);
+        if (trailerPos>0) {
+            body = body.substring(0,trailerPos);
+        }
+        trailerBlock = "<div style=\"color:grey;font-weight:bold;\">ACTION:";
+        trailerPos = body.indexOf(trailerBlock);
+        if (trailerPos>0) {
+            body = body.substring(0,trailerPos);
+        }
+        trailerBlock = "<div id=\"trimPoint\"";
+        trailerPos = body.indexOf(trailerBlock);
+        if (trailerPos>0) {
+            body = body.substring(0,trailerPos);
+        }
+         
+        
+        msg.setBodyText(body);
+    }
+
+    private void processEmailMsg(MailInst msg) throws Exception {
         try{
 
-            storeInboundMsg(message);
-            message.setFlag(Flag.DELETED, true);
-
+            storeInboundMsg(msg);
+            
+            String siteKey = msg.getSiteKey();
+            String workspaceKey = msg.getWorkspaceKey();
+            if (siteKey==null || siteKey.length()==0) {
+                System.out.println("WEAVERPOP: email did not have a site key");
+                return;
+            }
+            if (workspaceKey==null || workspaceKey.length()==0) {
+                System.out.println("WEAVERPOP: email did not have a workspace key");
+                return;
+            }
+            NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey,workspaceKey);
+            if (ngpi==null) {
+                System.out.println("WEAVERPOP: could not find workspace with "+siteKey+" and "+workspaceKey);
+                return;
+            }
+            NGWorkspace ngw = ngpi.getWorkspace();
+            String containerKey = msg.getCommentContainer();
+            if (containerKey==null) {
+                System.out.println("WEAVERPOP: did not find  a containerKey");
+                return;
+            }
+            
+            CommentContainer cc = CommentContainer.findContainerByKey(ngw, containerKey);
+            if (cc == null) {
+                System.out.println("WEAVERPOP: did not find container with "+containerKey);
+                return;
+            }
+            
+            String userEmail = msg.getFromAddress();
+            if (userEmail==null) {
+                System.out.println("WEAVERPOP: did not find the from address from the message");
+                return;
+            }
+            
+            UserProfile hintedUser = cog.getUserManager().lookupUserByAnyId(userEmail);
+            if (hintedUser == null) {
+                return;
+            }
+            ar.setPossibleUser(hintedUser);
+            ar.nowTime = System.currentTimeMillis();
+            
+            CommentRecord cr = cc.addComment(ar);
+            String markdown = HtmlToWikiConverter.htmlToWiki(msg.getBodyText());
+            cr.setContent(markdown);
+            cr.setState(CommentRecord.COMMENT_STATE_CLOSED);
+                
+            ngw.saveFile(ar, "received email");
+            //this should re-send the email back out again to the others.
+            
+            
         }catch (Exception e) {
             //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
-            throw new NGException("nugen.exception.could.not.process.email", new Object[]{message.getSubject()},e);
+            throw new JSONException("Unable to process email message subject={0}", e, msg.getSubject());
+        }
+        finally {
+            NGPageIndex.clearLocksHeldByThisThread();
         }
     }
 
-    private void storeInboundMsg(Message message) throws Exception {
-        File userFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
-        File inboundMailPath = new File(userFolder, "inboundMail.json");
-        //MailFile inboundMail = MailFile.readOrCreate(inboundMailPath, 3);
-        //inboundMail.storeMessage(message);
-        //inboundMail.save();
+    private void storeInboundMsg(MailInst message) throws Exception {
+
+        System.out.println("WEAVERPOP storeInboundMsg "+message.toString());
+        
+        db.createRecord(message.getJSON());
     }
 
 

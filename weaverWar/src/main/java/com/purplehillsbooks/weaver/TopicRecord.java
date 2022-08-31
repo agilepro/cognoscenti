@@ -184,76 +184,6 @@ public class TopicRecord extends CommentContainer {
     }
 
 
-    /**
-    * Each topic can be controlled as being public, member, or private,
-    * so that it can be moved over the course of lifespan.  When it is
-    * private, it can be seen only by the owner.
-    *
-    * The default setting inherits view from the container.  This is really
-    * a migration mode which should be purposefully used.  Data from
-    * before this setting will have 0, and thus will be public if in a
-    * public comments section, and member only if in a member only section.
-    * New comments should be created specifically with a visibility that
-    * is non-zero, and when edited the visibility should be set appropriately.
-    * Ideally, the concept of a "public comments" section will disappear,
-    * there will be one pool of comments with visibility set here.
-    *
-    * These constants declared in SectionDef
-    * SectionDef.PUBLIC_ACCESS = 1;
-    * SectionDef.MEMBER_ACCESS = 2;
-    * SectionDef.AUTHOR_ACCESS = 3;
-    * SectionDef.PRIVATE_ACCESS = 4;
-    *
-    *
-    public int getVisibility() {
-        return (int) safeConvertLong(getScalar("visibility"));
-    }
-    public void setVisibility(int newData) {
-        //the "anonymous" case must be converted to public
-        if (newData<1) {
-            newData=1;
-        }
-        else if (newData>4) {
-            newData=2;
-        }
-        setScalar("visibility", Integer.toString(newData));
-    }
-    */
-    
-    
-    /**
-     * Visibility value of 1 means that this topic is publicly viewable.
-     * This convenience method makes the test for this easy.
-     * Also, deleted topics are never considered public (for obvious reasons)
-     *
-    public boolean isPublic() {
-        return !isDeleted();
-    }
-    */
-
-    /**
-    * given a display level and a user (AuthRequest) tells whether
-    * this topic is to be displayed at that level.  Note this is
-    * an "exact" match to a level, not a "greater than" match.
-    *
-    public boolean isVisible(AuthRequest ar, int displayLevel)
-        throws Exception
-    {
-        int visibility = getVisibility();
-        if (visibility != displayLevel)
-        {
-            return false;
-        }
-        if (visibility != 4)
-        {
-            return true;
-        }
-        // must test ownership
-        return (ar.getUserProfile().hasAnyId(getOwner()));
-    }
-    */
-
-
 
 
     /**
@@ -399,63 +329,6 @@ public class TopicRecord extends CommentContainer {
         return newChild;
     }
 
-
-    /**
-    * output a HTML link to this topic, truncating the name (subject)
-    * to maxlength if it is longer than that.
-    *
-    public void writeLink(AuthRequest ar, int maxLength) throws Exception {
-        ar.write("<a href=\"");
-        ar.write(ar.retPath);
-        ar.write("\">");
-        String name = getSubject();
-        if (name.length()>maxLength)
-        {
-            name = name.substring(0,maxLength);
-        }
-        ar.writeHtml(name);
-        ar.write("</a>");
-    }
-    */
-
-
-    /*
-    public void findTags(List<String> v) throws Exception {
-        String tv = getWiki();
-        LineIterator li = new LineIterator(tv);
-        while (li.moreLines())
-        {
-            String thisLine = li.nextLine();
-            scanLineForTags(thisLine, v);
-        }
-    }
-    */
-
-    /*
-    protected void scanLineForTags(String thisLine, List<String> v) {
-        int hashPos = thisLine.indexOf('#');
-        int startPos = 0;
-        int last = thisLine.length();
-        while (hashPos >= startPos) {
-            hashPos++;
-            int endPos = WikiConverter.findIdentifierEnd(thisLine, hashPos);
-            if (endPos > hashPos+2) {
-                if (endPos >= last) {
-                    //this includes everything to the end of the string, and we are done
-                    v.add(thisLine.substring(hashPos));
-                    return;
-                }
-
-                v.add(thisLine.substring(hashPos, endPos));
-            }
-            else if (endPos >= last) {
-                return;
-            }
-            startPos = endPos;
-            hashPos = thisLine.indexOf('#', startPos);
-        }
-    }
-    */
 
 
     public static void sortNotesInPinOrder(List<TopicRecord> v) {
@@ -616,27 +489,6 @@ public class TopicRecord extends CommentContainer {
      }
 
 
-     /*
-      * getAccessRoles retuns a list of NGRoles which have access to this document.
-      * Admin role and Member role are assumed automatically, and are not in this list.
-      * This list contains only the extra roles that have access for non-members.
-      */
-     /*
-     public List<NGRole> getAccessRoles(NGContainer ngp) throws Exception {
-         List<NGRole> res = new ArrayList<NGRole>();
-         List<String> roleNames = getVector("accessRole");
-         for (String name : roleNames) {
-             NGRole aRole = ngp.getRole(name);
-             if (aRole!=null) {
-                 if (!res.contains(aRole)) {
-                     res.add(aRole);
-                 }
-             }
-         }
-         return res;
-     }
-     */
-
 
      /**
       * check if a particular role has access to the particular topic.
@@ -774,10 +626,10 @@ public class TopicRecord extends CommentContainer {
        * get the labels on a document -- only labels valid in the project,
        * and no duplicates
        */
-      public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
+      public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
           List<NGLabel> res = new ArrayList<NGLabel>();
           for (String name : getVector("labels")) {
-              NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+              NGLabel aLabel = ngw.getLabelRecordOrNull(name);
               if (aLabel!=null) {
                   if (!res.contains(aLabel)) {
                       res.add(aLabel);
@@ -907,7 +759,7 @@ public class TopicRecord extends CommentContainer {
           setLastEdited(ar.nowTime);
       }
 
-      private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
+      private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, TopicRecord note, OptOutAddr ooa,
               UserProfile commenterProfile, EmailSender mailFile) throws Exception  {
           if (!ooa.hasEmailAddress()) {
               return;  //ignore users without email addresses
@@ -916,26 +768,27 @@ public class TopicRecord extends CommentContainer {
           AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
           clone.retPath = ar.baseURL;
 
+          MailInst mailMsg = ngw.createMailInst();
+          
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
-          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this)
-                   + "?" + AccessControl.getAccessTopicParams(ngp, this)
+          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, this)
+                   + "?" + AccessControl.getAccessTopicParams(ngw, this)
                    + "&emailId=" +URLEncoder.encode(ooa.getEmail(), "UTF-8"));
-          data.put("topic", this.getJSONWithMarkdown(ngp));
-          data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
-          data.put("wsName", ngp.getFullName());
+          data.put("topic", this.getJSONWithMarkdown(ngw));
+          data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
+          data.put("wsName", ngw.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
           EmailContext emailContext = new EmailContext(note);
-          String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngp, 0)
+          String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngw, 0, mailMsg)
                   + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
           data.put("replyURL", replyUrl);
 
-          AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
+          AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 
           ChunkTemplate.streamAuthRequest(clone.w, ar, "NewTopic", data, commenterProfile.getCalendar());
           clone.flush();
 
-          MailInst mailMsg = ngp.createMailInst();
           mailMsg.setSubject("New Topic: "+note.getSubject());
           mailMsg.setBodyText(body.toString());
 
@@ -946,7 +799,7 @@ public class TopicRecord extends CommentContainer {
 /////////////////////////// JSON ///////////////////////////////
 
 
-      public JSONObject getJSON(NGWorkspace ngp) throws Exception {
+      public JSONObject getJSON(NGWorkspace ngw) throws Exception {
           JSONObject thisNote = new JSONObject();
           thisNote.put("id",        getId());
           thisNote.put("subject",   getSubject());
@@ -962,7 +815,7 @@ public class TopicRecord extends CommentContainer {
           extractAttributeBool(thisNote, "suppressEmail");
 
           JSONObject labelMap = new JSONObject();
-          for (NGLabel lRec : getLabels(ngp) ) {
+          for (NGLabel lRec : getLabels(ngw) ) {
               labelMap.put(lRec.getName(), true);
           }
           thisNote.put("labelMap",      labelMap);
@@ -998,8 +851,8 @@ public class TopicRecord extends CommentContainer {
          return noteData;
      }
      
-     public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngp) throws Exception {
-         JSONObject thisNote = getJSON(ngp);
+     public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngw) throws Exception {
+         JSONObject thisNote = getJSON(ngw);
          String contentUrl = urlRoot + "note" + getId() + "/"
                      + SectionWiki.sanitize(getSubject()) + ".txt?lic="+license.getId();
          thisNote.put("content", contentUrl);
@@ -1213,5 +1066,10 @@ public class TopicRecord extends CommentContainer {
         repliesMade = newRepliesMade;
         repliesNeeded = newRepliesNeeded;
     }
+    
+    public String getGlobalContainerKey(NGWorkspace ngw) {
+        return "T"+getId();
+    }
+
 
 }

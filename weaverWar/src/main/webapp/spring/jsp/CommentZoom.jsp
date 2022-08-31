@@ -21,7 +21,7 @@
     CommentRecord selectedComment = ngw.getCommentOrNull(cid);
     JSONObject comment = new JSONObject();
     if (selectedComment!=null) {
-        comment = selectedComment.getHtmlJSON();
+        comment = selectedComment.getCompleteJSON();
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -40,7 +40,6 @@
 
     JSONArray allLabels = ngw.getJSONLabels();
     boolean canComment = ar.canUpdateWorkspace();
-
 
 
 /* NOTES RECORD PROTOTYPE
@@ -73,6 +72,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.comment = <%comment.write(out,2,4);%>;
+    
+    $scope.containerTypeName = "Discussion Topic";
+    $scope.containerTypeNumber = 4;
+    if ($scope.comment.containerType == "A") {
+        $scope.containerTypeName = "Document";
+        $scope.containerTypeNumber = 8;
+    }
+    if ($scope.comment.containerType == "M") {
+        $scope.containerTypeName = "Meeting";
+        $scope.containerTypeNumber = 7;
+    }
+        
     
     $scope.commentExists = <%=selectedComment!=null%>;
     $scope.canComment = <%=canComment%>;
@@ -111,12 +122,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.defaultProposalAssignees = function() {
         return [];
     }
-    $scope.setContainerFields = function(newComment) {
+    
+    $scope.tuneNewComment = function(newComment) {
         newComment.containerType = $scope.comment.containerType;
         newComment.containerID = $scope.comment.containerID;
     }
-    
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = cmt.containerID;
+        newDecision.sourceType = 4;
+        if (cmt.containerType=="M") {
+            newDecision.sourceType = 7;
+        }
+        if (cmt.containerType=="D") {
+            newDecision.sourceType = 8;
+        }
+    }
+    $scope.refreshCommentContainer = function() {
+        refreshCommentList();
+    }
     setUpCommentMethods($scope, $http, $modal);
+    
+    
     $scope.deleteComment = function(cmt) {
         var newCmt = {};
         newCmt.time = $scope.cid;
@@ -198,11 +224,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
       <table class="table" style="max-width:800px" ng-show="commentExists">
         <tr>
-          <td>Container Key</td>
+          <td>{{containerTypeName}} Key</td>
           <td>{{comment.containerType}}:{{comment.containerID}}</td>
         </tr>
         <tr>
-          <td>Container Name</td>
+          <td>{{containerTypeName}} Name</td>
           <td><a href="{{containerLink(comment)}}">{{comment.containerName}}</a></td>
         </tr>
         <tr ng-show="comment.replyTo">

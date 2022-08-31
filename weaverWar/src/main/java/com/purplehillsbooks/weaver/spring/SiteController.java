@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.StreamHelper;
 
 @Controller
@@ -614,9 +615,13 @@ public class SiteController extends BaseController {
             if (templateFile.exists()) {
                 templateFile.delete();
             }
-            StreamHelper.copyStreamToFile(ar.req.getInputStream(), templateFile);
-            ar.write("Template saved correctly: "+templateName);
-            ar.flush();
+            MemFile mf = new MemFile();
+            mf.fillWithInputStream(ar.req.getInputStream());
+            if (mf.totalBytes()>5) {
+                mf.outToFile(templateFile);
+                ar.write("Template saved correctly: "+templateName);
+                ar.flush();
+            }
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to put the chunk template.", ex);

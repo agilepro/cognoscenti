@@ -273,7 +273,12 @@ public class WikiToPDF
             //determine the best name
             String defaultName = ngw.getFullName();
             if (allTopicPages.size()==1) {
+                //if exactly one topic is chosen, then use the name of the topic
                 defaultName = allTopicPages.get(0).getSubject();
+            }
+            else if (meetings.size()==1) {
+                //if exactly one meeting is chosen, then use the name of the meeting
+                defaultName = meetings.get(0).getName();
             }
             defaultName = SectionUtil.sanitize(defaultName) + ".pdf";
             

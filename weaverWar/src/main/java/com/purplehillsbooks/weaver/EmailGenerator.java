@@ -288,9 +288,10 @@ public class EmailGenerator extends DOMFace {
             return;
         }
 
-        String[] subjAndBody = generateEmailBody(ar, ngw, ooa);
-        String subject = subjAndBody[0];
-        String entireBody = subjAndBody[1];
+        MailInst mailMsg = ngw.createMailInst();
+        generateEmailBody(ar, ngw, ooa, mailMsg);
+        String subject = mailMsg.getSubject();
+        String entireBody = mailMsg.getBodyText();
 
         MeetingRecord meeting = getMeetingIfPresent(ngw);
 
@@ -326,7 +327,6 @@ public class EmailGenerator extends DOMFace {
             attachments.add(icsFile);
         }
 
-        MailInst mailMsg = ngw.createMailInst();
         mailMsg.setSubject(subject);
         mailMsg.setBodyText(entireBody);
         mailMsg.setAttachmentFiles(attachments);
@@ -354,9 +354,7 @@ public class EmailGenerator extends DOMFace {
         return meeting;
     }
 
-    public String[] generateEmailBody(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa) throws Exception {
-
-        String[] ret = new String[2];
+    public void generateEmailBody(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa, MailInst mail) throws Exception {
 
         TopicRecord noteRec = ngw.getNoteByUidOrNull(getNoteId());
         MemFile bodyChunk = new MemFile();
@@ -407,14 +405,17 @@ public class EmailGenerator extends DOMFace {
 
         JSONObject data = getJSONForTemplate(clone, ngw, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
-
+        mail.addFieldsForRender(data);
         writeNoteAttachmentEmailBody2(clone, ooa, data);
         clone.flush();
-        ret[1] = bodyChunk.toString() + meetingString;
+        String body = bodyChunk.toString() + meetingString;
+        mail.setBodyText(body);
 
-        ret[0] = ChunkTemplate.stringIt(getSubject(), data, ooa.getCalendar());
-
-        return ret;
+        String subject = ChunkTemplate.stringIt(getSubject(), data, ooa.getCalendar());
+        if (subject.length()>50) {
+            subject = subject.substring(0,50);
+        }
+        mail.setSubject(subject);
     }
 
     private static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
@@ -494,9 +495,11 @@ public class EmailGenerator extends DOMFace {
             if (includeBody) {
                 data.put("includeTopic", "yes");
             }
+            /*
             EmailContext emailContext = new EmailContext(selectedNote);
             data.put("replyUrl", ar.baseURL + emailContext.getReplyURL(ar, ngw, ar.nowTime)
             + "&emailId=" + URLEncoder.encode(ownerProfile.getUniversalId(), "UTF-8"));
+            */
         }
 
         if (meeting!=null) {

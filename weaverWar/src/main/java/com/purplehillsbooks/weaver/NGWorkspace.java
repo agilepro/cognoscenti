@@ -522,17 +522,11 @@ public class NGWorkspace extends NGPage {
         //initialize to some time next year
         long yearFromNow = System.currentTimeMillis() + 31000000000L;
         long nextTime = yearFromNow;
-        for (EmailRecord er : getAllEmail()) {
-            if (er.statusReadyToSend()) {
-                //there is no scheduled time for sending email .. it just is scheduled
-                //immediately and supposed to be sent as soon as possible after that
-                //so return now minus 1 minutes
-                long reminderTime = System.currentTimeMillis()-60000;
-                if (reminderTime < nextTime) {
-                    //Workspace has email that needs to be collected
-                    nextTime = reminderTime;
-                }
-            }
+        if (getAllEmail().size()>0) {
+            //if any email is found in the project, then immediately mark it as
+            //needing an action.   The background email processing will move all email to DB.
+            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN PROJECT: "+this.getCombinedKey());
+            return System.currentTimeMillis()-100000;
         }
 
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
@@ -559,6 +553,7 @@ public class NGWorkspace extends NGPage {
         if (allEmail.size()==0) {
             return false;
         }
+        System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL BEING REMOVED FROM WORKSPACE: "+this.getFullName());
         for (EmailRecord er : allEmail) {
             String fullFromAddress = er.getFromAddress();
             AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
@@ -575,7 +570,6 @@ public class NGWorkspace extends NGPage {
                 oaa.prepareInternalMessage(cog);
                 inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
                 inst.setLastSentDate(er.getLastSentDate());
-                inst.setCreateDate(sender.getUniqueTime());
                 ArrayList<File> attachments = new ArrayList<File>();
                 for (String id : er.getAttachmentIds()) {
                     File path = getAttachmentPathOrNull(id);
@@ -979,6 +973,36 @@ public class NGWorkspace extends NGPage {
         }
         return com;
     }
+    public CommentContainer getCommentContainer(long cid) throws Exception {
+        for (TopicRecord note : this.getAllDiscussionTopics()) {
+            for (CommentRecord comm : note.getComments()) {
+                if (comm.getTime()==cid) {
+                    return note;
+                }
+            }
+        }
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    if (comm.getTime()==cid) {
+                        return ai;
+                    }
+                }
+            }
+        }
+        for (AttachmentRecord doc : this.getAllAttachments()) {
+            for (CommentRecord comm : doc.getComments()) {
+                if (comm.getTime()==cid) {
+                    return doc;
+                }
+            }
+        }
+        return null;
+    }
+    
+    
+    
+    
     public List<CommentRecord> getAllComments() throws Exception {
         List<CommentRecord> res = new ArrayList<CommentRecord>();
         for (TopicRecord note : this.getAllDiscussionTopics()) {
@@ -1326,5 +1350,9 @@ public class NGWorkspace extends NGPage {
         }
         return false;
     }
+    public String getGlobalContainerKey() {
+        return "S"+getSiteKey()+"|W"+getKey();
+    }
+
 
 }

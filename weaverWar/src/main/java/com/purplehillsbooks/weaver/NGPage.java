@@ -319,6 +319,7 @@ public abstract class NGPage extends ContainerCommon {
             if (er.statusReadyToSend()) {
                 return true;
             }
+            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN PROJECT: "+this.getCombinedKey());
         }
         return false;
     }

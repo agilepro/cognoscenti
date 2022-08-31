@@ -20,7 +20,7 @@
 
 
 <p><a href="">{$requester.name|html}</a> has requested to join the role
-<b>'{$roleName}'</b> in the workspace '<a href="{$wsURL}">{$wsName|html}</a>'.   
+<b>'{$roleName}'</b> in the workspace '<a href="{$wsBaseURL}FrontPage.htm">{$wsName|html}</a>'.   
 </p>
 
 <p>

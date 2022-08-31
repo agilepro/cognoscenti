@@ -33,7 +33,7 @@ public class DecisionRecord extends DOMFace {
     //these codes match those for History record
     public final static int SOURCE_TYPE_TOPIC        = 4;
     public final static int SOURCE_TYPE_MEETING      = 7;
-    public final static int SOURCE_TYPE_DECISION     = 8;
+    public final static int SOURCE_TYPE_DOCUMENT     = 8;
 
     public DecisionRecord(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
@@ -82,8 +82,7 @@ public class DecisionRecord extends DOMFace {
     }
 
     public String getSourceUrl(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return HistoryRecord.lookUpResourceURL(ar, ngw, getSourceType(), getSourceId())
-                + "#cmt" + getSourceCmt();
+        return ar.getResourceURL(ngw, "CommentZoom.htm?cid="+getSourceCmt());
     }
 
 
@@ -167,7 +166,7 @@ public class DecisionRecord extends DOMFace {
         // and old value,  or by setting the decision value outright.
         // Only on of these should be used generally.
         if (!mergeIfPresent(decisionObj, "decision")) {
-        	updateAttributeString("decision", decisionObj);
+        	updateScalarString("decision", decisionObj);
         }
 
         updateAttributeLong("timestamp", decisionObj);

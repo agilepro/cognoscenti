@@ -182,57 +182,6 @@ public class ProcessRecord extends BaseRecord
     }
 
 
-    /*
-    public void fillInWfxmlProcess(Document doc, Element processEle, NGWorkspace ngp, String processurl)
-        throws Exception
-    {
-        if (doc == null || processEle == null) {
-            return;
-        }
-
-        processEle.setAttribute("id", getId());
-
-        DOMUtils.createChildElement(doc, processEle, "key", processurl);
-        DOMUtils.createChildElement(doc, processEle, "display", "FrontPage.htm");
-        DOMUtils.createChildElement(doc, processEle, "synopsis", getSynopsis());
-        DOMUtils.createChildElement(doc, processEle, "description", getDescription());
-        DOMUtils.createChildElement(doc, processEle, "priority", String.valueOf(getPriority()));
-        DOMUtils.createChildElement(doc, processEle, "duedate", UtilityMethods.getXMLDateFormat(getDueDate()));
-        DOMUtils.createChildElement(doc, processEle, "startdate", UtilityMethods.getXMLDateFormat(getStartDate()));
-        DOMUtils.createChildElement(doc, processEle, "enddate", UtilityMethods.getXMLDateFormat(getEndDate()));
-
-        LicensedURL[] parentlist = getLicensedParents();
-        Element element_parents = DOMUtils.createChildElement(doc, processEle, "parentprocesses");
-        for(int i=0; i<parentlist.length; i++)
-        {
-            String parent = parentlist[i].url;
-            //we DON'T include the user name and password here ... that is kept private
-            DOMUtils.createChildElement(doc, element_parents, "url", parent);
-        }
-
-        DOMUtils.createChildElement(doc, processEle, "state", Integer.toString(getState()));
-
-        List<HistoryRecord> histRecs = ngp.getAllHistory();
-        if (histRecs.size()>0)
-        {
-            Element histEle = DOMUtils.createChildElement(doc, processEle, "history");
-            DOMUtils.createChildElement(doc, histEle, "processurl", processurl);
-
-            for (HistoryRecord history : histRecs) {
-                ResourceSection.fillInWfxmlHistory(history, doc, histEle);
-            }
-        }
-
-        Element actsEle = DOMUtils.getOrCreateChild(doc, processEle, "activities");
-        for (GoalRecord gr : ngp.getAllGoals())
-        {
-            Element actEle = DOMUtils.createChildElement(doc, actsEle, "activity");
-            gr.fillInWfxmlActivity(doc, actEle, processurl);
-        }
-
-    }
-    */
-
  
 
 

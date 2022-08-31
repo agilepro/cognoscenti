@@ -194,22 +194,22 @@ public class SearchManager {
             }
             
             
-            NGWorkspace ngp = ngpi.getWorkspace();
-            if (ngp.isDeleted()) {
+            NGWorkspace ngw = ngpi.getWorkspace();
+            if (ngw.isDeleted()) {
                 //skip all deleted workspaces in case different from above
                 continue;
             }
 
-            String workspaceKey = ngp.getKey();
+            String workspaceKey = ngw.getKey();
             //we can't tolerate any hyphens in the page key
             if (workspaceKey.startsWith("-")) {
                 //forget it, we simply can't index pages that start with hyphen
                 System.out.println("SearchManager - can not handle workspace ("+workspaceKey+")");
                 continue;
             }
-            String siteKey = ngp.getSiteKey();
-            String workspaceName = ngp.getFullName();
-            String siteName = ngp.getSite().getFullName();
+            String siteKey = ngw.getSiteKey();
+            String workspaceName = ngw.getFullName();
+            String siteName = ngw.getSite().getFullName();
             
             System.out.println("SearchManager - Updating workspace "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
             
@@ -232,7 +232,7 @@ public class SearchManager {
                     doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
                     doc.add(new Field("PAGENAME", workspaceName, TextField.TYPE_STORED));
                     doc.add(new Field("ACCTNAME", siteName, TextField.TYPE_STORED));
-                    doc.add(new Field("MODTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
+                    doc.add(new Field("MODTIME", Long.toString(ngw.getLastModifyTime()), TextField.TYPE_STORED));
                     doc.add(new Field("ITEMID", "$", TextField.TYPE_STORED));
                     doc.add(new Field("ITEMNAME", max50(workspaceName), TextField.TYPE_STORED));
                     doc.add(new Field("LINK", "FrontPage.htm", TextField.TYPE_STORED));
@@ -242,7 +242,7 @@ public class SearchManager {
                     bodyStuff.append("\n");
                     bodyStuff.append(workspaceName);
                     bodyStuff.append("\n");
-                    ProcessRecord process = ngp.getProcess();
+                    ProcessRecord process = ngw.getProcess();
                     bodyStuff.append(stripWikiFormatting(process.getScalar("description")));   //a.k.a. "aim"
                     bodyStuff.append("\n");
                     bodyStuff.append(stripWikiFormatting(process.getScalar("mission")));
@@ -252,9 +252,9 @@ public class SearchManager {
                     bodyStuff.append(stripWikiFormatting(process.getScalar("domain")));
                     bodyStuff.append("\n");
                     // put the name in a few times to increase those scores
-                    bodyStuff.append(ngp.getFullName());
+                    bodyStuff.append(ngw.getFullName());
                     bodyStuff.append("\n");
-                    bodyStuff.append(ngp.getFullName());
+                    bodyStuff.append(ngw.getFullName());
                     doc.add(new Field("BODY", bodyStuff.toString(), TextField.TYPE_STORED));
                     iWriter.addDocument(doc);
                     addString(mf, doc.toString());
@@ -262,7 +262,7 @@ public class SearchManager {
 
 
 
-                for (TopicRecord note : ngp.getAllDiscussionTopics()) {
+                for (TopicRecord note : ngw.getAllDiscussionTopics()) {
                     String itemName = note.getSubject();
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Topic", TextField.TYPE_STORED));
@@ -283,7 +283,7 @@ public class SearchManager {
                     addString(mf, "\n=============== TOPIC\n");
                     addString(mf, doc.toString());
                 }
-                for (MeetingRecord meet : ngp.getMeetings()) {
+                for (MeetingRecord meet : ngw.getMeetings()) {
                     String itemName = meet.getName();
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Meeting", TextField.TYPE_STORED));
@@ -300,7 +300,7 @@ public class SearchManager {
                     doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
 
                     doc.add(new Field("BODY", itemName, TextField.TYPE_STORED));
-                    doc.add(new Field("BODY", stripWikiFormatting(meet.generateWikiRep(ar, ngp)), TextField.TYPE_STORED));
+                    doc.add(new Field("BODY", stripWikiFormatting(meet.generateWikiRep(ar, ngw)), TextField.TYPE_STORED));
                     for (AgendaItem ai : meet.getSortedAgendaItems()) {
                         doc.add(new Field("BODY", stripWikiFormatting(ai.getMeetingNotes()), TextField.TYPE_STORED));
                         doc.add(new Field("BODY", stripWikiFormatting(ai.getDesc()), TextField.TYPE_STORED));
@@ -310,7 +310,7 @@ public class SearchManager {
                     addString(mf, doc.toString());
                 }
 
-                for (DecisionRecord dec : ngp.getDecisions()) {
+                for (DecisionRecord dec : ngw.getDecisions()) {
                     String itemName = stripWikiFormatting(dec.getDecision());
                     if (itemName.length()<5) {
                         //short decisions are not searchable
@@ -333,7 +333,7 @@ public class SearchManager {
                     addString(mf, doc.toString());
                 }
 
-                for (AttachmentRecord att : ngp.getAllAttachments()) {
+                for (AttachmentRecord att : ngw.getAllAttachments()) {
                     if (att.isDeleted()) {
                         continue; //skip deleted attachments
                     }
@@ -355,7 +355,7 @@ public class SearchManager {
                     addString(mf, doc.toString());
                 }
                 
-                for (CommentRecord comment : ngp.getAllComments()) {
+                for (CommentRecord comment : ngw.getAllComments()) {
                     String itemName = stripWikiFormatting(comment.getAllSearchableText());
                     if (itemName.length()<5) {
                         //short comments are not searchable, like phase change messages
@@ -377,7 +377,7 @@ public class SearchManager {
                     addString(mf, "\n=============== COMMENT\n");
                     addString(mf, doc.toString());
                 }
-                for (GoalRecord goal : ngp.getAllGoals()) {
+                for (GoalRecord goal : ngw.getAllGoals()) {
                     String itemName = goal.getSynopsis();
                     if (itemName.length()<5) {
                         //short action items are not searchable
@@ -477,14 +477,14 @@ public class SearchManager {
                 }
             }
 
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
-            if (!ngp.primaryOrSecondaryPermission(up)) {
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
+            if (!ngw.primaryOrSecondaryPermission(up)) {
                 continue;   //don't include anything else if not a member
             }
             
-            String linkAddr = ar.getResourceURL(ngp, link);
+            String linkAddr = ar.getResourceURL(ngw, link);
             if (onlyOwner) {
-                if (!ngp.secondaryPermission(up)) {
+                if (!ngw.secondaryPermission(up)) {
                     continue;
                 }
             }
@@ -496,7 +496,7 @@ public class SearchManager {
             sr.setBookName(hitDoc.get("ACCTNAME"));
             sr.setNoteSubject(itemName);
             sr.setNoteLink(linkAddr);
-            sr.setPageLink(ar.getDefaultURL(ngp));
+            sr.setPageLink(ar.getDefaultURL(ngw));
             sr.setLastModifiedTime(updateTime);
             vec.add(sr);
         }

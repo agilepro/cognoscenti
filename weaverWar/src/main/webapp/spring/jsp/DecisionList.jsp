@@ -145,6 +145,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $http.post(postURL, postData)
         .success( function(data) {
             var newList = [];
+            console.log("SUCCESS DECISION:", data);
             $scope.allDecisions.forEach( function(item) {
                 if (item.num != data.num) {
                     newList.push(item);
@@ -364,10 +365,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <div ng-bind-html="rec.html" style="max-width:800px;"></div>
                     </div>
                     <div ng-show="rec.sourceType==4">
-                        See topic <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
+                        See topic <a href="<%=ar.retPath%>{{rec.sourceUrl}}">discussion</a>
                     </div>
                     <div ng-show="rec.sourceType==7">
-                        See meeting <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
+                        See meeting <a href="<%=ar.retPath%>{{rec.sourceUrl}}">discussion</a>
+                    </div>
+                    <div ng-show="rec.sourceType==8">
+                        See document <a href="<%=ar.retPath%>{{rec.sourceUrl}}">discussion</a>
                     </div>
                   </div>
                 </td>

@@ -1381,19 +1381,19 @@ public class AuthRequest
     * set parameter on the request object, if there is one.
     * AuthDummy does this a little differently
     */
-    public void setParam(String paramName, String paramValue)
-        throws Exception
-    {
-        if (req!=null)
-        {
-            req.setAttribute(paramName, paramValue);
-        }
-        else
-        {
+    public void setParam(String paramName, String paramValue) throws Exception {
+        if (req==null) {
             throw new ProgramLogicError("Calling setParam on an AuthRequest, but the "
                     +"request object is null!?!?!?");
-
         }
+        req.setAttribute(paramName, paramValue);
+    }
+    public void setParam(String paramName, long paramValue) throws Exception {
+        if (req==null) {
+            throw new ProgramLogicError("Calling setParam on an AuthRequest, but the "
+                    +"request object is null!?!?!?");
+        }
+        req.setAttribute(paramName, Long.toString(paramValue));
     }
 
     /**

@@ -1317,6 +1317,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                siteInfo: function() {
+                    return $scope.siteInfo;
                 }
             }
         });
@@ -1741,11 +1744,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     
-    $scope.setContainerFields = function(newComment) {
+    $scope.tuneNewComment = function(newComment) {
         newComment.containerType = "A";
         newComment.containerID = $scope.docId;
     }
-    console.log("ABOUT TO CALL the setup ");
+    $scope.tuneNewDecision = function(newDecision, cmt) {
+        newDecision.sourceId = $scope.meeting.id;
+        newDecision.sourceType = 7;
+    }
     setUpCommentMethods($scope, $http, $modal);
 });
 

@@ -57,7 +57,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * with older versions of the schema.
     *
     */
-    public static void assureSchemaMigration(NGSection sec, NGWorkspace ngp) throws Exception
+    public static void assureSchemaMigration(NGSection sec, NGWorkspace ngw) throws Exception
     {
         //attachments are directly in the section element.  Earlier there was an 'attachments'
         //element, and attachments were in that.  Clean that up.
@@ -77,7 +77,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //migrate any existing documents without id values in the record
             String thisId = att.getId();
             if (thisId.length()==0) {
-                thisId = ngp.getUniqueOnPage();
+                thisId = ngw.getUniqueOnPage();
                 att.setId(thisId);
             }
 
@@ -90,7 +90,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //of any record with a given ID.   Throw away the other duplicates
 
             if (!idset.containsKey(thisId)) {
-                AttachmentRecord newRec = ngp.createAttachment();
+                AttachmentRecord newRec = ngw.createAttachment();
                 newRec.copyFrom(att);
                 newRec.setId(att.getId());
             }
@@ -213,10 +213,10 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * This is a method to find a file, and output the file as a
     * stream of bytes to the request output stream.
     */
-    public static void serveUpFileNewUI(AuthRequest ar, NGWorkspace ngp, String fileName, int version)
+    public static void serveUpFileNewUI(AuthRequest ar, NGWorkspace ngw, String fileName, int version)
         throws Exception
     {
-        if (ngp==null) {
+        if (ngw==null) {
             throw new ProgramLogicError("SectionAttachments can serve upthe attachment only when the workspace is known.");
         }
         try {
@@ -234,7 +234,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             // versions might have a different extension....  Removed complicated logic.
             ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
 
-            AttachmentVersion attachmentVersion = getVersionOrLatest(ngp,fileName,version);
+            AttachmentVersion attachmentVersion = getVersionOrLatest(ngw,fileName,version);
             File attachmentFile =  attachmentVersion.getLocalFile();
 
             if (!attachmentFile.exists()) {
@@ -252,7 +252,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //Someone might be trying all the possible file names just to
             //see what is here.  A three second sleep makes that more difficult.
             Thread.sleep(3000);
-            throw new Exception("Unable to serve up a file named '"+fileName+"' from workspace '"+ngp.getFullName()+"'", e);
+            throw new Exception("Unable to serve up a file named '"+fileName+"' from workspace '"+ngw.getFullName()+"'", e);
         }
     }
 
@@ -264,17 +264,17 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
      * Specified version is returns, except if specified version does not exist, and then the latest
      * version is returned.   Throws exceptions if no version or no contents can be found.
      */
-    public static AttachmentVersion getVersionOrLatest(NGWorkspace ngp, String fileName, int version)
+    public static AttachmentVersion getVersionOrLatest(NGWorkspace ngw, String fileName, int version)
             throws Exception {
         try {
             AttachmentRecord att = null;
-            att = ngp.findAttachmentByNameOrFail(fileName);
+            att = ngw.findAttachmentByNameOrFail(fileName);
 
             if (!att.hasContents()) {
                 throw new NGException("nugen.exception.unable.to.serve.attachment", new Object[]{att.getType()});
             }
 
-            AttachmentVersion attachmentVersion = att.getSpecificVersion(ngp, version);
+            AttachmentVersion attachmentVersion = att.getSpecificVersion(ngw, version);
             if (attachmentVersion!=null) {
                 return attachmentVersion;
             }
@@ -283,7 +283,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //maybe we should throw an exception, because after all they are not
             //getting the version requested.  Why are they asking for a version that
             //does not exist?
-            attachmentVersion = att.getLatestVersion(ngp);
+            attachmentVersion = att.getLatestVersion(ngw);
             if (attachmentVersion!=null) {
                 return attachmentVersion;
             }
@@ -291,7 +291,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             throw new NGException("Attachment does not have ANY versions", new Object[0]);
         }
         catch (Exception e) {
-            throw new Exception("Unable to get contents of version "+version+" file named '"+fileName+"' from workspace '"+ngp.getFullName()+"'", e);
+            throw new Exception("Unable to get contents of version "+version+" file named '"+fileName+"' from workspace '"+ngw.getFullName()+"'", e);
         }
     }
 

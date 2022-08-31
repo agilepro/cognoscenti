@@ -115,7 +115,7 @@ public class HtmlToWikiConverter {
      * @return
      * @throws Exception
      */
-    public static String htmlToWiki(String unused,String htmlValue) throws Exception {
+    public static String htmlToWiki(String htmlValue) throws Exception {
         //HtmlToWikiConverter.baseURL = baseURL;
         // There was some problem saving &nbsp; in XML file so replaced it with
         // the space.

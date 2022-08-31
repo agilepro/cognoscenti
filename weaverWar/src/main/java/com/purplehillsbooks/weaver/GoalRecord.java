@@ -1075,7 +1075,7 @@ public class GoalRecord extends BaseRecord {
         else {
             data.put("actionItem", this.getJSON4Goal(ngw));
         }
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));
+        data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
         data.put("wsName", ngw.getFullName());
         data.put("isFinal", isFinal(getState()));
         data.put("isFuture", isFuture(getState()));

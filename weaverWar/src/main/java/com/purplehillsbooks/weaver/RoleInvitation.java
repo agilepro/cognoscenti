@@ -140,7 +140,7 @@ public class RoleInvitation extends JSONWrapper {
         }
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         if ("New".equals(this.getStatus())) {
             RIScheduledNotification sn = new RIScheduledNotification(this);
             if (sn.needsSendingBefore(timeout)) {

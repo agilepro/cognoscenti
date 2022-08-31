@@ -904,7 +904,7 @@ public class AttachmentRecord extends CommentContainer {
 
         JSONArray allCommentss = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCommentss.put(cr.getHtmlJSON());
+            allCommentss.put(cr.getCompleteJSON());
         }
         thisDoc.put("comments",  allCommentss);
         
@@ -1093,7 +1093,7 @@ public class AttachmentRecord extends CommentContainer {
 
     public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
         //don't know how to go straight into reply mode, so just go to the meeting
-        return getEmailURL(ar, ngw) + "#cmt"+commentId;
+        return ar.getResourceURL(ngw,  "CommentZoom.htm?cid="+commentId);
     }
 
 
@@ -1139,4 +1139,9 @@ public class AttachmentRecord extends CommentContainer {
             throw new RuntimeException("Tried and failed to delete file: "+currentFile.getAbsolutePath());
         }
     }
+    
+    public String getGlobalContainerKey(NGWorkspace ngw) {
+        return "A"+getId();
+    }
+    
 }
