@@ -584,14 +584,16 @@ public class MailInst extends JSONWrapper {
         e2.put("Subject",      kernel.optString("Subject",    "Unknown Subject"));
         e2.put("Site",         kernel.optString("Site",       "Unknown Site"));
         e2.put("Workspace",    kernel.optString("Workspace",  "Unknown Workspace"));
-        e2.put("CommentLoc",   kernel.optString("CommentLoc", "Unknown Comment Location"));
+        e2.put("EmailLocator", getEmailLocator());
         e2.put("CommentId",    kernel.optString("CommentId"));
+        e2.put("CommentContainer", kernel.optString("CommentContainer"));
         return e2;
     }
 
     public void addFieldsForRender(JSONObject data) throws Exception {
         data.put("msgId",        getCreateDate());
-        data.put("emailLocator", getEmailLocator());        
+        data.put("emailLocator", getEmailLocator());
+        data.put("commentContainer", getCommentContainer());
     }
 
 }

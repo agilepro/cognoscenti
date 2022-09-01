@@ -14,13 +14,15 @@ Required parameters:
 
 */
 
-    String topicId   = ar.defParam("topicId", null);
-    String meetId   = ar.defParam("meetId", null);
-    String agendaId   = ar.defParam("agendaId", null);
-    String commentId = ar.defParam("commentId", null);
     String pageId    = ar.reqParam("pageId");
     String siteId    = ar.reqParam("siteId");
-    String emailId    = ar.defParam("emailId", null);
+    String msgId     = ar.defParam("msgId", null);
+    String topicId   = ar.defParam("topicId", null);
+    String meetId    = ar.defParam("meetId", null);
+    String agendaId  = ar.defParam("agendaId", null);
+    String commentId = ar.defParam("commentId", null);
+    String emailId   = ar.defParam("emailId", null);
+    String docId     = ar.defParam("docId", null);
     
     String linkedEmailId = emailId;
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
@@ -53,7 +55,7 @@ Required parameters:
         subscribers = meetInfo.getJSONArray("participants");
         
     }
-    else {
+    else if (topicId!=null) {
         TopicRecord topic = ngw.getDiscussionTopic(topicId);
         topicSubject = topic.getSubject();
         JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
@@ -66,6 +68,15 @@ Required parameters:
         for (AttachmentRecord att : topic.getAttachedDocsIncludeComments(ngw)) {
              attachments.put(att.getMinJSON(ngw));
         }
+    } 
+    else if (docId!=null) {
+        AttachmentRecord att = ngw.findAttachmentOrNull(docId);
+        originalTopic = att.getDescription();
+        originalSubject = "Document: " + att.getNiceName();
+        emailContext = new EmailContext(att);
+    }
+    else {
+        throw new Exception("can not recognize this email type");
     }
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
     for (CommentRecord comm : emailContext.getPeerComments()) {

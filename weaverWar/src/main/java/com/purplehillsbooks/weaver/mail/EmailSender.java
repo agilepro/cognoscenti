@@ -134,6 +134,7 @@ public class EmailSender extends TimerTask {
     
     
     public void updateEmailInDB(MailInst msg) throws Exception {
+        System.out.println(" EMAIL DB: msg "+msg.getCreateDate()+" has comment container: "+msg.getCommentContainer());
         long id = msg.getCreateDate();
         JSONObject mailObj = msg.getJSON();
         JSONObject query = new JSONObject();
@@ -221,10 +222,10 @@ public class EmailSender extends TimerTask {
                 //System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().getId());
                 NGPageIndex.assertNoLocksOnThread();
                 checkAndSendDailyDigest(ar);
-                handleGlobalEmail();
                 handleAllOverdueScheduledEvents(ar);
+                handleGlobalEmail();
                 lastEmailProcessTime = startTime;
-                System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
+                //System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
                 Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
                 JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
@@ -279,7 +280,6 @@ public class EmailSender extends TimerTask {
         query.put("Status",  MailInst.READY_TO_GO);
         
         JSONArray allUnsentMail = db.queryRecords(query);
-        System.out.println("MAIL SENDING: found "+allUnsentMail.length()+" records in DB ready to send");
         boolean allSentOK = true;
 
         for (JSONObject msgObj : allUnsentMail.getJSONObjectList()) {
@@ -353,11 +353,6 @@ public class EmailSender extends TimerTask {
             Thread.sleep(200);  //just small delay to avoid saturation
         }
         
-        //now we can go an actually send the email in the mailArchive
-        if (!sendAllMailFromDB()) {
-            System.out.println("EMAIL SENDER: FAILED to send email.");
-        }
-
         if (iCount>0) {
             System.out.println("EMAIL SENDER: Processed "+iCount+" background events at "
                 +SectionUtil.currentTimeString());

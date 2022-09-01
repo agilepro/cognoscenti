@@ -654,24 +654,25 @@ public class ProjectDocsController extends BaseController {
             throw new Exception("Something is wrong, container keys don't match: "+containerKey+" AND "+container.getGlobalContainerKey(ngw));
         }
 
-        boolean specialAccess = false;
+
         if (container instanceof AgendaItem) {
             AgendaItem ai = (AgendaItem)container;
             MeetingRecord meet = ai.meeting;
-            specialAccess  = AccessControl.canAccessMeeting(ar, ngw, meet);
+            AccessControl.allowSpecialAccessMeeting(ar, ngw, meet);
             ar.setParam("meetId", meet.getId());
             ar.setParam("agendaId", ai.getId());
         }
         else if (container instanceof TopicRecord) {
             TopicRecord topic = (TopicRecord)container;
             //normally the permission comes from a license in the URL for anonymous access
-            specialAccess  = AccessControl.canAccessTopic(ar, ngw, topic);
+            AccessControl.allowSpecialAccessTopic(ar, ngw, topic);
             ar.setParam("topicId", topic.getId());
         }
         else if (container instanceof AttachmentRecord) {
             AttachmentRecord doc =(AttachmentRecord)container;
             //normally the permission comes from a license in the URL for anonymous access
-            specialAccess  = AccessControl.canAccessDoc(ar, ngw, doc);
+            AccessControl.allowSpecialAccessDoc(ar, ngw, doc);
+            ar.setParam("docId", doc.getId());
         }
         else {
             throw new Exception("Can not understand why comment container is a "+container.getClass().getCanonicalName());
@@ -681,7 +682,7 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("msgId", msgId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        showJSPDepending(ar, ngw, "Reply.jsp", specialAccess);
+        showJSPDepending(ar, ngw, "Reply.jsp", true);
     }
     public void specialReplyOld(@PathVariable String siteId,
             @PathVariable String pageId,
@@ -751,10 +752,10 @@ public class ProjectDocsController extends BaseController {
             if (!input.has("comments")) {
                 throw new Exception("posted object to specialReplySave needs to have a comments list");
             }
-            String topicId = input.optString("topicId");
-            //String commentId = input.optString("commentId", null);
-            String meetId = input.optString("meetId", null);
-            String agendaId = input.optString("agendaId", null);
+            String topicId  = input.optString("topicId");
+            String docId    = input.optString("docId");
+            String meetId   = input.optString("meetId");
+            String agendaId = input.optString("agendaId");
             
             if (!ar.isLoggedIn()) {
                 String emailId = input.optString("emailId", null);
@@ -792,7 +793,7 @@ public class ProjectDocsController extends BaseController {
                 //make sure the meeting cache is refreshed with latest
                 MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetId);
             }
-            else {
+            else if (topicId!=null && topicId.length()>0) {
                 TopicRecord note = ngw.getNoteOrFail(topicId);
                 //normally the permission comes from a license in the URL for anonymous access
                 boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngw, note);
@@ -810,6 +811,19 @@ public class ProjectDocsController extends BaseController {
                         subscribers.addPlayer(user.getAddressListEntry());
                     }
                 }
+            }
+            else if (docId!=null && docId.length()>0) {
+                AttachmentRecord doc = ngw.findAttachmentOrNull(docId);
+                //normally the permission comes from a license in the URL for anonymous access
+                boolean canAccessNote  = AccessControl.canAccessDoc(ar, ngw, doc);
+                if (!canAccessNote) {
+                    ar.assertAccessWorkspace("must have permission to make a reply");
+                }
+                doc.updateCommentsFromJSON(input, ar);
+                repo = doc.getJSON4Doc(ar, ngw);
+            }
+            else {
+                throw new Exception("SaveReply call was missing a parameter or two");
             }
             ngw.saveFile(ar, "saving comment using SaveReply");
             sendJson(ar, repo);

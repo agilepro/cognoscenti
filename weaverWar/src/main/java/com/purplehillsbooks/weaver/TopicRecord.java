@@ -769,6 +769,7 @@ public class TopicRecord extends CommentContainer {
           clone.retPath = ar.baseURL;
 
           MailInst mailMsg = ngw.createMailInst();
+          mailMsg.setCommentContainer(getGlobalContainerKey(ngw));
           
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
@@ -783,6 +784,7 @@ public class TopicRecord extends CommentContainer {
           String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngw, 0, mailMsg)
                   + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
           data.put("replyURL", replyUrl);
+          mailMsg.addFieldsForRender(data);
 
           AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 

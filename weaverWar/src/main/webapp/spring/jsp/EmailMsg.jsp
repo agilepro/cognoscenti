@@ -106,14 +106,6 @@ app.controller('myCtrl', function($scope, $http) {
         <div>{{emailMsg.exception.error.context}}</div>
         <div ng-repeat="ee in emailMsg.exception.error.details">{{ee.message}}</div></td>
   </tr>
-  <tr>
-    <td>Created</td>
-    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
-  <tr>
-    <td>Sent</td>
-    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
   <tr ng-hide="bodyIsDeleted">
     <td colspan="2"><%= specialBody %></td>
   </tr>
@@ -129,6 +121,39 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Attachments</td>
     <td><div ng-repeat="att in emailMsg.AttachmentFiles">{{att}}</div></td>
   </tr>
+  <tr>
+    <td>Created</td>
+    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr>
+    <td>Sent</td>
+    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr>
+    <td>CreateDate</td>
+    <td>{{emailMsg.CreateDate}}</td>
+  </tr>
+  <tr>
+    <td>Site</td>
+    <td>{{emailMsg.Site}}</td>
+  </tr>
+  <tr>
+    <td>Workspace</td>
+    <td>{{emailMsg.Workspace}}</td>
+  </tr>
+  <tr>
+    <td>CommentContainer</td>
+    <td>{{emailMsg.CommentContainer}}</td>
+  </tr>
+  <tr>
+    <td>CommentLoc</td>
+    <td>{{emailMsg.CommentLoc}}</td>
+  </tr>
+  <tr>
+    <td>CommentId</td>
+    <td>{{emailMsg.CommentId}}</td>
+  </tr>
+
 </table>
 
 </div>

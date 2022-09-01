@@ -108,6 +108,11 @@ public class AccessControl {
         String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
         return "mndoc=" + encodedValue;
     }
+    public static void allowSpecialAccessDoc(AuthRequest ar, NGWorkspace ngw, AttachmentRecord attachRec) {
+        String resourceId = "doc:"+attachRec.getId()+":"+ngw.getKey();
+        ar.setSpecialSessionAccess(resourceId);
+    }
+
 
     public static boolean canAccessReminder(AuthRequest ar, NGWorkspace ngw, ReminderRecord reminderRecord)
     throws Exception {
@@ -244,6 +249,12 @@ public class AccessControl {
             throw new JSONException("User {0} is not able to access topic {1}", ar.getBestUserId(), topicRec.getId());
         }
     }
+    public static void allowSpecialAccessTopic(AuthRequest ar, NGWorkspace ngw, TopicRecord topicRec) {
+        String resourceId = "topic:"+topicRec.getId()+":"+ngw.getKey();
+        ar.setSpecialSessionAccess(resourceId);
+    }
+
+
 
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
         
@@ -423,6 +434,11 @@ public class AccessControl {
         }
 
         return false;
+    }
+    
+    public static void allowSpecialAccessMeeting(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) {
+        String resourceId = "meet:"+meet.getId()+":"+ngw.getKey();
+        ar.setSpecialSessionAccess(resourceId);
     }
 
     public static String getAccessMeetParams(NGContainer ngc, MeetingRecord meet) throws Exception{

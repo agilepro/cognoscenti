@@ -34,8 +34,10 @@ in workspace <a href="{$wsBaseURL}FrontPage.htm">{$wsName|onempty(No Name)|html}
 
 {% include OptOut %}
 
-<!--
-//{-dollar- debugDump}
--->
+{!--
+<pre>
+{$debugDump|html}
+</pre>
+--}
 
 </body></html>

@@ -289,18 +289,30 @@ public class EmailGenerator extends DOMFace {
         }
 
         MailInst mailMsg = ngw.createMailInst();
+        
+
+        TopicRecord topic = getTopicIfPresent(ngw);
+        MeetingRecord meeting = getMeetingIfPresent(ngw);
+        if (topic!=null) {
+            mailMsg.setCommentContainer(topic.getGlobalContainerKey(ngw));
+        }
+        
         generateEmailBody(ar, ngw, ooa, mailMsg);
         String subject = mailMsg.getSubject();
         String entireBody = mailMsg.getBodyText();
 
-        MeetingRecord meeting = getMeetingIfPresent(ngw);
 
         ArrayList<File> attachments = new ArrayList<File>();
         if (getAttachFiles()) {
             for (String attId : getAttachments()) {
                 attachDocFromId(attachments, attId, ngw);
             }
-            if (meeting!=null) {
+            if (topic!=null) {
+                for (String docId : topic.getDocList()) {
+                    attachDocFromId(attachments, docId, ngw);
+                }
+            }
+            else if (meeting!=null) {
                 for (AgendaItem ai : meeting.getSortedAgendaItems()) {
                     for (String docId : ai.getDocList()) {
                         attachDocFromId(attachments, docId, ngw);
@@ -345,6 +357,14 @@ public class EmailGenerator extends DOMFace {
         attachments.add(path);
     }
 
+    private TopicRecord getTopicIfPresent(NGWorkspace ngw) throws Exception {
+        String topicId = getNoteId();
+        if (topicId==null || topicId.length()==0) {
+            return null;
+        }
+        TopicRecord topic = ngw.getNoteByUidOrNull(topicId);
+        return topic;
+    }
     private MeetingRecord getMeetingIfPresent(NGWorkspace ngw) throws Exception {
         String meetId = getMeetingId();
         if (meetId==null || meetId.length()==0) {
@@ -357,6 +377,9 @@ public class EmailGenerator extends DOMFace {
     public void generateEmailBody(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa, MailInst mail) throws Exception {
 
         TopicRecord noteRec = ngw.getNoteByUidOrNull(getNoteId());
+        if (noteRec!=null) {
+            mail.setCommentContainer(noteRec.getGlobalContainerKey(ngw));
+        }
         MemFile bodyChunk = new MemFile();
         UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
 
@@ -483,6 +506,7 @@ public class EmailGenerator extends DOMFace {
             String licensedUrl = ar.retPath + ar.getResourceURL(ngw, selectedNote)
                     + "?" + AccessControl.getAccessTopicParams(ngw, selectedNote)
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8");
+            data.put("commentContainer", selectedNote.getGlobalContainerKey(ngw));
             data.put("noteUrl", licensedUrl);
             data.put("noteName", selectedNote.getSubject());
 

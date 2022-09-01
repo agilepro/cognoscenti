@@ -245,12 +245,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     
     $scope.reviewStyle = function(date) {
-        var diff = (date-(new Date()).getTime())/(24*60*60*1000);
-        if (diff<0) {
+        var daysLeft = (date-(new Date()).getTime())/(24*60*60*1000);
+        if (daysLeft<0) {
             return {"color":"red","font-weight": "bold"};
         }
-        else if (diff<14) {
-            return {"color":"orange"};
+        else if (daysLeft<14) {
+            return {"color":"orange","font-weight": "bold"};
         }
         return {"color":"lightgrey"};
     }
@@ -264,7 +264,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("You are not able to change due dates on decisions because you are a READ-ONLY user");
             return;
         }
-        decision.reviewDate = decision.reviewDate + (365*24*60*60*1000);
+        var oneYear = 365*24*60*60*1000;
+        var lastYear = new Date().getTime() - oneYear;
+        if (decision.reviewDate < lastYear) {
+            decision.reviewDate = new Date().getTime() + oneYear;
+        }
+        else {
+            decision.reviewDate = decision.reviewDate + oneYear;
+        }
         $scope.saveDecision(decision);
     }
     if ($scope.startMode=="create") {

@@ -24,7 +24,10 @@
 
 {% include OptOut %}
 
-<script>
-{$debugDump}
-</script>
+{!--
+<pre>
+{$debugDump|html}
+</pre>
+--}
+
 </body></html>

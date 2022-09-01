@@ -431,6 +431,17 @@ public class NGWorkspace extends NGPage {
         }
         return list;
     }
+    public AttachmentRecord findAttachmentOrNull(String docId) throws Exception {
+        for (AttachmentRecord aRec : getAllAttachments()) {
+            if (aRec.getUniversalId().equals(docId)) {
+                return aRec;
+            }
+            if (aRec.getId().equals(docId)) {
+                return aRec;
+            }
+        }
+        return null;
+    }
 
     
     public AttachmentRecord createAttachment() throws Exception {

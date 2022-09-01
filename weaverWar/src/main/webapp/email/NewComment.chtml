@@ -68,8 +68,10 @@ Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No
 
 {% include OptOut %}
 
+{!--
 <pre>
 {$debugDump|html}
 </pre>
+--}
 
 </body></html>

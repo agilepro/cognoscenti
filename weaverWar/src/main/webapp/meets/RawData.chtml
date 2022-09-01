@@ -19,7 +19,9 @@
 <p>Just the raw data for a meeting to help develop more templates.</p>
 
 
-<pre>{$debugDump|html}</pre>
+<pre>
+{$debugDump|html}
+</pre>
 
 
 </body></html>

@@ -672,29 +672,6 @@ public class AttachmentRecord extends CommentContainer {
         return f.length();
     }
 
-    /**
-     * getAccessRoles retuns a list of NGRoles which have access to this document.
-     * Admin role and Member role are assumed automatically, and are not in this list.
-     * This list contains only the extra roles that have access for non-members.
-     */
-    /*
-    public List<NGRole> getAccessRoles() throws Exception {
-        if (container==null) {
-            throw new ProgramLogicError("call to rolesWithAccess must be made AFTER the container is set.");
-        }
-        List<NGRole> res = new ArrayList<NGRole>();
-        List<String> roleNames = getVector("labels");
-        for (String name : roleNames) {
-            NGRole aRole = container.getRole(name);
-            if (aRole!=null) {
-                if (!res.contains(aRole)) {
-                    res.add(aRole);
-                }
-            }
-        }
-        return res;
-    }
-    */
 
 
     /**

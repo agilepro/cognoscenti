@@ -61,9 +61,12 @@
 {% endif %}
 
 
-<div id="trimPoint" style="color:grey;font-weight:bold;">ACTION:  
+<div id="trimPoint" style="color:grey;font-weight:bold;">
+    {% if ($commentContainer) %}
+    ACTION:  
     <span><a href="{$workspaceUrl}Reply.htm?msg={$emailLocator}#QuickReply"><button title="Using this button will allow you to comment on-line and avoid having to track endless chains of email in your inbox">Comment on this</button></a>.
     </span>
+    {% endif %}
 </div>
 {% endif %}
 
@@ -110,9 +113,11 @@
 {% include OptOut %}
 
 
+{!--
 <pre>
 {$debugDump|html}
 </pre>
+--}
 
 
 </body></html>
