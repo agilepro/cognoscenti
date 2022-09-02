@@ -13,28 +13,6 @@
         allUsers.put(user.getFullJSON());
     }
 
-    File userFolder =  ar.getCogInstance().getConfig().getFileFromRoot("users");
-    for (UserProfile anyone : UserManager.getStaticUserManager().getAllUserProfiles()) {
-        String key = anyone.getKey();
-        File imageFile = new File(userFolder, key+".jpg");
-        if (!imageFile.exists()) {
-            String lc = anyone.getName().toLowerCase();
-            char ch = ' ';
-            int i=0;
-            while (i<lc.length() && (ch<'a'||ch>'z')) {
-                ch = lc.charAt(i);
-                i++;
-            }
-            if (ch<'a'||ch>'z') {
-                //this will be the name of the question mark image
-                ch = '~';
-            }
-            File fakeFile = new File(userFolder, "fake-"+ch+".jpg");
-            FileInputStream is = new FileInputStream(fakeFile);
-            StreamHelper.copyStreamToFile(is, imageFile);
-            is.close();
-        }
-    }
 
 %>
 <script type="text/javascript">
