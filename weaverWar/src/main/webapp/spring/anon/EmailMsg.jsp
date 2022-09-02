@@ -17,6 +17,9 @@
     NGBook ngb = ngp.getSite();
 
     MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);
+    if (emailMsg==null) {
+        throw new Exception("Sorry, can not  find an email message #"+msgId);
+    }
     AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
     AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
     

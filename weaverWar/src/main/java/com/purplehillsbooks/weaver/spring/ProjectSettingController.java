@@ -191,6 +191,12 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        long msgId = ar.reqParamLong("msg");
+        MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
+        if (emailMsg==null) {
+            showWarningAnon(ar, "Unable to find an existing email message with id: "+msgId);
+            return;
+        }
         showJSPDepending(ar, ngw, "EmailMsg.jsp", true);
     }
 

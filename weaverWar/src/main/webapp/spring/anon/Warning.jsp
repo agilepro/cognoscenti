@@ -54,6 +54,11 @@ function reloadIfLoggedIn() {
     font-style: italic;
     font-family:"PT_Sans"
 }
+.guideVocal {
+    font-size:20px;
+    font-weight:300;
+}
+    
 </style>
 
 

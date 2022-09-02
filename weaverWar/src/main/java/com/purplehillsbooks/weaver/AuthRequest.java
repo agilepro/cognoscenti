@@ -1363,18 +1363,19 @@ public class AuthRequest
     * have proper URLs constricted for redirecting to other pages, this error will
     * not occur.  Therefor, there is no need to localize this exception.
     */
-    public String reqParam(String paramName)
-        throws Exception
-    {
+    public String reqParam(String paramName) throws Exception {
         String val = defParam(paramName, null);
-        if (val == null || val.length()==0)
-        {
-            //The exception that is thrown will not be seen by users.  Once all of the pages
-            //have proper URLs constructed for redirecting to other pages, this error will
-            //not occur.  Therefore, there is no need to localize this exception.
-            throw new NGException("nugen.exception.parameter.required",new Object[]{paramName,getRequestURL()});
+        if (val == null || val.length()==0) {
+            throw new JSONException("A parameter named '{0}' is required for page '{1}'.", paramName, getRequestURL());
         }
         return val;
+    }
+    public long reqParamLong(String paramName) throws Exception {
+        String val = defParam(paramName, null);
+        if (val == null || val.length()==0) {
+            throw new JSONException("A parameter named '{0}' is required for page '{1}'.", paramName, getRequestURL());
+        }
+        return DOMFace.safeConvertLong(val);
     }
 
     /**

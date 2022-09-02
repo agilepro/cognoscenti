@@ -101,7 +101,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
     $scope.closeAndShutDown = function() {
         if ($scope.promiseAutosave) {
-            console.log("AUTOSAVE == killed");
             $interval.cancel($scope.promiseAutosave);
         }
         console.log("Comment popup closed.");

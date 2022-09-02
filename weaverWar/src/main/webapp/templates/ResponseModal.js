@@ -12,7 +12,6 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     }
     function getComment() {
         var getURL = "info/comment?cid="+$scope.cmtId;
-        console.log("calling: ",getURL);
         $http.get(getURL)
         .success( function(data) {
             setComment(data);
@@ -21,10 +20,13 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             reportError(data);
         });
     }
-    function saveComment(close) {
+    function saveComment(isExit) {
         var postURL = "info/comment?cid="+$scope.cmtId;
         var updateRec = {time:$scope.cmtId, responses:[]};
-        var responseObj = {user: $scope.responseUser, body: $scope.responseBody, choice: $scope.response.choice};
+        var responseObj = {user: $scope.responseUser, body: $scope.responseBody};
+        if ($scope.response.choice) {
+            responseObj.choice = $scope.response.choice;
+        }
         updateRec.responses.push(responseObj);
         var postdata = angular.toJson(updateRec);
         console.log("saving new comment: ",updateRec);
@@ -32,7 +34,11 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         $http.post(postURL ,postdata)
         .success( function(data) {
             setComment(data);
-            if ("Y"==close) {
+            if (isExit) {
+                if ($scope.promiseAutosave) {
+                    $interval.cancel($scope.promiseAutosave);
+                    $scope.promiseAutosave = null;
+                }
                 $modalInstance.close();
             }
         })
@@ -41,6 +47,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         });
     }
     function setComment(newComment) {
+        $scope.dataReceived = new Date().getTime();
         newComment.choices = ["Consent", "Objection"];
         $scope.displayText = convertMarkdownToHtml(newComment.body + "\n\n" + newComment.outcome);
         $scope.cmt = newComment;
@@ -56,9 +63,6 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
                 thisResponse = item.body;
             }
         });
-        if (!$scope.response.choice) {
-            $scope.response.choice = newComment.choices[0];
-        }
         
         if (thisResponse != $scope.responseBody) {
             //only set it if different so that cursor does not move
@@ -86,7 +90,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         if (choice) {
             $scope.response.choice = choice;
         }
-        saveComment("Y");
+        saveComment(true);
     };
 
     $scope.commentTypeName = function() {
@@ -145,10 +149,11 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         }
         if ($scope.unsaved) {
             $scope.unsaved = -1;
-            saveComment("N");
+            saveComment();
             return;
         }
-        if (secondsSinceLastSave > 60) {
+        var secondsSinceLastRefresh = Math.floor((new Date().getTime() - $scope.dataReceived)/1000);
+        if (secondsSinceLastRefresh > 60) {
             getComment();
         }
     }

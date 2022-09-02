@@ -19,11 +19,11 @@
     }
     else {
         JSONObject publicInfo = new JSONObject();
-        publicInfo.put("key", userInfo.getString("key"));
-        publicInfo.put("name", userInfo.getString("name"));
-        publicInfo.put("timeZone", userInfo.getString("timeZone"));
-        publicInfo.put("image", userInfo.getString("image"));
-        publicInfo.put("description", userInfo.getString("description"));
+        publicInfo.put("key", userInfo.optString("key", ""));
+        publicInfo.put("name", userInfo.optString("name", ""));
+        publicInfo.put("timeZone", userInfo.optString("timeZone", ""));
+        publicInfo.put("image", userInfo.optString("image", ""));
+        publicInfo.put("description", userInfo.optString("description", ""));
         userInfo = publicInfo;
     }
 
