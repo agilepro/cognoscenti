@@ -183,7 +183,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };    
     $scope.navigateToCreator = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
 });
 </script>

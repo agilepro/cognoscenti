@@ -1014,7 +1014,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         window.location = "SendNote.htm?noteId="+$scope.topicId;
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.startSubscriberEdit = function() {
         $scope.editMeetingPart='subscribers';

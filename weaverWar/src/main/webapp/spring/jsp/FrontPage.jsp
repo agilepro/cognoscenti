@@ -344,7 +344,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontTop.htm";
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngp.getFullName());%>'."

@@ -656,6 +656,25 @@ public class UserController extends BaseController {
     }
 
     
+    @RequestMapping(value = "/{userKey}/PersonShow.htm", method = RequestMethod.GET)
+    public void personShow(@PathVariable String userKey, 
+                           HttpServletRequest request, 
+                           HttpServletResponse response) throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
+            if (searchedFor==null) {
+                showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                return;
+            }
+            ar.req.setAttribute("userKey",  userKey);
+            showJSPDependingUser(ar, "PersonShow.jsp");
+        }
+        catch(Exception ex){
+            throw new Exception("Failure trying to find user", ex);
+        }
+    }
+
 
 
     @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)
@@ -663,9 +682,6 @@ public class UserController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return;
-            }
             
             //new parameter 'key' but support old 'uid' in case still there somewhere
             String userKey = ar.defParam("key", null);
@@ -675,11 +691,10 @@ public class UserController extends BaseController {
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
-                response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/UserSettings.htm");
+                response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/PersonShow.htm");
                 return;
             }
-            streamJSP(ar, "FindPerson.jsp");
-
+            showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
         }catch(Exception ex){
             throw new Exception("Failure trying to find user", ex);
         }

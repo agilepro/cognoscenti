@@ -8,8 +8,8 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 
 <p>Direct Email Message through Weaver</p>
-<p>To: <a href="{$baseURL}v/{$to.key}/userSettings.htm">{$to.name|onempty(No Name)|html}</a></p>
-<p>From: <a href="{$baseURL}v/{$from.key}/userSettings.htm">{$from.name|onempty(No Name)|html}</a></p>
+<p>To: <a href="{$baseURL}v/{$to.key}/PersonShow.htm">{$to.name|onempty(No Name)|html}</a></p>
+<p>From: <a href="{$baseURL}v/{$from.key}/PersonShow.htm">{$from.name|onempty(No Name)|html}</a></p>
 <p>Subject: {$subject|html}</p>
 <hr/>
 

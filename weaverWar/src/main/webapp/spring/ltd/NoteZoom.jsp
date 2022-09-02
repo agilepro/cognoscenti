@@ -690,7 +690,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         window.location = "SendNote.htm?noteId="+$scope.topicId;
     }
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.startSubscriberEdit = function() {
         console.log("can not edit subscriber if not member of workspace");

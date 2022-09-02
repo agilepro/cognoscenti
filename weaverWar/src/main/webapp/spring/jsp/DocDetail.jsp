@@ -257,7 +257,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "fake-"+ch+".jpg";
     }
     $scope.navigateToCreator = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key);
+        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.composeEmail = function() {
         window.location="SendNote.htm?att="+$scope.docInfo.id;

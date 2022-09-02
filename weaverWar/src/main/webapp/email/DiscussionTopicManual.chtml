@@ -4,8 +4,8 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 
 <p><b>Note From:</b>
-   <a href="{$baseURL}v/FindPerson.htm?uid={$sender.key|url}" 
-      title="access the profile of this user, if one exists">
+   <a href="{$baseURL}v/{$sender.key|url}/PersonShow.htm" 
+      title="access the profile of this user">
       {$sender.name|onempty(Unnamed Sender)|html}</a>
 &nbsp; <b>Workspace:</b> 
    <a href="{$workspaceUrl}FrontPage.htm">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>

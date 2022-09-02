@@ -350,10 +350,6 @@ public class BaseController {
     
     public static void showJSPDepending(AuthRequest ar, NGWorkspace ngw, String jspName, boolean specialAccess) throws Exception {
         try{
-            System.out.println("SHOWING DEPENDING: "+jspName+", SpecialAccess="+specialAccess);
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
-            }
             if (warnSiteMoved(ar)) {
                 return;
             }
@@ -377,14 +373,11 @@ public class BaseController {
             }
         }
         catch(Exception ex){
-            throw new JSONException("Unable to prepare JSP view of {0} for workspace: {1}/{2}", ex, jspName, ngw.getKey(), ngw.getSiteKey());
+            throw new JSONException("Unable to prepare jsp/depending view of {0} for workspace: {1}/{2}", ex, jspName, ngw.getKey(), ngw.getSiteKey());
         }
     }
     public static void showJSPDependingSite(AuthRequest ar, String jspName) throws Exception {
         try{
-            if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: showJSPMembers called withou JSP in name");
-            }
             if (!ar.isLoggedIn()) {
                 streamJSPAnon(ar, jspName);
             }
@@ -396,7 +389,20 @@ public class BaseController {
             }
         }
         catch(Exception ex){
-            throw new JSONException("Unable to prepare JSP view of {0}", ex, jspName);
+            throw new JSONException("Unable to prepare site/depending view of {0}", ex, jspName);
+        }
+    }
+    public static void showJSPDependingUser(AuthRequest ar, String jspName) throws Exception {
+        try{
+            if (!ar.isLoggedIn()) {
+                streamJSPAnon(ar, jspName);
+            }
+            else {
+                streamJSPUser(ar, jspName);
+            }
+        }
+        catch(Exception ex){
+            throw new JSONException("Unable to prepare user/depending view of {0}", ex, jspName);
         }
     }
 

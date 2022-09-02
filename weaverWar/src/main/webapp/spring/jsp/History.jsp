@@ -101,7 +101,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         return res;
     }
     $scope.navigateToUser = function(player) {
-        window.open("<%= ar.retPath%>v/FindPerson.htm?key="+encodeURIComponent(player.key),"_blank");
+        window.open("<%= ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm","_blank");
     }
 
 });

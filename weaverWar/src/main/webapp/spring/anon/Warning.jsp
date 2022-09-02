@@ -59,7 +59,7 @@ function reloadIfLoggedIn() {
 
 <div ng-app="myApp" ng-controller="myCtrl" style="margin:50px">
 
-    <div ng-bind-html="warningMessage"></div>
+    <div ng-bind-html="warningMessage" class="guideVocal"></div>
 
 <% if (ar.isLoggedIn()) {  %>
     <div>
@@ -77,6 +77,7 @@ function reloadIfLoggedIn() {
         <button class="btn btn-primary btn-raised" ng-click="login()">
             Login
         </button>
+        to find out more.
     </div>
 <% } %>
 
@@ -89,6 +90,7 @@ function reloadIfLoggedIn() {
     </div>
     <hr/>
 
+  <div class="col col-lg-4 col-md-6 col-sm-12">
     <h1>What is Weaver?</h1>
     <p>
         Weaver is a platform to help organizations large and small to reach their goals.
@@ -108,14 +110,15 @@ function reloadIfLoggedIn() {
     
 <% if (!ar.isLoggedIn()) { %>
     <div>
-        If you don't yet have an account, please
+        No account?  Please
         <button class="btn btn-primary btn-raised" ng-click="login()">
             Register
         </button> 
-        a new account.
+        to get one.
     </div>
 <% } %>
-    
+  </div>
+  <div class="col col-lg-4 col-md-6 col-sm-12">
     <h1>How can you get Weaver?</h1>
     <p>
         Weaver is free at the basic level, which includes meeting planning, document sharing,
@@ -132,6 +135,8 @@ function reloadIfLoggedIn() {
     <p>
         <button class="btn btn-primary btn-raised" ng-click="createNewSite()">Request A Site</button>
     </p>
+  </div>
+  <div class="col col-lg-4 col-md-6 col-sm-12">    
     <h1>How can you Help?</h1>
     <p>
         Weaver is 100% supported by volunteers, and is structured as a cooperative.  Want to help?
@@ -142,7 +147,7 @@ function reloadIfLoggedIn() {
         open source Weaver project by improving the user interface to meet more needs.
         Or -- at the very least -- tell all your friends about Weaver!
     </p>
-
+  </div>
 </div>
 
 
