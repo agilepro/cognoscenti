@@ -159,7 +159,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
-    
+    $scope.login = function() {
+        SLAP.loginUserRedirect();
+    }
+
 });
 </script>
 

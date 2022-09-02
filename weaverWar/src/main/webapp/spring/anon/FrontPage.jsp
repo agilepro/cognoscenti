@@ -69,18 +69,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.thisCircle = <%thisCircle.write(out,2,4);%>;
     $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
     $scope.filter = "";
-    
-    function processHtml(value) {
-        if (!value) {
-            return "<i>no description</i>";
-        }
-        else if (value.length<200) {
-            return convertMarkdownToHtml(value);
-        }
-        else {
-            return convertMarkdownToHtml(value.substring(0,198)+" ...");
-        }
-    }
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -91,66 +79,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.processTemplate = function(hist) {
-        return hist.template;
+  
+    $scope.login = function() {
+        SLAP.loginUserRedirect();
     }
-
-
-
-    $scope.ellipse = function(workspace) {
-        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontPage.htm";
-    }
-    $scope.topLevel = function(workspace) {
-        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontTop.htm";
-    }
-    $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
-    }
-    $scope.openInviteSender = function (player) {
-
-        var proposedMessage = {}
-        proposedMessage.msg = $scope.inviteMsg;
-        proposedMessage.userId = player.uid;
-        proposedMessage.name   = player.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
-        
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
-            controller: 'InviteModalCtrl',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                email: function () {
-                    return player.uid;
-                },
-                msg: function() {
-                    return proposedMessage;
-                }
-            }
-        });
-
-        modalInstance.result.then(function (actualMessage) {
-            $scope.inviteMsg = actualMessage.msg;
-        }, function () {
-            //cancel action - nothing really to do
-        });
-        
-    $scope.sendEmailLoginRequest = function(message) {
-        SLAP.sendInvitationEmail(message);
-        var postURL = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=apiSendInvite";
-        var postdata = JSON.stringify(message);
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            console.log("message has been sent to "+message.userId);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
-
-        
-    };
 
 
 });

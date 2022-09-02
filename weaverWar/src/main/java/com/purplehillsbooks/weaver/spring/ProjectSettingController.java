@@ -190,7 +190,8 @@ public class ProjectSettingController extends BaseController {
     public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "EmailMsg.jsp");
+        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        showJSPDepending(ar, ngw, "EmailMsg.jsp", true);
     }
 
 

@@ -13,7 +13,7 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertAccessWorkspace("Must be a member to see meetings");
+
     NGBook ngb = ngp.getSite();
 
     MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);
@@ -81,13 +81,15 @@ app.controller('myCtrl', function($scope, $http) {
 });
 
 </script>
+
 <style>
 .msgBody {
     padding:25px;
 }
 </style>
+
 <!-- MAIN CONTENT SECTION START -->
-<div ng-cloak>
+<div ng-cloak style="padding:35px;">
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -104,10 +106,6 @@ app.controller('myCtrl', function($scope, $http) {
   <tr>
     <td>Addressee</td>
     <td><a href="../../{{toUser.key}}/PersonShow.htm">{{toUser.name}}</a></td>
-  </tr>
-  <tr>
-    <td>Status</td>
-    <td>{{emailMsg.Status}}</td>
   </tr>
   <tr ng-show="emailMsg.exception">
     <td>Error</td>
@@ -130,38 +128,7 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Attachments</td>
     <td><div ng-repeat="att in emailMsg.AttachmentFiles">{{att}}</div></td>
   </tr>
-  <tr>
-    <td>Created</td>
-    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
-  <tr>
-    <td>Sent</td>
-    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
-  <tr>
-    <td>CreateDate</td>
-    <td>{{emailMsg.CreateDate}}</td>
-  </tr>
-  <tr>
-    <td>Site</td>
-    <td>{{emailMsg.Site}}</td>
-  </tr>
-  <tr>
-    <td>Workspace</td>
-    <td>{{emailMsg.Workspace}}</td>
-  </tr>
-  <tr>
-    <td>CommentContainer</td>
-    <td>{{emailMsg.CommentContainer}}</td>
-  </tr>
-  <tr>
-    <td>CommentLoc</td>
-    <td>{{emailMsg.CommentLoc}}</td>
-  </tr>
-  <tr>
-    <td>CommentId</td>
-    <td>{{emailMsg.CommentId}}</td>
-  </tr>
+
 
 </table>
 
