@@ -360,7 +360,7 @@ public class AttachmentRecord extends CommentContainer {
         }
 
         List<AttachmentVersion> list =
-            AttachmentVersion.getProjectVersions(projectFolder, this);
+            AttachmentVersion.getDocVersions(projectFolder, this);
 
         sortVersions(list);
 

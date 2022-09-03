@@ -2,7 +2,7 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<NGPageIndex> ownedProjs = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
+    List<NGPageIndex> ownedProjs = ar.getCogInstance().getWorkspacesUserIsIn(uProf);
     
     boolean noneFound = ownedProjs.size()==0;
 

@@ -98,52 +98,27 @@ public class AttachmentVersion {
     * Other versioning system should have a static member like this as well to find the
     * the versions in their way.
     */
-    public static List<AttachmentVersion> getProjectVersions(File projectfolder, AttachmentRecord att) throws Exception  {
+    public static List<AttachmentVersion> getDocVersions(File projectfolder, AttachmentRecord att) throws Exception  {
         if (projectfolder==null)  {
-            throw new ProgramLogicError("null workspace folder sent to getProjectVersions");
+            throw new ProgramLogicError("null workspace folder sent to getDocVersions");
         }
         if (att==null)  {
-            throw new ProgramLogicError("null attachment object sent to getProjectVersions");
+            throw new ProgramLogicError("null attachment object sent to getDocVersions");
         }
         String attachName = att.getNiceName();
         String attachmentId = att.getId();
         if (attachName==null) {
-            throw new ProgramLogicError("null attachment Name sent to getProjectVersions");
+            throw new ProgramLogicError("null attachment Name sent to getDocVersions");
         }
         if (attachmentId==null) {
-            throw new ProgramLogicError("null attachment Id sent to getProjectVersions");
+            throw new ProgramLogicError("null attachment Id sent to getDocVersions");
         }
         if (!projectfolder.exists()) {
-            throw new ProgramLogicError("getProjectVersions needs to be passed a valid projectfolder.  This does not exist: "+projectfolder.toString());
+            throw new ProgramLogicError("getDocVersions needs to be passed a valid projectfolder.  This does not exist: "+projectfolder.toString());
         }
         List<AttachmentVersion> list = new ArrayList<AttachmentVersion>();
 
         fillListReturnHighestInternalVersion(list, projectfolder,  att);
-
-        /*
-        int highestVersionSeen = 0;
-        if (highestInternal!=null) {
-            highestVersionSeen = highestInternal.getNumber();
-        }
-
-        //This is needed only if there have been recent edits to the display copy
-        //this is detected by comparing lengths
-        //--UPDATE: eliminating this because we do not allow editing of the file 
-        //  on the server.  Original design included possibly running server locally
-        //  and that caused an extra copy of the file to be in the project dir.
-        //  That extra copy no longer needed, so no need to look for attachments in the main folder
-        
-        for (File testFile : projectfolder.listFiles()) {
-            String testName = testFile.getName();
-            if (attachName.equalsIgnoreCase(testName)) {
-                //only add to the list of versions if it is a different length
-                if (highestInternal==null || highestInternal.getFileSize()!=testFile.length()) {
-                    list.add(new AttachmentVersion(att,testFile, highestVersionSeen+1, true, true));
-                }
-                break;
-            }
-        }
-        */
         
         return list;
     }
@@ -254,7 +229,7 @@ public class AttachmentVersion {
         synchronized(AttachmentVersion.class)
         {
             //first, see what versions exist, and get the latest
-            List<AttachmentVersion> list = getProjectVersions(projectFolder, att);
+            List<AttachmentVersion> list = getDocVersions(projectFolder, att);
 
             int newSubVersion = 1;
             for (AttachmentVersion av : list) {

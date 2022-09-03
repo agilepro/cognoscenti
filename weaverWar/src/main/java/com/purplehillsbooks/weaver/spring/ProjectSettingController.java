@@ -66,7 +66,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         showJSPDepending(ar, ngw, "LimitedAccess.jsp", true);
     }
 
@@ -137,7 +137,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerRequiredProject(ar, siteId, pageId);
+        registerWorkspaceRequired(ar, siteId, pageId);
         if (ar.isAdmin()) {
             streamJSP(ar, "AdminSettings.jsp");
         }
@@ -150,7 +150,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerRequiredProject(ar, siteId, pageId);
+        registerWorkspaceRequired(ar, siteId, pageId);
         showJSPMembers(ar, siteId, pageId, "AdminStats.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/AdminAPI.htm", method = RequestMethod.GET)
@@ -158,7 +158,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        registerRequiredProject(ar, siteId, pageId);
+        registerWorkspaceRequired(ar, siteId, pageId);
         showJSPMembers(ar, siteId, pageId, "AdminAPI.jsp");
     }
 
@@ -190,7 +190,7 @@ public class ProjectSettingController extends BaseController {
     public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         long msgId = ar.reqParamLong("msg");
         MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
         if (emailMsg==null) {
@@ -322,7 +322,7 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId );
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId );
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
             ar.assertNotFrozen(ngw);
@@ -454,7 +454,7 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleName= "Unknown";
         try{
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId );
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId );
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             JSONObject personalInfo = getPostedObject(ar);
@@ -625,7 +625,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String roleName = "";
         try{
-            NGWorkspace ngc = registerRequiredProject(ar, siteId, pageId );
+            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId );
             ar.assertLoggedIn("Must be logged in to check your role membership");
             ar.setPageAccessLevels(ngc);
             roleName = ar.reqParam("role");

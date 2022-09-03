@@ -1010,6 +1010,28 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
+    public CommentContainer findContainerByKey(String searchKey) throws Exception {
+        
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                if (searchKey.equals(ai.getGlobalContainerKey(this))) {
+                    return ai;
+                }
+            }
+        }
+        for (TopicRecord topic : getAllDiscussionTopics()) {
+            if (searchKey.equals(topic.getGlobalContainerKey(this))) {
+                return topic;
+            }
+        }
+        for (AttachmentRecord att : getAllAttachments()) {
+            if (searchKey.equals(att.getGlobalContainerKey(this))) {
+                return att;
+            }
+        }
+        System.out.println("COMMENT-CONTAINER: attempt to find container not found: "+searchKey);
+        return null;
+    }
     
     
     

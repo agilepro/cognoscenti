@@ -69,7 +69,7 @@ public class MeetingControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
 
             String id = ar.reqParam("id");
@@ -118,7 +118,7 @@ public class MeetingControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
@@ -137,7 +137,7 @@ public class MeetingControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
@@ -160,7 +160,7 @@ public class MeetingControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
@@ -208,7 +208,7 @@ public class MeetingControler extends BaseController {
                 return;
             }
 
-            registerRequiredProject(ar, siteId, pageId);
+            registerWorkspaceRequired(ar, siteId, pageId);
 
             ar.setParam("id", id);
             ar.setParam("pageId", pageId);
@@ -232,7 +232,7 @@ public class MeetingControler extends BaseController {
             //and not be logged in, and still be able to get the calendar on
             //their calendar.  So allow this information to ANYONE who has a link.
 
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeeting(meetId);
 
             //buffer this in case there is an exception we can report it cleanly

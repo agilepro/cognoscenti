@@ -302,9 +302,7 @@ public class DailyDigest {
                     }
                 }
 
-                //formatTaskListForEmail is going to clear locks, so clear here before entering
-                NGPageIndex.clearLocksHeldByThisThread();
-                numTasks = formatTaskListForEmail(clone, up);
+                numTasks = formatActionItems(clone, up, userCache);
                 userLog.put("tasks", numTasks);
 
                 //writeReminders will walk through a bunch of pages and all locks must be
@@ -392,15 +390,15 @@ public class DailyDigest {
                 continue;
             }
             try {
-                NGWorkspace container = ngpi.getWorkspace();
-                List<HistoryRecord> histRecs = container.getHistoryRange(
+                NGWorkspace ngw = ngpi.getWorkspace();
+                List<HistoryRecord> histRecs = ngw.getHistoryRange(
                         historyRangeStart, historyRangeEnd);
                 if (histRecs.size() == 0) {
                     // skip this if there is nothing to show
                     continue;
                 }
                 String url = clone.retPath
-                        + clone.getDefaultURL(container);
+                        + clone.getDefaultURL(ngw);
 
                 if (needsFirst) {
                     clone.write("<a href=\"");
@@ -425,7 +423,7 @@ public class DailyDigest {
 
                 clone.write(url);
                 clone.write("\">");
-                clone.writeHtml(container.getFullName());
+                clone.writeHtml(ngw.getFullName());
                 clone.write("</a></h4></td>");
                 clone.write("\n</tr>");
                 clone.write("\n</thead>");
@@ -442,7 +440,7 @@ public class DailyDigest {
                     clone.write("\"></a>");
 
                     // Get Localized string
-                    history.writeLocalizedHistoryMessage(container, clone);
+                    history.writeLocalizedHistoryMessage(ngw, clone);
                     SectionUtil.nicePrintTime(clone.w, history.getTimeStamp(),
                             clone.nowTime);
                     if (history.getContextType() != HistoryRecord.CONTEXT_TYPE_PERMISSIONS
@@ -518,11 +516,10 @@ public class DailyDigest {
         clone.write("</table>");
     }
 
-    private static int formatTaskListForEmail(AuthRequest ar, UserProfile up)
-            throws Exception {
+    private static int formatActionItems(AuthRequest ar, UserProfile up, UserCache userCache) throws Exception {
         int taskNum = 0;
-        List<ProjectGoal> tasks = getActiveTaskList(up, ar.getCogInstance());
-        if (tasks.size() == 0) {
+        JSONArray actionItems = userCache.getActionItems();
+        if (actionItems.length() == 0) {
             return 0;
         }
         ar.write("<div style=\"margin-top:25px;margin-bottom:5px;\"><span style=\"font-size:24px;font-weight:bold;\">Task Updates</span>&nbsp;&nbsp;&nbsp;");
@@ -544,10 +541,9 @@ public class DailyDigest {
         ar.write("\n </tr> ");
         ar.write("\n </thead> ");
         ar.write("\n <tbody>");
-        for (ProjectGoal pg : tasks) {
+        for (JSONObject actionItemObj : actionItems.getJSONObjectList()) {
             taskNum++;
-            NGPageIndex ngpi = pg.ngpi;
-            GoalRecord task = pg.goal;
+            int taskState = actionItemObj.getInt("state");
 
             ar.write("\n <tr");
             if (taskNum % 2 == 0) {
@@ -558,31 +554,32 @@ public class DailyDigest {
             // task state, name and the page link.
             ar.write("\n <td>");
             ar.write("<a href=\"");
-            writeGoalLinkUrl(ar, ngpi, task, up);
+            writeGoalLinkUrl(ar, actionItemObj, up.getKey(), userCache);
             ar.write("\" title=\"access current status of task\">");
             ar.write("<img border=\"0\" align=\"absbottom\" src=\"");
             ar.write(ar.baseURL);
-            ar.write(BaseRecord.stateImg(task.getState()));
+            ar.write(BaseRecord.stateImg(taskState));
             ar.write("\" alt=\"");
-            ar.writeHtml(GoalRecord.stateName(task.getState()));
+            ar.writeHtml(GoalRecord.stateName(taskState));
             ar.write("\"/></a>&nbsp;</td><td>");
             ar.write("<a href=\"");
-            writeGoalLinkUrl(ar, ngpi, task, up);
+            writeGoalLinkUrl(ar, actionItemObj, up.getKey(), userCache);
             ar.write("\" title=\"access current status of task\">");
-            ar.writeHtml(task.getSynopsis());
+            ar.writeHtml(actionItemObj.getString("synopsys"));
             ar.write("</a> - <a href=\"");
-            writeProcessLinkUrl(ar, ngpi);
+            writeProcessLinkUrl(ar, actionItemObj);
             ar.write("\" title=\"See the workspace containing this task\">");
-            ar.writeHtml(ngpi.containerName);
+            ar.writeHtml(actionItemObj.getString("projectName"));
             ar.write("</a>");
             ar.write("\n<br/>Status: ");
-            ar.writeHtml(task.getStatus());
+            ar.writeHtml(GoalRecord.stateName(taskState));
             ar.write("\n </td>");
 
             // due date column.
             ar.write("\n <td>");
-            if (task.getDueDate() > 0) {
-                ar.write(SectionUtil.getNicePrintDate(task.getDueDate()));
+            long dueDate = actionItemObj.getLong("duedate");
+            if (dueDate > 0) {
+                ar.write(SectionUtil.getNicePrintDate(dueDate));
             }
             ar.write("\n </td>");
             ar.write("\n </tr>");
@@ -596,38 +593,37 @@ public class DailyDigest {
      * Writes a URL of the task details page for a given task
      * along with the magic number and user key for anonymous access.
      */
-    private static void writeGoalLinkUrl(AuthRequest ar, NGPageIndex ngpi,
-            GoalRecord gr, UserProfile up) throws Exception {
+    private static void writeGoalLinkUrl(AuthRequest ar, JSONObject actionItemObj, String userKey, UserCache cache) throws Exception {
+        String id = actionItemObj.getString("id");
         ar.write(ar.baseURL);
         ar.write("t/");
-        ar.writeURLData(ngpi.wsSiteKey);
+        ar.writeURLData(actionItemObj.getString("siteKey"));
         ar.write("/");
-        ar.writeURLData(ngpi.containerKey);
+        ar.writeURLData(actionItemObj.getString("projectKey"));
         ar.write("/task");
-        ar.writeURLData(gr.getId());
+        ar.writeURLData(id);
         ar.write(".htm");
         ar.write("?");
-        NGWorkspace ngw = ngpi.getWorkspace();
-        ar.write(AccessControl.getAccessGoalParams(ngw, gr));
+        ar.write(cache.getAccessParams(id));
         ar.write("&ukey=");
-        ar.writeURLData(up.getKey());
+        ar.writeURLData(userKey);
     }
 
-    private static void writeProcessLinkUrl(AuthRequest ar, NGPageIndex ngpi)
+    private static void writeProcessLinkUrl(AuthRequest ar, JSONObject actionItemObj)
             throws Exception {
         ar.write(ar.baseURL);
         ar.write("t/");
-        ar.writeURLData(ngpi.wsSiteKey);
+        ar.writeURLData(actionItemObj.getString("siteKey"));
         ar.write("/");
-        ar.writeURLData(ngpi.containerKey);
-        ar.write("/goalList.htm");
+        ar.writeURLData(actionItemObj.getString("projectKey"));
+        ar.write("/GoalStatus.htm");
     }
 
     private static int writeReminders(AuthRequest ar, UserProfile up) throws Exception {
 
         int noOfReminders = 0;
 
-        for (NGPageIndex ngpi : ar.getCogInstance().getProjectsUserIsPartOf(up)) {
+        for (NGPageIndex ngpi : ar.getCogInstance().getWorkspacesUserIsIn(up)) {
 
             noOfReminders = writeOneReminder(ar, up, ngpi, noOfReminders);
 
@@ -753,19 +749,19 @@ public class DailyDigest {
     }
 
     // operation get task list.
-    private static List<ProjectGoal> getActiveTaskList(UserProfile up, Cognoscenti cog) throws Exception {
+    private static List<WorkspaceGoal> getActiveTaskList(UserProfile up, Cognoscenti cog) throws Exception {
         NGPageIndex.assertNoLocksOnThread();
 
-        ArrayList<ProjectGoal> activeTask = new ArrayList<ProjectGoal>();
+        ArrayList<WorkspaceGoal> activeTask = new ArrayList<WorkspaceGoal>();
 
         if (up == null) {
             throw new Exception("can not get list of action items for userwhich is null");
         }
 
-        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
+        for (NGPageIndex ngpi : cog.getWorkspacesUserIsIn(up)) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
-            if (!ngpi.isWorkspace() || ngpi.isDeleted) {
+            if (!ngpi.isWorkspace() || ngpi.isDeleted || ngpi.isFrozen()) {
                 continue;
             }
             NGWorkspace aPage = ngpi.getWorkspace();
@@ -788,14 +784,14 @@ public class DailyDigest {
                 int state = gr.getState();
                 if (state == BaseRecord.STATE_ERROR) {
                     if (gr.isAssignee(up)) {
-                        activeTask.add(new ProjectGoal(gr, aPage, cog));
+                        activeTask.add(new WorkspaceGoal(gr, aPage, cog));
                     }
                 }
                 else if (state == BaseRecord.STATE_ACCEPTED || state == BaseRecord.STATE_OFFERED
                         || state == BaseRecord.STATE_WAITING) {
                     // the assignee should see this task in the active task list.
                     if (gr.isAssignee(up)) {
-                        activeTask.add(new ProjectGoal(gr, aPage, cog));
+                        activeTask.add(new WorkspaceGoal(gr, aPage, cog));
                     }
                 }
             }
@@ -804,15 +800,15 @@ public class DailyDigest {
         return activeTask;
     }
 
-    private static class ProjectGoal {
+    private static class WorkspaceGoal {
 
         public GoalRecord goal;
         public NGPageIndex ngpi;
 
 
-        public ProjectGoal(GoalRecord aGoal, NGWorkspace aPage, Cognoscenti cog) throws Exception {
+        public WorkspaceGoal(GoalRecord aGoal, NGWorkspace ngw, Cognoscenti cog) throws Exception {
             goal = aGoal;
-            ngpi = cog.getWSBySiteAndKey(aPage.getSiteKey(), aPage.getKey());
+            ngpi = cog.getWSBySiteAndKey(ngw.getSiteKey(), ngw.getKey());
         }
     }
 

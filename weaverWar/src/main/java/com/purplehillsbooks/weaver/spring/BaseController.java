@@ -306,7 +306,7 @@ public class BaseController {
             return prepareSiteView(ar, siteId);
         }
         else {
-            return registerRequiredProject(ar, siteId, pageId );
+            return registerWorkspaceRequired(ar, siteId, pageId );
         }
     }
     /**
@@ -321,7 +321,7 @@ public class BaseController {
      *
      * Will ALSO set two request attributes needed by the JSP files.
      */
-    public static NGWorkspace registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
+    public static NGWorkspace registerWorkspaceRequired(AuthRequest ar, String siteId, String pageId) throws Exception
     {
         ar.req.setAttribute("headerType", "project");
         ar.req.setAttribute("siteId",     siteId);

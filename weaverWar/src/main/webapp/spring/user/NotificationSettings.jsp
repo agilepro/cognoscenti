@@ -25,7 +25,7 @@
     }
 
     JSONArray partProjects = new JSONArray();
-    List<NGPageIndex> projectsUserIsPartOf = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
+    List<NGPageIndex> projectsUserIsPartOf = ar.getCogInstance().getWorkspacesUserIsIn(uProf);
     
     NGPageIndex.sortInverseChronological(projectsUserIsPartOf);
     for(NGPageIndex ngpi : projectsUserIsPartOf){

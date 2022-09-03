@@ -328,7 +328,7 @@ public class UserPage extends ContainerCommon
         }
         JSONArray list = new JSONArray();
 
-        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
+        for (NGPageIndex ngpi : cog.getWorkspacesUserIsIn(up)) {
 
             if (!ngpi.isWorkspace() || ngpi.isDeleted) {
                 continue;

@@ -488,7 +488,7 @@ System.out.println("Weaver Server Object == Start the Server");
      * Returns a vector of NGPageIndex objects which represent projects which
      * are all part of a single site. Should be called get all projects in site
      */
-    public List<NGPageIndex> getAllProjectsInSite(String accountKey) throws Exception {
+    public List<NGPageIndex> getAllWorkspacesInSite(String accountKey) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (!ngpi.isWorkspace()) {
@@ -521,7 +521,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return ret;
     }
 
-    public List<NGPageIndex> getProjectsUserIsPartOf(UserProfile ale) throws Exception {
+    public List<NGPageIndex> getWorkspacesUserIsIn(UserProfile ale) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         String userKey = ale.getKey();
         for (NGPageIndex ngpi : getAllContainers()) {

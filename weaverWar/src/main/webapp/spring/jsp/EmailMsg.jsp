@@ -1,6 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailRecord"
+%><%@page import="com.purplehillsbooks.weaver.CommentContainer"
 %><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%
@@ -11,14 +12,24 @@
     
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    ar.setPageAccessLevels(ngw);
     ar.assertAccessWorkspace("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
 
-    MailInst emailMsg = EmailSender.findEmailById(ngp, msgId);
+    MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
     AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
     AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+    String containerKey = emailMsg.getCommentContainer();
+    String containerUrl = null;
+    if (containerKey != null && containerKey.length()>0) {
+        CommentContainer cc = ngw.findContainerByKey(containerKey);
+        if (cc!=null) {
+            if (cc instanceof TopicRecord) {
+                containerUrl = "NoteZoom"+((TopicRecord)cc).getId()+".htm";
+            }
+        }
+    }
     
     JSONObject mailObject = new JSONObject();
     String specialBody = "";
@@ -139,24 +150,24 @@ app.controller('myCtrl', function($scope, $http) {
     <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
   </tr>
   <tr>
-    <td>CreateDate</td>
+    <td>Msg Id</td>
     <td>{{emailMsg.CreateDate}}</td>
   </tr>
   <tr>
     <td>Site</td>
-    <td>{{emailMsg.Site}}</td>
+    <td><a href="../$/SiteWorkspaces.htm">{{emailMsg.Site}}</a></td>
   </tr>
   <tr>
     <td>Workspace</td>
-    <td>{{emailMsg.Workspace}}</td>
+    <td><a href="FrontPage.htm">{{emailMsg.Workspace}}</a></td>
   </tr>
   <tr>
     <td>CommentContainer</td>
+    <% if (containerUrl!=null) { %>
+    <td>a href="<%=containerUrl%>">{{emailMsg.CommentContainer}}</a></td>
+    <% } else { %>
     <td>{{emailMsg.CommentContainer}}</td>
-  </tr>
-  <tr>
-    <td>CommentLoc</td>
-    <td>{{emailMsg.CommentLoc}}</td>
+    <% } %>
   </tr>
   <tr>
     <td>CommentId</td>

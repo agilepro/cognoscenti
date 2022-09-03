@@ -135,7 +135,7 @@ public class ProjectDocsController extends BaseController {
         String aid = ar.reqParam("aid");
 
         request.setAttribute("aid", aid);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         AttachmentRecord att = ngw.findAttachmentByID(aid);
         boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
         BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
@@ -193,7 +193,7 @@ public class ProjectDocsController extends BaseController {
         try{
             NGPageIndex.assertNoLocksOnThread();
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String attachmentName = docName+"."+ext;
             AttachmentRecord att = ngw.findAttachmentByNameOrFail(attachmentName);
@@ -279,7 +279,7 @@ public class ProjectDocsController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             //this constructs and outputs the PDF file to the output stream
             WikiToPDF.handlePDFRequest(ar, ngw);
@@ -296,7 +296,7 @@ public class ProjectDocsController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
+            registerWorkspaceRequired(ar, siteId, pageId);
             showJSPMembers(ar, siteId, pageId, "reminders.jsp");
         }catch(Exception ex){
             throw new JSONException("Failed to open reminder page of workspace {0} in site {1}", ex, pageId, siteId);
@@ -608,7 +608,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
         String msgLocator = ar.defParam("msg", null);
         System.out.println("Reply.htm - got message locator="+msgLocator);
@@ -646,7 +646,7 @@ public class ProjectDocsController extends BaseController {
         //if you get here, then you have a link and the email msg id and the comment id match
         //which means you are not a hacker, so we can allow access to the content.
         
-        CommentContainer container = CommentContainer.findContainerByKey(ngw, containerKey);
+        CommentContainer container = ngw.findContainerByKey(containerKey);
         if (container==null) {
             throw new Exception("Unable to find a container comment with key="+containerKey);
         }
@@ -694,7 +694,7 @@ public class ProjectDocsController extends BaseController {
         String meetId = ar.defParam("meetId", null);
         String agendaId = ar.defParam("agendaId", null);
         String emailId = ar.defParam("emailId", null);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
         boolean specialAccess = false;
         if (meetId!=null) {
@@ -724,7 +724,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String commentId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         ngw.getNoteOrFail(topicId);
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
@@ -745,7 +745,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             JSONObject input = getPostedObject(ar);
@@ -874,7 +874,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             List<String> docList = null;
 
             String meetId = request.getParameter("meet");
@@ -1025,7 +1025,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             List<String> actionItemList = null;
 
             String meetId = request.getParameter("meet");
@@ -1166,7 +1166,7 @@ public class ProjectDocsController extends BaseController {
         System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         request.setAttribute("aid", aid);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         AttachmentRecord att = ngw.findAttachmentByID(aid);
         boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
         BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);

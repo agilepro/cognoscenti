@@ -401,7 +401,7 @@ public class UserController extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             String requestId = ar.reqParam("requestId");
             RoleRequestRecord roleRequestRecord = ngw.getRoleRequestRecordById(requestId);

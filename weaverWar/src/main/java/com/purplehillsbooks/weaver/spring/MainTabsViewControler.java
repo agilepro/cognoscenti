@@ -74,7 +74,7 @@ public class MainTabsViewControler extends BaseController {
             showJSPSiteLiberal(ar, siteId, "FrontTop.jsp");
         }
         else {
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             showJSPDepending(ar, ngw, "FrontTop.jsp", true);
         }
     }
@@ -89,7 +89,7 @@ public class MainTabsViewControler extends BaseController {
             response.sendRedirect("SiteWorkspaces.htm");
             return;
         }
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         showJSPDepending(ar, ngw, "FrontPage.jsp", true);
     }
 
@@ -114,7 +114,7 @@ public class MainTabsViewControler extends BaseController {
             if (warnNotLoggedIn(ar)) {
                 return;
             }
-            registerRequiredProject(ar, siteId, pageId);
+            registerWorkspaceRequired(ar, siteId, pageId);
             streamJSP(ar, "SearchAllNotes.jsp");
 
         }catch(Exception ex){

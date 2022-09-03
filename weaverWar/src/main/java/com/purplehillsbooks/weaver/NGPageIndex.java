@@ -318,10 +318,10 @@ public class NGPageIndex {
 
 
     public boolean isInVector(List<NGPageIndex> v) {
-        boolean isProject = isWorkspace();
+        boolean isWorkspace = isWorkspace();
         for (NGPageIndex y : v) {
             if (containerKey.equals(y.containerKey)) {
-                if (!isProject) {
+                if (!isWorkspace) {
                     return true;
                 }
                 if (wsSiteKey!=null && y.wsSiteKey!=null && wsSiteKey.equals(y.wsSiteKey)) {

@@ -35,7 +35,7 @@
     
     JSONArray accWSpaces = new JSONArray();
     int count = 0;
-    for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(displayedUser)) {
+    for (NGPageIndex ngpi : cog.getWorkspacesUserIsIn(displayedUser)) {
         accWSpaces.put(ngpi.getJSON4List());
     }
     

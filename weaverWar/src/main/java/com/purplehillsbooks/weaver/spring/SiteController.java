@@ -199,7 +199,7 @@ public class SiteController extends BaseController {
                 if (!siteKey.equalsIgnoreCase(siteFolder.getName())) {
                     throw new Exception("Something strange: expected site named ("+siteKey+") but folder is "+siteFolder);
                 }
-                for (NGPageIndex ngpi : cog.getAllProjectsInSite(siteKey)) {
+                for (NGPageIndex ngpi : cog.getAllWorkspacesInSite(siteKey)) {
                     NGWorkspace ngw = ngpi.getWorkspace();
                     cog.eliminateIndexForWorkspace(ngw);
                 }
@@ -304,7 +304,7 @@ public class SiteController extends BaseController {
                 NGBook site = ar.getCogInstance().getSiteById(siteId);
                 ar.setPageAccessLevels(site);
                 ar.assertAdmin("Must be owner of a site to replace users.");
-                listOfSpaces = ar.getCogInstance().getAllProjectsInSite(siteId);
+                listOfSpaces = ar.getCogInstance().getAllWorkspacesInSite(siteId);
                 NGPageIndex.clearLocksHeldByThisThread();
             }
             int count = 0;

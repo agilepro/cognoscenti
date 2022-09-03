@@ -476,7 +476,7 @@ public class EmailListener extends TimerTask{
                 return;
             }
             
-            CommentContainer cc = CommentContainer.findContainerByKey(ngw, containerKey);
+            CommentContainer cc = ngw.findContainerByKey(containerKey);
             if (cc == null) {
                 System.out.println("WEAVERPOP: did not find container with "+containerKey);
                 return;

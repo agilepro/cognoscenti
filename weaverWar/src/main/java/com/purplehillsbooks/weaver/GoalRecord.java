@@ -150,7 +150,7 @@ public class GoalRecord extends BaseRecord {
 
     protected void handleStateChangeEvent() throws Exception {
 
-        NGWorkspace ngw = getProject();
+        NGWorkspace ngw = getWorkspace();
         if (ngw == null) {
             throw new ProgramLogicError(
                     "handleStateChangeEvent needs a NGWorkspace parameter");
@@ -287,7 +287,7 @@ public class GoalRecord extends BaseRecord {
 
     public boolean hasSubGoals() throws Exception {
         String myId = getId();
-        for (GoalRecord gr : getProject().getAllGoals()) {
+        for (GoalRecord gr : getWorkspace().getAllGoals()) {
             if (myId.equalsIgnoreCase(gr.getParentGoalId())) {
                 return true;
             }
@@ -296,7 +296,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     public List<GoalRecord> getSubGoals() throws Exception {
-        List<GoalRecord> grlist = getProject().getAllGoals();
+        List<GoalRecord> grlist = getWorkspace().getAllGoals();
         List<GoalRecord> subTasksVect = new ArrayList<GoalRecord>();
         String myId = getId();
 
@@ -457,7 +457,7 @@ public class GoalRecord extends BaseRecord {
 
     // /////////////// DEPRECATED METHODS ////////////////////
 
-    public NGWorkspace getProject() {
+    private NGWorkspace getWorkspace() {
         return ((NGSection) getParent()).parent;
     }
 

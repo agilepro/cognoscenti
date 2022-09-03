@@ -59,7 +59,7 @@ public class UploadFileController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             Cognoscenti cog = ar.getCogInstance();
             UserManager userManager = cog.getUserManager();
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             //Handling special case for Multipart request
             ar.req = request;
 
@@ -133,7 +133,7 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.send.email");
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertNotFrozen(ngw);
 
             String comment = ar.reqParam("comment");
@@ -185,7 +185,7 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.resend.email.reminder");
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             String reminderId = ar.reqParam("rid");
             String emailto = ar.defParam("emailto", null);
@@ -205,7 +205,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
@@ -224,7 +224,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
@@ -245,7 +245,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
@@ -269,7 +269,7 @@ public class UploadFileController extends BaseController {
                 HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
 
             String rid = ar.reqParam("rid");

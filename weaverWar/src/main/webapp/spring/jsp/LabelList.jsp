@@ -28,7 +28,7 @@
     
     JSONArray allWorkspaces = new JSONArray();
     JSONObject thisWorkspace = null;
-    for (NGPageIndex ngpis : cog.getAllProjectsInSite(siteId)) {
+    for (NGPageIndex ngpis : cog.getAllWorkspacesInSite(siteId)) {
         if (ngpis.isDeleted) {
             continue;
         }

@@ -222,27 +222,19 @@ public abstract class CommentContainer extends DOMFace {
         return "BOGUS";
     }
     
-    public static CommentContainer findContainerByKey(NGWorkspace ngw, String searchKey) throws Exception {
-        
-        for (MeetingRecord meet : ngw.getMeetings()) {
-            for (AgendaItem ai : meet.getAgendaItems()) {
-                if (searchKey.equals(ai.getGlobalContainerKey(ngw))) {
-                    return ai;
-                }
-            }
+
+    public String getPageWebAddress() {
+        if (this instanceof TopicRecord) {
+            return "NoteZoom"+((TopicRecord)this).getId()+".htm";
         }
-        for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
-            if (searchKey.equals(topic.getGlobalContainerKey(ngw))) {
-                return topic;
-            }
+        if (this instanceof AttachmentRecord) {
+            return "DocInfo"+((TopicRecord)this).getId()+".htm";
         }
-        for (AttachmentRecord att : ngw.getAllAttachments()) {
-            if (searchKey.equals(att.getGlobalContainerKey(ngw))) {
-                return att;
-            }
+        if (this instanceof AgendaItem) {
+            MeetingRecord mr = ((AgendaItem)this).meeting;
+            return "meetingHtml.htm?id="+mr.getId();
         }
-        System.out.println("COMMENT-CONTAINER: attempt to find container not found: "+searchKey);
-        return null;
+        throw new RuntimeException("Unable to getPageWebAddress, unrecognized container type: "+getClass().getName());
     }
 
 }

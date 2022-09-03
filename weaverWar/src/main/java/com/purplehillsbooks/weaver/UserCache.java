@@ -39,10 +39,11 @@ public class UserCache {
         JSONArray openRounds = new JSONArray();
         JSONArray futureMeetings = new JSONArray();
         JSONArray draftTopics = new JSONArray();
+        JSONObject magicNumbers = new JSONObject();
 
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
-        for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(up)) {
+        for (NGPageIndex ngpi : cog.getWorkspacesUserIsIn(up)) {
             
             System.out.println("refreshCache is reading "+ngpi.containerKey+" for "+up.getPreferredEmail());
             if (!ngpi.isWorkspace() || ngpi.isDeleted) {
@@ -58,19 +59,20 @@ public class UserCache {
                 continue;
             }
 
-            for (GoalRecord gr : ngw.getAllGoals()) {
+            for (GoalRecord actionItem : ngw.getAllGoals()) {
 
-                if (gr.isPassive()) {
+                if (actionItem.isPassive()) {
                     //ignore tasks that are from other servers.  They will be identified and tracked on
                     //those other servers
                     continue;
                 }
 
-                if (!gr.isAssignee(up)) {
+                if (!actionItem.isAssignee(up)) {
                     continue;
                 }
 
-                actionItemList.put(gr.getJSON4Goal(ngw));
+                actionItemList.put(actionItem.getJSON4Goal(ngw));
+                magicNumbers.put(actionItem.getId(), AccessControl.getAccessGoalParams(ngw, actionItem));
             }
             for (TopicRecord aTopic : ngw.getAllDiscussionTopics()) {
                 String address = "noteZoom"+aTopic.getId()+".htm";
@@ -85,6 +87,7 @@ public class UserCache {
                     topicJSON.put("siteKey", ngw.getSiteKey());
                     topicJSON.put("workspaceName", ngw.getFullName());
                     draftTopics.put(topicJSON);
+                    magicNumbers.put(aTopic.getId(), AccessControl.getAccessTopicParams(ngw, aTopic));
                 }
 
                 for (CommentRecord cr : aTopic.getComments()) {
@@ -129,10 +132,16 @@ public class UserCache {
        }
 
         cacheObj.put("actionItems", actionItemList);
+        cacheObj.put("magicNumbers", magicNumbers);
         cacheObj.put("proposals", proposalList);
         cacheObj.put("openRounds", openRounds);
         cacheObj.put("futureMeetings", futureMeetings);
         cacheObj.put("draftTopics", draftTopics);
+    }
+    
+    public String getAccessParams(String resourceId) throws Exception {
+        JSONObject  magicNumbers = cacheObj.requireJSONObject("magicNumbers");
+        return magicNumbers.optString(resourceId, "");
     }
 
     private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,

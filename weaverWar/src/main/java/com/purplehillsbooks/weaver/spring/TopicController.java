@@ -49,7 +49,7 @@ public class TopicController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         showJSPDepending(ar, ngw, "NotesList.jsp", false);
     }
 
@@ -59,7 +59,7 @@ public class TopicController extends BaseController {
            throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+           NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
            TopicRecord topic = ngw.getNoteOrFail(topicId);
            request.setAttribute("topicId", topicId);
            boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);

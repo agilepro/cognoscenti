@@ -113,7 +113,7 @@ public class ProjectGoalController extends BaseController {
     {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             GoalRecord goal = ngw.getGoalOrFail(taskId);
             if(goal.isPassive()) {
@@ -130,7 +130,7 @@ public class ProjectGoalController extends BaseController {
             if (canAccessGoal && (!isLoggedIn || !canAccessWorkspace) ) {
                 ar.setParam("pageId", pageId);
                 ar.setParam("siteId", siteId);
-                streamJSPAnonUnwrapped(ar, "ActionItem.jsp");
+                streamJSPAnon(ar, "ActionItem.jsp");
             }
             else{
                 if (warnNoAccess(ar)) {
@@ -186,7 +186,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to manipulate tasks.");
 
             //TODO: taskId should really be parentTaskId
@@ -211,7 +211,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace nGPage = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace nGPage = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to open a sub task");
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
@@ -376,7 +376,7 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to reassign task.");
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertUpdateWorkspace("Must be able to update workspace to update action items.");
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update an action item");
@@ -430,7 +430,7 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to update task.");
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             String go = ar.reqParam("go");
 
             taskActionUpdate(ar, ngw, taskId);
@@ -453,7 +453,7 @@ public class ProjectGoalController extends BaseController {
             //note: this form is for people NOT logged in!
             //ukey specifies user, and mntask verifies they have a proper link to the action item
 
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             String taskId = ar.reqParam("taskId");
             String mntask = ar.reqParam("mntask");
             String ukey = ar.reqParam("ukey");
@@ -506,56 +506,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/subProcess.ajax", method = RequestMethod.POST)
-    public void searchSubProcess(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
 
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            ar.assertLoggedIn("You need to login to access subProcess.ajax.");
-
-            String processURL = ar.reqParam("processURL");
-            int pcolon = processURL.indexOf(":");
-            int pfs = processURL.indexOf("/");
-
-            String processLocation = processURL.substring(0, pcolon);
-            String accoundID = processURL.substring(pcolon + 1, pfs);
-            String projectID = processURL.substring(pfs + 1, processURL.length());
-
-            JSONObject param = new JSONObject();
-            if (processLocation.equalsIgnoreCase("local")) {
-                param.put("msgType", SUCCESS_LOCAL);
-                param.put(LOCAL_PROJECT, getLocalProcess(accoundID, projectID, ar));
-            }else if(processLocation.equalsIgnoreCase("http")){
-                param.put("msgType", SUCCESS_REMOTE);
-                param.put("msg", REMOTE_PROJECT);
-            }
-            sendJson(ar,param);
-        }catch(Exception ex){
-            streamException(ex,ar);
-        }
-    }
-    */
-
-
-    /*
-    private String getLocalProcess(String siteId, String projectID,
-            AuthRequest ar) throws Exception {
-
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
-            if (ngpi.containerKey.equals(projectID)) {
-                NGWorkspace page = ngpi.getWorkspace();
-                ar.setPageAccessLevels(page);
-                ProcessRecord process = page.getProcess();
-                LicensedURL thisProcessUrl = process.getWfxmlLink(ar);
-                return thisProcessUrl.getCombinedRepresentation();
-            }
-        }
-
-        throw new Exception("Local process for workspace '"+projectID+"' not found");
-    }
-    */
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/fetchGoal.json", method = RequestMethod.GET)
@@ -887,7 +838,7 @@ public class ProjectGoalController extends BaseController {
             //and not be logged in, and still be able to get the calendar on
             //their calendar.  So allow this information to ANYONE who has a link.
 
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             GoalRecord goal = ngw.getGoalOrFail(actId);
 
             MemFile mf = new MemFile();
