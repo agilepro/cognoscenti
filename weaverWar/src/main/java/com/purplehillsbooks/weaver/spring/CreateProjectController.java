@@ -74,14 +74,14 @@ public class CreateProjectController extends BaseController {
 
             //now actually create it
             NGWorkspace newWorkspace = createWorkspace(ar, site, workspaceName);
-
-            //set the purpose / description
-            if (newConfig.has("purpose")) {
-                newWorkspace.setPurpose(newConfig.getString("purpose"));
-            }
+            
+            //temp name change in case the old name is used someplace
             if (newConfig.has("parent")) {
-                newWorkspace.setParentKey(newConfig.getString("parent"));
+                newConfig.put("parentKey", newConfig.getString("parent"));
             }
+
+            //handles parentKey, purpose, and frozen
+            newWorkspace.updateConfigJSON(ar, newConfig);
 
             if (newConfig.has("members")) {
                 //do the members if any specified

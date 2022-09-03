@@ -108,6 +108,10 @@ public class NGBook extends ContainerCommon {
         moveOldMembersToRole();
         assureColorsExist();
         
+        if (getWorkspaceLimit()<4) {
+            setWorkspacelimit(4);
+        }
+        
     }
 
     private void assureNameExists() {
@@ -478,6 +482,23 @@ public class NGBook extends ContainerCommon {
     }
 
 
+    public int getWorkspaceLimit() {
+        return siteInfoRec.getAttributeInt("workspaceLimit");
+    }
+    public void setWorkspacelimit(int limit) {
+        siteInfoRec.setAttributeInt("workspaceLimit", limit);
+    }
+    public int countUnfrozenWorkspaces() throws Exception {
+        int unfrozenCount = 0;
+        for (NGPageIndex aWorkspace : cog.getAllProjectsInSite(getKey())) {
+            if (aWorkspace.isFrozen() || aWorkspace.isDeleted()) {
+                continue;
+            }
+            unfrozenCount++;
+        }
+        return unfrozenCount;
+    }
+    
     // ////////////////// ROLES /////////////////////////
 
     @Override
@@ -661,7 +682,7 @@ public class NGBook extends ContainerCommon {
 
 
     @Override
-    public boolean isFrozen() throws Exception {
+    public boolean isFrozen() {
         if (isDeleted()) {
             return true;
         }
@@ -909,6 +930,12 @@ public class NGBook extends ContainerCommon {
 
 
     public JSONObject getConfigJSON() throws Exception {
+        
+        //all deleted site should also be frozen
+        if (this.isDeleted() && !this.isFrozen()) {
+            siteInfoRec.setAttributeBool("frozen", true);
+        }
+        
         JSONObject jo = new JSONObject();
         jo.put("key", this.getKey());
         jo.put("names", constructJSONArray(getContainerNames()));
@@ -921,6 +948,8 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.extractAttributeBool(jo, "offLine");
         siteInfoRec.extractAttributeString(jo, "siteMsg");
         siteInfoRec.extractVectorString(jo, "labelColors");
+        siteInfoRec.extractAttributeInt(jo, "workspaceLimit");
+
         this.extractScalarString(jo, "movedTo");
         NGRole owners = getSecondaryRole();
         JSONArray ja = new JSONArray();
@@ -950,13 +979,26 @@ public class NGBook extends ContainerCommon {
                 siteInfoRec.setAttributeBool("frozen", true);
             }
         }
-        siteInfoRec.updateAttributeBool("frozen", jo);
-        siteInfoRec.updateAttributeBool("offLine", jo);
+        //siteInfoRec.updateAttributeBool("frozen", jo);
+        //siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeString("siteMsg", jo);
         siteInfoRec.updateUniqueVectorString("labelColors", jo);
         this.updateScalarString("movedTo", jo);
     }
 
+    
+    /**
+     * These are settings that can only be set by a super admin
+     * because they pertain the account settings that users should
+     * never be able to change.  The structure is the same as 
+     * regular update, but only allowed if super admin
+     */
+    public void updateAdminConfigJSON(JSONObject jo) throws Exception {
+        siteInfoRec.updateAttributeBool("frozen", jo);
+        siteInfoRec.updateAttributeBool("offLine", jo);
+        siteInfoRec.updateAttributeInt("workspaceLimit", jo);
+    }
+    
     /**
      * the only thing you send from a Site is role request emails
      * and SiteMail.

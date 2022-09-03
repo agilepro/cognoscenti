@@ -1240,13 +1240,14 @@ public class NGWorkspace extends NGPage {
 
     
     public JSONObject getConfigJSON() throws Exception {
+        
         ProcessRecord process = getProcess();
         JSONObject workspaceConfigInfo = new JSONObject();
         workspaceConfigInfo.put("key", getKey());
         workspaceConfigInfo.put("site", getSiteKey());
         workspaceConfigInfo.put("goal", process.getSynopsis());
         workspaceConfigInfo.put("parentKey", getParentKey());
-        workspaceConfigInfo.put("frozen", isFrozen());
+        workspaceConfigInfo.put("frozen", isFrozen() || isDeleted());
         workspaceConfigInfo.put("deleted", isDeleted());
         if (isDeleted()) {
             workspaceConfigInfo.put("deleteDate", pageInfo.getDeleteDate());

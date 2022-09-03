@@ -61,6 +61,9 @@
         }
         recentWorkspaces.put(sibling.getJSON4List());
     }
+    int unfrozenCount = site.countUnfrozenWorkspaces();
+    int workspaceLimit = site.getWorkspaceLimit();
+    boolean mustBeFrozen = (unfrozenCount >= workspaceLimit && ngw.isFrozen());
 
     /*
     Data from the server is the workspace config structure
@@ -170,7 +173,14 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.workspaceConfig.parentKey = workspace.pageKey;
         $scope.parentWorkspace = workspace;
         $scope.parentFilter = "";
-        $scope.saveOneField(['parentKey']);
+        $scope.saveOneField("parentKey");
+    }
+    $scope.undeleteWorkspace = function() {
+        var newData = {};
+        newData.deleted = false;
+        newData.frozen = true;
+        saveRecord(newData);
+        $scope.isEditing = null;
     }
     $scope.clearField = function(fieldName) {
         var newData = {};
@@ -181,11 +191,19 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.saveProjectConfig = function() {
         saveRecord($scope.workspaceConfig);
     }
+    console.log("FROZEN", $scope.workspaceConfig.frozen, $scope.workspaceConfig );
     function saveRecord(rec) {
+        console.log("FROZEN", $scope.workspaceConfig.frozen, $scope.workspaceConfig);
         if (!<%=ar.isAdmin()%>) {
             alert("Sorry, you are not allowed to make changes on this page.  You must be an administrator of this workspace.");
             return;
         }
+        if ((!$scope.workspaceConfig.frozen) && <%=mustBeFrozen%>) {
+            $scope.workspaceConfig.frozen = true;
+            alert("Sorry, you already have too many unfrozen workspaces, please freeze another workspace before unfreezing this one");
+            return;
+        }
+            
         $scope.generateTheHtmlValues();
         var postURL = "updateProjectInfo.json";
         var postdata = angular.toJson(rec);
@@ -492,7 +510,7 @@ editBoxStyle {
                         <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted')"
                             class="btn btn-primary btn-raised" ng-hide="workspaceConfig.deleted">
                             Delete Workspace</button>
-                        <button ng-click="workspaceConfig.deleted=false;saveOneField('deleted')"
+                        <button ng-click="undeleteWorkspace()"
                             class="btn btn-primary btn-raised" ng-show="workspaceConfig.deleted">
                             Undelete Workspace</button>
                         <button ng-click="isEditing=null" class="btn btn-warning btn-raised">

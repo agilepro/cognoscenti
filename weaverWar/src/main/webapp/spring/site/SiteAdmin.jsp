@@ -110,7 +110,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td class="gridTableColummHeader_2">New Name:</td>
                 <td class="form-inline">
                     <input type="text" class="form-control" ng-model="newName">
-                    <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Add Name</button>
+                    <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Change Name</button>
                 </td>
             </tr>
             <tr>
@@ -131,14 +131,6 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr>
-                <td class="gridTableColummHeader_2">Flags:</td>
-                <td>
-                    <input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental &nbsp; &nbsp; 
-                    <input type="checkbox" ng-model="siteInfo.frozen"> Frozen &nbsp; &nbsp; 
-                    <input type="checkbox" ng-model="siteInfo.isDeleted"> isDeleted &nbsp; &nbsp; 
-                    <input type="checkbox" ng-model="siteInfo.offLine"> offLine
-            </tr>
-            <tr>
                 <td >Site Message:</td>
                 <td>
                     <textarea  class="form-control" rows="2" ng-model="siteInfo.siteMsg"
@@ -152,6 +144,16 @@ app.controller('myCtrl', function($scope, $http) {
                     title="A comma separated list of standard color names."></textarea>
                 </td>
             </tr>
+        <% if (ar.isSuperAdmin()) { %>
+            <tr>
+                <td class="gridTableColummHeader_2">Flags:</td>
+                <td>
+                    <input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.frozen"> Frozen &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.isDeleted"> isDeleted &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.offLine"> offLine
+            </tr>
+        <% } %>
             <tr>
                 <td class="gridTableColummHeader_2"></td>
                  
@@ -160,37 +162,6 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td class="gridTableColummHeader_2">Site Key:</td>
                 <td>{{siteInfo.key}}</td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader_2">Storage Path:</td>
-                 
-                <td>
-                {{siteInfo.rootfolder}}
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader_2">Streaming Link:</td>
-                 
-                <td><%
-                    License lic = null;
-                    for (License test : ngb.getLicenses()) {
-                        //just find any one license that is still valid
-                        if (ar.nowTime < test.getTimeout()) {
-                            lic = test;
-                        }
-                    }
-                    //ok ... since at this time there is no UI for creating licenses
-                    //in order to test, we just create a license on the fly here, and
-                    //also save the workspace, which is not exactly proper.
-                    //TODO: clean this up
-                    if (lic==null) {
-                        lic = ngb.createLicense(ar.getBestUserId(), "Owners", ar.nowTime+(1000*60*60*24*365), false);
-                        ngb.saveFile(ar, "Created license on the fly for testing purposes");
-                    }
-                    String link = ar.baseURL + "api/" + ngb.getKey() + "/$/summary.json?lic="+lic.getId();
-                    ar.writeHtml(link);
-                    %>
-                </td>
             </tr>
         </table>
     </div>

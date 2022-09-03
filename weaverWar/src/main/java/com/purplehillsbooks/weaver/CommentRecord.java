@@ -680,12 +680,6 @@ public class CommentRecord extends DOMFace {
             setReplyTo(source);
             ngw.assureRepliesSet(source, this.getTime());
         }
-        /*
-        if (input.has("replies")) {
-            //this should probably never be used, but left in just in case
-            setReplies(constructVectorLong(input.getJSONArray("replies")));
-        }
-        */
         if (input.has("postTime")) {
             setPostTime(input.getLong("postTime"));
         }

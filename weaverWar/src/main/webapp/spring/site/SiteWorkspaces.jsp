@@ -171,9 +171,12 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
     
-    <a href="SiteCreateWorkspace.htm" >
-        <button class="btn btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button>
-    </a>
+    <div>
+        <a href="SiteCreateWorkspace.htm" >
+            <button class="btn btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button>
+        </a>
+        Site can have {{siteInfo.workspaceLimit}} active workspaces.
+    </div>
 
     <div class="guideVocal" ng-show="noneFound">
        <p>

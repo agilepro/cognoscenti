@@ -130,6 +130,11 @@ public class AdminController extends BaseController {
             JSONObject newConfig = getPostedObject(ar);
 
             site.updateConfigJSON(newConfig);
+            
+            //allow updates for super admin things only if super admin
+            if (ar.isSuperAdmin()) {
+                site.updateAdminConfigJSON(newConfig);
+            }
 
             //save changes but DONT change the date.   These kinds of meta-changes don't qualify as modifications.
             site.save();

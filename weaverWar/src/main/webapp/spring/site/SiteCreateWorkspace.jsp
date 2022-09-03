@@ -42,13 +42,19 @@ Required parameter:
 
     UserProfile  uProf =ar.getUserProfile();
 
+    String desc = ar.defParam("desc", "");
+
+    int unfrozenCount = site.countUnfrozenWorkspaces();
+    int workspaceLimit = site.getWorkspaceLimit(); 
+    boolean onlyAllowFrozen = (unfrozenCount >= workspaceLimit);
+    boolean surplusWorkspaces = (unfrozenCount > workspaceLimit);
+    
     JSONObject newWorkspace = new JSONObject();
     newWorkspace.put("newName", ar.defParam("pname", ""));
     newWorkspace.put("purpose", ar.defParam("purpose", ""));
-    newWorkspace.put("parent", ar.defParam("parent", ""));
+    newWorkspace.put("parentKey", ar.defParam("parentKey", ""));
     newWorkspace.put("members", new JSONArray());
-
-    String desc = ar.defParam("desc", "");
+    newWorkspace.put("frozen", onlyAllowFrozen);
 
 
     /*
@@ -56,9 +62,10 @@ Required parameter:
     {
         newName:"",
         purpose:"",
-        parent: "",
+        parentKey: "",
         members: [],
-        template:""
+        template:"",
+        frozen: true
     }
     Data from the server is the workspace config structure
     {
@@ -93,13 +100,18 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         console.log("Error: "+serverErr);
         errorPanelHandler($scope, serverErr);
     };
-
+    console.log("WORKSPACE LIMIT; <%=workspaceLimit%>");
+    console.log("WORKSPACE LIMIT", $scope.siteInfo);
     $scope.updatePlayers = function() {
         $scope.newWorkspace.members = cleanUserList($scope.newWorkspace.members);
     }
     $scope.createNewWorkspace = function() {
         if (!$scope.newWorkspace.newName) {
             alert("Please enter a name for this new workspace.");
+            return;
+        }
+        if (<%=onlyAllowFrozen%> && !$scope.newWorkspace.frozen) {
+            alert("You are only allowed to create frozen workspaces at this time.");
             return;
         }
         var urlAddress = $scope.getURLAddress();
@@ -176,11 +188,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 </style>
 <div style="max-width:500px" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
 
-    <div class="form-group" ng-show="newWorkspace.parent">
+    <div class="form-group" ng-show="newWorkspace.parentKey">
         <label ng-click="showNameHelp=!showNameHelp">
             Parent
         </label>
-        <input disabled="disabled" class="form-control" ng-model="newWorkspace.parent"/>
+        <input disabled="disabled" class="form-control" ng-model="newWorkspace.parentKey"/>
     </div>
     <div class="form-group">
         <label ng-click="showNameHelp=!showNameHelp">
@@ -213,6 +225,24 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         part of that workspace. <br/>
         This description will be available to the public if the workspace
         ever appears in a public list of workspaces.
+    </div>
+    <div class="form-group">
+        <label ng-click="showFrozenHelp=!showFrozenHelp">
+            Frozen Workspace &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+        </label>
+        <div>
+            <input type="checkbox" ng-model="newWorkspace.frozen"/> Frozen
+            <% if (onlyAllowFrozen) { %> (only frozen allowed, already 
+                <%=workspaceLimit%><% if (surplusWorkspaces) {%>+<%}%> non-frozen workspaces) <% } %>
+        </div>
+    </div>
+    <div class="guideVocal" ng-show="showFrozenHelp" ng-click="showFrozenHelp=!showFrozenHelp">
+        Workspaces can be active, frozen or deleted.  Only active workspaces can be 
+        updated in any way.  This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces, 
+        but you are allowed unlimited frozen workspaces to allow an accurate organizational hierarchy.
+        <br/>
+        If you are only allowed to create frozen, go ahead and create it frozen, and then 
+        go to the other projects and sort out which ones are and are not frozen.
     </div>
     <div class="form-group">
         <label ng-click="showMembersHelp=!showMembersHelp">

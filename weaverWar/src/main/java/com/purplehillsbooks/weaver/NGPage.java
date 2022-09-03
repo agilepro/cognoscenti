@@ -377,7 +377,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     @Override
-    public boolean isFrozen() throws Exception {
+    public boolean isFrozen() {
         //every workspace in a frozen site is considered frozen
         if (prjSite.isDeleted()) {
             return true;
@@ -1435,34 +1435,6 @@ public abstract class NGPage extends ContainerCommon {
         HistoryRecord.sortByTimeStamp(newHist);
         return newHist;
     }
-
-    /*
-    * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
-    * history for that resource will be copied to the current container for a new context id.
-    * The history records are left in the old container.
-    * The history records in the new page will have the new ID.
-    *
-    public void copyHistoryForResource(NGPage ngc, int contextType, String oldID, String newID) throws Exception
-    {
-        for (HistoryRecord oldHist : ngc.getAllHistory())
-        {
-            int histContextType = oldHist.getContextType();
-            if (histContextType!=contextType) {
-                continue;
-            }
-            String contextId = oldHist.getContext();
-            if (!oldID.equals(contextId)) {
-                continue;
-            }
-
-            HistoryRecord newHist = createNewHistory();
-            newHist.copyFrom(oldHist);
-            newHist.setContext(newID);
-        }
-    }
-    */
-
-
 
 
     public HistoryRecord getLatestHistory() throws Exception {

@@ -613,6 +613,13 @@ public class NGPageIndex {
         }
 
     }
+    
+    public boolean isFrozen() {
+        return isFrozen;
+    }
+    public boolean isDeleted() {
+        return isDeleted;
+    }
 
     // ///////////// INTERNAL PRIVATE METHODS ///////////////////
 
