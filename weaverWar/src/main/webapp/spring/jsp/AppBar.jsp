@@ -40,11 +40,11 @@
 <div class="container-fluid">
 
   <!-- Subnavi Collapse Button -->
-  <button type="button" class="navbar-toggle visible-xs" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+  <!--button type="button" class="navbar-toggle visible-xs" data-toggle="collapse" data-target=".navbar-responsive-collapse">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
-  </button>
+  </button-->
 
 <style>
 .tighten li a {

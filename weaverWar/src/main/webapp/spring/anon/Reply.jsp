@@ -5,6 +5,7 @@
 %><%@page import="com.purplehillsbooks.weaver.AgendaItem"
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
 %><%@page import="com.purplehillsbooks.weaver.EmailContext"
+%><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 /*
@@ -16,18 +17,24 @@ Required parameters:
 
     String pageId    = ar.reqParam("pageId");
     String siteId    = ar.reqParam("siteId");
-    String msgId     = ar.defParam("msgId", null);
-    String topicId   = ar.defParam("topicId", null);
-    String meetId    = ar.defParam("meetId", null);
-    String agendaId  = ar.defParam("agendaId", null);
-    String commentId = ar.defParam("commentId", null);
-    String emailId   = ar.defParam("emailId", null);
-    String docId     = ar.defParam("docId", null);
-    
-    String linkedEmailId = emailId;
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
-
+    
+    
+    long msgId     = ar.reqParamLong("msgId");
+    MailInst mail = EmailSender.findEmailById(ngw, msgId);
+    String commentContainerKey = mail.getCommentContainer();
+    CommentContainer cc = ngw.findContainerByKey(commentContainerKey);
+    
+    
+    String topicId   = "";
+    String meetId    = "";
+    String agendaId  = "";
+    String commentId = ar.defParam("commentId", null);
+    String emailId   = ar.defParam("emailId", null);
+    String docId     = "";
+    
+    String linkedEmailId = emailId;
     if (ar.isLoggedIn()) {
         emailId = ar.getBestUserId();
     }
@@ -43,9 +50,11 @@ Required parameters:
     JSONArray attachments = new JSONArray();
     String originalSubject = "";
 
-    if (meetId!=null) {
-        MeetingRecord meet = ngw.findMeeting(meetId);
-        AgendaItem ai = meet.findAgendaItem(agendaId);
+    if (cc instanceof AgendaItem) {
+        AgendaItem ai = (AgendaItem) cc;
+        MeetingRecord meet = ai.meeting;
+        agendaId = ai.getId();
+        meetId = meet.getId();
         emailContext = new EmailContext(meet, ai);
         meetingTitle = meet.getName();
         agendaItem = ai.getSubject();
@@ -53,10 +62,10 @@ Required parameters:
         originalSubject = "Agenda: " + ai.getSubject();
         JSONObject meetInfo = meet.getFullJSON(ar, ngw, false);
         subscribers = meetInfo.getJSONArray("participants");
-        
     }
-    else if (topicId!=null) {
-        TopicRecord topic = ngw.getDiscussionTopic(topicId);
+    else if (cc instanceof TopicRecord) {
+        TopicRecord topic = (TopicRecord) cc;
+        topicId = topic.getId();
         topicSubject = topic.getSubject();
         JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
         originalTopic = topicInfo.getString("wiki");
@@ -69,8 +78,9 @@ Required parameters:
              attachments.put(att.getMinJSON(ngw));
         }
     } 
-    else if (docId!=null) {
-        AttachmentRecord att = ngw.findAttachmentOrNull(docId);
+    else if (cc instanceof AttachmentRecord) {
+        AttachmentRecord att = (AttachmentRecord)cc;
+        docId = att.getId();
         originalTopic = att.getDescription();
         originalSubject = "Document: " + att.getNiceName();
         emailContext = new EmailContext(att);
@@ -102,6 +112,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.comments = <%comments.write(out,2,4);%>;
     $scope.newComment = {html:"",state:11};
     $scope.newComment.time = new Date().getTime();
+    $scope.commentTypeName = "Comment";
+    $scope.responseTypeName = "Answer";
     
     $scope.linkedEmailId = "<%ar.writeJS(linkedEmailId);%>";
     
@@ -109,11 +121,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.tinymceOptions.height = 250;
     $scope.isLoggedIn = <%=ar.isLoggedIn()%>;
     
+    function reportError(data) {
+        console.log("FAILURE: ", data);
+        alert("Unable to update server");
+    }
+    
     
     <% if (ar.isLoggedIn()) {%>
     $scope.loggedUserIds = <%ar.getUserProfile().getFullJSON().getJSONArray("ids").write(out,2,4);%>;
     $scope.emailId = "<%ar.writeJS(emailId);%>";
     $scope.userName = "<%ar.writeJS(ar.getUserProfile().getName());%>";
+    localStorage.setItem('userEmail', $scope.emailId);
+    localStorage.setItem('userName', $scope.userName);
     <% } else {%>
     $scope.loggedUserIds = [];
     $scope.emailId = localStorage.getItem('userEmail');
@@ -165,18 +184,40 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         $scope.otherComments = allOthers;
         $scope.userCounts = newCounts;
+        $scope.newComment.html2 = convertMarkdownToHtml($scope.newComment.body);
         
-        //this test is not good enough if user has multiple email addresses
-        var isSub = false;
+        $scope.hasResponse = false;
+        if ($scope.focusComment) {
+            if ($scope.focusComment.commentType==2) {
+                $scope.commentTypeName = "Proposal";
+                $scope.responseTypeName = "Response";
+            }
+            else if ($scope.focusComment.commentType==3) {
+                $scope.commentTypeName = "Question";
+                $scope.responseTypeName = "Answer";
+            }
+            else {
+                $scope.commentTypeName = "Comment";
+                $scope.responseTypeName = "N/A";
+            }
+            $scope.focusComment.responses.forEach( function(resp) {
+                if (resp.user == $scope.emailId) {
+                    $scope.hasResponse = true;
+                    $scope.myResponse = convertMarkdownToHtml(resp.body);
+                }
+            });
+        }
+        
+        //determine if the user is subscribed to the topic
+        $scope.isSubscriber = false;
         $scope.subscribers.forEach( function(sub) {
             var subIdLC = sub.uid.toLowerCase();
             $scope.loggedUserIds.forEach( function(anId) {
                 if (subIdLC == anId.toLowerCase()) {
-                    isSub = true;
+                    $scope.isSubscriber = true;
                 }
             });
         });
-        $scope.isSubscriber = isSub;
     }
     $scope.distributeComments();
 
@@ -243,11 +284,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.distributeComments();
         })
         .error( function(data, status, headers, config) {
-            console.log("ERROR", data, status)
+            console.log("ERROR", data, status);
+            alert("Failure to save data");
         });
     }
     $scope.goToDiscussion = function() {
-        window.location = "<%ar.writeJS(goToUrl);%>";
+    <% if (ar.isLoggedIn()) {%>
+    window.location = "<%ar.writeJS(goToUrl);%>";
+    <% } else {%>
+       SLAP.loginUserRedirect();
+    <% } %>
     }
 
     $scope.changeSubscription = function(onOff) {
@@ -268,6 +314,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         } )
         .error( function(data, status, headers, config) {
             console.log("ERROR",data);
+            alert("Failure to save data");
         });
     }
     $scope.navigateToDoc = function(doc) {
@@ -279,6 +326,75 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.navigateToLink = function(doc) {
         window.open(doc.url, "_blank");
+    }
+    
+    $scope.startResponse = function() {
+        if (!$scope.emailId || !$scope.userName) {
+            $scope.mustGetId = true;
+        }
+        $scope.makingResponse = true;
+    }
+    $scope.saveResponse = function(choice) {
+        if (choice=='Objection' && $scope.myResponse.length < 12) {
+            alert("If you object, you must give a clear reason for your objection");
+            return;
+        }
+        $scope.makingResponse = false;
+        var newResponse = {};
+        newResponse.user = $scope.emailId;
+        newResponse.choice = choice;
+        newResponse.body = HTML2Markdown($scope.myResponse, {});
+        var cmtUpdate = {};
+        cmtUpdate.time = $scope.focusComment.time;
+        cmtUpdate.responses = [newResponse];
+        
+        var postData = angular.toJson(cmtUpdate);
+        $http.post("updateCommentAnon.json?cid="+cmtUpdate.time+"&msg=<%=msgId%>", postData)
+        .success( function(data) {
+            console.log("GOT BACK:", data); 
+            $scope.focusComment = data;
+        } )
+        .error( function(data, status, headers, config) {
+            console.log("ERROR",data);
+            alert("Failure to save data");
+        });
+    }
+    $scope.cancelResponse = function() {
+        $scope.makingResponse = false;
+    }
+    $scope.startComment = function() {
+        if (!$scope.emailId || !$scope.userName) {
+            $scope.mustGetId = true;
+        }
+        $scope.makingComment = true;
+    }
+    $scope.saveComment = function() {
+        $scope.makingResponse = false;
+    }
+    $scope.cancelComment = function() {
+        $scope.makingResponse = false;
+    }
+    $scope.forgetMe = function() {
+        <% if (!ar.isLoggedIn()) {%>
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userName');
+        $scope.emailId = "";
+        $scope.userName = "";
+        <% } %>
+    }
+    $scope.saveAddresses = function() {
+        if (!$scope.emailId) {
+            alert("Please enter an email address");
+            return;
+        }
+        
+        if (!$scope.emailId) {
+            alert("Please enter an email address");
+            return;
+        }
+        localStorage.setItem('userEmail', $scope.emailId);
+        localStorage.setItem('userName', $scope.userName);
+        $scope.mustGetId = false;
     }
 
 });
@@ -298,13 +414,25 @@ function reloadIfLoggedIn() {
 .spacey tr td {
     padding: 5px 5px;
 }
+.mainAboutObject {
+    background-color: #F0D7F7;
+}
 
 </style>
 
 
 <div style="max-width:800px;scroll-margin-top:50px">
     
-    <div class="comment-outer comment-state-active">
+    <div>
+<% if (!ar.isLoggedIn()) {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Login</button>
+<% } else {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Go To Full Discussion</button>
+<% } %>
+    </div>
+    <div class="comment-outer mainAboutObject">
       <div class="comment-inner">
         <div ng-bind-html="originalWiki|wiki"></div>
       </div>
@@ -351,29 +479,84 @@ function reloadIfLoggedIn() {
         </div>
       </div>
     </div>
+    
+    
     <div id="Comment" style="scroll-margin-top:80px;scroll-padding-top:80px"></div>
     <div ng_show="focusComment.body" >
-        <h1 >You are replying to:</h1>
+        <h1>{{commentTypeName}} from email:</h1>
 
-        <div class="comment-outer">
+        <div class="comment-outer comment-state-active">
           <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
+          <div ng-show="focusComment.commentType>=2"><h3>The {{commentTypeName}}:</h3></div>
           <div class="comment-inner">
             <div ng-bind-html="focusComment.body|wiki"></div>
           </div>
-          <table ng-show="focusComment.responses" class="spacey">
-            <tr ng-repeat="resp in focusComment.responses" ng-show="resp.body">
+          <table ng-show="focusComment.responses" class="spacey" style="width:100%">
+            <tr ng-show="focusComment.commentType>=2 && !makingResponse">
+                <td colSpan="3"><h3>{{responseTypeName}}s so far:</h3></td></tr>
+            <tr ng-repeat="resp in focusComment.responses" ng-show="!makingResponse">
               <td><b>{{resp.choice}}</b></td>
               <td><i>{{resp.userName}}</i></td>
               <td><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
             </tr>
+            <tr ng-show="focusComment.commentType>=2 && !makingResponse"><td></td><td></td><td>
+              <button ng-click="startResponse()" class="btn btn-primary btn-raised">Create / update your {{responseTypeName}}</button></td></tr>
+            <tr ng-show="makingResponse && mustGetId"><td colSpan="3">
+                <div class="comment-outer" style="padding:25px;width:600px">
+                
+                    <div>Please enter/verify your email address</div>
+                    <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
+                    <div>And your name</div>
+                    <div><input class="form-control" ng-model="userName" placeholder="Enter name"/></div>
+                    <div><button class="btn btn-primary btn-raised" ng-click="saveAddresses()"
+                        title="Save these verified values">Save & Continue</button></div>
+                </div>
+            </td></tr>
+            <tr ng-show="makingResponse && !mustGetId"><td colSpan="3">
+              <div><h3>Your {{responseTypeName}}:</h3></div>       
+              <div ui-tinymce="tinymceOptions" ng-model="myResponse"
+                 class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
+              <div ng-show="focusComment.commentType==2">
+                  <button ng-click="saveResponse('Consent')" class="btn btn-primary btn-raised">Consent</button>
+                  <button ng-click="saveResponse('Objection')" class="btn btn-primary btn-raised">Objection</button>
+                  <button ng-click="cancelResponse()" class="btn btn-warning btn-raised">Cancel</button>
+              </div>
+              <div ng-show="focusComment.commentType==3">
+                  <button ng-click="saveResponse()" class="btn btn-primary btn-raised">Save</button>
+                  <button ng-click="cancelResponse()" class="btn btn-warning btn-raised">Cancel</button>
+              </div>
+            </td></tr>
           </table>
+
+          <div ng-show="focusComment.outcome"><h3>The Outcome:</h3></div>
           <div class="comment-inner" ng-show="focusComment.outcome">
             <div ng-bind-html="focusComment.outcome|wiki"></div>
           </div>
         </div>
     </div>
 
-    <div style="min-height:460px">
+    <div ng-hide="makingComment" style="margin:25px;">
+        To reply <button ng-click="startComment()" class="btn btn-primary btn-raised">Create Reply Comment</button>
+<% if (!ar.isLoggedIn()) {%>
+            , or for more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Login</button>
+<% } else {%>
+            , or for options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Go To Full Discussion</button>
+<% } %>
+    </div>
+    <div style="min-height:460px" ng-show="makingComment && mustGetId">
+        <div class="comment-outer" style="padding:25px">
+        
+            <div>Please enter/verify your email address</div>
+            <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
+            <div>And your name</div>
+            <div><input class="form-control" ng-model="userName" placeholder="Enter name"/></div>
+            <div><button class="btn btn-primary btn-raised" ng-click="saveAddresses()"
+                title="Save these verified values">Save & Continue</button></div>
+        </div>
+    </div>
+    <div style="min-height:460px" ng-show="makingComment && !mustGetId">
         <div ng-hide="sentAlready" class="comment-outer">
             <table class="spacey"><tr>
             <td><h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2></td>
@@ -381,31 +564,17 @@ function reloadIfLoggedIn() {
                 title="Send the comment into the discussion topic">Save Draft</button></td>
             <td><button class="btn btn-primary btn-raised" ng-click="sendIt()"
                 title="Send the comment into the discussion topic">Send</button></td>
-            <td><button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Go To Full Discussion</button></td>
+            <td></td>
             <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access discussion</span></td>
             </tr>
-<% if (!ar.isLoggedIn()) { %>
-            <tr><td colspan="3">
-                Your Name:
-            </td><td colspan="2">
-                Your Email:
-            </td></tr>
-            <tr><td colspan="3">
-                <input type="form-control" ng-model="userName"/>
-            </td><td colspan="2">
-                <input type="form-control" ng-model="emailId"/>
-            </td></tr>            
-<% } %>
             </table>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
                  class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
-       </div>
+        </div>
         <div ng-show="sentAlready">
             <table class="spacey"><tr>
             <td><h2>Your reply is sent:</h2></td>
-            <td><button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Go To Full Discussion</button></td>
+            <td></td>
             <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access the discussion</span></td>
             </tr></table>
             <div class="comment-outer">
@@ -416,8 +585,23 @@ function reloadIfLoggedIn() {
             </div>
             
         </div>
+        <div>
+<% if (!ar.isLoggedIn()) {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Login</button>
+<% } else {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Go To Full Discussion</button>
+<% } %>
+        </div>
     </div>
-    <table class="table" style="max-width:800px">
+    
+    
+    
+    
+    
+    
+    <table class="table" style="width:100%;max-width:800px">
         <tr ng-show="topicSubject">
             <td>Discussion Topic</td>
             <td>{{topicSubject}}</td>
@@ -500,6 +684,10 @@ function reloadIfLoggedIn() {
             <td>Reply as</td>
             <td>{{emailId}}
               <span ng-hide="emailId==linkedEmailId" style="color:red">(You used a link for {{linkedEmailId}})</span>
+<% if (!ar.isLoggedIn()) {%>
+              <br/>
+              <button ng-click="forgetMe()" class="btn btn-default btn-raised">Forget Me</button>
+<% } %>
             </td>
         </tr>
     </table>

@@ -11,9 +11,21 @@
 Workspace: <a href="{$wsBaseURL}FrontPage.htm">{$wsName|onempty(No Name)|html}</a>
 Message: <a href="{$wsBaseURL}EmailMsg.htm?msg={$msgId}">View Online</a>
 <br/>
-Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No Name)|html}</a> 
- has a <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#Comment">{$opType} <b>{$cmtType}</b> (view online)</a>.
+About Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No Name)|html}</a>.
 </p>
+
+{% if ($cmtType=="proposal") %}
+<div style="color:grey;font-weight:bold;">
+  This is a Proposal</a>
+</div>
+{% endif %}
+
+{% if ($cmtType=="round") %}
+<div style="color:grey;font-weight:bold;">
+  This is a Question Round</a>
+</div>
+{% endif %}
+
 <hr/>
 
 
@@ -34,10 +46,17 @@ Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No
 {% if ($cmtType=="proposal") %}
 <hr/>
 <div style="color:grey;font-weight:bold;">
-  Please click to <a href="{$commentURL}">Enter Your Response To This</a>
+  Please click to <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#Comment"><button>Respond to this Proposal</button></a>
 </div>
-
 {% endif %}
+
+{% if ($cmtType=="round") %}
+<hr/>
+<div style="color:grey;font-weight:bold;">
+  Please click to <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}#Comment"><button>Answer this Question</button></a>
+</div>
+{% endif %}
+
 {% endif %}
 {% if ($cmtType=="comment") %}
 <div id="trimPoint" style="color:grey;font-weight:bold;">ACTION:  

@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailRecord"
 %><%@page import="com.purplehillsbooks.weaver.CommentContainer"
+%><%@page import="com.purplehillsbooks.weaver.AgendaItem"
 %><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%
@@ -22,11 +23,21 @@
     AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
     String containerKey = emailMsg.getCommentContainer();
     String containerUrl = null;
+    String aboutName = null;
+    String aboutType = null;
     if (containerKey != null && containerKey.length()>0) {
         CommentContainer cc = ngw.findContainerByKey(containerKey);
         if (cc!=null) {
             if (cc instanceof TopicRecord) {
-                containerUrl = "NoteZoom"+((TopicRecord)cc).getId()+".htm";
+                containerUrl = "noteZoom"+((TopicRecord)cc).getId()+".htm";
+                aboutName = ((TopicRecord)cc).getSubject();
+                aboutType = "Topic";
+            }
+            else if (cc instanceof AgendaItem) {
+                MeetingRecord meet = ((AgendaItem)cc).meeting;
+                containerUrl = "meetingHtml.htm?id="+meet.getId();
+                aboutName = meet.getName();
+                aboutType = "Meeting";
             }
         }
     }
@@ -120,6 +131,12 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Status</td>
     <td>{{emailMsg.Status}}</td>
   </tr>
+  <% if (containerUrl!=null) { %>
+  <tr>
+    <td>About <%ar.writeHtml(aboutType);%></td>
+    <td><a href="<%=containerUrl%>"><%ar.writeHtml(aboutName);%></a></td>
+  </tr>
+  <% } %>
   <tr ng-show="emailMsg.exception">
     <td>Error</td>
     <td><div>Failed {{emailMsg.FailCount}} times</div>
@@ -164,7 +181,7 @@ app.controller('myCtrl', function($scope, $http) {
   <tr>
     <td>CommentContainer</td>
     <% if (containerUrl!=null) { %>
-    <td>a href="<%=containerUrl%>">{{emailMsg.CommentContainer}}</a></td>
+    <td><a href="<%=containerUrl%>">{{emailMsg.CommentContainer}}</a></td>
     <% } else { %>
     <td>{{emailMsg.CommentContainer}}</td>
     <% } %>

@@ -1,6 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.EmailRecord"
+%><%@page import="com.purplehillsbooks.weaver.CommentContainer"
 %><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%@page import="com.purplehillsbooks.json.JSONException"
@@ -13,6 +14,26 @@
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
 
     MailInst emailMsg = EmailSender.findEmailById(msgId);
+    String siteId = emailMsg.getSiteKey();
+    String pageId = emailMsg.getWorkspaceKey();
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(emailMsg.getSiteKey(), emailMsg.getWorkspaceKey()).getWorkspace();
+    AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
+    AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+    String containerKey = emailMsg.getCommentContainer();
+    String containerUrl = null;
+    String aboutName = null;
+    String aboutType = null;
+    if (containerKey != null && containerKey.length()>0) {
+        CommentContainer cc = ngw.findContainerByKey(containerKey);
+        if (cc!=null) {
+            if (cc instanceof TopicRecord) {
+                containerUrl = "noteZoom"+((TopicRecord)cc).getId()+".htm";
+                aboutName = ((TopicRecord)cc).getSubject();
+                aboutType = "Topic";
+            }
+        }
+    }
+
     JSONObject mailObject = new JSONObject();
     String specialBody = "";
     boolean bodyIsDeleted = false;
@@ -82,9 +103,13 @@ app.controller('myCtrl', function($scope, $http) {
 });
 
 </script>
-
+<style>
+.msgBody {
+    padding:25px;
+}
+</style>
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak class="msgBody">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
@@ -92,7 +117,7 @@ app.controller('myCtrl', function($scope, $http) {
 <table class="table" style="max-width:800px">
   <tr>
     <td>From</td>
-    <td>{{emailMsg.From}}</td>
+    <td><a href="../../{{fromUser.key}}/PersonShow.htm">{{fromUser.name}}</a></td>
   </tr>
   <tr>
     <td>Subject</td>
@@ -100,28 +125,26 @@ app.controller('myCtrl', function($scope, $http) {
   </tr>
   <tr>
     <td>Addressee</td>
-    <td>{{emailMsg.Addressee}}</td>
+    <td><a href="../../{{toUser.key}}/PersonShow.htm">{{toUser.name}}</a></td>
   </tr>
   <tr>
     <td>Status</td>
     <td>{{emailMsg.Status}}</td>
   </tr>
+  <% if (containerUrl!=null) { %>
+  <tr>
+    <td>About <%ar.writeHtml(aboutType);%></td>
+    <td><a href="../<%=siteId%>/<%=pageId%>/<%=containerUrl%>"><%ar.writeHtml(aboutName);%></a></td>
+  </tr>
+  <% } %>
   <tr ng-show="emailMsg.exception">
     <td>Error</td>
     <td><div>Failed {{emailMsg.FailCount}} times</div>
         <div>{{emailMsg.exception.error.context}}</div>
         <div ng-repeat="ee in emailMsg.exception.error.details">{{ee.message}}</div></td>
   </tr>
-  <tr>
-    <td>Created</td>
-    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
-  <tr>
-    <td>Sent</td>
-    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
-  </tr>
   <tr ng-hide="bodyIsDeleted">
-    <td colspan="2"><%= specialBody %></td>
+    <td colspan="2"><div class="msgBody"><%= specialBody %></div></td>
   </tr>
   <tr ng-show="bodyIsDeleted">
     <td colspan="2">
@@ -135,6 +158,39 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Attachments</td>
     <td><div ng-repeat="att in emailMsg.AttachmentFiles">{{att}}</div></td>
   </tr>
+  <tr>
+    <td>Created</td>
+    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr>
+    <td>Sent</td>
+    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr>
+    <td>Msg Id</td>
+    <td>{{emailMsg.CreateDate}}</td>
+  </tr>
+  <tr>
+    <td>Site</td>
+    <td><a href="../<%=siteId%>/$/SiteWorkspaces.htm">{{emailMsg.Site}}</a></td>
+  </tr>
+  <tr>
+    <td>Workspace</td>
+    <td><a href="../<%=siteId%>/<%=pageId%>/FrontPage.htm">{{emailMsg.Workspace}}</a></td>
+  </tr>
+  <tr>
+    <td>CommentContainer</td>
+    <% if (containerUrl!=null) { %>
+    <td><a href="../<%=siteId%>/<%=pageId%>/<%=containerUrl%>">{{emailMsg.CommentContainer}}</a></td>
+    <% } else { %>
+    <td>{{emailMsg.CommentContainer}}</td>
+    <% } %>
+  </tr>
+  <tr>
+    <td>CommentId</td>
+    <td>{{emailMsg.CommentId}}</td>
+  </tr>
+
 </table>
 
 </div>

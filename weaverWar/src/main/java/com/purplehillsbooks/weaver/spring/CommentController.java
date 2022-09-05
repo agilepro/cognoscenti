@@ -31,6 +31,8 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.xml.Mel;
 
 import org.springframework.stereotype.Controller;
@@ -119,6 +121,56 @@ public class CommentController extends BaseController {
             if (postObject.has("deleteMe")) {
                 ngw.deleteComment(cid);
                 repo = new JSONObject().put("delete", "success");
+            }
+            else {
+                CommentRecord topic = ngw.getCommentOrFail(cid);
+                topic.updateFromJSON(postObject, ar);
+    
+                repo = topic.getCompleteJSON();
+            }
+            
+            //re-link (or unlink) replies links to all comments
+            ngw.correctAllRepliesLinks();
+            
+            //if the comment was on a meeting, then refresh the meeting cache
+            if (meetingId!=null) {
+                MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
+            }
+            saveAndReleaseLock(ngw, ar, "updated a comment");
+            sendJson(ar, repo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update comment ("+cid+") contents", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/updateCommentAnon.json", method = RequestMethod.POST)
+    public void updateCommentAnon(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        long cid = 0;
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            JSONObject postObject = this.getPostedObject(ar);
+            
+            cid = Mel.safeConvertLong(ar.reqParam("cid"));
+            
+            //in order to allow an anonymous update of a comment, there must be a valid email
+            //message id, and the email in question must be about the comment being upated
+            long msgId = Mel.safeConvertLong(ar.reqParam("msg"));
+            MailInst mail = EmailSender.findEmailById(msgId);
+            if (mail == null) {
+                throw new Exception("Can't find an email message for "+msgId);
+            }
+            if (cid != mail.getCommentId()) {
+                throw new Exception("Comment and email message id do not match");
+            }
+                    
+            JSONObject repo = null;
+            String meetingId = ngw.findMeetingIdForComment(cid);
+            if (postObject.has("deleteMe")) {
+                throw new Exception("delete is not allowed anonymously");
             }
             else {
                 CommentRecord topic = ngw.getCommentOrFail(cid);

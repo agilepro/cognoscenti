@@ -109,6 +109,8 @@ public class BaseController {
         streamJSP(ar, "Warning.jsp");
     }
     protected static void showWarningAnon(AuthRequest ar, String why) throws Exception {
+        //always create a small delay when generating a warning.
+        Thread.sleep(3000);
         ar.req.setAttribute("property_msg_key", why);
         streamJSPAnon(ar, "Warning.jsp");
     }
@@ -121,6 +123,17 @@ public class BaseController {
         streamJSPSite(ar, "Warning.jsp");
     }
 
+    protected static void showWarningDepending(AuthRequest ar, String why) throws Exception {
+        ar.req.setAttribute("property_msg_key", why);
+        if (ar.isLoggedIn()) {
+            streamJSP(ar, "Warning.jsp");
+        }
+        else {
+            //always create a small delay when generating a warning.
+            Thread.sleep(3000);
+            streamJSPAnon(ar, "Warning.jsp");
+        }
+    }
 
 
     //////////////////////// JSP Wrapping and Streaming ////////////////////////////

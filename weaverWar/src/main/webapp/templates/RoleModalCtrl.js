@@ -117,10 +117,12 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
             $scope.roleInfo = JSON.parse(JSON.stringify($scope.roleToCopy));
             $scope.roleInfo.name = roleName;
         }
+        console.log("COPY FROM", $scope.roleInfo);
         var postdata = angular.toJson($scope.roleInfo);
         postURL = "roleUpdate.json?op=Create";
         $http.post(postURL,postdata)
         .success( function(data) {
+            console.log("RESULT OF COPY", data);
             $scope.parentScope.cleanDuplicates(data);
             $scope.parentScope.updateRoleList(data);
             $modalInstance.dismiss('cancel');

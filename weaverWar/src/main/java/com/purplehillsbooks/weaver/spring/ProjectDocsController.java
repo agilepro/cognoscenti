@@ -620,17 +620,21 @@ public class ProjectDocsController extends BaseController {
         
         long msgId = MailInst.getCreateDateFromLocator(msgLocator);
         if (msgId==0) {
+            //this is a special case where the message prototype is being displayed
+            //but no email sent yet, and so we don't have any message in the DB to look at.
             showJSPDepending(ar, ngw, "ReplyNoEmail.jsp", false);
             return;
         }
         if (msgId<=0) {
-            throw new Exception("Can not understand the msg locator: "+msgLocator);
+            showWarningDepending(ar, "Can not find that email, the id passed appears to be invalid: "+msgId);
+            return;
         }
         long commentId = MailInst.getCommentIdFromLocator(msgLocator);
         
         MailInst foundMsg = EmailSender.findEmailById(msgId);
         if (foundMsg==null) {
-            throw new Exception("Can not find the message from locator: "+msgLocator);
+            showWarningDepending(ar, "Can not find that email with id="+msgId+".  Maybe the email has been deleted?");
+            return;
         }
 
         String containerKey = foundMsg.getCommentContainer();

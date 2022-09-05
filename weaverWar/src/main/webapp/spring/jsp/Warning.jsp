@@ -37,6 +37,13 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
+<style>
+.guideVocal {
+    font-size:20px;
+    font-weight:300;
+}
+</style>
+
 <div>
 
     <div class="guideVocal">

@@ -55,7 +55,7 @@ public class SuperAdminController extends BaseController {
             return;
         }
         if (!ar.isSuperAdmin()) {
-            showWarningAnon(ar, "In order to see this section, you need to be a system administrator.");
+            showWarningDepending(ar, "In order to see this section, you need to be a system administrator.");
             return;
         }
         ar.req.setAttribute("wrappedJSP", jspName);

@@ -114,8 +114,14 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-
-            GoalRecord goal = ngw.getGoalOrFail(taskId);
+            if (taskId==null || taskId.length()==0) {
+                showWarningDepending(ar, "Missing id parameter for action item");
+            }
+            GoalRecord goal = ngw.getGoalOrNull(taskId);
+            if (goal==null) {
+                showWarningDepending(ar, "Can not find an action item with the id  "+taskId
+                        +".  It might have been deleted or there might be some other mistake.");
+            }
             if(goal.isPassive()) {
                 throw new Exception("Passive goals are not supported any more");
             }

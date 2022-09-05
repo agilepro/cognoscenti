@@ -8,16 +8,16 @@
 <nav class="navbar navbar-default appbar">
   <div class="container-fluid">
 
-    <!-- Logo Brand -->
-    <a href="<%=ar.retPath%>" title="Weaver Home Page">
-      <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-      <span class="weaver-logo">Weaver</span>
+      <!-- Logo Brand -->
+    <a class="navbar-brand" href="<%=ar.retPath%>" title="Access your overall personal Weaver Home Page">
+        <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
+        <span class="weaver-logo">Weaver</span>
     </a>
 
     <div class="pull-right">
-       <a title="Authenticate Yourself" href="<%=loginLink%>">
-          <span class="weaver-logo">Login</span>
-       </a>
+        <a title="Authenticate Yourself" href="<%=loginLink%>">
+            <span class="weaver-logo">Login</span>
+        </a>
     </div>
 
   </div>

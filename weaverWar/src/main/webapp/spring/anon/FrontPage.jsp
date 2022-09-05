@@ -113,7 +113,7 @@ a {
     
     <div>
         Please
-        <button class="btn btn-primary btn-raised" ng-click="login()">
+        <button class="btn btn-primary btn-raised" onClick="SLAP.loginUserRedirect()">
             Login
         </button>
         to find out more.

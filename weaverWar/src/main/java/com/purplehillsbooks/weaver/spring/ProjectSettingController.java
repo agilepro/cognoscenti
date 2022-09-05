@@ -194,7 +194,7 @@ public class ProjectSettingController extends BaseController {
         long msgId = ar.reqParamLong("msg");
         MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
         if (emailMsg==null) {
-            showWarningAnon(ar, "Unable to find an existing email message with id: "+msgId);
+            showWarningDepending(ar, "Unable to find an existing email message with id: "+msgId);
             return;
         }
         showJSPDepending(ar, ngw, "EmailMsg.jsp", true);
@@ -208,6 +208,14 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+        String eGenId = ar.defParam("id", null);
+        if (eGenId!=null) {
+        EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
+            if (eGen==null) {
+                showWarningDepending(ar, "Can not find an email generator with the id: "+eGenId);
+            }
+        }
         showJSPMembers(ar, siteId, pageId, "SendNote.jsp");
     }
 
@@ -579,8 +587,8 @@ public class ProjectSettingController extends BaseController {
             }
             else if ("GetAll".equals(op)) {
                 JSONArray ja = new JSONArray();
-                for (NGRole ngr : ngc.getAllRoles()) {
-                    ja.put(ngr.getJSON());
+                for (CustomRole ngr : ngc.getAllRoles()) {
+                    ja.put(ngr.getJSONDetail());
                 }
                 repo.put("roles", ja);
             }

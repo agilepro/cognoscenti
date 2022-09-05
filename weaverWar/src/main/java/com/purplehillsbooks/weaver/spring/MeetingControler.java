@@ -116,17 +116,23 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String id = ar.defParam("id", null);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if (id==null || id.length()==0) {
+                showWarningDepending(ar, "Missing id parameter for meeting display page");
+            }
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-
-            String id = ar.reqParam("id");
-            MeetingRecord meet = ngw.findMeeting(id);
+            MeetingRecord meet = ngw.findMeetingOrNull(id);
+            if (meet==null) {
+                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                        +".  Was it deleted?");
+            }
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
         }
         catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            throw new NGException("Unable to generate meeting page for id={0}", new Object[]{pageId,siteId} , ex);
         }
     }
 

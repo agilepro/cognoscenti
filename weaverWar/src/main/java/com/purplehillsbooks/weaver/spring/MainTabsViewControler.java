@@ -114,7 +114,7 @@ public class MainTabsViewControler extends BaseController {
             if (warnNotLoggedIn(ar)) {
                 return;
             }
-            registerWorkspaceRequired(ar, siteId, pageId);
+            registerSiteOrProject(ar, siteId, pageId);
             streamJSP(ar, "SearchAllNotes.jsp");
 
         }catch(Exception ex){

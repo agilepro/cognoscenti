@@ -135,6 +135,14 @@ app.controller('myCtrl', function($scope, $http) {
 
 </table>
 
+    <div>
+        Please
+        <button class="btn btn-primary btn-raised" onClick="SLAP.loginUserRedirect()">
+            Login
+        </button>
+        to find out more.
+    </div>
+
 </div>
 
 
