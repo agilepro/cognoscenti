@@ -7,6 +7,8 @@ import java.util.List;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.mail.OptOutIndividualRequest;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 

@@ -16,7 +16,6 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.OptOutAddr;
 import com.purplehillsbooks.weaver.ReminderMgr;
 import com.purplehillsbooks.weaver.ReminderRecord;
 import com.purplehillsbooks.weaver.SectionUtil;

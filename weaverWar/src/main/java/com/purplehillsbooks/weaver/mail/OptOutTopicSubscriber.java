@@ -18,9 +18,14 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.TopicRecord;
 
 /**
 * This is for email messages which are sent to the

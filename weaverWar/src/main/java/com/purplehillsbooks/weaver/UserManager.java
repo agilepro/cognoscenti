@@ -26,6 +26,9 @@ import java.util.Hashtable;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
+
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;

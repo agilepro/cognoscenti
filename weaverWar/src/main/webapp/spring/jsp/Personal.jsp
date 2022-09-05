@@ -4,7 +4,7 @@
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%@page import="com.purplehillsbooks.weaver.SuperAdminLogFile"
-%><%@page import="com.purplehillsbooks.weaver.EmailListener"
+%><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
 %><%@page import="java.util.Date"
 %>
 <%

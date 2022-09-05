@@ -18,11 +18,15 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.net.URLEncoder;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.NGWorkspace;
 
 /**
 * This is for email messages which are sent to the Super Admin
@@ -31,9 +35,9 @@ import com.purplehillsbooks.json.JSONObject;
 */
 public class OptOutRolePlayer extends OptOutAddr {
 
-    String containerID;
-    String siteID;
-    String roleName;
+    public String containerID;
+    public String siteID;
+    public String roleName;
 
     public OptOutRolePlayer(AddressListEntry _assignee, String siteKey, String containerKey, String _roleName) {
         super(_assignee);

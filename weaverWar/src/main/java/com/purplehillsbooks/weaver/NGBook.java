@@ -29,6 +29,7 @@ import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 

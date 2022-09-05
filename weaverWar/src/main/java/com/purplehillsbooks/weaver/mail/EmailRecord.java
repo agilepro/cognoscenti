@@ -18,7 +18,7 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +26,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AttachmentRecord;
+import com.purplehillsbooks.weaver.AttachmentVersion;
+import com.purplehillsbooks.weaver.DOMFace;
+import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

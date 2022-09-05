@@ -29,12 +29,12 @@ import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.ErrorLog;
 import com.purplehillsbooks.weaver.ErrorLogDetails;
 import com.purplehillsbooks.weaver.HistoricActions;
-import com.purplehillsbooks.weaver.OptOutAddr;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

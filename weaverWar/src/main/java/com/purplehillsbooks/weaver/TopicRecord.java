@@ -28,6 +28,8 @@ import java.util.List;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.mail.OptOutTopicSubscriber;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -264,9 +266,9 @@ public class TopicRecord extends CommentContainer {
     }
 
 
-    /**
+    /*
     * gets all the response that exist on the topic.
-    */
+    *
     public List<LeafletResponseRecord> getResponses()
         throws Exception
     {
@@ -286,11 +288,12 @@ public class TopicRecord extends CommentContainer {
         }
         return res;
     }
+    */
 
-    /**
+    /*
     * returns the response for a particular user, creating one if it does
     * not already exist.
-    */
+    *
     public LeafletResponseRecord getOrCreateUserResponse(UserProfile up)
                 throws Exception {
         List<LeafletResponseRecord> temp = getChildren("response", LeafletResponseRecord.class);
@@ -307,12 +310,13 @@ public class TopicRecord extends CommentContainer {
                 "response", LeafletResponseRecord.class, "user", up.getUniversalId());
         return newChild;
     }
+    */
 
-    /**
+    /*
     * This is needed for finding responses from people with email addresses
     * who have been asked to respond to a topic, but who do not have any profile.
     * In this case ID must match exactly.
-    */
+    *
     public LeafletResponseRecord accessResponse(String userId)
         throws Exception
     {
@@ -328,7 +332,7 @@ public class TopicRecord extends CommentContainer {
                 "response", LeafletResponseRecord.class, "user", userId);
         return newChild;
     }
-
+    */
 
 
     public static void sortNotesInPinOrder(List<TopicRecord> v) {

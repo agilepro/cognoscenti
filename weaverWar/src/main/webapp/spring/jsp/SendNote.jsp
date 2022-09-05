@@ -3,7 +3,7 @@
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.EmailGenerator"
+%><%@page import="com.purplehillsbooks.weaver.mail.EmailGenerator"
 %><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%!
     String pageTitle="Compose EMail";

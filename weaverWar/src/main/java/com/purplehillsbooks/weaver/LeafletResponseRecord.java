@@ -23,6 +23,7 @@ package com.purplehillsbooks.weaver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+@Deprecated
 public class LeafletResponseRecord extends DOMFace
 {
 

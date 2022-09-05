@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@page import="com.purplehillsbooks.weaver.EmailListener"
+%><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.Set"
 %><%@ include file="/spring/jsp/include.jsp"

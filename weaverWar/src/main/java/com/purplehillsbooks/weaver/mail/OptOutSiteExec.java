@@ -18,25 +18,30 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
+
+import java.util.List;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.NGBook;
+import com.purplehillsbooks.weaver.NGRole;
 
 /**
 * This is for email messages which are sent to the Super Admin
 * and you really can't opt out of that responsibility.
 * So this makes a message that says that.
 */
-public class OptOutDirectAddress extends OptOutAddr {
+public class OptOutSiteExec extends OptOutAddr {
 
-    public OptOutDirectAddress(AddressListEntry _assignee) {
+    public OptOutSiteExec(AddressListEntry _assignee) {
         super(_assignee);
     }
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         writeSentToMsg(clone);
-        clone.write("You have received this message because the sender entered your email address directly into the "+
-            "address prompt and not due to any automated email mechanism. ");
+        clone.write("You have received this message because you are either the owner or the executive of the site. ");
         writeConcludingPart(clone);
     }
     
@@ -46,4 +51,19 @@ public class OptOutDirectAddress extends OptOutAddr {
         return jo;
     }
 
+    public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
+        for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
+            boolean found = false;
+            for (OptOutAddr existing : collector) {
+                if (ale.equals(existing.getAssignee())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                OptOutAddr ooa = new OptOutSiteExec(ale);
+                collector.add(ooa);
+            }
+        }
+    }    
+    
 }

@@ -18,13 +18,22 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AuthDummy;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.Cognoscenti;
+import com.purplehillsbooks.weaver.NGBook;
+import com.purplehillsbooks.weaver.NGRole;
+import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.UserManager;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
 
 import com.purplehillsbooks.json.JSONObject;

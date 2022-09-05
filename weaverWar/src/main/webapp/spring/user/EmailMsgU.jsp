@@ -1,8 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.EmailRecord"
 %><%@page import="com.purplehillsbooks.weaver.CommentContainer"
-%><%@page import="com.purplehillsbooks.weaver.OptOutAddr"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%

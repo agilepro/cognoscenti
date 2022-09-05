@@ -1,4 +1,4 @@
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.io.IOException;
 import java.io.InputStream;

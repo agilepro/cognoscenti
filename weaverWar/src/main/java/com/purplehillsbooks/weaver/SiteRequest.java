@@ -23,6 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 

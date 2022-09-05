@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

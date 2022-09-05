@@ -18,48 +18,34 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
-
-import java.util.List;
+package com.purplehillsbooks.weaver.mail;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AuthRequest;
 
 /**
 * This is for email messages which are sent to the Super Admin
 * and you really can't opt out of that responsibility.
 * So this makes a message that says that.
 */
-public class OptOutSiteExec extends OptOutAddr {
+public class OptOutSuperAdmin extends OptOutAddr {
 
-    public OptOutSiteExec(AddressListEntry _assignee) {
+    public OptOutSuperAdmin(AddressListEntry _assignee) {
         super(_assignee);
     }
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         writeSentToMsg(clone);
-        clone.write("You have received this message because you are either the owner or the executive of the site. ");
-        writeConcludingPart(clone);
-    }
-    
-    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
-        JSONObject jo = super.getUnsubscribeJSON(ar);
-        jo.put("isDirectAddress", true);
-        return jo;
+        clone.write("You have received this message because you are a registered 'super admin' for this server. ");
+        clone.write("If you want to avoid getting these messages in the future please");
+        clone.write("work with the server administrator to change that.</font></p>");
     }
 
-    public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
-        for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
-            boolean found = false;
-            for (OptOutAddr existing : collector) {
-                if (ale.equals(existing.getAssignee())) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                OptOutAddr ooa = new OptOutSiteExec(ale);
-                collector.add(ooa);
-            }
-        }
-    }    
+    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
+        JSONObject jo = super.getUnsubscribeJSON(ar);
+        jo.put("isSuperAdmin", true);
+        return jo;
+    }
     
 }

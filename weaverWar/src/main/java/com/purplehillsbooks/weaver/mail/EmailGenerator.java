@@ -18,7 +18,7 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,10 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailInst;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,6 +37,21 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.weaver.AccessControl;
+import com.purplehillsbooks.weaver.AddressListEntry;
+import com.purplehillsbooks.weaver.AgendaItem;
+import com.purplehillsbooks.weaver.AttachmentRecord;
+import com.purplehillsbooks.weaver.AuthDummy;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.DOMFace;
+import com.purplehillsbooks.weaver.GoalRecord;
+import com.purplehillsbooks.weaver.MeetingRecord;
+import com.purplehillsbooks.weaver.NGLabel;
+import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.SectionUtil;
+import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.UserManager;
+import com.purplehillsbooks.weaver.UserProfile;
 
 /**
  * People create this, and this creates emails, sent possibly in
@@ -244,6 +255,8 @@ public class EmailGenerator extends DOMFace {
                 OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
             }
         }
+        
+        /*
         TopicRecord noteRec = ngw.getNoteByUidOrNull(getNoteId());
         if (noteRec!=null && getExcludeResponders()) {
             for (LeafletResponseRecord llr : noteRec.getResponses()) {
@@ -251,6 +264,8 @@ public class EmailGenerator extends DOMFace {
                 OptOutAddr.removeFromList(sendTo, responder);
             }
         }
+        */
+        
         return sendTo;
     }
 

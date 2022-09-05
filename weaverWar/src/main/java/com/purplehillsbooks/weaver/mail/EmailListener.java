@@ -18,7 +18,7 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,9 +45,18 @@ import javax.mail.UIDFolder;
 import javax.mail.internet.MimeBodyPart;
 import javax.swing.text.html.HTMLEditorKit;
 
+import com.purplehillsbooks.weaver.AuthDummy;
+import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.Cognoscenti;
+import com.purplehillsbooks.weaver.CommentContainer;
+import com.purplehillsbooks.weaver.CommentRecord;
+import com.purplehillsbooks.weaver.HtmlToWikiConverter;
+import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.SectionUtil;
+import com.purplehillsbooks.weaver.SuperAdminLogFile;
+import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONException;
 

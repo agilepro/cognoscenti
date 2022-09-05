@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Random;
 
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailRecord;
+
 import org.w3c.dom.Document;
 
 /**

@@ -31,6 +31,7 @@ import java.util.List;
 import com.purplehillsbooks.weaver.dms.RemoteLinkCombo;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -16,6 +16,7 @@ import com.purplehillsbooks.weaver.api.IconServlet;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.mail.EmailListener;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.rest.ServerInitializer;
 import com.purplehillsbooks.weaver.spring.BaseController;

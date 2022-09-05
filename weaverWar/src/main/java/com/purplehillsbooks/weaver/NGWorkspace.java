@@ -32,8 +32,11 @@ import java.util.List;
 
 //import org.apache.commons.io.FileUtils;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailGenerator;
+import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;

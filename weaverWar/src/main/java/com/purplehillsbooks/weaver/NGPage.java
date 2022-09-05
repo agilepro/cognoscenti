@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.mail.EmailGenerator;
+import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.util.LRUCache;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;

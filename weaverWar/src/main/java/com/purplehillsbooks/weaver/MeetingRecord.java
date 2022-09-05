@@ -12,7 +12,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

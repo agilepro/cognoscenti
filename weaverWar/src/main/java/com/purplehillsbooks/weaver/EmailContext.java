@@ -3,6 +3,7 @@ package com.purplehillsbooks.weaver;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
 
 /**
  * What a mess!
