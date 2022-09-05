@@ -774,6 +774,36 @@ public class NGWorkspace extends NGPage {
             for (TaskArea ta : this.getTaskAreas()) {
                 ta.replaceAssignee(sourceUser, destUser);
             }
+            for (TopicRecord topic : this.getAllDiscussionTopics()) {
+                NGRole assignee = topic.getSubscriberRole();
+                if (assignee.replaceId(sourceUser, destUser)) {
+                    count++;
+                }
+            }
+            for (MeetingRecord meet : this.getMeetings()) {
+                List<String> newList = new ArrayList<String>();
+                boolean found = false;
+                for (String part : meet.getParticipants()) {
+                    if (sourceUser.equalsIgnoreCase(part)) {
+                        part = destUser;
+                        found = true;
+                    }
+                    if (!newList.contains(part)) {
+                        newList.add(part);
+                    }
+                }
+                if (found) {
+                    meet.setParticipants(newList);
+                    count++;
+                }
+                if (meet.removeFromRollCall(sourceUser)) {
+                    count++;
+                }
+                if (meet.removeFromAttended(sourceUser)) {
+                    count++;
+                }
+                count += meet.removeFromTimeSlots(sourceUser);
+            }
             return count;
         }
         catch (Exception e) {

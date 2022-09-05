@@ -1181,7 +1181,7 @@ public class NGBook extends ContainerCommon {
         else {
             userMap = new JSONObject();
         }
-        recalcUserStats(userMap);
+        userMap = recalcUserStats(userMap);
         return userMap;
     }
     
@@ -1199,6 +1199,7 @@ public class NGBook extends ContainerCommon {
                 userInfo.put("name", userDelta.getString("name"));
             }
         }
+        
         File cogFolder = new File(siteFolder, ".cog");
         File userMapFile = new File(cogFolder, "users.json");
         userMap.writeToFile(userMapFile);
@@ -1206,25 +1207,32 @@ public class NGBook extends ContainerCommon {
         return userMap;
     }
     
-    private void recalcUserStats(JSONObject userMap) throws Exception{
-        
-        //clear out all the old settings
-        for (String userKey : userMap.keySet()) {
-            JSONObject userInfo = userMap.getJSONObject(userKey);
-            userInfo.put("count", 0);
-            userInfo.put("wscount", 0);
-            userInfo.put("wsMap", new JSONObject());
-        }
-        
+    private JSONObject recalcUserStats(JSONObject oldUserMap) throws Exception{
+                
         //get then settings from Site
-        setUserEntriesForContainer(userMap, this);
+        JSONObject newUserMap = new JSONObject();
+        setUserEntriesForContainer(newUserMap, this);
         
         //now update for the most recent settings from workspace
         List<NGPageIndex> allWorkspaces = cog.getAllWorkspacesInSite(key);
         for (NGPageIndex ngpi : allWorkspaces) {
             NGWorkspace ngw = ngpi.getWorkspace();
-            setUserEntriesForContainer(userMap, ngw);
+            setUserEntriesForContainer(newUserMap, ngw);
         }
+        
+        for (String userKey : newUserMap.keySet()) {
+            if (oldUserMap.has(userKey)) {
+                JSONObject oldUserEntries = oldUserMap.getJSONObject(userKey);
+                JSONObject newUserEntries = newUserMap.getJSONObject(userKey);
+                if (oldUserEntries.has("readOnly")) {
+                    newUserEntries.put("readOnly", oldUserEntries.getBoolean("readOnly"));
+                }
+                if (oldUserEntries.has("name")) {
+                    newUserEntries.put("name", oldUserEntries.getString("name"));
+                }
+            }
+        }
+        return newUserMap;
     }
     
     private void setUserEntriesForContainer(JSONObject userMap, NGContainer ngw) throws Exception {
@@ -1232,6 +1240,7 @@ public class NGBook extends ContainerCommon {
         for (CustomRole ngr : ngw.getAllRoles()) {
             for (AddressListEntry ale : ngr.getDirectPlayers()) {
                 String uid = ale.getUniversalId();
+                System.out.println("USERCLEAN:\t"+ngw.getKey()+"\t"+ngr.getName()+"\t"+uid);
     
                 JSONObject userInfo = userMap.requireJSONObject(uid);
                 userInfo.put("count", userInfo.optInt("count", 0)+1);

@@ -15,7 +15,7 @@
     JSONObject userInfo = uProf.getFullJSON();
     if (isLoggedIn) {
         UserProfile runningUser = ar.getUserProfile();
-        viewingSelf = uProf.getKey().equals(runningUser.getKey());
+        viewingSelf = uProf.getKey().equals(runningUser.getKey()) || ar.isSuperAdmin();
     }
     else {
         JSONObject publicInfo = new JSONObject();
@@ -66,7 +66,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.goToEdit = function() {
-        window.location = "UserProfileEdit.htm";
+        window.location = "UserSettings.htm";
     }
     $scope.requestEmail = function() {
         var url="addEmailAddress.htm?newEmail="+encodeURIComponent($scope.newEmail);
@@ -199,13 +199,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% if (isLoggedIn) { %>
     <div>
+      <% if (viewingSelf) { %>
       <a class="btn btn-default btn-raised" ng-click="goToEdit()" >
-                <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                Update Settings</a>
-      <a class="btn btn-default btn-raised" ng-click="openSendEmail()" >
-                Send Email to this User</a>
+                Settings</a>
       <a class="btn btn-default btn-raised" href="UserHome.htm" >
                 Show Home</a>
+      <% } %>
+      <a class="btn btn-default btn-raised" ng-click="openSendEmail()" >
+                Send Email to this User</a>
+      
     </div>
 <% } else { %>
     <div>

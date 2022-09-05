@@ -323,7 +323,11 @@ public class SiteController extends BaseController {
                 count += found;
                 NGPageIndex.clearLocksHeldByThisThread();
             }
-
+            {
+                NGBook site = ar.getCogInstance().getSiteById(siteId);
+                //force recalculation of statistics
+                site.getUserMap();
+            }
             JSONObject jo = new JSONObject();
             jo.put("updated", count);
             sendJson(ar, jo);

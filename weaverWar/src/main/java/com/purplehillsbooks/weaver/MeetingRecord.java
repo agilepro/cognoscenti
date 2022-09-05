@@ -119,6 +119,9 @@ public class MeetingRecord extends DOMFace {
     public List<String> getParticipants() {
         return this.getVector("participants");
     }
+    public void setParticipants(List<String> newSet) {
+        this.setVector("participants", newSet);
+    }
 
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
@@ -469,6 +472,52 @@ public class MeetingRecord extends DOMFace {
     }
 
 
+    public boolean removeFromRollCall(String sourceUser) throws Exception {
+        DOMFace foundOne = null;
+        for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            if (sourceUser.equalsIgnoreCase(onePerson.getAttribute("uid"))) {
+                foundOne = onePerson;
+            }
+        }
+        if (foundOne != null) {
+            removeChild(foundOne);
+            return true;
+        }
+        return false;
+    }
+    public boolean removeFromAttended(String sourceUser) throws Exception {
+        boolean found = false;
+        List<Element> children = getNamedChildrenVector("attended");
+        for (Element child : children) {
+            String childVal = DOMUtils.textValueOf(child, false);
+            if (childVal.equalsIgnoreCase(sourceUser)) {
+                fEle.removeChild(child);
+                found = true;
+            }
+        }
+        return found;
+    }
+    public int removeFromTimeSlots(String sourceUser) throws Exception {
+        int count = 0;
+        for (DOMFace slot : getChildren("timeSlots", DOMFace.class)) {
+            boolean found = false;
+            List<String> people = slot.getVector("people");
+            List<String> newList = new ArrayList<String>();
+            for (String onePers : people) {
+                if (onePers.startsWith(sourceUser)) {
+                    found = true;
+                }
+                else {
+                    newList.add(onePers);
+                }
+            }
+            if (found) {
+                count++;
+                slot.setVector("people", newList);
+            }
+        }
+        return count;
+    }
 
     /**
      * A vary small object suitable for notification event lists

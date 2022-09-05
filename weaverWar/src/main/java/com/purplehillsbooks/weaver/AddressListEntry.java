@@ -585,10 +585,18 @@ public class AddressListEntry implements UserRef
         }
         return res;
     }
+    /**
+     * Takes an array of user object, each user object with key, uid, and name
+     */
     public static List<String> uidListfromJSONArray( JSONArray inputArray ) throws Exception {
         List<String> uids = new ArrayList<String>();
-        for (int i=0; i<inputArray.length(); i++) {
-            uids.add(inputArray.getJSONObject(i).getString("uid"));
+        for (JSONObject oneEntry : inputArray.getJSONObjectList()) {
+            String email = oneEntry.getString("uid");
+            AddressListEntry ale = new AddressListEntry(email);
+            String betterEmail = ale.getUniversalId();
+            if (!uids.contains(betterEmail)) {
+                uids.add(betterEmail);
+            }
         }
         return uids;
     }

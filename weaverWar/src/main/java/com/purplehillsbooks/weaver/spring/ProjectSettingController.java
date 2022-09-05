@@ -535,7 +535,7 @@ public class ProjectSettingController extends BaseController {
             System.out.println("UPDATEROLE: "+roleInfo.toString());
 
             if ("Update".equals(op)) {
-                ar.assertNotFrozen(ngc);
+                //OK to do this when frozen
                 String roleName = roleInfo.getString("name");
                 CustomRole role = ngc.getRoleOrFail(roleName);
                 String priorLinkedRole = role.getLinkedRole();
@@ -581,7 +581,7 @@ public class ProjectSettingController extends BaseController {
                 repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
-                ar.assertNotFrozen(ngc);
+                //OK to do this when frozen
                 ngc.deleteRole(roleInfo.getString("name"));
                 repo.put("success",  true);
             }

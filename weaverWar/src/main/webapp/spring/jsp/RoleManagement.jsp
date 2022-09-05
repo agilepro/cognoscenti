@@ -32,7 +32,7 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
-    boolean isFrozen = ngw.isFrozen();
+
     boolean canUpdate = ar.canUpdateWorkspace();
 
 %>
@@ -44,7 +44,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Roles");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
-    $scope.isFrozen = <%= isFrozen %>;
+    $scope.isFrozen = <%= ngw.isFrozen() %>;
     $scope.showInput = false;
     //this map tells whether to display the role in detail mode.   All roles
     //start in non-detailed mode
@@ -117,10 +117,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     
     $scope.updateRole = function(role) {
-        if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
-            return;
-        }
         if (!$scope.canUpdate) {
             alert("You are not able to update this role because you are a read-only user");
             return;
@@ -145,10 +141,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.removePlayer = function(role, player) {
-        if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
-            return;
-        }
         if (!$scope.canUpdate) {
             alert("You are not able to remove player from this role because you are a read only user");
             return;
@@ -174,10 +166,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location = "<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.deleteRole = function(role) {
-        if ($scope.isFrozen) {
-            alert("You are not able to update this role because this workspace is frozen");
-            return;
-        }
         if (!$scope.canUpdate) {
             alert("You are not able to delete this role because you are a read only user");
             return;
@@ -259,10 +247,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.openRoleModal = function (role) {
         if (!$scope.canUpdate) {
             alert("You are not able to edit this role because you are a read only user");
-            return;
-        }
-        if ($scope.isFrozen) {
-            alert("You are not able to edit this role because this workspace is frozen");
             return;
         }
         var isNew = false;
