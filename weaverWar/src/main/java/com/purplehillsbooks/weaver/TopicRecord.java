@@ -785,9 +785,6 @@ public class TopicRecord extends CommentContainer {
           data.put("wsName", ngw.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
           EmailContext emailContext = new EmailContext(note);
-          String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngw, 0, mailMsg)
-                  + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
-          data.put("replyURL", replyUrl);
           mailMsg.addFieldsForRender(data);
 
           AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());

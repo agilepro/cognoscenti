@@ -692,14 +692,14 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
         String topicId = ar.defParam("topicId", null);
         String commentId = ar.defParam("commentId", null);
         String meetId = ar.defParam("meetId", null);
         String agendaId = ar.defParam("agendaId", null);
         String emailId = ar.defParam("emailId", null);
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-
+        
         boolean specialAccess = false;
         if (meetId!=null) {
             MeetingRecord meet = ngw.findMeeting(meetId);
@@ -718,7 +718,7 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        showJSPDepending(ar, ngw, "Reply.jsp", specialAccess);
+        showJSPDepending(ar, ngw, "ReplyOld.jsp", specialAccess);
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)

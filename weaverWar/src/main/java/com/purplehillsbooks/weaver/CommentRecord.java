@@ -573,18 +573,10 @@ public class CommentRecord extends DOMFace {
         data.put("outcome", getScalar("outcome"));
         
         data.put("optout", ooa.getUnsubscribeJSON(clone));
-
-        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngw,this.getTime(), mailMsg)
-                + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
-        data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngw,this.getTime())
-                + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
-
         AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 
         ChunkTemplate.streamAuthRequest(clone.w, ar, "NewComment", data, ooa.getCalendar());
         clone.flush();
-        
-        CommentContainer cc = noteOrMeet.getcontainer();
         
         mailMsg.setSubject(noteOrMeet.emailSubject()+": "+opType+cmtType);
         mailMsg.setBodyText(body.toString());

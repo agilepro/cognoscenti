@@ -1240,7 +1240,6 @@ public class NGBook extends ContainerCommon {
         for (CustomRole ngr : ngw.getAllRoles()) {
             for (AddressListEntry ale : ngr.getDirectPlayers()) {
                 String uid = ale.getUniversalId();
-                System.out.println("USERCLEAN:\t"+ngw.getKey()+"\t"+ngr.getName()+"\t"+uid);
     
                 JSONObject userInfo = userMap.requireJSONObject(uid);
                 userInfo.put("count", userInfo.optInt("count", 0)+1);

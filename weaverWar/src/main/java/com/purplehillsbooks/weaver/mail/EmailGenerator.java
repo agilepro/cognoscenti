@@ -534,11 +534,6 @@ public class EmailGenerator extends DOMFace {
             if (includeBody) {
                 data.put("includeTopic", "yes");
             }
-            /*
-            EmailContext emailContext = new EmailContext(selectedNote);
-            data.put("replyUrl", ar.baseURL + emailContext.getReplyURL(ar, ngw, ar.nowTime)
-            + "&emailId=" + URLEncoder.encode(ownerProfile.getUniversalId(), "UTF-8"));
-            */
         }
 
         if (meeting!=null) {
