@@ -55,7 +55,10 @@
         <div class="form-group form-inline">
           <label>Also Notify:</label>
           <tags-input ng-model="cmt.notify" placeholder="Enter user name or id"
-                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updateNotify()" 
+                      on-tag-removed="updateNotify()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
         </div>
@@ -132,7 +135,10 @@
         <div class="form-group form-inline" ng-show="cmt.commentType==2 || cmt.commentType==3">
           <label>Add Potential Responder:</label>
           <tags-input ng-model="responders" placeholder="Enter user name or id"
-                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updateResponders()" 
+                      on-tag-removed="updateResponders()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
           <div style="color:lightgrey">

@@ -564,11 +564,11 @@ public class DailyDigest {
             ar.write("<a href=\"");
             writeGoalLinkUrl(ar, actionItemObj, up.getKey(), userCache);
             ar.write("\" title=\"access current status of task\">");
-            ar.writeHtml(actionItemObj.getString("synopsys"));
+            ar.writeHtml(actionItemObj.optString("synopsis","unknown action item"));
             ar.write("</a> - <a href=\"");
             writeProcessLinkUrl(ar, actionItemObj);
             ar.write("\" title=\"See the workspace containing this task\">");
-            ar.writeHtml(actionItemObj.getString("projectName"));
+            ar.writeHtml(actionItemObj.optString("projectname","unknown workspace"));
             ar.write("</a>");
             ar.write("\n<br/>Status: ");
             ar.writeHtml(GoalRecord.stateName(taskState));

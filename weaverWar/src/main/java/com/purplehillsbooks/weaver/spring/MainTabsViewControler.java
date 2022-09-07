@@ -79,6 +79,18 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
+    
+    //backward compatibility, some old emails created with this kind of front page in them
+    @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
+    public void frontPageOld(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        
+        frontPage(siteId,pageId,request, response);
+    }
+    
+    
+    
     @RequestMapping(value = "/{siteId}/{pageId}/FrontPage.htm", method = RequestMethod.GET)
     public void frontPage(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -114,8 +126,15 @@ public class MainTabsViewControler extends BaseController {
             if (warnNotLoggedIn(ar)) {
                 return;
             }
+            //convert requests to be site requests no matter which page they came from
+            ;
             registerSiteOrProject(ar, siteId, pageId);
-            streamJSP(ar, "SearchAllNotes.jsp");
+            if ("$".equals(pageId)) {
+                streamJSPSite(ar, "SearchAllNotes.jsp");
+            }
+            else {
+                streamJSP(ar, "SearchAllNotes.jsp");
+            }
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.draft.notes.page", new Object[]{pageId,siteId} , ex);

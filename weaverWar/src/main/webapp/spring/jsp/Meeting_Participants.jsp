@@ -14,7 +14,9 @@
               <tags-input ng-model="participantEditCopy" 
                           placeholder="Enter users to send notification email to"
                           display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true">
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updateParticipants()" 
+                      on-tag-removed="updateParticipants()">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
           </div>

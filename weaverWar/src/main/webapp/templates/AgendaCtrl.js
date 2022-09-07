@@ -56,4 +56,8 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
         return sss;
     };
     
+    $scope.updatePresenters = function() {
+        $scope.agendaItem.presenterList = cleanUserList($scope.agendaItem.presenterList);
+    }
+    
 });

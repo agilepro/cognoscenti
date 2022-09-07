@@ -1,6 +1,5 @@
 package com.purplehillsbooks.weaver;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -655,6 +654,10 @@ public class CommentRecord extends DOMFace {
             JSONArray responseArray = input.getJSONArray("responses");
             for (int i=0; i<responseArray.length(); i++) {
                 JSONObject oneResp = responseArray.getJSONObject(i);
+                if (!oneResp.has("user")) {
+                    System.out.println("Got a response object without a user!");
+                    continue;
+                }
                 String responseUser = oneResp.getString("user");
                 AddressListEntry ale = new AddressListEntry(responseUser);
                 boolean removeMe = (oneResp.has("removeMe") && oneResp.getBoolean("removeMe"));

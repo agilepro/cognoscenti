@@ -114,6 +114,14 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
     }
     $scope.getDocument();
     $scope.saveDoc = function() {
+        if ($scope.docInfo.attType == "FILE") {
+            var dotPos = $scope.docInfo.name.indexOf(".");
+            if (dotPos <= 0) {
+                alert("Sorry, the document name has to include an 'extension'  such as '.pdf' or '.jpg' or something like that depending on the type of document");
+                return;
+            }
+        }
+        
         var postURL = "docsUpdate.json?did="+$scope.docInfo.id;
         var postdata = angular.toJson($scope.docInfo);
         $scope.showError=false;

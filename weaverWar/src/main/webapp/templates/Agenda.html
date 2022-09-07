@@ -46,7 +46,9 @@
             <label for="labels">Presenter:</label>
             <tags-input ng-model="agendaItem.presenterList"
                       placeholder="Enter user name or id"
-                      display-property="name" key-property="uid">
+                      display-property="name" key-property="uid"
+                      on-tag-added="updatePresenters()" 
+                      on-tag-removed="updatePresenters()">
                 <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
             </tags-input>
         </div>

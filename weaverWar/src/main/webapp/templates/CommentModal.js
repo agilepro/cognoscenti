@@ -373,6 +373,15 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             //cancel action - nothing really to do
         });
     };
+    
+    $scope.updateNotify = function() {
+        console.log("updateNotify");
+        $scope.cmt.notify = cleanUserList($scope.cmt.notify);
+    }
+    $scope.updateResponders = function() {
+        console.log("updateNotify");
+        $scope.responders = cleanUserList($scope.responders);
+    }
 
     $scope.getScratch = function() {
         var postURL = "GetScratchpad.json";

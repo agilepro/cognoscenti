@@ -803,6 +803,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             console.log("Meeting has invalid targetRole");
             return;
         }
+        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
         for (var i=0; i<theRole.players.length; i++) {
             var rolePerson = theRole.players[i];
             var found = false;
@@ -818,7 +819,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }
     }
     
-    
+    $scope.updateParticipants = function() {
+        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
+    }
     
     $scope.createAgendaItem = function() {
         if (!embeddedData.canUpdate) {
@@ -1253,6 +1256,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             alert("Unable to update meeting because you are a READ-ONLY user");
             return;
         }
+        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
         $scope.participantEditCopy.forEach( function(newPers) {
             let found = false;
             $scope.meeting.participants.forEach( function(already) {
