@@ -199,7 +199,7 @@ public class SiteMailGenerator extends DOMFace {
         
         JSONObject siteJSON = ngb.getConfigJSON();
         JSONArray projList = new JSONArray();
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllWorkspacesInSite(ngb.getKey())) {
+        for (NGPageIndex ngpi : ar.getCogInstance().getNonDelWorkspacesInSite(ngb.getKey())) {
             if (!ngpi.isWorkspace()) {
                 continue;
             }

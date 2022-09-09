@@ -10,7 +10,7 @@
     boolean showExperimental = site.getShowExperimental();
 
     JSONArray projList = new JSONArray();
-    for (NGPageIndex ngpi : cog.getAllWorkspacesInSite(siteId)) {
+    for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(siteId)) {
         if (!ngpi.isWorkspace()) {
             continue;
         }

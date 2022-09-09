@@ -379,7 +379,7 @@ public class NGBook extends ContainerCommon {
      */
     public static void destroySiteAndAllProjects(NGBook site, Cognoscenti cog) throws Exception {
 
-        for (NGPageIndex ngpi : cog.getAllWorkspacesInSite(site.getKey())) {
+        for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(site.getKey())) {
             //for now, just avoid the project with projects.
             throw new Exception("Remove all the projects from site '"+site.getKey()
                      +"' before trying to destroy it: "+ngpi.containerKey);
@@ -491,7 +491,7 @@ public class NGBook extends ContainerCommon {
     }
     public int countUnfrozenWorkspaces() throws Exception {
         int unfrozenCount = 0;
-        for (NGPageIndex aWorkspace : cog.getAllWorkspacesInSite(getKey())) {
+        for (NGPageIndex aWorkspace : cog.getNonDelWorkspacesInSite(getKey())) {
             if (aWorkspace.isFrozen() || aWorkspace.isDeleted()) {
                 continue;
             }
@@ -897,7 +897,7 @@ public class NGBook extends ContainerCommon {
         //we should figure out how to do this at a time when all the
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
-        for (NGPageIndex ngpi : cog.getAllWorkspacesInSite(this.getKey())) {
+        for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(this.getKey())) {
             NGWorkspace ngw = ngpi.getWorkspace();
             siteStats.gatherFromWorkspace(ngw);
             siteStats.numWorkspaces++;
@@ -1140,7 +1140,7 @@ public class NGBook extends ContainerCommon {
             NGWorkspace ngw = ngpi.getWorkspace();
             ja.put(ngw.actuallyGarbageCollect(cog));
         }
-        for (NGPageIndex ngpi : cog.getAllWorkspacesInSite(this.getKey())) {
+        for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(this.getKey())) {
             NGWorkspace ngw = ngpi.getWorkspace();
             ja.put(ngw.actuallyGarbageCollect(cog));
         }
@@ -1214,7 +1214,7 @@ public class NGBook extends ContainerCommon {
         setUserEntriesForContainer(newUserMap, this);
         
         //now update for the most recent settings from workspace
-        List<NGPageIndex> allWorkspaces = cog.getAllWorkspacesInSite(key);
+        List<NGPageIndex> allWorkspaces = cog.getNonDelWorkspacesInSite(key);
         for (NGPageIndex ngpi : allWorkspaces) {
             NGWorkspace ngw = ngpi.getWorkspace();
             setUserEntriesForContainer(newUserMap, ngw);

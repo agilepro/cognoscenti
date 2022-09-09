@@ -37,7 +37,7 @@
     JSONObject workspaceConfig = ngw.getConfigJSON();
 
     JSONArray allWorkspaces = new JSONArray();
-    for (NGPageIndex ngpis : cog.getAllWorkspacesInSite(site.getKey())) {
+    for (NGPageIndex ngpis : cog.getNonDelWorkspacesInSite(site.getKey())) {
         if (ngpis.isDeleted) {
             continue;
         }
@@ -55,7 +55,7 @@
     if (barPos>=0) {
         parentKey = parentKey.substring(barPos+1);
     }
-    List<NGPageIndex> allWS = cog.getAllWorkspacesInSite(siteId);
+    List<NGPageIndex> allWS = cog.getNonDelWorkspacesInSite(siteId);
     JSONArray recentWorkspaces = new JSONArray();
     for (NGPageIndex sibling : allWS) {
         if (sibling.containerKey.equals(pageId)) {

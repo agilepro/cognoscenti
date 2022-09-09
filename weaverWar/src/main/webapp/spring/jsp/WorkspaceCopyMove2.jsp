@@ -16,7 +16,7 @@
 
     NGPageIndex thisWS = null;
     NGPageIndex fromWS = null;
-    for (NGPageIndex ngpis : cog.getAllWorkspacesInSite(siteId)) {
+    for (NGPageIndex ngpis : cog.getNonDelWorkspacesInSite(siteId)) {
         if (ngpis.containerKey.equals(pageId)) {
             thisWS = ngpis;
             continue;

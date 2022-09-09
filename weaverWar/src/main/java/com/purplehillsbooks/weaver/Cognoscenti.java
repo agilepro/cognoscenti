@@ -489,11 +489,26 @@ System.out.println("Weaver Server Object == Start the Server");
      * Returns a vector of NGPageIndex objects which represent projects which
      * are all part of a single site. Should be called get all projects in site
      */
-    public List<NGPageIndex> getAllWorkspacesInSite(String accountKey) throws Exception {
+    public List<NGPageIndex> getNonDelWorkspacesInSite(String accountKey) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (!ngpi.isWorkspace()) {
                 // only consider book/project style containers
+                continue;
+            }
+            if (!accountKey.equals(ngpi.wsSiteKey)) {
+                // only consider if the project is in the site we look for
+                continue;
+            }
+            ret.add(ngpi);
+        }
+        return ret;
+    }
+    public List<NGPageIndex> getAllWorkspacesInSiteIncludeDeleted(String accountKey) throws Exception {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
+        for (NGPageIndex ngpi : allContainers) {
+            if (!ngpi.isWorkspace()) {
+                // only consider workspace style containers
                 continue;
             }
             if (!accountKey.equals(ngpi.wsSiteKey)) {

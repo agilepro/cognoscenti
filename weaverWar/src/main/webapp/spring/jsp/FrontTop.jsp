@@ -22,7 +22,7 @@ Required parameters:
     List<NGPageIndex> projectsInSite = new ArrayList<NGPageIndex>();
     HashSet<String> allKeys = new HashSet<String>();
     
-    for (NGPageIndex ngpi : cog.getAllContainers()) {
+    for (NGPageIndex ngpi : cog.getAllWorkspacesInSiteIncludeDeleted(siteId)) {
         if (!ngpi.isWorkspace()) {
             continue;
         }
@@ -60,6 +60,15 @@ public void layoutRoot( List<NGPageIndex> allContainers, int point[], JSONArray 
             jo.put("y", point[1]);
             jo.put("parx", 50);
             jo.put("pary", 50);
+            if (ngpi.isDeleted()) {
+                jo.put("color", "#FFE3DB");
+            }
+            else if (ngpi.isFrozen()) {
+                jo.put("color", "#E2EFFF");
+            }
+            else {
+                jo.put("color", "white");
+            }
             container.put(jo);
             layout(allContainers, point, ngpi.containerKey, container);
             point[1] = point[1]+70;
@@ -86,6 +95,15 @@ public void layout( List<NGPageIndex> allContainers, int point[], String parent,
         jo.put("y", point[1]);
         jo.put("parx", parx);
         jo.put("pary", pary);
+        if (ngpi.isDeleted()) {
+            jo.put("color", "#FFE3DB");
+        }
+        else if (ngpi.isFrozen()) {
+            jo.put("color", "#E2EFFF");
+        }
+        else {
+            jo.put("color", "white");
+        }
         container.put(jo);
         layout(allContainers, point, ngpi.containerKey, container);
         point[1] = point[1]+70;
@@ -162,6 +180,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/$/frontTop.htm";
     }
+
   
 });
 </script>
@@ -206,7 +225,7 @@ app.controller('myCtrl', function($scope, $http) {
                     style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
-                       rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
+                       rx="60" ry="30" style="fill:{{child.color}};stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
                    <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-20}}" width="110" height="60">
                        <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(child)">{{child.name}}</div>

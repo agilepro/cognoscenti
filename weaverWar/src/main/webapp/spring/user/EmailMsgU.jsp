@@ -14,20 +14,23 @@
     MailInst emailMsg = EmailSender.findEmailById(msgId);
     String siteId = emailMsg.getSiteKey();
     String pageId = emailMsg.getWorkspaceKey();
-    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(emailMsg.getSiteKey(), emailMsg.getWorkspaceKey()).getWorkspace();
-    AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
-    AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
-    String containerKey = emailMsg.getCommentContainer();
     String containerUrl = null;
     String aboutName = null;
     String aboutType = null;
-    if (containerKey != null && containerKey.length()>0) {
-        CommentContainer cc = ngw.findContainerByKey(containerKey);
-        if (cc!=null) {
-            if (cc instanceof TopicRecord) {
-                containerUrl = "noteZoom"+((TopicRecord)cc).getId()+".htm";
-                aboutName = ((TopicRecord)cc).getSubject();
-                aboutType = "Topic";
+    if (pageId != null && pageId.length()>1 ) {
+        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(emailMsg.getSiteKey(), emailMsg.getWorkspaceKey()).getWorkspace();
+        AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
+        AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+        String containerKey = emailMsg.getCommentContainer();
+        
+        if (containerKey != null && containerKey.length()>0) {
+            CommentContainer cc = ngw.findContainerByKey(containerKey);
+            if (cc!=null) {
+                if (cc instanceof TopicRecord) {
+                    containerUrl = "noteZoom"+((TopicRecord)cc).getId()+".htm";
+                    aboutName = ((TopicRecord)cc).getSubject();
+                    aboutType = "Topic";
+                }
             }
         }
     }

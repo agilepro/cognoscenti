@@ -37,7 +37,7 @@
     JSONObject workspaceConfig = ngw.getConfigJSON();
 
     JSONArray allWorkspaces = new JSONArray();
-    for (NGPageIndex ngpis : cog.getAllWorkspacesInSite(site.getKey())) {
+    for (NGPageIndex ngpis : cog.getNonDelWorkspacesInSite(site.getKey())) {
         if (ngpis.isDeleted) {
             continue;
         }
@@ -53,7 +53,7 @@
     if (barPos>=0) {
         parentKey = parentKey.substring(barPos+1);
     }
-    List<NGPageIndex> allWS = cog.getAllWorkspacesInSite(siteId);
+    List<NGPageIndex> allWS = cog.getNonDelWorkspacesInSite(siteId);
     JSONArray recentWorkspaces = new JSONArray();
     for (NGPageIndex sibling : allWS) {
         if (sibling.containerKey.equals(pageId)) {
@@ -243,6 +243,7 @@ app.controller('myCtrl', function($scope, $http) {
         .success( function(data) {
             $scope.workspaceConfig = data;
             $scope.editName = false;
+            $scope.setEdit('');
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -379,21 +380,14 @@ editBoxStyle {
         <div>
             <table class="spaceyTable">
                 <tr >
-                    <td ng-click="setEdit('name')"><label>Workspace Names:</label></td>
+                    <td ng-click="setEdit('name')"><label>Workspace Name:</label></td>
                     <td ng-hide="isEditing=='name'" ng-dblclick="setEdit('name')">
                         <h1>{{workspaceConfig.allNames[0]}}</h1>
                     </td>
                     <td class="form-inline form-group" ng-show="isEditing=='name'">
-                        <div ng-repeat="name in workspaceConfig.allNames">
-                            <a ng-click="deleteWorkspaceName(name)"
-                               title="delete this name from workspace">
-                               {{name}}
-                               <img src="<%=ar.retPath%>/assets/iconDelete.gif">
-                            </a>
-                        </div>
                         <input type="text" class="form-control" style="width:300px" ng-model="newName"/>
-                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Add Name</button>
-                        <button class="btn btn-warning btn-raised" ng-click="editName=false">Cancel</button>
+                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Change Name</button>
+                        <button class="btn btn-warning btn-raised" ng-click="setEdit('')">Cancel</button>
                     </td>
                 </tr>
                 <tr>

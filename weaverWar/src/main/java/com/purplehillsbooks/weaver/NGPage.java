@@ -602,40 +602,38 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     public void setNewName(String newName) {
-        List<String> nameSet = getPageNames();
+        List<String> nameSet = new ArrayList<String>();
 
-        //first, see if the new name is one of the old names, and if so
-        //just rearrange the list
-        int oldPos = -1;
-        String sanVal = SectionWiki.sanitize(newName);
-        for (int i=0; i<nameSet.size(); i++) {
-            String san2 = SectionWiki.sanitize(nameSet.get(i));
-            if (sanVal.equals(san2)) {
-                oldPos = i;
-            }
-        }
-        if (oldPos>=0) {
-            nameSet.remove(oldPos);
-        }
-        nameSet.add(0, newName);
+        //there used to be a set of names because this was supposed to ack like a wiki
+        //and we wanted to preserve name-links that were old.
+        //However, there are no name-links today, so there is nothing to preserve.
+        //It is confusing to have to delete the OLD names, so changed this function
+        //to simply replace the entire list of names, with the single new name.
+        
+        nameSet.add(newName);
         setPageNames(nameSet);
     }
     public void deleteOldName(String oldName) {
         List<String> nameSet = getPageNames();
-        //first, see if the new name is one of the old names, and if so
-        //just rearrange the list
-        int oldPos = -1;
-        String sanVal = SectionWiki.sanitize(oldName);
-        for (int i=0; i<nameSet.size(); i++) {
-            String san2 = SectionWiki.sanitize(nameSet.get(i));
-            if (sanVal.equals(san2)) {
-                oldPos = i;
-            }
+
+        //there used to be a set of names because this was supposed to ack like a wiki
+        //and we wanted to preserve name-links that were old.
+        //However, there are no name-links today, so there is nothing to preserve.
+        //It is confusing to have to delete the OLD names, so changed this function
+        //to simply replace the entire list of names, with the single new name.
+        //
+        //This function need consider only the first name, and if the name to delete 
+        //is not that name, just delete all except the first.
+        //If there is NO names, then just make the one to delete be the only name.
+        //This function should be deprecated.
+        
+        if (nameSet.size()>1) {
+            String firstName = nameSet.get(0);
+            setNewName(firstName);
         }
-        if (oldPos>=0) {
-            nameSet.remove(oldPos);
+        else {
+            setNewName(oldName);
         }
-        setPageNames(nameSet);
     }
 
 

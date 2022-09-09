@@ -71,7 +71,10 @@ public class AdminController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAdmin("Must be an admin to change workspace info.");
-            ar.assertNotFrozen(ngw);
+            
+            //NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
+            //      of a frozen workspace needs to be changed to differentiate from newer workspaces.
+            
             JSONObject newData = getPostedObject(ar);
 
             String newName = newData.getString("newName");
@@ -97,7 +100,10 @@ public class AdminController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAdmin("Must be an admin to change workspace info.");
-            ar.assertNotFrozen(ngw);
+            
+            //NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
+            //      of a frozen workspace needs to be changed to differentiate from newer workspaces.
+            
             JSONObject newData = getPostedObject(ar);
 
             String oldName = newData.getString("oldName");

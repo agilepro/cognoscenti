@@ -33,6 +33,15 @@ Required parameters:
     thisCircle.put("name", ngp.getFullName());
     thisCircle.put("key",  ngp.getKey());
     thisCircle.put("site", ngp.getSiteKey());
+    if (ngpi.isDeleted()) {
+        thisCircle.put("color", "#FFE3DB");
+    }
+    else if (ngpi.isFrozen()) {
+        thisCircle.put("color", "#E2EFFF");
+    }
+    else {
+        thisCircle.put("color", "#F0D7F7");
+    }
 
     JSONObject parent = new JSONObject();
     NGPageIndex parentIndex = cog.getParentWorkspace(ngpi);
@@ -40,11 +49,21 @@ Required parameters:
         parent.put("name", "");
         parent.put("site", "");
         parent.put("key",  "");
+        parent.put("color", "#F0D7F7");
     }
     else {
         parent.put("name", parentIndex.containerName);
         parent.put("key",  parentIndex.containerKey);
         parent.put("site", parentIndex.wsSiteKey);
+        if (parentIndex.isDeleted()) {
+            parent.put("color", "#FFE3DB");
+        }
+        else if (parentIndex.isFrozen()) {
+            parent.put("color", "#E2EFFF");
+        }
+        else {
+            parent.put("color", "white");
+        }
     }
 
     JSONArray children = new JSONArray();
@@ -56,6 +75,15 @@ Required parameters:
         jo.put("name", child.containerName);
         jo.put("key",  child.containerKey);
         jo.put("site", child.wsSiteKey);
+        if (child.isDeleted()) {
+            jo.put("color", "#FFE3DB");
+        }
+        else if (child.isFrozen()) {
+            jo.put("color", "#E2EFFF");
+        }
+        else {
+            jo.put("color", "white");
+        }
         children.put(jo);
     }
 
@@ -504,7 +532,7 @@ a {
                    <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)"
-                        style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
+                        style="fill:{{parent.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                    <foreignObject  x="105" y="50" width="140" height="70">
                       <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(parent)">{{parent.name}}</div>
@@ -527,14 +555,14 @@ a {
                    <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                </g>
                <ellipse cx="175" cy="175" rx="80" ry="40" ng-click="ellipse(thisCircle)"
-                    style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
+                    style="fill:{{thisCircle.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                 <foreignObject  x="95" y="160" width="160" height="80">
                    <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>
                 </foreignObject>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
-                       rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
+                       rx="60" ry="30" style="fill:{{child.color}};stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
                    <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
                        <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(child)">{{child.name}}</div>

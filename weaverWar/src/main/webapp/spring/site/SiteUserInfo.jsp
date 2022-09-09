@@ -27,7 +27,7 @@
     
 
     JSONObject wsMap = new JSONObject();
-    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllWorkspacesInSite(siteId);
+    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getNonDelWorkspacesInSite(siteId);
     for (NGPageIndex ngpi : allWorkspaces) {
         NGWorkspace ngw = ngpi.getWorkspace();
         JSONObject workspaceInfo = new JSONObject();
