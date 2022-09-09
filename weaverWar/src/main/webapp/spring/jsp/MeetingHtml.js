@@ -1009,7 +1009,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     };
 
     $scope.refreshAttachmentList = function() {
-        var getURL = "docsList.json";
+        var getURL = "docsList.json?meet="+$scope.meetId;
+        console.log("REQUEST DOCS", getURL);
         $scope.showError=false;
         $http.get(getURL)
         .success( function(data) {

@@ -49,7 +49,7 @@
               href="MeetingList.htm" >Meeting List</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
-              href="meetingHtml.htm?id=<%=id%>" >Edit Meeting</a></li>
+              href="MeetingHtml.htm?id=<%=id%>" >Edit Meeting</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
               href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(layoutFile.getName()); %>" >Print It</a></li>

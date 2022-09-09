@@ -382,7 +382,17 @@ public class ProjectDocsController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAccessWorkspace("Must have access to a workspace to get the document list.");
+            String meetId = ar.defParam("meet", null);
+            if (meetId!=null) {
+                MeetingRecord meet = ngw.findMeeting(meetId);
+                boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+                if (!canAccess) {
+                    ar.assertAccessWorkspace("User is not a member of meeting.");
+                }
+            }
+            else {
+                ar.assertAccessWorkspace("Must have access to a workspace to get the document list.");
+            }
 
             JSONArray attachmentList = new JSONArray();
             for (AttachmentRecord doc : ngw.getAllAttachments()) {

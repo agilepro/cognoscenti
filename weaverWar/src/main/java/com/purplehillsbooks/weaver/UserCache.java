@@ -96,12 +96,7 @@ public class UserCache {
             }
             for (MeetingRecord meet : ngw.getMeetings()) {
 
-                if (meet.isBacklogContainer()) {
-                    //added Dec 2021 because all backlog container support removed
-                    throw new Exception("Should never be seeing any backlog container meetings any more");
-                }
-
-                String address = "meetingHtml.htm?id="+meet.getId();
+                String address = "MeetingHtml.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getSortedAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
                         addPollIfNoResponse(proposalList, openRounds, cr, up, ngw, meet.getTargetRole(), address, nowTime);

@@ -397,7 +397,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location="noteZoom"+encodeURIComponent(oneTopic.id)+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
-        window.location="meetingHtml.htm?id="+encodeURIComponent(meet.id);
+        window.location="MeetingHtml.htm?id="+encodeURIComponent(meet.id);
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";

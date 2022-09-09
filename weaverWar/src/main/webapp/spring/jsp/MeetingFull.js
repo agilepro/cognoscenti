@@ -1718,7 +1718,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         let stateObj = {
             foo: newMode
         }
-        window.history.pushState(stateObj, newMode, 'meetingHtml.htm?id='+embeddedData.meetId+'&mode='+newMode);
+        window.history.pushState(stateObj, newMode, 'MeetingHtml.htm?id='+embeddedData.meetId+'&mode='+newMode);
         console.log("LOCATION", window.location)
     }
     

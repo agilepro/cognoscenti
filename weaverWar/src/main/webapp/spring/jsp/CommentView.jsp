@@ -246,7 +246,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             var colonPos = cmt.containerID.indexOf(":");
             var meetingId = cmt.containerID.substring(0,colonPos);
             var agendaItem = cmt.containerID.substring(colonPos+1);
-            return "meetingHtml.htm?id="+meetingId+"&mode=Items&ai="+agendaItem;
+            return "MeetingHtml.htm?id="+meetingId+"&mode=Items&ai="+agendaItem;
         }
         else if (cmt.containerType=="T") {
             return "noteZoom"+cmt.containerID+".htm"

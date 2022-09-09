@@ -14,23 +14,34 @@
 </div>
 
 {% if ($meeting) %}
-<p><b>Meeting:</b> (click links to see meeting):
-<ul>
-<li><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a>
+<hr/>
+<p><b>Meeting:</b> <a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a>
     ( 
      <a href="{$meeting.agendaUrl}">Agenda</a>,
      <a href="{$meeting.minutesUrl}">Minutes</a>,
-     <a href="{$workspaceUrl}meetingTime{$meeting.id}.ics">Calendar</a>,
-     <a href="{$meeting.meetingUrl}&mode=Times">Start Time</a> )
-<br/>
-{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}
-</li>
-</ul>
+     <a href="{$workspaceUrl}meetingTime{$meeting.id}.ics">Save to Calendar</a> )
+
+</p>
+
+{% if ($meeting.isScheduled) %} 
+<p><b>Date / Time: </b> {$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</p>
+<ul><li>
+<a href="{$workspaceUrl}MeetingAvail.htm?id={$meeting.id}&msgId={$msgId}"><button>Please Confirm Attendance</button></a>
+</li></ul>
+{% else %}
+<div style="color:red">
+<p><b>Time Not Yet Determined:</b> Please click here now to help set the schedule.</p>
+<ul><li>
+<a href="{$workspaceUrl}MeetingAvail.htm?id={$meeting.id}&msgId={$msgId}"><button>Select Best Times</button></a>
+</li></ul></div>
+{% endif %}
+
 {% endif %}
 
 
 {% if ($attach) %}
 
+<hr/>
 <p><b>Attachments:</b> (click links for secure access to documents):
 <ul>
 {% loop in $attach as $att}
@@ -50,11 +61,15 @@
 
 {% if ($note) %}
 {% if ($includeTopic) %}
+
+<hr/>
 <p>ACCESS: <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
     <button title="Use this link to read and update this topic online">{$note.subject|onempty(No Name)|html}</button></a> <i>The topic is copied below. Use the access button (left) to see the latest version:</i> </p>
 <hr/>
 <div>{$note.wiki|markdown}</div>
 {% else %}
+
+<hr/>
 <p><i>Access the web page using the following link:</i> 
   <a href="{$noteUrl}" title="Access the latest version of this discussion topic">
     <b>{$note.subject|onempty(No Name)|html}</b></a></p>

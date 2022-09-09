@@ -205,14 +205,14 @@ app.controller('myCtrl', function($scope, $http) {
               </a>
             </td>
             <td class="actions"><a title="Meeting Agenda" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=Agenda">
+                 href="MeetingHtml.htm?id={{rec.id}}&mode=Agenda">
                 <button type="button" name="edit" class='btn btn-primary'> 
                     <span class="fa  fa-file-o"></span>
                 </button>
               </a>
             </td>
             <td><b><a title="Meeting User Interface" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=Items">
+                 href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
                 {{rec.name}}</a></b>
             </td>
             <td>
@@ -221,7 +221,7 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td class="actions">
               <a role="menuitem" tabindex="-1" title="Meeting Minutes" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=Minutes">
+                 href="MeetingHtml.htm?id={{rec.id}}&mode=Minutes">
                 <button type="button" name="edit" class='btn btn-primary'>
                     <span class="fa fa-file-text-o"></span>
                 </button>

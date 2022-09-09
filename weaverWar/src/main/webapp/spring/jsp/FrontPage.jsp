@@ -124,7 +124,7 @@ Required parameters:
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            url = ar.getResourceURL(ngp, "meetingHtml.htm?id="+objectKey);
+            url = ar.getResourceURL(ngp, "MeetingHtml.htm?id="+objectKey);
             MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
             if (meet!=null) {
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
@@ -445,7 +445,7 @@ a {
           </div>
           <div class="panel-body">
             <div ng-repeat="meet in myMeetings"  class="clipping">
-              <a href="meetingHtml.htm?id={{meet.id}}">{{meet.name}}, {{meet.startTime|date: "MMM dd, HH:mm"}}</a>
+              <a href="MeetingHtml.htm?id={{meet.id}}">{{meet.name}}, {{meet.startTime|date: "MMM dd, HH:mm"}}</a>
             </div>
           </div>
         </div>

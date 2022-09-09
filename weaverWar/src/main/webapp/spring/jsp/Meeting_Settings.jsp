@@ -86,7 +86,7 @@
           <tr ng-show="previousMeeting.id">
             <td>Previous Meeting:</td>
             <td>
-              <a href="meetingHtml.htm?id={{previousMeeting.id}}">
+              <a href="MeetingHtml.htm?id={{previousMeeting.id}}">
                 {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
                 <span>&nbsp; ({{browserZone}})</span>
             </td>

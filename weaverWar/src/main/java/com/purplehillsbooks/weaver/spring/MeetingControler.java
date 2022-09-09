@@ -110,8 +110,41 @@ public class MeetingControler extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingAvail.htm", method = RequestMethod.GET)
+    public void meetingAvail(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String id = ar.defParam("id", null);
+        try{
+            if (id==null || id.length()==0) {
+                showWarningDepending(ar, "Missing id parameter for meeting availability page");
+            }
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            MeetingRecord meet = ngw.findMeetingOrNull(id);
+            if (meet==null) {
+                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                        +".  Was it deleted?");
+            }
+            //boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            //just make meeting available accessible by ANYONE
+            boolean canAccess = true;
+            showJSPDepending(ar, ngw, "MeetingAvail.jsp", canAccess);
+        }
+        catch(Exception ex){
+            throw new NGException("Unable to generate meeting page for id={0}", new Object[]{pageId,siteId} , ex);
+        }
+    }    
+    
     @RequestMapping(value = "/{siteId}/{pageId}/meetingHtml.htm", method = RequestMethod.GET)
+    public void meetingHtmllowercase(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        meetingHtml(siteId,pageId,request, response);
+    }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingHtml.htm", method = RequestMethod.GET)
     public void meetingHtml(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -479,6 +512,38 @@ public class MeetingControler extends BaseController {
               streamException(ee, ar);
           }
       }
+      @RequestMapping(value = "/{siteId}/{pageId}/setSituation.json", method = RequestMethod.POST)
+      public void setSituation(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+              ar.setPageAccessLevels(ngw);
+              String id = ar.reqParam("id");
+              ar.assertNotFrozen(ngw);
+              MeetingRecord meeting = ngw.findMeeting(id);
+              boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
+              if (!canAccess) {
+                  throw new Exception("not a member and no magic number");
+              }
+              
+              //NOTE: we trust this to be legitimate.   We allow anonymous people
+              //to set these values without logging in.  Not dangerous.
+              JSONObject userSituation = getPostedObject(ar);
+
+              String userId = userSituation.getString("uid");
+              meeting.setWillAttend(userId, userSituation);
+
+              JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
+              addVisitors(ar, repo, siteId, pageId);
+              saveAndReleaseLock(ngw, ar, "Updated Meeting");
+              
+              sendJson(ar, repo);
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to update meeting proposed times.", ex);
+              streamException(ee, ar);
+          }
+      }
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
@@ -493,9 +558,6 @@ public class MeetingControler extends BaseController {
               List<MeetingRecord> allMeets = ngw.getMeetings();
               MeetingRecord.sortChrono(allMeets);
               for (MeetingRecord oneRef : allMeets) {
-                  if (oneRef.isBacklogContainer()) {
-                      throw new Exception("no meeting should be a backlog container any more, just making sure");
-                  }
                   meetings.put(oneRef.getListableJSON(ar));
               }
               jo.put("meetings", meetings);

@@ -543,6 +543,16 @@ public class DailyDigest {
         for (JSONObject actionItemObj : actionItems.getJSONObjectList()) {
             taskNum++;
             int taskState = actionItemObj.getInt("state");
+            if (taskState == BaseRecord.STATE_ERROR) {
+                //allow this, not sure why
+            }
+            else if (taskState == BaseRecord.STATE_ACCEPTED || taskState == BaseRecord.STATE_OFFERED  || taskState == BaseRecord.STATE_WAITING) {
+                //allow this
+            }
+            else {
+                continue;
+            }
+            
 
             ar.write("\n <tr");
             if (taskNum % 2 == 0) {

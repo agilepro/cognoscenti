@@ -205,7 +205,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         </tr>
         <tr ng-repeat="rec in meetings">
             <td><b><a title="Meeting Agenda" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=Items">
+                 href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
                 {{rec.name}}</a></b>
             </td>
             <td>

@@ -88,7 +88,7 @@ public class MeetingRecord extends DOMFace {
         setAttributeInt("state", newVal);
     }
 
-    public long getStartTime()  throws Exception {
+    public long getStartTime() {
         return getAttributeLong("startTime");
     }
     private void setStartTime(long newVal) throws Exception {
@@ -242,8 +242,12 @@ public class MeetingRecord extends DOMFace {
      * NO LONGER a special meeting which is actually the container for backlog
      * agenda items. Should never exist any more.
      */
-    public boolean isBacklogContainer() {
+    public boolean deprecatedBacklogMeetingNoLongerAllowed() {
         return "true".equals(getAttribute("isBacklog"));
+    }
+    
+    public boolean isScheduled() {
+        return getStartTime()>100000000;
     }
 
 
@@ -472,10 +476,47 @@ public class MeetingRecord extends DOMFace {
     }
 
 
-    public boolean removeFromRollCall(String sourceUser) throws Exception {
+    public JSONObject getWillAttend(String userKey) throws Exception {
+        AddressListEntry ale = new AddressListEntry(userKey);
         DOMFace foundOne = null;
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
-            if (sourceUser.equalsIgnoreCase(onePerson.getAttribute("uid"))) {
+            if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
+                foundOne = onePerson;
+            }
+        }
+        if (foundOne==null) {
+            foundOne = createChildWithID("rollCall", DOMFace.class, "uid", ale.getUniversalId());
+        }
+        JSONObject res = new JSONObject();
+        res.put("attend", foundOne.getScalar("attend"));
+        res.put("situation", foundOne.getScalar("situation"));
+        return res;
+    }
+    public void setWillAttend(String userKey, JSONObject attendValues) throws Exception {
+        AddressListEntry ale = new AddressListEntry(userKey);
+        DOMFace foundOne = null;
+        for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
+                foundOne = onePerson;
+            }
+        }
+        if (foundOne==null) {
+            foundOne = createChildWithID("rollCall", DOMFace.class, "uid", ale.getUniversalId());
+        }
+        if (attendValues.has("attend")) {
+            foundOne.setScalar("attend", attendValues.getString("attend"));
+        }
+        if (attendValues.has("situation")) {
+            foundOne.setScalar("situation", attendValues.getString("situation"));
+        }
+    }
+    
+    
+    public boolean removeFromRollCall(String sourceUser) throws Exception {
+        AddressListEntry ale = new AddressListEntry(sourceUser);
+        DOMFace foundOne = null;
+        for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
                 foundOne = onePerson;
             }
         }
@@ -555,9 +596,11 @@ public class MeetingRecord extends DOMFace {
 
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
             JSONObject sub = new JSONObject();
             //user id
-            sub.put("uid", UserManager.getCorrectedEmail(onePerson.getAttribute("uid")));
+            sub.put("uid", ale.getUniversalId());
+            sub.put("key", ale.getKey());
 
             // yse, no, maybe
             sub.put("attend", onePerson.getScalar("attend"));
@@ -971,7 +1014,7 @@ public class MeetingRecord extends DOMFace {
         sb.append(getNameAndDate(cal));
         sb.append("|");
         sb.append(ar.baseURL);
-        sb.append(ar.getResourceURL(ngw, "meetingHtml.htm?id="+getId()));
+        sb.append(ar.getResourceURL(ngw, "MeetingHtml.htm?id="+getId()));
         sb.append("]");
 
         sb.append("\n\n!!!Agenda");
@@ -1177,7 +1220,7 @@ public class MeetingRecord extends DOMFace {
      */
 
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw,  "meetingHtml.htm?id="+this.getId())
+        return ar.getResourceURL(ngw,  "MeetingHtml.htm?id="+this.getId())
                 + "&" + AccessControl.getAccessMeetParams(ngw, this);
     }
 

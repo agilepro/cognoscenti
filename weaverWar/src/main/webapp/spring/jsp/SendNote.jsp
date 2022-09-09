@@ -782,4 +782,3 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 </div>
   
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-

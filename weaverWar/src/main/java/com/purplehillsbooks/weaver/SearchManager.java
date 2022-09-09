@@ -294,7 +294,7 @@ public class SearchManager {
                     doc.add(new Field("MODTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
                     doc.add(new Field("ITEMID", meet.getId(), TextField.TYPE_STORED));
                     doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
-                    doc.add(new Field("LINK", "meetingHtml.htm?id="+meet.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "MeetingHtml.htm?id="+meet.getId(), TextField.TYPE_STORED));
                     
 
                     doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));

@@ -441,9 +441,9 @@ public class AccessControl {
         ar.setSpecialSessionAccess(resourceId);
     }
 
-    public static String getAccessMeetParams(NGContainer ngc, MeetingRecord meet) throws Exception{
-        String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+    public static String getAccessMeetParams(NGWorkspace ngw, MeetingRecord meet) throws Exception{
+        String resourceId = "meet:"+meet.getId()+":"+ngw.getKey();
+        String encodedValue = URLEncoder.encode(ngw.emailDependentMagicNumber(resourceId), "UTF-8");
         return "mnm=" + encodedValue;
     }
 

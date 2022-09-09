@@ -200,12 +200,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 $scope.commentTypeName = "Comment";
                 $scope.responseTypeName = "N/A";
             }
-            $scope.focusComment.responses.forEach( function(resp) {
-                if (resp.user == $scope.emailId) {
-                    $scope.hasResponse = true;
-                    $scope.myResponse = convertMarkdownToHtml(resp.body);
-                }
-            });
+            if ($scope.focusComment.responses) {
+                $scope.focusComment.responses.forEach( function(resp) {
+                    if (resp.user == $scope.emailId) {
+                        $scope.hasResponse = true;
+                        $scope.myResponse = convertMarkdownToHtml(resp.body);
+                    }
+                });
+            }
         }
         
         //determine if the user is subscribed to the topic

@@ -130,7 +130,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="noteZoom"+topic.id+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
-        window.location="meetingHtml.htm?id="+meet.id;
+        window.location="MeetingHtml.htm?id="+meet.id;
     }
     $scope.commentTypeName = function(cmt) {
         if (cmt.commentType==2) {

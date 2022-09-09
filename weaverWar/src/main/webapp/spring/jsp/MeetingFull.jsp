@@ -313,7 +313,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
               href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
-              href="meetingHtml.htm?id={{meeting.id}}">Show Tabbed Meeting Display</a></li>
+              href="MeetingHtml.htm?id={{meeting.id}}">Show Tabbed Meeting Display</a></li>
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
               href="MeetingList.htm">List All Meetings</a></li>

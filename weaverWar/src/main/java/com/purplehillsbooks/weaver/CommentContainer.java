@@ -232,7 +232,7 @@ public abstract class CommentContainer extends DOMFace {
         }
         if (this instanceof AgendaItem) {
             MeetingRecord mr = ((AgendaItem)this).meeting;
-            return "meetingHtml.htm?id="+mr.getId();
+            return "MeetingHtml.htm?id="+mr.getId();
         }
         throw new RuntimeException("Unable to getPageWebAddress, unrecognized container type: "+getClass().getName());
     }

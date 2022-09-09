@@ -538,9 +538,10 @@ public class EmailGenerator extends DOMFace {
 
         if (meeting!=null) {
             JSONObject meetingObj = meeting.getFullJSON(ar, ngw, false);
-            meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngw, "meetingHtml.htm?id="+meeting.getId()
+            meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngw, "MeetingHtml.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngw, meeting))
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            meetingObj.put("isScheduled", meeting.isScheduled());
             data.put("meeting", meetingObj);
 
             //TODO: this is temporary until templates can handle dates

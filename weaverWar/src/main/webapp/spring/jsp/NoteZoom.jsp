@@ -439,7 +439,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
     }
     $scope.navigateToMeeting = function(meet) {
-        window.location="meetingHtml.htm?id="+meet.id;
+        window.location="MeetingHtml.htm?id="+meet.id;
     }
     $scope.navigateToAction = function(oneAct) {
         window.location="task"+oneAct.id+".htm";

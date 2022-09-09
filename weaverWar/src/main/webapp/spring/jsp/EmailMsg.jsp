@@ -33,7 +33,7 @@
             }
             else if (cc instanceof AgendaItem) {
                 MeetingRecord meet = ((AgendaItem)cc).meeting;
-                containerUrl = "meetingHtml.htm?id="+meet.getId();
+                containerUrl = "MeetingHtml.htm?id="+meet.getId();
                 aboutName = meet.getName();
                 aboutType = "Meeting";
             }

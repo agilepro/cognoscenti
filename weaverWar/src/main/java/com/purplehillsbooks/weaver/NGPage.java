@@ -178,7 +178,7 @@ public abstract class NGPage extends ContainerCommon {
         //eliminate old meetings that were just backlog containers
         //added Dec 2021 cleanup schema migration
         for (MeetingRecord meet: getMeetings()) {
-            if (meet.isBacklogContainer()) {
+            if (meet.deprecatedBacklogMeetingNoLongerAllowed()) {
                 this.removeMeeting(meet.getId());
             }
         }

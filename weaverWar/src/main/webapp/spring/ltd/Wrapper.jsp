@@ -270,6 +270,14 @@ myApp.filter('cdate', function() {
     return moment(x).format("DD-MMM @ HH:mm");
   };
 });
+myApp.filter('wiki', function() {
+  return function(x) {
+    return convertMarkdownToHtml(x);
+  };
+});
+myApp.filter('encode', function() {
+  return window.encodeURIComponent;
+});
 
  </script>
 
