@@ -224,6 +224,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.meeting = <%meeting.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
+    $scope.suppressEmail = <%=ngw.suppressEmail()%>;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -751,13 +752,24 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                {{explainState()}}
             </div>
           </div>
+          <div class="form-group" ng-show="suppressEmail">
+            <label class="col-md-2 control-label">Suppression</label>
+            <div class="col-md-10">
+              <div class="form-inline" style="color:red;weight:700">
+                Note: suppressEmail enabled.
+                No actual email will be sent from from this workspace
+                Email will appear in the database as if it had been sent.
+              </div>
+            </div>
+          </div>
         <!-- Form Control BUTTONS -->
         <div class="row">
           <div class="col-md-12 form-group text-right">
             <button ng-click="deleteEmail()" class="btn btn-warning btn-raised" 
                     ng-hide="emailInfo.id=='~new~'">Delete</button>
             <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save &amp; Preview</button>
-            <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Now</button>
+            <button ng-click="sendEmail()" class="btn btn-primary btn-raised" ng-show="suppressEmail">Simulate Sending</button>
+            <button ng-click="sendEmail()" class="btn btn-primary btn-raised" ng-hide="suppressEmail">Send Now</button>
           </div>
         </div>
       </fieldset>

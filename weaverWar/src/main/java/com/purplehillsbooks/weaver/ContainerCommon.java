@@ -368,16 +368,6 @@ public abstract class ContainerCommon extends NGContainer
         return mail.getChildren("email", EmailRecord.class);
     }
 
-/*
-    public EmailRecord getEmail(String id) throws Exception {
-        for (EmailRecord er : getAllEmail()) {
-            if (id.equals(er.getId())) {
-                return er;
-            }
-        }
-        throw new Exception("There is no email record with id="+id+" on container "+getKey());
-    }
-    */
 
 
     /**

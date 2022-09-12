@@ -690,7 +690,6 @@ public class NGBook extends ContainerCommon {
         return siteInfoRec.getAttributeBool("frozen");
     }
 
-
     /**
      * Whether to show or hide experimental features.
      */
@@ -980,8 +979,6 @@ public class NGBook extends ContainerCommon {
                 siteInfoRec.setAttributeBool("frozen", true);
             }
         }
-        //siteInfoRec.updateAttributeBool("frozen", jo);
-        //siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeString("siteMsg", jo);
         siteInfoRec.updateUniqueVectorString("labelColors", jo);
         this.updateScalarString("movedTo", jo);

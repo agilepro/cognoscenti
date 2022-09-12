@@ -49,6 +49,7 @@ public class MailInst extends JSONWrapper {
     public static final String SENT = "Sent";
     public static final String FAILED = "Failed";
     public static final String SKIPPED = "Skipped";
+    public static final String SUPPRESS = "Suppressed";
 
 
 
@@ -58,6 +59,7 @@ public class MailInst extends JSONWrapper {
         //this is the ID of the message, each message has a unique create time, which is 
         //the time that this code is run, and the record saved in the DB.
         setCreateDate(Cognoscenti.getUniqueTime());
+        setStatus(READY_TO_GO);
     }
     public MailInst(JSONObject _kernel) {
         super(_kernel);
@@ -361,10 +363,6 @@ public class MailInst extends JSONWrapper {
                 }
             }
             safeEmailBody = sb.toString();
-
-
-
-
 
 
             MimeMessage message = new MimeMessage(mailSession);

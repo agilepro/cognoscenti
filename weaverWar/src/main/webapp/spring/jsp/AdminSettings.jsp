@@ -305,6 +305,15 @@ app.controller('myCtrl', function($scope, $http) {
         newData.wsSettings[flag] = $scope.workspaceConfig.wsSettings[flag];
         saveRecord(newData);
     }
+    $scope.toggleBool = function(flag) {
+        if (!$scope.isAdmin) {
+            return;
+        }
+        $scope.workspaceConfig[flag] = !$scope.workspaceConfig[flag];
+        var newData = {};
+        newData[flag] = $scope.workspaceConfig[flag];
+        saveRecord(newData);
+    }
 
 });
 app.filter('escape', function() {
@@ -538,6 +547,16 @@ editBoxStyle {
                         <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td ng-click="toggleBool('suppressEmail')">
+                        <span ng-show="workspaceConfig.suppressEmail">
+                            <i class="fa fa-check-circle"></i> Email generated in this workspace will be suppressed so testing does not cause unnecessary real email to be sent.</span>
+                        <span ng-hide="workspaceConfig.suppressEmail">
+                            <i class="fa fa-circle-o"></i> Email in this workspace functionals normally</span>
+                    </td>
+                </tr>
             </table>
         </div>
+        <div style="margin:75px"></div>
 

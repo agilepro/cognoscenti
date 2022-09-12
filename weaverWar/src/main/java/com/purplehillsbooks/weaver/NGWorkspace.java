@@ -523,7 +523,11 @@ public class NGWorkspace extends NGPage {
         }
         return val;
     }
-
+    
+    public boolean suppressEmail() {
+        return pageInfo.getAttributeBool("suppressEmail");
+    }
+    
 
     /**
      * Return the time of the next automated action.  If there are multiple
@@ -567,6 +571,9 @@ public class NGWorkspace extends NGPage {
         if (allEmail.size()==0) {
             return false;
         }
+        
+        //at this point, this should NEVER be happening.   Remove this routine.
+        
         System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL BEING REMOVED FROM WORKSPACE: "+this.getFullName());
         for (EmailRecord er : allEmail) {
             String fullFromAddress = er.getFromAddress();
@@ -577,7 +584,7 @@ public class NGWorkspace extends NGPage {
                 //usually only one so this usually creates only a single email
                 MailInst inst = createMailInst();
                 inst.setAddressee(oaa.getEmail());
-                inst.setStatus(er.getStatus());
+                inst.setStatus(MailInst.SENT);    //suppress the sending of anything in here
                 inst.setSubject(er.getSubject());
                 inst.setFromAddress(fromAle.getEmail());
                 inst.setFromName(fromAle.getName());
@@ -609,6 +616,11 @@ public class NGWorkspace extends NGPage {
         MailInst msg = new MailInst();
         msg.setSiteKey(getSiteKey());
         msg.setWorkspaceKey(getKey());
+        if (suppressEmail()) {
+            //if this workspace is not supposed to send email, then generate
+            //the email in the already sent state
+            msg.setStatus(MailInst.SUPPRESS);
+        }
         return msg;
     }
 
@@ -1296,11 +1308,9 @@ public class NGWorkspace extends NGPage {
     
     public JSONObject getConfigJSON() throws Exception {
         
-        ProcessRecord process = getProcess();
         JSONObject workspaceConfigInfo = new JSONObject();
         workspaceConfigInfo.put("key", getKey());
         workspaceConfigInfo.put("site", getSiteKey());
-        workspaceConfigInfo.put("goal", process.getSynopsis());
         workspaceConfigInfo.put("parentKey", getParentKey());
         workspaceConfigInfo.put("frozen", isFrozen() || isDeleted());
         workspaceConfigInfo.put("deleted", isDeleted());
@@ -1309,6 +1319,7 @@ public class NGWorkspace extends NGPage {
             workspaceConfigInfo.put("deleteUser", UserManager.getCorrectedEmail(pageInfo.getDeleteUser()));
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
+        pageInfo.extractAttributeBool(workspaceConfigInfo, "suppressEmail");
 
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
@@ -1317,6 +1328,8 @@ public class NGWorkspace extends NGPage {
         List<String> nameSet = getPageNames();
         workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
 
+        ProcessRecord process = getProcess();
+        workspaceConfigInfo.put("goal", process.getSynopsis());
         workspaceConfigInfo.put("purpose", process.getDescription());  //a.k.a. 'aim'
         process.extractScalarString(workspaceConfigInfo, "mission");
         process.extractScalarString(workspaceConfigInfo, "vision");
@@ -1326,10 +1339,6 @@ public class NGWorkspace extends NGPage {
     }
 
     public void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception {
-        ProcessRecord process = getProcess();
-        if (newConfig.has("goal")) {
-            process.setSynopsis(newConfig.getString("goal"));
-        }
         if (newConfig.has("parentKey")) {
             String parentKey = newConfig.getString("parentKey");
             if ("$delete$".equals(parentKey)) {
@@ -1355,10 +1364,15 @@ public class NGWorkspace extends NGPage {
         if (newConfig.has("projectMail")) {
             setWorkspaceMailId(newConfig.getString("projectMail"));
         }
+        pageInfo.updateAttributeBool("suppressEmail", newConfig);
+
+        ProcessRecord process = getProcess();
+        process.updateScalarString("goal", newConfig);
         if (newConfig.has("purpose")) {
             //also known as 'aim'
             process.setDescription(newConfig.getString("purpose"));
         }
+
         process.updateScalarString("mission", newConfig);
         process.updateScalarString("vision", newConfig);
         process.updateScalarString("domain", newConfig);

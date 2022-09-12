@@ -592,7 +592,6 @@ public class EmailSender extends TimerTask {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
             }
 
-            emailRec.setStatus(EmailRecord.READY_TO_GO);
             emailRec.setFromName(from.getName());
             emailRec.setFromAddress(from.getEmail());
             emailRec.setAddressee(addressee);
