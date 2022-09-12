@@ -459,7 +459,7 @@ public class EmailSender extends TimerTask {
 
     /**
      * generalMailToOne - Send a email to a single email address (as an
-     * AddressListEntry) in the scope of the entire product (not any specific
+     * AddressListEntry) in the scope of the entire system (not any specific
      * project or other context).
      *
      * This method sends a single email message to the addressee

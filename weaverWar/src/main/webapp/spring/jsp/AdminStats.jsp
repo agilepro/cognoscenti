@@ -23,8 +23,6 @@
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
 
-    String allTasksPage = ar.getResourceURL(ngw,"projectAllTasks.htm");
-
     List<String> names = ngw.getContainerNames();
 
     String parentKey = ngw.getParentKey();

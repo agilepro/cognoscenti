@@ -55,7 +55,7 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         NGPageIndex ngpi = clone.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngc = ngpi.getWorkspace();
 
-        //if the project no longer exists, then just use the generic response.
+        //if the workspace no longer exists, then just use the generic response.
         if (ngc==null) {
             super.writeUnsubscribeLink(clone);
             return;

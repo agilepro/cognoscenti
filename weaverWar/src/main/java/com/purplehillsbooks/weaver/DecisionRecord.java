@@ -88,10 +88,10 @@ public class DecisionRecord extends DOMFace {
 
     /**
      * the universal id is a globally unique ID for this decision, composed of the
-     * id for the server, the project, and the action item. This is set at the point
+     * id for the server, the workspace, and the action item. This is set at the point
      * where the action item is created and remains with the note as it is carried
-     * around the system as long as it is moved as a clone from a project to a
-     * clone of a project. If it is copied or moved to another project for any
+     * around the system as long as it is moved as a clone from a workspace to a
+     * clone of a workspace. If it is copied or moved to another workspace for any
      * other reason, then the universal ID should be reset.
      */
     public String getUniversalId() throws Exception {
@@ -104,7 +104,7 @@ public class DecisionRecord extends DOMFace {
 
 
     /**
-     * get the labels on a document -- only labels valid in the project,
+     * get the labels on a document -- only labels valid in the workspace,
      * and no duplicates
      */
     public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {

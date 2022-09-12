@@ -313,7 +313,7 @@ public abstract class NGPage extends ContainerCommon {
 
         // check if there is new email, and put this in the index as well
         if (hasEmailToSend()) {
-            cog.projectsWithEmailToSend.add(key);
+            cog.workspacesWithEmailToSend.add(key);
         }
     }
     public boolean hasEmailToSend() throws Exception {

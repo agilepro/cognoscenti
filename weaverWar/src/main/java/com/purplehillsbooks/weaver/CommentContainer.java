@@ -179,7 +179,7 @@ public abstract class CommentContainer extends DOMFace {
                 cr.updateFromJSON(oneComment, ar);
                 linkReplyToSource(cr);
 
-                //if you add a comment, then you also get this project on your watch list
+                //if you add a comment, then you also get this workspace on your watch list
                 NGWorkspace ngw = (NGWorkspace) ar.ngp;
                 uProf.assureWatch(ngw.getCombinedKey());
             }

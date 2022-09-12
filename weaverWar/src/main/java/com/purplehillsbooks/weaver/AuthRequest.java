@@ -531,8 +531,8 @@ public class AuthRequest
 
     /**
      * If you want to throw away all the changes that might have been made to the copy
-     * of a project in memory, you need to NOT save the project, and you need to
-     * call this to make sure that all cached copies of the project are removed from
+     * of a workspace in memory, you need to NOT save the workspace, and you need to
+     * call this to make sure that all cached copies of the workspace are removed from
      * memory, forcing the next read to actually read from the file on the disk.
      *
      * After calling this, ngp member is cleared back to null, so make sure your logic
@@ -1466,7 +1466,7 @@ public class AuthRequest
                         + "/" + ngc.getKey() + "/";
         }
 
-        // for site go to the project list
+        // for site go to the workspace list
         return  "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8")+"/$/";
     }
     
@@ -1488,7 +1488,7 @@ public class AuthRequest
                         + ngc.getKey()+"/FrontPage.htm";
         }
 
-        // for site go to the project list
+        // for site go to the workspace list
         return  "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8")+"/$/SiteWorkspaces.htm";
     }
 
@@ -1497,7 +1497,7 @@ public class AuthRequest
             return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")+"/"
                         + ngpi.containerKey + "/FrontPage.htm";
         }
-        // for site go to the project list
+        // for site go to the workspace list
         return  "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8")+"/$/SiteWorkspaces.htm";
     }
 

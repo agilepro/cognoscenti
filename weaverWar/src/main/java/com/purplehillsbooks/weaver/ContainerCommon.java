@@ -225,7 +225,7 @@ public abstract class ContainerCommon extends NGContainer
                 desc = "The role 'Owners' contains a list of people who can modify the properties of the site properties.";
             }
             else if ("Members".equals(roleName)) {
-                desc = "Members of a project can see and edit any of the content in the workspace.  "
+                desc = "Members of a workspace can see and edit any of the content in the workspace.  "
                        +"Members can create, edit, and delete topics, can upload, download, and delete documents."
                        +"Members can approve other people to become members or other roles.";
             }

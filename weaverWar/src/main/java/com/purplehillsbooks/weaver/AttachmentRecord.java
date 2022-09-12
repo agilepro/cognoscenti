@@ -182,18 +182,15 @@ public class AttachmentRecord extends CommentContainer {
                     new Object[] { newDisplayName });
         }
 
-        // also, display name needs to be unique within the project
+        // also, display name needs to be unique within the workspace
         AttachmentRecord otherFileWithSameName = container.findAttachmentByName(newDisplayName);
         if (otherFileWithSameName!=null) {
             throw new Exception("Can't rename this attachment because there is another attachment named "
-                    + otherFileWithSameName.getDisplayName() + " in this project.");
+                    + otherFileWithSameName.getDisplayName() + " in this workspace.");
         }
 
         setAttribute("displayName", newDisplayName);
         niceName = newDisplayName;
-
-        //duplicate copy no longer kept in the project folder
-        //updateActualFile(oldName, newDisplayName);
     }
 
     /**
@@ -277,7 +274,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * Returns true if this document has appeared in the folder, and the project
+     * Returns true if this document has appeared in the folder, and the workspace
      * does not have any former knowledge of it ==> EXTRA or GONE Returns false
      * if this is an otherwise expected document where the type is URL or FILE
      */
@@ -351,17 +348,17 @@ public class AttachmentRecord extends CommentContainer {
     public List<AttachmentVersion> getVersions(NGWorkspace ngc)
         throws Exception {
         if (!(ngc instanceof NGWorkspace)) {
-            throw new Exception("Problem: ProjectAttachment should only belong to NGProject, "
+            throw new Exception("Problem: workspace Attachment should only belong to NGWorkspace, "
                     +"but somehow got a different kind of container.");
         }
 
-        File projectFolder = ngc.containingFolder;
-        if (projectFolder==null) {
-            throw new Exception("NGProject container has no containing folder????");
+        File workspaceFolder = ngc.containingFolder;
+        if (workspaceFolder==null) {
+            throw new Exception("NGWorkspace container has no containing folder????");
         }
 
         List<AttachmentVersion> list =
-            AttachmentVersion.getDocVersions(projectFolder, this);
+            AttachmentVersion.getDocVersions(workspaceFolder, this);
 
         sortVersions(list);
 
@@ -469,17 +466,17 @@ public class AttachmentRecord extends CommentContainer {
             String userId, long timeStamp) throws Exception {
 
         if (!(ngc instanceof NGWorkspace)) {
-            throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
+            throw new Exception("Problem: workspace Attachment should only belong to NGWorkspace, but somehow got a different kind of container.");
         }
-        File projectFolder = ngc.containingFolder;
-        if (projectFolder==null) {
-            throw new Exception("NGProject container has no containing folder????");
+        File workspaceFolder = ngc.containingFolder;
+        if (workspaceFolder==null) {
+            throw new Exception("NGWorkspace container has no containing folder????");
         }
 
         //in case the attachment is deleted, undelete it for this new version
         clearDeleted();
 
-        AttachmentVersion av = AttachmentVersion.getNewProjectVersion(projectFolder,
+        AttachmentVersion av = AttachmentVersion.getNewProjectVersion(workspaceFolder,
                 this, contents);
 
         //update the record
@@ -554,11 +551,11 @@ public class AttachmentRecord extends CommentContainer {
 
 
     /**
-     * when a doc is moved to another project, use this to record where it was
+     * when a doc is moved to another workspace, use this to record where it was
      * moved to, so that we can link there.
      */
-    public void setMovedTo(String project, String otherId) throws Exception {
-        setScalar("MovedToProject", project);
+    public void setMovedTo(String workspace, String otherId) throws Exception {
+        setScalar("MovedToProject", workspace);
         setScalar("MovedToId", otherId);
     }
 
@@ -570,7 +567,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * get the id of the doc in the other project that this doc was moved to.
+     * get the id of the doc in the other workspace that this doc was moved to.
      */
     public String getMovedToAttachId() throws Exception {
         return getScalar("MovedToId");
@@ -614,7 +611,7 @@ public class AttachmentRecord extends CommentContainer {
     /**
      * This is the timestamp of the document on the remote server at the time
      * that it was last synchronized. Thus if the remote file was modified on
-     * Monday, and someone synchronized that version to the project on Tuesday,
+     * Monday, and someone synchronized that version to the workspace on Tuesday,
      * this date will hold the Monday date. The purpose is to compare with the
      * current remote time to see if it has been modified since the last
      * synchronization.
@@ -636,7 +633,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /***
-     * This is the flag which tells that file download in the project is read
+     * This is the flag which tells that file download in the workspace is read
      * only type or not. And if it is read only type then it prohibits user to
      * upload newer version of that file and synchronization of that file should
      * be one directional only
@@ -661,11 +658,11 @@ public class AttachmentRecord extends CommentContainer {
     /**
      * return the size of the file in bytes
      */
-    public long getFileSize(NGWorkspace ngc) throws Exception {
+    public long getFileSize(NGWorkspace ngw) throws Exception {
         if (!"FILE".equals(getType()) || isDeleted()) {
             return -1;
         }
-        AttachmentVersion av = getLatestVersion(ngc);
+        AttachmentVersion av = getLatestVersion(ngw);
         if (av==null) {
             return -1;
         }
@@ -691,7 +688,7 @@ public class AttachmentRecord extends CommentContainer {
 
 
     /**
-     * get the labels on a document -- only labels valid in the project,
+     * get the labels on a document -- only labels valid in the workspace,
      * and no duplicates
      */
     public List<NGLabel> getLabels() throws Exception {
@@ -759,10 +756,10 @@ public class AttachmentRecord extends CommentContainer {
      * Returns all the meetinsg that have agenda items that are linked to this document
      * attachment.  Should this return agenda items, as well?
      */
-    public List<MeetingRecord> getLinkedMeetings(NGWorkspace ngc) throws Exception {
+    public List<MeetingRecord> getLinkedMeetings(NGWorkspace ngw) throws Exception {
         ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
         String nid = this.getUniversalId();
-        for (MeetingRecord meet : ngc.getMeetings()) {
+        for (MeetingRecord meet : ngw.getMeetings()) {
             boolean found = false;
             if (nid.equals(meet.getMinutesId())) {
                 //include the meeting that declared this topic to be its minutes
@@ -785,10 +782,10 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    public List<TopicRecord> getLinkedTopics(NGWorkspace ngc) throws Exception {
+    public List<TopicRecord> getLinkedTopics(NGWorkspace ngw) throws Exception {
         ArrayList<TopicRecord> allTopics = new ArrayList<TopicRecord>();
         String nid = this.getUniversalId();
-        for (TopicRecord topic : ngc.getAllDiscussionTopics()) {
+        for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
             boolean found = false;
             for (String docId : topic.getDocList()) {
                 if (nid.equals(docId)) {
@@ -802,10 +799,10 @@ public class AttachmentRecord extends CommentContainer {
         return allTopics;
     }
 
-    public List<GoalRecord> getLinkedGoals(NGWorkspace ngc) throws Exception {
+    public List<GoalRecord> getLinkedGoals(NGWorkspace ngw) throws Exception {
         ArrayList<GoalRecord> allGoals = new ArrayList<GoalRecord>();
         String nid = this.getUniversalId();
-        for (GoalRecord goal : ngc.getAllGoals()) {
+        for (GoalRecord goal : ngw.getAllGoals()) {
             boolean found = false;
             for (String otherId : goal.getDocLinks()) {
                 if (nid.equals(otherId)) {
@@ -927,15 +924,6 @@ public class AttachmentRecord extends CommentContainer {
             setLabels(selectedLabels);
             changed = true;
         }
-        //TODO: this is probably not needed any more
-        /*
-        if (docInfo.has("newComment")) {
-            String newValue = docInfo.getString("newComment");
-            CommentRecord newCr = addComment(ar);
-            newCr.setContentHtml(ar, newValue);
-            changed = true;
-        }
-        */
 
         if (docInfo.has("url")) {
             if ("URL".equals(getType())) {
@@ -1102,14 +1090,13 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * We used to keep a duplicate copy of the file in the project directory.
-     * That is, one copy in the project directory, and then a file for 
+     * We used to keep a duplicate copy of the file in the workspace directory.
+     * That is, one copy in the workspace directory, and then a file for 
      * every version in the .cog folder.   We only need the versions inside
-     * the cog folder, so get rid of the extra copy in the project folder.
+     * the cog folder, so get rid of the extra copy in the workspace folder.
      */
     public void purgeUnnecessaryDuplicate() {
-        File projectFolder = container.containingFolder;
-        File currentFile = new File(projectFolder, getNiceName());
+        File currentFile = new File(container.containingFolder, getNiceName());
         if (currentFile.exists()) {
             currentFile.delete();
         }

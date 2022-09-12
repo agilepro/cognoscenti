@@ -442,8 +442,7 @@ public class DailyDigest {
                     history.writeLocalizedHistoryMessage(ngw, clone);
                     SectionUtil.nicePrintTime(clone.w, history.getTimeStamp(),
                             clone.nowTime);
-                    if (history.getContextType() != HistoryRecord.CONTEXT_TYPE_PERMISSIONS
-                            && history.getComments() != null
+                    if (history.getComments() != null
                             && history.getComments().length() > 0) {
                         clone.write("<br/>Comments: &raquo;&nbsp;");
                         clone.writeHtml(history.getComments());
@@ -541,7 +540,6 @@ public class DailyDigest {
         ar.write("\n </thead> ");
         ar.write("\n <tbody>");
         for (JSONObject actionItemObj : actionItems.getJSONObjectList()) {
-            taskNum++;
             int taskState = actionItemObj.getInt("state");
             if (taskState == BaseRecord.STATE_ERROR) {
                 //allow this, not sure why
@@ -552,7 +550,8 @@ public class DailyDigest {
             else {
                 continue;
             }
-            
+            taskNum++;
+                    
 
             ar.write("\n <tr");
             if (taskNum % 2 == 0) {

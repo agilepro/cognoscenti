@@ -67,7 +67,7 @@ public class OptOutRolePlayer extends OptOutAddr {
             ngc = ngpi.getWorkspace();
         }
 
-        //if the project no longer exists, then just use the generic response.
+        //if the workspace no longer exists, then just use the generic response.
         if (ngc==null) {
             super.writeUnsubscribeLink(clone);
             return;

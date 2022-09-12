@@ -390,23 +390,23 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * when a task is moved to another project, use this to record where it was
+     * when a task is moved to another workspace, use this to record where it was
      * moved to, so that we can link there.
      */
-    public void setMovedTo(String project, String otherId) throws Exception {
-        setScalar("MovedToProject", project);
+    public void setMovedTo(String workspace, String otherId) throws Exception {
+        setScalar("MovedToProject", workspace);
         setScalar("MovedToId", otherId);
     }
 
     /**
-     * get the project that this task was moved to.
+     * get the workspace that this task was moved to.
      */
     public String getMovedToProjectKey() throws Exception {
         return getScalar("MovedToProject");
     }
 
     /**
-     * get the id of the task in the other project that this task was moved to.
+     * get the id of the task in the other workspace that this task was moved to.
      */
     public String getMovedToTaskId() throws Exception {
         return getScalar("MovedToId");
@@ -478,10 +478,10 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * the universal id is a globally unique ID for this action item, composed of the
-     * id for the server, the project, and the action item. This is set at the point
+     * id for the server, the workspace, and the action item. This is set at the point
      * where the action item is created and remains with the note as it is carried
-     * around the system as long as it is moved as a clone from a project to a
-     * clone of a project. If it is copied or moved to another project for any
+     * around the system as long as it is moved as a clone from a workspace to a
+     * clone of a workspace. If it is copied or moved to another workspace for any
      * other reason, then the universal ID should be reset.
      */
     public String getUniversalId() throws Exception {
@@ -631,7 +631,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * Passive is a setting that says that the action item was not defined
-     * in this particular replicant of the project, and so it should
+     * in this particular replicant of the workspace, and so it should
      * only display the status, and not allow any means to change
      * the state.
      *
@@ -665,17 +665,18 @@ public class GoalRecord extends BaseRecord {
     public String getRemoteUpdateURL() {
         return getScalar("remoteUpdateURL");
     }
-
-    /**
+    
+    /*
      * RemoteProjectURL is the URL to get information about the
      * project that this action item is defined in
-     */
+     *
     public void setRemoteProjectURL(String url) {
         setScalar("remoteProjectURL", url);
     }
     public String getRemoteProjectURL() {
         return getScalar("remoteProjectURL");
     }
+    */
 
     /**
      * RemoteProjectName is the name of the
@@ -849,7 +850,6 @@ public class GoalRecord extends BaseRecord {
             uiUrl = baseURL + "t/" + ngw.getSiteKey() + "/" + ngw.getKey()
                 + "/task" + getId() + ".htm";
         }
-        thisGoal.put("projectinfo", urlRoot+"?lic="+license.getId());
         thisGoal.put("goalinfo", goalinfo);
         thisGoal.put("ui", uiUrl);
         thisGoal.put("siteinfo", siteRoot);
@@ -902,9 +902,6 @@ public class GoalRecord extends BaseRecord {
         }
         if (goalObj.has("ui")) {
             setRemoteUpdateURL(goalObj.getString("ui"));
-        }
-        if (goalObj.has("projectinfo")) {
-            setRemoteProjectURL(goalObj.getString("projectinfo"));
         }
         if (goalObj.has("projectname")) {
             setRemoteProjectName(goalObj.getString("projectname"));

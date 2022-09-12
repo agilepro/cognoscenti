@@ -36,7 +36,7 @@ public class AccessControl {
     /**
     * When the web request is trying to access a particular document, this will
     * say whether that document should be accessed, based on logged in user being
-    * a member of the project, or whether a special session permission was granted.
+    * a member of the workspace, or whether a special session permission was granted.
     *
     * For documents, the localIdMagicNumber must be in the "mndoc" parameter
     * to get special session status.

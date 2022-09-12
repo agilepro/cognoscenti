@@ -33,7 +33,7 @@ public class RestHandler {
 
     AuthRequest ar;
     String siteId;
-    String projectId;
+    String workspaceKey;
     String resource;
     NGBook prjSite;
     NGWorkspace ngw;
@@ -71,8 +71,8 @@ public class RestHandler {
         if (nextSlashPos<0) {
             throw new ProgramLogicError("could not find a third slash in: " + path);
         }
-        projectId = path.substring(slashPos+1, nextSlashPos);
-        ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, projectId).getWorkspace();
+        workspaceKey = path.substring(slashPos+1, nextSlashPos);
+        ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspaceKey).getWorkspace();
 
         resource = path.substring(nextSlashPos+1);
         if (!"case.xml".equals(resource)) {

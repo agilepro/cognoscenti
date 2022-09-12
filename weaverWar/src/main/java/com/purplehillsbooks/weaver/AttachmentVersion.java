@@ -33,7 +33,7 @@ import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
 
 /**
-* A project folder file versioning system just represents multiple files
+* A workspace folder file versioning system just represents multiple files
 * in a file system.  All version are
 * stored in a subfolder named ".cog". and are named as the internal ID and
 * appending the version number to that ID.
@@ -45,11 +45,11 @@ import com.purplehillsbooks.streams.StreamHelper;
 *     great-cars/.cog/9987-4.xls
 *     great-cars/.cog/9987-5.xls
 *
-* In this case, the project folder (container) is "great-cars"
+* In this case, the workspace folder (container) is "great-cars"
 * The attachment id is "9987" which is unique within the container.
 * The hyphen number at the end is the version number of the attachment.
 *
-* The drawback of the project versioning system is obvious: all versions of all
+* The drawback of the workspace versioning system is obvious: all versions of all
 * files are in the file system at the same time, taking up space.
 * Also, the files are all stored local to one system.
 * The advantage, however, is that it does not depend upon complex code
@@ -59,7 +59,7 @@ import com.purplehillsbooks.streams.StreamHelper;
 * Disks are cheap, and if your documents are mostly binary, then there is
 * little need to use a differencing algorithm to store more efficiently.
 *
-* The current version file is no longer duplicated in the project folder.
+* The current version file is no longer duplicated in the workspace folder.
 * Used to be these for direct editing, but we only support servers now.
 *
 * Date and time of the version is taken directly from the file system date.
@@ -98,8 +98,8 @@ public class AttachmentVersion {
     * Other versioning system should have a static member like this as well to find the
     * the versions in their way.
     */
-    public static List<AttachmentVersion> getDocVersions(File projectfolder, AttachmentRecord att) throws Exception  {
-        if (projectfolder==null)  {
+    public static List<AttachmentVersion> getDocVersions(File wsFolder, AttachmentRecord att) throws Exception  {
+        if (wsFolder==null)  {
             throw new ProgramLogicError("null workspace folder sent to getDocVersions");
         }
         if (att==null)  {
@@ -113,20 +113,20 @@ public class AttachmentVersion {
         if (attachmentId==null) {
             throw new ProgramLogicError("null attachment Id sent to getDocVersions");
         }
-        if (!projectfolder.exists()) {
-            throw new ProgramLogicError("getDocVersions needs to be passed a valid projectfolder.  This does not exist: "+projectfolder.toString());
+        if (!wsFolder.exists()) {
+            throw new ProgramLogicError("getDocVersions needs to be passed a valid workspace folder.  This does not exist: "+wsFolder.toString());
         }
         List<AttachmentVersion> list = new ArrayList<AttachmentVersion>();
 
-        fillListReturnHighestInternalVersion(list, projectfolder,  att);
+        fillListReturnHighestInternalVersion(list, wsFolder,  att);
         
         return list;
     }
 
     private static AttachmentVersion fillListReturnHighestInternalVersion(
-            List<AttachmentVersion> list, File projectfolder, AttachmentRecord att ) throws Exception {
+            List<AttachmentVersion> list, File wsFolder, AttachmentRecord att ) throws Exception {
         String attachmentId = att.getId();
-        File cogfolder = new File(projectfolder, ".cog");
+        File cogfolder = new File(wsFolder, ".cog");
         if (!cogfolder.exists()) {
             return null;
         }
@@ -184,12 +184,11 @@ public class AttachmentVersion {
     * thread will be creating a new version at a time, and there is no confusion about
     * what version a file is.
     */
-    public synchronized static AttachmentVersion getNewProjectVersion(File projectFolder,
+    public synchronized static AttachmentVersion getNewProjectVersion(File wsFolder,
             AttachmentRecord att, InputStream contents) throws Exception {
         String attachName = att.getNiceName();
         String attachmentId = att.getId();
-        File cogFolder = new File(projectFolder,".cog");
-        //File currentFile = new File(projectFolder, attachName);
+        File cogFolder = new File(wsFolder,".cog");
         if (!cogFolder.exists()) {
             cogFolder.mkdir();
         }
@@ -206,22 +205,6 @@ public class AttachmentVersion {
         File tempCogFile = new File(cogFolder, "~tmpV-"+attachmentId+"-"+unique()+fileExtension);
         StreamHelper.copyStreamToFile(contents, tempCogFile);
 
-        //Second, make a copy of this in the main directory.
-        //---Eliminate the copy in the main folder.  ONLY use the COG version
-        //---No need for the unnecessary duplication
-        //File tempFile = File.createTempFile("~newM_"+attachmentId, fileExtension, projectFolder);
-        //copyFileContents(tempCogFile, tempFile);
-
-        //Third, check to see if the local copy in the project file has been modified,
-        //if so, make a copy of that in the cog directory -- just INCASE it is needed
-        //---Since no file in the main folder, there is no need to check
-        //File specialCogFile = null;
-        //if (currentFile.exists()) {
-        //    specialCogFile = File.createTempFile("~newS_"+attachmentId, fileExtension, cogFolder);
-        //    copyFileContents(currentFile, specialCogFile);
-        //}
-
-
         //Next, search through the directory, find the version number that is next available
         //in the cog folder, and rename the file to that version number, and then rename the
         //temp current file to the current name.  Must be done in a synchronized block
@@ -229,7 +212,7 @@ public class AttachmentVersion {
         synchronized(AttachmentVersion.class)
         {
             //first, see what versions exist, and get the latest
-            List<AttachmentVersion> list = getDocVersions(projectFolder, att);
+            List<AttachmentVersion> list = getDocVersions(wsFolder, att);
 
             int newSubVersion = 1;
             for (AttachmentVersion av : list) {
@@ -247,22 +230,6 @@ public class AttachmentVersion {
                         new Object[]{tempCogFile,newCogFile});
             }
 
-            //no more files in the project folder
-            /*
-            if (currentFile.exists()) {
-                currentFile.delete();
-            }           
-            
-            //clean up that special copy made 'just in case'
-            if (specialCogFile!=null && specialCogFile.exists()){
-                specialCogFile.delete();
-            }
-            
-            if (!tempFile.renameTo(currentFile)) {
-                throw new NGException("nugen.exception.unable.to.rename.temp.file",
-                        new Object[]{tempFile,currentFile});
-            }
-            */
             return new AttachmentVersion(att, newCogFile, newSubVersion);
         }
     }

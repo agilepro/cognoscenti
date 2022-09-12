@@ -34,7 +34,7 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
-* A custom role is defined by the users on a project, but
+* A custom role is defined by the users on a workspace, but
 * defining a name, and associated users with it.
 *
 * TODO: This class was designed around the idea that a role might contain

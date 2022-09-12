@@ -259,88 +259,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
-    /*
-    private void genSwagger(AuthRequest ar, ResourceDecoder resDec) throws Exception {
 
-        JSONObject root = new JSONObject();
-        root.put("swagger","2.0");
-
-        JSONObject info = new JSONObject();
-        info.put("title","Cognoscenti");
-        info.put("description", "A collaborative application platform.");
-        info.put("termsOfService", "This is the terms of service.");
-        info.put("contact", "Cognoscenti");
-        JSONObject license = new JSONObject();
-        license.put("name", "Apache 2.0");
-        license.put("url", "http://www.apache.org/licenses/LICENSE-2.0.html");
-        info.put("license", license);
-        info.put("version", "Cognoscenti");
-        root.put("info", info);
-
-        String myUrl = ar.baseURL;
-        int slashPos = myUrl.indexOf("://");
-        if (slashPos<0) {
-            throw new JSONException("The BaseURL needs to look like a URL, and it must have a :// in it, but does not:  {0}",myUrl);
-        }
-        int slash2 = myUrl.indexOf("/", slashPos+3);
-        if (slashPos<0) {
-            throw new JSONException("The BaseURL needs to look like a URL, and it must have a second slash in it, but does not:  {0}",myUrl);
-        }
-        root.put("host", myUrl.substring(slashPos+3, slash2));
-        //swagger spec says that partial paths start with a slash, and don't end with them...
-        root.put("basePath",  myUrl.substring(slash2));
-        root.put("schemes", singleStringArray(myUrl.substring(0, slashPos)));
-        root.put("consumes", singleStringArray("application/json"));
-        root.put("produces", singleStringArray("application/json"));
-
-        root.put("produces", getPathsObject());
-        root.put("definitions", getDefinitionsObject());
-        root.put("parameters", getParametersObject());
-        root.put("responses", getResponsesObject());
-        root.put("securityDefinitions", getSecurityDefinitionsArray());
-        root.put("tags", getTagsArray());
-        root.put("externalDocs", getExternalDocObject());
-
-        ar.resp.setContentType("application/json");
-        root.write(ar.resp.getWriter(), 2, 0);
-        ar.flush();
-    }
-
-
-    private JSONArray singleStringArray(String input) {
-        JSONArray theArray = new JSONArray();
-        theArray.put(input);
-        return theArray;
-    }
-    private JSONObject getPathsObject() throws Exception {
-        JSONObject allPaths = new JSONObject();
-
-        JSONObject aPath = new JSONObject();
-        allPaths.put("/api/{site}/{proj}/summary.json", aPath);
-        JSONObject gets = new JSONObject();
-        gets.put("description", "Entire Workspace Summary");
-
-        return allPaths;
-    }
-    private JSONObject getDefinitionsObject() throws Exception {
-        return new JSONObject();
-    }
-    private JSONObject getParametersObject() throws Exception {
-        return new JSONObject();
-    }
-    private JSONObject getResponsesObject() throws Exception {
-        return new JSONObject();
-    }
-    private JSONArray getSecurityDefinitionsArray() throws Exception {
-        return new JSONArray();
-    }
-    private JSONArray getTagsArray() throws Exception {
-        return new JSONArray();
-    }
-    private JSONObject getExternalDocObject() throws Exception {
-        return new JSONObject();
-    }
-    */
 
 
     private JSONObject getSitePostResponse(AuthRequest ar, ResourceDecoder resDec,
@@ -559,8 +478,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
             //TODO: determine how to tell if the source was using the web UI or actually from
             //a downstream synchronization.  Commenting out for now since it is inaccurate.
-            HistoryRecord.createAttHistoryRecord(resDec.workspace, att, historyEventType, ar,
-                    updateReason);
+            HistoryRecord.createHistoryRecord(resDec.workspace, att.getId(),  HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+                    0, historyEventType, ar, updateReason);
             System.out.println("DOCUMENT: updated: "+att.getNiceName()+" ("+size+" bytes) and history created.");
             resDec.workspace.saveFile(ar, "Document created or updated.");
             return responseOK;
@@ -634,80 +553,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         ar.flush();
     }
 
-    /*
-    private void getWorkspaceListing(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        JSONObject root = new JSONObject();
 
-        NGWorkspace ngp = resDec.workspace;
-        if (ngp==null) {
-            //this is probably unnecessary, having hit an exception earlier, but just begin sure
-            throw new JSONException("Something is wrong, can not find a site object.");
-        }
-        if (resDec.licenseId == null || resDec.licenseId.length()==0 || resDec.lic==null) {
-            throw new JSONException("All operations on the site need to be licensed, but did not get a license id in that URL.");
-        }
-        if (!ngp.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new JSONException("The license ({0}) has expired.  "
-                    +"To exchange information, you will need to get an updated license", resDec.licenseId);
-        }
-        root.put("license", getLicenseInfo(resDec.lic));
-        NGBook site = ngp.getSite();
-
-        String urlRoot = ar.baseURL + "api/" + resDec.siteId + "/" + resDec.projId + "/";
-        root.put("projectname", ngp.getFullName());
-        root.put("projectinfo", urlRoot+"?lic="+resDec.licenseId);
-        root.put("sitename", site.getFullName());
-
-        LicenseForUser lfu = LicenseForUser.getUserLicense(resDec.lic);
-        String siteRoot = ar.baseURL + "api/" + resDec.siteId + "/$/?lic="+lfu.getId();
-        root.put("siteinfo", siteRoot);
-
-        String uiUrl = ar.baseURL + ar.getDefaultURL(ngp);
-        root.put("projectui", uiUrl);
-        String siteUI = ar.baseURL + ar.getDefaultURL(ngp.getSite());
-        root.put("siteui", siteUI);
-
-        JSONArray goals = new JSONArray();
-        if (ar.canAccessWorkspace()) {
-            for (GoalRecord goal : resDec.workspace.getAllGoals()) {
-                goals.put(goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic));
-            }
-        }
-        root.put("goals", goals);
-
-        JSONArray docs = new JSONArray();
-        for (AttachmentRecord att : ngp.getAllAttachments()) {
-            if (att.isDeleted()) {
-                continue;
-            }
-            if (att.isUnknown()) {
-                continue;
-            }
-            if (!"FILE".equals(att.getType())) {
-                continue;
-            }
-            if (!resDec.canAccessAttachment(att)) {
-                continue;
-            }
-            JSONObject thisDoc = att.getJSON4Doc(resDec.workspace, ar, urlRoot, resDec.lic);
-            docs.put(thisDoc);
-        }
-        root.put("docs", docs);
-
-        JSONArray notes = new JSONArray();
-        for (TopicRecord note : resDec.workspace.getAllDiscussionTopics()) {
-            if (!resDec.canAccessNote(note)) {
-                continue;
-            }
-            notes.put(note.getJSON4Note(urlRoot, resDec.lic, resDec.workspace));
-        }
-        root.put("notes", notes);
-
-        ar.resp.setContentType("application/json");
-        root.write(ar.resp.getWriter(), 2, 0);
-        ar.flush();
-    }
-    */
 
     private void streamDocument(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         AttachmentRecord att = resDec.workspace.findAttachmentByIDOrFail(resDec.docId);
@@ -721,35 +567,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         StreamHelper.copyFileToOutput(realPath, ar.resp.out);
     }
 
-    /*
-    private void genGoalInfo(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        GoalRecord goal = resDec.workspace.getGoalOrFail(resDec.goalId);
-        JSONObject goalObj = goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic);
-        ar.resp.setContentType("application/json");
-        goalObj.write(ar.resp.getWriter(), 2, 0);
-        ar.flush();
-    }
 
-    private void streamNote(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        TopicRecord note = resDec.workspace.getNoteOrFail(resDec.noteId);
-        if (!resDec.canAccessNote(note)) {
-            throw new JSONException("Specified license ({0}) is not able to access topic ({1})", resDec.licenseId, resDec.noteId);
-        }
-        String contents = note.getWiki();
-        if (contents.length()==0) {
-            contents = "-no contents-";
-        }
-        if (resDec.isHtmlFormat) {
-            ar.resp.setContentType("text/html;charset=UTF-8");
-            WikiConverter.writeWikiAsHtml(ar, contents);
-        }
-        else {
-            ar.resp.setContentType("text");
-            ar.write(contents);
-        }
-        ar.flush();
-    }
-    */
 
     private void receiveTemp(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         File folder = resDec.workspace.getContainingFolder();

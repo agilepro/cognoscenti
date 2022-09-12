@@ -231,11 +231,11 @@ public class EmailRecord extends DOMFace
         setAttribute("subject",subject);
     }
 
-    public String getProjectId() {
+    public String getWorkspaceId() {
         return getAttribute("projectId");
     }
-    public void setProjectId(String projectId) {
-        setAttribute("projectId",projectId);
+    public void setWorkspaceId(String key) {
+        setAttribute("projectId",key);
     }
 
     public long getCreateDate() {

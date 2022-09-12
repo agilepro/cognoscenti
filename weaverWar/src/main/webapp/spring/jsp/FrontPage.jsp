@@ -115,21 +115,22 @@ Required parameters:
         String url = "";
         String cType = HistoryRecord.getContextTypeName(contextType);
         String objName = "Unidentified";
-        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            url = ar.getResourceURL(ngp, "projectAllTasks.htm");
-            objName = "";
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
+        //if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
+        //    url = ar.getResourceURL(ngp, "projectAllTasks.htm");
+        //    objName = "";
+        //}
+        //else 
+        if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
             url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
             GoalRecord gr = ngp.getGoalOrNull(objectKey);
             if (gr!=null) {
                 objName = gr.getSynopsis();
             }
         }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
-            objName = objectKey;
-        }
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+        //    url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
+        //    objName = objectKey;
+        //}
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
             url = ar.getResourceURL(ngp, "DocDetail.htm?aid="+objectKey);
             AttachmentRecord att = ngp.findAttachmentByID(objectKey);
@@ -144,13 +145,13 @@ Required parameters:
                 objName = nr.getSubject();
             }
         }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            url = ar.getResourceURL(ngp, "RoleManagement.htm");
-            NGRole role = ngp.getRole(objectKey);
-            if (role!=null) {
-                objName = role.getName();
-            }
-        }
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+        //    url = ar.getResourceURL(ngp, "RoleManagement.htm");
+        //    NGRole role = ngp.getRole(objectKey);
+        //    if (role!=null) {
+        //        objName = role.getName();
+        //    }
+        //}
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             url = ar.getResourceURL(ngp, "MeetingHtml.htm?id="+objectKey);
             MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
@@ -167,7 +168,7 @@ Required parameters:
 
         //elliminate duplicate objects
         boolean seen = seenBefore.containsKey(objectKey);
-        if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+        if (!seen) {
             seenBefore.put(objectKey,objectKey);
             recentChanges.put(jObj);
             if (limit-- < 0) {

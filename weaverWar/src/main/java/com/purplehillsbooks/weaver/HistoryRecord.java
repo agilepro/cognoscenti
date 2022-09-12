@@ -36,13 +36,15 @@ import com.purplehillsbooks.json.JSONObject;
 public class HistoryRecord extends DOMFace
 {
 
-    // list of all the producers.
-    public final static int CONTEXT_TYPE_PROCESS      = 0;
+    // list of outdated / unused history contexts
+    //public final static int CONTEXT_TYPE_PROCESS      = 0;
+    //public final static int CONTEXT_TYPE_PERMISSIONS  = 2;
+    //public final static int CONTEXT_TYPE_ROLE         = 5;
+    
+    //These appear to be in use currently
     public final static int CONTEXT_TYPE_TASK         = 1;
-    public final static int CONTEXT_TYPE_PERMISSIONS  = 2;
     public final static int CONTEXT_TYPE_DOCUMENT     = 3;
     public final static int CONTEXT_TYPE_LEAFLET      = 4;
-    public final static int CONTEXT_TYPE_ROLE         = 5;
     public final static int CONTEXT_TYPE_CONTAINER    = 6;
     public final static int CONTEXT_TYPE_MEETING      = 7;
     public final static int CONTEXT_TYPE_DECISION     = 8;
@@ -52,16 +54,16 @@ public class HistoryRecord extends DOMFace
     public final static String CONTEXT_TYPE_PREFIX="context.type";
 
 
-    public final static String OBJECT_TYPE_USER="object.type.user";
-    public final static String OBJECT_TYPE_ATTACHMENT="object.type.attachment";
-    public final static String OBJECT_TYPE_PLAYER="object.type.player";
-    public final static String OBJECT_TYPE_ROLE="object.type.role";
-    public final static String OBJECT_TYPE_PROCESS="object.type.process";
-    public final static String OBJECT_TYPE_TASK="object.type.task";
-    public final static String OBJECT_TYPE_NOTE="object.type.note";
-    public final static String OBJECT_TYPE_SUBTASK="object.type.subtask";
+    //public final static String OBJECT_TYPE_USER="object.type.user";
+    //public final static String OBJECT_TYPE_ATTACHMENT="object.type.attachment";
+    //public final static String OBJECT_TYPE_PLAYER="object.type.player";
+    //public final static String OBJECT_TYPE_ROLE="object.type.role";
+    //public final static String OBJECT_TYPE_PROCESS="object.type.process";
+    //public final static String OBJECT_TYPE_TASK="object.type.task";
+    //public final static String OBJECT_TYPE_NOTE="object.type.note";
+    //public final static String OBJECT_TYPE_SUBTASK="object.type.subtask";
 
-
+/*
     public final static String OBJECT_CREATED="object.created";
     public final static String OBJECT_SENT_BY_EMAIL="object.sent.by.email";
     public final static String OBJECT_MODIFIED="object.modified";
@@ -78,6 +80,7 @@ public class HistoryRecord extends DOMFace
     public final static String TASK_STARTED ="task.started";
     public final static String DOC_ATTACHED="document.attached";
     public final static String DOC_UPDATED="document.updated";
+    */
 
 
     // list of all the events.
@@ -195,13 +198,6 @@ public class HistoryRecord extends DOMFace
             setEventType(i);
         }
 
-        if (i >= 100) {
-            //strange legacy data corruption.  Somehow some event got set to 100,
-            //and stored in the files.  This cleans it up.
-            //Remove after Dec 2012
-            i = EVENT_TYPE_MODIFIED;
-            setEventType(i);
-        }
         return i;
     }
     public void setEventType(int type)
@@ -316,18 +312,18 @@ public class HistoryRecord extends DOMFace
     {
         switch (ptype)
         {
-            case CONTEXT_TYPE_PROCESS:
-                return "Process";
+            //case CONTEXT_TYPE_PROCESS:
+            //    return "Process";
             case CONTEXT_TYPE_TASK:
                 return "Action Item";
-            case CONTEXT_TYPE_PERMISSIONS:
-                return "Permission";
+            //case CONTEXT_TYPE_PERMISSIONS:
+            //    return "Permission";
             case CONTEXT_TYPE_DOCUMENT:
                 return "Document";
             case CONTEXT_TYPE_LEAFLET:
                 return "Topic";
-            case CONTEXT_TYPE_ROLE:
-                return "Role";
+            //case CONTEXT_TYPE_ROLE:
+            //    return "Role";
             case CONTEXT_TYPE_MEETING:
                 return "Meeting";
             case CONTEXT_TYPE_DECISION:
@@ -408,16 +404,6 @@ public class HistoryRecord extends DOMFace
     }
 
 
-    /**
-     * Creates a history record appropriate for a change to a attachment.
-     */
-    public static HistoryRecord createAttHistoryRecord(NGWorkspace ngc,
-            AttachmentRecord att, int eventType, AuthRequest ar, String comments) throws Exception
-    {
-        return createHistoryRecord(ngc, att.getId(),  HistoryRecord.CONTEXT_TYPE_DOCUMENT,
-                0, eventType, ar, comments);
-    }
-
 
     public String getCombinedKey()
         throws Exception
@@ -425,24 +411,24 @@ public class HistoryRecord extends DOMFace
         String messageID;
         int ctx = getContextType();
         switch (ctx) {
-            case CONTEXT_TYPE_PROCESS:
-                messageID = "history.process.";
-                break;
+            //case CONTEXT_TYPE_PROCESS:
+            //    messageID = "history.process.";
+            //    break;
             case CONTEXT_TYPE_TASK:
                 messageID = "history.task.";
                 break;
-            case CONTEXT_TYPE_PERMISSIONS:
-                messageID = "history.permission.";
-                break;
+            //case CONTEXT_TYPE_PERMISSIONS:
+            //    messageID = "history.permission.";
+            //    break;
             case CONTEXT_TYPE_DOCUMENT:
                 messageID = "history.doc.";
                 break;
             case CONTEXT_TYPE_LEAFLET:
                 messageID = "history.note.";
                 break;
-            case CONTEXT_TYPE_ROLE:
-                messageID = "history.role.";
-                break;
+            //case CONTEXT_TYPE_ROLE:
+            //    messageID = "history.role.";
+            //    break;
             case CONTEXT_TYPE_MEETING:
                 messageID = "history.meeting.";
                 break;
@@ -833,17 +819,11 @@ history.task.subtask.add    113
     public String lookUpObjectName(NGWorkspace ngw) throws Exception {
         int contextType = getContextType();
         String objectKey = getContext();
-        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            return "";
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
+        if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
             GoalRecord gr = ngw.getGoalOrNull(objectKey);
             if (gr!=null) {
                 return gr.getSynopsis();
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            return objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
             AttachmentRecord att = ngw.findAttachmentByID(objectKey);
@@ -855,12 +835,6 @@ history.task.subtask.add    113
             TopicRecord nr = ngw.getDiscussionTopic(objectKey);
             if (nr!=null) {
                 return nr.getSubject();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            NGRole role = ngw.getRole(objectKey);
-            if (role!=null) {
-                return role.getName();
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
@@ -879,6 +853,18 @@ history.task.subtask.add    113
                 return "#" + dr.getNumber() + ": " + val;
             }
         }
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
+        //    return "";
+        //}
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+        //    return objectKey;
+        //}
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+        //    NGRole role = ngw.getRole(objectKey);
+        //    if (role!=null) {
+        //        return role.getName();
+        //    }
+        //}
         return "Unknown";
     }
 
@@ -896,14 +882,8 @@ history.task.subtask.add    113
         //always encode to avoid problems with injection
         String objectKey = URLEncoder.encode(contextKey, "UTF-8");
 
-        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            return ar.getResourceURL(ngw, "projectAllTasks.htm");
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
+        if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
             return  ar.getResourceURL(ngw, "task"+objectKey+".htm");
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
             return ar.getResourceURL(ngw, "DocDetail.htm?aid="+objectKey);
@@ -911,15 +891,21 @@ history.task.subtask.add    113
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
             return ar.getResourceURL(ngw, "noteZoom"+objectKey+".htm");
         }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            return ar.getResourceURL(ngw, "RoleManagement.htm");
-        }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             return ar.getResourceURL(ngw, "MeetingHtml.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             return ar.getResourceURL(ngw, "DecisionList.htm#DEC")+objectKey;
         }
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
+        //    return ar.getResourceURL(ngw, "projectAllTasks.htm");
+        //}
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+        //    return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
+        //}
+        //else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+        //    return ar.getResourceURL(ngw, "RoleManagement.htm");
+        //}
         return ar.getResourceURL(ngw, "FrontPage.htm");
     }
 

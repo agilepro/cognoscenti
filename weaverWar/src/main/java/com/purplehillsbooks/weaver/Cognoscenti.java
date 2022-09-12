@@ -56,7 +56,7 @@ public class Cognoscenti {
 
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem
-    public List<String> projectsWithEmailToSend = new ArrayList<String>();
+    public List<String> workspacesWithEmailToSend = new ArrayList<String>();
 
     SearchManager searchManager = null;
     private Cognoscenti(ServletContext sc) {
@@ -177,7 +177,7 @@ System.out.println("Weaver Server Object == Start the Server");
         allContainers = null;
         keyToSites = null;
         keyToWorkspace = null;
-        projectsWithEmailToSend = null;
+        workspacesWithEmailToSend = null;
     }
 
     /**
@@ -211,7 +211,7 @@ System.out.println("Weaver Server Object == Start the Server");
             initializingNow = true;
             theConfig = ConfigFile.initialize(rootFolder);
             theConfig.assertConfigureCorrectInternal();
-            projectsWithEmailToSend = new ArrayList<String>();
+            workspacesWithEmailToSend = new ArrayList<String>();
 
             AuthDummy.initializeDummyRequest(this);
             userManager = new UserManager(this);
@@ -369,7 +369,7 @@ System.out.println("Weaver Server Object == Start the Server");
             return ngpi;
         }
 
-        //did not find it correctly, but maybe this is a legacy link with just the project key?
+        //did not find it correctly, but maybe this is a legacy link with just the workspace key?
         //we can handle that for the time being.   BUT REMOVE THIS LATER!
         return lookForWSBySimpleKeyOnly(combinedKey);
 
@@ -427,7 +427,7 @@ System.out.println("Weaver Server Object == Start the Server");
     /**
      * This is a convenience function that looks a particular workspace
      * up in the index, finds the index entry, and then IF it is a
-     * project, returns that with the right type (NGWorkspace).
+     * workspace, returns that with the right type (NGWorkspace).
      * Fails if the key is not matched with anything, or if the key
      * is for a site.
      */
@@ -462,7 +462,7 @@ System.out.println("Weaver Server Object == Start the Server");
      * up in the index, finds the index entry, and then IF it is a
      * site, returns that with the right type (NGBook)
      * Fails if the key is not matched with anything, or if the key
-     * is for a project.
+     * is for a workspace.
      */
     public NGBook getSiteById(String key) throws Exception {
         NGPageIndex ngpi = getSiteByKey(key);
@@ -476,7 +476,7 @@ System.out.println("Weaver Server Object == Start the Server");
      * up in the index, finds the index entry, and then IF it is a
      * site, returns that with the right type (NGBook)
      * Fails if the key is not matched with anything, or if the key
-     * is for a project.
+     * is for a workspace.
      */
     public NGBook getSiteByIdOrFail(String key) throws Exception {
         NGPageIndex ngpi = getSiteByKeyOrFail(key);
@@ -486,18 +486,21 @@ System.out.println("Weaver Server Object == Start the Server");
 
 
     /**
-     * Returns a vector of NGPageIndex objects which represent projects which
-     * are all part of a single site. Should be called get all projects in site
+     * Returns a vector of NGPageIndex objects which represent workspaces which
+     * are all part of a single site which are not deleted.
      */
     public List<NGPageIndex> getNonDelWorkspacesInSite(String accountKey) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
-        for (NGPageIndex ngpi : getAllContainers()) {
+        for (NGPageIndex ngpi : allContainers) {
             if (!ngpi.isWorkspace()) {
-                // only consider book/project style containers
+                // only consider workspace style containers
+                continue;
+            }
+            if (ngpi.isDeleted) { 
                 continue;
             }
             if (!accountKey.equals(ngpi.wsSiteKey)) {
-                // only consider if the project is in the site we look for
+                // only consider if the workspace is in the site we look for
                 continue;
             }
             ret.add(ngpi);
@@ -512,7 +515,7 @@ System.out.println("Weaver Server Object == Start the Server");
                 continue;
             }
             if (!accountKey.equals(ngpi.wsSiteKey)) {
-                // only consider if the project is in the site we look for
+                // only consider if the workspace is in the site we look for
                 continue;
             }
             ret.add(ngpi);
@@ -524,7 +527,7 @@ System.out.println("Weaver Server Object == Start the Server");
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (!ngpi.isWorkspace()) {
-                // only consider project style containers
+                // only consider workspace style containers
                 continue;
             }
             for (String admin : ngpi.admins) {
@@ -542,7 +545,7 @@ System.out.println("Weaver Server Object == Start the Server");
         String userKey = ale.getKey();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (!ngpi.isWorkspace()) {
-                // only consider project style containers
+                // only consider workspace style containers
                 continue;
             }
             if (ngpi.allUsers.contains(userKey)) {
@@ -726,7 +729,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         // look for email and remember if there is some
         if (ngw.hasEmailToSend()) {
-            projectsWithEmailToSend.add(key);
+            workspacesWithEmailToSend.add(key);
         }
     }
 
@@ -748,18 +751,18 @@ System.out.println("Weaver Server Object == Start the Server");
      * null if there are not any
      */
     public String getPageWithEmailToSend() throws Exception {
-        if (projectsWithEmailToSend.size() == 0) {
+        if (workspacesWithEmailToSend.size() == 0) {
             return null;
         }
-        return projectsWithEmailToSend.get(0);
+        return workspacesWithEmailToSend.get(0);
     }
 
     /**
-     * When you find that a project does not have any more email to send,
+     * When you find that a workspace does not have any more email to send,
      * call removePageFromEmailToSend to remove from the cached list.
      */
     public void removePageFromEmailToSend(String key) {
-        projectsWithEmailToSend.remove(key);
+        workspacesWithEmailToSend.remove(key);
     }
 
     public void reinitializeServer(ServletConfig config) {
