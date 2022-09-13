@@ -587,7 +587,7 @@ public class CommentRecord extends DOMFace {
     public JSONObject getJSON() throws Exception {
         AddressListEntry ale = getUser();
         UserProfile up = ale.getUserProfile();
-        String userKey = "unknown";
+        String userKey = ale.getUniversalId();
         if (up!=null) {
             userKey = up.getKey();
         }

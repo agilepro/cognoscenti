@@ -331,10 +331,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.startResponse = function() {
-        if (!$scope.emailId || !$scope.userName) {
-            $scope.mustGetId = true;
-        }
         $scope.makingResponse = true;
+        $scope.mustGetId = (!$scope.emailId || !$scope.userName);
+        
+        //get response/answer if any
+        $scope.hasResponse = false;
+        $scope.myResponse = "";        
+        if ($scope.focusComment) {
+           if ($scope.focusComment.responses) {
+                $scope.focusComment.responses.forEach( function(resp) {
+                    if (resp.user == $scope.emailId) {
+                        $scope.hasResponse = true;
+                        $scope.myResponse = convertMarkdownToHtml(resp.body);
+                    }
+                });
+            }
+        }
     }
     $scope.saveResponse = function(choice) {
         if (choice=='Objection' && $scope.myResponse.length < 12) {
@@ -364,11 +376,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.cancelResponse = function() {
         $scope.makingResponse = false;
     }
-    $scope.startComment = function() {
-        if (!$scope.emailId || !$scope.userName) {
-            $scope.mustGetId = true;
-        }
-        $scope.makingComment = true;
+    if (!$scope.emailId || !$scope.userName) {
+        $scope.mustGetId = true;
     }
     $scope.saveComment = function() {
         $scope.makingResponse = false;
@@ -397,6 +406,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         localStorage.setItem('userEmail', $scope.emailId);
         localStorage.setItem('userName', $scope.userName);
         $scope.mustGetId = false;
+        
+        $scope.startResponse();
     }
 
 });
@@ -536,19 +547,11 @@ function reloadIfLoggedIn() {
           </div>
         </div>
     </div>
-
-    <div ng-hide="makingComment" style="margin:25px;">
-        To reply <button ng-click="startComment()" class="btn btn-primary btn-raised">Create Reply Comment</button>
-<% if (!ar.isLoggedIn()) {%>
-            , or for more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Login</button>
-<% } else {%>
-            , or for options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Go To Full Discussion</button>
-<% } %>
-    </div>
-    <div style="min-height:460px" ng-show="makingComment && mustGetId">
-        <div class="comment-outer" style="padding:25px">
+ 
+ 
+ 
+    <div style="min-height:460px" ng-show="focusComment.commentType==1 && mustGetId">
+        <div class="comment-outer comment-state-active" style="padding:25px">
         
             <div>Please enter/verify your email address</div>
             <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
@@ -558,50 +561,34 @@ function reloadIfLoggedIn() {
                 title="Save these verified values">Save & Continue</button></div>
         </div>
     </div>
-    <div style="min-height:460px" ng-show="makingComment && !mustGetId">
-        <div ng-hide="sentAlready" class="comment-outer">
-            <table class="spacey"><tr>
-            <td><h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2></td>
-            <td><button class="btn btn-default btn-raised" ng-click="saveIt()"
-                title="Send the comment into the discussion topic">Save Draft</button></td>
-            <td><button class="btn btn-primary btn-raised" ng-click="sendIt()"
-                title="Send the comment into the discussion topic">Send</button></td>
-            <td></td>
-            <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access discussion</span></td>
-            </tr>
-            </table>
+    <div style="min-height:460px" ng-show="focusComment.commentType==1 && !mustGetId">
+        <div ng-hide="sentAlready" class="comment-outer comment-state-active">
+            <h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
                  class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
-        </div>
-        <div ng-show="sentAlready">
-            <table class="spacey"><tr>
-            <td><h2>Your reply is sent:</h2></td>
-            <td></td>
-            <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access the discussion</span></td>
-            </tr></table>
-            <div class="comment-outer">
-              <div>{{newComment.userName}} - {{newComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
-              <div class="comment-inner">
-                <div ng-bind-html="newComment.body|wiki"></div>
-              </div>
+            <div>
+                <button class="btn btn-default btn-raised" ng-click="saveIt()"
+                        title="Send the comment into the discussion topic">Save Draft</button>
+                <button class="btn btn-primary btn-raised" ng-click="sendIt()"
+                        title="Send the comment into the discussion topic">Send</button>
             </div>
-            
-        </div>
-        <div>
-<% if (!ar.isLoggedIn()) {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Login</button>
-<% } else {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Go To Full Discussion</button>
-<% } %>
         </div>
     </div>
     
     
+    <div style="margin:50px"></div>
     
     
     
+    <div ng-hide="makingResponse">
+    <% if (!ar.isLoggedIn()) {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Login</button>
+    <% } else {%>
+            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+                title="Link to the full discussion with all the options">Go To Full Discussion</button>
+    <% } %>
+    </div>   
     
     <table class="table" style="width:100%;max-width:800px">
         <tr ng-show="topicSubject">
@@ -685,10 +672,10 @@ function reloadIfLoggedIn() {
         <tr>
             <td>Reply as</td>
             <td>{{emailId}}
-              <span ng-hide="emailId==linkedEmailId" style="color:red">(You used a link for {{linkedEmailId}})</span>
+              <span ng-hide="emailId==linkedEmailId">(You used a hyperlink from {{linkedEmailId}})</span>
 <% if (!ar.isLoggedIn()) {%>
               <br/>
-              <button ng-click="forgetMe()" class="btn btn-default btn-raised">Forget Me</button>
+              <button ng-click="forgetMe()" class="btn btn-default btn-raised">Wait!  That is not me!</button>
 <% } %>
             </td>
         </tr>

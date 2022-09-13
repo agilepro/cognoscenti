@@ -663,11 +663,16 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
+            ar.req.setAttribute("userKey",  userKey);
             if (searchedFor==null) {
-                showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                if (userKey.indexOf("@")<0) {
+                    showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                    return;
+                }
+                //this looks like an email address, so display non-profile display
+                streamJSPAnon(ar, "PersonMissing.jsp");
                 return;
             }
-            ar.req.setAttribute("userKey",  userKey);
             showJSPDependingUser(ar, "PersonShow.jsp");
         }
         catch(Exception ex){

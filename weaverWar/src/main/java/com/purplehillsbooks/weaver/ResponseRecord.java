@@ -90,6 +90,13 @@ public class ResponseRecord extends DOMFace
     public void setContent(String content) {
         setScalar("content", content);
     }
+    public boolean isEmpty() {
+        String body = getContent();
+        if (body==null) {
+            return true;
+        }
+        return body.length()==0;
+    }
 
     public void responseEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr, EmailSender mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();

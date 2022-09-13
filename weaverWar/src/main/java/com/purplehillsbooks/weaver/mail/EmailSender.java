@@ -149,8 +149,7 @@ public class EmailSender extends TimerTask {
         File configFile = cog.getConfig().getFile("EmailNotification.properties");
 
         if (!configFile.exists()) {
-            throw new NGException("nugen.exception.incorrect.sys.config",
-                    new Object[] { configFile.getAbsolutePath() });
+            throw new JSONException("Email config file does not exist: {0}", configFile.getAbsolutePath());
         }
         FileInputStream fis = new FileInputStream(configFile);
         Properties props = new Properties();
@@ -541,7 +540,7 @@ public class EmailSender extends TimerTask {
 
         String proto = getProperty("mail.transport.protocol");
         if (proto == null || proto.length() == 0) {
-            throw new NGException("nugen.exception.email.config.issue", null);
+            throw new Exception("Email config file is missing the protocol setting");
         }
         if (!proto.equals("smtp") && !proto.equals("none")) {
             throw new NGException(

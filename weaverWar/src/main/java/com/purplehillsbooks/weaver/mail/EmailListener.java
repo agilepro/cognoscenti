@@ -56,7 +56,6 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONException;
 
@@ -212,8 +211,7 @@ public class EmailListener extends TimerTask{
     public Session getSession()throws Exception {
         try {
             if(emailProperties == null){
-                throw new NGException("nugen.exception.email.config.file.not.found",
-                        new Object[]{emailPropFile.getAbsolutePath()});
+                throw new JSONException("Email Configuration not initialized from: {0}", emailPropFile.getAbsolutePath());
             }
 
             String user = emailProperties.getProperty("mail.pop3.user");
@@ -225,14 +223,9 @@ public class EmailListener extends TimerTask{
                 throw new JSONException("In order to read email, there must be a setting for 'mail.pop3.password' in {0}.",emailPropFile.getAbsolutePath());
             }
 
-            if (user == null || user.length() == 0 || pwd == null || pwd.length() == 0) {
-                throw new NGException("nugen.exception.email.config.incorrect.invalid.user.or.password",
-                        new Object[]{emailPropFile.getAbsolutePath()});
-            }
-
             return Session.getInstance(emailProperties, new EmailAuthenticator(user, pwd));
         }catch (Exception e) {
-            throw new NGException("nugen.exception.email.unable.to.create.session",new String[]{"user", "pwd"},e);
+            throw new Exception("Unable to get the user session", e);
         }
     }
 
@@ -246,7 +239,7 @@ public class EmailListener extends TimerTask{
             return session.getStore("pop3");
 
         }catch (MessagingException me) {
-            throw new NGException("nugen.exception.email.unable.to.create.pop3store",null,me);
+            throw new Exception("Unable to initialize the POP3 store",me);
         }
     }
 
@@ -268,7 +261,7 @@ public class EmailListener extends TimerTask{
             return popFolder;
 
         }catch (MessagingException me) {
-            throw new NGException("nugen.exception.email.unable.to.connect.to.mail.server",null,me);
+            throw new Exception("Unable to connect to mail server",me);
         } finally {
             // close the store.
             // but wait!  Won't that close the folder?
@@ -359,7 +352,7 @@ public class EmailListener extends TimerTask{
             lastFolderRead = System.currentTimeMillis();
 
         }catch (Exception e) {
-            throw new NGException("nugen.exception.email.listner.thread.read.fail",null, e);
+            throw new Exception("Failure while reading the POP3 mail server", e);
         }finally {
             try {
                 if(popFolder != null){
@@ -534,7 +527,7 @@ public class EmailListener extends TimerTask{
     private Properties setEmailProperties(File emailPropFile) throws Exception {
 
         if (!emailPropFile.exists()) {
-            throw new NGException("nugen.exception.incorrect.sys.config", new Object[]{emailPropFile.getAbsolutePath()});
+            throw new JSONException("Email configuration not initialized: {0}", emailPropFile.getAbsolutePath());
         }
 
         emailProperties = new Properties();

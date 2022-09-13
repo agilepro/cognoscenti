@@ -32,7 +32,6 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -169,8 +168,7 @@ public class CreateProjectController extends BaseController {
     private static NGWorkspace createWorkspace(AuthRequest ar, NGBook site, String workspaceName) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         if (!site.primaryOrSecondaryPermission(uProf)) {
-            throw new NGException("nugen.exception.not.member.of.account",
-                    new Object[]{site.getFullName()});
+            throw new JSONException("User does not have permission to create a workspace in site '{0}'", site.getFullName());
         }
 
         String pageKey = makeGoodSearchableName(workspaceName);

@@ -38,8 +38,8 @@ public class HistoryRecord extends DOMFace
 
     // list of outdated / unused history contexts
     //public final static int CONTEXT_TYPE_PROCESS      = 0;
-    //public final static int CONTEXT_TYPE_PERMISSIONS  = 2;
-    //public final static int CONTEXT_TYPE_ROLE         = 5;
+    public final static int CONTEXT_TYPE_PERMISSIONS  = 2;
+    public final static int CONTEXT_TYPE_ROLE         = 5;
     
     //These appear to be in use currently
     public final static int CONTEXT_TYPE_TASK         = 1;
@@ -316,14 +316,14 @@ public class HistoryRecord extends DOMFace
             //    return "Process";
             case CONTEXT_TYPE_TASK:
                 return "Action Item";
-            //case CONTEXT_TYPE_PERMISSIONS:
-            //    return "Permission";
+            case CONTEXT_TYPE_PERMISSIONS:
+                return "Permission";
             case CONTEXT_TYPE_DOCUMENT:
                 return "Document";
             case CONTEXT_TYPE_LEAFLET:
                 return "Topic";
-            //case CONTEXT_TYPE_ROLE:
-            //    return "Role";
+            case CONTEXT_TYPE_ROLE:
+                return "Role";
             case CONTEXT_TYPE_MEETING:
                 return "Meeting";
             case CONTEXT_TYPE_DECISION:
@@ -417,18 +417,18 @@ public class HistoryRecord extends DOMFace
             case CONTEXT_TYPE_TASK:
                 messageID = "history.task.";
                 break;
-            //case CONTEXT_TYPE_PERMISSIONS:
-            //    messageID = "history.permission.";
-            //    break;
+            case CONTEXT_TYPE_PERMISSIONS:
+                messageID = "history.permission.";
+                break;
             case CONTEXT_TYPE_DOCUMENT:
                 messageID = "history.doc.";
                 break;
             case CONTEXT_TYPE_LEAFLET:
                 messageID = "history.note.";
                 break;
-            //case CONTEXT_TYPE_ROLE:
-            //    messageID = "history.role.";
-            //    break;
+            case CONTEXT_TYPE_ROLE:
+                messageID = "history.role.";
+                break;
             case CONTEXT_TYPE_MEETING:
                 messageID = "history.meeting.";
                 break;
@@ -856,15 +856,15 @@ history.task.subtask.add    113
         //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
         //    return "";
         //}
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-        //    return objectKey;
-        //}
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-        //    NGRole role = ngw.getRole(objectKey);
-        //    if (role!=null) {
-        //        return role.getName();
-        //    }
-        //}
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+            return objectKey;
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+            NGRole role = ngw.getRole(objectKey);
+            if (role!=null) {
+                return role.getName();
+            }
+        }
         return "Unknown";
     }
 
@@ -900,12 +900,12 @@ history.task.subtask.add    113
         //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
         //    return ar.getResourceURL(ngw, "projectAllTasks.htm");
         //}
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-        //    return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
-        //}
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-        //    return ar.getResourceURL(ngw, "RoleManagement.htm");
-        //}
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+            return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
+        }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+            return ar.getResourceURL(ngw, "RoleManagement.htm");
+        }
         return ar.getResourceURL(ngw, "FrontPage.htm");
     }
 

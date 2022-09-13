@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -59,10 +58,6 @@ public class NGSection extends DOMFace
             throw new ProgramLogicError("Section tag MUST have an attribute 'name' with a valid value.");
         }
         def = SectionDef.getDefByName(sectionName);
-        if (def==null)
-        {
-            throw new NGException("nugen.exception.unable.to.find.definition",new Object[]{sectionName});
-        }
         assertNameIsConsistent();
     }
 

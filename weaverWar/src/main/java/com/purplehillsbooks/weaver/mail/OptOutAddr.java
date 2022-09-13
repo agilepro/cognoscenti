@@ -34,7 +34,6 @@ import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
 
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -89,7 +88,7 @@ public class OptOutAddr {
     public void assertValidEmail() throws Exception {
         String useraddress = assignee.getEmail();
         if (useraddress==null || useraddress.length()==0) {
-            throw new NGException("nugen.exception.email.address.is.empty", new Object[]{assignee.getUniversalId()});
+            throw new Exception("Email address is missing");
         }
     }
 

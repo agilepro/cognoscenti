@@ -34,6 +34,11 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.proposalList.sort( function(a,b) {
         return a.dueDate-b.dueDate;
     });
+    $scope.proposalList.forEach( function(item) {
+        if (!item.content) {
+            item.content = "!empty content!";
+        }
+    });
     $scope.filterVal = "";
     $scope.filterPast = false;
     $scope.filterCurrent = true;

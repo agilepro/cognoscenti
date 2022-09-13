@@ -24,8 +24,6 @@ import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -121,7 +119,7 @@ public class DailyDigest {
 
 
         } catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.send.daily.digest", null, e);
+            throw new Exception("Unable to compose and send daily digets", e);
         } finally {
             NGPageIndex.clearLocksHeldByThisThread();
             logFile.writeToFile(dailyDigestFile);

@@ -162,14 +162,7 @@ public class AddressListEntry implements UserRef
         if (user!=null) {
             return user.getPreferredEmail();
         }
-        else if (rawAddress.indexOf("@")>0
-              && !startsWithIgnoreCase(rawAddress, "https://")
-              && !startsWithIgnoreCase(rawAddress, "http://")) {
-            return rawAddress;
-        }
-
-        //if it does not look like an email address, return a null string.
-        return "";
+        return rawAddress;
     }
 
     /**
@@ -186,13 +179,6 @@ public class AddressListEntry implements UserRef
         return (email!=null && email.length()>0);
     }
 
-
-    private boolean startsWithIgnoreCase(String dataVal, String testVal) {
-        if (dataVal.length()<testVal.length()) {
-            return false;
-        }
-        return dataVal.substring(0, testVal.length()).equalsIgnoreCase(testVal);
-    }
 
     /**
     * Return the best global unique ID for this address list entry.

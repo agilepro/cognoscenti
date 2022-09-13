@@ -347,6 +347,9 @@ editBoxStyle {
 .clicker:after {
     content: "Double-click to Set Value"
 }
+label {
+    color: black;
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
@@ -548,12 +551,12 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
+                    <td>Email</td>
                     <td ng-click="toggleBool('suppressEmail')">
                         <span ng-show="workspaceConfig.suppressEmail">
-                            <i class="fa fa-check-circle"></i> Email generated in this workspace will be suppressed so testing does not cause unnecessary real email to be sent.</span>
+                            <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>
                         <span ng-hide="workspaceConfig.suppressEmail">
-                            <i class="fa fa-circle-o"></i> Email in this workspace functionals normally</span>
+                            <i class="fa fa-circle-o"></i> Normal: email in this workspace functions normally</span>
                     </td>
                 </tr>
             </table>

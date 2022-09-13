@@ -156,7 +156,7 @@ public class UserCache {
             NGRole targetRole = aPage.getRole(targetRoleName);
             if (targetRole!=null && targetRole.isPlayer(up)) {
                 ResponseRecord rr = cr.getResponse(up);
-                if (rr==null) {
+                if (rr==null || rr.isEmpty()) {
                     //add proposal info if there is no response from this user
                     //seems a bit overkill to have everything, but then,
                     //everything is there for displaying a list...
