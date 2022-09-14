@@ -87,17 +87,17 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     @RequestMapping(value = "/su/emailListnerSettings.htm", method = RequestMethod.GET)
+     @RequestMapping(value = "/su/EmailListnerSettings.htm", method = RequestMethod.GET)
      public void emailListnerSettings(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
 
 
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "emailListnerSettings.jsp");
+             streamAdminJSP(ar, "EmailListnerSettings.jsp");
 
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+             throw new Exception("Failed while trying to display email listener settings", ex);
          }
      }
 
@@ -109,7 +109,19 @@ public class SuperAdminController extends BaseController {
              streamAdminJSP(ar, "lastNotificationSend.jsp");
 
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+             throw new Exception("Failed while trying to display last notification report", ex);
+         }
+     }
+
+     @RequestMapping(value = "/su/BlockedEmail.htm", method = RequestMethod.GET)
+     public void blockedEmail(HttpServletRequest request, HttpServletResponse response)
+             throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             streamAdminJSP(ar, "BlockedEmail.jsp");
+
+         }catch(Exception ex){
+             throw new Exception("Failed while trying to display blocked email report", ex);
          }
      }
 

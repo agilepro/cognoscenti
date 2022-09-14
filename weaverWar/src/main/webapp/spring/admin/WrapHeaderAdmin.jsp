@@ -95,13 +95,14 @@
              aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="errorLog.htm" >Error Log</a></li>
-            <li><a href="emailListnerSettings.htm" >Listener Settings</a></li>
+            <li><a href="EmailListnerSettings.htm" >Listener Settings</a></li>
             <li><a href="lastNotificationSend.htm" >Notification Settings</a></li>
             <li><a href="newUsers.htm" >Users</a></li>
             <li><a href="requestedAccounts.htm" >Requested Sites</a></li>
             <li><a href="allSites.htm" >All Sites</a></li>
             <li><a href="EmailScanner.htm" >Scan All Email</a></li>
             <li><a href="testEmail.htm" >Test Email</a></li>
+            <li><a href="BlockedEmail.htm" >Blocked Email</a></li>
           </ul>
         </li>
       </ul>
@@ -119,7 +120,7 @@
             <li><a href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
-            <li><a href="<%=userRelPath%>emailListnerSettings.htm">Administration</a></li>
+            <li><a href="<%=userRelPath%>EmailListnerSettings.htm">Administration</a></li>
           </ul>
         </li>
       </ul>
@@ -185,7 +186,7 @@ function displayWelcomeMessage(info) {
         y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
     }
     else {
-        y.innerHTML = 'Welcome <b>'+info.userName+'</b>';
+        y.innerHTML = 'Super Admin Module for <b>'+info.userName+'</b>';
     }
 }
 

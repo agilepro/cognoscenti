@@ -157,6 +157,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
+
+    $scope.queryMailStatus = function() {
+        var postURL = "MailProblemsUser.json";
+        $http.get(postURL)
+        .success( function(data) {
+            console.log("MailProblemsUser.json RECEIVED", data);
+            $scope.mailBlockers = data.blocks;
+            $scope.mailBounces = data.bounces;
+            $scope.mailSpams = data.spams;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
     
 });
 </script>
@@ -455,6 +469,79 @@ if (ar.isLoggedIn()) { %>
             </td>
         </tr>
     </table>
+    
+    
+    <div>
+        <button class="btn btn-default btn-raised" ng-click="queryMailStatus()">Check Email Status</button>
+    </div>
+    <div ng-show="mailBlockers" class="well">
+        <h2>Mail Your Provider Refused to Deliver</h2>
+        
+        <div ng-show="mailBlockers.length==0">No email blockers found</div>
+        
+        <table class="table" ng-hide="mailBlockers.length==0" style="max-width:1000px">
+            <tr>
+                <td>Blocked</td>
+                <td>Email</td>
+                <td>Reason</td>
+                <td>Status</td>
+            </tr>
+            <tr ng-repeat="block in mailBlockers">
+                <td>{{block.created*1000|date}}</td>
+                <td>{{block.email}}</td>
+                <td><div style="max-width:600px;">{{block.reason}}</div></td>
+                <td>{{block.status}}</td>
+            </tr>
+        </table>
+    
+    </div>
+
+    <div ng-show="mailBlockers" class="well">
+        <h2>Mail Bounced due to Address Problems</h2>
+        
+        <div ng-show="mailBounces.length==0">No bounces found</div>
+        
+        <table class="table" ng-hide="mailBounces.length==0" style="max-width:1000px">
+            <tr>
+                <td>Bounced</td>
+                <td>Email</td>
+                <td>Reason</td>
+                <td>Status</td>
+            </tr>
+            <tr ng-repeat="block in mailBounces">
+                <td>{{block.created*1000|date}}</td>
+                <td>{{block.email}}</td>
+                <td><div style="max-width:600px;">{{block.reason}}</div></td>
+                <td>{{block.status}}</td>
+            </tr>
+        </table>
+    
+    </div>
+    <div ng-show="mailSpams" class="well">
+        <h2>Mail Marked by Receiver as Spam</h2>
+        
+        <div ng-show="mailSpams.length==0">No messages marked as spam</div>
+        
+        <table class="table" ng-hide="mailSpams.length==0" style="max-width:1000px">
+            <tr>
+                <td>Spammed</td>
+                <td>Email</td>
+                <td>Reason</td>
+                <td>Status</td>
+            </tr>
+            <tr ng-repeat="block in mailSpams">
+                <td>{{block.created*1000|date}}</td>
+                <td>{{block.email}}</td>
+                <td><div style="max-width:600px;">{{block.reason}}</div></td>
+                <td>{{block.status}}</td>
+            </tr>
+        </table>
+    
+    </div>
+    
+    
+    
+    
 <%if (viewingSelf){ %>
     <hr/>
     <table class="spacey">

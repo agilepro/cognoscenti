@@ -7,7 +7,7 @@
 
     Set<String> activeUsers = Cognoscenti.getInstance(request).whoIsLoggedIn();
 
-
+ 
 
 %>
 <div class="content tab01" style="display:block;" >
@@ -107,8 +107,9 @@
         <%
         for (String userid : activeUsers) {
             UserProfile user = UserManager.getUserProfileByKey(userid);
-            out.write("\n<li>"+userid+", "+user.getName()+"</li>");
+            out.write("\n<li><a href=\"../"+userid+"/PersonShow.htm\">"+userid+"</a>, "+user.getName()+"</li>");
         }
         %>
     </ul>
 </div>
+

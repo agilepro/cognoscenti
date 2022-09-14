@@ -21,6 +21,7 @@
 package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.util.APIClient;
 import com.purplehillsbooks.weaver.util.Thumbnail;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -693,13 +695,20 @@ public class UserController extends BaseController {
             if (userKey==null) {
                 userKey = ar.defParam("uid", null);
             }
+            ar.req.setAttribute("userKey",  userKey);
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
                 response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/PersonShow.htm");
                 return;
             }
-            showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+            if (userKey.indexOf("@")<0) {
+                showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                return;
+            }
+            //this looks like an email address, so display non-profile display
+            streamJSPAnon(ar, "PersonMissing.jsp");
+            return;
         }catch(Exception ex){
             throw new Exception("Failure trying to find user", ex);
         }
@@ -871,13 +880,99 @@ public class UserController extends BaseController {
             
             JSONObject repo = user.getFacilitatorFields();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
 
+    //refresh every 15 minutes, but keeping a copy here speeds up the client side.
+    long mailProblemCacheTime = 0;
+    JSONObject cacheMailProblem = new JSONObject();
+    private synchronized JSONObject getMailProblems() throws Exception {
+        if (mailProblemCacheTime < System.currentTimeMillis()-15*60*1000) {
+            //it has been 15 minutes since fetching
+            
+            long oneYearAgo = (System.currentTimeMillis()/1000)-365*24*60*60;
+            
+            APIClient client = new APIClient();
+            client.expectArray = true;
+            client.setHeader("Authorization", "Bearer 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");
+            URL url = new URL("https://api.sendgrid.com/v3/suppression/blocks?start_time="+oneYearAgo);
+            JSONObject blocks = client.getFromRemote(url);
+            
+            url = new URL("https://api.sendgrid.com/v3/suppression/bounces?start_time="+oneYearAgo);
+            JSONObject bounces = client.getFromRemote(url);
+
+            url = new URL("https://api.sendgrid.com/v3/suppression/spam_reports?start_time="+oneYearAgo);
+            JSONObject spams = client.getFromRemote(url);
+
+            JSONObject res = new JSONObject();
+            res.put("blocks", blocks.getJSONArray("list"));
+            res.put("bounces", bounces.getJSONArray("list"));
+            res.put("spams", spams.getJSONArray("list"));
+            cacheMailProblem = res;
+            mailProblemCacheTime = System.currentTimeMillis();
+        }
+        return cacheMailProblem;
+    }
     
+    
+    @RequestMapping(value = "/{userKey}/MailProblems.json", method = RequestMethod.GET)
+    public void mailProblems(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+                sendJson(ar, getMailProblems());
+        }
+        catch (Exception ex) {
+            Exception ee = new Exception("Unable to get mail blockers", ex);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{userKey}/MailProblemsUser.json", method = RequestMethod.GET)
+    public void mailProblemsUser(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            UserProfile uProf = UserManager.getUserProfileByKey(userKey);
+            JSONObject problems = getMailProblems();
+            
+            JSONArray userBlocks = new JSONArray();
+            for (JSONObject block : problems.getJSONArray("blocks").getJSONObjectList()) {
+                String email = block.getString("email");
+                if (uProf.hasAnyId(email)) {
+                    userBlocks.put(block);
+                }
+            }
+            JSONArray userBounces = new JSONArray();
+            for (JSONObject block : problems.getJSONArray("bounces").getJSONObjectList()) {
+                String email = block.getString("email");
+                if (uProf.hasAnyId(email)) {
+                    userBounces.put(block);
+                }
+            }
+            JSONArray userSpams = new JSONArray();
+            for (JSONObject block : problems.getJSONArray("spams").getJSONObjectList()) {
+                String email = block.getString("email");
+                if (uProf.hasAnyId(email)) {
+                    userSpams.put(block);
+                }
+            }
+            
+            JSONObject res = new JSONObject();
+            res.put("blocks", userBlocks);
+            res.put("bounces", userBounces);
+            res.put("spams", userSpams);
+
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get mail blockers", ex);
+            streamException(ee, ar);
+        }
+    }
 
 }
 

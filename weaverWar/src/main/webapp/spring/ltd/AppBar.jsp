@@ -97,7 +97,7 @@
       </li>  
       
 <%if(ar.isSuperAdmin()){ %>
-      <li style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/emailListnerSettings.htm'">
+      <li style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/EmailListnerSettings.htm'">
           <img src="<%=ar.retPath%>/bits/adminicon.png" style="max-height:50px;max-width:50px">
           </li>
 <% } %>      
@@ -193,7 +193,7 @@
             <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
-            <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>
+            <li><a href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>
 <%} %>
             <li class="divider"></li>
             <li><a onclick='logOutPage();'>Log Out</a></li>

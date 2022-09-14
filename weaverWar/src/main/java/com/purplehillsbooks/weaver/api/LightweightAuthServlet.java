@@ -17,10 +17,7 @@
 package com.purplehillsbooks.weaver.api;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-
+import com.purplehillsbooks.weaver.util.APIClient;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -227,43 +224,11 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
-    /**
-     * Send a JSONObject to this server as a POST and
-     * get a JSONObject back with the response.
-     */
-    public static JSONObject postToRemote(URL url, JSONObject msg) throws Exception {
-        try {
-        	System.out.println("SLAP: posted object to trusted provider: "+url);
-            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-            httpCon.setDoOutput(true);
-            httpCon.setDoInput(true);
-            httpCon.setUseCaches(false);
-            httpCon.setRequestProperty( "Content-Type", "text/plain" );
-            httpCon.setRequestProperty("Origin", "http://bogus.example.com/");
-
-            httpCon.setRequestMethod("POST");
-            httpCon.connect();
-            OutputStream os = httpCon.getOutputStream();
-            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-            msg.write(osw, 2, 0);
-            osw.flush();
-            osw.close();
-            os.close();
-
-            InputStream is = httpCon.getInputStream();
-            JSONTokener jt = new JSONTokener(is);
-            JSONObject resp = new JSONObject(jt);
-
-            return resp;
-        }
-        catch (Exception e) {
-            throw new Exception("Unable to call the server site located at "+url, e);
-        }
-    }
 
     public static JSONObject postToTrustedProvider(String postFix, JSONObject objIn) throws Exception {
         String destUrl = trusterProviderUrl + postFix;
-        JSONObject response = postToRemote(new URL(destUrl), objIn);
+        APIClient client = new APIClient();
+        JSONObject response = client.postToRemote(new URL(destUrl), objIn);
         return response;
     }
     
