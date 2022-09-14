@@ -171,7 +171,7 @@ table tr td {
                 but instead will provide an easy way for other users to access the web page in their browser.</p>
                 
                 <p><button type="button" class="btn btn-primary btn-raised"
-                    onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
+                    onClick="location.href='DocLinkGoogle.htm<%=folderPart%>'">Attach Google Doc</button>
                     Access documents from Google Drive </p>
                 
                 <p><button type="button" class="btn btn-primary btn-raised"

@@ -38,7 +38,7 @@
     String currentUser = uProf.getUniversalId();
     String currentUserName = uProf.getName();
     String currentUserKey = uProf.getKey();
-    boolean canUpdate = ngw.canUpdateWorkspace(uProf);
+    boolean canUpdate = ngw.canUpdateWorkspace(uProf) || ar.isSuperAdmin();
 
     String targetRole = mRec.getTargetRole();
     if (targetRole==null || targetRole.length()==0) {

@@ -218,8 +218,8 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/linkGoogleDoc.htm", method = RequestMethod.GET)
-    protected void linkGoogleDoc(@PathVariable String siteId,
+    @RequestMapping(value = "/{siteId}/{pageId}/DocLinkGoogle.htm", method = RequestMethod.GET)
+    protected void docLinkGoogle(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
@@ -230,7 +230,7 @@ public class UploadFileController extends BaseController {
                 return;
             }
 
-            showJSPMembers(ar, siteId, pageId, "linkGoogleDoc.jsp");
+            showJSPMembers(ar, siteId, pageId, "DocLinkGoogle.jsp");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);

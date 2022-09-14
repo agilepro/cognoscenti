@@ -504,7 +504,7 @@ public class DailyDigest {
             clone.write("<td>");
             clone.write("<a href=\"");
             clone.write(clone.baseURL);
-            clone.write("v/su/requestedAccounts.htm\">Click here to review list</a>");
+            clone.write("v/su/SiteRequests.htm\">Click here to review list</a>");
             clone.write("</td>");
             clone.write("</tr>");
         }

@@ -10,7 +10,7 @@
 
 %>
 
-<!-- ************************ xxx/Reply.jsp ************************ -->
+<!-- ************************ jsp/ReplyNoEmail.jsp ************************ -->
 <script type="text/javascript">
 
 var app = angular.module('myApp');

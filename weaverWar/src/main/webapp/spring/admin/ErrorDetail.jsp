@@ -72,7 +72,7 @@ myApp.controller('myCtrl', function($scope, $http) {
 
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
-        <a class="btn btn-default btn-raised" href="errorLog.htm?searchDate={{searchDateStr}}">
+        <a class="btn btn-default btn-raised" href="ErrorList.htm?searchDate={{searchDateStr}}">
         Return to Error List </a>
       </span>
     </div>

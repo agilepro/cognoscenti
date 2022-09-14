@@ -71,7 +71,7 @@ app.controller('myCtrl', function($scope, $http) {
     <div>Filter <input ng-model="filter"></div>
     <div style="height:30px;"></div>
 
-    <table class="gridTable2" width="100%">
+    <table class="table" width="100%">
         <tr class="gridTableHeader">
             <td width="50px"></td>
             <td width="200px">Workspace</td>
@@ -84,9 +84,9 @@ app.controller('myCtrl', function($scope, $http) {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Front Page</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Abandon Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Modify Roles</a></li>
                 </ul>
               </div>
             </td>

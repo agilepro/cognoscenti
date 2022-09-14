@@ -251,11 +251,11 @@ public class ProjectDocsController extends BaseController {
     /**
      * This is a view that prompts the user to specify how they want the PDF to be produced.
      */
-    @RequestMapping(value = "/{siteId}/{pageId}/exportPDF.htm", method = RequestMethod.GET)
-    public void exportPDF(HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping(value = "/{siteId}/{pageId}/PDFExport.htm", method = RequestMethod.GET)
+    public void pdfExport(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String pageId, @PathVariable String siteId) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "exportPDF.jsp");
+        showJSPMembers(ar, siteId, pageId, "PDFExport.jsp");
     }
 
 
@@ -696,7 +696,7 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("msgId", msgId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        showJSPDepending(ar, ngw, "Reply.jsp", true);
+        showJSPDepending(ar, ngw, "../anon/Reply.jsp", true);
     }
     public void specialReplyOld(@PathVariable String siteId,
             @PathVariable String pageId,

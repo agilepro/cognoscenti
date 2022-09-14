@@ -101,10 +101,12 @@ public class ConfigFile {
             configFile = getFile("config.txt");
 
             if (!configFile.exists()) {
+                System.out.println("*** No configuration file found at: "+configFile.getAbsolutePath());
                 //this is probably a new installation.  copy the example config file
                 File exampleConfigFile = getFile("config_example.txt");
                 if (exampleConfigFile.exists()) {
                     StreamHelper.copyFileToFile(exampleConfigFile, configFile);
+                    System.out.println("*** config_example.txt copied to: "+configFile.getAbsolutePath());
                 }
 
                 //while we are at it, copy the ssofi config as well
@@ -112,6 +114,7 @@ public class ConfigFile {
                 File exampleSsofiConfig = getFile("ssofi_example.config");
                 if (!ssofiConfig.exists() && exampleSsofiConfig.exists()) {
                     StreamHelper.copyFileToFile(exampleSsofiConfig, ssofiConfig);
+                    System.out.println("*** ssofi_example.config copied to: "+ssofiConfig.getAbsolutePath());
                 }
 
                 //while we are at it, copy the email config as well
@@ -119,6 +122,7 @@ public class ConfigFile {
                 File exampleEmailConfig = getFile("EmailNotification_example.properties");
                 if (!emailConfig.exists() && exampleEmailConfig.exists()) {
                     StreamHelper.copyFileToFile(exampleEmailConfig, emailConfig);
+                    System.out.println("*** EmailNotification_example.properties copied to: "+emailConfig.getAbsolutePath());
                 }
             }
 
@@ -126,7 +130,7 @@ public class ConfigFile {
             MimeTypes.initialize(webInfPath);
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.configfile.initialization.fail", null, e);
+            throw new Exception("Failure during basic initialization of the server", e);
         }
     }
 

@@ -352,7 +352,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
               Send Email</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="exportPDF.htm">
+          <li role="presentation"><a role="menuitem" href="PDFExport.htm">
               Create PDF</a>
           </li>
           <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">

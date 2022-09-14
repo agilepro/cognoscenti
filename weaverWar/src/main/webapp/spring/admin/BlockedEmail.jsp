@@ -1,10 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="administration.jsp"
+%><%@ include file="/spring/jsp/include.jsp"
 %><%
 
-    long nextScheduleTime = EmailSender.getNextTime(lastSentTime);
-    boolean overDue = (ar.nowTime > nextScheduleTime);
-    long serverTime = System.currentTimeMillis();
 
 
 
@@ -14,10 +11,6 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    $scope.serverTime = <%=serverTime%>;
-    $scope.browserTime = new Date().getTime();
-    $scope.overDue = <%=overDue%>;
-    $scope.protocol = "<%=EmailSender.getProperty("mail.transport.protocol")%>";
     
     $scope.reportError = function(serverErr) {
         console.log("ERROR", serverErr);

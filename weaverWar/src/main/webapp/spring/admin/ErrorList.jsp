@@ -45,7 +45,7 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.newSearch = function() {
-        window.location = "errorLog.htm?searchDate="+$scope.newDate;
+        window.location = "ErrorList.htm?searchDate="+$scope.newDate;
     }
 
 });
@@ -57,9 +57,9 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     <div class="h1">Error Log for <%=searchDate%>  
-    <a href="errorLog.htm?searchDate=<%=previousDate%>" title="View <%=previousDate%>">
+    <a href="ErrorList.htm?searchDate=<%=previousDate%>" title="View <%=previousDate%>">
         <i class="fa  fa-arrow-circle-left"></i></a>
-    <a href="errorLog.htm?searchDate=<%=nextDate%>" title="View <%=nextDate%>">
+    <a href="ErrorList.htm?searchDate=<%=nextDate%>" title="View <%=nextDate%>">
         <i class="fa  fa-arrow-circle-right"></i></a>
     </div>
         
@@ -68,7 +68,7 @@ app.controller('myCtrl', function($scope, $http) {
 
    <table class="table">
       <tr ng-repeat="row in allDetails">
-         <td><a href="errorDetails{{row.errNo}}.htm?searchByDate=<%=errorDate%>">{{row.errNo}}</a></td>
+         <td><a href="ErrorDetail{{row.errNo}}.htm?searchByDate=<%=errorDate%>">{{row.errNo}}</a></td>
          <td>{{row.message}}</td>
          <td style="width:100px">{{row.modTime | date:'HH:mm:ss'}}</td>
       </tr>

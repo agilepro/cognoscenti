@@ -184,7 +184,7 @@ app.controller('myCtrl', function($scope, $http) {
                         <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                           <li role="presentation">
-                              <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
+                              <a href="SiteDetails.htm?siteKey={{rec.key}}">View Details</a></li>
                           <li role="presentation">
                               <a href="SiteMerge.htm?site={{rec.key}}">See Layouts</a></li>
                           <li role="presentation">

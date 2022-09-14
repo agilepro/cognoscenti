@@ -94,14 +94,14 @@
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
              aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="errorLog.htm" >Error Log</a></li>
+            <li><a href="ErrorList.htm" >Error List</a></li>
             <li><a href="EmailListnerSettings.htm" >Listener Settings</a></li>
-            <li><a href="lastNotificationSend.htm" >Notification Settings</a></li>
-            <li><a href="newUsers.htm" >Users</a></li>
-            <li><a href="requestedAccounts.htm" >Requested Sites</a></li>
-            <li><a href="allSites.htm" >All Sites</a></li>
+            <li><a href="NotificationStatus.htm" >Notification Settings</a></li>
+            <li><a href="UserList.htm" >Users</a></li>
+            <li><a href="SiteRequests.htm" >Requested Sites</a></li>
+            <li><a href="ListSites.htm" >List All Sites</a></li>
             <li><a href="EmailScanner.htm" >Scan All Email</a></li>
-            <li><a href="testEmail.htm" >Test Email</a></li>
+            <li><a href="EmailTest.htm" >Test Email</a></li>
             <li><a href="BlockedEmail.htm" >Blocked Email</a></li>
           </ul>
         </li>

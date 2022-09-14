@@ -96,7 +96,7 @@ Required parameters:
 
 %>
 
-<!-- ************************ xxx/Reply.jsp ************************ -->
+<!-- ************************ anon/Reply.jsp ************************ -->
 <script type="text/javascript">
 
 var app = angular.module('myApp');

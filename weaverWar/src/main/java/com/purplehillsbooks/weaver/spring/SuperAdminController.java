@@ -63,24 +63,24 @@ public class SuperAdminController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/su/errorLog.htm", method = RequestMethod.GET)
-    public void errorLogPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/su/ErrorList.htm", method = RequestMethod.GET)
+    public void errorList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            streamAdminJSP(ar, "errorLog.jsp");
+            streamAdminJSP(ar, "ErrorList.jsp");
 
         } catch (Exception ex) {
             throw new NGException("nugen.operation.fail.administration.page", new Object[] { ar.getBestUserId() }, ex);
         }
     }
 
-     @RequestMapping(value = "/su/testEmail.htm", method = RequestMethod.GET)
-     public void testEmail(HttpServletRequest request,
+     @RequestMapping(value = "/su/EmailTest.htm", method = RequestMethod.GET)
+     public void emailTest(HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "testEmail.jsp");
+             streamAdminJSP(ar, "EmailTest.jsp");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
@@ -101,12 +101,12 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     @RequestMapping(value = "/su/lastNotificationSend.htm", method = RequestMethod.GET)
-     public void lastNotificationSend(HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/NotificationStatus.htm", method = RequestMethod.GET)
+     public void notificationStatus(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "lastNotificationSend.jsp");
+             streamAdminJSP(ar, "NotificationStatus.jsp");
 
          }catch(Exception ex){
              throw new Exception("Failed while trying to display last notification report", ex);
@@ -125,45 +125,45 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     @RequestMapping(value = "/su/newUsers.htm", method = RequestMethod.GET)
-     public void newUsers(HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/UserList.htm", method = RequestMethod.GET)
+     public void userList(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "newUsers.jsp");
+             streamAdminJSP(ar, "UserList.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/su/requestedAccounts.htm", method = RequestMethod.GET)
-     public void requestedAccounts(HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/SiteRequests.htm", method = RequestMethod.GET)
+     public void siteRequests(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "requestedAccounts.jsp");
+             streamAdminJSP(ar, "SiteRequests.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/su/allSites.htm", method = RequestMethod.GET)
-     public void allSites(HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/ListSites.htm", method = RequestMethod.GET)
+     public void listSites(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "allSites.jsp");
+             streamAdminJSP(ar, "ListSites.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/su/oneSite.htm", method = RequestMethod.GET)
-     public void oneSite(HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/SiteDetails.htm", method = RequestMethod.GET)
+     public void siteDetails(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             streamAdminJSP(ar, "oneSite.jsp");
+             streamAdminJSP(ar, "SiteDetails.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
@@ -308,7 +308,7 @@ public class SuperAdminController extends BaseController {
 
 
 
-     @RequestMapping(value = "/su/errorDetails{errorId}.htm", method = RequestMethod.GET)
+     @RequestMapping(value = "/su/ErrorDetail{errorId}.htm", method = RequestMethod.GET)
      public void errorDetailsPage(@PathVariable String errorId,
              @RequestParam String searchByDate,HttpServletRequest request,
              HttpServletResponse response) throws Exception {
@@ -317,7 +317,7 @@ public class SuperAdminController extends BaseController {
              ar.setParam("errorId", errorId);
              ar.setParam("errorDate", searchByDate);
              ar.setParam("goURL", ar.getCompleteURL());
-             streamAdminJSP(ar, "detailsErrorLog.jsp");
+             streamAdminJSP(ar, "ErrorDetail.jsp");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.error.detail.page", null , ex);
          }

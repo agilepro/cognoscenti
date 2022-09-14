@@ -93,7 +93,7 @@ app.controller('myCtrl', function($scope, $http) {
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
             <button type="button" class="btn btn-primary btn-raised"
-                onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
+                onClick="location.href='DocLinkGoogle.htm<%=folderPart%>'">Attach Google Doc</button>
         </td>
         <td style="padding:15px">
             <p>Weaver can access documents from Google Drive, also known as

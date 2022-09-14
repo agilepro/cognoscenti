@@ -124,7 +124,7 @@
         },
         {
           "use": ["NotesList.jsp", "NoteZoom.jsp"],
-          "href":"exportPDF.htm",
+          "href":"PDFExport.htm",
           "name":"Create PDF",
           "title":"Create a PDF of a topic or topics"
         },

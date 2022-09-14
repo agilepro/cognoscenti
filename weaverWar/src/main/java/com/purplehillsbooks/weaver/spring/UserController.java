@@ -81,6 +81,7 @@ public class UserController extends BaseController {
     }
     
     //this one just in case someone had bookmarked the old value
+    //delete this after december 2022
     @RequestMapping(value = "/{userKey}/userHome.htm", method = RequestMethod.GET)
     public void userHome2(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -93,14 +94,6 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         streamJSPUserLogged2(request, response, userKey, "WatchedProjects.jsp");
-    }
-
-    @RequestMapping(value = "/{userKey}/notifiedProjects.htm", method = RequestMethod.GET)
-    public void notifiedProjects(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        streamJSPUserLogged2(request, response, userKey, "NotifiedProjects.jsp");
     }
 
     @RequestMapping(value = "/{userKey}/OwnerProjects.htm", method = RequestMethod.GET)
