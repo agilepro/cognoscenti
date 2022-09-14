@@ -890,15 +890,18 @@ public class UserController extends BaseController {
     //refresh every 15 minutes, but keeping a copy here speeds up the client side.
     long mailProblemCacheTime = 0;
     JSONObject cacheMailProblem = new JSONObject();
-    private synchronized JSONObject getMailProblems() throws Exception {
+    private synchronized JSONObject getMailProblems(AuthRequest ar) throws Exception {
         if (mailProblemCacheTime < System.currentTimeMillis()-15*60*1000) {
             //it has been 15 minutes since fetching
+            Cognoscenti cog = ar.getCogInstance();
+            
+            String apiKey = cog.getConfig().getProperty("sendGridKey");
             
             long oneYearAgo = (System.currentTimeMillis()/1000)-365*24*60*60;
             
             APIClient client = new APIClient();
             client.expectArray = true;
-            client.setHeader("Authorization", "Bearer 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");
+            client.setHeader("Authorization", "Bearer "+apiKey);
             URL url = new URL("https://api.sendgrid.com/v3/suppression/blocks?start_time="+oneYearAgo);
             JSONObject blocks = client.getFromRemote(url);
             
@@ -924,7 +927,7 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-                sendJson(ar, getMailProblems());
+                sendJson(ar, getMailProblems(ar));
         }
         catch (Exception ex) {
             Exception ee = new Exception("Unable to get mail blockers", ex);
@@ -937,7 +940,7 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             UserProfile uProf = UserManager.getUserProfileByKey(userKey);
-            JSONObject problems = getMailProblems();
+            JSONObject problems = getMailProblems(ar);
             
             JSONArray userBlocks = new JSONArray();
             for (JSONObject block : problems.getJSONArray("blocks").getJSONObjectList()) {

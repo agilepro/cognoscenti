@@ -39,7 +39,7 @@ public class APIClient {
             httpCon.setDoInput(true);
             httpCon.setUseCaches(false);
             for (String key : headers.keySet()) {
-                System.out.println("    HEADER: "+key+" = "+headers.get(key));
+                System.out.println("    HEADER: "+key+" = ("+headers.get(key)+")");
                 httpCon.setRequestProperty( key, headers.get(key) );
             }
 
@@ -78,6 +78,7 @@ public class APIClient {
             httpCon.setDoInput(true);
             httpCon.setUseCaches(false);
             for (String key : headers.keySet()) {
+                System.out.println("    HEADER: "+key+" = ("+headers.get(key)+")");
                 httpCon.setRequestProperty( key, headers.get(key) );
             }
 
