@@ -187,7 +187,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.newComment.html2 = convertMarkdownToHtml($scope.newComment.body);
         
         $scope.hasResponse = false;
-        if ($scope.focusComment) {
+        $scope.showReplyBox = true;
+        if ($scope.focusComment.commentType) {
+            $scope.showReplyBox = ($scope.focusComment.commentType==1);
             if ($scope.focusComment.commentType==2) {
                 $scope.commentTypeName = "Proposal";
                 $scope.responseTypeName = "Response";
@@ -476,7 +478,7 @@ function reloadIfLoggedIn() {
 
     <div ng-repeat="cmt in otherComments">
       <div class="comment-outer">
-        <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}}</div>
+        <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - <a href="../../FindPerson.htm?uid={{cmt.userKey}}">{{cmt.userName}}</a></div>
         <div class="comment-inner">
           <div ng-bind-html="cmt.body|wiki"></div>
         </div>
@@ -495,11 +497,11 @@ function reloadIfLoggedIn() {
     
     
     <div id="Comment" style="scroll-margin-top:80px;scroll-padding-top:80px"></div>
-    <div ng_show="focusComment.body" >
+    <div ng_show="focusComment.body">
         <h1>{{commentTypeName}} from email:</h1>
 
         <div class="comment-outer comment-state-active">
-          <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - {{focusComment.userName}}</div>
+          <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - <a href="../../FindPerson.htm?uid={{focusComment.userKey}}">{{focusComment.userName}}</a></div>
           <div ng-show="focusComment.commentType>=2"><h3>The {{commentTypeName}}:</h3></div>
           <div class="comment-inner">
             <div ng-bind-html="focusComment.body|wiki"></div>
@@ -548,10 +550,9 @@ function reloadIfLoggedIn() {
         </div>
     </div>
  
- 
- 
-    <div style="min-height:460px" ng-show="focusComment.commentType==1 && mustGetId">
-        <div class="comment-outer comment-state-active" style="padding:25px">
+  <div ng-show="showReplyBox">
+    <div ng-show="showReplyBox && mustGetId">
+        <div class="comment-outer comment-state-active" style="padding:25px;min-height:460px">
         
             <div>Please enter/verify your email address</div>
             <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
@@ -561,8 +562,8 @@ function reloadIfLoggedIn() {
                 title="Save these verified values">Save & Continue</button></div>
         </div>
     </div>
-    <div style="min-height:460px" ng-show="focusComment.commentType==1 && !mustGetId">
-        <div ng-hide="sentAlready" class="comment-outer comment-state-active">
+    <div ng-show="showReplyBox && !mustGetId">
+        <div ng-hide="sentAlready" class="comment-outer comment-state-active" style="min-height:460px">
             <h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
                  class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
@@ -574,9 +575,9 @@ function reloadIfLoggedIn() {
             </div>
         </div>
     </div>
+  </div>
     
-    
-    <div style="margin:50px"></div>
+    <div style="margin:50px"  style="broder:2px solid red"></div>
     
     
     
