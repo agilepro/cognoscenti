@@ -365,7 +365,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if ("updateNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             String noteUID = newNoteObj.getString("universalid");
-            TopicRecord note = resDec.workspace.getNoteByUidOrNull(noteUID);
+            TopicRecord note = resDec.workspace.getDiscussionTopic(noteUID);
             if (note==null) {
                 throw new JSONException("Unable to find an existing topic with UID ("+noteUID+")");
             }

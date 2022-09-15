@@ -502,7 +502,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </table>
 
 <% if (canUpdate) { %>
-    <button class="btn btn-primary btn-raised" ng-click="openRoleModal(null)" style="float:right;">
+    <button class="btn btn-primary btn-raised" ng-click="openRoleModal(null)">
         <span class="fa fa-plus"></span> Create Role</button>
 <% } %>
         

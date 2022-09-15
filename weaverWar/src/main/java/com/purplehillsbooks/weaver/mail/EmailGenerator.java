@@ -256,16 +256,6 @@ public class EmailGenerator extends DOMFace {
             }
         }
         
-        /*
-        TopicRecord noteRec = ngw.getNoteByUidOrNull(getNoteId());
-        if (noteRec!=null && getExcludeResponders()) {
-            for (LeafletResponseRecord llr : noteRec.getResponses()) {
-                String responder = llr.getUser();
-                OptOutAddr.removeFromList(sendTo, responder);
-            }
-        }
-        */
-        
         return sendTo;
     }
 
@@ -376,7 +366,7 @@ public class EmailGenerator extends DOMFace {
         if (topicId==null || topicId.length()==0) {
             return null;
         }
-        TopicRecord topic = ngw.getNoteByUidOrNull(topicId);
+        TopicRecord topic = ngw.getDiscussionTopic(topicId);
         return topic;
     }
     private MeetingRecord getMeetingIfPresent(NGWorkspace ngw) throws Exception {
@@ -390,7 +380,7 @@ public class EmailGenerator extends DOMFace {
 
     public void generateEmailBody(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa, MailInst mail) throws Exception {
 
-        TopicRecord noteRec = ngw.getNoteByUidOrNull(getNoteId());
+        TopicRecord noteRec = ngw.getDiscussionTopic(getNoteId());
         if (noteRec!=null) {
             mail.setCommentContainer(noteRec.getGlobalContainerKey(ngw));
         }
@@ -644,7 +634,7 @@ public class EmailGenerator extends DOMFace {
 
         String noteId = getNoteId();
         if (noteId!=null && noteId.length()>0) {
-            TopicRecord nr = ngw.getNoteByUidOrNull(noteId);
+            TopicRecord nr = ngw.getDiscussionTopic(noteId);
             if (nr!=null) {
                 obj.put("noteInfo", nr.getJSONWithMarkdown(ngw));
             }

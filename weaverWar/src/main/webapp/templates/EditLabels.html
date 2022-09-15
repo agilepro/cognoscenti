@@ -96,13 +96,13 @@ spaceTable tr td {
             </div>
         </div>
         <div>
-          <button class="btn btn-primary btn-raised" type="button" ng-click="createLabel()">
-               Create</button>
         </div>
    </div>
    <div style="clear: both"></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-raised" type="button" ng-click="exitPopup()">
+    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="exitPopup()">
         Exit</button>
+    <button class="btn btn-primary btn-raised" ng-click="createLabel()" ng-show="selectedTab=='Creating'">
+         Create</button>
 </div>

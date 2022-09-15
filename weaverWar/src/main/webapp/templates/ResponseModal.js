@@ -106,6 +106,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     //this fires every keystroke to maintain change flag
     function tinymceChangeTrigger(e, editor) {
         $scope.lastKeyTimestamp = new Date().getTime();
+        $scope.secondsTillSave = 5;
         $scope.responseBody = HTML2Markdown($scope.responseHtml);
         if ($scope.responseBody != $scope.oldResponseBody ) {
             $scope.unsaved = 1;
@@ -135,16 +136,15 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         }
         var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
         var secondsSinceLastSave = Math.floor((new Date().getTime() - $scope.lastSave)/1000);
-        $scope.secondsTillSave = 20 - secondsSinceKeypress;
-        $scope.secondsTillClose = 1200 - secondsSinceKeypress;
+        $scope.secondsTillSave = 5 - secondsSinceKeypress;
         if (secondsSinceKeypress > 1200) {
             //it has been 1200 seconds (20 minutes) since any save or keystroke
             //time to close this pop up dialog
             console.log("Auto close time achieved, closing the dialog box", $scope);
             $scope.saveAndClose();
         }
-        if (secondsSinceKeypress < 20 || secondsSinceLastSave < 20) {
-            //user has typed in last 20 seconds to wait until 20 seconds of silence
+        if (secondsSinceKeypress < 5 || secondsSinceLastSave < 5) {
+            //user has typed in last 5 seconds to wait until 5 seconds of silence
             return;
         }
         if ($scope.unsaved) {

@@ -3178,7 +3178,6 @@ fieldset[disabled] .navbar .btn-link:hover {
 
 .modal-content .modal-footer {
 	border-top: none;
-	padding: 7px
 }
 
 .modal-content .modal-footer button {
@@ -3189,10 +3188,7 @@ fieldset[disabled] .navbar .btn-link:hover {
 }
 
 .modal-content .modal-footer button.pull-left {
-	padding-left: 5px;
-	padding-right: 5px;
 	position: relative;
-	left: -5px
 }
 
 .modal-content .modal-footer button+button {

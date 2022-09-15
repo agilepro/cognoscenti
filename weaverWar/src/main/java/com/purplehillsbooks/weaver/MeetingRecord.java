@@ -679,7 +679,7 @@ public class MeetingRecord extends DOMFace {
         meetingInfo.put("agenda", aiArray);
         String mid = getMinutesId();
         if (mid!=null && mid.length()>0) {
-            TopicRecord  nr = ngw.getNoteByUidOrNull(mid);
+            TopicRecord  nr = ngw.getDiscussionTopic(mid);
             if (nr!=null) {
                 meetingInfo.put("minutesId",      mid);
                 meetingInfo.put("minutesLocalId", nr.getId());

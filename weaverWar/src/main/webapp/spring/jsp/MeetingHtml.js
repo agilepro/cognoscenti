@@ -1646,6 +1646,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
         attachModalInstance.result
         .then(function (selectedTopics, topicName) {
+            console.log("CLOSING TOPIC DIALOG 2", selectedTopics);
             item.topics = selectedTopics;
             $scope.saveAgendaItem(item);
             $scope.extendBackgroundTime();

@@ -17,12 +17,14 @@
 </div>
 <div class="modal-body" ng-show="dialogMode>2">
     <br/>
-    Successfully sent email to {{message.userId}}.
+    Sending email to {{message.userId}} please wait a moment...
+    <br/>
+    . . . Successfully sent email to {{message.userId}}.
 </div>
 <div class="modal-footer">
+      <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left" ng-show="dialogMode==1">Don't Send Invite</button>
       <button ng-click="ok()"     class="btn btn-primary btn-raised" ng-show="dialogMode==1">Send Invitation</button>
       <button ng-click="done()"   class="btn btn-primary btn-raised" ng-show="dialogMode>1">Close Window</button>
-      <button ng-click="cancel()" class="btn btn-warning btn-raised" ng-show="dialogMode<3">Don't Send Invite</button>
 </div>
 </body>
 </html>

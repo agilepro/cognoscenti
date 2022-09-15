@@ -88,12 +88,12 @@
   <div style="clear:both"></div>
 </div>
 <div class="modal-footer">
-    <span ng-hide="agendaData.needsMerge" style="float:left;margin-left:20px;color:gray">
+    <button ng-hide="id=='~new~'" class="btn btn-warning btn-raised pull-left"
+        type="button" ng-click="ok()">Exit</button>
+    <button ng-hide="agendaData.needsMerge" class="btn">
         <input type="checkbox" ng-model="autoMerge"> Automatically Merge (danger)
-    </span>
+    </button>
     <button ng-show="agendaData.needsMerge" class="btn btn-danger btn-raised"
         type="button" ng-click="mergeNewData()"><i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
-    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Close</button>
 </div>
 

@@ -242,7 +242,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             <div>
 <% if (canUpdate) { %>
-                <button ng-click="openResponsibilityModal()" class="btn btn-default btn-raised">
+                <button ng-click="openResponsibilityModal()" class="btn btn-primary btn-raised">
                     Create Responsibility
                 </button>
 <% } %>
@@ -298,7 +298,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             <div>
 <% if (canUpdate) { %>
-                <button ng-click="createTerm()" class="btn btn-default btn-raised">Create Term</button>
+                <button ng-click="createTerm()" class="btn btn-primary btn-raised">
+                    <span class="fa fa-plus"></span> Create Term</button>
                 <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
 <% } %>
             </div>

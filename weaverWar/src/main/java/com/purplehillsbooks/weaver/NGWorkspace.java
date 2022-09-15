@@ -172,6 +172,9 @@ public class NGWorkspace extends NGPage {
             if (topicId.equals(lr.getId())) {
                 return lr;
             }
+            if (topicId.equals(lr.getUniversalId())) {
+                return lr;
+            }
         }
         return null;
     }
@@ -183,18 +186,6 @@ public class NGWorkspace extends NGPage {
             throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
         }
         return ret;
-    }
-
-    public TopicRecord getNoteByUidOrNull(String universalId) throws Exception {
-        if (universalId==null) {
-            return null;
-        }
-        for (TopicRecord lr : getAllDiscussionTopics()) {
-            if (universalId.equals(lr.getUniversalId())) {
-                return lr;
-            }
-        }
-        return null;
     }
 
 

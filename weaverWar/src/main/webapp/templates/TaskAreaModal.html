@@ -51,11 +51,11 @@
   <div style="clear:both"></div>
 </div>
 <div class="modal-footer">
-    <button ng-show="id=='~new~'" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Create</button>
-    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
+    <button class="btn btn-warning btn-raised pull-left" ng-click="cancel()">
         Cancel</button>
+    <button ng-show="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+        Create</button>
+    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+        Save</button>
 </div>
 

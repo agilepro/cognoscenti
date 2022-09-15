@@ -7,40 +7,36 @@
     </span>
   </div>
 </div>
+
 <div class="modal-body">
-    <div>
-      <div class="col-sm-12 col-md-6">
-        <div class="form-group">
-            <label for="status">Nominator: (you)</label>
-            <input class="form-control" ng-model="nom.owner"/>
-        </div>
-        <div class="form-group">
-            <label for="status">Nominee:</label>
-            <input class="form-control" ng-model="nom.nominee"/>
-        </div>
-        <div class="form-group">
-            <label for="status">Reason:</label>
-            <textarea class="form-control" ng-model="nom.comment"></textarea>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6">
-        <div class="guideVocal" >
-           Choose someone who you think would be a good fit for the role of 
-           {{parentScope.role.name}}.
-           <br/>
-           <br/>
-           Give a reason why you think this person would be a good
-           fit for the responsibilities involved.
-        </div>
-      </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group">
+        <label for="status">Nominator: (you)</label>
+        <input class="form-control" ng-model="nom.owner"/>
     </div>
+    <div class="form-group">
+        <label for="status">Nominee:</label>
+        <input class="form-control" ng-model="nom.nominee"/>
+    </div>
+    <div class="form-group">
+        <label for="status">Reason:</label>
+        <textarea class="form-control" ng-model="nom.comment"></textarea>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="guideVocal" >
+       Choose someone who you think would be a good fit for the role of 
+       {{parentScope.role.name}}.
+       <br/>
+       <br/>
+       Give a reason why you think this person would be a good
+       fit for the responsibilities involved.
+    </div>
+  </div>
+  <div style="clear:both"></div>
 </div>
-<div >
-            
-</div>
+
 <div class="modal-footer">
-    <div class="col-md-12">
-        <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Save</button>
-        <button ng-click="cancel()" class="btn btn-default btn-raised">Cancel</button>
-    </div>
+    <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
+    <button ng-click="saveAndClose()" class="btn btn-primary btn-raised">Save</button>
 </div>

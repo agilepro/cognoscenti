@@ -70,6 +70,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     }
 
     $scope.ok = function () {
+        console.log("CLOSING TOPIC DIALOG 1", $scope.topics);
         $modalInstance.close($scope.topics);
     };
 

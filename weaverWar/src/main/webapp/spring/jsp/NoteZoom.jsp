@@ -571,6 +571,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return "cursor:pointer";
     }
     $scope.startSend = function() {
+        $scope.subscriberBuffer = $scope.noteInfo.subscribers;
         $scope.addressMode = true;
     }
     $scope.updatePlayers = function() {
@@ -579,6 +580,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.postIt = function(sendEmail) {
         //automatic sending has been defeated, but just 
         //redirect to the manual sending to prepare the messsage
+        $scope.noteInfo.subscribers = $scope.subscriberBuffer;
         $scope.noteInfo.sendEmailNow = false;;
         $scope.setPhase("Freeform");
         $scope.addressMode = false;
@@ -1082,7 +1084,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <div class="well" ng-show="addressMode" ng-cloak>
       <h2>Email Notification To (Subscribers):</h2>
       <div>
-          <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notification email to"
+          <tags-input ng-model="subscriberBuffer" placeholder="Enter users to send notification email to"
                       display-property="name" key-property="uid"
                       replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                       on-tag-added="updatePlayers()" 
@@ -1283,7 +1285,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <span class="dropdown">
               <button class="btn btn-default btn-primary btn-raised" type="button" 
                       ng-click="saveSubscriberEdit()"
-                      title="Post this topic but don't send any email">
+                      title="Save this list of subscribers">
               Save </button>
           </span>
           </div>

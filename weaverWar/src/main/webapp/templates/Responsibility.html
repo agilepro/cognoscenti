@@ -8,28 +8,23 @@
   </div>
 </div>
 <div class="modal-body">
-    <div>
-      <div class="col-sm-12 col-md-6">
-        <div class="form-group">
-            <label for="status">Key:</label>
-            {{resp.key}}
-        </div>
-        <div class="form-group">
-            <label for="status">Description:</label>
-            <textarea ng-model="resp.text" class="form-control editBoxStyle markDownEditor" placeholder="Enter description"></textarea>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6">
-         
-      </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group">
+        <label for="status">Key:</label>
+        {{resp.key}}
     </div>
-</div>
-<div >
-            
+    <div class="form-group">
+        <label for="status">Description:</label>
+        <textarea ng-model="resp.text" class="form-control editBoxStyle markDownEditor" placeholder="Enter description"></textarea>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6">
+
+  </div>
+   
+  <div style="clear:both"></div>
 </div>
 <div class="modal-footer">
-    <div class="col-md-12">
-        <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Save</button>
-        <button ng-click="cancel()" class="btn btn-warning btn-raised">Cancel</button>
-    </div>
+        <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
+        <button ng-click="saveAndClose()" class="btn btn-primary btn-raised">Save</button>
 </div>

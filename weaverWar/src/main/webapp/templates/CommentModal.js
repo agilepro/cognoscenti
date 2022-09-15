@@ -14,7 +14,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     
     // are there unsaved changes?
 	$scope.unsaved = 0;
-    $scope.saveCount = 0;
 	// controls if comment can be saved
 	$scope.saveDisabled = false;
     $scope.promiseAutosave = null;
@@ -192,7 +191,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         console.log(postURL,updateRec);
         $http.post(postURL ,postdata)
         .success( function(data) {
-            $scope.saveCount++;
             if ("Y"==closeIt) {
                 $scope.closeAndShutDown();
             }
@@ -280,15 +278,15 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             $scope.unsaved = 0;
         }
         var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
-        $scope.secondsTillSave = 20 - secondsSinceKeypress;
-        $scope.secondsTillClose = 1200 - secondsSinceKeypress;
+        $scope.secondsTillSave = 5 - secondsSinceKeypress;
+        $scope.minutesTillClose = Math.floor((1200 - secondsSinceKeypress)/60);
         if (secondsSinceKeypress > 1200) {
             //it has been 1200 seconds (20 minutes) since any save or keystroke
             //time to close this pop up dialog
             console.log("Auto close time achieved, closing the dialog box", $scope);
             $scope.saveAndClose();
         }
-        if (secondsSinceKeypress < 20) {
+        if (secondsSinceKeypress < 5) {
             //user has typed in last 20 seconds to wait until 20 seconds of silence
             return;
         }

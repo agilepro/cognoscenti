@@ -327,6 +327,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </span>
     </div>
 
+<div>
+    <button class="btn btn-primary btn-raised" ng-click="startCreating()"><i class="fa fa-plus"></i> Create Decision</button>
+</div>
 
   <div  id="searchresultdiv0">
     <div class="taskListArea">

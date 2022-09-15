@@ -130,7 +130,7 @@ public class MeetingControler extends BaseController {
             //boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             //just make meeting available accessible by ANYONE
             boolean canAccess = true;
-            showJSPDepending(ar, ngw, "MeetingAvail.jsp", canAccess);
+            showJSPDepending(ar, ngw, "../anon/MeetingAvail.jsp", canAccess);
         }
         catch(Exception ex){
             throw new NGException("Unable to generate meeting page for id={0}", new Object[]{pageId,siteId} , ex);
@@ -841,13 +841,7 @@ public class MeetingControler extends BaseController {
               ar.assertNotFrozen(ngw);
 
               TopicRecord nr = null;
-              //
-              //commented out:  ALWAYS create a new minutes, never overwrite an existing one.
-              //
-              //String minId =  meeting.getMinutesId();
-              //if (minId!=null && minId.length()>0) {
-              //    nr = ngw.getNoteByUidOrNull(minId);
-              //}
+              
               if (nr==null) {
                   nr = ngw.createNote();
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());
