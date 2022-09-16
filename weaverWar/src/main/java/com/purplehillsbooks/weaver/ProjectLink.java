@@ -25,13 +25,13 @@ import org.w3c.dom.Element;
 
 /**
 * A StatusReport contains a set of ProjectLinks which tell the specific
-* information about a project to include in the status report.
+* information about a workspace to include in the status report.
 */
 public class ProjectLink extends DOMFace
 {
 
     //this is a temporary (non persistent) marker that can be used
-    //to garbage collect left over dangling project references.
+    //to garbage collect left over dangling workspace references.
     public boolean touchFlag = false;
 
     public ProjectLink(Document nDoc, Element nEle, DOMFace p) {
@@ -53,7 +53,7 @@ public class ProjectLink extends DOMFace
 
     /**
     * Convenience function that looks up and returns the index record for the
-    * associated project.  If the project does not exist, this returns null.
+    * associated workspace.  If the workspace does not exist, this returns null.
     */
     public NGPageIndex getPageIndexOrNull(Cognoscenti cog) throws Exception {
         return cog.getWSBySiteAndKey(getSiteKey(), getKey());

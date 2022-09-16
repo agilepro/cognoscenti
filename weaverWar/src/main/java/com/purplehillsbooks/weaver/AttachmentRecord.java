@@ -476,7 +476,7 @@ public class AttachmentRecord extends CommentContainer {
         //in case the attachment is deleted, undelete it for this new version
         clearDeleted();
 
-        AttachmentVersion av = AttachmentVersion.getNewProjectVersion(workspaceFolder,
+        AttachmentVersion av = AttachmentVersion.getNewWorkspaceVersion(workspaceFolder,
                 this, contents);
 
         //update the record
@@ -553,30 +553,32 @@ public class AttachmentRecord extends CommentContainer {
     /**
      * when a doc is moved to another workspace, use this to record where it was
      * moved to, so that we can link there.
-     */
+     *
     public void setMovedTo(String workspace, String otherId) throws Exception {
         setScalar("MovedToProject", workspace);
         setScalar("MovedToId", otherId);
     }
-
+*/
     /**
-     * get the project that this doc was moved to.
-     */
+     * get the workspace that this doc was moved to.
+     *
     public String getMovedToProjectKey() throws Exception {
         return getScalar("MovedToProject");
     }
-
+*/
     /**
      * get the id of the doc in the other workspace that this doc was moved to.
-     */
+     *
     public String getMovedToAttachId() throws Exception {
         return getScalar("MovedToId");
     }
-
+*/
     /**
      * If an attachment has a remote link, then it came originally from a
      * repository and can be synchronized with that remote copy as well.
      */
+    
+    /*
     public RemoteLinkCombo getRemoteCombo() throws Exception {
         return RemoteLinkCombo.parseLink(getAttribute(ATTACHMENT_ATTB_RLINK));
     }
@@ -589,11 +591,12 @@ public class AttachmentRecord extends CommentContainer {
             setAttribute(ATTACHMENT_ATTB_RLINK, combo.getComboString());
         }
     }
+
     public boolean hasRemoteLink() {
         String rl = getAttribute(ATTACHMENT_ATTB_RLINK);
         return (rl!=null && rl.length()>0);
     }
-
+*/
 
     /**
      * This is the time that the user actually made the attachment, regardless
@@ -615,7 +618,7 @@ public class AttachmentRecord extends CommentContainer {
      * this date will hold the Monday date. The purpose is to compare with the
      * current remote time to see if it has been modified since the last
      * synchronization.
-     */
+     *
     public long getFormerRemoteTime() {
         return safeConvertLong(getAttribute(ATTACHMENT_ATTB_RLMTIME));
     }
@@ -631,13 +634,13 @@ public class AttachmentRecord extends CommentContainer {
     public void setRemoteFullPath(String path) {
         setAttribute("remotePath", path);
     }
-
+*/
     /***
      * This is the flag which tells that file download in the workspace is read
      * only type or not. And if it is read only type then it prohibits user to
      * upload newer version of that file and synchronization of that file should
      * be one directional only
-     */
+
     public String getReadOnlyType() {
         return getAttribute("readonly");
     }
@@ -645,7 +648,7 @@ public class AttachmentRecord extends CommentContainer {
     public void setReadOnlyType(String readonly) {
         setAttribute("readonly", readonly);
     }
-
+     */
 
     /**
      * Tells whether there is a file behind this that can be served up

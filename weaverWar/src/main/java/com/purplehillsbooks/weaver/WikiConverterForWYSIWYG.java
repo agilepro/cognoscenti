@@ -115,10 +115,10 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             //    assumed to be a URL and the text value is used as a URL without modification.
             //
             // 2. otherwise it is assumed to a symbolic name in the
-            //    such as a site or project name, so look up the address of the project
+            //    such as a site or workspace name, so look up the address of the workspace
             //    and include the URL there.  There was a time that you could just type
-            //    the name of a project in, and get a link to it.
-            //    Here we do conversion to put the link to the project in, if it
+            //    the name of a workspace in, and get a link to it.
+            //    Here we do conversion to put the link to the workspace in, if it
             //    exits.
             //
             // After editing there should always be a link and we will not go through
@@ -134,7 +134,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                     linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "FrontPage.htm");
                 }
                 else {
-                    //didn't find a project with that name, so just link to hash which
+                    //didn't find a workspace with that name, so just link to hash which
                     //works out to be the current page
                     linkAddr="#";
                 }

@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 /**
 * A StatusReport is a record that holds the specification of a status
 * report that can be generated at any time.  It will point to a set of
-* projects, and will also have a set of tasks to exclude.
+* workspaces, and will also have a set of tasks to exclude.
 */
 public class StatusReport extends DOMFace
 {
@@ -81,7 +81,7 @@ public class StatusReport extends DOMFace
 
     public ProjectLink getOrCreateProject(String siteKey, String key) throws Exception {
 
-        //first lets make sure that this project is not already in the set
+        //first lets make sure that this workspace is not already in the set
         for (ProjectLink pl : getProjects()) {
             if (key.equals(pl.getKey()) && siteKey.equals(pl.getSiteKey())) {
                 return pl;

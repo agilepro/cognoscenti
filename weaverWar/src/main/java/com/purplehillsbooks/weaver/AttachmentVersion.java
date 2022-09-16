@@ -184,7 +184,7 @@ public class AttachmentVersion {
     * thread will be creating a new version at a time, and there is no confusion about
     * what version a file is.
     */
-    public synchronized static AttachmentVersion getNewProjectVersion(File wsFolder,
+    public synchronized static AttachmentVersion getNewWorkspaceVersion(File wsFolder,
             AttachmentRecord att, InputStream contents) throws Exception {
         String attachName = att.getNiceName();
         String attachmentId = att.getId();

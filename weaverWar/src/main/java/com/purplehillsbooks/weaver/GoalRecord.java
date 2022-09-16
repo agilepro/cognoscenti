@@ -392,19 +392,19 @@ public class GoalRecord extends BaseRecord {
     /**
      * when a task is moved to another workspace, use this to record where it was
      * moved to, so that we can link there.
-     */
+     *
     public void setMovedTo(String workspace, String otherId) throws Exception {
         setScalar("MovedToProject", workspace);
         setScalar("MovedToId", otherId);
     }
-
+*/
     /**
      * get the workspace that this task was moved to.
-     */
+     *
     public String getMovedToProjectKey() throws Exception {
         return getScalar("MovedToProject");
     }
-
+*/
     /**
      * get the id of the task in the other workspace that this task was moved to.
      */
@@ -1094,8 +1094,8 @@ public class GoalRecord extends BaseRecord {
 
         ArrayList<File> attachments = new ArrayList<File>();
         if (this.getDueDate()>0) {
-            File projectFolder = ngw.getContainingFolder();
-            File cogFolder = new File(projectFolder, ".cog");
+            File weFolder = ngw.getContainingFolder();
+            File cogFolder = new File(weFolder, ".cog");
             File icsFile = new File(cogFolder, "actitem"+this.getId()+".ics");
             File icsFileTmp = new File(cogFolder, "meet"+this.getId()+".ics~tmp"+System.currentTimeMillis());
             FileOutputStream fos = new FileOutputStream(icsFileTmp);

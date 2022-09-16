@@ -41,8 +41,8 @@ import com.purplehillsbooks.streams.MemFile;
 
 /**
 * A TopicRecord represents a Topic in a Workspace.
-* Topic exist on projects as quick ways for people to
-* write and exchange information about the project.
+* Topic exist on workspaces as quick ways for people to
+* write and exchange information about the workspace.
 * Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
@@ -449,41 +449,41 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * when a topic is moved to another project, use this to record where
+     * when a topic is moved to another workspace, use this to record where
      * it was moved to, so that we can link there.
-     */
+     *
      public void setMovedTo(String project, String otherId)
          throws Exception
      {
          setScalar("MovedToProject", project);
          setScalar("MovedToId", otherId);
      }
-
+*/
 
      /**
      * get the project that this topic was moved to.
-     */
+     *
      public String getMovedToProjectKey()
          throws Exception
      {
          return getScalar("MovedToProject");
      }
-
+*/
      /**
-     * get the id of the note (leaflet) in the other project that this note was moved to.
-     */
+     * get the id of the note (leaflet) in the other workspace that this note was moved to.
+     *
      public String getMovedToNoteId()
          throws Exception
      {
          return getScalar("MovedToId");
      }
-
+*/
      /**
      * the universal id is a globally unique ID for this topic, composed of the id for the
-     * server, the project, and the topic.  This is set at the point where the topic is created
+     * server, the workspace, and the topic.  This is set at the point where the topic is created
      * and remains with the topic as it is carried around the system as long as it is moved
-     * as a clone from a project to a clone of a project.   If it is copied or moved to another
-     * project for any other reason, then the universal ID should be reset.
+     * as a clone from a workspace to a clone of a workspace.   If it is copied or moved to another
+     * workspace for any other reason, then the universal ID should be reset.
      */
      public String getUniversalId() throws Exception {
          return getScalar("universalid");
@@ -627,7 +627,7 @@ public class TopicRecord extends CommentContainer {
       }
 
       /**
-       * get the labels on a document -- only labels valid in the project,
+       * get the labels on a document -- only labels valid in the workspace,
        * and no duplicates
        */
       public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {

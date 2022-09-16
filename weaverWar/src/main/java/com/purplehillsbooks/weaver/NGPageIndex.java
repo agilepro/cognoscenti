@@ -118,7 +118,7 @@ public class NGPageIndex {
     public String containerKey;
     public String wsSiteName;
     public String wsSiteKey;
-    public String parentKey;     // Key for the 'circle' hierarchy parent project
+    public String parentKey;     // Key for the 'circle' hierarchy parent workspace
     public Set<String> allUsers; // all users mentioned anywhere
 
 
@@ -205,8 +205,8 @@ public class NGPageIndex {
             // if there are any pages pointing to this term, then
             // this page is not an orphan.
             if (term.sourceLeaves.size() > 0) {
-                // found one project that points to this term that points
-                // to this project. That is enough to not be an orphan.
+                // found one workspace that points to this term that points
+                // to this workspace. That is enough to not be an orphan.
                 return false;
             }
         }
@@ -713,7 +713,7 @@ public class NGPageIndex {
     }
 
     /**
-     * The container (project or site) can have any number of names. For each
+     * The container (workspace or site) can have any number of names. For each
      * name, an associated term is found, and that term is made to point to this
      * container.
      */

@@ -502,8 +502,8 @@ public class WikiConverter
                 specialGraphic = "deletedLink.gif";
             } else if (foundPages.size() == 0) {
 
-                //TODO: eliminate this leftover ability to make a link to a project that does not exist
-                //We no longer expect people to make new projects this way.
+                //TODO: eliminate this leftover ability to make a link to a workspace that does not exist
+                //We no longer expect people to make new workspaces this way.
 
                 pageExists = false;
                 specialGraphic = "createicon.gif";

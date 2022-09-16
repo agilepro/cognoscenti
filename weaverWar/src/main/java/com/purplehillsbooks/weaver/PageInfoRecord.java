@@ -60,7 +60,7 @@ public class PageInfoRecord extends DOMFace
     }
 
     /**
-    * This is the unique ID of the entire project
+    * This is the unique ID of the entire workspace
     * across all sites.  It is up to the system to
     * make sure this is created and maintained unique
     * and it must never be changed (or links will be
@@ -133,10 +133,10 @@ public class PageInfoRecord extends DOMFace
     }
 
     /**
-    * Marking a project as deleted means that we SET the deleted time.
+    * Marking a workspace as deleted means that we SET the deleted time.
     * If there is no deleted time, then it is not deleted.
-    * A project that is deleted remains in the archive until a later
-    * date, when garbage has been collected.  If the project has remained
+    * A workspace that is deleted remains in the archive until a later
+    * date, when garbage has been collected.  If the workspace has remained
     * deleted for more than 90 days, then the file is actually
     * removed from the file system (and so are all the attachments)
     */
@@ -150,7 +150,7 @@ public class PageInfoRecord extends DOMFace
     * Set deleted date to the date that it is effectively deleted,
     * which is the current time in most cases.
     * Set the date to zero in order to clear the deleted flag
-    * and make the project to be not-deleted
+    * and make the workspace to be not-deleted
     */
     public void setDeleted(AuthRequest ar)
     {
@@ -173,17 +173,17 @@ public class PageInfoRecord extends DOMFace
 
 
     /**
-    * Marking a project as frozen means that we SET the frozen time and user.
+    * Marking a workspace as frozen means that we SET the frozen time and user.
     * If there is no frozen time, then it is not frozen.
     *
-    * The administrator of a project is allowed to freeze or unfreeze it.
+    * The administrator of a workspace is allowed to freeze or unfreeze it.
     * It is a lot like deleted, in that users can not make changes,
-    * a frozen project will remain in that state indefinitely for future
+    * a frozen workspace will remain in that state indefinitely for future
     * reference.
     */
     public boolean isFrozen()
     {
-        //deleted projects are always frozen by definition, even if they
+        //deleted workspaces are always frozen by definition, even if they
         //were not purposefully frozen at a point in time..
         if (isDeleted())
         {
@@ -196,7 +196,7 @@ public class PageInfoRecord extends DOMFace
     * Set deleted date to the date that it is effectively deleted,
     * which is the current time in most cases.
     * Set the date to zero in order to clear the deleted flag
-    * and make the project to be not-deleted
+    * and make the workspace to be not-deleted
     */
     public void freezeWorkspace(AuthRequest ar)
     {

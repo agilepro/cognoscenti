@@ -65,7 +65,7 @@ public class TestBuildSite implements TestSet {
         }
 
         NGBook testSite = testSiteCon.getSite();
-        NGBook.destroySiteAndAllProjects(testSite, cog);
+        NGBook.destroySiteAndAllWorkspaces(testSite, cog);
     }
 
 

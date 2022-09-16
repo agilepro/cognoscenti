@@ -377,7 +377,7 @@ public class NGBook extends ContainerCommon {
      * You should destroy all projects contained in the site
      * before calling this.
      */
-    public static void destroySiteAndAllProjects(NGBook site, Cognoscenti cog) throws Exception {
+    public static void destroySiteAndAllWorkspaces(NGBook site, Cognoscenti cog) throws Exception {
 
         for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(site.getKey())) {
             //for now, just avoid the project with projects.

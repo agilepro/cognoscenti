@@ -37,7 +37,7 @@ import com.purplehillsbooks.json.JSONObject;
 
 /**
 * NGPage is an abstract parent of a NGWorkspace.
-* A Workspace is the main container of a project/circle/etc.
+* A Workspace is the main container of a workspace/circle/etc.
 * "Page" is the old term, "Leaf" is also an old term, avoid these.
 * The current term for the user interaction is "Workspace"
 * This should all be moved into NGWorkspace to simplify.
@@ -321,7 +321,7 @@ public abstract class NGPage extends ContainerCommon {
             if (er.statusReadyToSend()) {
                 return true;
             }
-            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN PROJECT: "+this.getCombinedKey());
+            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN Workspace: "+this.getCombinedKey());
         }
         return false;
     }

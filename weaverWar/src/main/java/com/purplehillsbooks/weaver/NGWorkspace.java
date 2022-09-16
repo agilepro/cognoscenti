@@ -48,14 +48,14 @@ import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
 * NGWorkspace is a Container that represents a Workspace.
-* This kind of project/page/workspace exists anywhere in a site hierarchy.
-* The old project (NGPage) existed only in a single date folder, and all the attachments
+* This kind of workspace/page/workspace exists anywhere in a site hierarchy.
+* The old workspace (NGPage) existed only in a single date folder, and all the attachments
 * existed in the attachment folder.  The old NGPage is not used anymore,
 * but exists in name only in the class hierarchy.
 *
 * This workspace is represented by a folder in a site hierarchy,
 * and the attachments are just files within that folder.
-* The project file itself has a reserved name ".cog/ProjInfo.xml"
+* The workspace file itself has a reserved name ".cog/ProjInfo.xml"
 * and the old versions of attachments are in the ".cog" folder as well.
 */
 public class NGWorkspace extends NGPage {
@@ -403,12 +403,12 @@ public class NGWorkspace extends NGPage {
             if (atype.equals("FILE") && !isDel) {
                 String attName = att.getDisplayName();
                 if (attName==null || attName.length()==0) {
-                    System.out.println("Found attachement without name, id="+att.getId()+" in project ("+this.getCombinedKey()+")");
+                    System.out.println("Found attachement without name, id="+att.getId()+" in workspace ("+this.getCombinedKey()+")");
                 }
             }
             else if (atype.equals("GONE")) {
                 //old state no longer supported, this correction was in the code
-                //eliminated project folder files in Oct 2021 and so at some point remove this unnecessary check.
+                //eliminated workspace folder files in Oct 2021 and so at some point remove this unnecessary check.
                 att.setType("FILE");
             }
         }
@@ -532,9 +532,9 @@ public class NGWorkspace extends NGPage {
         long yearFromNow = System.currentTimeMillis() + 31000000000L;
         long nextTime = yearFromNow;
         if (getAllEmail().size()>0) {
-            //if any email is found in the project, then immediately mark it as
+            //if any email is found in the workspace, then immediately mark it as
             //needing an action.   The background email processing will move all email to DB.
-            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN PROJECT: "+this.getCombinedKey());
+            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN workspace: "+this.getCombinedKey());
             return System.currentTimeMillis()-100000;
         }
 
@@ -597,7 +597,7 @@ public class NGWorkspace extends NGPage {
         return true;
     }
     /**
-     * This will delete all email records in the project (workspace)
+     * This will delete all email records in the workspace (workspace)
      */
     private void clearAllEmail() throws Exception {
         DOMFace mail = requireChild("mail", DOMFace.class);
@@ -687,7 +687,7 @@ public class NGWorkspace extends NGPage {
     
     /**
      * Another structure migration.   Get rid of the files that are in the root
-     * of the project folder.
+     * of the workspace folder.
      */
     private void purgeRootLevelFiles() throws Exception {
         for (AttachmentRecord att : getAllAttachments()) {
