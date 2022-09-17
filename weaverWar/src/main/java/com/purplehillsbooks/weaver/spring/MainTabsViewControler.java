@@ -160,7 +160,7 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
-             streamJSPAnonUnwrapped(ar, "Index.jsp");
+             streamJSPAnon(ar, "Index.jsp");  /*needtest*/
              return null;
          }catch(Exception ex){
              throw new Exception("Failed to open welcome page." , ex);

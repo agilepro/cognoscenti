@@ -21,7 +21,6 @@
 package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +51,6 @@ import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
-import com.purplehillsbooks.weaver.util.APIClient;
 import com.purplehillsbooks.weaver.util.Thumbnail;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -884,6 +882,15 @@ public class UserController extends BaseController {
     long mailProblemCacheTime = 0;
     JSONObject cacheMailProblem = new JSONObject();
     private synchronized JSONObject getMailProblems(AuthRequest ar) throws Exception {
+        
+        //dummy code to make a good response because we are not longer
+        //using SendGrid and this must be rewritted for another service.
+        
+        cacheMailProblem.requireJSONArray("blocks");
+        cacheMailProblem.requireJSONArray("bounces");
+        cacheMailProblem.requireJSONArray("spams");
+        
+        /*  OLD CODE FOR SendGrid:
         if (mailProblemCacheTime < System.currentTimeMillis()-15*60*1000) {
             //it has been 15 minutes since fetching
             Cognoscenti cog = ar.getCogInstance();
@@ -911,6 +918,7 @@ public class UserController extends BaseController {
             cacheMailProblem = res;
             mailProblemCacheTime = System.currentTimeMillis();
         }
+        */
         return cacheMailProblem;
     }
     

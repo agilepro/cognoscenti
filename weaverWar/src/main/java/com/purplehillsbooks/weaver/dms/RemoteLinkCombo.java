@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver.dms;
 
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserPage;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 /**
 * This class parses and composes a special "combo" string value that used to be
@@ -42,6 +41,7 @@ public class RemoteLinkCombo
     public String folderId;
     public String rpath;
 
+/*
     public static RemoteLinkCombo parseLink(String rLink) throws Exception
     {
         if (rLink==null || rLink.length()==0) {
@@ -69,7 +69,7 @@ public class RemoteLinkCombo
 
         return new RemoteLinkCombo(userKey, folderId, rpath);
     }
-
+*/
     public RemoteLinkCombo(String _userKey, String _folderId, String _rpath)
     {
         if (_userKey==null) {

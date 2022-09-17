@@ -201,7 +201,7 @@ public class CreateProjectController extends BaseController {
             if (ar.isLoggedIn()) {
                 redirectBrowser(ar, ar.getUserProfile().getKey()+"/NewSiteRequest.htm");
             }
-            streamJSPAnonUnwrapped(ar, "NewSiteApplication.jsp");
+            streamJSPAnon(ar, "NewSiteApplication.jsp");  /*needtest*/
         }
         catch(Exception ex){
             throw new Exception("Unable to display the Register New Site page", ex);
@@ -218,7 +218,8 @@ public class CreateProjectController extends BaseController {
            }
            UserProfile uProf = ar.getUserProfile();
            if (uProf==null) {
-               redirectBrowser(ar, "../NewSiteApplication.htm");
+               //this should be impossible
+               throw new Exception("Inconsistancy: user logged in but does not have a profile: "+ar.getBestUserId());
            }
            String userKey = uProf.getKey();
            streamJSPUserLoggedIn(ar, userKey, "NewSiteRequest.jsp");

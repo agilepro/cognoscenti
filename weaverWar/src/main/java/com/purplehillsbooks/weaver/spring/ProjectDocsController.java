@@ -560,10 +560,18 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String id,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+        SharePortRecord spr = ngw.findSharePortOrNull(id);
+        if (spr == null) {
+            showWarningDepending(ar, "Unable to find a Share Port Side with the id: "
+                    +id+".  Maybe it was deleted, or maybe the URL was damaged?");
+            return;
+        }
+        
         ar.setParam("id", id);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnonUnwrapped(ar, "Share.jsp");
+        streamJSPAnon(ar, "Share.jsp");
     }
 
     
@@ -744,13 +752,13 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("commentId", commentId);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
-        streamJSPAnonUnwrapped(ar, "Unsub.jsp");
+        streamJSPAnon(ar, "Unsub.jsp");  /*needtest*/
     }
 
     @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
     public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPAnonUnwrapped(ar, "Feedback.jsp");
+        streamJSPAnon(ar, "Feedback.jsp");  /*needtest*/
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/SaveReply.json", method = RequestMethod.POST)

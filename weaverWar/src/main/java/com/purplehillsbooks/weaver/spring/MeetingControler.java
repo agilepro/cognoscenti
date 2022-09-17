@@ -83,7 +83,7 @@ public class MeetingControler extends BaseController {
             ar.setParam("pageId", pageId);
             ar.setParam("siteId", siteId);            
             if(!ar.isLoggedIn()) {
-                streamJSPAnonUnwrapped(ar, "MeetingAnon.jsp");
+                streamJSPAnon(ar, "MeetingAnon.jsp");  /*needtest*/
                 return;
             }
             if (ar.canAccessWorkspace() || canAccess) {
