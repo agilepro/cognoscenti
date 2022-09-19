@@ -3,11 +3,13 @@ package com.purplehillsbooks.weaver.util;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 
@@ -90,15 +92,46 @@ public class APIClient {
             osw.flush();
             osw.close();
             os.close();
+            
+            int returnCode = httpCon.getResponseCode();
+            if (200 == returnCode) {
 
-            InputStream is = httpCon.getInputStream();
-            JSONTokener jt = new JSONTokener(is);
-            JSONObject resp = new JSONObject(jt);
-
-            return resp;
+                InputStream is = httpCon.getInputStream();
+                JSONTokener jt = new JSONTokener(is);
+                JSONObject resp = new JSONObject(jt);
+                return resp;
+                
+            }
+            
+            if (400 <= returnCode && 500 > returnCode) {
+                
+                InputStream is = httpCon.getErrorStream();
+                JSONTokener jt = new JSONTokener(is);
+                JSONObject resp = new JSONObject(jt);
+                
+                //let try to recognize this, if it has an error member
+                //then there is some likelihood that this is a standard error message
+                if (resp.has("error")) {
+                    
+                    Exception remoteError = JSONException.convertJSONToException(resp);
+                    throw remoteError;
+                    
+                }
+                
+                System.out.println("RECEIVED UNRECOGNIZABLE JSON "+returnCode+" ERROR from "+url);
+                Writer w = new OutputStreamWriter(System.out, "UTF-8");
+                resp.write(w, 2, 2);
+                w.flush();
+                
+            }
+            
+            //we got an error code that we really can not handle, so just report 
+            //it here and give up
+            throw new JSONException("Received response code {0} unable to handle response.", Integer.toString(returnCode)); 
+           
         }
         catch (Exception e) {
-            throw new Exception("Unable to call the server site located at "+url, e);
+            throw new JSONException("Unable to call the server site located at {0}", e, url) ;
         }
     }
     

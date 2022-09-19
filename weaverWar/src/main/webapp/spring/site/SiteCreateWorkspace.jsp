@@ -9,6 +9,7 @@ Required parameter:
 */
 
     String siteId = ar.reqParam("siteId");
+    String parentKey = ar.defParam("parent", "");
     
     //this page should only be called when logged in and having access to the site
     ar.assertLoggedIn("Must be logged in to create a workspace");
@@ -49,10 +50,16 @@ Required parameter:
     boolean onlyAllowFrozen = (unfrozenCount >= workspaceLimit);
     boolean surplusWorkspaces = (unfrozenCount > workspaceLimit);
     
+    NGPageIndex parentWorkspace = ar.getCogInstance().getWSBySiteAndKey(siteId, parentKey);
+    
     JSONObject newWorkspace = new JSONObject();
     newWorkspace.put("newName", ar.defParam("pname", ""));
     newWorkspace.put("purpose", ar.defParam("purpose", ""));
-    newWorkspace.put("parentKey", ar.defParam("parentKey", ""));
+    if (parentWorkspace != null) {
+        newWorkspace.put("parentKey", parentWorkspace.containerKey);
+        newWorkspace.put("parentName", parentWorkspace.containerName);
+    }
+    
     newWorkspace.put("members", new JSONArray());
     newWorkspace.put("frozen", onlyAllowFrozen);
 
@@ -185,22 +192,19 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 .spacey td {
     padding:5px;
 }
+.form-group {
+    margin-top:25px;
+}
 </style>
 <div style="max-width:500px" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
 
-    <div class="form-group" ng-show="newWorkspace.parentKey">
-        <label ng-click="showNameHelp=!showNameHelp">
-            Parent
-        </label>
-        <input disabled="disabled" class="form-control" ng-model="newWorkspace.parentKey"/>
-    </div>
     <div class="form-group">
         <label ng-click="showNameHelp=!showNameHelp">
             New Workspace Name &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
         <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
     </div>
-    <div class="form-group">
+    <div>
         <label>
             URL Address:
         </label>
@@ -208,21 +212,23 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     </div>
     <div class="guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
         Pick a short clear name that would be useful to people that don't already know
-        about the group using the workspace.  You can change the name at any time,
-        however the first name you pick will set the URL address and that can not be
-        changed later.
+        about the group using the workspace.  You can change the <b>display name</b> at any time.
+        <br/>
+        The first name you pick will set the <b>URL address</b> for the workspace.  
+        That will be permanent; the URL can not be changed later.
     </div>
     <div class="form-group">
         <label ng-click="showPurposeHelp=!showPurposeHelp">
-            Workspace Purpose &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+            Workspace Aim &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
         <textarea class="form-control" ng-model="newWorkspace.purpose"></textarea>
     </div>
     <div class="guideVocal" ng-show="showPurposeHelp" ng-click="showPurposeHelp=!showPurposeHelp">
-        Describe in a sentence or two the <b>purpose</b> of the workspace in a way that
-        people who are not (yet) part of the workspace will understand,
+        Describe in a sentence or two the <b>aim</b> (or purpose) of the workspace in a way that
+        people who are not yet part of the workspace will understand,
         and to help them know whether they should or should not be
-        part of that workspace. <br/>
+        part of that workspace. 
+        <br/>
         This description will be available to the public if the workspace
         ever appears in a public list of workspaces.
     </div>
@@ -233,16 +239,21 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <div>
             <input type="checkbox" ng-model="newWorkspace.frozen"/> Frozen
             <% if (onlyAllowFrozen) { %> (only frozen allowed, already 
-                <%=workspaceLimit%><% if (surplusWorkspaces) {%>+<%}%> non-frozen workspaces) <% } %>
+                <%=workspaceLimit%><% if (surplusWorkspaces) {%>+<%}%> active workspaces) <% } %>
         </div>
     </div>
     <div class="guideVocal" ng-show="showFrozenHelp" ng-click="showFrozenHelp=!showFrozenHelp">
-        Workspaces can be active, frozen or deleted.  Only active workspaces can be 
-        updated in any way.  This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces, 
-        but you are allowed unlimited frozen workspaces to allow an accurate organizational hierarchy.
-        <br/>
-        If you are only allowed to create frozen, go ahead and create it frozen, and then 
-        go to the other projects and sort out which ones are and are not frozen.
+        Workspaces can be active, frozen or deleted.  Only active workspaces can 
+        support organizational work.
+        <br/><br/>
+        This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces according
+        to the current payment plan.
+        <br/><br/>       
+        You are allowed unlimited frozen workspaces to represent an accurate organizational hierarchy.
+        <br/><br/>
+        If you find you can only create a frozen workspace, go ahead and create it frozen, and then 
+        go to the other projects and sort out which ones need to be active, or change your plan
+        to allow for more.
     </div>
     <div class="form-group">
         <label ng-click="showMembersHelp=!showMembersHelp">
@@ -265,6 +276,23 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         After the workspace is created go to each <b>novice</b> user and send them an
         invitation to join.
     </div>
+    <div class="form-group" ng-show="newWorkspace.parentName">
+        <label ng-click="showParentHelp=!showParentHelp">
+            Initial Parent &nbsp; <i class="fa fa- fa-question-circle-o"></i>  
+        </label>
+        <div>
+            <input class="form-control" disabled ng-model="newWorkspace.parentName"/>
+        </div>
+    </div>
+    <div class="guideVocal" ng-show="showParentHelp" ng-click="showParentHelp=!showParentHelp">
+        Workspaces can be arranged into a tree, with child workspaces nested
+        below parent workspaces.  
+        <br/>
+        To change the structure of the tree, this parent can be changed at any time after 
+        the workspace is created.
+    </div>
+
+
 
 
     <div class="form-group">
