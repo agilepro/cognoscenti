@@ -564,7 +564,7 @@ public class ProjectDocsController extends BaseController {
         SharePortRecord spr = ngw.findSharePortOrNull(id);
         if (spr == null) {
             showWarningDepending(ar, "Unable to find a Share Port Side with the id: "
-                    +id+".  Maybe it was deleted, or maybe the URL was damaged?");
+                    +id+".  Maybe it was deleted, or maybe the link was damaged?");
             return;
         }
         

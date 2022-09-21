@@ -862,7 +862,8 @@ public class DOMFace
     }
     public boolean updateAttributeLong(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
-            setAttributeLong(fieldName, srce.getLong(fieldName));
+            long def = getAttributeLong(fieldName);
+            setAttributeLong(fieldName, srce.optLong(fieldName, def));
             return true;
         }
         return false;
@@ -872,7 +873,8 @@ public class DOMFace
     }
     public boolean updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
-            setAttributeLong(fieldName, srce.getInt(fieldName));
+            int def = getAttributeInt(fieldName);
+            setAttributeLong(fieldName, srce.optInt(fieldName, def));
             return true;
         }
         return false;
@@ -883,7 +885,8 @@ public class DOMFace
     }
     public boolean updateAttributeBool(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
-            setAttributeBool(fieldName, srce.getBoolean(fieldName));
+            boolean def = getAttributeBool(fieldName);
+            setAttributeBool(fieldName, srce.optBoolean(fieldName, def));
             return true;
         }
         return false;

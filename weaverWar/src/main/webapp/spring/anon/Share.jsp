@@ -26,6 +26,7 @@ Required parameters:
     if (sharePort.has("isActive")) {
         isActive = sharePort.getBoolean("isActive");
     }
+    String pageTitle = sharePort.getString("name");
     
 %>
 
@@ -34,6 +35,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    window.setMainPageTitle("<% ar.writeJS(pageTitle); %>");
     $scope.sharePort = <%sharePort.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.nowTime = new Date().getTime();
@@ -61,11 +63,11 @@ tr:hover {
 </style>
 
   
-<div ng-app="myApp" ng-controller="myCtrl">
+<div style="margin:50px">
 
-    <div class="page-name">
-        <h1 id="mainPageTitle">{{sharePort.name}}</h1>
-    </div>
+    <span style="color:white">
+       .    <!--unless this dot is here, the page does not show????-->
+    </span>
 
     <div ng-show="sharePort.isActive && sharePort.endTime>nowTime">
         <p>{{sharePort.message}}</p>
@@ -86,7 +88,7 @@ tr:hover {
            <td ng-show="rec.url" >
              <span class="fa fa-external-link"></scan></td>
            <td><b>{{rec.name}}</b> ~ {{rec.description}}</td>
-           <td class="dateColumn">{{rec.modifiedtime|date}}</td>
+           <td class="dateColumn">{{rec.modifiedtime|cdate}}</td>
            <td ng-show="rec.size>=0" style="text-align:right">{{rec.size|number}}</td>
            <td ng-hide="rec.size>=0" style="text-align:right;color:lightgray">Web Link</td>
         </tr>
@@ -118,4 +120,6 @@ tr:hover {
    
    </div>
     
+
+
 </div>
