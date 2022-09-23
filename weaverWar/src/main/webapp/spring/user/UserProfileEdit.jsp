@@ -84,6 +84,9 @@ myApp.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     }
+    $scope.exit = function() {
+        window.location='UserSettings.htm';
+    }
     
     $scope.makePreferred = function(email) {
         var newProfile = {};
@@ -137,25 +140,10 @@ myApp.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<fmt:setBundle basename="messages"/>
-<script>
-
-
-
-    function uploadUserPhoto(){
-        if(document.getElementById('fname').value.length <1 ){
-            alert('Please upload a photo');
-        }else{
-            document.getElementById('upload_user').submit();
-        }
-    }
-
-</script>
-
 
 <style>
 .spacey {
-    width:100%;
+    max-width:600px;
 }
 .spacey tr td {
     padding:3px;
@@ -175,11 +163,16 @@ myApp.controller('myCtrl', function($scope, $http) {
     <table class="spacey table">
         <tr>
             <td class="firstcol"></td>
-            <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
+            <td colspan="2">
+                <button class="btn btn-warning btn-raised" ng-click="exit()">Return to Profile</button>
+            </td>
         </tr>
         <tr>
             <td class="firstcol">Time Zone:</td>
             <td>
+                <div>
+                    <button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Time Zone</button>
+                </div>
                 <div class="form-inline">
                     Currently set to: <b>{{profile.timeZone}}</b>
                 </div>
@@ -192,8 +185,6 @@ myApp.controller('myCtrl', function($scope, $http) {
                 </div>
             </td>
         </tr>
-    </table>
-    <table>
         <tr ng-repeat="email in profile.ids">
             <td class="firstcol">Email Id:</td>
             <td>{{email}}</td>
@@ -205,17 +196,6 @@ myApp.controller('myCtrl', function($scope, $http) {
             </td>
         </tr>
     </table>
-    <hr/>
-
-    <table class="spacey">
-        <tr>
-            <td class="firstcol"></td>
-            <td>
-                <button class="btn btn-raised" onclick="window.location='UserSettings.htm'">Done</button>
-            </td>
-        </tr>
-    </table>
-
     <hr/>
 
     <% if (isSuperAdmin) { %>

@@ -221,7 +221,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
         <tr>
             <td class="firstcol canClick" ng-click="editField='name'">Full Name:</td>
-            <td class="secondcol">
+            <td class="secondcol" ng-dblclick="editField='name'">
               <div ng-hide="editField=='name'">{{userInfo.name}}</div>
               <div ng-show="editField=='name'">
                 <input class="form-control" ng-model="userInfo.name"/>
@@ -237,12 +237,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 You should include both first and last name, because in Weaver you will
                 be working with many people, some who know you, and some who don't.
                 It is better to include a complete name if possible.
+                <hr/>
+                Click in the leftmost column to change your name.
               </div>
             </td>
         </tr>
         <tr>
             <td class="firstcol canClick" ng-click="editField='icon'">Icon:</td>
-            <td>
+            <td ng-dblclick="editField='icon'">
               <div>
                 <img src="<%ar.writeHtml(photoSrc);%>" width="100" height="100" alt="user photo" />
                 &nbsp; &nbsp;
@@ -280,13 +282,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 The icon is an image of you that is used in lists of users.
                 By default you will be given a letter of the alphabet.
                 In Update Settings you can upload an image of yourself.
+                <hr/>
+                Click in the leftmost column to upload a new image.
               </div>
             </td>
         </tr>
 
         <tr>
             <td class="firstcol canClick" ng-click="editField='description'">Description:</td>
-            <td class="secondcol">
+            <td class="secondcol" ng-dblclick="editField='description'">
               <div ng-hide="editField=='description'"><div ng-bind-html="userInfo.description|wiki"></div></div>
               <div ng-show="editField=='description'">
                 <textarea class="form-control" ng-model="userInfo.description"></textarea>
@@ -299,6 +303,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </div>
               <div class="guideVocal thinnerGuide" ng-show="helpDescription">
                 Describe yourself for others to get to know you.
+                <hr/>
+                Click in the leftmost column to change the description.
               </div>
             </td>
         </tr>
@@ -306,7 +312,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol canClick" ng-click="editField='email'">Email Ids:</td>
-            <td class="secondcol">
+            <td class="secondcol" ng-dblclick="editField='email'">
                 <div ng-repeat="email in userInfo.ids">{{email}}<br/></div>
                 <div ng-show="editField=='email'" class="form-group">
                     <div class="well" style="max-width:500px">
@@ -335,12 +341,12 @@ if (ar.isLoggedIn()) { %>
             </td>
         </tr>
         <tr>
-            <td class="firstcol">Email Time Zone:</td>
+            <td class="firstcol canClick" ng-click="goToEdit()">Email Time Zone:</td>
             <td>{{userInfo.timeZone}} 
                 
             </td>
-            <td ng-hide="helpTimeZone">
-                <button class="btn" ng-click="helpTimeZone=!helpTimeZone">?</button>
+            <td ng-hide="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
+                <button class="btn" >?</button>
             </td>
             <td ng-show="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
               <div class="guideVocal thinnerGuide">
@@ -349,9 +355,26 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
+<%if (viewingSelf){ %>
+        <tr ng-show="browserZone!=userInfo.timeZone">
+            <td></td>
+            <td>
+                <div  style="color:red">
+                Note, your browser is set to '{{browserZone}}' 
+                <br/>
+                While your profile is set to '{{userInfo.timeZone}}'
+                <br/>
+                is above setting correct?
+                </div>
+                <div><button class="btn btn-default btn-raised" ng-click="setTimeZone(browserZone)">Set Your Time Zone to {{browserZone}}</button></div>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+<% } %>
         <tr>
             <td class="firstcol canClick" ng-click="editField='notifyPeriod'">Notify Period:</td>
-            <td class="secondcol">
+            <td class="secondcol" ng-dblclick="editField='notifyPeriod'">
               <div ng-hide="editField=='notifyPeriod'">
                 {{userInfo.notifyPeriod}} days
               </div>
@@ -364,7 +387,7 @@ if (ar.isLoggedIn()) { %>
             </td>
             <td class="thirdcol" ng-click="helpNotifyPeriod=!helpNotifyPeriod">
               <div ng-hide="helpNotifyPeriod">
-                <button class="btn" ng-click="helpNotifyPeriod=!helpNotifyPeriod">?</button>
+                <button class="btn">?</button>
               </div>
               <div class="guideVocal thinnerGuide" ng-show="helpNotifyPeriod" >
                 If you sign up for change notifications for a workspace, this setting will determine whether you get an email every day, every week, or every month.
@@ -381,8 +404,8 @@ if (ar.isLoggedIn()) { %>
                   <a href="FacSettings.htm" ng-show="userCache.facilitator.isActive"><button class="btn btn-default btn-raised">Configure Settings</button></a>
                 </div>
             </td>
-            <td ng-hide="helpFacilitator">
-                <button class="btn" ng-click="helpFacilitator=!helpFacilitator">?</button>
+            <td ng-hide="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+                <button class="btn" >?</button>
             </td>
             <td ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
               <div class="guideVocal thinnerGuide">
@@ -391,14 +414,15 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
+        <!--
         <tr>
             <td class="firstcol">Phone:</td>
             <td>
                 <input type="text" ng-model="userCache.facilitator.phone" ng-blur="updateFacilitator()"/> 
                 
             </td>
-            <td ng-hide="helpFacilitatorPhone">
-                <button class="btn" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">?</button>
+            <td ng-hide="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
+                <button class="btn" >?</button>
             </td>
             <td ng-show="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
               <div class="guideVocal thinnerGuide">
@@ -412,8 +436,8 @@ if (ar.isLoggedIn()) { %>
                 <input type="text" ng-model="userCache.facilitator.region" ng-blur="updateFacilitator()"/> 
                 
             </td>
-            <td ng-hide="helpFacilitatorRegion">
-                <button class="btn" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">?</button>
+            <td ng-hide="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
+                <button class="btn" >?</button>
             </td>
             <td ng-show="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
               <div class="guideVocal thinnerGuide">
@@ -421,16 +445,8 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
+        -->
 <%if (viewingSelf){ %>
-        <tr ng-show="browserZone!=userInfo.timeZone">
-            <td></td>
-            <td>
-                <div  style="color:red">Note, your browser is set to '{{browserZone}}' -- is above setting correct?</div>
-                <div><button class="btn btn-default btn-raised" ng-click="setTimeZone(browserZone)">Set Time Zone to {{browserZone}}</button></div>
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
 
     <%if (ar.isSuperAdmin()){ %>
         <tr >
@@ -447,8 +463,8 @@ if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol">Last Login:</td>
             <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
-            <td ng-hide="helpLastLogin">
-                <button class="btn" ng-click="helpLastLogin=!helpLastLogin">?</button>
+            <td ng-hide="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
+                <button class="btn" >?</button>
             </td>
             <td ng-show="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
               <div class="guideVocal thinnerGuide">
@@ -459,18 +475,21 @@ if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol">User Key:</td>
             <td>{{userInfo.key}}</td>
-            <td ng-hide="helpKey">
-                <button class="btn" ng-click="helpKey=!helpKey">?</button>
+            <td ng-hide="helpKey" ng-click="helpKey=!helpKey">
+                <button class="btn">?</button>
             </td>
             <td ng-show="helpKey" ng-click="helpKey=!helpKey">
               <div class="guideVocal thinnerGuide">
                 This is the internal unique identifier of this user.
+                You can not change this, this is permanent in order 
+                to tie everything you do together even if you change 
+                your email address.
               </div>
             </td>
         </tr>
     </table>
     
-    
+    <!--
     <div>
         <button class="btn btn-default btn-raised" ng-click="queryMailStatus()">Check Email Status</button>
     </div>
@@ -538,7 +557,7 @@ if (ar.isLoggedIn()) { %>
         </table>
     
     </div>
-    
+    -->
     
     
     
@@ -548,10 +567,6 @@ if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol">Password:</td>
             <td><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></td>
-        </tr>
-        <tr>
-            <td class="firstcol">API Token:</td>
-            <td><% ar.writeHtml(uProf.getLicenseToken());%></td>
         </tr>
     </table>
 <% } %>

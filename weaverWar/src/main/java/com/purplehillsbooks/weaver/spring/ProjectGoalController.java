@@ -707,8 +707,11 @@ public class ProjectGoalController extends BaseController {
             if (isNew) {
                 dr = ngw.createDecision();
                 decisionInfo.put("universalid", dr.getUniversalId());
-                dr.setTimestamp(ar.nowTime);
-                decisionInfo.put("timestamp", ar.nowTime);
+                
+                //if time not specified, or if specified time is bogus, then override
+                if (!decisionInfo.has("timestamp")  || decisionInfo.optLong("timestamp", -1) < 100000000) {
+                    decisionInfo.put("timestamp", ar.nowTime);
+                }
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
                 dr.updateDecisionFromJSON(decisionInfo, ngw, ar);
             }
