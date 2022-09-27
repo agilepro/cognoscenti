@@ -35,6 +35,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.logFilePath = "<% ar.writeJS(eLog.getFilePath().toString()); %>";
     $scope.newDate = "<%=searchDate%>";
+    $scope.errorDate = <%=errorDate%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -56,9 +57,10 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 
-    <div class="h1">Error Log for <%=searchDate%>  
+    <div class="h1">Error Log 
     <a href="ErrorList.htm?searchDate=<%=previousDate%>" title="View <%=previousDate%>">
         <i class="fa  fa-arrow-circle-left"></i></a>
+    starting {{errorDate|date: "yyyy-MM-dd HH:mm"}}
     <a href="ErrorList.htm?searchDate=<%=nextDate%>" title="View <%=nextDate%>">
         <i class="fa  fa-arrow-circle-right"></i></a>
     </div>

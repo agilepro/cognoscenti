@@ -28,14 +28,6 @@ app.controller('myCtrl', function($scope, $http) {
 });
 
 
-function reloadIfLoggedIn() {
-    if (SLAP.loginInfo.verified) {
-        window.location = "<%=ar.retPath%>";
-    }
-}
-
-SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, reloadIfLoggedIn);
-
 </script>
 
 

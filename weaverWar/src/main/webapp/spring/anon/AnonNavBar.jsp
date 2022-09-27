@@ -14,11 +14,13 @@
         <span class="weaver-logo">Weaver</span>
     </a>
 
-    <div class="pull-right">
+<% if (!ar.isLoggedIn()) { %>
+    <div class="navbar-brand pull-right">
         <a title="Authenticate Yourself" href="<%=loginLink%>">
             <span class="weaver-logo">Login</span>
         </a>
     </div>
+<% } %>
 
   </div>
 </nav>

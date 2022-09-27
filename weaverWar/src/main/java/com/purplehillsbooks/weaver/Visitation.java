@@ -103,6 +103,19 @@ public final class Visitation {
         }
         return newList;
     }
+
+    static long getVisitTime(List<Visitation> source, String uid) {
+        long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
+        for (Visitation v : source) {
+            if (v.timestamp < tooOld) {
+                continue;
+            }
+            if (uid.equals(v.userKey)) {
+                return v.timestamp;
+            }
+        }
+        return 0;
+    }
     
 
 }

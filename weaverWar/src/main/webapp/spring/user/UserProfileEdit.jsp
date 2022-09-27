@@ -43,17 +43,13 @@
 %>
 
 <script type="text/javascript">
-console.log("RUNNING");
 var myApp = angular.module('myApp');
-console.log("RUNNING",myApp);
 myApp.controller('myCtrl', function($scope, $http) {
-    console.log("CONTROLLER",myApp);
     window.setMainPageTitle("Edit Your Profile");
     $scope.profile = <%userObj.write(out,2,4);%>;
     $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
     
     $scope.myTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("TIMEZONE", $scope.myTimeZone);
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -88,17 +84,6 @@ myApp.controller('myCtrl', function($scope, $http) {
         window.location='UserSettings.htm';
     }
     
-    $scope.makePreferred = function(email) {
-        var newProfile = {};
-        newProfile.preferred = email;
-        $scope.updateServer(newProfile);
-    }
-    $scope.deleteEmail = function(email) {
-        //var newProfile = {};
-        //newProfile.removeId = email;
-        //$scope.updateServer(newProfile);
-        alert("In general there is no need to remove an email address from your profile.   Email is only sent to the 'preferred' email;  the others are never sent email.   If you need to remove an email address from your profile please contact the system administrator.");
-    }
     $scope.addEmail = function() {
         var newProfile = {};
         newProfile.preferred = $scope.newEmail;
@@ -110,7 +95,6 @@ myApp.controller('myCtrl', function($scope, $http) {
         }
         var rez = [];
         var filterList = parseLCList($scope.tzFilter);
-        console.log("filterList:", filterList);
         $scope.timeZoneList.forEach( function(item) {
             var found = true;
             var lcItem = item.toLowerCase();
@@ -126,7 +110,6 @@ myApp.controller('myCtrl', function($scope, $http) {
         if (rez.length>8) {
             rez = rez.slice(0,8);
         }
-        console.log("Filtered RTZ:", rez);
         return rez;
     }
     $scope.selectTimeZone = function(newTimeZone) {
@@ -185,33 +168,25 @@ myApp.controller('myCtrl', function($scope, $http) {
                 </div>
             </td>
         </tr>
-        <tr ng-repeat="email in profile.ids">
-            <td class="firstcol">Email Id:</td>
-            <td>{{email}}</td>
-            <td>
-                <span class="labelButton" style="background-color:yellow" ng-show="email==profile.preferred"
-                    title="This is where all email notifications from Weaver will be sent">Preferred</span>
-                <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
-                    ng-click="makePreferred(email)">Make Preferred</span>
-            </td>
-        </tr>
     </table>
     <hr/>
 
     <% if (isSuperAdmin) { %>
+    <div class="well">
     <h1>Admin Only Functions</h1>
-    <table class="spacey">
-        <tr>
-            <td class="firstcol">New Email:</td>
-            <td><input type="text" class="form-control" ng-model="newEmail" /></td>
-        </tr>
-        <tr>
-            <td class="firstcol"></td>
-            <td>
-                <button class="btn btn-primary btn-raised" ng-click="addEmail()">Add Email</button>
-            </td>
-        </tr>
-    </table>
+        <table class="spacey">
+            <tr>
+                <td class="firstcol">New Email:</td>
+                <td><input type="text" class="form-control" ng-model="newEmail" /></td>
+            </tr>
+            <tr>
+                <td class="firstcol"></td>
+                <td>
+                    <button class="btn btn-primary btn-raised" ng-click="addEmail()">Add Email</button>
+                </td>
+            </tr>
+        </table>
+    </div>
     <% } %>
 </div>
 

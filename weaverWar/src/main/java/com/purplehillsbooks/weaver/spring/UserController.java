@@ -683,8 +683,12 @@ public class UserController extends BaseController {
             
             //new parameter 'key' but support old 'uid' in case still there somewhere
             String userKey = ar.defParam("key", null);
-            if (userKey==null) {
+            if (userKey==null || userKey.length()==0) {
                 userKey = ar.defParam("uid", null);
+            }
+            if (userKey==null || userKey.length()==0) {
+                showWarningAnon(ar, "The FindPerson page requires an ID to search for but that appears to be missing from the URL.");
+                return;
             }
             ar.req.setAttribute("userKey",  userKey);
             UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
@@ -724,7 +728,7 @@ public class UserController extends BaseController {
             String token = uCache.genEmailAddressAttempt(newEmail);
 
             File templateFile = cog.getConfig().getFileFromRoot("email/ConfirmEmail.chtml");
-            OptOutAddr ooa = new OptOutAddr(user.getAddressListEntry());
+            OptOutAddr ooa = new OptOutAddr(new AddressListEntry(newEmail));
             String confirmAddress = "v/" + userKey + "/confirmEmailAddress.htm?token=" + token;
 
             JSONObject mailData = user.getJSON();
@@ -734,7 +738,7 @@ public class UserController extends BaseController {
 
             MailInst mi = MailInst.genericEmail("$", "$", "Confirm your email address", "");
             mi.setBodyFromTemplate(templateFile, mailData, ooa);
-            EmailSender.generalMailToOne(mi, new AddressListEntry(newEmail), ooa);
+            EmailSender.generalMailToOne(mi, user.getAddressListEntry(), ooa);
             sendJson(ar, mi.getJSON());
 
         }catch(Exception ex){

@@ -791,6 +791,9 @@ System.out.println("Weaver Server Object == Start the Server");
     public Set<String> whoIsLoggedIn() {
         return Visitation.getGlobalUsers(visitationList);
     }
+    public long getVisitTime(String uid) {
+        return Visitation.getVisitTime(visitationList, uid);
+    }
 
 
     public NGPageIndex getParentWorkspace(NGPageIndex child) throws Exception {

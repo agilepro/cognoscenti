@@ -24,8 +24,8 @@
     </td></tr>
 <tr><td>Result: &nbsp;</td>
     <td><b>{$req.status}</b></td></tr>
-<tr><td>Comment: &nbsp;</td>
-    <td>{$req.adminComment|html}</td></tr>
+<!--tr><td>Comment: &nbsp;</td>
+    <td>{$req.adminComment|html}</td></tr-->
 <tr><td>Site Name: &nbsp;</td>
     <td><a href="{$baseURL}t/{$req.siteId}/$/SiteAdmin.htm">{$req.siteName|html}</a></td></tr>
 <tr><td>Description: &nbsp;</td>

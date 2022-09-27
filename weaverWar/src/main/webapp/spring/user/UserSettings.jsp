@@ -171,6 +171,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
+    $scope.makePreferred = function(email) {
+        var newProfile = {};
+        newProfile.preferred = email;
+        $scope.updateServer(newProfile);
+        $scope.editField='';
+    }
+
     
 });
 </script>
@@ -312,8 +319,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 if (ar.isLoggedIn()) { %>
         <tr>
             <td class="firstcol canClick" ng-click="editField='email'">Email Ids:</td>
-            <td class="secondcol" ng-dblclick="editField='email'">
-                <div ng-repeat="email in userInfo.ids">{{email}}<br/></div>
+            <td class="secondcol" ng-dblclick="editField='email'"  ng-hide="editField=='email'">
+                <div ng-repeat="email in userInfo.ids">
+                    {{email}}
+                </div>
+            </td>
+            <td class="secondcol" ng-show="editField=='email'">
+                <div ng-repeat="email in userInfo.ids">
+                    <button class="btn btn-raised"
+                            ng-show="email==userInfo.preferred">Preferred Email:</button>
+                    <button class="btn btn-primary btn-raised" ng-click="makePreferred(email)" 
+                            ng-hide="email==userInfo.preferred">Make Preferred</button>
+                    {{email}}
+                </div>
                 <div ng-show="editField=='email'" class="form-group">
                     <div class="well" style="max-width:500px">
                     <h3>Add an email address to your profile</h3>

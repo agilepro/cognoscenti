@@ -5,12 +5,35 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 
-    Set<String> activeUsers = Cognoscenti.getInstance(request).whoIsLoggedIn();
+    Cognoscenti cog = Cognoscenti.getInstance(request);
+    Set<String> activeUsers = cog.whoIsLoggedIn();
+    
 
  
 
 %>
-<div class="content tab01" style="display:block;" >
+
+<script type="text/javascript">
+console.log("RUNNING");
+var myApp = angular.module('myApp');
+console.log("RUNNING",myApp);
+myApp.controller('myCtrl', function($scope, $http) {
+
+    $scope.lastSend = "<%=EmailSender.lastEmailProcessTime%>";
+    $scope.lastFailure = "<%=EmailSender.lastEmailFailureTime%>";
+
+});
+
+</script>
+
+<style>
+.table {
+    max-width:800px;
+}
+</style>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+  <div class="content tab01" style="display:block;" >
     <div class="section_body">
         <div class="h1">Email Send Settings</div>
 
@@ -43,7 +66,8 @@
             </tr>
             <tr>
                 <td>Last Email Send</td>
-                <td><%=SectionUtil.getDateAndTime(EmailSender.lastEmailProcessTime)%></td>
+                <td>{{lastSend|date:"dd-MMM-yyyy HH:mm:ss"}}  
+                    (server:<%=SectionUtil.getDateAndTime(EmailSender.lastEmailProcessTime)%>)</td>
             </tr>
             <tr>
                 <td>Number of Email Sent</td>
@@ -51,7 +75,8 @@
             </tr>
             <tr>
                 <td>Last Email Error Time</td>
-                <td><%=SectionUtil.getDateAndTime(EmailSender.lastEmailFailureTime)%></td>
+                <td>{{lastFailure|date:"dd-MMM-yyyy HH:mm:ss"}}  
+                    (server:<%=SectionUtil.getDateAndTime(EmailSender.lastEmailFailureTime)%>)</td>
             </tr>
             <tr>
                 <td>Last Email Error</td>
@@ -92,24 +117,38 @@
                 <td>Password</td>
                 <td>****************</td>
             </tr>
+            <tr>
+                <td>Last Inbox Read</td>
+                <td><% SectionUtil.nicePrintDateAndTime(out, EmailListener.lastFolderRead);%></td>
+            </tr>
         </table>
-        <p>
-            Last Inbox Read: <% SectionUtil.nicePrintDateAndTime(out, EmailListener.lastFolderRead);%>
-        </p>
 
     </div>
-</div>
+  </div>
 
 
-<div>
+  <div>
     <div class="h1">Active Users</div>
-    <ul>
+    <table class="table">
+      <tr>
+        <th>User ID</th>
+        <th>Name</th>
+        <th>Last Access</th>
+      </tr>
         <%
         for (String userid : activeUsers) {
-            UserProfile user = UserManager.getUserProfileByKey(userid);
-            out.write("\n<li><a href=\"../"+userid+"/PersonShow.htm\">"+userid+"</a>, "+user.getName()+"</li>");
+            UserProfile user = UserManager.getUserProfileByKey(userid); %>
+          <tr>
+            <td><a href=\"../<%=userid%>/PersonShow.htm\"><%=userid%></a></td>
+            <td><%=user.getName()%></td>
+            <td>{{<%=cog.getVisitTime(userid)%>|cdate}}</td>
+          </tr>
+            <%
         }
         %>
-    </ul>
-</div>
+    </table>
+  </div>
+  
+  <div style="height:300px"></div>
 
+</div>
