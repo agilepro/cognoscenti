@@ -60,7 +60,13 @@ public class TopicController extends BaseController {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-           TopicRecord topic = ngw.getNoteOrFail(topicId);
+           TopicRecord topic = ngw.getDiscussionTopic(topicId);
+           if (topic==null) {
+               showWarningDepending(ar, "Can not find a discussion topic with the id  "+topicId
+                       +".  Was it deleted?");
+               return;
+           }
+
            request.setAttribute("topicId", topicId);
            boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);
            showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);

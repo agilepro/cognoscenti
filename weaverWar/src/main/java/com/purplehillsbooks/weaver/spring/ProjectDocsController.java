@@ -137,6 +137,10 @@ public class ProjectDocsController extends BaseController {
         request.setAttribute("aid", aid);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         AttachmentRecord att = ngw.findAttachmentByID(aid);
+        if (att==null) {
+            showWarningDepending(ar, "Can not find a document with the id  "+aid+".  Was it deleted?");
+            return;
+        }
         boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
         BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
     }

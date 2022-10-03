@@ -792,7 +792,16 @@ System.out.println("Weaver Server Object == Start the Server");
         return Visitation.getGlobalUsers(visitationList);
     }
     public long getVisitTime(String uid) {
-        return Visitation.getVisitTime(visitationList, uid);
+        Visitation visit = Visitation.getRecentVisit(visitationList, uid);
+        return visit.timestamp;
+    }
+    public String getVisitWorkspace(String uid) {
+        Visitation visit = Visitation.getRecentVisit(visitationList, uid);
+        return visit.workspace;
+    }
+    public String getVisitSite(String uid) {
+        Visitation visit = Visitation.getRecentVisit(visitationList, uid);
+        return visit.site;
     }
 
 

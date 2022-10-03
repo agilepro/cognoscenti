@@ -211,9 +211,10 @@ public class ProjectSettingController extends BaseController {
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         String eGenId = ar.defParam("id", null);
         if (eGenId!=null) {
-        EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
+            EmailGenerator eGen = ngw.getEmailGeneratorOrNull(eGenId);
             if (eGen==null) {
                 showWarningDepending(ar, "Can not find an email generator with the id: "+eGenId);
+                return;
             }
         }
         showJSPMembers(ar, siteId, pageId, "SendNote.jsp");

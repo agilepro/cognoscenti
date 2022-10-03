@@ -104,17 +104,39 @@ public final class Visitation {
         return newList;
     }
 
-    static long getVisitTime(List<Visitation> source, String uid) {
+    /**
+     * gets the most recent visitation
+     */
+    static Visitation getRecentVisit(List<Visitation> source, String uid) {
         long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
+        Visitation ret = null;
         for (Visitation v : source) {
             if (v.timestamp < tooOld) {
                 continue;
             }
             if (uid.equals(v.userKey)) {
-                return v.timestamp;
+                if (ret==null) {
+                    ret = v;
+                }
+                else if (v.timestamp > ret.timestamp) {
+                    ret = v;
+                }
             }
         }
-        return 0;
+        return ret;
+    }
+    static List<Visitation> getAllVisits(List<Visitation> source, String uid) {
+        long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
+        List<Visitation> ret = new ArrayList<Visitation>();
+        for (Visitation v : source) {
+            if (v.timestamp < tooOld) {
+                continue;
+            }
+            if (uid.equals(v.userKey)) {
+                ret.add(v);
+            }
+        }
+        return ret;
     }
     
 

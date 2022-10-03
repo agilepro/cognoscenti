@@ -121,6 +121,7 @@ public class ProjectGoalController extends BaseController {
             if (goal==null) {
                 showWarningDepending(ar, "Can not find an action item with the id  "+taskId
                         +".  It might have been deleted or there might be some other mistake.");
+                return;
             }
             if(goal.isPassive()) {
                 throw new Exception("Passive goals are not supported any more");
