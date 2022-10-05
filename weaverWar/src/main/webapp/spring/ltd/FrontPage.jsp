@@ -13,9 +13,9 @@ Required parameters:
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId);
-    NGWorkspace ngp = ngpi.getWorkspace();
-    ar.setPageAccessLevels(ngp);
-    NGBook site = ngp.getSite();
+    NGWorkspace ngw = ngpi.getWorkspace();
+    ar.setPageAccessLevels(ngw);
+    NGBook site = ngw.getSite();
     Cognoscenti cog = ar.getCogInstance();
 
     
@@ -30,9 +30,9 @@ Required parameters:
     JSONArray recentChanges = new JSONArray();
 
     JSONObject thisCircle = new JSONObject();
-    thisCircle.put("name", ngp.getFullName());
-    thisCircle.put("key",  ngp.getKey());
-    thisCircle.put("site", ngp.getSiteKey());
+    thisCircle.put("name", ngw.getFullName());
+    thisCircle.put("key",  ngw.getKey());
+    thisCircle.put("site", ngw.getSiteKey());
 
     JSONObject parent = new JSONObject();
     NGPageIndex parentIndex = cog.getParentWorkspace(ngpi);
@@ -65,10 +65,31 @@ Required parameters:
     JSONArray otherMembers = new JSONArray();
     JSONArray myMeetings = new JSONArray();
     JSONArray myActions = new JSONArray();
-    
-
-    
     boolean isWatching = uProf.isWatch(siteId+"|"+pageId);
+    
+    List<TopicRecord> ltdTopics = new ArrayList<TopicRecord>();
+    
+    for (TopicRecord topicRec : ngw.getAllDiscussionTopics()) {
+        NGRole subscribers = topicRec.getSubscriberRole();
+        if (!subscribers.isExpandedPlayer(uProf, ngw)) {
+            continue;
+        }
+        ltdTopics.add(topicRec);
+    }
+    
+    List<MeetingRecord> ltdMeetings = new ArrayList<MeetingRecord>();
+    for (MeetingRecord meet : ngw.getMeetings()) {
+        boolean found = false;
+        for (String participant : meet.getParticipants()) {
+            if (uProf.hasAnyId(participant)) {
+                found = true;
+            }
+        }
+        if (found) {
+            ltdMeetings.add(meet);
+        }
+    }
+    
 
 %>
 
@@ -78,7 +99,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Front Page");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.workspaceConfig = <%ngp.getConfigJSON().write(out,2,4);%>;
+    $scope.workspaceConfig = <%ngw.getConfigJSON().write(out,2,4);%>;
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
     $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
     $scope.parent     = <%parent.write(out,2,4);%>;
@@ -88,7 +109,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.otherMembers = <%otherMembers.write(out,2,4);%>;
     $scope.myMeetings = <%myMeetings.write(out,2,4);%>;
     $scope.myActions  = <%myActions.write(out,2,4);%>;
-    $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
+    $scope.purpose = "<%ar.writeJS(ngw.getProcess().getDescription());%>";
     $scope.isWatching = <%=isWatching%>;
 
     $scope.filter = "";
@@ -236,7 +257,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in the workspace for '<%ar.writeHtml(ngp.getFullName());%>'."
+                    +" participate in the workspace for '<%ar.writeHtml(ngw.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
                     +" participate directly with the others through the site.";
     $scope.openInviteSender = function (player) {
@@ -245,7 +266,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         proposedMessage.msg = $scope.inviteMsg;
         proposedMessage.userId = player.uid;
         proposedMessage.name   = player.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
+        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "FrontPage.htm")%>";
         
         var modalInstance = $modal.open({
             animation: false,
@@ -268,6 +289,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }, function () {
             //cancel action - nothing really to do
         });
+
+        
+    };
         
     $scope.sendEmailLoginRequest = function(message) {
         SLAP.sendInvitationEmail(message);
@@ -281,8 +305,29 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
-
-        
+    
+    $scope.takeStep = function() {
+        $scope.enterMode = true;
+        $scope.alternateEmailMode = false;
+    }
+    $scope.roleChange = function() {
+        var data = {};
+        data.op = 'Join';
+        data.roleId = "Members";
+        data.desc = $scope.enterRequest;
+        console.log("Requesting to ",data);
+        var postURL = "rolePlayerUpdate.json";
+        var postdata = angular.toJson(data);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            alert("OK, you have requested membership");
+            $scope.enterMode = false;
+        })
+        .error( function(data, status, headers, config) {
+            console.log("GOT ERROR ",data);
+            $scope.reportError(data);
+        });
     };
 
 
@@ -318,8 +363,84 @@ a {
       </div>
       <div class="panel-body">
         You do not play any role in this workspace.
+        <br/>
+        You do have some guest access to some things.
       </div>
     </div>
+
+<%
+    if (ltdTopics.size()>0) {
+%>
+    <div class="panel panel-default">
+      <div class="panel-heading headingfont">
+          <div style="float:left">Discussion Topics you Subscribe to</div>
+          <div style="clear:both"></div>
+      </div>
+      <div class="panel-body">
+
+<%
+    for (TopicRecord topicRec : ltdTopics) {
+%>
+            <div class="clipping">
+              <a href="noteZoom<%=topicRec.getId()%>.htm">
+                <i class="fa fa-lightbulb-o"></i> <%ar.writeHtml( topicRec.getSubject() );%>
+                </a>
+            </div>
+<%
+        }
+%>
+      </div>
+    </div>
+<%
+    }
+%>
+
+
+<%
+    if (ltdMeetings.size()>0) {
+%>
+    <div class="panel panel-default">
+      <div class="panel-heading headingfont">
+          <div style="float:left">Meetings you are Participant in</div>
+          <div style="clear:both"></div>
+      </div>
+      <div class="panel-body">
+
+<%
+    for (MeetingRecord meet : ltdMeetings) {
+%>
+            <div class="clipping">
+              <i class="fa fa-gavel"></i> <a href="MeetingHtml.htm?id=<%=meet.getId()%>"><%=meet.getName()%>, {{<%=meet.getStartTime()%>|date: "MMM dd, HH:mm"}}</a>
+            </div>
+<%
+        }
+%>
+      </div>
+    </div>
+<%
+    }
+%>
+
+
+
+        <div ng-hide="enterMode || alternateEmailMode" class="warningBox">
+            <div ng-show="isRequested">
+                 You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/>
+                 The status of that request is: <b>{{requestState}}</b>.
+            </div>
+            <div ng-hide="isRequested">
+                If you think you should be a member then please:  
+            </div>
+            <button class="btn btn-primary btn-raised" ng-click="takeStep()">Request Membership</button>
+        </div>
+        <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
+            <div>Enter a reason to join the workspace:</div>
+            <textarea ng-model="enterRequest" class="form-control"></textarea>
+            <button class="btn btn-primary btn-raised" ng-click="roleChange()">Request Membership</button>
+            <button class="btn btn-warning btn-raised" ng-click="enterMode=false">Cancel</button>
+        </div>
+
+
 
 </div>
 

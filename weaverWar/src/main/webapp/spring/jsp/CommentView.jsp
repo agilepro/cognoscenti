@@ -265,9 +265,11 @@ function setUpCommentMethods($scope, $http, $modal) {
     $scope.generateCommentHtml = function(cmt) {
         cmt.html2 = convertMarkdownToHtml(cmt.body);
         cmt.outcomeHtml = convertMarkdownToHtml(cmt.outcome);
-        cmt.responses.forEach( function(item) {
-            item.html = convertMarkdownToHtml(item.body);
-        });
+        if (cmt.responses) {
+            cmt.responses.forEach( function(item) {
+                item.html = convertMarkdownToHtml(item.body);
+            });
+        }
     }
     
     $scope.getOutcomeHtml = function(cmt) {
