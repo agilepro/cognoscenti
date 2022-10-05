@@ -57,6 +57,13 @@ public class CommentController extends BaseController {
     public void commentZoom(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+        long cid = Mel.safeConvertLong(ar.reqParam("cid"));
+        CommentRecord selectedComment = ngw.getCommentOrNull(cid);
+        if (selectedComment==null) {
+            showWarningDepending(ar, "Can not find comment, proposal, or question with the id  "+cid+".  Was it deleted?");
+            return;
+        }
         showJSPMembers(ar, siteId, pageId, "CommentZoom.jsp");
     }
 

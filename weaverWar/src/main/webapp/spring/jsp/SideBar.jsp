@@ -97,7 +97,13 @@
         %></li><% 
     }
     %>
-    <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>YOU CAN EDIT<% } %></li>
+    <li style="color:black">  <% if (userIsReadOnly) { %>
+        <img src="<%=ar.retPath%>assets/ReadIndicator.png" title="You have read only access to this workspace" 
+             style="width:30px;width:30px;margin-left:20px"/>
+    <% } else { %>
+        <img src="<%=ar.retPath%>assets/WriteIndicator.png" title="You have full edit access to this workspace" 
+             style="width:30px;width:30px;margin-left:20px"/>
+    <% } %></li>
     
   </ul>
   <%if (false) {ar.write(wrappedJSP);} %>
