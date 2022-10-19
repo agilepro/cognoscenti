@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.dms.RemoteLinkCombo;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -40,24 +39,13 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 public class AttachmentRecord extends CommentContainer {
-    private static String ATTACHMENT_ATTB_RLINK = "rlink";
     private static String ATTACHMENT_ATTB_RCTIME = "rctime";
-    public static String ATTACHMENT_ATTB_RLMTIME = "rlmtime";
 
     private String niceName = null;
     protected NGWorkspace container = null;
 
     public AttachmentRecord(Document doc, Element definingElement, DOMFace attachmentContainer) {
         super(doc, definingElement, attachmentContainer);
-
-        //retire the separate roleAccess and labels records, and make a single
-        //consolidated list.  This migrates any existing roleAccess entries to the
-        //labels vector.  Migration added June 2015, however roles on attachments
-        //was never fully implemented in the UI and rarely used.
-        for (String roleName : getVector("accessRole")) {
-            this.addVectorValue("labels", roleName);
-        }
-        clearVector("accessRole");
     }
 
     public void setContainer(NGWorkspace newCon) throws Exception {
@@ -551,54 +539,6 @@ public class AttachmentRecord extends CommentContainer {
 
 
     /**
-     * when a doc is moved to another workspace, use this to record where it was
-     * moved to, so that we can link there.
-     *
-    public void setMovedTo(String workspace, String otherId) throws Exception {
-        setScalar("MovedToProject", workspace);
-        setScalar("MovedToId", otherId);
-    }
-*/
-    /**
-     * get the workspace that this doc was moved to.
-     *
-    public String getMovedToProjectKey() throws Exception {
-        return getScalar("MovedToProject");
-    }
-*/
-    /**
-     * get the id of the doc in the other workspace that this doc was moved to.
-     *
-    public String getMovedToAttachId() throws Exception {
-        return getScalar("MovedToId");
-    }
-*/
-    /**
-     * If an attachment has a remote link, then it came originally from a
-     * repository and can be synchronized with that remote copy as well.
-     */
-    
-    /*
-    public RemoteLinkCombo getRemoteCombo() throws Exception {
-        return RemoteLinkCombo.parseLink(getAttribute(ATTACHMENT_ATTB_RLINK));
-    }
-
-    public void setRemoteCombo(RemoteLinkCombo combo) {
-        if (combo == null) {
-            setAttribute(ATTACHMENT_ATTB_RLINK, null);
-        }
-        else {
-            setAttribute(ATTACHMENT_ATTB_RLINK, combo.getComboString());
-        }
-    }
-
-    public boolean hasRemoteLink() {
-        String rl = getAttribute(ATTACHMENT_ATTB_RLINK);
-        return (rl!=null && rl.length()>0);
-    }
-*/
-
-    /**
      * This is the time that the user actually made the attachment, regardless
      * of the time that the document was edited, or any other time that the doc
      * might have.
@@ -610,45 +550,6 @@ public class AttachmentRecord extends CommentContainer {
     public void setAttachTime(long attachTime) {
         setAttribute(ATTACHMENT_ATTB_RCTIME, Long.toString(attachTime));
     }
-
-    /**
-     * This is the timestamp of the document on the remote server at the time
-     * that it was last synchronized. Thus if the remote file was modified on
-     * Monday, and someone synchronized that version to the workspace on Tuesday,
-     * this date will hold the Monday date. The purpose is to compare with the
-     * current remote time to see if it has been modified since the last
-     * synchronization.
-     *
-    public long getFormerRemoteTime() {
-        return safeConvertLong(getAttribute(ATTACHMENT_ATTB_RLMTIME));
-    }
-
-    public void setFormerRemoteTime(long attachTime) {
-        setAttribute(ATTACHMENT_ATTB_RLMTIME, Long.toString(attachTime));
-    }
-
-    public String getRemoteFullPath() {
-        return getAttribute("remotePath");
-    }
-
-    public void setRemoteFullPath(String path) {
-        setAttribute("remotePath", path);
-    }
-*/
-    /***
-     * This is the flag which tells that file download in the workspace is read
-     * only type or not. And if it is read only type then it prohibits user to
-     * upload newer version of that file and synchronization of that file should
-     * be one directional only
-
-    public String getReadOnlyType() {
-        return getAttribute("readonly");
-    }
-
-    public void setReadOnlyType(String readonly) {
-        setAttribute("readonly", readonly);
-    }
-     */
 
     /**
      * Tells whether there is a file behind this that can be served up
@@ -882,7 +783,7 @@ public class AttachmentRecord extends CommentContainer {
 
         JSONArray allCommentss = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCommentss.put(cr.getCompleteJSON());
+            allCommentss.put(cr.getJSONWithDocs(ngw));
         }
         thisDoc.put("comments",  allCommentss);
         

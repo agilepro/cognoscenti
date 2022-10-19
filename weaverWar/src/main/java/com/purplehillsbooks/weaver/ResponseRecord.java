@@ -158,7 +158,7 @@ public class ResponseRecord extends DOMFace
         data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw));
         data.put("parentName", noteOrMeet.emailSubject());
         data.put("commentURL", ar.baseURL + ar.getResourceURL(ngw,  "CommentZoom.htm?cid="+cr.getTime()));
-        data.put("comment", cr.getCompleteJSON());
+        data.put("comment", cr.getJSONWithDocs(ngw));
         data.put("response", this.getJSON());
         data.put("choice", this.getChoice());
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));

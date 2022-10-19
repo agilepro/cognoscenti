@@ -37,9 +37,6 @@ public class MeetingRecord extends DOMFace {
     public MeetingRecord(Document doc, Element ele, DOMFace p) throws Exception {
         super(doc, ele, p);
 
-        //new "number" field added, and this initializes it
-        renumberItems();
-
         String defaultLayout = getScalar("defaultLayout");
         if (defaultLayout==null || defaultLayout.length()==0) {
             setScalar("defaultLayout", "MinutesDetails.chtml");
@@ -48,6 +45,8 @@ public class MeetingRecord extends DOMFace {
         if (notifyLayout==null || notifyLayout.length()==0) {
             setScalar("notifyLayout", "AgendaDetail.chtml");
         }
+        
+        System.out.println("++constructed MeetingRecord "+getId());
     }
 
 

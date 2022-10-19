@@ -53,7 +53,7 @@ Required parameters:
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
     String originalSubject = emailContext.emailSubject();
     for (CommentRecord comm : emailContext.getPeerComments()) {
-        comments.put(comm.getCompleteJSON());
+        comments.put(comm.getJSONWithDocs(ngw));
     }
 %>
 

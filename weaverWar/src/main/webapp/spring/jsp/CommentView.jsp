@@ -125,6 +125,14 @@ function setUpCommentMethods($scope, $http, $modal) {
         });
     };
 
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
+    }
 
     $scope.stateStyle = function(cmt) {
         if (cmt.state==11) {
@@ -314,11 +322,11 @@ function setUpCommentMethods($scope, $http, $modal) {
         .success( function(data) {
             $scope.extendBackgroundTime();
             console.log("SUCCESS DECISION:", data);
-            $scope.refreshCommentContainer();
+            $scope.refreshCommentList();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
-            $scope.refreshCommentContainer();
+            $scope.refreshCommentList();
         });
     };
 
@@ -346,7 +354,13 @@ function setUpCommentMethods($scope, $http, $modal) {
             labelMap: {},
             sourceCmt: cmt.time
         };
-        newDecision.decision = cmt.body+"\n\n"+cmt.outcome;
+        var newBody = cmt.body+"\n\n";
+        cmt.responses.forEach( function (resp) {
+            if (resp.choice=="Consent" || resp.choice=="Objection") {
+                newBody = newBody + resp.alt.name + ": " + resp.choice + ": " + resp.body + "\n\n";
+            }
+        });
+        newDecision.decision = newBody + cmt.outcome;
         $scope.tuneNewDecision(newDecision, cmt);
 
         var decisionModalInstance = $modal.open({
@@ -370,7 +384,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         decisionModalInstance.result.then(function (modifiedDecision) {
             $scope.createDecision(modifiedDecision);
         }, function () {
-            $scope.refreshCommentContainer();
+            $scope.refreshCommentList();
         });
     };
     
@@ -476,6 +490,19 @@ function setUpCommentMethods($scope, $http, $modal) {
            ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
       </div>
+        <div ng-repeat="doc in cmt.docDetails">
+         <span ng-show="doc.attType=='FILE'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              &nbsp;
+              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+          </span>
+          <span  ng-show="doc.attType=='URL'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              &nbsp;
+              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+          </span>
+          &nbsp; {{doc.name}}
+        </div>
 
       <table style="min-width:500px;overflow:hidden;table-layout:fixed" ng-show="cmt.commentType==2 || cmt.commentType==3">
         <col style="width:120px;white-space:nowrap">
@@ -518,11 +545,6 @@ function setUpCommentMethods($scope, $http, $modal) {
           </td>
         </tr>
       </table>
-      <div ng-show="cmt.docList">
-          <span class="btn btn-sm btn-default btn-raised" ng-repeat="docId in cmt.docList" ng-click="navigateCmtToDoc(docId)">
-              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docId).name}} 
-          </span>
-      </div>
       <div class="leafContent comment-inner" 
            ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
            ng-dblclick="openCommentEditor(null, cmt)"

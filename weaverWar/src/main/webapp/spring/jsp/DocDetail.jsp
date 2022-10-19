@@ -274,14 +274,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.generateLink();
     
-    $scope.downloadDocument = function(doc) {
-        if (doc.attType=='URL') {
-             window.open(doc.url,"_blank");
-        }
-        else {
-            window.open("a/"+doc.name,"_blank");
-        }
-    }
     $scope.refreshCommentList = function() {
         $scope.getDocumentInfo();
     }

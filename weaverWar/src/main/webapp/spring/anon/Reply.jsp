@@ -81,16 +81,17 @@ Required parameters:
     else if (cc instanceof AttachmentRecord) {
         AttachmentRecord att = (AttachmentRecord)cc;
         docId = att.getId();
-        originalTopic = att.getDescription();
+        originalTopic = "!!!"+att.getNiceName()+"\n\n"+att.getDescription();
         originalSubject = "Document: " + att.getNiceName();
         emailContext = new EmailContext(att);
+        attachments.put(att.getMinJSON(ngw));
     }
     else {
         throw new Exception("can not recognize this email type");
     }
     String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
     for (CommentRecord comm : emailContext.getPeerComments()) {
-        comments.put(comm.getCompleteJSON());
+        comments.put(comm.getJSONWithDocs(ngw));
     }
 
 
@@ -321,6 +322,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("Failure to save data");
         });
     }
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
+    }
     $scope.navigateToDoc = function(doc) {
         if (!doc.id) {
             console.log("DOCID", doc);
@@ -448,25 +457,25 @@ function reloadIfLoggedIn() {
 <% } %>
     </div>
     <div class="comment-outer mainAboutObject">
-      <div class="comment-inner">
-        <div ng-bind-html="originalWiki|wiki"></div>
-      </div>
-    </div>
-    <div ng-show="attachments">
-      <div><b>Attachments</b></div>
-      <div ng-repeat="doc in attachments"  style="vertical-align: top">
-          <span ng-show="doc.attType=='FILE'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-              &nbsp;
-              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
-          </span>
-          <span  ng-show="doc.attType=='URL'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-              &nbsp;
-              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
-          </span>
-          &nbsp; {{doc.name}}
-      </div>
+        <div class="comment-inner">
+            <div ng-bind-html="originalWiki|wiki"></div>
+        </div>
+        <div ng-show="attachments">
+          <div><b>Attachments</b></div>
+          <div ng-repeat="doc in attachments"  style="vertical-align: top">
+              <span ng-show="doc.attType=='FILE'">
+                  <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                  &nbsp;
+                  <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+              </span>
+              <span  ng-show="doc.attType=='URL'">
+                  <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                  &nbsp;
+                  <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+              </span>
+              &nbsp; {{doc.name}}
+          </div>
+        </div>
     </div>
     
     <div class="page-name">
@@ -491,6 +500,19 @@ function reloadIfLoggedIn() {
         </table>
         <div class="comment-inner" ng-show="cmt.outcome">
           <div ng-bind-html="cmt.outcome|wiki"></div>
+        </div>
+        <div ng-repeat="doc in cmt.docDetails">
+         <span ng-show="doc.attType=='FILE'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              &nbsp;
+              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+          </span>
+          <span  ng-show="doc.attType=='URL'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              &nbsp;
+              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+          </span>
+          &nbsp; {{doc.name}}
         </div>
       </div>
     </div>
@@ -547,6 +569,20 @@ function reloadIfLoggedIn() {
           <div class="comment-inner" ng-show="focusComment.outcome">
             <div ng-bind-html="focusComment.outcome|wiki"></div>
           </div>
+        <div ng-repeat="doc in focusComment.docDetails">
+         <span ng-show="doc.attType=='FILE'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+              &nbsp;
+              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+          </span>
+          <span  ng-show="doc.attType=='URL'">
+              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+              &nbsp;
+              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+          </span>
+          &nbsp; {{doc.name}}
+        </div>
+      </div>
         </div>
     </div>
  

@@ -18,7 +18,7 @@
     
     JSONArray allComments = new JSONArray();
     for (CommentRecord comm : ngw.getAllComments()) {
-        allComments.put(comm.getCompleteJSON());
+        allComments.put(comm.getJSONWithDocs(ngw));
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();

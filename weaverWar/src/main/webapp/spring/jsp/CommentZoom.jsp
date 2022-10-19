@@ -21,7 +21,7 @@
     CommentRecord selectedComment = ngw.getCommentOrNull(cid);
     JSONObject comment = new JSONObject();
     if (selectedComment!=null) {
-        comment = selectedComment.getCompleteJSON();
+        comment = selectedComment.getJSONWithDocs(ngw);
     }
     
     JSONObject workspaceInfo = ngw.getConfigJSON();

@@ -86,28 +86,28 @@ public abstract class CommentContainer extends DOMFace {
 /////////////////////////// JSON ///////////////////////////////
 
 
-    public JSONArray getAllComments() throws Exception {
+    public JSONArray getAllComments(NGWorkspace ngw) throws Exception {
         JSONArray allCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCmts.put(cr.getCompleteJSON());
+            allCmts.put(cr.getJSONWithDocs(ngw));
         }
         return allCmts;
     }
-    public JSONArray getIncludedComments() throws Exception {
+    public JSONArray getIncludedComments(NGWorkspace ngw) throws Exception {
         JSONArray includedCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
             if (cr.getAttributeBool("includeInMinutes")) {
-                includedCmts.put(cr.getCompleteJSON());
+                includedCmts.put(cr.getJSONWithDocs(ngw));
             }
         }
         return includedCmts;
     }
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, boolean allComments) throws Exception {
+    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, boolean allComments, NGWorkspace ngw) throws Exception {
         if (allComments) {
-            thisContainer.put("comments",  getAllComments());
+            thisContainer.put("comments",  getAllComments(ngw));
         }
         else {
-            thisContainer.put("comments",  getIncludedComments());
+            thisContainer.put("comments",  getIncludedComments(ngw));
             
         }
         

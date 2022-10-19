@@ -97,7 +97,7 @@
         %></li><% 
     }
     %>
-    <li style="color:black">  <% if (userIsReadOnly) { %>
+    <li style="color:black">  <% if (userIsReadOnly || isFrozen) { %>
         <img src="<%=ar.retPath%>assets/ReadIndicator.png" title="You have read only access to this workspace" 
              class="accessIndicator"/>
     <% } else { %>

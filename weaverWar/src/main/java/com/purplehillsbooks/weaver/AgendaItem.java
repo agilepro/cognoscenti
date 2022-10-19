@@ -283,16 +283,16 @@ public class AgendaItem extends CommentContainer {
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet, boolean allComments) throws Exception {
         
         JSONObject aiInfo = new JSONObject();
-        aiInfo.put("id",        getId());
-        aiInfo.put("subject",   getSubject());
-        aiInfo.put("duration",  getDuration());
-        aiInfo.put("status",    getStatus());
-        aiInfo.put("readyToGo", getReadyToGo());
+        extractScalarString(aiInfo, "subject");
+        extractAttributeString(aiInfo, "id");
+        extractAttributeLong(aiInfo, "duration");
+        extractAttributeInt(aiInfo, "status");
+        extractAttributeInt(aiInfo, "position");
+        extractAttributeInt(aiInfo, "number");
+        extractAttributeBool(aiInfo, "isSpacer");
+        extractAttributeBool(aiInfo, "readyToGo");
+
         aiInfo.put("description", getDesc());
-        
-        aiInfo.put("position",  getPosition());
-        aiInfo.put("number",    getNumber());
-        aiInfo.put("isSpacer",  isSpacer());
         
         //duplicated the presenters into a list of full person definitions.
         //ultimately get rid of the other.
@@ -307,7 +307,7 @@ public class AgendaItem extends CommentContainer {
         
         aiInfo.put("actionItems", constructJSONArray(getActionItems()));
         aiInfo.put("docList", constructJSONArray(getDocList()));
-        addJSONComments(ar, aiInfo, allComments);
+        addJSONComments(ar, aiInfo, allComments, ngw);
 
         AddressListEntry locker = getLockUser();
         if (locker!=null) {
@@ -326,10 +326,15 @@ public class AgendaItem extends CommentContainer {
 
 
     public void updateFromJSON(AuthRequest ar, JSONObject input, NGWorkspace ngw) throws Exception {
-        if (input.has("subject")) {
-            setSubject(input.getString("subject"));
-        }
+        updateScalarString("subject", input);
         updateAttributeLong("duration", input);
+        updateAttributeInt("position", input);
+        updateAttributeInt("status", input);
+        updateAttributeBool("readyToGo", input);
+        updateAttributeBool("isSpacer", input);
+        updateAttributeBool("showMinutes", input);
+        updateAttributeBool("proposed", input);
+        
         if (input.has("timerElapsed")) {
             if (getAttributeBool("timerRunning")) {
                 //if the timer is running, the reset the basis for the current
@@ -345,21 +350,11 @@ public class AgendaItem extends CommentContainer {
             String newVal = mergeObj.getString("new");
             mergeScalar("desc", lastSaveVal, newVal);
         }
-        else if (input.has("description")) {
+        else {
         	//if there is a descriptionMerge, then ignore any complete description,
         	//only  one or the other
-            setDesc(input.getString("description"));
+            updateScalarString("description", input);
         }
-        if (input.has("position")) {
-            setPosition(input.getInt("position"));
-        }
-        if (input.has("status")) {
-            setStatus(input.getInt("status"));
-        }
-        if (input.has("readyToGo")) {
-            setReadyToGo(input.getBoolean("readyToGo"));
-        }
-
 
         if (input.has("minutesMerge")) {
         	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
@@ -417,9 +412,6 @@ public class AgendaItem extends CommentContainer {
                 clearLock();
             }
         }
-        updateAttributeBool("isSpacer", input);
-        updateAttributeBool("showMinutes", input);
-        updateAttributeBool("proposed", input);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext meet, 

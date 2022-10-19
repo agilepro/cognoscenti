@@ -100,7 +100,7 @@ public class CommentController extends BaseController {
             
             JSONArray allComments = new JSONArray();
             for (CommentRecord cmt : ngw.getAllComments()) {
-                allComments.put(cmt.getCompleteJSON());
+                allComments.put(cmt.getJSONWithDocs(ngw));
             }
 
             JSONObject jo = new JSONObject();
@@ -130,10 +130,10 @@ public class CommentController extends BaseController {
                 repo = new JSONObject().put("delete", "success");
             }
             else {
-                CommentRecord topic = ngw.getCommentOrFail(cid);
-                topic.updateFromJSON(postObject, ar);
+                CommentRecord cmt = ngw.getCommentOrFail(cid);
+                cmt.updateFromJSON(postObject, ar);
     
-                repo = topic.getCompleteJSON();
+                repo = cmt.getJSONWithDocs(ngw);
             }
             
             //re-link (or unlink) replies links to all comments
@@ -180,10 +180,10 @@ public class CommentController extends BaseController {
                 throw new Exception("delete is not allowed anonymously");
             }
             else {
-                CommentRecord topic = ngw.getCommentOrFail(cid);
-                topic.updateFromJSON(postObject, ar);
+                CommentRecord cmt = ngw.getCommentOrFail(cid);
+                cmt.updateFromJSON(postObject, ar);
     
-                repo = topic.getCompleteJSON();
+                repo = cmt.getJSONWithDocs(ngw);
             }
             
             //re-link (or unlink) replies links to all comments
@@ -269,7 +269,7 @@ public class CommentController extends BaseController {
             }
             System.out.println("Comment Controller: workspace is saved for: "+cid);
         }
-        return cr.getCompleteJSON();
+        return cr.getJSONWithDocs(ngw);
     }
 
     private CommentRecord createNewComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {

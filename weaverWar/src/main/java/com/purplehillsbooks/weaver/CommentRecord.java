@@ -634,6 +634,15 @@ public class CommentRecord extends DOMFace {
         commInfo.put("docList", constructJSONArray(getDocList()));
         return commInfo;
     }
+    public JSONObject getJSONWithDocs(NGWorkspace ngw) throws Exception {
+        JSONObject commInfo = getCompleteJSON();
+        JSONArray fullDocArray = new JSONArray();
+        for (AttachmentRecord doc : getAttachedDocs(ngw)) {
+            fullDocArray.put(doc.getMinJSON(ngw));
+        }
+        commInfo.put("docDetails", fullDocArray);
+        return commInfo;
+    }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         NGWorkspace ngw = (NGWorkspace) ar.ngp;
@@ -673,8 +682,10 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("replyTo")) {
             long source = input.getLong("replyTo");
-            setReplyTo(source);
-            ngw.assureRepliesSet(source, this.getTime());
+            if (source != getReplyTo()) {
+                setReplyTo(source);
+                ngw.assureRepliesSet(source, this.getTime());
+            }
         }
         if (input.has("postTime")) {
             setPostTime(input.getLong("postTime"));
