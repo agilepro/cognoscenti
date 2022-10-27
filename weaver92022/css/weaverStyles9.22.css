@@ -223,6 +223,12 @@
   width: 100%;
   height: auto;
 }
+.image-frame	{
+	border: double;
+	border-color: #ECECE8;
+	width: 100%;
+	
+}
 
 .overlay {
   position: absolute;
@@ -256,4 +262,16 @@
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   text-align: center;
+}
+.CTA-button	{
+	padding: 0.25rem 1.5rem 0.5rem;
+	background-color: #ECECE8;
+	border:10px #954D9E;
+	color: #39174B;
+	font-size: 2rem; 
+	margin: 10px auto;
+	cursor: pointer;
+	border-radius: 6px;
+	
+	
 }

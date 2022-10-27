@@ -2570,14 +2570,14 @@ fieldset:disabled a.btn {
 
 .btn-primary {
   color: #fff;
-  background-color: #39174B;
-  border-color: #000000;
+  background-color: #954D9E;
+ 
 }
 
 .btn-primary:hover {
   color: #fff;
   background-color: #662A79;
-  border-color: #000000;
+
 }
 
 .btn-primary:focus, .btn-primary.focus {
@@ -3402,7 +3402,7 @@ input[type="button"].btn-block {
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.25rem 1.5rem;
+  padding: 0.25rem 1.5rem 0.25rem 0.5rem;
   clear: both;
   font-weight: 400;
   color: #39174B;
@@ -4347,7 +4347,7 @@ input[type="button"].btn-block {
   align-items: right;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
 }
 
 .navbar .container,
@@ -4366,7 +4366,7 @@ input[type="button"].btn-block {
   display: inline-block;
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
-  margin-right: 1rem;
+  margin-right: 1.5rem;
   font-size: 1.25rem;
   line-height: inherit;
   white-space: nowrap;
