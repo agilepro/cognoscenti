@@ -322,12 +322,16 @@ public class MeetingControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
-        String id = ar.reqParam("id");
-        MeetingRecord meet = ngw.findMeetingOrNull(id);
-        if (meet==null) {
-            showWarningDepending(ar, "Can not find meeting with the id  "+id
-                    +".  Was it deleted?");
-            return;
+        String id = ar.defParam("id", null);
+        if (id != null && id.length()>0) {
+            //when creating a meeting by itself without cloning then no parameter is passed
+            //and we only need to check that the meeting exists if there is a parameter
+            MeetingRecord meet = ngw.findMeetingOrNull(id);
+            if (meet==null) {
+                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                        +".  Was it deleted?");
+                return;
+            }
         }
         showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
     }

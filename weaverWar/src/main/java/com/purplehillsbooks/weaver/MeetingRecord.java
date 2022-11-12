@@ -45,8 +45,6 @@ public class MeetingRecord extends DOMFace {
         if (notifyLayout==null || notifyLayout.length()==0) {
             setScalar("notifyLayout", "AgendaDetail.chtml");
         }
-        
-        System.out.println("++constructed MeetingRecord "+getId());
     }
 
 
