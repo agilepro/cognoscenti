@@ -1,0 +1,34 @@
+
+.white-section  {
+  background-color: #fff;
+  color:#39134c;
+  padding: 15px 45px;
+  min-height: 400px;
+}
+.purple-section {
+  background-color: #39134C; 
+  color:#fff;
+  padding: 15px 45px;
+  min-height: 400px;
+}
+.tutorialThumbnail {
+    border-radius:15px;
+    box-shadow: 5px 5px 5px gray;
+}
+.purple-section .tutorialThumbnail {
+    border-radius:15px;
+    box-shadow: 5px 5px 5px black;
+}
+table tr {
+    margin: 15px;
+}
+table tr th {
+    padding: 15px;
+    vertical-align: top;
+    margin: 15px;
+}
+table tr td {
+    padding: 15px;
+    vertical-align: top;
+    margin: 15px;
+}
