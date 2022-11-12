@@ -7,16 +7,16 @@ You must have Java installed, version 8 or later.
 
 You must have Mongo installed and running on the standard port for Mongo.
 
-!BUILD
+# Build
 
-The project is built with Gradle.   A version of gradle is included.  You only need to bulid from the weaverWar folder.  If you have java installed, all you have 
+The project is built with Gradle.   A version of gradle is included.  You only need to build from the weaverWar folder.  If you have java installed, all you have 
 
     cd weaverWar
     ../gradlew clean build
 
 This should produce a WAR file in the weaverWar/build/libs folder
  
-!CONFIGURE
+# Configure
  
 You will find the configuration in the WEB-INF/config.txt file.   There are four settings of importance in there.
 
@@ -33,7 +33,7 @@ The value "JDVBRFKFH" is the user key in this url. This user key will be differe
 
 * superAdmin - set to the user key for the users you want to be administrators.  You can put multiple keys separated by commas.  Restart the server to get the server to read this.  You will know that administrator privilege has been enabled properly for your user when you see the "king" icon appear in the navigation bar at the top of the weaver page.
 
-!TESTING
+# Testing
 
 If you are going to be doing a lot of testing, there are two more servers you will want t o run.
 
