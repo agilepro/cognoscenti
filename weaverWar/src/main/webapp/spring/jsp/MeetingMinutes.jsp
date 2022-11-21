@@ -71,19 +71,19 @@ Required parameters:
     
     
     
-    
+
     
 <script type="text/javascript">
-console.log("STARTING");
+
 var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize','ngTagsInput','angularjs-datetime-picker','pascalprecht.translate','ui.tinymce']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     var templateCacheDefeater = "?"+new Date().getTime();
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.visitors = [];
-    $scope.allMinutes = [];
     $scope.allTitles = [];
     $scope.allHtml = [];
+    $scope.agendaList = [];
     $scope.isEditing = -1;
     $scope.selectedMinutes = {};
     $scope.enableClick = true;
@@ -105,76 +105,43 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
 
-    function selectMinutes(name) {
-        $scope.allMinutes.forEach( function(item) {
-            if (name==item.title) {
-                $scope.selectedMin = item;
-            }
-        });
-    }
-    $scope.changeTitle = function() {
-        selectMinutes($scope.selectedTitle);
-    }
-
-    $scope.setMinutesData = function(data) {
-        $scope.timerCorrection = data.serverTime - new Date().getTime();
-        var newTitles = [];
+    function setMinutesData(data, lastUpdateId, lastUpdateValue) {
+        console.log("NEW DATA", lastUpdateId, lastUpdateValue, data);
         $scope.visitors = data.visitors;
+        $scope.timerCorrection = data.serverTime - new Date().getTime();
+        
+        var oldAgendaList = $scope.agendaList;
+        var newAgendaList = [];
         data.minutes.forEach( function(newItem) {
-            existing = null;
-            $scope.allMinutes.forEach( function(found) {
-                if (found.id == newItem.id) {
-                    existing = found;
+            
+            var itemEntry = null;
+            oldAgendaList.forEach( function(found) {
+                if (found.data.id == newItem.id) {
+                    itemEntry = found;
                 }
             });
-            if (!existing) {
-                $scope.allMinutes.push(newItem);
-                existing = newItem;
-                existing.old = newItem.new;
+            if (!itemEntry) {
+                itemEntry = {};
+                itemEntry.sim = new SimText(newItem.new);
             }
-            else if (newItem.new == existing.lastSave) {
-                //if you get back what you sent to the server
-                //then nothing has changed on the server, so you
-                //can ignore the update and don't update at all
-                //whether user typing or not
-                existing.old = existing.lastSave;
-                existing.needsMerge = false;
-            } 
-            else if (newItem.new != existing.new) {
-                //unfortunately, there are edits from someone else to 
-                //merge in causing some loss from of current typing.
-                console.log("merging new version from server.",newItem,existing);
-                if (existing.isEditing) {
-                    console.log("The item being edited has changed ... deferring merging");
-                    existing.needsMerge = true;
-                    existing.old = existing.lastSave;
-                }
-                else {
-                    existing.new = Textmerger.get().merge(existing.lastSave, existing.new, newItem.new);
-                    existing.old = newItem.new;
-                    existing.needsMerge = false;
-                }
+            else if (itemEntry.data.id == lastUpdateId) {
+                itemEntry.sim.updateFromServer(lastUpdateValue, newItem.new);
             }
             else {
-                existing.old = newItem.new;
-                existing.needsMerge = false;
+                if (itemEntry.sim.isEditing) {
+                    //should never find one of these, but if so, ignore
+                    console.log("     ERROR "+newItem.id+" and editing is improperly TRUE!!!");
+                }
+                else {
+                    console.log("attempt to set value on NON editing one");
+                    itemEntry.sim.init(newItem.new);
+                }
             }
-            existing.lastSave = null;
-            existing.timerRunning = newItem.timerRunning;
-            existing.timerStart = newItem.timerStart;
-            existing.timerElapsed = newItem.timerElapsed;
-            existing.duration = newItem.duration;
-            newTitles.push(newItem.title);
+            itemEntry.data = newItem;
+            newAgendaList.push(itemEntry);
         });
-        if ($scope.allTitles.length==0) {
-            $scope.allTitles = newTitles;
-            $scope.selectedTitle = newTitles[0];
-        }
-        selectMinutes($scope.selectedTitle);
+        $scope.agendaList = newAgendaList;
         $scope.calcTimes();
-        $scope.allMinutes.forEach( function(min) {
-            min.html = convertMarkdownToHtml(min.new);
-        });
         $scope.loaded = true;   
     }
     
@@ -184,11 +151,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var postURL = "getMeetingNotes.json?id="+$scope.meetId;
         $http.get(postURL)
         .success( function(data) {
-            $scope.setMinutesData(data);
+            setMinutesData(data);
+            $scope.isUpdating = false;
             $scope.handleDeferred();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
+            $scope.isUpdating = false;
             $scope.handleDeferred();
         });
         
@@ -220,32 +189,56 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             console.log("update was skipped because we are already updating");
             return;
         }
-        $scope.isUpdating = true;
         var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
         var postRecord = {minutes:[]};
-        $scope.allMinutes.forEach( function(item) {
-            if (item.new != item.old) {
-                postRecord.minutes.push( JSON.parse( JSON.stringify( item )));
+        var itemNeedingSave;
+        $scope.agendaList.forEach( function(agendaItem) {
+            if (agendaItem.sim.isEditing) {
+                itemNeedingSave = agendaItem;
             }
-            item.lastSave = item.new;
         });
+        
+        if (itemNeedingSave) {
+            saveSim(itemNeedingSave);
+        }
+        else {
+            $scope.getMeetingNotes();
+        }
+    }
+	$scope.promiseAutosave = $interval($scope.autosave, 3000);
+    
+    
+    function saveSim(agendaItem) {
+        if ($scope.isUpdating) {
+            return;
+        }
+        $scope.isUpdating = true;
+        var thisId = agendaItem.data.id;
+        agendaItem.saving = true;
+        var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
+        var postRecord = {minutes:[]};
+        var lastSave = agendaItem.sim.getLocal();
+        var itemData = {};
+        itemData.id = thisId;
+        itemData.new = lastSave;
+        itemData.old = agendaItem.sim.vServer;
+        postRecord.minutes.push(itemData);
         var postData = JSON.stringify(postRecord);
         $http.post(postURL, postData)
         .success( function(data) {
-            $scope.setMinutesData(data);
+            setMinutesData(data, thisId, lastSave)
+            $scope.isUpdating = false;
             $scope.handleDeferred();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
+            $scope.isUpdating = false;
             $scope.handleDeferred();
         });
     }
-	$scope.promiseAutosave = $interval($scope.autosave, 3000);
     
-    $scope.closeWindow = function() {
-        $scope.autosave();
-        window.close();
-    }
+    
+
     $scope.startAgendaRunning = function(agendaItem) {
         var saveRecord = {};
         saveRecord.startTimer = agendaItem.id;
@@ -262,11 +255,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $http.post(postURL, postData)
         .success( function(data) {
             data.agenda.forEach( function(receivedItem) {
-                $scope.allMinutes.forEach( function(realItem) {
-                    if (receivedItem.id == realItem.id) {
-                        realItem.timerRunning = receivedItem.timerRunning;
-                        realItem.timerStart = receivedItem.timerStart;
-                        realItem.timerElapsed = receivedItem.timerElapsed;
+                $scope.agendaList.forEach( function(realItem) {
+                    if (receivedItem.id == realItem.data.id) {
+                        realItem.data.timerRunning = receivedItem.timerRunning;
+                        realItem.data.timerStart = receivedItem.timerStart;
+                        realItem.data.timerElapsed = receivedItem.timerElapsed;
                     }
                 });
             });
@@ -297,30 +290,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var totalTotal = 0;
         //get the time that it is on the server
         var nowTime = new Date().getTime() + $scope.timerCorrection;
-        $scope.allMinutes.forEach( function(agendaItem) {
+        $scope.agendaList.forEach( function(agendaItem) {
             if (agendaItem.timerRunning) {
-                agendaItem.timerTotal = (agendaItem.timerElapsed + nowTime - agendaItem.timerStart)/60000;
+                agendaItem.data.timerTotal = (agendaItem.data.timerElapsed + nowTime - agendaItem.data.timerStart)/60000;
             }
             else {
-                agendaItem.timerTotal = (agendaItem.timerElapsed)/60000;
+                agendaItem.data.timerTotal = (agendaItem.data.timerElapsed)/60000;
             }
             //the 500 is to round the time, instead of truncation
-            agendaItem.timerRemaining = agendaItem.duration - agendaItem.timerTotal;
-            totalTotal += agendaItem.timerTotal;
+            agendaItem.data.timerRemaining = agendaItem.data.duration - agendaItem.data.timerTotal;
+            totalTotal += agendaItem.data.timerTotal;
         });
         $scope.timerTotal = totalTotal;
     }
     function closeAllEditors() {
         $scope.autosave();
-        $scope.allMinutes.forEach( function(min) {
-            min.isEditing = false;
-            min.needsMerge = false;
-            min.html = convertMarkdownToHtml(min.new);
+        $scope.agendaList.forEach( function(aItem) {
+            aItem.sim.isEditing = false;
         });
     }
     
     $scope.editStyle = function(item) {
-        if (item.needsMerge) {
+        if (item.sim.needMerge) {
             return {"background-color":"orange"};
         }
         else {
@@ -328,13 +319,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
     }
     
-    $scope.startEditing = function(min) {
-        if (!$scope.enableClick) {
-            return;
-        }
-        $scope.autosave();        
+    $scope.startEditing = function(aItem) {      
         closeAllEditors();
-        min.isEditing = true;        
+        aItem.sim.isEditing = true;
+        console.log("Set the isEditing to true for "+aItem.data.id);
     }
     
     $scope.openAddDocument = function (item) {
@@ -447,9 +435,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             //cancel action - nothing really to do
         });
     };    
+    
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 400;
+    $scope.tinymceOptions.init_instance_callback = function(editor) {
+        $scope.initialContent = editor.getContent();
+        editor.on('Change', tinymceChangeTrigger);
+        editor.on('KeyUp', tinymceChangeTrigger);
+        editor.on('Paste', tinymceChangeTrigger);
+        editor.on('Remove', tinymceChangeTrigger);
+        editor.on('Format', tinymceChangeTrigger);
+    }
+    function tinymceChangeTrigger(e, editor) {
+        //this runs every keystroke in the editor
+        $scope.lastKeyTimestamp = new Date().getTime();
+        $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
+        $scope.changesToSave = ($scope.wikiEditing != $scope.wikiLastSave);
+    }    
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
 });
+
 app.filter('minutes', function() {
 
   return function(input) {
@@ -468,73 +474,10 @@ app.filter('minutes', function() {
   }
 
 });
-function getInputSelection(el) {
-    var start = 0, end = 0, normalizedValue, range,
-        textInputRange, len, endRange;
 
-    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-        start = el.selectionStart;
-        end = el.selectionEnd;
-    } else {
-        range = document.selection.createRange();
 
-        if (range && range.parentElement() == el) {
-            len = el.value.length;
-            normalizedValue = el.value.replace(/\r\n/g, "\n");
 
-            // Create a working TextRange that lives only in the input
-            textInputRange = el.createTextRange();
-            textInputRange.moveToBookmark(range.getBookmark());
 
-            // Check if the start and end of the selection are at the very end
-            // of the input, since moveStart/moveEnd doesn't return what we want
-            // in those cases
-            endRange = el.createTextRange();
-            endRange.collapse(false);
-
-            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
-                start = end = len;
-            } else {
-                start = -textInputRange.moveStart("character", -len);
-                start += normalizedValue.slice(0, start).split("\n").length - 1;
-
-                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
-                    end = len;
-                } else {
-                    end = -textInputRange.moveEnd("character", -len);
-                    end += normalizedValue.slice(0, end).split("\n").length - 1;
-                }
-            }
-        }
-    }
-
-    return {
-        start: start,
-        end: end
-    };
-}
-
-function offsetToRangeCharacterMove(el, offset) {
-    return offset - (el.value.slice(0, offset).split("\r\n").length - 1);
-}
-
-function setInputSelection(el, startOffset, endOffset) {
-    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-        el.selectionStart = startOffset;
-        el.selectionEnd = endOffset;
-    } else {
-        var range = el.createTextRange();
-        var startCharMove = offsetToRangeCharacterMove(el, startOffset);
-        range.collapse(true);
-        if (startOffset == endOffset) {
-            range.move("character", startCharMove);
-        } else {
-            range.moveEnd("character", offsetToRangeCharacterMove(el, endOffset));
-            range.moveStart("character", startCharMove);
-        }
-        range.select();
-    }
-}
 </script>
 
 
@@ -584,9 +527,6 @@ function setInputSelection(el, startOffset, endOffset) {
                 <li role="presentation"><a role="menuitem"
                     title="Enable click to edit"
                     href="#" ng-click="editMode('edit')" >Edit</a></li>
-                <!-- li role="presentation"><a role="menuitem"
-                    title="Assure that you are the only one editing"
-                    href="#" ng-click="editMode('exclusive')" >Exclusive Edit</a></li -->
              </ul>
         </span> 
       </div>          
@@ -610,38 +550,39 @@ function setInputSelection(el, startOffset, endOffset) {
 
       <div ng-show="loaded && !showError">
 
-        <div class="panel panel-default" ng-repeat="min in allMinutes">
-            <div class="panel-heading" >{{min.pos}}. {{min.title}}
-                <span style="font-size:70%" ng-hide="min.needsMerge">
-                    <span ng-hide="min.timerRunning" style="padding:5px">
-                        <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
-                        Elapsed: {{min.timerTotal| minutes}}
-                        Remaining: {{min.timerRemaining| minutes}}
+        <div class="panel panel-default" ng-repeat="aItem in agendaList">
+            <div class="panel-heading" >{{aItem.data.pos}}. {{aItem.data.title}}
+                <span style="font-size:70%" ng-hide="aItem.data.needMerge">
+                    <span ng-hide="aItem.data.timerRunning" style="padding:5px">
+                        <button ng-click="startAgendaRunning(aItem.data)"><i class="fa fa-clock-o"></i> Start</button>
+                        Elapsed: {{aItem.data.timerTotal| minutes}}
+                        Remaining: {{aItem.data.timerRemaining| minutes}}
                     </span>
-                    <span ng-show="min.timerRunning" ng-style="timerStyleComplete(min)">
+                    <span ng-show="aItem.data.timerRunning" ng-style="timerStyleComplete(aItem.data)">
                         <span>Running</span>
-                        Elapsed: {{min.timerTotal| minutes}}
-                        Remaining: {{min.timerRemaining| minutes}}
+                        Elapsed: {{aItem.data.timerTotal| minutes}}
+                        Remaining: {{aItem.data.timerRemaining| minutes}}
                         <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                     </span>
                 </span>
-                <span style="font-size:70%" ng-show="min.needsMerge">
+                <span style="font-size:70%" ng-show="aItem.sim.needMerge">
                     <button ng-click="closeEditor()" style="background-color:red;color:white">
                         <i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
                 </span>
-                <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>
             </div>
-            <div class="panel-body" ng-show="min.isEditing"  ng-style="editStyle(min)">
-                <textarea ng-model="min.new" class="form-control markDownEditor" style="width:100%;height:200px"></textarea>
-                <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
-                <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
-                <button class="btn btn-default btn-raised" ng-click="openDecisionEditor(min)">Add Decision</button>
+            <div class="panel-body" ng-show="aItem.sim.isEditing"  ng-style="editStyle(aItem)">
+                <div ui-tinymce="tinymceOptions" ng-model="aItem.sim.vHtml" 
+                     class="leafContent" style="min-height:250px;" ></div>
+                <button class="btn btn-default btn-raised" ng-click="openAttachAction(aItem.data)">Add Action Item</button>
+                <button class="btn btn-default btn-raised" ng-click="openAddDocument(aItem.data)">Add Document</button>
+                <button class="btn btn-default btn-raised" ng-click="openDecisionEditor(aItem.data)">Add Decision</button>
+                <input type="checkbox" ng-model="aItem.sim.autoMerge"/> AutoMerge
                 
                 <button class="btn btn-primary btn-raised" style="float:right" ng-click="closeEditor()">Close</button>
             </div>
-            <div class="panel-body" ng-hide="min.isEditing" ng-dblclick="startEditing(min)">
-                <div ng-bind-html="min.html"></div>
-                <div ng-hide="min.html" style="color:#bbb">Double click to start editing</div>
+            <div class="panel-body" ng-hide="aItem.sim.isEditing" ng-dblclick="startEditing(aItem)">
+                <div ng-bind-html="aItem.sim.vHtml"></div>
+                <div ng-hide="aItem.sim.vHtml" style="color:#bbb">Double click to start editing</div>
                 <div>&nbsp;</div>
             </div>
 
@@ -653,7 +594,7 @@ function setInputSelection(el, startOffset, endOffset) {
             </div>
 
         
-        <div class="guideVocal" ng-hide="allMinutes.length > 0">
+        <div class="guideVocal" ng-hide="agendaList.length > 0">
           No minutes to show . . .
         </div>
       </div>
@@ -663,7 +604,11 @@ function setInputSelection(el, startOffset, endOffset) {
 </body>
 </html>
 
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>jscript/SimultaneousEdit.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
