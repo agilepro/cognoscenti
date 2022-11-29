@@ -122,9 +122,9 @@
     $scope.meeting = {
       "agenda": [
         {
-          "actionItems": [
-            "BKLQHEHWG@clone-c-of-clone-4@8005",
-            "HFCKCQHWG@clone-c-of-clone-4@0353"
+          "aiList": [
+            {...},
+            {...}
           ],
           "description": "An autocracy vests power in one autocratic.",
           "docList": [
@@ -137,7 +137,7 @@
           "subject": "Approve Advertising Plan"
         },
         {
-          "actionItems": [],
+          "aiList": [],
           "description": "Many new organizational support.",
           "docList": [],
           "duration": 5,

@@ -139,6 +139,36 @@ public class AgendaItem extends CommentContainer {
     public void setLinkedTopics(List<String> newVal) throws Exception {
         setVector("topics", newVal);
     }
+    public void addTopic(NGWorkspace ngw, String id) throws Exception {
+        TopicRecord aRec = ngw.getDiscussionTopic(id);
+        if (aRec==null) {
+            //nonsense value, so ignore
+            return;
+        }
+        for (String existingId : getLinkedTopics()) {
+            TopicRecord otherRec = ngw.getDiscussionTopic(existingId);
+            if (otherRec!=null) {
+                if (otherRec.hasId(id)) {
+                    return;  //it already exists so ignore
+                }
+            }
+        }
+        addVectorValue("topics", aRec.getUniversalId());
+    }
+    public void removeTopic(NGWorkspace ngw, String id) throws Exception {
+        TopicRecord aRec = ngw.getDiscussionTopic(id);
+        if (aRec==null) {
+            //nonsense value, so ignore
+            return;
+        }
+        for (String existingId : getLinkedTopics()) {
+            TopicRecord otherRec = ngw.getDiscussionTopic(existingId);
+            if (otherRec.hasId(id)) {
+                removeVectorValue("topics", existingId);
+                return;
+            }
+        }
+    }
 
 
 
@@ -305,8 +335,34 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("presenterList", presenterList);
         aiInfo.put("presenters", presenterNameList);
         
-        aiInfo.put("actionItems", constructJSONArray(getActionItems()));
-        aiInfo.put("docList", constructJSONArray(getDocList()));
+        
+        JSONArray aiList = new JSONArray();
+        for (String guid : getActionItems()) {
+            GoalRecord gr = ngw.getGoalOrNull(guid);
+            if (gr!=null) {
+                JSONObject oneAI = gr.getMinimalJSON();
+                //meetings need this URL based on AuthRequest
+                oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "task"+gr.getId()+".htm"));
+                aiList.put(oneAI);
+            }
+        }
+        aiInfo.put("aiList", aiList);
+
+        
+        JSONArray attList = new JSONArray();
+        for (String guid : getDocList()) {
+            int pos = guid.lastIndexOf("@");
+            String id = guid.substring(pos+1);
+            AttachmentRecord arec = ngw.findAttachmentByID(id);
+            if (arec!=null) {
+                JSONObject oneAI = arec.getLinkableJSON();
+                oneAI.put("url", ar.baseURL + arec.getEmailURL(ar, ngw));
+                attList.put(oneAI);
+            }
+        }
+        aiInfo.put("attList", attList);
+        
+        
         addJSONComments(ar, aiInfo, allComments, ngw);
 
         AddressListEntry locker = getLockUser();
@@ -320,7 +376,24 @@ public class AgendaItem extends CommentContainer {
         extractAttributeBool(aiInfo, "proposed");
         extractScalarString(aiInfo, "minutes");
         
+        
+        JSONArray topicList = new JSONArray();
+        for (String topicId : getLinkedTopics()) {
+            TopicRecord tr = ngw.getDiscussionTopic(topicId);
+            JSONObject trobj = tr.getLinkableJSON();
+            topicList.put(trobj);
+        }
+        aiInfo.put("topicList", topicList);
+        
+        
+
+        //actionItems is deprecated, DONT USE, use aiList instead.
+        aiInfo.put("actionItems", constructJSONArray(getActionItems()));
+        //docList is deprecated, use attList instead
+        aiInfo.put("docList", constructJSONArray(getDocList()));
+        //topics is deprecated, use topicList instead
         aiInfo.put("topics", constructJSONArray(getLinkedTopics()));
+        
         return aiInfo;
     }
 
@@ -350,10 +423,9 @@ public class AgendaItem extends CommentContainer {
             String newVal = mergeObj.getString("new");
             mergeScalar("desc", lastSaveVal, newVal);
         }
-        else {
-        	//if there is a descriptionMerge, then ignore any complete description,
-        	//only  one or the other
-            updateScalarString("description", input);
+        else if (input.has("description")) {
+            String description = input.getString("description");
+            this.setDesc(description);
         }
 
         if (input.has("minutesMerge")) {
@@ -371,17 +443,43 @@ public class AgendaItem extends CommentContainer {
                 }
             }
             setLinkedTopics(newTopicList);
-        }
-        if (input.has("actionItems")) {
-            List<String> newDocList = new ArrayList<String>();
-            for (String id : constructVector(input.getJSONArray("actionItems"))) {
-                GoalRecord aRec = ngw.getGoalOrNull(id);
+        } 
+        else if (input.has("topicAdd")) {
+            this.addTopic(ngw, input.getString("topicAdd"));
+        } 
+        else if (input.has("topicRemove")) {
+            this.removeTopic(ngw, input.getString("topicRemove"));
+        } 
+        else if (input.has("topicList")) {
+            List<String> newTopicList = new ArrayList<String>();
+            for (JSONObject oneTopic : input.getJSONArray("topicList").getJSONObjectList()) {
+                TopicRecord aRec = null;
+                if (oneTopic.has("id")) {
+                    aRec = ngw.getDiscussionTopic(oneTopic.getString("id"));
+                }
+                else if (oneTopic.has("universalid")) {
+                    aRec = ngw.getDiscussionTopic(oneTopic.getString("universalid"));
+                }
                 if (aRec!=null) {
-                    //add only if the document is found, ignore if not found
-                    newDocList.add(aRec.getUniversalId());
+                    //add only if the topic is found, ignore if not found
+                    newTopicList.add(aRec.getUniversalId());
                 }
             }
-            setActionItems(newDocList);
+            setLinkedTopics(newTopicList);
+        }
+        if (input.has("aiList")) {
+            List<String> newActionItemList = new ArrayList<String>();
+            for (JSONObject oneItem : input.getJSONArray("aiList").getJSONObjectList()) {
+                if (!oneItem.has("id")) {
+                    continue;
+                }
+                GoalRecord aRec = ngw.getGoalOrNull(oneItem.getString("id"));
+                if (aRec!=null) {
+                    //add only if the document is found, ignore if not found
+                    newActionItemList.add(aRec.getUniversalId());
+                }
+            }
+            setActionItems(newActionItemList);
         }
         if (input.has("docList")) {
             List<String> newDocList = new ArrayList<String>();

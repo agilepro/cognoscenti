@@ -60,6 +60,22 @@
         recentWorkspaces.put(sibling.getJSON4List());
     }
 
+    JSONArray meetingIdList = new JSONArray();
+    JSONObject meetingAgendaMap = new JSONObject();
+
+    int meetCount = 0;
+    for (MeetingRecord mr : ngw.getMeetings()) {
+        meetingIdList.put(mr.getId());
+        JSONArray aiList = meetingAgendaMap.requireJSONArray(mr.getId());
+        for (AgendaItem mai : mr.getAgendaItems()) {
+            aiList.put(mai.getId());
+        }
+        if (meetCount++>10) {
+           break;
+        }
+    }
+
+
     /*
     Data from the server is the workspace config structure
     {
@@ -103,6 +119,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.editName = false;
     $scope.editInfo = false;
     $scope.foo = "<p>This <b>bold</b> statement.</p>"
+    $scope.meetingIdList = <%meetingIdList.write(out,2,4);%>;
+    $scope.meetingAgendaMap = <%meetingAgendaMap.write(out,2,4);%>;
 
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
@@ -270,6 +288,13 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.setMeeting = function(meetId) {
+        $scope.sampleMeet = meetId;
+        $scope.sampleAgenda = "";
+    }
+    $scope.setAgenda = function(aid) {
+        $scope.sampleAgenda = aid;
+    }
 
 });
 app.filter('escape', function() {
@@ -336,9 +361,16 @@ editBoxStyle {
        <li><a target="dataWindow" href="getGoalHistory.json?gid={{sampleGoal}}">getGoalHistory.json?gid={{sampleGoal}}</a></li>
        <li><a target="dataWindow" href="fetchGoal.json?gid={{sampleGoal}}">fetchGoal.json?gid={{sampleGoal}}</a></li>
        <li><a target="dataWindow" href="ActionItem{{sampleGoal}}Due.ics">ActionItem{{sampleGoal}}Due.ics</a></li>
-       <li>Sample Meeting: <input ng-model="sampleMeet"/> Agenda Item <input ng-model="sampleAgenda"/></li>
-       <li><a target="dataWindow" href="getMeetingNotes.json?id={{sampleMeet}}">getMeetingNotes.json?id={{sampleMeet}}</a></li>
+       <li>Sample Meeting: <input ng-model="sampleMeet"/> Agenda Item <input ng-model="sampleAgenda"/>
+       
+           <ul><li>
+           <button ng-repeat="meetId in meetingIdList" ng-click="setMeeting(meetId)"> {{meetId}} </button> 
+           </li><li>
+           <button ng-repeat="aid in meetingAgendaMap[sampleMeet]" ng-click="setAgenda(aid)"> {{aid}} </button>
+           </li></ul>
+       </li>
        <li><a target="dataWindow" href="meetingRead.json?id={{sampleMeet}}">meetingRead.json?id={{sampleMeet}}</a></li>
+       <li><a target="dataWindow" href="getMeetingNotes.json?id={{sampleMeet}}">getMeetingNotes.json?id={{sampleMeet}}</a></li>
        <li><a target="dataWindow" href="attachedActions.json?meet={{sampleMeet}}&ai={{sampleAgenda}}">attachedActions.json?meet={{sampleMeet}}&ai={{sampleAgenda}}</a></li>
        <li><a target="dataWindow" href="attachedDocs.json?meet={{sampleMeet}}&ai={{sampleAgenda}}">attachedDocs.json?meet={{sampleMeet}}&ai={{sampleAgenda}}</a></li>
        <li>Sample Role: <input ng-model="sampleRole"/></li>
@@ -347,6 +379,9 @@ editBoxStyle {
        <li><a target="dataWindow" href="getTopic.json?nid={{sampleTopic}}">getTopic.json?nid={{sampleTopic}}</a></li>
        <li><a target="dataWindow" href="attachedActions.json?note={{sampleTopic}}">attachedActions.json?note={{sampleTopic}}</a></li>
        <li><a target="dataWindow" href="attachedDocs.json?note={{sampleTopic}}">attachedDocs.json?note={{sampleTopic}}</a></li>
+       <li>Sample Document: <input ng-model="sampleDoc"/></li>
+       <li><a target="dataWindow" href="docInfo.json?did={{sampleDoc}}">docInfo.json?did={{sampleDoc}}</a></li>
+       
        <li>Sample Comment: <input ng-model="sampleComment"/></li>
        <li><a target="dataWindow" href="info/comment?cid={{sampleComment}}">info/comment?cid={{sampleComment}}</a></li>
        <li>Sample SharePort: <input ng-model="sampleSharePort"/></li>

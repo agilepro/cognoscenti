@@ -73,10 +73,10 @@
           <td style="overflow:hidden;white-space:nowrap;width:90px">
             {{pers.name}}
           </td>
-          <td ng-click="toggleAttend(pers.uid)">
-            <span ng-show="didAttend(pers.uid)" style="color:green" title="indicates that the user did attend meeting">
+          <td ng-click="toggleAttend(pers)">
+            <span ng-show="pers.attended" style="color:green" title="indicates that the user did attend meeting">
                 <span class="fa fa-check"></span></span>
-            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"  title="indicates that the user did not attend meeting">
+            <span ng-hide="pers.attended" style="color:#eeeeee"  title="indicates that the user did not attend meeting">
                 <span class="fa fa-question-circle"></span></span>
           </td>
           <td ng-dblclick="toggleEditSitch(pers)">

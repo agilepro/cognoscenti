@@ -113,7 +113,6 @@ app.controller('myCtrl', function($scope, $http) {
             return;
         }
         
-        var postURL = "meetingCreate.json";
         var minutesFromNow = Math.floor(($scope.meeting.startTime - (new Date()).getTime()) / 60000);
         if ($scope.meeting.startTime>1000000 && minutesFromNow<0) {
             if (!confirm("Warning: this meeting is being scheduled for time in the past.  An email message will be sent immediately informing people of the meeting before you get a chance to change the date.   If you mean to schedule a meeting for the future, press 'Cancel' and correct the date.   Do you still want to create a meeting for the past?")) {
@@ -152,7 +151,10 @@ app.controller('myCtrl', function($scope, $http) {
                 newMeeting.agenda.push(newAgenda);
             }
         });
+        var postURL = "meetingCreate.json";
         var postdata = angular.toJson(newMeeting);
+        //console.log("Structure gor creting meeting", newMeeting);
+        //confirm("click OK to create meeting");
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

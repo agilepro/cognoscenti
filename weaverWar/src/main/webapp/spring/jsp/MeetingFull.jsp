@@ -19,6 +19,9 @@
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
     UserProfile uProf = ar.getUserProfile();
+    if (uProf==null) {
+        throw new Exception("Please log in to see this meeting.");
+    }     
     String userTimeZone = uProf.getTimeZone();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
@@ -37,16 +40,11 @@
         throw new Exception("NGP should not be null!!!!!!");
     }
     
-    NGBook site = ngw.getSite();
-    boolean isLoggedIn = (uProf!=null);
-    String currentUser = "";
-    String currentUserName = "Unknown";
-    String currentUserKey = "";
-    if (isLoggedIn) {
-        currentUser = uProf.getUniversalId();
-        currentUserName = uProf.getName();
-        currentUserKey = uProf.getKey();
-    }
+    NGBook site = ngw.getSite();   
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
+    boolean canUpdate = ngw.canUpdateWorkspace(uProf) || ar.isSuperAdmin();
 
     String targetRole = mRec.getTargetRole();
     if (targetRole==null || targetRole.length()==0) {
@@ -121,9 +119,9 @@
     $scope.meeting = {
       "agenda": [
         {
-          "actionItems": [
-            "BKLQHEHWG@clone-c-of-clone-4@8005",
-            "HFCKCQHWG@clone-c-of-clone-4@0353"
+          "aiList": [
+            {...},
+            {...}
           ],
           "description": "An autocracy vests power in one autocratic.",
           "docList": [
@@ -136,7 +134,7 @@
           "subject": "Approve Advertising Plan"
         },
         {
-          "actionItems": [],
+          "aiList": [],
           "description": "Many new organizational support.",
           "docList": [],
           "duration": 5,
@@ -211,6 +209,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 embeddedData.mode     = "<%ar.writeJS(mode);%>";
 embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
+embeddedData.canUpdate = <%=canUpdate%>;
 
 
 
@@ -277,7 +276,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 <%@include file="ErrorPanel.jsp"%>
 
 
-<%if (isLoggedIn) { %>
+<%if (true) { %>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown" ng-show="meeting.state<=0">
           <button class="btn btn-default btn-primary btn-raised"

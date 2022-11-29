@@ -781,10 +781,21 @@ public class GoalRecord extends BaseRecord {
     }
 
 
+    /**
+     * This is a version that can be included in lists of action items,
+     * such as those linked to an agenda item.
+     */
+    public JSONObject getMinimalJSON() throws Exception {
+        JSONObject oneAI = new JSONObject();
+        oneAI.put("synopsis", this.getSynopsis());
+        oneAI.put("id", this.getId());
+        oneAI.put("state", this.getState());
+        oneAI.put("universalid", getUniversalId());
+        return oneAI;
+    }
 
     public JSONObject getJSON4Goal(NGWorkspace ngw) throws Exception {
         JSONObject thisGoal = new JSONObject();
-        thisGoal.put("universalid", getUniversalId());
         thisGoal.put("id", getId());
         thisGoal.put("synopsis", getSynopsis());
         thisGoal.put("description", getDescription());

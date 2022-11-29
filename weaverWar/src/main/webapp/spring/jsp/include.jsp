@@ -25,6 +25,7 @@
 %><%@page import="com.purplehillsbooks.weaver.AddressListEntry"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentRecord"
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"
+%><%@page import="com.purplehillsbooks.weaver.AgendaItem"
 %><%@page import="com.purplehillsbooks.weaver.BaseRecord"
 %><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"

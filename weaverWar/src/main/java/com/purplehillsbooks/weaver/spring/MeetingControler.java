@@ -457,6 +457,48 @@ public class MeetingControler extends BaseController {
           }
 
       }
+      
+      
+
+      @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
+      public void meetingListB(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+              ar.setPageAccessLevels(ngw);
+              JSONObject jo = new JSONObject();
+              JSONArray meetings = new JSONArray();
+              List<MeetingRecord> allMeets = ngw.getMeetings();
+              MeetingRecord.sortChrono(allMeets);
+              for (MeetingRecord oneRef : allMeets) {
+                  meetings.put(oneRef.getListableJSON(ar));
+              }
+              jo.put("meetings", meetings);
+              sendJson(ar, jo);
+          }
+          catch(Exception ex){
+              Exception ee = new Exception("Unable to access meeting list.", ex);
+              streamException(ee, ar);
+          }
+      }
+
+      @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
+      public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              String id = ar.reqParam("id");
+
+              JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
+              addVisitors(ar, jo, siteId, pageId);
+              sendJson(ar, jo);
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to access meeting information.", ex);
+              streamException(ee, ar);
+          }
+      }
+      
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingUpdate.json", method = RequestMethod.POST)
       public void meetingUpdate(@PathVariable String siteId,@PathVariable String pageId,
@@ -581,45 +623,6 @@ public class MeetingControler extends BaseController {
           }
       }
 
-
-      @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
-      public void meetingListB(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response) {
-          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-          try{
-              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-              ar.setPageAccessLevels(ngw);
-              JSONObject jo = new JSONObject();
-              JSONArray meetings = new JSONArray();
-              List<MeetingRecord> allMeets = ngw.getMeetings();
-              MeetingRecord.sortChrono(allMeets);
-              for (MeetingRecord oneRef : allMeets) {
-                  meetings.put(oneRef.getListableJSON(ar));
-              }
-              jo.put("meetings", meetings);
-              sendJson(ar, jo);
-          }
-          catch(Exception ex){
-              Exception ee = new Exception("Unable to access meeting list.", ex);
-              streamException(ee, ar);
-          }
-      }
-
-      @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
-      public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response) {
-          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-          try{
-              String id = ar.reqParam("id");
-
-              JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
-              addVisitors(ar, jo, siteId, pageId);
-              sendJson(ar, jo);
-          }catch(Exception ex){
-              Exception ee = new Exception("Unable to access meeting information.", ex);
-              streamException(ee, ar);
-          }
-      }
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/getMeetingNotes.json", method = RequestMethod.GET)

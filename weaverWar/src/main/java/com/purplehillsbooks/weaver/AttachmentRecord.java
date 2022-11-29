@@ -752,13 +752,17 @@ public class AttachmentRecord extends CommentContainer {
         jo.put("attList", attachInfo);
         return true;
     }
+    
+    public JSONObject getLinkableJSON() throws Exception {
+        JSONObject thisDoc = new JSONObject();
+        thisDoc.put("id", this.getId());
+        thisDoc.put("name", this.getNiceName());
+        thisDoc.put("universalid",  getUniversalId());
+        return thisDoc;
+    }
 
     public JSONObject getMinJSON(NGWorkspace ngw) throws Exception {
-        JSONObject thisDoc = new JSONObject();
-        String univ = getUniversalId();
-        thisDoc.put("universalid",  univ);
-        thisDoc.put("id",           getId());
-        thisDoc.put("name",         getNiceName());
+        JSONObject thisDoc = getLinkableJSON();
         thisDoc.put("description",  getDescription());
         thisDoc.put("attType",      getType());
         thisDoc.put("size",         getFileSize(ngw));

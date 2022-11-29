@@ -115,6 +115,15 @@ public class TopicRecord extends CommentContainer {
     public void setId(String newId) {
         setAttribute("id", newId);
     }
+    public boolean hasId(String id) {
+        if (id.equals(this.getId())) {
+            return true;
+        }
+        if (id.equals(this.getUniversalId())) {
+            return true;
+        }
+        return false;
+    }
 
 
     //TODO: is this properly supported?  Should be an AddressListEntry
@@ -485,7 +494,7 @@ public class TopicRecord extends CommentContainer {
      * as a clone from a workspace to a clone of a workspace.   If it is copied or moved to another
      * workspace for any other reason, then the universal ID should be reset.
      */
-     public String getUniversalId() throws Exception {
+     public String getUniversalId() {
          return getScalar("universalid");
      }
      public void setUniversalId(String newID) throws Exception {
@@ -800,14 +809,18 @@ public class TopicRecord extends CommentContainer {
 
 /////////////////////////// JSON ///////////////////////////////
 
-
-      public JSONObject getJSON(NGWorkspace ngw) throws Exception {
+      public JSONObject getLinkableJSON() throws Exception {
           JSONObject thisNote = new JSONObject();
           thisNote.put("id",        getId());
           thisNote.put("subject",   getSubject());
+          thisNote.put("universalid", getUniversalId());
+          return thisNote;
+      }
+
+      public JSONObject getJSON(NGWorkspace ngw) throws Exception {
+          JSONObject thisNote = getLinkableJSON();
           thisNote.put("modTime",   getLastEdited());
           thisNote.put("modUser",   getModUser().getJSON());
-          thisNote.put("universalid", getUniversalId());
           thisNote.put("deleted",   isDeleted());
           thisNote.put("draft",     isDraftNote());
           thisNote.put("discussionPhase", getDiscussionPhase());

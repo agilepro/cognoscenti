@@ -9,7 +9,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
         console.log("Topic BEFORE: ", $scope.fullTopics);
         var res = [];
         $scope.attachmentList.forEach( function(oneTopic) {
-            if ($scope.itemHasDoc(oneTopic.universalid)) {
+            if ($scope.itemHasTopic(oneTopic.universalid)) {
                 res.push(oneTopic);
             }
         });
@@ -28,7 +28,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
         });
         return rez;
     }
-    $scope.itemHasDoc = function(oneTopic) {
+    $scope.itemHasTopic = function(oneTopic) {
         var found = false;
         $scope.topics.forEach( function(item) {
             if (item == oneTopic) {
@@ -42,7 +42,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     $scope.topicsOnItem = function() {
         var res = [];
         return $scope.attachmentList.forEach( function(oneTopic) {
-            if ($scope.itemHasDoc(oneTopic.universalid)) {
+            if ($scope.itemHasTopic(oneTopic.universalid)) {
                 res.push(oneTopic);
             }
         });
@@ -50,14 +50,14 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
         return res;
     }
 
-    $scope.addDocToItem = function(oneTopic) {
-        if (!$scope.itemHasDoc(oneTopic.universalid)) {
+    $scope.addTopicToItem = function(oneTopic) {
+        if (!$scope.itemHasTopic(oneTopic.universalid)) {
             $scope.topics.push(oneTopic.universalid);
         }
         console.log("Topic list: ", $scope.topics);
         generateList();
     }
-    $scope.removeDocFromItem = function(oneTopic) {
+    $scope.removeTopicFromItem = function(oneTopic) {
         var newList = [];
         $scope.topics.forEach( function(item) {
             if (item != oneTopic.universalid) {

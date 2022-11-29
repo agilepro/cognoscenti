@@ -176,12 +176,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
 
     $scope.itemGoals = function(item) {
         var res = [];
-        if (item && item.actionItems) {
-            for (var j=0; j<item.actionItems.length; j++) {
-                var aiId = item.actionItems[j];
+        if (item) {
+            for (var j=0; j<item.aiList.length; j++) {
+                var actionItemInfo = item.aiList[j];
                 for(var i=0; i<$scope.allGoals.length; i++) {
                     var oneGoal = $scope.allGoals[i];
-                    if (oneGoal.universalid == aiId) {
+                    if (oneGoal.id == actionItemInfo.id) {
                         res.push(oneGoal);
                     }
                 }
@@ -607,6 +607,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 postURL = "agendaAdd.json?id="+$scope.meeting.id;
             }
             var postdata = angular.toJson(readyToSave);
+            console.log("POSTING meeting info", readyToSave);
             promise = $http.post(postURL, postdata);
         }
         else {
@@ -698,6 +699,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         
         var totalAgendaTime = 0;
         data.agenda.forEach( function(item) {
+            //just for demonstration, I am clearing out actionItems so that
+            //I know this field is never being used
+            item.actionItems = "DONT USE THIS ANY MORE";
+            
             if (!item.proposed) {
                 totalAgendaTime += item.duration;
             }
@@ -1645,10 +1650,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
 
         attachModalInstance.result
-        .then(function (selectedTopics, topicName) {
-            console.log("CLOSING TOPIC DIALOG 2", selectedTopics);
-            item.topics = selectedTopics;
-            $scope.saveAgendaItem(item);
+        .then(function (selectedTopics) {
+            var replacement = {};
+            replacement.id = item.id;
+            replacement.topics = selectedTopics;
+            $scope.saveAgendaItem(replacement);
             $scope.extendBackgroundTime();
         }, function () {
             $scope.putGetMeetingInfo( null );
@@ -1976,32 +1982,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             }
         });
     }
+
     
-    $scope.didAttend = function(specId) {
-        var found = false;
-        $scope.meeting.attended.forEach( function(item) {
-            if (specId == item) {
-                found = true;
-            }
-        });
-        return found;
-    }
-    
-    $scope.toggleAttend = function(specId) {
-        var did = $scope.didAttend(specId);
-        if (did) {
-            var newArray = [];
-            $scope.meeting.attended.forEach( function(item) {
-                if (specId != item) {
-                    newArray.push(item);
-                }
-            });
-            $scope.meeting.attended = newArray;
+    $scope.toggleAttend = function(person) {
+        var saveRecord = {};
+        if (person.attended) {
+            saveRecord.attended_remove = person.key;
         }
         else {
-            $scope.meeting.attended.push(specId);
+            saveRecord.attended_add = person.key;
         }
-        $scope.savePartialMeeting(["attended"]);
+        $scope.putGetMeetingInfo(saveRecord);
     }
     $scope.changeMeetingMode = function(newMode) {
         $scope.extendBackgroundTime();

@@ -636,41 +636,6 @@ public class MeetingRecord extends DOMFace {
             scheduledTime = scheduledTime + (aiObj.getLong("duration")*60000);
             aiObj.put("schedEnd", scheduledTime);
 
-            //add some additional details about the action items
-            JSONArray actionItems = aiObj.getJSONArray("actionItems");
-            JSONArray aiList = new JSONArray();
-            for (int j=0; j<actionItems.length(); j++) {
-                String guid = actionItems.getString(j);
-                GoalRecord gr = ngw.getGoalOrNull(guid);
-                if (gr!=null) {
-                    JSONObject oneAI = new JSONObject();
-                    oneAI.put("synopsis", gr.getSynopsis());
-                    oneAI.put("id", gr.getId());
-                    oneAI.put("state", gr.getState());
-                    oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "task"+gr.getId()+".htm"));
-                    aiList.put(oneAI);
-                }
-            }
-            aiObj.put("aiList", aiList);
-
-            //add some details about the documents
-            JSONArray docList = aiObj.getJSONArray("docList");
-            JSONArray attList = new JSONArray();
-            for (int j=0; j<docList.length(); j++) {
-                String guid = docList.getString(j);
-                int pos = guid.lastIndexOf("@");
-                guid = guid.substring(pos+1);
-                AttachmentRecord arec = ngw.findAttachmentByID(guid);
-                if (arec!=null) {
-                    JSONObject oneAI = new JSONObject();
-                    oneAI.put("id", arec.getId());
-                    oneAI.put("name", arec.getNiceName());
-                    oneAI.put("url", ar.baseURL + arec.getEmailURL(ar, ngw));
-                    attList.put(oneAI);
-                }
-            }
-            aiObj.put("attList", attList);
-
             aiArray.put(aiObj);
         }
         meetingInfo.put("agenda", aiArray);
@@ -847,10 +812,10 @@ public class MeetingRecord extends DOMFace {
             this.setVector("attended", constructVector(input.getJSONArray("attended")));
         }
         if (input.has("attended_add")) {
-            this.addUniqueValue("attended", input.getString("attended_add"));
+            this.addUserToVector("attended", input.getString("attended_add"));
         }
         if (input.has("attended_remove")) {
-            this.removeVectorValue("attended", input.getString("attended_remove"));
+            this.removeUserFromVector("attended", input.getString("attended_remove"));
         }
 
         if (input.has("participants")) {
@@ -881,6 +846,38 @@ public class MeetingRecord extends DOMFace {
             stopTimer();
         }
     }
+    
+    public void removeUserFromVector(String memberName, String value) {
+        AddressListEntry ale = new AddressListEntry(value);
+        if (memberName == null) {
+            throw new RuntimeException("Program logic error: a null member name"
+                +" was passed to addVectorValue.");
+        }
+        List<Element> children = getNamedChildrenVector(memberName);
+        for (Element child : children) {
+            String childVal = DOMUtils.textValueOf(child, false);
+            if (ale.hasAnyId(childVal)) {
+                fEle.removeChild(child);
+            }
+        }
+    }
+    public void addUserToVector(String memberName, String value) {
+        if (memberName == null) {
+            throw new RuntimeException("Program logic error: a null member name"
+                +" was passed to addVectorValue.");
+        }
+        AddressListEntry newUser = new AddressListEntry(value);
+        List<Element> children = getNamedChildrenVector(memberName);
+        for (Element child : children) {
+            String childVal = DOMUtils.textValueOf(child, false);
+            if (newUser.hasAnyId(childVal)) {
+                //value is already there, so ignore this add
+                return;
+            }
+        }
+        createChildElement(memberName, newUser.getKey());
+    }
+    
 
     /**
      * This will update the existing agenda items with values from

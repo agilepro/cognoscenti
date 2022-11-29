@@ -306,6 +306,9 @@ public class BaseController {
         ar.invokeJSP("/spring/anon/"+jspName);
     }
     
+    protected static void streamJSPMobileFirst(AuthRequest ar, String jspName) throws Exception {
+        streamWrappedJSP(ar, "wmf", jspName);
+    }
     
     
     

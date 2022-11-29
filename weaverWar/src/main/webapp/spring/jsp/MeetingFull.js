@@ -181,11 +181,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.itemGoals = function(item) {
         var res = [];
         if (item) {
-            for (var j=0; j<item.actionItems.length; j++) {
-                var aiId = item.actionItems[j];
+            for (var j=0; j<item.aiList.length; j++) {
+                var actionItemInfo = item.aiList[j];
                 for(var i=0; i<$scope.allGoals.length; i++) {
                     var oneGoal = $scope.allGoals[i];
-                    if (oneGoal.universalid == aiId) {
+                    if (oneGoal.id == actionItemInfo.id) {
                         res.push(oneGoal);
                     }
                 }
@@ -584,6 +584,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var totalAgendaTime = 0;
         data.agenda.forEach( function(item) {
             totalAgendaTime += item.duration;
+            //just for demonstration, I am clearing out actionItems so that
+            //I know this field is never being used
+            item.actionItems = "DONT USE THIS ANY MORE";
         });
         data.agendaDuration = totalAgendaTime;
         $scope.timerCorrection = data.serverTime - new Date().getTime();

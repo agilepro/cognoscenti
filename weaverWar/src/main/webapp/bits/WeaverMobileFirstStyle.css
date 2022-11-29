@@ -1,0 +1,107 @@
+body {
+    background: #672A79 0% 0% no-repeat padding-box;
+    width: 412px;
+}
+.main-content {
+    min-height: 787px;
+    margin: 24px;
+    padding: 15px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+}
+.fullWidth {
+    width: 100%;
+}
+.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.big-weaver {
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) 90px/117px var(--unnamed-font-family-pt-sans);
+    color: var(--unnamed-color-662a79);
+    text-align: left;
+    font: normal normal bold 90px/117px PT Sans;
+    letter-spacing: 0px;
+    color: #662A79;
+    opacity: 1;
+}
+.topper {
+    text-align: center;
+    font: normal normal 600 28px/37px Segoe UI;
+    color: #672A79;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.instruction {
+    font: normal normal 600 20px Segoe UI;
+    margin: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.infoBox {
+    *border: 1px red solid;
+    *background-color: white;
+    text-align: center;
+    font: normal normal 600 20px Segoe UI;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.richTextBox {
+    border: 1px black solid;
+    background-color: white;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding:5px;
+}
+.listItemStyle {
+    font: normal normal 600 18px Segoe UI;
+    margin: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.subItemStyle {
+    font: normal normal 300 16px Segoe UI;
+    margin: 5px;
+    margin-left: 25px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.grayBox {
+    width: 100%;
+    background-color: #EEEEEE;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.bigButton {
+    display: block;
+    margin-top:30px;
+    padding:20px;
+    color:white;
+    background-color:#944C9D;
+    border-radius:20px;
+    border-color:black;
+    margin-left: auto;
+    margin-right: auto;
+    font: normal normal 600 28px/37px Segoe UI;
+}
+.notFinished {
+    display: block;
+    margin-top:30px;
+    font-style: italic;
+    padding:20px;
+    color:red;
+    margin-left: auto;
+    margin-right: auto;
+    font: normal italic 200 18px Segoe UI;
+}

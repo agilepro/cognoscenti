@@ -31,7 +31,7 @@
         </div>
         <div class="sBoxMain">
           <table class="docTable">
-            <tr ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer"
+            <tr ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
                 title="Click to link to this topic">
                 <td> {{doc.subject}} </td>
                 <td>
@@ -53,7 +53,7 @@
         </div>
         <div class="sBoxMain">
           <table class="docTable">
-            <tr ng-repeat="topic in fullTopics" ng-click="removeDocFromItem(topic)" 
+            <tr ng-repeat="topic in fullTopics" ng-click="removeTopicFromItem(topic)" 
                 title="Click to unlink the discussion topic"  style="cursor:pointer">
                 <td> {{topic.subject}} </td>
                 <td>

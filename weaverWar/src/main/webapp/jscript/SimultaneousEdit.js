@@ -22,6 +22,31 @@ The block of text is held in an object, with three main fields
                a way to preserve the cursor position, so leave this false.
 }
 
+PATTERN OF USAGE
+
+When you first get the markdown from the server, execute this:
+
+    mySim = new SimText(markdown_from_server);
+    
+Display the html using something like this:
+
+    <div ng-bind-html="mySim.vHtml"></div>
+
+Edit with edit using something similar:
+
+    <div ui-tinymce="tinymceOptions" ng-model="mySim.vHtml"></div>
+    
+Send an update to the server, you have to send two values, the oldMarkdown is what the server had when user started editing, and newMarkdown is the value that is currently in editor.  The user's changes is the difference between these two values.  Generally both are sent to the server.
+
+    var newMarkdown = mySim.getLocal();   //a.k.a. lastSave
+    var oldMarkdown = mySim.vServer;
+    
+When you receive a response from the server, you need to provide two values to the merge routine.  First the value you sent to the server to update to, and second the value that just came from the server.  The diff between these two are the changes on the server that need to be merged locally.
+
+    mySim.updateFromServer( lastSave, newMarkdown );
+    
+Note, if marked for editing and not autoMerge, then the merge will not be done, but instead a flag needMerge is set saying that there are changes on the server.  If editing and autoMerge then a merge will be performed.  If not editing, then the new markdown will simply be set as the new local markdown and html.
+
 TIME OF SAVE
 
 The difference between vServer and vLocal is what user has typed since the last update from the server.
