@@ -295,6 +295,9 @@ embeddedData.canUpdate = <%=canUpdate%>;
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
               href="MeetingList.htm">List All Meetings</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Access the new mobile UI in development"
+              href="RunMeeting.wmf?meetId={{meeting.id}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>
         </ul>
       </span>
 

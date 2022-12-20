@@ -3,7 +3,7 @@
 %><%
     String pageId    = ar.reqParam("pageId");
     String siteId    = ar.reqParam("siteId");
-    String meetId    = ar.reqParam("meetId");
+    String meetId    = ar.defParam("meetId", "");
     String topicId    = ar.reqParam("topicId");
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
@@ -19,11 +19,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.workspaceName = "<% ar.writeJS(ngw.getFullName()); %>";
     $scope.meetId = "<% ar.writeJS(meetId); %>";
+    if ($scope.meetId) {
+        localStorage.setItem("meetId", $scope.meetId);
+        console.log("STORED meeting to local storage: ("+$scope.meetId+")");
+    }
+    else {
+        $scope.meetId = localStorage.getItem("meetId");
+        console.log("RETRIEVED meeting from local storage: ("+$scope.meetId+")");
+    }
     $scope.topicId = "<% ar.writeJS(topicId); %>";
     $scope.meeting = {};
     $scope.topic = {};
 
     $scope.getMeetingInfo = function() {
+        if (!$scope.meetId) {
+            return;
+        }
         var postURL = "meetingRead.json?id="+$scope.meetId;
         $http.get(postURL)
         .success( function(data) {
@@ -120,14 +131,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     {{workspaceName}}
     </div>
     <div class="grayBox">
-        <div class="infoBox">
-        <a href="RunMeeting.wmf?meetId={{meeting.id}}">
-          <span class="fa fa-gavel"></span> {{meeting.name}}</a>
+        <div class="infoBox" ng-show="{{meetId}}">
+            <a href="RunMeeting.wmf?meetId={{meeting.id}}">
+              <span class="fa fa-gavel"></span> {{meeting.name}}</a>
         </div>
-        <div class="infoBox">
+        <div class="infoBoxSm" ng-show="{{meetId}}">
         {{meeting.startTime|pdate}}
         </div>
-        <div class="infoBox">
+        <div class="infoBoxSm">
         <span class="fa fa-lightbulb-o"></span> {{topic.subject}}
         </div>
     </div>
@@ -155,9 +166,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     
     
-    <div class="notFinished">
-    This page is not completed yet!
-    </div>
+    <!-- Begin Template Footer -->
+    <jsp:include page="WMFFooter.jsp" />
+    <!-- End Template Footer -->
 </div>
 
 

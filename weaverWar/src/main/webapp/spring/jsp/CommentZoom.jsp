@@ -239,6 +239,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <td>Reply</td>
           <td><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></td>
         </tr>
+        <tr>
+          <td></td>
+          <td><a href="CmtView.wmf?cmtId={{cid}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a></td>
+        </tr>
       </table>
       <table class="table" ng-hide="commentExists">
         <tr>

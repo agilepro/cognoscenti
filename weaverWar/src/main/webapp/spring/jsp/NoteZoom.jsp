@@ -1076,6 +1076,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></li>
           <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Access the new mobile UI in development"
+              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>
 
         </ul>
       </span>

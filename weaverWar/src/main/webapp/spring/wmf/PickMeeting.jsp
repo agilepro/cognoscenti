@@ -43,13 +43,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     Choose a meeting from list below:
     </div>
     
-    <div ng-repeat="meet in meetings" class="listItemStyle">
-    <a href="RunMeeting.wmf?meetId={{meet.id}}">
-        <span class="fa fa-gavel"></span> {{meet.name}}
-    </a>
+    <div ng-repeat="meet in meetings" style="margin:10px;" >
+      <div class="listItemStyle">
+        <a href="RunMeeting.wmf?meetId={{meet.id}}">
+            <span class="fa fa-gavel"></span> {{meet.name}}
+        </a>
+      </div>
+      <div class="subItemStyle">
+        {{meet.startTime|pdate}}
+      </div>
     </div>
     
     
+    <div class="notFinished">
+    This page is not completed yet!
+    </div>
+    <div class="bigButton">
+       <a href="MeetingList.htm">Switch to Browser UI</a>
+    </div>
 </div>
 
 

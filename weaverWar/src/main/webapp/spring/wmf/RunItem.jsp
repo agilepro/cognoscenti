@@ -20,6 +20,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.workspaceName = "<% ar.writeJS(ngw.getFullName()); %>";
     $scope.meetId = "<% ar.writeJS(meetId); %>";
     $scope.itemId = "<% ar.writeJS(itemId); %>";
+    $scope.nextItem = null;
+    $scope.prevItem = null;
     $scope.meeting = {};
     $scope.agendaItem = {};
 
@@ -40,11 +42,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         $scope.meeting = data;
         $scope.agendaItem = {};
+        $scope.prevItem = null;
+        $scope.nextItem = null;
+        var previousItem =null;
         data.agenda.forEach( function(item) {
+            if (previousItem == $scope.itemId) {
+                $scope.nextItem = item.id;
+            }
             if (item.id == $scope.itemId) {
                 $scope.agendaItem = item;
                 console.log("RECEIVED", item);
+                $scope.prevItem = previousItem;
             }
+            previousItem = item.id;
         });
         
     }
@@ -102,48 +112,65 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <a href="RunMeeting.wmf?meetId={{meeting.id}}">
           <span class="fa fa-gavel"></span> {{meeting.name}}</a>
         </div>
-        <div class="infoBox">
+        <div class="infoBoxSm">
         {{meeting.startTime|pdate}}
         </div>
-        <div class="infoBox">
-        <span class="fa fa-bullseye"></span> {{agendaItem.subject}}
+        <div class="infoBoxSm" ng-show="agendaItem.isSpacer">
+        {{agendaItem.subject}}
+        </div>
+        <div class="infoBoxSm" ng-hide="agendaItem.isSpacer">
+        {{agendaItem.number}} <span class="fa fa-thumb-tack"></span> {{agendaItem.subject}}
+        </div>
+        <div class="infoBoxSm">
+            <div style="float:left" ng-show="prevItem">
+                <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{prevItem}}">
+                    <span class="fa fa-arrow-circle-left"></span>
+                </a>
+            </div>
+            <div style="float:right" ng-show="nextItem">
+                <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{nextItem}}">
+                    <span class="fa fa-arrow-circle-right"></span>
+                </a>
+            </div>
         </div>
     </div>
     
 
-    
-    <div class="instruction">
-    Description:
-    </div>
-    <div ng-bind-html="agendaItem.description | wiki" class="richTextBox"></div> 
-    
+    <div ng-hide="agendaItem.isSpacer">
+        <div class="instruction">
+        Description:
+        </div>
+        <div ng-bind-html="agendaItem.description | wiki" class="richTextBox"></div> 
+        
 
-    <div class="instruction">
-    Minutes:
-    </div>
-    <div ng-bind-html="agendaItem.minutes | wiki" class="richTextBox"></div> 
+        <div class="instruction">
+        Minutes:
+        </div>
+        <div ng-bind-html="agendaItem.minutes | wiki" class="richTextBox"></div> 
+        
+        
+        <div class="instruction">
+        Links:
+        </div>
+          <div class="subItemStyle" ng-repeat="topic in agendaItem.topicList">
+            <a href="TopicView.wmf?meetId={{meeting.id}}&topicId={{topic.id}}">
+              <span class="fa fa-lightbulb-o"></span> {{topic.subject}}</a>
+          </div>
+          <div class="subItemStyle" ng-repeat="att in agendaItem.attList">
+            <a href="DocView.wmf?meetId={{meeting.id}}&docId={{att.id}}">
+              <span class="fa fa-file-o"></span> {{att.name}}</a>
+          </div>
+          <div class="subItemStyle" ng-repeat="comment in agendaItem.comments">
+            <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
+              <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
+          </div>
+        
+    </div> 
     
-    
-    <div class="instruction">
-    Links:
-    </div>   
-      <div class="subItemStyle" ng-repeat="topic in agendaItem.topics">
-        <a href="TopicView.wmf?meetId={{meeting.id}}&topicId={{getNid(topic)}}">
-          <span class="fa fa-lightbulb-o"></span> {{getNid(topic)}}</a>
-      </div>
-      <div class="subItemStyle" ng-repeat="att in agendaItem.attList">
-        <a href="DocView.wmf?meetId={{meeting.id}}&docId={{att.id}}">
-          <span class="fa fa-file-o"></span> {{att.name}}</a>
-      </div>
-      <div class="subItemStyle" ng-repeat="comment in agendaItem.comments">
-        <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
-          <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
-      </div>
-    
-    
-    <div class="notFinished">
-    This page is not completed yet!
-    </div>
+    <!-- Begin Template Footer -->
+    <jsp:include page="WMFFooter.jsp" />
+    <!-- End Template Footer -->
+
 </div>
 
 

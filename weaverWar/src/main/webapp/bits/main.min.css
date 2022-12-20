@@ -349,6 +349,7 @@ img {
 
 a, a:focus, a:hover {
     color: #AB37C8;
+    text-decoration: underline;
 }
 
 

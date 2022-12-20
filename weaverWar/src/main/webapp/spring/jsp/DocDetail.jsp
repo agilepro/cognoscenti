@@ -434,6 +434,9 @@ function copyTheLink() {
     <button class="btn btn-default btn-raised" ng-click="composeEmail()">Send by email</button>
     <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.<p>
   </div>
+  <div>
+    <a href="DocView.wmf?docId={{docId}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
+  </div>
 </div>
 <div class="col col-lg-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
     <h2>Sharing</h2>

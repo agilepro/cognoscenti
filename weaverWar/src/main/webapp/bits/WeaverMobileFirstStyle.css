@@ -2,6 +2,9 @@ body {
     background: #672A79 0% 0% no-repeat padding-box;
     width: 412px;
 }
+a {
+    text-decoration: underline;
+}
 .main-content {
     min-height: 787px;
     margin: 24px;
@@ -36,15 +39,13 @@ body {
     white-space: nowrap
 }
 .instruction {
-    font: normal normal 600 20px Segoe UI;
+    font: normal normal 600 12px Segoe UI;
     margin: 5px;
     overflow: hidden;
     text-overflow: clip;
     white-space: nowrap
 }
 .infoBox {
-    *border: 1px red solid;
-    *background-color: white;
     text-align: center;
     font: normal normal 600 20px Segoe UI;
     margin: 5px;
@@ -54,8 +55,19 @@ body {
     text-overflow: clip;
     white-space: nowrap
 }
+.infoBoxSm {
+    text-align: center;
+    font: normal normal 600 14px Segoe UI;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+
 .richTextBox {
-    border: 1px black solid;
+    border: 1px lightskyblue solid;
     background-color: white;
     margin: 5px;
     margin-top: 5px;
@@ -84,16 +96,15 @@ body {
     padding-bottom: 1px;
 }
 .bigButton {
+    text-align: center;
     display: block;
     margin-top:30px;
-    padding:20px;
-    color:white;
-    background-color:#944C9D;
+    padding:5px;
     border-radius:20px;
-    border-color:black;
+    border:1px solid lightskyblue;
     margin-left: auto;
     margin-right: auto;
-    font: normal normal 600 28px/37px Segoe UI;
+    font: normal normal 300 20px Segoe UI;
 }
 .notFinished {
     display: block;

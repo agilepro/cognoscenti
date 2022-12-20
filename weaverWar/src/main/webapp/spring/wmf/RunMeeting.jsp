@@ -90,6 +90,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "fa-comments-o";
     }
     
+    $scope.browserUI = function() {
+        
+    }
+    
 
 });
 
@@ -107,7 +111,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <a href="RunMeeting.wmf?meetId={{meeting.id}}">
           <span class="fa fa-gavel"></span> {{meeting.name}}</a>
         </div>
-        <div class="infoBox">
+        <div class="infoBoxSm">
         {{meeting.startTime|pdate}}
         </div>
     
@@ -135,7 +139,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div ng-repeat="item in meeting.agenda">
       <div class="listItemStyle">
         <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{item.id}}">
-          <span class="fa fa-bullseye"></span> {{item.subject}}</a>
+          <span class="fa fa-thumb-tack"></span> {{item.subject}}</a>
       </div>
 
       <div class="subItemStyle" ng-repeat="topic in item.topicList">
@@ -152,18 +156,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
     </div>
     
-    <div ng-show="meeting.state!=2" class="fullWidth">
-      <button class="bigButton" ng-click="setMeetingState(2)">Start Meeting</button>
-    </div>
-    <div ng-show="meeting.state==2" class="fullWidth">
-      <button class="bigButton" ng-click="setMeetingState(3)">Conclude Meeting</button>
-    </div>
     
-    
-    
-    <div class="notFinished">
-    This page is not completed yet!
-    </div>
+    <!-- Begin Template Footer -->
+    <jsp:include page="WMFFooter.jsp" />
+    <!-- End Template Footer -->
+
 </div>
 
 
