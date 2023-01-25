@@ -55,12 +55,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     
     
-    <div class="notFinished">
-    This page is not completed yet!
-    </div>
-    <div class="bigButton">
-       <a href="MeetingList.htm">Switch to Browser UI</a>
-    </div>
+    <!-- Begin Template Footer -->
+    <jsp:include page="WMFFooter.jsp" />
+    <!-- End Template Footer -->
 </div>
 
 

@@ -115,8 +115,14 @@ public class EmailSender extends TimerTask {
         assertEmailConfigOK();
         db = new MongoDB();
         
+        long thirtyDaysAgo = System.currentTimeMillis() - 30L * 24 * 3_600_000;
+        
         //find the highest created time in the database so far
+        //but limit the query to the last 30 days
         JSONObject query = new JSONObject();
+        JSONObject gteCondition = new JSONObject();
+        gteCondition.put("$gte", thirtyDaysAgo);
+        query.put("CreateDate", gteCondition);
         JSONObject sort = new JSONObject();
         sort.put("CreateDate", -1);
         JSONArray maxCreateTime = db.querySortRecords(query, sort);

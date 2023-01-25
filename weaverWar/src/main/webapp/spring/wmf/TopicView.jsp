@@ -87,10 +87,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
-    };
-    $scope.getNid = function(uid) {
-        var pos = uid.lastIndexOf("@");
-        return uid.substring(pos+1);
     }
     $scope.getNid = function(uid) {
         var pos = uid.lastIndexOf("@");
@@ -154,6 +150,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     Links:
     </div>  
       <div class="subItemStyle" ng-repeat="att in topic.docList">
+        <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
+          <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
         <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
           <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
       </div>

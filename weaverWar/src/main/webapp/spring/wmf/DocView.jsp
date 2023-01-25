@@ -20,6 +20,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.workspaceName = "<% ar.writeJS(ngw.getFullName()); %>";
     $scope.meetId = "<% ar.writeJS(meetId); %>";
     $scope.docId = "<% ar.writeJS(docId); %>";
+    $scope.document = {};
     if ($scope.meetId) {
         localStorage.setItem("meetId", $scope.meetId);
         console.log("STORED meeting to local storage: ("+$scope.meetId+")");
@@ -44,7 +45,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     };
-    $scope.getTopicInfo = function() {
+    $scope.getDocInfo = function() {
         var postURL = "docInfo.json?did="+$scope.docId;
         $http.get(postURL)
         .success( function(data) {
@@ -55,7 +56,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     $scope.getMeetingInfo();
-    $scope.getTopicInfo();
+    $scope.getDocInfo();
     
     
     
@@ -108,6 +109,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "fa-comments-o";
     }
     
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
+    }
 
 });
 
@@ -133,6 +142,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
     
+    <div>
+        <div class="smallButton"  ng-click="downloadDocument(document)"
+             ng-show="document.attType == 'FILE'">
+           Download Document
+        </div>
+        <div class="smallButton"  ng-click="downloadDocument(document)"
+             ng-show="document.attType != 'FILE'">
+           Visit Link
+        </div>  
+    </div>
 
     
     <div class="instruction">
