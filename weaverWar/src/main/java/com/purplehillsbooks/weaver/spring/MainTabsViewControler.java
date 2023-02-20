@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +29,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
+import com.purplehillsbooks.weaver.LearningPath;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SearchResultRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.xml.Mel;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -142,7 +148,77 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/getLearning.json", method = RequestMethod.GET)
+    public void getLearningPath(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            String jspName = ar.reqParam("jsp");
+            UserProfile user = ar.getUserProfile();
+            if (user==null) {
+                throw new Exception("User is not logged in or has no user profile");
+            }
+            UserPage userPage = user.getUserPage();
+            JSONArray learningPathList = userPage.getLearningPathForUser(jspName);
+            
+            JSONObject res = new JSONObject();
+            res.put("list", learningPathList);
+            
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get learning path", ex);
+            streamException(ee, ar);
+        }
+    }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/setLearning.json", method = RequestMethod.POST)
+    public void setLearning(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertSuperAdmin("only administrators can change the learning scripts");
+            String jspName = ar.reqParam("jsp");
+
+            JSONObject newLearning = getPostedObject(ar);
+            String mode = newLearning.getString("mode");
+            LearningPath.putLearningForPage(jspName, mode, newLearning);
+            
+            JSONObject res = new JSONObject();
+            res.put("list", LearningPath.getLearningForPage(jspName));
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to set learning path to done", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/MarkLearningDone.json", method = RequestMethod.POST)
+    public void setLearningPath(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            String jspName = ar.reqParam("jsp");
+            String mode = ar.reqParam("mode");
+            String isDone = ar.reqParam("done");
+            UserProfile user = ar.getUserProfile();
+            if (user==null) {
+                throw new Exception("User is not logged in or has no user profile");
+            }
+            UserPage userPage = user.getUserPage();
+            userPage.setLearningDone(jspName, mode, isDone.equalsIgnoreCase("true"));
+            
+            JSONObject res = new JSONObject();
+            res.put("list", userPage.getLearningPathForUser(jspName));
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to set learning path to done", ex);
+            streamException(ee, ar);
+        }
+    }
 
 
 
@@ -185,7 +261,8 @@ public class MainTabsViewControler extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.preserveRealRequestURL();
             streamJSP(ar, "EmailAdjustment.jsp");
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             throw new Exception("Unable to stream EmailAdjustment.jsp", ex);
         }
     }
@@ -223,7 +300,8 @@ public class MainTabsViewControler extends BaseController {
             }
 
             response.sendRedirect(go);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             throw new Exception("Unable to process EmailAdjustmentAction.form", ex);
         }
     }
@@ -252,7 +330,8 @@ public class MainTabsViewControler extends BaseController {
             JSONObject results = new JSONObject();
             results.put("result", "ok");
             sendJson(ar, results);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to remove user from role.", ex);
             streamException(ee, ar);
         }

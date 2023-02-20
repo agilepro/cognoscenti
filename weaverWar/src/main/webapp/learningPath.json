@@ -1,0 +1,13 @@
+{
+  "AdminStats.jsp":  [
+    {
+      "mode": "standard",
+      "description": "this is a page to help administrators know what it going on \n\n* bullet\n* bullet\nsecond line",
+      "video": "Tutorial01"
+    }, {
+      "mode": "expert",
+      "description": "this is a page to help administrators know what it going on",
+      "video": "Tutorial02"
+    }
+  ]
+}

@@ -795,13 +795,10 @@ public class GoalRecord extends BaseRecord {
     }
 
     public JSONObject getJSON4Goal(NGWorkspace ngw) throws Exception {
-        JSONObject thisGoal = new JSONObject();
-        thisGoal.put("id", getId());
-        thisGoal.put("synopsis", getSynopsis());
+        JSONObject thisGoal = getMinimalJSON();
         thisGoal.put("description", getDescription());
         thisGoal.put("modifiedtime", getModifiedDate());
         thisGoal.put("modifieduser", getModifiedBy());
-        thisGoal.put("state",     getState());
         thisGoal.put("status",    getStatus());
         thisGoal.put("priority",  getPriority());
         thisGoal.put("duedate",   getDueDate());

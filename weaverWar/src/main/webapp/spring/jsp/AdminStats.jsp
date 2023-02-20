@@ -41,10 +41,33 @@
         }
         allWorkspaces.put(ngpis.getJSON4List());
     }
-
+    UserManager userManager = UserManager.getStaticUserManager();
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
     JSONObject statsObj = wStats.getJSON();
+    
+    JSONObject allUsers = statsObj.getJSONObject("anythingPerUser");
+    JSONObject accessStatus = new JSONObject();
+    for (String aUser : allUsers.keySet()) {
+        UserProfile aUserProf = userManager.lookupUserByAnyId(aUser);
+        if (aUserProf == null) {
+            accessStatus.put(aUser, "No Profile");
+            continue;
+        }
+        if (site.userReadOnly(aUser)) {
+            accessStatus.put(aUser, "Site R/O");
+        }
+        else if (ngw.canUpdateWorkspace(aUserProf)) {
+            accessStatus.put(aUser, "Can Edit");
+        }
+        else if (ngw.canAccessWorkspace(aUserProf)) {
+            accessStatus.put(aUser, "Read Only");
+        }
+        else {
+            accessStatus.put(aUser, "No Access");
+        }
+    }
+    statsObj.put("access", accessStatus);
     
 
     boolean foundInRecents = false;
@@ -106,6 +129,7 @@ tagsInputWorkspacePicker  ={
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
+    setUpLearningMethods($scope);
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%ngpi.getJSON4List().write(out,2,4);%>;
@@ -380,7 +404,7 @@ editBoxStyle {
     </table>
 
 <h1>User Counts</h1>
-<table class="spaceyTable">
+<table class="table">
 
 <tr style="background-color:#EEF">
 <td>Filter: <input ng-model="userFilter"></td>
@@ -390,16 +414,18 @@ editBoxStyle {
 <td style="text-align:center;">Proposals</td>
 <td style="text-align:center;">Responses</td>
 <td style="text-align:center;">Unresponded</td>
+<td style="text-align:center;">Access</td>
 </tr>
 
 <tr ng-repeat="(user,val) in getUserStats()">
 <td>{{user}}</td>
-<td style="text-align:center;">{{stats['commentsPerUser'][user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats['docsPerUser'][user]}}</td>
-<td style="text-align:center;">{{stats['meetingsPerUser'][user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats['proposalsPerUser'][user]}}</td>
-<td style="text-align:center;">{{stats['responsesPerUser'][user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats['unrespondedPerUser'][user]}}</td>
+<td style="text-align:center;">{{stats.commentsPerUser[user]}}</td>
+<td style="text-align:center;background-color:#fefefe;">{{stats.docsPerUser[user]}}</td>
+<td style="text-align:center;">{{stats.meetingsPerUser[user]}}</td>
+<td style="text-align:center;background-color:#fefefe;">{{stats.proposalsPerUser[user]}}</td>
+<td style="text-align:center;">{{stats.responsesPerUser[user]}}</td>
+<td style="text-align:center;background-color:#fefefe;">{{stats.unrespondedPerUser[user]}}</td>
+<td style="text-align:center;">{{stats.access[user]}}</td>
 </tr>
 
 </table>

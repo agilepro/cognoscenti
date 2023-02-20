@@ -495,24 +495,6 @@ public class BaseController {
     }
 
 
-    /**
-     * this is loggedin users who are non-members of the workspace, that have some special reason
-     * to access a part of the workspace.  e.g. topic subscriber or meeting participant
-     * @param ar
-     * @param siteId
-     * @param pageId
-     * @param jspName
-     * @throws Exception
-     */
-    public static void showJSPLimited(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
-        try{
-            registerSiteOrProject(ar, siteId, pageId);
-            streamJSPLimited(ar, jspName);
-        }
-        catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
-        }
-    }
 
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{

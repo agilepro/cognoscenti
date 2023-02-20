@@ -15,9 +15,12 @@
     ar.setPageAccessLevels(ngb);
 
     List<File> allLayouts = NGBook.getAllLayouts(ar);
+    JSONArray layoutList = new JSONArray();
 
     String layoutName = ar.defParam("layout", "SiteIntro1.chtml");
     File layoutFile = NGBook.findSiteLayout(ar,layoutName);
+    
+    JSONObject allMail = ngb.getSiteDripContent(ar);
 
     JSONObject siteJSON = ngb.getConfigJSON();
     JSONArray projList = new JSONArray();
@@ -75,6 +78,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.data = <% mergeable.write(out,2,4);%>;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     $scope.addressees = <% affected.write(out,2,4); %>;
+    $scope.allMail = <% allMail.write(out,2,4); %>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -106,6 +110,19 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 <div ng-app="myApp" ng-controller="myCtrl">
+
+    <table class="table">
+        
+      <tr ng-repeat="drip in allMail.list">
+        <td>{{drip.name}}</td>
+        <td><a href="SiteMerge.htm?site=<% ar.writeURLData(siteId); %>&layout={{drip.name}}">LINK</a></td>
+        <td></td>
+      </tr>
+    </table>
+    
+    <pre>
+    {{allMail.list}}
+    </pre>
     <div class="form-horizontal">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" 

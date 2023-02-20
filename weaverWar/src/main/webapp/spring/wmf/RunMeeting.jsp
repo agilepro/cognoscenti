@@ -148,7 +148,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
       <div class="subItemStyle" ng-repeat="att in item.attList">
         <a href="DocView.wmf?meetId={{meeting.id}}&docId={{att.id}}">
-          <span class="fa fa-file-o"></span> {{att.name}}</a>
+          <span class="fa fa-file-o"></span> 
+          {{att.name}}</a>
       </div>
       <div class="subItemStyle" ng-repeat="comment in item.comments">
         <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">

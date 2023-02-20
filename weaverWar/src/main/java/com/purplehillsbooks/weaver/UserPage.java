@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * Holds extra information for a particular user.
@@ -363,5 +365,34 @@ public class UserPage extends ContainerCommon
         return list;
     }
 
-
+    public boolean getLearningDone(String jspName, String mode) throws Exception {
+        DOMFace learning = requireChild("learning", DOMFace.class);
+        DOMFace learn = learning.findChildWithID("learn", DOMFace.class, "key", jspName+"-"+mode);
+        if (learn==null) {
+            return false;
+        }
+        return learn.getAttributeBool("done");
+    }
+    public void setLearningDone(String jspName, String mode, boolean isDone) throws Exception {
+        DOMFace learning = requireChild("learning", DOMFace.class);
+        DOMFace learn = learning.findChildWithID("learn", DOMFace.class, "key", jspName+"-"+mode);
+        if (learn==null) {
+            Element child = learning.createChildElement("learn");
+            child.setAttribute("key",jspName+"-"+mode);
+            child.setAttribute("done", isDone?"true":"false");
+        }
+        else {
+            learn.setAttributeBool("done", isDone);
+        }
+    }
+    
+    public JSONArray getLearningPathForUser(String jspName) throws Exception {
+        JSONArray learningList = LearningPath.getLearningForPage(jspName);
+        for (JSONObject oneLearn : learningList.getJSONObjectList()) {
+            String oneMode = oneLearn.getString("mode");
+            oneLearn.put("done", getLearningDone(jspName, oneMode));
+        }
+        return learningList;
+    }
+    
 }

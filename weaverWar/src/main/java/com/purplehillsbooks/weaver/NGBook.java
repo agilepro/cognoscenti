@@ -1031,7 +1031,6 @@ public class NGBook extends ContainerCommon {
 
 
     public static List<File> getAllLayouts(AuthRequest ar) {
-
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");
         ArrayList<File> allTemplates = new ArrayList<File>();
         Hashtable<String, File> used = new Hashtable<String, File>();
@@ -1039,6 +1038,10 @@ public class NGBook extends ContainerCommon {
         File[] children = templateFolder.listFiles();
         if (children!=null) {
             for (File tempName: children) {
+                String name = tempName.getName();
+                if (!name.endsWith(".chtml")) {
+                    continue;
+                }
                 if (!used.contains(tempName.getName())) {
                     allTemplates.add(tempName);
                     used.put(tempName.getName(), tempName);
@@ -1046,6 +1049,31 @@ public class NGBook extends ContainerCommon {
             }
         }
         return allTemplates;
+    }
+    
+    public JSONObject getSiteDripContent(AuthRequest ar) throws Exception {
+        try {
+            File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");
+            File configFile = new File(templateFolder, "config.json");
+            JSONObject fileContents = JSONObject.readFromFile(configFile);
+            List<SiteMailGenerator> allMail = getAllSiteMail();
+            for (JSONObject oneMail : fileContents.getJSONArray("list").getJSONObjectList()) {
+                String thisFile = oneMail.getString("name");
+                for(SiteMailGenerator smg : allMail) {
+                    if (thisFile.equals(smg.getLayoutName())) {
+                        smg.extractAttributeString(oneMail, "id");
+                        smg.extractAttributeString(oneMail, "subject");
+                        smg.extractAttributeInt(oneMail, "state");
+                        smg.extractAttributeLong(oneMail, "sendDate");
+                        smg.extractAttributeString(oneMail, "from");
+                    }
+                }
+            }
+            return fileContents;
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to read all the site layout drip feed", e);
+        }
     }
 
     public static File findSiteLayout(AuthRequest ar, String layoutName) {
@@ -1144,16 +1172,19 @@ public class NGBook extends ContainerCommon {
         return jo;
     }
     
+    // there was a problem with this map being out of date.  Nothing was clearing it and
+    // causing it to be recreated.   Timeout now will assure that.
+    private static long userMapTimeout = System.currentTimeMillis();
     public boolean userReadOnly(String userId) throws Exception {
         if (userId==null || userId.length()==0) {
             return true;
         }
-        if (userAccessMap==null) {
+        if (userAccessMap==null || userMapTimeout < System.currentTimeMillis()) {
             JSONObject userMap = getUserMap();
-            setUserUpdateMap(userMap);            
+            setUserUpdateMap(userMap);
+            userMapTimeout = System.currentTimeMillis() + 3_600_000;  //one hour in the future
         }
-        boolean b = !userAccessMap.contains(userId);
-        return b;
+        return !userAccessMap.contains(userId);
     }
     
     private void setUserUpdateMap(JSONObject userMap) throws Exception {

@@ -9,8 +9,7 @@
     if (ar.isLoggedIn()) {
         loggedKey = loggedUser.getKey();
     }
-
-
+    
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
@@ -25,6 +24,9 @@
     }
 
     Cognoscenti cog = ar.getCogInstance();
+    
+    
+
 
 
 //pageTitle is a very strange variable.  It mostly is used to hold the value displayed
@@ -294,6 +296,8 @@ myApp.filter('wiki', function() {
 
     <!-- Begin mainContent -->
     <div class="col-sm-10 col-lg-11 main-content">
+    
+      <%@ include file="WrapLearning.jsp" %>
 
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">

@@ -236,6 +236,8 @@ System.out.println("Weaver Server Object == Start the Server");
             IconServlet.init(theConfig);
 
             BaseController.initBaseController(this);
+            LearningPath.init(this);
+            
             isInitialized = true;
         }
         catch (Exception e) {
