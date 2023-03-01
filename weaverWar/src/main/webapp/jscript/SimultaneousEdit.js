@@ -2,14 +2,14 @@
 
 This is a library to support simultaneous/concurrent edit blocks of text that a user can be editing in the browser, and others can be editing elsewhere, and all the correct synchronization is performed.  
 
-This class does two real things: 
+This class does four real things: 
 
 (1) it helps to manage the markdown to html conversions needed for the HTML editor, and 
 (2) it does the merge to markdown when an update comes from the server
 (3) it holds the flag on whether the editor is open
 (4) it holds a flag on whether we know of changes on the server not yet merged
 
-The block of text is held in an object, with three main fields
+The block of text is held in an object, with six main fields
 
 {
     vServer:   this is markdown we got from the server, what we believe the server has

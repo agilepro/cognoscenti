@@ -35,7 +35,8 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Frozen Workspace");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
 

@@ -30,6 +30,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Multi-Person Invite");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     $scope.newRole = "<%ar.writeJS(roleName);%>"

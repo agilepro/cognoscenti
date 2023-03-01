@@ -41,7 +41,8 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Email Sent");
     $scope.emailList = [];
     $scope.filter = "<%ar.writeJS(filter);%>";

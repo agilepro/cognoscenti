@@ -56,6 +56,7 @@ var SIGNED_IN=false;
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Link Google Docs");
     window.MY_SCOPE = $scope;
     $scope.attachmentList = <% attachArray.write(out, 2,2); %>;

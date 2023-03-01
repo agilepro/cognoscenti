@@ -61,6 +61,7 @@ div[dropzone] {
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Upload Documents");
     window.MY_SCOPE = $scope;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;

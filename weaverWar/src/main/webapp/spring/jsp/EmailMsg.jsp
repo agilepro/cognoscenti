@@ -65,7 +65,8 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Email Sent");
     $scope.emailMsg = <%mailObject.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";

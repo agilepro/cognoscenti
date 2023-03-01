@@ -160,7 +160,7 @@
             <li><a href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
-            <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Training</a></li>
+            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
             <li><a href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>

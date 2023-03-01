@@ -25,7 +25,8 @@
 <script>
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, AllPeople) {
+app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Email Prepared");
     $scope.eGenList = <%eGenList.write(out,2,4);%>;
     $scope.filter = "";

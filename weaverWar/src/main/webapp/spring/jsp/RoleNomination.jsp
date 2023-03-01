@@ -30,6 +30,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     $scope.role = <%role.write(out,2,4);%>;
     $scope.origRole = <%role.write(out,2,4);%>;
     window.setMainPageTitle("Nominate Role: "+$scope.role.name);

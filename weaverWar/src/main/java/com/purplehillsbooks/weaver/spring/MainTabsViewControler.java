@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.LearningPath;
@@ -40,8 +38,6 @@ import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.xml.Mel;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -200,15 +196,18 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            String jspName = ar.reqParam("jsp");
-            String mode = ar.reqParam("mode");
-            String isDone = ar.reqParam("done");
             UserProfile user = ar.getUserProfile();
             if (user==null) {
                 throw new Exception("User is not logged in or has no user profile");
             }
+            JSONObject postedObject = this.getPostedObject(ar);
+            String jspName = postedObject.getString("jsp");
+            String mode = postedObject.getString("mode");
+            boolean isDone = postedObject.getBoolean("done");
+            
             UserPage userPage = user.getUserPage();
-            userPage.setLearningDone(jspName, mode, isDone.equalsIgnoreCase("true"));
+            userPage.setLearningDone(jspName, mode, isDone);
+            userPage.saveUserPage(ar, "Set learning flag for "+jspName);
             
             JSONObject res = new JSONObject();
             res.put("list", userPage.getLearningPathForUser(jspName));

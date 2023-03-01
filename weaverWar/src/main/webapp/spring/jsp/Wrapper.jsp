@@ -172,6 +172,27 @@
     loginConfigSetup.put("serverUrl",   ar.baseURL);
 
     String currentPageURL = ar.getCompleteURL();
+    UserProfile user = ar.getUserProfile();
+    UserPage userPage = user.getUserPage();
+    
+    JSONArray learningModes = userPage.getLearningPathForUser(wrappedJSP);
+    if (learningModes.length()==0) {
+        learningModes = new JSONArray();
+        JSONObject lm = new JSONObject();
+        lm.put("description", "Learn about "+wrappedJSP
+                +"\n\nMust create some text for this before you can hide it");
+        lm.put("done", false);
+        lm.put("mode", "standard");
+        learningModes.put(lm);
+    }
+    JSONObject learningMode = null;
+    for (JSONObject oneLearn : learningModes.getJSONObjectList()) {
+        if (oneLearn.getBoolean("done")) {
+            continue;
+        }
+        learningMode = oneLearn;
+        break;
+    }
 
     %>
 
@@ -266,8 +287,65 @@ myApp.filter('wiki', function() {
     return convertMarkdownToHtml(x);
   };
 });
- </script>
 
+console.log("LOADING WRAP LEARNING");
+function setUpLearningMethods($scope, $modal, $http) {
+    console.log("setUpLearningMethods");
+    $scope.learningModes = <% learningModes.write(out, 2, 2); %>;
+    $scope.learningMode = {done: true, mode:"standard"};
+    
+    $scope.findLearningMode = function() {
+        $scope.learningMode = {done: true, mode:"standard"};
+        $scope.learningModes.forEach(function(item) {
+            if (!item.done && $scope.learningMode.done) {
+                $scope.learningMode = item;
+            }
+        });
+        console.log("LEARNING MODE", $scope.learningMode);
+    }
+    
+    $scope.findLearningMode();
+    
+    $scope.markLearningDone = function() {
+        $scope.learningMode.done = true;
+        $scope.findLearningMode();
+    }
+    
+    $scope.openLearningEditor = function () {
+        console.log("trying ot open it");
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/LearningEditModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'LearningEditCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                wrappedJSP: function () {
+                    return "<%=wrappedJSP%>";
+                }
+            }
+        });
+    }
+    
+    $scope.toggleLearningDone = function() {
+        console.log("MARK DONE", $scope.learningMode);
+        var toPost = {}
+        toPost.jsp = "<%=wrappedJSP%>";
+        toPost.mode = $scope.learningMode.mode;
+        toPost.done = true;        
+        var postdata = angular.toJson(toPost);
+        var postURL = "MarkLearningDone.json";
+        console.log(postURL,toPost);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.learningMode.done = true;
+        })
+        .error( function(data) {
+            errorPanelHandler($scope, data);
+        });
+    }
+}
+</script>
 <style>
 .navbar.navbar-default.sidebar {
 	margin-bottom: 0;
@@ -298,6 +376,9 @@ myApp.filter('wiki', function() {
     <div class="col-sm-10 col-lg-11 main-content">
     
       <%@ include file="WrapLearning.jsp" %>
+      <script>
+      console.log("loaded the LEARNING module");
+      </script> 
 
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">
@@ -392,7 +473,15 @@ window.setInterval(function() {
 </script>
 
 <script src="<%=ar.baseURL%>jscript/translation.js"></script>
-
+<script src="<%=ar.retPath%>templates/LearningEditModal.js"></script>
+<script src="<%=ar.retPath%>jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>jscript/SimultaneousEdit.js"></script>
+<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 </body>
 </html>
 

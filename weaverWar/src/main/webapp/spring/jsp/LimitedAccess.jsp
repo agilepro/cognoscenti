@@ -26,6 +26,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Limited Access");
     $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%ngw.getConfigJSON().write(out,2,4);%>;

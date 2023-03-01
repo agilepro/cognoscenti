@@ -30,6 +30,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     $scope.role = <%role.write(out,2,4);%>;
     $scope.showInput = false;
     $scope.canUpdate = <%=canUpdate%>;

@@ -1,0 +1,25 @@
+{
+  "AdminSettings.jsp": [],
+  "AdminStats.jsp": [
+    {
+      "description": "This page tracks statistics of how various users have been using the workspace. Use it at your peril.",
+      "done": false,
+      "mode": "standard",
+      "video": "Tutorial04"
+    },
+    {
+      "description": "this is a page to help administrators know what it going on",
+      "done": false,
+      "mode": "expert",
+      "video": "Tutorial02"
+    }
+  ],
+  "DocsList.jsp": [],
+  "FrontPage.jsp": [],
+  "GoalStatus.jsp": [],
+  "NotesList.jsp": [],
+  "RoleManagement.jsp": [{
+    "description": "Page for configuring the roles for this workspace.",
+    "mode": "standard"
+  }]
+}

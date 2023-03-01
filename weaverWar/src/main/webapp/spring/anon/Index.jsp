@@ -17,7 +17,7 @@
 <!-- index.jsp -->
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.login = function() {
         SLAP.loginUserRedirect();

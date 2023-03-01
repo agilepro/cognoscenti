@@ -61,6 +61,7 @@ Required parameters:
 <script type="text/javascript">
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("OLD Reply Format: Better things are coming . . .");
     $scope.topicId = "<%ar.writeJS(topicId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";

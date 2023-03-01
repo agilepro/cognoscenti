@@ -33,7 +33,7 @@
 
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Add Something to Workspace");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.folderMap = <%folderMap.write(out,2,4);%>;

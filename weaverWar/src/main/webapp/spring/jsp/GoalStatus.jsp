@@ -93,6 +93,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Action Item Status");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;

@@ -55,6 +55,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Decision List");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;

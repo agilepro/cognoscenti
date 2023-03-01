@@ -111,7 +111,7 @@ tagsInputWorkspacePicker  ={
 }
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;

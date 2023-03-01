@@ -475,6 +475,20 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
         }
     }
+    @RequestMapping(value = "/{userKey}/LearningPath.htm", method = RequestMethod.GET)
+    public void learningPath(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+
+            //this will fail if not logged in
+            streamJSPUserLoggedIn(ar, userKey, "LearningPath.jsp");
+        }catch(Exception ex){
+            throw new Exception("Unable to servve up the learning path page", ex);
+        }
+    }
 
     @RequestMapping(value = "/unsubscribe.htm", method = RequestMethod.GET)
     public void unsubscribe(
@@ -982,5 +996,27 @@ public class UserController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{userKey}/ClearLearningDone.json", method = RequestMethod.POST)
+    public void clearLearningPath(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            UserProfile user = ar.getUserProfile();
+            if (user==null) {
+                throw new Exception("User is not logged in or has no user profile");
+            }
+            UserPage userPage = user.getUserPage();
+            userPage.clearAllLearning();
+            userPage.saveUserPage(ar, "Cleared all learning flags");
+            
+            JSONObject res = new JSONObject();
+            res.put("status", "cleared");
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to clear all learning flags", ex);
+            streamException(ee, ar);
+        }
+    }
 }
 

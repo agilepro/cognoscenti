@@ -27,7 +27,8 @@
 
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Add Document Methods");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.folderMap = <%folderMap.write(out,2,4);%>;

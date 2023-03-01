@@ -41,6 +41,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Roles");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;

@@ -100,6 +100,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Access Document");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;

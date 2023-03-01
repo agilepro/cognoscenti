@@ -21,7 +21,7 @@
 <!-- anon/Warning.jsp -->
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.warningMessage = "<% ar.writeJS(warningMessage); %>"
     setMainPageTitle("Weaver Warning");
     $scope.login = function() {

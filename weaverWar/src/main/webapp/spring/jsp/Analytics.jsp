@@ -23,6 +23,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Analytics Links");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.caseId = "<% ar.writeJS(siteId+"|"+pageId); %>";

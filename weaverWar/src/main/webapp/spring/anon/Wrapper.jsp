@@ -149,6 +149,9 @@ function setMainPageTitle(str) {
     document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
 }
 
+function setUpLearningMethods($scope, $modal, $http) {
+}
+
  </script>
 
 

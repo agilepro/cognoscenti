@@ -31,7 +31,8 @@
 
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Transfer from Workspace");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;

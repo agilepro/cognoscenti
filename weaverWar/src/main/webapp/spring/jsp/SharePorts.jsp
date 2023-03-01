@@ -32,6 +32,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Share Ports");
     $scope.loaded = false;
     $scope.allShares = [];

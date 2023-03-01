@@ -128,8 +128,8 @@ tagsInputWorkspacePicker  ={
 }
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
-    setUpLearningMethods($scope);
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%ngpi.getJSON4List().write(out,2,4);%>;
@@ -319,7 +319,6 @@ app.controller('myCtrl', function($scope, $http) {
                 coll[item] = $scope.stats.anythingPerUser[item];
             }
         });
-        console.log("User Stats: ",coll);
         return coll;
     }
 

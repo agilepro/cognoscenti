@@ -82,6 +82,7 @@ div[dropzone] {
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Document Versions");
     window.MY_SCOPE = $scope;
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;

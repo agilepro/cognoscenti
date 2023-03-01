@@ -33,6 +33,7 @@
 
     var app = angular.module('myApp');    
     app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
         //no real function here
     });
      </script>

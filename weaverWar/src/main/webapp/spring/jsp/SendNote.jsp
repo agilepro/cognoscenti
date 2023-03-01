@@ -217,6 +217,7 @@ Optional Parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
+    setUpLearningMethods($scope, $modal, $http);
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.isNew = <%=(eGenId==null)%>;
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;

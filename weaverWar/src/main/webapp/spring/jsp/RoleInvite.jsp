@@ -28,6 +28,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Invite Members");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     $scope.isFrozen = <%= isFrozen %>;

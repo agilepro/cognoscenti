@@ -11,7 +11,8 @@
 <!-- jsp/Warning.jsp -->
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Weaver Access Control");
     $scope.notLoggedIn = <%=ar.isLoggedIn()==false%>;
     $scope.newEmail = "";

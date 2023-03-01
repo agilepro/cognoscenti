@@ -21,7 +21,8 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Find Person");
     $scope.userId = "<%ar.writeJS(uid);%>";
     $scope.microProfile = <%microProfile.write(ar.w,2,2);%>;

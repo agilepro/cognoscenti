@@ -47,6 +47,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Labels");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;

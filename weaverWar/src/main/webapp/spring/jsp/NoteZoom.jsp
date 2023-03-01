@@ -99,6 +99,7 @@ document.title="<% ar.writeJS(note.getSubject());%>";
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Discussion Topic");
     $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;

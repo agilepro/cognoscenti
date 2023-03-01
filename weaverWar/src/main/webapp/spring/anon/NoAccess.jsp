@@ -25,7 +25,7 @@
 <!-- NoAccess.jsp -->
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Welcome to Weaver");
     $scope.notLoggedIn = <%=ar.isLoggedIn()==false%>;
     $scope.newEmail = "";

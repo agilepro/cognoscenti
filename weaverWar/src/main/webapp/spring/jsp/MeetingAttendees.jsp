@@ -24,7 +24,8 @@
 WCACHE.putObj("<%ar.writeJS(siteInfoURL);%>", <%site.getConfigJSON().write(out,2,4);%>, <%=System.currentTimeMillis()%>);
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, AllPeople) {
+app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Meeting Attendee Matrix");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);

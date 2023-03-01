@@ -99,7 +99,7 @@ public void layout( List<NGPageIndex> allContainers, int point[], String parent,
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Site Map for <%ar.writeJS(ngb.getFullName());%>");
     $scope.children   = <%container.write(out,2,4);%>;
     $scope.filter = "";

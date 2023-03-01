@@ -71,7 +71,8 @@ Optional Parameter:
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Role Requests");
     $scope.allRoleRequests = <%allRoleRequests.write(out,2,4);%>;
 

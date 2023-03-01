@@ -77,6 +77,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize','ngTagsInput','angularjs-datetime-picker','pascalprecht.translate','ui.tinymce']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
+    setUpLearningMethods($scope, $modal, $http);
     var templateCacheDefeater = "?"+new Date().getTime();
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
@@ -604,14 +605,6 @@ app.filter('minutes', function() {
 </body>
 </html>
 
-<script src="<%=ar.retPath%>jscript/AllPeople.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
-<script src="<%=ar.retPath%>jscript/SimultaneousEdit.js"></script>
-<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 
 

@@ -39,6 +39,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Task Areas & Work Groupings");
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.loaded = false;

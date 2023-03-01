@@ -13,7 +13,8 @@
 
 <script>
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Web Page - Text Only");
     $scope.originalUrl = "<% ar.writeJS(path); %>";
 

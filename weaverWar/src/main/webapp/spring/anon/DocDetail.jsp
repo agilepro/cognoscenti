@@ -360,11 +360,9 @@ function copyTheLink() {
     using a technique known as Dynamic Governance.
     Give it a try.</p>
     <p>If you want to know more, we have a sequence of 
-       <a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">training videos</a>
+       <a href="https://s06.circleweaver.com/TutorialList.html">training videos</a>
        which will help explain exactly what Weaver can do for you and your team.</p>
 </div>
-
-
 
 
 </div>

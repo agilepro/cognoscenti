@@ -385,6 +385,16 @@ public class UserPage extends ContainerCommon
             learn.setAttributeBool("done", isDone);
         }
     }
+    public void clearAllLearning() throws Exception {
+        JSONObject learningList = LearningPath.getAllLearningPrompts();
+        for (String jspName : learningList.keySet()) {
+            JSONArray allModes = learningList.getJSONArray(jspName);
+            for (JSONObject oneLearn : allModes.getJSONObjectList()) {
+                String oneMode = oneLearn.getString("mode");
+                setLearningDone(jspName, oneMode, false);
+            }
+        }
+    }
     
     public JSONArray getLearningPathForUser(String jspName) throws Exception {
         JSONArray learningList = LearningPath.getLearningForPage(jspName);
@@ -394,5 +404,15 @@ public class UserPage extends ContainerCommon
         }
         return learningList;
     }
-    
+    public JSONObject getUserAllLearning() throws Exception {
+        JSONObject learningList = LearningPath.getAllLearningPrompts();
+        for (String jspName : learningList.keySet()) {
+            JSONArray allModes = learningList.getJSONArray(jspName);
+            for (JSONObject oneLearn : allModes.getJSONObjectList()) {
+                String oneMode = oneLearn.getString("mode");
+                oneLearn.put("done", getLearningDone(jspName, oneMode));
+            }
+        }
+        return learningList;
+    }
 }

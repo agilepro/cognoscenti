@@ -1,6 +1,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $timeout) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Meeting");
     
     var isLinkToComment = ( window.location.href.indexOf("#")>0 );
