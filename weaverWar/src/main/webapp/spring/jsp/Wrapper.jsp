@@ -325,6 +325,13 @@ function setUpLearningMethods($scope, $modal, $http) {
                 }
             }
         });
+        modalInstance.result
+        .then(function () {
+            window.location.reload();
+        }, function () {
+            window.location.reload();
+        });
+        
     }
     
     $scope.toggleLearningDone = function() {
@@ -338,7 +345,7 @@ function setUpLearningMethods($scope, $modal, $http) {
         console.log(postURL,toPost);
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.learningMode.done = true;
+            window.location.reload();
         })
         .error( function(data) {
             errorPanelHandler($scope, data);
