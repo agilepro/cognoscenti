@@ -334,12 +334,12 @@ function setUpLearningMethods($scope, $modal, $http) {
         
     }
     
-    $scope.toggleLearningDone = function() {
+    $scope.setLearningDone = function(option) {
         console.log("MARK DONE", $scope.learningMode);
         var toPost = {}
         toPost.jsp = "<%=wrappedJSP%>";
         toPost.mode = $scope.learningMode.mode;
-        toPost.done = true;        
+        toPost.done = option;        
         var postdata = angular.toJson(toPost);
         var postURL = "MarkLearningDone.json";
         console.log(postURL,toPost);
@@ -351,6 +351,16 @@ function setUpLearningMethods($scope, $modal, $http) {
             errorPanelHandler($scope, data);
         });
     }
+    $scope.toggleLearningDone = function() {
+        $scope.setLearningDone(true);
+    }
+        
+    mainScope = $scope;
+}
+
+var mainScope = null;
+function showLearningPath() {
+    mainScope.setLearningDone(false);
 }
 </script>
 <style>

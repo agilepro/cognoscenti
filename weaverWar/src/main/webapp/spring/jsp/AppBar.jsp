@@ -102,7 +102,27 @@
           </li>
 <% } %>      
       
-<% if (loggedUser!=null) { %>      
+<% if (loggedUser!=null) { %> 
+
+      
+      <li class="dropdown">
+          <a class="dropdown-toggle"
+            data-target="#"
+            data-toggle="dropdown"
+            aria-expanded="false"
+            title="Workspaces">
+              <i class="fa  fa-question-circle" aria-hidden="true"></i>
+              <span class="dropdown-toggle-label" translate>Help</span>
+              <div class="ripple-container"></div>
+          </a>
+          <ul class="dropdown-menu pull-right tighten">
+            <li><a onClick="showLearningPath()">Show Learning Path</a></li>
+            <li><a href="<%=userRelPath%>LearningPath.htm">Learning Settings</a></li>
+            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="Training">Training Videos</a></li>
+          </ul>
+      
+      </li>
+
       <li class="dropdown">
           <a class="dropdown-toggle"
             data-target="#"
@@ -190,7 +210,6 @@
             <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>EmailUser.htm">Email Sent</a></li>
             <li><a href="<%=userRelPath%>NotificationSettings.htm">Withdraw</a></li>
-            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
             <li><a href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>

@@ -151,8 +151,8 @@
             <li><a href="<%=userRelPath%>EmailUser.htm">Email Sent</a></li>
             <li><a href="<%=userRelPath%>NotificationSettings.htm">Withdraw</a></li>
             <li><a href="<%=userRelPath%>Facilitators.htm">Facilitators</a></li>
-            <li><a href="<%=userRelPath%>LearningPath.htm">Learning</a></li>
-            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
+            <li><a href="<%=userRelPath%>LearningPath.htm">Learning Settings</a></li>
+            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="Training">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
             <li><a href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>
