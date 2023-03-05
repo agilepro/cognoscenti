@@ -272,25 +272,31 @@
       "title":"Manage the roles that define who is able to what in this workspace",
       "opts": [
         {
-          "use": ["RoleManagement.jsp"],
+          "use": ["RoleManagement.jsp", "RoleMap.jsp"],
           "ng-click":"openRoleModal(null)",
           "name":"Create",
           "title":"Create a new role"
         },
         {
-          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
+          "href":"RoleMap.htm",
+          "name":"User Map",
+          "title":"Table view of all roles and all users in a grid"
+        },
+        {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
           "href":"RoleInvite.htm",
           "name":"Invite User",
           "title":"Invite individual users to a role"
         },
         {
-          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
           "href":"MultiInvite.htm",
           "name":"Multi-Invite",
           "title":"Invite multiple users to a role"
         }
       ],
-      "useOpts": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],
+      "useOpts": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
       "readOnly": true
     },
     {
