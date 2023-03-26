@@ -172,7 +172,11 @@
     background-color:#ECB6F9;
     cursor:pointer;
 }
-
+.labelButton {
+    width:180px;
+    overflow: hidden;
+    color: red;
+}
 .agendaItemFull {
     border: 1px solid lightgrey;
     border-radius:10px;
@@ -242,7 +246,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
     background-color:skyblue;
 }
 .spaceyTable tr td {
-    padding:5px;
+    vertical-align: top;
 }
 .spacydiv {
     padding:5px;
@@ -259,6 +263,13 @@ embeddedData.canUpdate = <%=canUpdate%>;
 .buttonSpacerOn {
     border: 5px solid lightgrey;
     padding:5px;
+}
+.leftColumn {
+    border-right: 3px solid black;
+    width:150px; 
+}
+.contentColumn {
+    width:1000px; 
 }
 </style>
 
@@ -304,16 +315,52 @@ embeddedData.canUpdate = <%=canUpdate%>;
     </div>
 
 
-<div>
+<table class="spaceyTable"><tr>
 
-<button ng-click="changeMeetingMode('Agenda')"   ng-class="statusButtonClass('Agenda')"  >Agenda</button>
-<button ng-click="changeMeetingMode('Minutes')"  ng-class="statusButtonClass('Minutes')" >Minutes</button>
-<button ng-click="changeMeetingMode('General')"  ng-class="statusButtonClass('General')" >Settings</button>
-<button ng-click="changeMeetingMode('Attendance')" ng-class="statusButtonClass('Attendance')">Participants</button>
-<button ng-click="changeMeetingMode('Times')"    ng-class="statusButtonClass('Times')"   >Start Time</button>
-<button ng-click="changeMeetingMode('Status')"   ng-class="statusButtonClass('Status')"  >Overview</button>
-<button ng-click="changeMeetingMode('Items')"    ng-class="statusButtonClass('Items')"   >Edit</button>
+<td class="leftColumn">
+
+
+<button ng-click="changeMeetingMode('Agenda')"   ng-class="labelButtonClass('Agenda')"  >Agenda</button><br/>
+<button ng-click="changeMeetingMode('Minutes')"  ng-class="labelButtonClass('Minutes')" >Minutes</button>
+<button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button>
+<button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')">Participants</button>
+<button ng-click="changeMeetingMode('Times')"    ng-class="labelButtonClass('Times')"   >Start Time</button>
+<button ng-click="changeMeetingMode('Status')"   ng-class="labelButtonClass('Status')"  >Overview</button>
+
+<div style="height:70px">&nbsp;</div>
+
+<div ng-repeat="item in getAgendaItems()">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed"
+         ng-dblclick="openAgenda(selectedItem)">
+        <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
+        <span ng-show="item.isSpacer" style="color:grey">Break</span>
+        <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
+        <span style="float:right" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
+        <br/>
+        
+        <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+    </div>
 </div>
+<div>
+    <span style="float:right">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;</span>
+</div>
+
+<div style="height:70px">&nbsp;</div>
+
+<div ng-repeat="item in getAgendaItems()">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
+         ng-dblclick="openAgenda(selectedItem)">
+        <span ng-show="item.proposed" style="color:grey">Proposed</span>
+        <br/>
+        <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+    </div>
+</div>
+<hr/>
+<div style="margin:20px;" ng-show="meeting.state<3">
+    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
+</div>
+</td>
+<td class="contentColumn">
 
 
 
@@ -341,7 +388,9 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
 
 <div ng-show="displayMode=='Items'">
+<div ng-repeat="item in [selectedItem]">
 <%@include file="Meeting_Edit.jsp"%>
+</div>
 </div>
 
 
@@ -365,7 +414,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
 </div>
 
 
-
+</td>
+</tr></table>
 
 <span>
 Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},

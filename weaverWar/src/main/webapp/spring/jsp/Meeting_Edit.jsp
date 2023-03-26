@@ -1,84 +1,51 @@
-<table width="100%"><tr>
-<td style="width:180px;border-right:4px black solid;vertical-align: top;">
-<div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-hide="item.proposed"
-         ng-dblclick="openAgenda(selectedItem)">
-        <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
-        <span ng-show="item.isSpacer" style="color:grey">Break</span>
-        <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
-        <span style="float:right" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
-        <br/>
-        {{item.subject}}
-    </div>
-</div>
+
 <div>
-    <span style="float:right">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;</span>
-</div>
-<div style="height:70px">&nbsp;</div>
-
-<div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-show="item.proposed"
-         ng-dblclick="openAgenda(selectedItem)">
-        <span ng-show="item.proposed" style="color:grey">Proposed</span>
-        <br/>
-        {{item.subject}}
-    </div>
-</div>
-
-
-    <hr/>
-    <div style="margin:20px;" ng-show="meeting.state<3">
-        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
-    </div>
-
-</td>
-<td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
-
-    <table class="table" ng-show="item.id">
+    <table class="table">
     <col width="150">
     <tr ng-show="meeting.state<=1">
       <td></td>
       <td>
-          <button ng-click="toggleSpacer(selectedItem)" class="btn btn-primary btn-raised">
-              <i class="fa fa-check-circle" ng-show="selectedItem.isSpacer"></i> 
-              <i class="fa fa-circle-o" ng-hide="selectedItem.isSpacer"></i> Break Time</button>
-          <button ng-click="moveItem(selectedItem,-1)" class="btn btn-primary btn-raised"
-                  ng-hide="selectedItem.proposed">
+          <button ng-click="toggleSpacer(item)" class="btn btn-primary btn-raised">
+              <i class="fa fa-check-circle" ng-show="item.isSpacer"></i> 
+              <i class="fa fa-circle-o" ng-hide="item.isSpacer"></i> Break Time</button>
+          <button ng-click="moveItem(item,-1)" class="btn btn-primary btn-raised"
+                  ng-hide="item.proposed">
               <i class="fa fa-arrow-up"></i> Move Up</a></li></button>
-          <button ng-click="moveItem(selectedItem,1)" class="btn btn-primary btn-raised"
-                  ng-hide="selectedItem.proposed">
+          <button ng-click="moveItem(item,1)" class="btn btn-primary btn-raised"
+                  ng-hide="item.proposed">
               <i class="fa fa-arrow-down"></i> Move Down</a></li></button>
-          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
-                  ng-show="selectedItem.proposed">
+          <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised"
+                  ng-show="item.proposed">
               <i class="fa fa-check"></i> Accept Proposed Item</a></li></button>
-          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
-                  ng-hide="selectedItem.proposed">
+          <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised"
+                  ng-hide="item.proposed">
               <i class="fa fa-reply"></i> Send to Backlog</a></li></button>
       </td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem)">
-      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Subject:</td>
-      <td ng-style="timerStyleComplete(item)"><span class="h2">{{selectedItem.subject}}</span></td>
+    <tr ng-dblclick="openAgenda(item)">
+      <td ng-click="openAgenda(item)" class="labelColumn">Subject:</td>
+      <td ng-style="timerStyleComplete(item)"><span class="h2">
+          <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</span></td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
-      <td ng-dblclick="openNotesDialog(selectedItem)">
-        <div ng-bind-html="selectedItem.minutesHtml"></div>
-        <div ng-hide="selectedItem.minutesHtml" class="doubleClickHint">
+    <tr ng-hide="item.isSpacer">
+      <td class="labelColumn" ng-click="openNotesDialog(item)">Notes/Minutes:</td>
+      <td ng-dblclick="openNotesDialog(item)">
+        <div ng-bind-html="item.minutesHtml"></div>
+        <div ng-hide="item.minutesHtml" class="doubleClickHint">
             Double-click to edit notes
         </div>
       </td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachAction(selectedItem)" class="labelColumn">Action Items:</td>
+    <tr ng-hide="item.isSpacer">
+      <td ng-click="openAttachAction(item)" class="labelColumn">Action Items:</td>
       <td title="double-click to modify the action items">
           <table class="table">
-          <tr ng-repeat="goal in itemGoals(selectedItem)">
+          <tr ng-repeat="goal in itemGoals(item)">
               <td>
                 <a href="task{{goal.id}}.htm" title="access action item details">
                    <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
               </td>
-              <td ng-dblclick="openModalActionItem(selectedItem, goal)">
+              <td ng-dblclick="openModalActionItem(item, goal)">
                 {{goal.synopsis}}
               </td>
               <td>
@@ -101,7 +68,7 @@
                   </span>
                 </div>
               </td>
-              <td ng-dblclick="openModalActionItem(selectedItem, goal)">
+              <td ng-dblclick="openModalActionItem(item, goal)">
                 <div>{{goal.status}}</div>
                 <div ng-repeat="ci in goal.checkitems" >
                   <span ng-click="toggleCheckItem($event, goal, ci.index)" style="cursor:pointer">
@@ -114,15 +81,15 @@
               </td>
           </tr>
           </table>
-          <div ng-hide="itemGoals(selectedItem).length>0" class="doubleClickHint">
+          <div ng-hide="itemGoals(item).length>0" class="doubleClickHint">
               Double-click to add / remove action items
           </div>
       </td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
+    <tr ng-hide="item.isSpacer">
+      <td ng-click="openAttachDocument(item)" class="labelColumn">Attachments:</td>
       <td title="double-click to modify the attachments">
-          <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
+          <div ng-repeat="docid in item.docList track by $index" style="vertical-align: top">
               <div ng-repeat="fullDoc in getSelectedDocList(docid)"> 
                   <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
                     <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
@@ -135,15 +102,15 @@
                   {{fullDoc.name}}
               </div>
           </div>
-          <div ng-hide="selectedItem.docList && selectedItem.docList.length>0" class="doubleClickHint">
+          <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">
               Double-click to add / remove attachments
           </div>
        </td>
     </tr>
-    <tr  ng-dblclick="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
+    <tr  ng-dblclick="openAgenda(item)" ng-hide="item.isSpacer">
+      <td ng-click="openAgenda(item)" class="labelColumn">Presenter:</td>
       <td>
-        <div ng-repeat="presenter in selectedItem.presenterList">
+        <div ng-repeat="presenter in item.presenterList">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
                 <img class="img-circle" 
@@ -162,27 +129,27 @@
               </span>
             {{presenter.name}}
         </div>
-        <div ng-hide="selectedItem.presenterList && selectedItem.presenterList.length>0" class="doubleClickHint">
+        <div ng-hide="item.presenterList && item.presenterList.length>0" class="doubleClickHint">
             Double-click to set presenter
         </div>
       </td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-show="!selectedItem.isSpacer">
-      <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
+    <tr ng-dblclick="openAgenda(item,'Description')" ng-show="!item.isSpacer">
+      <td ng-click="openAgenda(item,'Description')" class="labelColumn">Description:</td>
       <td>
-        <div ng-bind-html="selectedItem.descriptionHtml"></div>
-        <div ng-hide="selectedItem.descriptionHtml && selectedItem.descriptionHtml.length>3" class="doubleClickHint">
+        <div ng-bind-html="item.descriptionHtml"></div>
+        <div ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to description
         </div>
       </td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem)" ng-hide="item.proposed">
-      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Planned:</td>
-      <td>{{selectedItem.duration|minutes}} minutes</td>
+    <tr ng-dblclick="openAgenda(item)" ng-hide="item.proposed">
+      <td ng-click="openAgenda(item)" class="labelColumn">Planned:</td>
+      <td>{{item.duration|minutes}} minutes</td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem)"  ng-hide="item.proposed">
-      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Actual:</td>
-      <td ng-style="timerStyleComplete(item)">{{selectedItem.timerTotal|minutes}} minutes &nbsp; &nbsp; 
+    <tr ng-dblclick="openAgenda(item)"  ng-hide="item.proposed">
+      <td ng-click="openAgenda(item)" class="labelColumn">Actual:</td>
+      <td ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} minutes &nbsp; &nbsp; 
             <span ng-hide="item.timerRunning">
                 <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
             </span>
@@ -192,37 +159,37 @@
             <span> Remaining: {{item.duration - item.timerTotal| minutes}}</span>
       </td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem)" ng-show="item.proposed">
-      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Proposed:</td>
+    <tr ng-dblclick="openAgenda(item)" ng-show="item.proposed">
+      <td ng-click="openAgenda(item)" class="labelColumn">Proposed:</td>
       <td ng-style="timerStyleComplete(item)">This item is proposed, and not accepted yet.  
-          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
-                  ng-show="selectedItem.proposed">
+          <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised"
+                  ng-show="item.proposed">
               <i class="fa fa-check"></i> Accept Proposed Item</a></button>
       </td>
     </tr>
-    <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachTopics(selectedItem)" class="labelColumn">Topics:</td>
+    <tr ng-dblclick="openAttachTopics(item)" ng-hide="item.isSpacer">
+      <td ng-click="openAttachTopics(item)" class="labelColumn">Topics:</td>
       <td>
-          <div ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  
+          <div ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default btn-raised"  
                 style="margin:4px;max-width:200px;overflow: hidden"
             ng-click="navigateToTopic(topic.universalid)">
             <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
           </div>
-          <div ng-hide="itemTopics(selectedItem).length>0" class="doubleClickHint">
+          <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
               Double-click to set or unset linked topic
           </div>
       </td>
     </tr>
-    <tr ng-dblclick="selectedItem.readyToGo = ! selectedItem.readyToGo"  ng-hide="selectedItem.isSpacer">
-      <td class="labelColumn" ng-click="selectedItem.readyToGo = ! selectedItem.readyToGo">Ready:</td>
+    <tr ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
+      <td class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</td>
       <td>
-        <span ng-hide="selectedItem.readyToGo" >
+        <span ng-hide="item.readyToGo" >
             <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                  title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
                  Not ready yet.
         </span>
-        <span ng-show="selectedItem.readyToGo"  >
+        <span ng-show="item.readyToGo"  >
             <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                  title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
@@ -232,21 +199,21 @@
     </tr>
     </table>
     <table style="max-width:800px">
-      <tr ng-repeat="cmt in selectedItem.comments"  ng-hide="selectedItem.isSpacer">
+      <tr ng-repeat="cmt in item.comments"  ng-hide="item.isSpacer">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
 
       </tr>
 
-      <tr  ng-hide="selectedItem.isSpacer">
+      <tr  ng-hide="item.isSpacer">
         <td></td>
         <td>
         <div style="margin:20px;">
-            <button ng-click="openMeetingComment(selectedItem, 1)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(item, 1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openMeetingComment(selectedItem, 2)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(item, 2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openMeetingComment(selectedItem, 3)" class="btn btn-default btn-raised">
+            <button ng-click="openMeetingComment(item, 3)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-question-circle"></i> Round</button>
         </div>
         </td>
@@ -258,7 +225,6 @@
         </div>
     </div>
 
-</td>
-</tr></table>
+</div>
 
 

@@ -343,9 +343,13 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <%@include file="Meeting_Overview.jsp"%>
 </div>
 
+
+
+<div ng-repeat="item in getAgendaItems()">
 <hr/>
 <div class="bordereddiv">
 <%@include file="Meeting_Edit.jsp"%>
+</div>
 </div>
 
 
@@ -395,10 +399,12 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
 
 
 
-
-
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/MeetingNotes.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

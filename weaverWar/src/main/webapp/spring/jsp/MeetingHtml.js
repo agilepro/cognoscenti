@@ -117,9 +117,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 //spacers (breaks) can not be proposed
                 item.proposed = false;
             }
-            if (!item.desc) {
-                item.desc = "<p></p>";
-            }
         });
         return $scope.meeting.agenda;
     }
@@ -175,9 +172,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     }
 
-    $scope.itemGoals = function(item) {
+    $scope.itemGoalsXXX = function(item) {
         var res = [];
         if (item) {
+            if (!item.aiList) {
+                console.log("DEFECTIVE: ", item);
+            }
             for (var j=0; j<item.aiList.length; j++) {
                 var actionItemInfo = item.aiList[j];
                 for(var i=0; i<$scope.allGoals.length; i++) {
@@ -461,9 +461,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             return {};
         }
         let style = {"background-color":"white", 
-                     "color":"black", 
-                     "border": "4px solid white",
-                     "border-right": "none"};
+                     "color":"black",
+                     "margin-top": "10px",
+                     "margin-bottom": "10px",
+                     "padding":"5px",
+                     "border": "0"};
         if (!item.timerRunning) {
             if (item.proposed) {
                 style["background-color"] = "yellow";
@@ -478,10 +480,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         else {
             style["background-color"] = "lightgreen";
         }
+        /*
         if ($scope.selectedItem && item.position==$scope.selectedItem.position) {
             style.border = "4px solid black";
             style["border-right"] = "none"
         }
+        */
         return style;
     }
     
@@ -709,8 +713,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             }
             item.minutesHtml = convertMarkdownToHtml(item.minutes);
             item.descriptionHtml = convertMarkdownToHtml(item.description);
-            //make sure this is not appearing anywhere
-            item.desc = "N/A";
             item.comments.forEach( function(cmt) {
                 $scope.generateCommentHtml(cmt);
             });
@@ -1962,12 +1964,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             $scope.roleWarningMessage = "Unable to read role information about "+$scope.meeting.targetRole;
         });
     }
-    $scope.statusButtonClass = function(state) {
+    $scope.labelButtonClass = function(state, item) {
+        if ("Items"==$scope.displayMode && item) {
+            if (item.id == $scope.selectedItem.id) {
+                return "btn btn-success btn-raised labelButton";
+            }
+            else {
+                return "btn btn-default btn-raised labelButton";
+            }
+        }
         if (state==$scope.displayMode) {
-            return "btn btn-primary btn-raised";
+            return "btn btn-success btn-raised labelButton";
         }
         else {
-            return "btn btn-default btn-raised";
+            return "btn btn-default btn-raised labelButton";
         }
     }
     $scope.setSelectedItem = function(item) {
@@ -1996,6 +2006,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.putGetMeetingInfo(saveRecord);
     }
     $scope.changeMeetingMode = function(newMode) {
+        $scope.selectedItem = {};
         $scope.extendBackgroundTime();
         $scope.displayMode=newMode;
         let stateObj = {
