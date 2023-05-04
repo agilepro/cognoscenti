@@ -129,9 +129,6 @@
 </nav>
 
 
- 
-    <div id="welcomeMessage"></div>
-
 
 <script>
 function validateDelimEmails(field) {
@@ -171,23 +168,7 @@ function validateDelimEmails(field) {
 
 
 function displayWelcomeMessage(info) {
-    var y = document.getElementById("welcomeMessage");
-    if (info.haveNotCheckedYet) {
-        y.innerHTML = 'Checking identity, please <a href="'
-            +SLAP.loginConfig.providerUrl
-            +'&go='+window.location+'">Login</a>.';
-    }
-    else if (!info.userName) {
-        y.innerHTML = 'Not logged in, please <a href="'
-            +SLAP.loginConfig.providerUrl
-            +'?openid.mode=quick&go='+window.location+'">Login</a>.';
-    }
-    else if (!info.verified) {
-        y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
-    }
-    else {
-        y.innerHTML = 'Super Admin Module for <b>'+info.userName+'</b>';
-    }
+    console.log("Welcome message", info);
 }
 
 

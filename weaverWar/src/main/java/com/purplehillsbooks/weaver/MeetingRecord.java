@@ -1490,19 +1490,27 @@ public class MeetingRecord extends DOMFace {
         return meetingLayoutFile;
     }
     
+    /**
+     * This produces a list of meeting attendees, but ONLY those who are members
+     * of the site in the list of site users.   Ad-hoc users added to a meeting 
+     * are ignored.
+     */
     public static JSONObject findAttendeeMatrix(NGWorkspace ngw) throws Exception {
+        NGBook site = ngw.getSite();
+        List<AddressListEntry> siteUsers = site.getSiteUsersList();
         JSONObject jo = new JSONObject();
         for (MeetingRecord meet : ngw.getMeetings()) {
             for (String attendee : meet.getAttendees()) {
-                attendee = UserManager.getCorrectedEmail(attendee);
-                AddressListEntry ale = new AddressListEntry(attendee);
-                UserProfile user = ale.getUserProfile();
-                if (user==null) {
-                    //ignore attendance entries for people without user profiles
-                    continue;
+                AddressListEntry foundUser = null;
+                for (AddressListEntry ale: siteUsers) {
+                    if (ale.hasAnyId(attendee)) {
+                        foundUser = ale;
+                    }
                 }
-                JSONObject attendeeRecord = jo.requireJSONObject(attendee);
-                attendeeRecord.put(meet.getId(), true);
+                if (foundUser != null) {
+                    JSONObject attendeeRecord = jo.requireJSONObject(foundUser.getKey());
+                    attendeeRecord.put(meet.getId(), true);
+                }
             }
         }
         return jo;

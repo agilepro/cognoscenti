@@ -26,6 +26,7 @@ img{
 #welcomeMessage{
   font-size:20px;
   text-align:center;
+  border: 5px purple dashed
 }
 
 #mainContent{

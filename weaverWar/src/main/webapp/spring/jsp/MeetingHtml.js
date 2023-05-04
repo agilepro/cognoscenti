@@ -120,6 +120,30 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
         return $scope.meeting.agenda;
     }
+    $scope.getSims = function() {
+        if (!$scope.meeting.agenda) {
+            $scope.meeting.agenda = [];
+        }
+        if (!$scope.sims) {
+            $scope.sims = {};
+        }
+        var simList = [];
+        $scope.meeting.agenda.forEach( function(item) {
+            if (item.isSpacer) {
+                return;
+            }
+            var sim = $scope.sims[item.id];
+            if (!sim) {
+                sim = new SimText(item.minutes);
+                $scope.sims[item.id] = sim;
+            }
+            //TEMP disable editing
+            sim.startEdit = function() {alert('editing not yet enabled on this page');}
+            sim.item = item;
+            simList.push(sim);
+        });
+        return simList;
+    }
 
 
     $scope.sortItemsB = function() {
@@ -172,12 +196,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         });
     }
 
-    $scope.itemGoalsXXX = function(item) {
+    $scope.itemGoals = function(item) {
+        if (!item) {
+            return [];
+        }
+        if (!item.aiList) {
+            return [];
+        }
         var res = [];
         if (item) {
-            if (!item.aiList) {
-                console.log("DEFECTIVE: ", item);
-            }
             for (var j=0; j<item.aiList.length; j++) {
                 var actionItemInfo = item.aiList[j];
                 for(var i=0; i<$scope.allGoals.length; i++) {
@@ -550,6 +577,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         $scope.putGetMeetingInfo(saveRecord);
         $scope.stopEditing();
     };
+    $scope.saveNoteFromSim = function(sim) {
+        var item = sim.item;
+        var newItem = {};
+        newItem.id = sim.item.id;
+        
+    }
     $scope.saveAgendaItem = function(agendaItem) {
         if (!embeddedData.canUpdate) {
             alert("Unable to update meeting because you are a READ-ONLY user");
@@ -1845,7 +1878,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
                 $scope.changeMeetingState(2);
             }
         }
-        window.open('meetingMinutes.htm?id='+$scope.meeting.id);
+        window.open('MeetingMinutes.htm?id='+$scope.meeting.id);
     }
     
     $scope.createTime = function(fieldName,newTime) {

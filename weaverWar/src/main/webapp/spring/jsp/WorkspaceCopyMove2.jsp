@@ -178,7 +178,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <tr ng-repeat="doc in allAttachments" ng-style="rowStyle(doc)">
        <td>{{doc.name}}</td>
        <td>{{doc.modifiedtime|cdate}}</td>
-       <td>{{doc.size|number}} bytes</td>
+       <td ng-show="doc.size>=0">{{doc.size|number}} bytes</td>
+       <td ng-hide="doc.size>=0">Web URL</td>
        <td ng-hide="doc.hideThis">
            <button class="btn btn-sm btn-raised" ng-click="copyDoc(doc)">Copy</button>
            <button class="btn btn-sm btn-raised" ng-click="moveDoc(doc)">Move</button>

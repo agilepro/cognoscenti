@@ -47,7 +47,7 @@ Required parameters:
     if("URL".equals(attachment.getType())){
         permaLink = attachment.getURLValue();
     }
-    
+    boolean hasURL = (permaLink != null && permaLink.length()>0);
     
     JSONObject workspaceInfo = ngp.getConfigJSON();
     AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
@@ -106,6 +106,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.docId   = "<%=aid%>";
     $scope.docInfo = {};
+    $scope.hasURL = <%=hasURL%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
@@ -382,18 +383,24 @@ function copyTheLink() {
   </div>
   <div ng-show="canAccess">
       <div ng-show="docInfo.attType=='FILE'">
-          <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
-          src="<%=ar.retPath%>download.gif"></a> 
-          <hr/>
+          <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
+             <img src="<%=ar.retPath%>download.gif"></a>
       </div>
       <div ng-show="docInfo.attType=='URL'">
-        <a href="<%ar.write(permaLink); %>" target="_blank"><img
-          src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
-        <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
-          <button class="btn btn-primary btn-raised">View Text Only</button></a>
-          <hr/>
+        <div ng-show="hasURL">
+          <a href="<%ar.write(permaLink); %>" target="_blank"><img
+             src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+          <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
+             <button class="btn btn-primary btn-raised">View Text Only</button></a>
+        </div>
+        <div ng-hide="hasURL">
+            <button class="btn btn-danger btn-raised">
+            Error - this web attachment has no URL</button>
+            <div style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+        </div>
       </div>
   </div>
+  <hr/>
   <div ng-hide="canAccess">
       <p>You are not able to access this document.</p>
   </div>

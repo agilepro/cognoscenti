@@ -380,7 +380,7 @@ function showLearningPath() {
 <!-- End AppBar -->
 
 
-<div class="container-fluid">
+<div class="container-fluid" ng-cloak>
   <div class="row">
 
     <!-- Begin SideBar  -->
@@ -419,7 +419,7 @@ function showLearningPath() {
           document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
       }
       </script>
-      <!-- BEGIN Title and Breadcrump -->
+      <!-- BEGIN Title and Breadcrumb -->
 
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
@@ -462,6 +462,14 @@ function showLearningPath() {
 
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
+      
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
+<!-- -->
 
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />

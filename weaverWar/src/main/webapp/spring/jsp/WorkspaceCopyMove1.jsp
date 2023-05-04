@@ -68,27 +68,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
 
-    <table>
-    <tr>
-        <td colspan="3" class="linkWizardHeading">Select the workspace you want to copy FROM?:</td>
-    </tr>
-
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
-            To:
-        </td>
-        <td style="padding:15px">
-            <h3>{{thisWorkspace.name}}</h3>
-        </td>
-    </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
-            From:
-        </td>
-        <td style="padding:15px">
-            <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-small btn-raised">{{ws.name}}</button>
-        </td>
-    </tr>
-    </table>
-</div>
+    <div class="form-group">
+        <label for="toto">To copy/transfer to this workspace:</label>
+        <div class="form-control" id="toto" aria-describedby="emailHelp" placeholder="Name of the current workspace">
+            {{thisWorkspace.name}}</div>
+    </div>
+    
+     <div class="form-group">
+        <label for="fromfrom">Select the workspace you want to copy from:</label>
+        <div id="fromfrom" aria-describedby="emailHelp" placeholder="Name of the current workspace">
+             <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-small btn-raised">{{ws.name}}</button></div>
+    </div>
+   
+ </div>
 <!-- end addDocument.jsp -->

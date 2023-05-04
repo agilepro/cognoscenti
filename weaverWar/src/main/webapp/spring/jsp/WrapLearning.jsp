@@ -33,7 +33,7 @@
 </style>
 
 
-<div class="learningBox" ng-hide="learningMode.done">
+<div class="learningBox" ng-hide="learningMode.done" ng-cloak>
   <div class="learningInfo">
     <div class="learningTitle">
       Learning Path <button class="btn btn-sm btn-default btn-raised" ng-click="toggleLearningDone()">Close</button>
@@ -55,6 +55,7 @@
     <div class="learningButton">
         <button class="btn btn-warning btn-raised" ng-click="openLearningEditor()">
               Improve this Learning Path</button>
+        <span>  <%=wrappedJSP%>  </span>
     </div>
 </div>
 <%

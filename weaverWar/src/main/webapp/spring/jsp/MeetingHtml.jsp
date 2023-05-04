@@ -326,6 +326,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')">Participants</button>
 <button ng-click="changeMeetingMode('Times')"    ng-class="labelButtonClass('Times')"   >Start Time</button>
 <button ng-click="changeMeetingMode('Status')"   ng-class="labelButtonClass('Status')"  >Overview</button>
+<button ng-click="changeMeetingMode('Facilitate')" ng-class="labelButtonClass('Facilitate')"  >Facilitate</button>
 
 <div style="height:70px">&nbsp;</div>
 
@@ -393,6 +394,10 @@ embeddedData.canUpdate = <%=canUpdate%>;
 </div>
 </div>
 
+
+<div ng-show="displayMode=='Facilitate'">
+<%@include file="Meeting_Facilitate.jsp"%>
+</div>
 
 
 

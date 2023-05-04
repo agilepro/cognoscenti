@@ -94,19 +94,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
             <button type="button" class="btn btn-primary btn-raised"
-                onClick="location.href='DocLinkGoogle.htm<%=folderPart%>'">Attach Google Doc</button>
-        </td>
-        <td style="padding:15px">
-            <p>Weaver can access documents from Google Drive, also known as
-            Google Docs.  You have to log in to Google Drive, and then this will
-            help you locate the document, and save the link for that into your Weaver workspace.
-            Note: others may not be able to access it!
-            </p>
-        </td>
-    </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
-            <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
         </td>
         <td style="padding:15px">

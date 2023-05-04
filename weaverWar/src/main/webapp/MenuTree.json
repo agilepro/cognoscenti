@@ -54,8 +54,23 @@
       "href":"FrontPage.htm",
       "name":"Front Page",
       "title":"Get the main overview of the workspace and recent changes",
-      "opts": [],
-      "useOpts": [],
+      "opts": [
+        {
+          "use": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
+          "href":"CommentList.htm",
+          "name":"Comments",
+          "title":"View all the comments in this workspace",
+          "readOnly": true
+        },
+        {
+          "use": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
+          "href":"History.htm",
+          "name":"History",
+          "title":"See the detailed display of all history",
+          "readOnly": true
+        }
+      ],
+      "useOpts": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
       "readOnly": true
     },
     {
@@ -93,13 +108,6 @@
           "name":"Attendance",
           "title":"A list of who attended which meetings",
           "readOnly": true
-        },
-        {
-          "use": ["MeetingList.jsp","MeetingHtml.jsp","MeetingAttendees.jsp"],
-          "href":"CommentList.htm",
-          "name":"Comments",
-          "title":"View all the comments in this workspace",
-          "readOnly": true
         }
       ],
       "useOpts": ["MeetingList.jsp", "MeetingAttendees.jsp"],
@@ -133,13 +141,6 @@
           "href":"searchAllNotes.htm",
           "name":"Search",
           "title":"Search through all the topics",
-          "readOnly": true
-        },
-        {
-          "use": ["NotesList.jsp", "NoteZoom.jsp"],
-          "href":"CommentList.htm",
-          "name":"Comments",
-          "title":"View all the comments in this workspace",
           "readOnly": true
         }
       ],
@@ -253,13 +254,6 @@
           "href":"EmailSent.htm",
           "name":"Sent",
           "title":"Create a new email message to send",
-          "readOnly": true
-        },
-        {
-          "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp", "CommentList.jsp", "CommentZoom.jsp"],
-          "href":"CommentList.htm",
-          "name":"Comments",
-          "title":"View all the comments in this workspace",
           "readOnly": true
         }
       ],

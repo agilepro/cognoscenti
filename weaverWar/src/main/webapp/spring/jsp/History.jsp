@@ -12,6 +12,13 @@ Required parameters:
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
+    int start = DOMFace.safeConvertInt(ar.defParam("start", "0"));
+    if (start < 0) {
+        start = 0;
+    }
+    int size = 50;
+    int endRecord = 0;
+    
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
@@ -19,6 +26,13 @@ Required parameters:
     List<HistoryRecord> histRecs = ngp.getAllHistory();
     JSONArray allHistory = new JSONArray();
     for (HistoryRecord hist : histRecs) {
+        endRecord++;
+        if (endRecord < start) {
+            continue;
+        }
+        if (endRecord >= start+size) {
+            break;
+        }
         AddressListEntry ale = new AddressListEntry(hist.getResponsible());
         JSONObject userObject = ale.getJSON();
         UserProfile responsible = ale.getUserProfile();
@@ -57,11 +71,14 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, AllPeople) {
+app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Activity Stream");
+    window.setMainPageTitle("History Stream");
     $scope.allHistory = <%allHistory.write(out,2,4);%>;
     $scope.filter = "";
+    
+    // NOTE: filter was removed when pagination added.
+    // should do server-side filtering
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -114,7 +131,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div style="margin-bottom:30px;">
-        Filter <input ng-model="filter">
+        <a href="History.htm?start=<%=start-size%>" title="Back 50 records">
+          <i class="fa  fa-arrow-circle-left"></i></a>
+        <%=start%> - <%=endRecord%> 
+        <a href="History.htm?start=<%=start+size%>" title="Forward 50 records">
+          <i class="fa  fa-arrow-circle-right"></i></a>
     </div>
 
     <table>

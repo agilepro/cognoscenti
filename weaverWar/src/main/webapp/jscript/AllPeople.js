@@ -134,7 +134,9 @@ app.service('AllPeople', function($http) {
         var res = [];
         var q = query.toLowerCase();
         siteObj.people.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+            if (person.name.toLowerCase().indexOf(q)<0 
+                && person.uid.toLowerCase().indexOf(q)<0 
+                && person.key.toLowerCase().indexOf(q)<0) {
                 return;
             }
             res.push(person);
@@ -146,7 +148,9 @@ app.service('AllPeople', function($http) {
         var res = null;
         var q = query.toLowerCase();
         siteObj.people.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+            if (person.name.toLowerCase().indexOf(q)<0 
+                && person.uid.toLowerCase().indexOf(q)<0 
+                && person.key.toLowerCase().indexOf(q)<0) {
                 return;
             }
             res = person;
@@ -225,7 +229,7 @@ app.service('AllPeople', function($http) {
         //$http.get("../../AllPeople.json")
         .success( function(data) {
             console.log("Read people from", url, data);
-            data.validTime = new Date().getTime() + 3600000;
+            data.validTime = new Date().getTime() + 360000;
             AllPeople.allPersonBySite[site] = data;
             sessionStorage.setItem('allPersonBySite', JSON.stringify(AllPeople.allPersonBySite));
             console.log("allPersonBySite["+site+"] retrieved, count = "+data.people.length

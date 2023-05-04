@@ -112,7 +112,7 @@ class SimText {
     }
     needsSaving() {
         this.vLocal = HTML2Markdown(this.vHtml, {});
-        return this.vLocal;
+        return (this.vLocal != this.vServer);
     }
     updateFromServer(lastSave, newMarkdown) {
         if (!newMarkdown) {

@@ -251,7 +251,7 @@ public class MeetingControler extends BaseController {
     }
     
 
-    @RequestMapping(value = "/{siteId}/{pageId}/meetingMinutes.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingMinutes.htm", method = RequestMethod.GET)
     public void meetingMinutes(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -808,6 +808,29 @@ public class MeetingControler extends BaseController {
           }
       }
 
+      @RequestMapping(value = "/{siteId}/{pageId}/agendaGet.json", method = RequestMethod.GET)
+      public void agendaGet(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+              ar.setPageAccessLevels(ngw);
+
+              String id = ar.reqParam("id");
+              MeetingRecord meeting = ngw.findMeeting(id);
+              boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
+              if (!canAccess) {
+                  throw new Exception("Unable to access agenda of meeting "+id);
+              }
+              String aid = ar.reqParam("aid");
+              AgendaItem ai = meeting.findAgendaItem(aid);
+              JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
+              sendJson(ar, repo);
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to update agenda item.", ex);
+              streamException(ee, ar);
+          }
+      }
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/agendaUpdate.json", method = RequestMethod.POST)

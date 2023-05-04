@@ -35,23 +35,31 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     $scope.attendeeMatrix = <%attendeeMatrix.write(out, 2, 4);%>;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
+    
+    console.log("SITE OBJ: ", AllPeople.getSiteObject($scope.siteInfo.key));
+    console.log("NOW TIME: ", new Date().getTime());
+    console.log("MATRIX: ", $scope.attendeeMatrix);
+    console.log("ALL USERS: ", AllPeople.getSiteObject($scope.siteInfo.key));
+    
     $scope.foundUsers = [];
     Object.keys($scope.attendeeMatrix).forEach( function(att) {
-        console.log("Looking at: ", att, $scope.attendeeMatrix[att]);
+        
         let person = AllPeople.findPerson(att, $scope.siteInfo.key);
         if (person) {
-            if (person.uid==att) {
+            if (person.key==att) {
                 $scope.foundUsers.push(person);
             }
             else {
                 console.log("Searched for "+att+" but found "+person.uid);
             }
+            console.log("Found: ", att, $scope.attendeeMatrix[att]);
         }
         else {
             console.log("Did not find "+att);
         }
     });
-
+    console.log("FOUND USERS: ", $scope.foundUsers);
+    
     $scope.isInAttendance = false;
     
     var n = new Date().getTimezoneOffset();
@@ -214,8 +222,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
                 <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
             </td>
             <td ng-repeat="user in foundUsers" class="centerCell">
-                <span ng-show="attendeeMatrix[user.uid][rec.id]"><i class="fa fa-check"></i></span>
-                <span ng-hide="attendeeMatrix[user.uid][rec.id]" style="color:grey">.</span>
+                <span ng-show="attendeeMatrix[user.key][rec.id]"><i class="fa fa-check"></i></span>
+                <span ng-hide="attendeeMatrix[user.key][rec.id]" style="color:grey">.</span>
             </td>
         </tr>
     </table>
