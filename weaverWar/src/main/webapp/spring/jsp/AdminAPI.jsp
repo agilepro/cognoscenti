@@ -341,6 +341,12 @@ editBoxStyle {
 
 
     <div>
+    
+       <div class="guideVocal"> 
+           This page contains helpful details for learning the underlying
+           API for Weaver, and is intended for developers.  
+           For most users this page is unimportant and can be ignored.
+       </div>
 
        <h3>Data API</h3>
 

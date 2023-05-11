@@ -64,12 +64,24 @@
         if (jo.has("external")) {
             %> target="_blank"<%
         }
-        %>><% ar.writeHtml(jo.getString("name")); if (jo.has("external")) {ar.write(" <i class=\"fa fa-external-link\"></i>");}%></a><%
+        %>><% 
+        if (jo.has("icon")) {
+            %><img src="../../../assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
+        }
+        {
+            ar.writeHtml(jo.getString("name")); 
+            if (jo.has("external")) {
+                ar.write(" <i class=\"fa fa-external-link\"></i>");
+            }
+        }
+        %></a><%
         if (jo.has("opts")) {
             JSONArray options = getOptions(jo, wrappedJSP);
             if (options.length()>0) {
             %>
-              <div class="sublist" style="color:black"><ul><%
+              <div class="sublist" style="color:black"><ul>
+                <li><b><%ar.writeHtml(jo.getString("name"));%></b></li>
+                <%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
                     if (userIsReadOnly && !jo2.has("readOnly")) {
                         //skip anything not marked for read only when user is readonly.
@@ -106,7 +118,7 @@
     <% } %></li>
     
   </ul>
-  <%if (false) {ar.write(wrappedJSP);} %>
+  <div style="height:100px"></div>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>

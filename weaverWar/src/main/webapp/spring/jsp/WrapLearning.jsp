@@ -1,7 +1,4 @@
 <!-- BEGIN LearningBar.jsp -->
-<%
-    if (ar.isSuperAdmin()) {
-%>
 
 <style>
 .learningBox {
@@ -57,9 +54,8 @@
               Improve this Learning Path</button>
         <span>  <%=wrappedJSP%>  </span>
     </div>
-</div>
 <%
     }
-  }
 %>
+</div>
 

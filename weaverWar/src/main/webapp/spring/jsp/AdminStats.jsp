@@ -429,61 +429,6 @@ editBoxStyle {
 
 </table>
 
-<h1>Events</h1>
-
-    <div class="generalContent">
-        <div class="generalSubHeading paddingTop">Future Scheduled Actions</div>
-        <div>
-           Next Action due: {{<%=ngw.nextActionDue()%>|date:'M/d/yy H:mm'}}
-        </div>
-        <div>
-           Index says: {{<%=ngpi.nextScheduledAction%>|date:'M/d/yy H:mm'}}
-        </div>
-        <div>
-            OVERDUE:
-            <ul>
-            <li ng-repeat="(key,val) in nextActionDate">
-            {{key}} : {{val|date}}
-            </li>
-            </ul>
-            ALL UNSENT NOTIFICATIONS:
-            <ol>
-            <%
-
-            ArrayList<ScheduledNotification> allUnsent = new ArrayList<ScheduledNotification>();
-
-            //Now scan all the comments on all the topics
-            int ii = 0;
-            ngw.gatherUnsentScheduledNotification(allUnsent, ar.nowTime);
-            for (ScheduledNotification sn : allUnsent) {
-                if (sn!=null) {
-                    long timeToAct = sn.futureTimeToSend();
-                    ar.write("<li>"+ (++ii)+": ");
-                    ar.writeHtml( (new Date(timeToAct)).toString() );
-                    ar.write(", ");
-                    ar.writeHtml( sn.selfDescription() );
-                    if (timeToAct < ar.nowTime) {
-                        ar.write("  <b>OVERDUE!</b>");
-                    }
-                    ar.write("</li>");
-                }
-            }
-
-
-
-            %>
-            </ol>
-        </div>
-    </div>
-
-
-<div class="well">
-<%
-   for (String name : ngpi.allUsers) {
-       out.write(name+", ");
-   }
-%>
-</div>
 
 </div>
 

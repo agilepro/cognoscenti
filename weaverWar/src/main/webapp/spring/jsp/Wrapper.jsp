@@ -384,7 +384,7 @@ function showLearningPath() {
   <div class="row">
 
     <!-- Begin SideBar  -->
-    <div class="col-sm-2 col-lg-1">
+    <div class="col-sm-1 col-lg-1">
       <%@ include file="SideBar.jsp" %>
     </div>
     <!-- End SideBar -->
