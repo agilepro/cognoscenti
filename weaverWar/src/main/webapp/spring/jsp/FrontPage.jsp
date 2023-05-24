@@ -487,7 +487,7 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Your Action Items</div>
               <div style="float:right" title="Access the list of all action items">
-                  <a href="goalList.htm">
+                  <a href="GoalList.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>

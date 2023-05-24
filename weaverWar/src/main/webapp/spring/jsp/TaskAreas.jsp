@@ -137,7 +137,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
               ng-click="openTaskAreaEditor({id:'~new~'})">Create New Task Area</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="goalList.htm">Action Items View</a></li>
+              href="GoalList.htm">Action Items View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="GoalStatus.htm">Status List View</a></li>
           <li role="presentation"><a style="color:lightgrey">Manage Task Areas</a></li>

@@ -71,7 +71,8 @@
         }
       ],
       "useOpts": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "FrontPage.png"
     },
     {
       "href":"MeetingList.htm",
@@ -111,7 +112,8 @@
         }
       ],
       "useOpts": ["MeetingList.jsp", "MeetingAttendees.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Meeting.png"
     },
     {
       "href":"NotesList.htm",
@@ -145,7 +147,8 @@
         }
       ],
       "useOpts": ["NotesList.jsp", "NoteZoom.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Topics.png"
     },
     {
       "href":"DocsList.htm",
@@ -193,7 +196,8 @@
         }
       ],
       "useOpts": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Documents.png"
     },
     {
       "href":"GoalStatus.htm",
@@ -207,21 +211,29 @@
           "title":"Create a new action item"
         },
         {
-          "use": ["GoalStatus.jsp", "GoalList.jsp", "TaskAreas.jsp"],
+          "use": ["GoalList.jsp", "TaskAreas.jsp"],
           "href":"GoalStatus.htm",
           "name":"Status View",
+          "title":"List the actions items in a table",
+          "readOnly": true
+        },
+        {
+          "use": ["GoalStatus.jsp", "TaskAreas.jsp"],
+          "href":"GoalList.htm",
+          "name":"Item View",
           "title":"List the actions items in the simpler items view",
           "readOnly": true
         },
         {
           "use": ["GoalStatus.jsp", "GoalList.jsp"],
-          "href":"taskAreas.htm",
+          "href":"TaskAreas.htm",
           "name":"Task Areas",
           "title":"Manage task areas"
         }
       ],
       "useOpts": ["GoalStatus.jsp", "GoalList.jsp", "TaskAreas.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "ActionItems.png"
     },
     {
       "href":"DecisionList.htm",
@@ -236,7 +248,8 @@
         }
       ],
       "useOpts": ["DecisionList.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Decisions.png"
     },
     {
       "href":"EmailCreated.htm",
@@ -258,7 +271,8 @@
         }
       ],
       "useOpts": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Email.png"
     },
     {
       "href":"RoleManagement.htm",
@@ -291,7 +305,8 @@
         }
       ],
       "useOpts": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Roles.png"
     },
     {
       "href":"AdminSettings.htm",
@@ -335,7 +350,8 @@
           "title":"Create a new workspace that is a sibling of this workspace"
         }
       ],
-      "useOpts": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"]
+      "useOpts": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+      "icon": "Admin.png"
     },
     {
       "href":"Personal.htm",

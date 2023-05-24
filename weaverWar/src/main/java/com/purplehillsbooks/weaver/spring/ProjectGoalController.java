@@ -73,7 +73,7 @@ public class ProjectGoalController extends BaseController {
 
     ///////////////////////// MAIN VIEWS ////////////////////////////////////
 
-    @RequestMapping(value = "/{siteId}/{pageId}/goalList.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/GoalList.htm", method = RequestMethod.GET)
     public void goalList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -747,7 +747,7 @@ public class ProjectGoalController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/TaskAreas.htm", method = RequestMethod.GET)
     public void taskArea(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);

@@ -431,7 +431,7 @@ function addvalue() {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="GoalStatus.htm">Status List View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="taskAreas.htm">Manage Task Areas</a></li>
+              href="TaskAreas.htm">Manage Task Areas</a></li>
         </ul>
       </span>
     </div>

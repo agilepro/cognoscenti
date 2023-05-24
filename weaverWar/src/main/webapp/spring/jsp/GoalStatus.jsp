@@ -654,10 +654,10 @@ function addvalue() {
               ng-click="openModalActionItem(newGoal,'details')">Create New Action Item</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="goalList.htm">Action Items View</a></li>
+              href="GoalList.htm">Action Items View</a></li>
           <li role="presentation"><a style="color:lightgrey">Status List View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="taskAreas.htm">Manage Task Areas</a></li>
+              href="TaskAreas.htm">Manage Task Areas</a></li>
         </ul>
       </span>
     </div>
