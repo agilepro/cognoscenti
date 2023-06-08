@@ -34,9 +34,12 @@ import com.purplehillsbooks.weaver.HistoricActions;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.SiteLedger;
+import com.purplehillsbooks.weaver.SiteLedgerCharge;
 import com.purplehillsbooks.weaver.SiteMailGenerator;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
+import com.purplehillsbooks.weaver.SiteUsers;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WorkspaceStats;
@@ -70,6 +73,12 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPExecutives(ar,siteId,"SiteStats.jsp");
+    }
+    @RequestMapping(value = "/{siteId}/$/SiteLedger.htm", method = RequestMethod.GET)
+    public void siteLedger(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPExecutives(ar,siteId,"SiteLedger.jsp");
     }
     @RequestMapping(value = "/{siteId}/$/TemplateEdit.htm", method = RequestMethod.GET)
     public void templateEdit(@PathVariable String siteId,
@@ -534,8 +543,8 @@ public class SiteController extends BaseController {
             }
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteByIdOrFail(siteId);
-            JSONObject userMap = site.getUserMap();
-            sendJson(ar, userMap);
+            SiteUsers userMap = site.getUserMap();
+            sendJson(ar, userMap.getJson());
         }
         catch(Exception ex){
             Exception ee = new JSONException("Unable to get user map for site {0}", ex, siteId);
@@ -559,8 +568,8 @@ public class SiteController extends BaseController {
                 throw new Exception("Must be administrator of site to update the permissions");
             }
             JSONObject userMapDelta = getPostedObject(ar);
-            JSONObject userMap = site.updateUserMap(userMapDelta);
-            sendJson(ar, userMap);
+            SiteUsers userMap = site.updateUserMap(userMapDelta);
+            sendJson(ar, userMap.getJson());
         }
         catch(Exception ex){
             Exception ee = new JSONException("Unable to update user map for site {0}", ex, siteId);
@@ -640,14 +649,45 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGBook ngw = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             JSONObject posted = this.getPostedObject(ar);
 
-            JSONObject repo = EmailSender.querySiteEmail(ngw, posted);
+            JSONObject repo = EmailSender.querySiteEmail(site, posted);
 
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/$/CalculateCharges.json", method = RequestMethod.POST)
+    public void calculateCharges(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            ar.assertSuperAdmin("Site changes can only be calculated by super admin");
+            JSONObject posted = this.getPostedObject(ar);
+            
+            long timestamp = System.currentTimeMillis();
+            int year = SiteLedger.getYear(timestamp);
+            int month = SiteLedger.getMonth(timestamp);
+            if (posted.has("year")) {
+                year = posted.getInt("year");
+            }
+            if (posted.has("month")) {
+                month = posted.getInt("month");
+            }
+            
+            File sitefolder = site.getFilePath().getParentFile();
+            SiteLedger ledger = SiteLedger.readLedger(sitefolder);
+            SiteLedgerCharge charge = ledger.requiredCharges(year, month);
+            ledger.saveLedger(sitefolder);
+
+            sendJson(ar, charge.getJson());
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }

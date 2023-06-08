@@ -159,10 +159,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
         $scope.domainHtml  = convertMarkdownToHtml($scope.workspaceConfig.domain);
     }
     $scope.generateTheHtmlValues();
-    $scope.saveOneField = function(fieldName) {
+    $scope.saveOneField = function(fieldName, refreshPage) {
         var newData = {};
         newData[fieldName] = $scope.workspaceConfig[fieldName];
-        saveRecord(newData);
+        saveRecord(newData, refreshPage);
         $scope.isEditing = null;
     }
     $scope.deleteParentKey = function() {
@@ -178,7 +178,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
         var newData = {};
         newData.deleted = false;
         newData.frozen = true;
-        saveRecord(newData);
+        saveRecord(newData, true);
         $scope.isEditing = null;
     }
     $scope.clearField = function(fieldName) {
@@ -190,8 +190,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
     $scope.saveProjectConfig = function() {
         saveRecord($scope.workspaceConfig);
     }
+    
+    
     console.log("FROZEN", $scope.workspaceConfig.frozen, $scope.workspaceConfig );
-    function saveRecord(rec) {
+    function saveRecord(rec, refreshPage) {
         console.log("FROZEN", $scope.workspaceConfig.frozen, $scope.workspaceConfig);
         if (!<%=ar.isAdmin()%>) {
             alert("Sorry, you are not allowed to make changes on this page.  You must be an administrator of this workspace.");
@@ -212,6 +214,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
             $scope.workspaceConfig = data;
             $scope.generateTheHtmlValues();
             $scope.editInfo=false;
+            if (refreshPage) {
+                window.location.reload();
+            }
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -351,6 +356,10 @@ editBoxStyle {
 label {
     color: black;
 }
+.labelColumn:hover {
+    background-color:#ECB6F9;
+    cursor: pointer;
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
@@ -391,18 +400,18 @@ label {
         <div>
             <table class="spaceyTable">
                 <tr >
-                    <td ng-click="setEdit('name')"><label>Workspace Name:</label></td>
+                    <td ng-click="setEdit('name')" class="labelColumn">Workspace Name:</td>
                     <td ng-hide="isEditing=='name'" ng-dblclick="setEdit('name')">
                         <h1>{{workspaceConfig.allNames[0]}}</h1>
                     </td>
-                    <td class="form-inline form-group" ng-show="isEditing=='name'">
+                    <td class="form-inline form-group" ng-show="isEditing=='name'" class="labelColumn">
                         <input type="text" class="form-control" style="width:300px" ng-model="newName"/>
                         <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Change Name</button>
                         <button class="btn btn-warning btn-raised" ng-click="setEdit('')">Cancel</button>
                     </td>
                 </tr>
                 <tr>
-                    <td ng-click="setEdit('vision')"><label>Vision:</label></td>
+                    <td ng-click="setEdit('vision')" class="labelColumn">Vision:</td>
                     <td ng-show="isEditing=='vision'">
                         <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a vision statement for the circle working in this  workspace, if any"
@@ -419,7 +428,7 @@ label {
                 </tr>
                 <tr>
                     <td></td>
-                    <td ng-click="toggleFrontPage('showVisionOnFrontPage')">
+                    <td ng-click="toggleFrontPage('showVisionOnFrontPage')" class="labelColumn">
                         <span ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
                             <i class="fa fa-check-circle"></i> Show vision on Front Page</span>
                         <span ng-hide="workspaceConfig.wsSettings.showVisionOnFrontPage">
@@ -427,7 +436,7 @@ label {
                     </td>
                 </tr>
                 <tr>
-                    <td ng-click="setEdit('mission')"><label>Mission:</label></td>
+                    <td ng-click="setEdit('mission')" class="labelColumn">Mission:</td>
                     <td ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a mission statement for the circle working in this  workspace, if any"
@@ -444,7 +453,7 @@ label {
                 </tr>
                 <tr>
                     <td></td>
-                    <td ng-click="toggleFrontPage('showMissionOnFrontPage')">
+                    <td ng-click="toggleFrontPage('showMissionOnFrontPage')" class="labelColumn">
                         <span ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
                             <i class="fa fa-check-circle"></i> Show mission on Front Page</span>
                         <span ng-hide="workspaceConfig.wsSettings.showMissionOnFrontPage">
@@ -452,7 +461,7 @@ label {
                     </td>
                 </tr>
                 <tr >
-                    <td ng-click="setEdit('purpose')"><label>Aim:</label></td>
+                    <td ng-click="setEdit('purpose')" class="labelColumn">Aim:</td>
                     <td ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace."
@@ -469,7 +478,7 @@ label {
                 </tr>
                 <tr>
                     <td></td>
-                    <td ng-click="toggleFrontPage('showAimOnFrontPage')">
+                    <td ng-click="toggleFrontPage('showAimOnFrontPage')" class="labelColumn">
                         <span ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
                             <i class="fa fa-check-circle"></i> Show aim on Front Page</span>
                         <span ng-hide="workspaceConfig.wsSettings.showAimOnFrontPage">
@@ -477,7 +486,7 @@ label {
                     </td>
                 </tr>
                 <tr>
-                    <td ng-click="setEdit('domain')"><label>Domain:</label></td>
+                    <td ng-click="setEdit('domain')" class="labelColumn">Domain:</td>
                     <td ng-show="isEditing=='domain'">
                         <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a domain statement for the circle working in this  workspace, if any"
@@ -494,7 +503,7 @@ label {
                 </tr>
                 <tr>
                     <td></td>
-                    <td ng-click="toggleFrontPage('showDomainOnFrontPage')">
+                    <td ng-click="toggleFrontPage('showDomainOnFrontPage')" class="labelColumn">
                         <span ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
                             <i class="fa fa-check-circle"></i> Show domain on Front Page</span>
                         <span ng-hide="workspaceConfig.wsSettings.showDomainOnFrontPage">
@@ -502,33 +511,57 @@ label {
                     </td>
                 </tr>
                 <tr>
-                    <td valign="top" ng-click="setEdit('frozen')"><label>Workspace State:</label></td>
+                    <td valign="top" ng-click="setEdit('frozen')" class="labelColumn">Workspace State:</td>
                     <td  valign="top" ng-show="isEditing=='frozen'">
-
-                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')"
-                            class="btn btn-primary btn-raised" ng-hide="workspaceConfig.frozen">
-                            Freeze Workspace</button>
-                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen')"
-                            class="btn btn-primary btn-raised"
-                            ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
-                            Unfreeze Workspace</button>
-                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted')"
-                            class="btn btn-primary btn-raised" ng-hide="workspaceConfig.deleted">
-                            Delete Workspace</button>
+                      <div ng-hide="workspaceConfig.frozen">
+                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen', true)"
+                            class="btn btn-primary btn-raised">
+                            Freeze Workspace</button><br/>
+                            Use this <b>Freeze</b> to change an active workspace into a frozen workspace where nothing can be changed.  Frozen workspaces do not count toward your quota of workspace in the site.
+                      </div>
+                      <div ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
+                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen', true)"
+                            class="btn btn-primary btn-raised">
+                            Unfreeze Workspace</button><br/>
+                            Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
+                            You are only allowed a certain number of active workspaces in a site depending upon 
+                            you playment plan.  
+                            <br/>
+                            If you already have the maximum number of active workspaces, you will not be able to 
+                            unfreeze this workspace, until you freeze or delete another active one.
+                      </div>
+                      <div ng-hide="workspaceConfig.deleted">
+                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted', true)"
+                            class="btn btn-primary btn-raised" >
+                            Delete Workspace</button><br/>
+                            Use <b>Delete</b> option to delete a workspace.  
+                            The workspace will actually remain around until the 
+                            <b>Garbage Collect</b> operation is run at the site level.
+                            After garbage collection the workspace will be permanently gone,
+                            and no information can be retrieved.
+                      </div>
+                      <div ng-show="workspaceConfig.deleted">
                         <button ng-click="undeleteWorkspace()"
-                            class="btn btn-primary btn-raised" ng-show="workspaceConfig.deleted">
-                            Undelete Workspace</button>
+                            class="btn btn-primary btn-raised" >
+                            Undelete Workspace</button><br/>
+                            If you didn't really want to delete the workspace, 
+                            use this <b>Undelete</b> to cancel the delete, 
+                            and return the workspace to a frozen state.
+                      </div>
+                      <div>
                         <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
-                            Cancel</button>
+                            Cancel</button><br/>
+                            Use <b>Cancel</b> to close this option without changinge the workspace state.
+                      </div>
                     </td>
                     <td  valign="top" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
                         <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
                         <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
-                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.  (Double-click here to freeze or delete).</span>
+                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
                     </td>
                 </tr>
                 <tr>
-                    <td ng-click="setEdit('parentKey');backupParent=parentWorkspace"><label>Parent Circle:</label></td>
+                    <td ng-click="setEdit('parentKey');backupParent=parentWorkspace" class="labelColumn">Parent Circle:</td>
                     <td ng-show="isEditing=='parentKey'">
                         <table>
                             <tr>
@@ -553,7 +586,7 @@ label {
                 </tr>
                 <tr>
                     <td>Email</td>
-                    <td ng-click="toggleBool('suppressEmail')">
+                    <td ng-click="toggleBool('suppressEmail')" class="labelColumn">
                         <span ng-show="workspaceConfig.suppressEmail">
                             <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>
                         <span ng-hide="workspaceConfig.suppressEmail">

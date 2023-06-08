@@ -46,6 +46,12 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:2.0.26'
     // https://mvnrepository.com/artifact/com.github.ralfstuckert.pdfbox-layout/pdfbox1-layout
     //implementation 'com.github.ralfstuckert.pdfbox-layout:pdfbox2-layout:1.0.1'
+    
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    
 }
 
 application {

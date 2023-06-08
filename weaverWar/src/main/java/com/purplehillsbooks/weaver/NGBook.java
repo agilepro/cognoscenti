@@ -56,7 +56,7 @@ public class NGBook extends ContainerCommon {
     private final NGRole executiveRole;
     private final NGRole ownerRole;
 
-    private List<AddressListEntry> siteUsers;
+    private List<AddressListEntry> allUserList;
     private boolean forceNewStatistics = false;
     private Set<String> userAccessMap;
 
@@ -1123,8 +1123,8 @@ public class NGBook extends ContainerCommon {
 
 
     public List<AddressListEntry> getSiteUsersList() throws Exception {
-        if (siteUsers!=null) {
-            return siteUsers;
+        if (allUserList!=null) {
+            return allUserList;
         }
 
         List<AddressListEntry> temp = new ArrayList<AddressListEntry>();
@@ -1142,11 +1142,11 @@ public class NGBook extends ContainerCommon {
                 }
             }
         }
-        siteUsers =  temp;
+        allUserList =  temp;
         return temp;
     }
     public void flushUserCache() throws Exception {
-        siteUsers = null;
+        allUserList = null;
         forceNewStatistics = true;
     }
 
@@ -1180,62 +1180,41 @@ public class NGBook extends ContainerCommon {
             return true;
         }
         if (userAccessMap==null || userMapTimeout < System.currentTimeMillis()) {
-            JSONObject userMap = getUserMap();
+            SiteUsers userMap = getUserMap();
             setUserUpdateMap(userMap);
             userMapTimeout = System.currentTimeMillis() + 3_600_000;  //one hour in the future
         }
         return !userAccessMap.contains(userId);
     }
     
-    private void setUserUpdateMap(JSONObject userMap) throws Exception {
+    private void setUserUpdateMap(SiteUsers userMap) throws Exception {
         
         Set<String> newMap = new HashSet<String>();
-        for (String userId : userMap.keySet()) {
-            JSONObject userInfo = userMap.getJSONObject(userId);
-            if (userInfo.optBoolean("hasProfile", false) && !userInfo.optBoolean("readOnly", false)) {
+        for (String userId : userMap.getAllUserKeys()) {
+            if (userMap.hasProfile(userId) && !userMap.isReadOnly(userId)) {
                 newMap.add(userId);
             }
         }
         userAccessMap = newMap;
     }
     
-    public JSONObject getUserMap() throws Exception {
+    public SiteUsers getUserMap() throws Exception {
         File cogFolder = new File(siteFolder, ".cog");
-        File userMapFile = new File(cogFolder, "users.json");
-        JSONObject userMap;
-        if (userMapFile.exists()) {
-            userMap = JSONObject.readFromFile(userMapFile);
-        }
-        else {
-            userMap = new JSONObject();
-        }
-        userMap = recalcUserStats(userMap);
-        return userMap;
+        return SiteUsers.readUsers(cogFolder);
     }
     
-    public JSONObject updateUserMap(JSONObject delta) throws Exception {
-        JSONObject userMap = getUserMap();
-        for (String userKey : delta.keySet()) {
-            JSONObject userDelta = delta.getJSONObject(userKey);
-            JSONObject userInfo = userMap.requireJSONObject(userKey);
-
-            //if nothing is mentioned about readOnly then it will be false
-            if (userDelta.has("readOnly")) {
-                userInfo.put("readOnly", userDelta.getBoolean("readOnly"));
-            }
-            if (userDelta.has("name")) {
-                userInfo.put("name", userDelta.getString("name"));
-            }
-        }
+    public SiteUsers updateUserMap(JSONObject delta) throws Exception {
+        File cogFolder = new File(siteFolder, ".cog");
+        SiteUsers siteUsers = SiteUsers.readUsers(cogFolder);
+        recalcUserStats(siteUsers);
+        siteUsers.updateUserMap(delta);
+        setUserUpdateMap(siteUsers);
         
-        File cogFolder = new File(siteFolder, ".cog");
-        File userMapFile = new File(cogFolder, "users.json");
-        userMap.writeToFile(userMapFile);
-        setUserUpdateMap(userMap);
-        return userMap;
+        siteUsers.writeUsers(cogFolder);
+        return siteUsers;
     }
     
-    private JSONObject recalcUserStats(JSONObject oldUserMap) throws Exception{
+    private void recalcUserStats(SiteUsers userMap) throws Exception{
                 
         //get then settings from Site
         JSONObject newUserMap = new JSONObject();
@@ -1248,19 +1227,7 @@ public class NGBook extends ContainerCommon {
             setUserEntriesForContainer(newUserMap, ngw);
         }
         
-        for (String userKey : newUserMap.keySet()) {
-            if (oldUserMap.has(userKey)) {
-                JSONObject oldUserEntries = oldUserMap.getJSONObject(userKey);
-                JSONObject newUserEntries = newUserMap.getJSONObject(userKey);
-                if (oldUserEntries.has("readOnly")) {
-                    newUserEntries.put("readOnly", oldUserEntries.getBoolean("readOnly"));
-                }
-                if (oldUserEntries.has("name")) {
-                    newUserEntries.put("name", oldUserEntries.getString("name"));
-                }
-            }
-        }
-        return newUserMap;
+        userMap.updateUserMap(newUserMap);
     }
     
     private void setUserEntriesForContainer(JSONObject userMap, NGContainer ngw) throws Exception {

@@ -123,6 +123,8 @@ app.filter('encode', function() {
               href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteStats.htm">Site Statistics</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteLedger.htm">Site Charges</a></li>
         </ul>
       </span>
     </div>

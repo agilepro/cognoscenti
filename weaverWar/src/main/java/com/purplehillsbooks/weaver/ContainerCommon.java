@@ -206,6 +206,13 @@ public abstract class ContainerCommon extends NGContainer
         }
         return nameOfLink;
     }
+    
+    protected void removeIfEmpty(String roleName) throws Exception {
+        NGRole role = getRole(roleName);
+        if (role!=null && role.getDirectPlayers().size() == 0) {
+            deleteRole(roleName);
+        }
+    }
 
     /**
     * get a role, and create it if not found.
@@ -243,7 +250,7 @@ public abstract class ContainerCommon extends NGContainer
                 elegibility = "Good judgement. Integrity. Listens and empathizes effectively. Can hold "
                         +"the big picture of an issue. Articulate. Both a sense of humor and able to be firm.";
             }
-            else if ("Circle Administrator".equals(roleName)) {
+            else if ("Meeting Manager".equals(roleName)) {
                 desc = "Personally handles or oversees: circle meeting venue, creating agendas, taking "
                         +"minutes in collaboration with facilitator, and keeping the records organized.";
                 elegibility = "Familiar with electronic media. Organized. Articulate. Reliable. Takes initiative.";

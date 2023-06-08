@@ -118,6 +118,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
           <li role="presentation"><a role="menuitem"
               href="SiteStats.htm">Site Statistics</a></li>
           <li role="presentation"><a role="menuitem"
+              href="SiteLedger.htm">Site Charges</a></li>
+          <li role="presentation"><a role="menuitem"
               ng-click="recalcStats()">Recalculate</a></li>
         </ul>
       </span>

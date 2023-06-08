@@ -10,11 +10,11 @@
     String startMode = ar.defParam("start", "nothing");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
-    NGBook ngb = ngw.getSite();
+    NGBook site = ngw.getSite();
     boolean canUpdate = ar.canUpdateWorkspace();
     
-    JSONObject siteInfo = ngb.getConfigJSON();
-    siteInfo.put("frozen", ngb.isFrozen());
+    JSONObject siteInfo = site.getConfigJSON();
+    siteInfo.put("frozen", site.isFrozen());
     
     JSONObject workspaceInfo = ngw.getConfigJSON();
     

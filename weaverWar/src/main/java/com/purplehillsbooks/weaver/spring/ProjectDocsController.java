@@ -101,7 +101,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPNotFrozen(ar, siteId, pageId, "DocsAdd.jsp");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsAdd.jsp");
     }
 
     /**

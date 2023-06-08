@@ -223,18 +223,29 @@ function GetFirstHundredNoHtml(input) {
 <div ng-cloak>
 
   <%@include file="ErrorPanel.jsp"%>
-  
+ 
   
 <% if (userReadOnly) { %>
 
 <div class="guideVocal" style="margin-top:80px">
-    You are not allowed to create a meeting in this workspace, because
+    <p>You are not allowed to create a meeting in this workspace, because
     you are a passive 'read-only' user.  You can access documents, but you can 
-    not add them or update them.
+    not add them or update them.</p>
     
-    If you wish to add or update meetings, speak to the administrator of this 
+    <p>If you wish to add or update meetings, speak to the administrator of this 
     workspace / site and have your membership level changed to an
-    active user.
+    active user.</p>
+</div>
+
+<% } else if (ngw.isFrozen()) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    <p>You are not able to create a meeting in this workspace, because
+    it is frozen.  Frozen workspaces can not be modified: nothing can be added
+    or removed, including meetings.</p>
+    
+    <p>If you wish to add or update meetings, the workspace must be set into the 
+    active (unfrozen) state in the workspace admin page.</p>
 </div>
 
 <% } else { %>

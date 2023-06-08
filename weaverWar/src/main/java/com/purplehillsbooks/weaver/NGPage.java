@@ -155,10 +155,13 @@ public abstract class NGPage extends ContainerCommon {
         //assure that other roles exist
         getRequiredRole("Notify");
         getRequiredRole("Facilitator");
-        getRequiredRole("Circle Administrator");
+        getRequiredRole("Meeting Manager");
         getRequiredRole("Operations Leader");
         getRequiredRole("Representative");
         getRequiredRole("External Expert");
+        
+        // this is the old name, the new name is Meeting Manager
+        removeIfEmpty("Circle Administrator");
 
         //refresh the roles from the site if linked
         for (CustomRole aRole : this.getAllRoles()) {

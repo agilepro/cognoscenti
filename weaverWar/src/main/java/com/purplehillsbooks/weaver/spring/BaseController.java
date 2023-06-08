@@ -495,7 +495,7 @@ public class BaseController {
     }
 
 
-
+/*
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
@@ -508,7 +508,7 @@ public class BaseController {
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-
+*/
 
 
 

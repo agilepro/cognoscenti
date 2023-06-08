@@ -6,11 +6,8 @@
     String folderVal = ar.defParam("folder", null);
     List<String> folders = UtilityMethods.splitString(folderVal, '|');
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    if (ngp.isFrozen()) {
-        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
-           +"Please check the logic of the controller.");
-    }
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+
     String folderPart = "";
     if (folderVal!=null) {
         folderPart = "?folder="+URLEncoder.encode(folderVal, "UTF-8");
@@ -20,7 +17,7 @@
         folderMap.put( folder, true);
     }
 
-    JSONArray allLabels = ngp.getJSONLabels();
+    JSONArray allLabels = ngw.getJSONLabels();
     
     boolean userReadOnly = ar.isReadOnly(); 
 %>
@@ -60,6 +57,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     If you wish to add a document, speak to the administrator of this 
     workspace / site and have your membership level changed to an
     active user.
+</div>
+
+<% } else if (ngw.isFrozen()) { %>
+
+<div class="guideVocal" style="margin-top:80px">
+    <p>You are not able to add a document to this workspace, because
+    the workspace is frozen.
+    Frozen workspaces can not be modified: nothing can be added
+    or removed, including documents and links.</p>
+    
+    <p>If you wish to add or update documents, the workspace must be set into the 
+    active (unfrozen) state in the workspace admin page.</p>
 </div>
 
 <% } else { %>
