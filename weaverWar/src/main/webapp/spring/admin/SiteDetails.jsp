@@ -10,9 +10,11 @@
     String siteKey = ar.reqParam("siteKey");
     
     NGBook theSite = cog.getSiteByIdOrFail(siteKey);
+    Ledger ledger = theSite.getLedger();
     
-    //JSONArray fullList = new JSONArray();
-    //fullList.put("/api/"+siteKey+"/{proj}/summary.json");
+    long timestamp = System.currentTimeMillis();
+    int year = Ledger.getYear(timestamp);
+    int month = Ledger.getMonth(timestamp);
     
 
 %>
@@ -40,6 +42,15 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.stdKeys.push(propertyName);
         }
     }
+    $scope.siteLedger = <%ledger.generateJson().write(out, 2, 4);%>;
+    
+    $scope.year = <%=year%>;
+    $scope.month = <%=month%>;
+    $scope.day = 1;
+    $scope.paymentAmt = 0;
+    $scope.chargeAmt = 0;
+    $scope.planName = "Trial";
+    
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -101,6 +112,69 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.saveProp(propName);
     };
     
+    $scope.recordPayment = function() {
+        postObj = {};
+        postObj.year = $scope.year;
+        postObj.month = $scope.month;
+        postObj.day = $scope.day;
+        postObj.amount = parseFloat($scope.paymentAmt);
+        postObj.site = $scope.theSite.key;
+        var postURL = "recordPayment.json";
+        var postdata = angular.toJson(postObj);
+        console.log("SENDING: ", postdata);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.siteLedger = data;
+            alert("payment recorded successfully");
+            console.log("PAYMENT: ", data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+        
+    }
+    $scope.makeCharge = function() {
+        postObj = {};
+        postObj.year = $scope.year;
+        postObj.month = $scope.month;
+        postObj.day = $scope.day;
+        postObj.amount = parseFloat($scope.chargeAmt);
+        postObj.site = $scope.theSite.key;
+        var postURL = "updateCharge.json";
+        var postdata = angular.toJson(postObj);
+        console.log("SENDING: ", postdata);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.siteLedger = data;
+            alert("payment recorded successfully");
+            console.log("CHARGE: ", data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.setPlan = function() {
+        postObj = {};
+        postObj.year = $scope.year;
+        postObj.month = $scope.month;
+        postObj.day = $scope.day;
+        postObj.planName = $scope.planName;
+        postObj.site = $scope.theSite.key;
+        var postURL = "setPlan.json";
+        var postdata = angular.toJson(postObj);
+        console.log("SENDING: ", postdata);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.siteLedger = data;
+            alert("plan set successfully");
+            console.log("PLAN: ", data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+   
+   
 });
 
 </script>
@@ -130,7 +204,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td></td>
                 <td>names</td>
-                <td><div ng-repeat="u in theSite.names">{{u}}</div>
+                <td><a href="../../t/{{theSite.key}}/$/SiteStats.htm"><b>{{theSite.names[0]}}</b></a>
                 </td>
             </tr>
             <tr>
@@ -208,6 +282,93 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
         </tbody>
     </table>
+    
+    <hr/>
+    
+    <div class="well">
+    <h2>Site Payment</h2>
+        
+    <table class="table">
+      <tr>
+        <td>
+          Year
+        </td>
+        <td>
+          <input ng-model="year"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Month
+        </td>
+        <td>
+          <input ng-model="month"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Day
+        </td>
+        <td>
+          <input ng-model="day"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Plan
+        </td>
+        <td>
+          <input ng-model="planName"/>
+          <button ng-click="setPlan()">Set Plan</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Payment
+        </td>
+        <td>
+          <input ng-model="paymentAmt"/>
+          <button ng-click="recordPayment()">Record Payment</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Charge
+        </td>
+        <td>
+          <input ng-model="chargeAmt"/>
+          <button ng-click="makeCharge()">Make Charge</button>
+        </td>
+      </tr>
+    </table>
+    
+    </div>
+    
+    
+    <div>
+    <table class="table">
+      <tr ng-repeat="plan in siteLedger.plans">
+        <td>PLAN</td>
+        <td>{{plan.planName}}</td>
+        <td>{{plan.year}} / {{ (plan.month + "").padStart(2 ,"0") }}</td>
+        <td>End: {{plan.endDate|cdate}}</td>
+      </tr>
+      <tr ng-repeat="charge in siteLedger.charges">
+        <td>CHARGE</td>
+        <td>$ {{charge.amount}}</td>
+        <td>{{charge.year}} / {{(charge.month + "").padStart(2 ,"0")}}</td>
+        <td></td>
+      </tr>
+      <tr ng-repeat="pay in siteLedger.payments">
+        <td>PAYMENT</td>
+        <td>$ {{pay.amount}}</td>
+        <td>{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</td>
+        <td>Detail: {{pay.detail}}</td>
+      </tr>
+    </table>
+    
+    </div>
+    
 </div>
 
 

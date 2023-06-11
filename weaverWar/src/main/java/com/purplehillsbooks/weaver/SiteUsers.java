@@ -1,12 +1,7 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-
-import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 

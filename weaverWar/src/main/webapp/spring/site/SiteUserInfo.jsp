@@ -22,8 +22,8 @@
         userDetails = ale.getJSON();
     }
     
-    JSONObject userMap = site.getUserMap();
-    JSONObject userMapEntry = userMap.requireJSONObject(ale.getUniversalId());
+    SiteUsers userMap = site.getUserMap();
+    JSONObject userMapEntry = userMap.getJson().requireJSONObject(ale.getUniversalId());
     
 
     JSONObject wsMap = new JSONObject();

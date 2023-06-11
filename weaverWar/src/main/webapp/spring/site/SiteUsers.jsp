@@ -9,7 +9,7 @@
     Cognoscenti cog = ar.getCogInstance();
     NGBook site = cog.getSiteByIdOrFail(siteId);
 
-    JSONObject userMap = site.getUserMap();
+    SiteUsers userMap = site.getUserMap();
 
 
 %>
@@ -19,7 +19,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List of Users in Site");
-    $scope.userMap = <%userMap.write(out,2,4);%>;
+    $scope.userMap = <%userMap.getJson().write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
     $scope.replaceConfirm = false;

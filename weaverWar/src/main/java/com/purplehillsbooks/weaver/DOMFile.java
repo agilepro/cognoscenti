@@ -228,5 +228,4 @@ public class DOMFile extends DOMFace {
         out.close();
         oldLocation.delete();
     }
-
 }

@@ -34,8 +34,9 @@ import com.purplehillsbooks.weaver.HistoricActions;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.SiteLedger;
-import com.purplehillsbooks.weaver.SiteLedgerCharge;
+import com.purplehillsbooks.weaver.Ledger;
+import com.purplehillsbooks.weaver.LedgerCharge;
+import com.purplehillsbooks.weaver.LedgerPayment;
 import com.purplehillsbooks.weaver.SiteMailGenerator;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
@@ -661,33 +662,90 @@ public class SiteController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/$/CalculateCharges.json", method = RequestMethod.POST)
-    public void calculateCharges(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/su/updateCharge.json", method = RequestMethod.POST)
+    public void updateCharge(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             ar.assertSuperAdmin("Site changes can only be calculated by super admin");
             JSONObject posted = this.getPostedObject(ar);
-            
-            long timestamp = System.currentTimeMillis();
-            int year = SiteLedger.getYear(timestamp);
-            int month = SiteLedger.getMonth(timestamp);
-            if (posted.has("year")) {
-                year = posted.getInt("year");
-            }
-            if (posted.has("month")) {
-                month = posted.getInt("month");
-            }
-            
-            File sitefolder = site.getFilePath().getParentFile();
-            SiteLedger ledger = SiteLedger.readLedger(sitefolder);
-            SiteLedgerCharge charge = ledger.requiredCharges(year, month);
-            ledger.saveLedger(sitefolder);
 
-            sendJson(ar, charge.getJson());
+            int year = posted.getInt("year");
+            int month = posted.getInt("month");
+            double amount = posted.getDouble("amount");
+            String siteId = posted.getString("site");
+
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            
+            Ledger ledger = site.getLedger();
+            LedgerCharge charge = ledger.requiredCharges(year, month);
+            charge.amount = amount;
+            site.saveLedger(ledger);
+
+            sendJson(ar, ledger.generateJson());
         }catch(Exception ex){
             Exception ee = new Exception("Unable to calculate site charges", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    @RequestMapping(value = "/su/recordPayment.json", method = RequestMethod.POST)
+    public void recordPayment(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String siteId = "UNKNOWN";
+        try{
+            ar.assertSuperAdmin("Must be super admin to create payment record.");
+            JSONObject posted = getPostedObject(ar);
+            siteId = posted.getString("site");
+            
+            int year = posted.getInt("year");
+            int month = posted.getInt("month");
+            int day = posted.getInt("day");
+            double amount = posted.getDouble("amount");
+            
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            Ledger ledger = site.getLedger();
+            
+            long timestamp = Ledger.getTimestamp(year, month, day);
+            LedgerPayment payment = ledger.createPayment(timestamp, amount);
+            site.saveLedger(ledger);
+
+            JSONObject jo = ledger.generateJson();
+            sendJson(ar, jo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create payment record for site "+siteId, ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    @RequestMapping(value = "/su/setPlan.json", method = RequestMethod.POST)
+    public void setPlan(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String siteId = "UNKNOWN";
+        try{
+            ar.assertSuperAdmin("Must be super admin to create payment record.");
+            JSONObject posted = getPostedObject(ar);
+            siteId = posted.getString("site");
+            
+            int year = posted.getInt("year");
+            int month = posted.getInt("month");
+            int day = posted.getInt("day");
+            String name = posted.getString("planName");
+            
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            Ledger ledger = site.getLedger();
+            
+            long timestamp = Ledger.getTimestamp(year, month, day);
+            ledger.createOrSetPlan(timestamp, name);
+            site.saveLedger(ledger);
+
+            JSONObject jo = ledger.generateJson();
+            sendJson(ar, jo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create payment record for site "+siteId, ex);
             streamException(ee, ar);
         }
     }

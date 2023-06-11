@@ -4,50 +4,50 @@
   "AddSomething.jsp": [],
   "AdminAPI.jsp": [],
   "AdminSettings.jsp": [{
-    "description": "Experience suggests that a workspace should have an administrator who is responsible for making sure meetings are planned in advance and participants notified, someone is responsible for taking notes during the meetings, that decisions are recorded in the Decisions file, participants are fully identified, and the basic purpose of the workspace (vision, mission, aim, domain) is articulated.\n\nThe workspace Administrator is a role that can be elected using the election process found under Roles.",
-    "done": true,
+    "description": "! Key terms for this learning path\n* Frozen workspace - Content and all records can be viewed but no new information can be added to a workspace.\n* Active workspace - workspace is fully functional\n* Deleted Workspace - marks workspace for deletion.\n\nTechnical Administrators set up the workspace and take care of technical details to keep the workspace moving.\n\nare responsible for making sure meetings are planned in advance and participants notified, someone is responsible for taking notes during the meetings, that decisions are recorded in the Decisions file, participants are fully identified, and the basic purpose of the workspace (vision, mission, aim, domain) is articulated.\n\nSome other notes:\n* When you click in grey box next to Parent Circle, you will get a list of all the workspaces in your site. Pick one if your workspace in in a multi-layered structure and you want the diagram on the Front Page to show a hierarchy between. Note: establishing a hierarchy makes it easier to share documents with other workspaces.\n* If you want mail for the workspace to function normally, leave the box unchecked next to the statement: \"Normal: email in this workspace functions normally\". If you want prevent email from being sent, check the box.\n* If you want to freeze a workspace, click on Workspace State and then click the Freeze Workspace button and refresh the page to add snowflakes. If you want to unfreeze a workspace, click Workspace State and refresh the page to remove the snowflakes. If you want to freeze the workspace (i.e., retain the information but make users unable to add new information) then click the \"Freeze Workspace\" button and refresh the page to add snowflakes.\n*",
+    "done": false,
     "mode": "standard"
   }],
   "AdminStats.jsp": [
     {
-      "description": "This page tracks statistics of how various users have been using the workspace. Use it at your peril.",
-      "done": false,
+      "description": "This page tracks statistics of how various users have been using the workspace.\n\nFor most users this page can be ignored.",
+      "done": true,
       "mode": "standard",
       "video": "Tutorial04"
     },
     {
       "description": "this is a page to help administrators know what it going on",
-      "done": false,
+      "done": true,
       "mode": "expert",
       "video": "Tutorial02"
     }
   ],
   "CleanAtt.jsp": [],
   "CloneMeeting.jsp": [{
-    "description": "Page for CloneMeeting.jsp\n\n(this page shows up when I click Create Meeting - should say CreateMeeting.jsp)",
-    "done": true,
+    "description": "Fill in the fields below with the meeting's information and click either \"clone meeting\" or \"create meeting\" as required.",
+    "done": false,
     "mode": "standard"
   }],
   "CommentList.jsp": [{
     "description": "This list shows all the comments ever made in any of the Workspace's resources (Meetings, topics, documents, action items). Use the filter to search for a particular comment.",
-    "done": true,
+    "done": false,
     "mode": "standard"
   }],
   "CommentZoom.jsp": [],
   "DecisionList.jsp": [{
-    "description": "Whenever you make a policy decision in your workspace, you can record the decision in this Decisions List. It is particularly important to record decisions that need to be reviewed at some later date.\n\nClick on the black [+ CREATE DECISION|https://s06.circleweaver.com/weaver/t/socio/weavermeeting-tech-llc-board/+%20CREATE%20DECISION] button, paste in the box the text of the decision as decided during your meeting, note the review date, and perhaps add a label to categorize the topic of the decision.",
+    "description": "This decisions list records all your decisions made in the workspace. \n\nYou can set deadlines on each decision to go back and review all decisions on a regular basis.\n\nTo create a new decision, click on the [+ CREATE DECISION|https://s06.circleweaver.com/weaver/t/philo/philosoraptors/../../socio/weavermeeting-tech-llc-board/+%2520CREATE%2520DECISION] button, write or paste the text of the decision as decided during your meeting, note the review date, and perhaps add a label to categorize the topic of the decision.",
     "done": false,
     "mode": "standard"
   }],
   "DocDetail.jsp": [{
-    "description": "Click on Access Link URL to access the document you want. \n\nCheck out the written instructions on this page! Did you know it is more secure to send documents via Weaver? And, Weaver lets you send much larger files than you can via email.",
+    "description": "There are two options for this page\n* If this is for an uploaded file, you can click \"Download Now\" to bring it to you local computer and open it.\n* If this is for a Web URL, you can click on Access Link URL to navigate to the web page.\n\nYou can correct details about the document, such as the description, by using \"Change Details\"\n\nCheck out the written instructions on this page! Did you know it is more secure to send documents via Weaver? And, Weaver lets you send much larger files than you can via email.",
     "done": false,
     "mode": "standard"
   }],
   "DocLinkGoogle.jsp": [],
   "DocsAdd.jsp": [{
-    "description": "You can upload a file, link a URL, or attach a google doc by clicking on the corresponding black button.\n\nThe Copy/Move From Workspace button is an especially important tool for sites that have more than one workspace. For example, if the workspace in a site that corresponds to units in an organizational hierarchy, the workspaces at the bottom of the hierarchy may want to have copies of general policy documents from the top workspace in the hierarchy in their workspace's document system. Or, peer workspaces may want to have copies of documents originated by other workspaces. This button lets you obtain copies of those materials.",
-    "done": false,
+    "description": "Workspace members can share documents with each other in a safe and secure way. Each workspace has a set of documents which remain as long as you want them to.\n\nA document can be:\n* a file that you upload from your computer - workspace members can download to see\n** Click \"Upload File\" to add a file document to the workspace\n* a link URL to a web page - workspace members can navigate the link (if they have access to the destination)\n** Click on \"Link URL\" to add a web link style document\n\nThe Copy/Move From Workspace button is an especially important tool for sites that have more than one workspace. For example, if the workspace in a site that corresponds to units in an organizational hierarchy, the workspaces at the bottom of the hierarchy may want to have copies of general policy documents from the top workspace in the hierarchy in their workspace's document system. Or, peer workspaces may want to have copies of documents originated by other workspaces. This button lets you obtain copies of those materials.",
+    "done": true,
     "mode": "standard"
   }],
   "DocsFolder.jsp": [{
@@ -56,24 +56,30 @@
     "mode": "standard"
   }],
   "DocsList.jsp": [{
-    "description": "\"Documents\" let's you store and retrieve all the documents your working group needs to share. Retrieve selecting a title from the list, entering key words in Filter, or clicking on the black label button (next to the Filter) and selecting the relevant labels.\n\nTo add a document, click Add in the Documents drop down box (to the left).",
-    "done": true,
+    "description": "Workspace members can share documents safely and securely in the workspace. People outside the workspace do not have access, unless you give it to them.\n\nType a few letters into the filter, and instantly see all the documents with those letters in the title or description. Click on the name of the document and you can download or navigate to the document.\n\nOr click on a label (dark funnel button) to filter all the documents by that label.\n\nTo add a document, click Add in the Documents drop down box (to the left).",
+    "done": false,
     "mode": "standard"
   }],
   "DocsUpload.jsp": [{
-    "description": "Drag and drop a file in your computer to the Workspaces store of documents. Click the black \"+\" button to add one or more labels.",
-    "done": true,
+    "description": "Drag and drop a file in your computer to the Workspaces store of documents.\n\nWhen dropped, a space will open to enter a description for each document that describes WHY it is relevant to the people in this workspace. This is really important for others to find the right document, and you can search on these descriptions to quickly locate what you need.\n\nClick the \"+\" button to add one or more labels.",
+    "done": false,
     "mode": "standard"
   }],
   "EmailCreated.jsp": [{
-    "description": "Send email conveniently from your workspace. It's easy to select the names of some or all of the workspace members, or type in the address of someone not in the workspace, too. Easily attach topics, documents, action items. A big advantage of Weaver is that you can send files up to a few GB without the size restrictions of your usual email.\n\nRecipients will see your Weaver messages quickly because the sender will be marked with \"\u203b\" .\n* Click Create to create your email.\n* Click Sent for a history of your correspondence.\n* Click Comments to see recent comments.",
+    "description": "Send email conveniently from your workspace. It's easy to select the names of some or all of the workspace members, or type in the address of someone not in the workspace, too. Easily attach topics, documents, action items.\n* You __prepare__ a message and can address it to multiple people. You see here a list of email preparations.\n* When the mail is __sent__, it creates a record for each individual person and these are all shown in the 'Sent'\n\nRecipients will see your Weaver messages quickly because the sender will be marked with \"\u203b\" .\n* Click Create to __prepare__ an email.\n* Click Sent for a history messages __sent__ from this workspace.\n\nA big advantage of Weaver is that you can send files up to a few GB without the size restrictions of your usual email.",
     "done": true,
-    "mode": "standard"
+    "mode": "standard",
+    "video": "Tutorial08"
   }],
-  "EmailMsg.jsp": [],
+  "EmailMsg.jsp": [{
+    "description": "Here is a display of a single email message sent from the workspace.\n\nThis is the 'web version' of the email. Each email sent can also be viewed on the web here. This web version can be viewed by anonymous users so that this web version is always available whether or not they are logged in. This can be convenient if someone loses track of an email message, just grab the web address of this page, and send it to them, and they can always view the email.",
+    "done": true,
+    "mode": "standard",
+    "video": "Tutorial14"
+  }],
   "EmailSent.jsp": [{
     "description": "This screen shows the history of emails sent from the workspace. Use the filter to search for a key phrase or name.\n\nIf you have just sent an email, for a few minutes the Status may say \"Scheduled\" rather than \"Sent.\"",
-    "done": true,
+    "done": false,
     "mode": "standard"
   }],
   "FrontPage.jsp": [{
@@ -82,14 +88,19 @@
     "mode": "standard",
     "video": "Tutorial01"
   }],
-  "FrontTop.jsp": [],
+  "FrontTop.jsp": [{
+    "description": "This is a graphical representation of all the workspaces in the site.",
+    "done": true,
+    "mode": "standard"
+  }],
   "GoalEdit.jsp": [],
   "GoalList.jsp": [],
   "GoalStatus.jsp": [{
-    "description": "Use Weaver's Action Item's feature to manage all the action items related to a workspace.\n\nWhen you click on \"Action Items\" in the left side magenta column, you immediately see the Status View dashboard.\n\nIf you want to edit an action item, click on the gray box with the down arrow at the very left of the row containing the action item.\n\nSelect Edit Item, or move the item up or down on the list, or close it by marking it completed or skipped.",
+    "description": "Use Weaver's Action Item's feature to manage all the action items related to a workspace.\n\nWhen you click on \"Action Items\" in the left side purple column, you immediately see the Status View dashboard.\n\nIf you want to edit an action item, click on the gray box with the down arrow at the very left of the row containing the action item.\n\nSelect Edit Item, or move the item up or down on the list, or close it by marking it completed or skipped.",
     "done": false,
     "mode": "standard"
   }],
+  "History.jsp": [],
   "LabelList.jsp": [],
   "MeetMerge.jsp": [{
     "description": "You can choose the format you want for the agenda of the the meeting. \n* In the upper right corner, next to Options, there is a diamond shape. Click the down arrow and choose an option that best suits your needs to participate in the meeting. \n* If you wish to take notes or edit anything about the meeting, click on the down arrow in the Options box and select Edit.",
@@ -99,13 +110,12 @@
   "MeetingAttendees.jsp": [],
   "MeetingFull.jsp": [],
   "MeetingHtml.jsp": [{
-    "description": "This page lets you edit the core features of a meeting.\n* Click on one of the numbered items on the left side to see details of the key features related to an agenda item.\n* Click a the feature to see the feature in more detail and edit. For example, click on Subject and the edit box for Subject will display. You can use the edit box to change the subject of the agenda item.o\n* You can edit any other aspects (Notes/Minutes:, Action Items:, etc) in a similar way - by clicking on them.\n* The Notes/Minutes item is particularly important because any notes taken there during the meeting will automatically appear in the Minutes of the meeting.\n* You can signal that an agenda item is fully ready for the meeting by clicking \"Ready\" at the bottom of the list.",
-    "done": true,
+    "description": "This page lets you edit the core features of a meeting.\n* Click on one of the numbered items on the left side to see details of the key features related to an agenda item.\n* Click the feature to see the feature in more detail and edit. For example, click on Subject and the edit box for Subject will display. You can use the edit box to change the subject of the agenda item.\n* You can edit any other aspects (Notes/Minutes:, Action Items:, etc) in a similar way - by clicking on them.\n* The Notes/Minutes item is particularly important because any notes taken there during the meeting will automatically appear in the Minutes of the meeting.\n* You can signal that an agenda item is fully ready for the meeting by double-clicking the red button at \"Ready:\" at the bottom of the item to change it to green.",
+    "done": false,
     "mode": "standard"
   }],
   "MeetingList.jsp": [{
-    "description": "! To Create a Meeting\n\nIf you are the first person to ever use this workspace, no meetings will be listed.\n* Click Create (over on the lefthand side) to create a new meeting.\n! To Access a Meeting\n\nIf meetings have already happened in your workspace, you will see a list of meetings and their dates.\n* Look at the meeting at the top of the list.\n** If that meeting's date is in the future, click on the Agenda logo (to the left)\n** If that meeting's date is in the past, click on the Minutes logo (to the right) OR click on that meeting's title to open it.\n! To Check Meeting Attendance\n\nWho has been attending the workspace's meetings?\n* Click Attendance (over on the lefthand side) to see an Attendance Table",
-    "done": true,
+    "description": "! To Create a Meeting\n\nIf you are the first person to ever use this workspace, no meetings will be listed.\n* Click Create (over on the lefthand side) to create a new meeting.\n! To Clone a Meeting\n\nIf you would like to start with content or framework from a previous meeting, you can clone an existing meeting in two ways:\n* Find the meeting you would like to clone and click on the double box icon left of the orange trashcan in that row.\n* Open the meeting and click on \"Clone\" in the far left column's meetings sub-menu.\n! To Access a Meeting\n\nIf meetings have already happened in your workspace, you will see a list of meetings and their dates.\n* Look at the meeting at the top of the list.\n** If that meeting's date is in the future, click on the Agenda logo (to the left)\n** If that meeting's date is in the past, click on the Minutes logo (to the right) OR click on that meeting's title to open it.\n! To Check Meeting Attendance\n\nWho has been attending the workspace's meetings?\n* Click Attendance (over on the lefthand side) to see an Attendance Table",
     "mode": "standard",
     "video": "Tutorial04"
   }],
@@ -114,15 +124,19 @@
     "done": true,
     "mode": "standard"
   }],
-  "NoteZoom.jsp": [],
-  "NotesList.jsp": [{
-    "description": "Topics are a great Weaver feature! They let you meet asynchronously outside of in-person (synchronous) meetings. You can\n* Open an existing topic by clicking on it.\n* Search for existing topics by entering a key word or phrase in Filter.\n* Search for existing topics by clicking on the black label button next to \"Filter\" and then selecting one or more labels.\n* Create a new topic by clicking on the black \"+ Create New Topic\" button.",
+  "NoteZoom.jsp": [{
+    "description": "Each topics is two things:\n* A wiki page that you can write quickly and share\n* A stream of comments about that wiki page.",
     "done": false,
+    "mode": "standard"
+  }],
+  "NotesList.jsp": [{
+    "description": "This page shows a list of topics. Each topics is two things:\n* A wiki page that you can write quickly and share\n* A stream of comments about that wiki page.\n\nYou can:\n* Open an existing topic by clicking on it.\n* Search for existing topics by entering a key word or phrase in Filter.\n* Search for existing labels by clicking on the funnel button and then selecting one or more labels. Or just click in an exposed label on the list of topics.\n* Create a new topic by clicking on the __(+ Create New Topic)__ button.\n\nAlso notice that the __(+)__ icon on each topic line will open up and show more detail about the topic.",
+    "done": true,
     "mode": "standard"
   }],
   "PDFExport.jsp": [{
     "description": "You may want to print a number of items stored in your worksite. This page makes it easy to print several items at once - no need to go to each item and print each page individually. Select the specific items you want printed by making sure there are X's in the box on the right hand by each item you want to print.\n\nNote that the \"Attachments\" item only prints the titles of the attached documents. To print the full text of individual documents, you should go open the document itself and print from there.",
-    "done": true,
+    "done": false,
     "mode": "standard"
   }],
   "Personal.jsp": [],
@@ -130,7 +144,7 @@
   "RequireName.jsp": [],
   "RoleDefine.jsp": [{
     "description": "This page lets you edit a role or define a new role. If you are a Site Administrator, you will see in the lower left corner the words \"Can Edit.\" If you want the role to be able to do edit functions, click the box just below and a bit to the right of the Can Edit button. A check mark will appear, indicating that the role has edit capabilities. \n\nLimiting edit capabilities lets you, for example, invite observers or advisors to your meetings but restrict them from editing your notes and records.",
-    "done": true,
+    "done": false,
     "mode": "standard"
   }],
   "RoleInvite.jsp": [{
@@ -139,14 +153,16 @@
     "mode": "standard"
   }],
   "RoleManagement.jsp": [{
-    "description": "Participants in the workspace can have many roles. The default is member.",
+    "description": "Users of the workspace can be grouped into ''roles'' which are used to manage access and rights in the workspace. The users assigned to a role are called role ''players''.\n\nThe __Members__ role is special, it is always available in every workspace, and it always allows the ability to access and update all resources.\n\nThe __Administrators__ role is also special, and it allows users everything from Members, but also the ability to configure the workspace in ways that regular users don't normally need.\n\nThe rest of the roles can be added and removed as needed, however, you need to group the users in the workspace. Administrators can create new roles with whatever name is relevant to the group.\n\nAny role player can add and remove users from that role. This allows each role to be self-managed by the players of that role. Administrators can add and remove players from any role.\n\nUse the pull-down options on the left of each role to see more about the properties of the role.\n\n''Note'': each workspace is part of a site, and the site defines a few more roles that you don't see here that apply to every workspace in the site. Site __Owners__ and site __Executives__ have access to all workspaces even if they are not mentioned in the roles of that workspace.",
     "done": false,
-    "mode": "standard"
+    "mode": "standard",
+    "video": "Tutorial03"
   }],
   "RoleMap.jsp": [{
-    "description": "The User Map is simply a table showing the roles of all the players in the workspace. You can create or edit role descriptions from this page.",
+    "description": "The User Map shows the roles of all the users in the workspace.\n* Each column represents a singe real user\n* Each row shows a role in the workspace\n* A check mark appears when the user is a player of the role.\n\nUsing the pull-down options on the left of each role, you can modify the players, and change other settings on each role very much the same as in the main Role management page.",
     "done": true,
-    "mode": "standard"
+    "mode": "standard",
+    "video": "Tutorial19"
   }],
   "RoleNomination.jsp": [{
     "description": "CircleWeaver provides you a unique template for selecting people to roles by consent decision making!\n\nBefore you get to this page define the role, responsibilities, and qualities they want in the person who files the role.\n\n1. On this page, set the term the person selected will serve in the role.\n\n2. Then select the edit box under Nominations (or simply click under \"Nominee\") and enter the name of the person you want to nominate and briefly the reason(s) you are making the nomination. Note: you can nominate another person, nominate yourself, or just write \"abstain.\"\n\n3. Once everyone has completed nominating, the facilitator should ask each person to elaborate on their reasons if they wish. (Typically \"Abstain\" doesn't need any explanation.) When everyone has spoken, then the facilitator asks each person if they wish to change their nomination and, if so, to say why.\n\n4. The facilitator then, based on the direction of the reasoning, usually proposes someone to take the role and then asks each participant if they consent to that proposal. It's good practice to ask the person nominated last if they consent. If there are objections. The facilitator helps the group resolve the objections. (Note: if the facilitator is not clear whom to propose, the facilitator can ask for free form discussion or ask the leading candidates to discuss among themselves who should be proposed.)\n\n5. Celebrating is an important step! If the participants don't feel like celebrating, then it's a sign that further group reflection is needed.",
@@ -166,17 +182,18 @@
   }],
   "SharePorts.jsp": [{
     "description": "Share Port is a port (or opening) you can use to share specific document(s) with anyone you wish - for a designated period of time - length of time of your choosing. You can share a specific document or documents in your workspace by creating a Share Port. The Port lets anyone with the link access the documents you designate for a designated period of time without giving further access to the whole workspace.\n* To create a new Share Port, select Create New Share Port from the Options button in the upper right corner and complete the form. Note: the default is to have the port Active. But the check box lets you quickly disable access temporarily without needing to remove it completely.\n* The eye symbol lets you view the documents in the share port.\n* \"Filter\" lets you include just document with a particular phrase in their title. For example, if you enter \"zip\" in the filter, that Share Port will display only documents with \"Zip\" in their title. For example, all documents with a .zip extension in their name would be listed in the SharePort\n* \"Labels\" - are another way to filter the documents you want. You can enter more than one label to narrow your documents list.\n* To send a Share Port link to someone, open up the Share Port by clicking on the eye symbol next to the Name of the Port. When that Share Port document list is open, copy the URL link for that list and forward it to your recipient(s).",
+    "done": false,
     "mode": "standard"
   }],
   "TaskAreas.jsp": [{
-    "description": "When the members of your workspace have many action items, you may wish to create task areas or groupings and show who is responsible for overseeing those task areas or groups. This screen lets you set up those groupings. \n\nOnce the groupings are set up, you can return to Status View and move your action items into their respective categories.",
+    "description": "You can group action items into task areas.\n\nWhen the members of your workspace have many action items, you may wish to create task areas or groupings and show who is responsible for overseeing those task areas or groups. This screen lets you set up those groupings.\n\nOnce the groupings are set up, you can return to Status View and move your action items into their respective categories.",
     "done": false,
     "mode": "standard"
   }],
   "WorkspaceCopyMove1.jsp": [],
   "WorkspaceCopyMove2.jsp": [{
     "description": "This page lets you copy or move documents from any workspace in your Weaver Site to any other workspace in the Site. Just click on any workspace in the From list and chose a document to copy or move from that workspace to the \"To\" workspace.",
-    "done": true,
+    "done": false,
     "mode": "standard"
   }],
   "linkURLToProject.jsp": [{

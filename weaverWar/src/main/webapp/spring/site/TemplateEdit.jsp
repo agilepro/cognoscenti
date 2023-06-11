@@ -9,8 +9,6 @@
     Cognoscenti cog = ar.getCogInstance();
     NGBook site = cog.getSiteByIdOrFail(siteId);
 
-    JSONObject userMap = site.getUserMap();
-
 
 %>
 

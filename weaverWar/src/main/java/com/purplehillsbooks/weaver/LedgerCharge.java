@@ -2,15 +2,15 @@ package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.json.JSONObject;
 
-public class SiteLedgerCharge {
+public class LedgerCharge {
 
-    int month;
-    int year;
+    public int month;
+    public int year;
     public double amount;
     
     
     
-    public JSONObject getJson() throws Exception {
+    public JSONObject generateJson() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("year", year);
         jo.put("month", month);

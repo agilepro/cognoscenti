@@ -525,7 +525,7 @@ label {
                             Unfreeze Workspace</button><br/>
                             Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
                             You are only allowed a certain number of active workspaces in a site depending upon 
-                            you playment plan.  
+                            your playment plan.  
                             <br/>
                             If you already have the maximum number of active workspaces, you will not be able to 
                             unfreeze this workspace, until you freeze or delete another active one.

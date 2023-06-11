@@ -1274,4 +1274,14 @@ public class NGBook extends ContainerCommon {
         }
     }
 
+    
+    public Ledger getLedger() throws Exception {
+        File sitefolder = getFilePath().getParentFile();
+        Ledger ledger = Ledger.readLedger(sitefolder);
+        return ledger;
+    }
+    public void saveLedger(Ledger ledger) throws Exception {
+        File sitefolder = getFilePath().getParentFile();
+        ledger.saveLedger(sitefolder);
+    }
 }
