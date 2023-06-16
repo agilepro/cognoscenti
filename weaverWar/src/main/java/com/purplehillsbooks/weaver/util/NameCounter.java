@@ -109,10 +109,14 @@ public class NameCounter extends Hashtable<String,Integer>
      * and if called on a non-clean object it will be the sum of the
      * earlier values with the new values.
      */
-    public void fromJSON(JSONObject jo) throws Exception {
-        for (String key : jo.keySet()) {
-            int val = jo.getInt(key);
-            modifyCount(key, val);
+    public void fromJSON(JSONObject parent, String key) throws Exception {
+        if (!parent.has(key)) {
+            return;
+        }
+        JSONObject jo = parent.getJSONObject(key);
+        for (String memkey : jo.keySet()) {
+            int val = jo.getInt(memkey);
+            modifyCount(memkey, val);
         }
     }
 

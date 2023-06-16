@@ -115,7 +115,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <td><b>{{month.year}} / {{(month.month + "").padStart(2 ,"0")}}</b></td>
         <td>{{month.plan}}</td>
         <td>(charge)</td>
-        <td>$ {{month.chargeAmt}}</td>
+        <td>{{0.0001+month.chargeAmt | currency: '$'}}</td>
         <td></td>
         <td></td>
       </tr>
@@ -124,7 +124,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <td></td>
         <td>{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</td>
         <td></td>
-        <td>$ {{pay.amount}}</td>
+        <td>{{pay.amount | currency: '$'}}</td>
         <td></td>
       </tr>
       <tr>
@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <td>(balance)</td>
         <td></td>
         <td></td>
-        <td>$ {{month.balance}}</td>
+        <td>{{month.balance | currency: '$' }}</td>
       </tr>
     </tbody>
     </table>

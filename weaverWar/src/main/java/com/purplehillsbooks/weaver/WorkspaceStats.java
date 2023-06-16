@@ -28,6 +28,7 @@ public class WorkspaceStats {
     public NameCounter responsesPerUser   = new NameCounter();
     public NameCounter unrespondedPerUser = new NameCounter();
     public NameCounter anythingPerUser    = new NameCounter();
+    public NameCounter historyPerType     = new NameCounter();
 
     public void gatherFromWorkspace(NGWorkspace ngw) throws Exception {
 
@@ -91,6 +92,13 @@ public class WorkspaceStats {
                 anythingPerUser.increment(ale.getUniversalId());
             }
         }
+
+        //count all the history of the various types
+        for (HistoryRecord hist : ngw.getAllHistory()) {
+            String histKey = HistoryRecord.getContextTypeName(hist.getContextType()) 
+                    + "-" + HistoryRecord.convertEventTypeToString(hist.getEventType());
+            historyPerType.increment(histKey);
+        }
         
         //now, let's clean out any old temp documents polluting the space left by a broken upload
         File containingFolder = ngw.containingFolder;
@@ -149,6 +157,7 @@ public class WorkspaceStats {
         responsesPerUser.addAllCounts(other.responsesPerUser);
         unrespondedPerUser.addAllCounts(other.unrespondedPerUser);
         anythingPerUser.addAllCounts(other.anythingPerUser);
+        historyPerType.addAllCounts(other.historyPerType);
     }
 
     public JSONObject getJSON() throws Exception {
@@ -172,6 +181,7 @@ public class WorkspaceStats {
         jo.put("responsesPerUser",   responsesPerUser.getJSON());
         jo.put("unrespondedPerUser", unrespondedPerUser.getJSON());
         jo.put("anythingPerUser",    anythingPerUser.getJSON());
+        jo.put("historyPerType",     historyPerType.getJSON());
         return jo;
     }
 
@@ -185,21 +195,17 @@ public class WorkspaceStats {
         res.numProposals = jo.getInt("numProposals");
         res.sizeDocuments = jo.getLong("sizeDocuments");
         res.sizeArchives = jo.getLong("sizeArchives");
-        if (jo.has("numWorkspaces")) {
-            res.numWorkspaces = jo.getInt("numWorkspaces");
-        }
+        res.numWorkspaces = jo.optInt("numWorkspaces", 0);
         res.recentChange = jo.getLong("recentChange");
-        res.topicsPerUser.fromJSON(jo.getJSONObject("topicsPerUser"));
-        res.docsPerUser.fromJSON(jo.getJSONObject("docsPerUser"));
-        res.commentsPerUser.fromJSON(jo.getJSONObject("commentsPerUser"));
-        res.meetingsPerUser.fromJSON(jo.getJSONObject("meetingsPerUser"));
-        res.proposalsPerUser.fromJSON(jo.getJSONObject("proposalsPerUser"));
-        res.responsesPerUser.fromJSON(jo.getJSONObject("responsesPerUser"));
-        res.unrespondedPerUser.fromJSON(jo.getJSONObject("unrespondedPerUser"));
-        if (jo.has("anythingPerUser")) {
-            //schema migration
-            res.anythingPerUser.fromJSON(jo.getJSONObject("anythingPerUser"));
-        }
+        res.topicsPerUser.fromJSON(jo, "topicsPerUser");
+        res.docsPerUser.fromJSON(jo ,"docsPerUser");
+        res.commentsPerUser.fromJSON(jo, "commentsPerUser");
+        res.meetingsPerUser.fromJSON(jo, "meetingsPerUser");
+        res.proposalsPerUser.fromJSON(jo, "proposalsPerUser");
+        res.responsesPerUser.fromJSON(jo, "responsesPerUser");
+        res.unrespondedPerUser.fromJSON(jo, "unrespondedPerUser");
+        res.anythingPerUser.fromJSON(jo, "anythingPerUser");
+        res.historyPerType.fromJSON(jo, "historyPerType");
         return res;
     }
 

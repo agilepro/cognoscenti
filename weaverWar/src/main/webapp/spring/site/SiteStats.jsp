@@ -261,6 +261,17 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                </table>
            </td>
         </tr>
+        <tr>
+           <td>History:</td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.historyPerType">
+                   <td>{{key}}:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
+        </tr>
         </table>
     </div>
 </div>

@@ -68,6 +68,19 @@
           "name":"History",
           "title":"See the detailed display of all history",
           "readOnly": true
+        },
+        {
+          "use": ["FrontPage.jsp", "CommentList.jsp","History.jsp"],
+          "href":"searchAllNotes.htm",
+          "name":"Search",
+          "title":"Search through all the workspaces",
+          "readOnly": true
+        },
+        {
+          "use": ["FrontPage.jsp", "CommentList.jsp","History.jsp"],
+          "href":"PDFExport.htm",
+          "name":"Create PDF",
+          "title":"Create a PDF of a topic or topics"
         }
       ],
       "useOpts": ["FrontPage.jsp","CommentList.jsp","History.jsp"],

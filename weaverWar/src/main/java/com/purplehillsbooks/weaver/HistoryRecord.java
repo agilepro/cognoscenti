@@ -141,7 +141,7 @@ public class HistoryRecord extends DOMFace
     {
         super(definingDoc, definingElement, p);
     }
-
+/*
     public void copyFrom(HistoryRecord other)
         throws Exception
     {
@@ -153,7 +153,7 @@ public class HistoryRecord extends DOMFace
         setTimeStamp(other.getTimeStamp());
         setResponsible(other.getResponsible());
     }
-
+*/
 
     public String getId()
         throws Exception

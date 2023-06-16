@@ -104,9 +104,6 @@ public class NGBook extends ContainerCommon {
         executiveRole = getRequiredRole("Executives");
         ownerRole = getRequiredRole("Owners");
 
-        // just in case this is an old site object, we need to look for and
-        // copy members from the members tag into the role itself
-        moveOldMembersToRole();
         assureColorsExist();
         
         if (getWorkspaceLimit()<4) {
@@ -146,49 +143,14 @@ public class NGBook extends ContainerCommon {
 
     public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
         if (fromLevel<13) {
-            moveOldMembersToRole();
+            throw new Exception("data file is too old");
         }
     }
     public int currentSchemaVersion() {
         return 13;
     }
 
-    /**
-     * SCHEMA MIGRATION CODE - old schema required members to be children of a
-     * tag 'members' and also prospective members in a tag 'pmembers' This code
-     * migrates these to the standard Role object storage format, to a role
-     * called 'Executives' The tag 'members' and 'pmembers' are removed from the
-     * file.
-     *
-     * the old format did not distinguish between executives and owners so these
-     * members are migrated to both executives and owners, presumably the real
-     * owner will remove the others.
-     *
-     * But this code, like other migration code, must be left in in case there
-     * are olld book files around with the old format. until 2 years after April
-     * 2011 and there are no books older than this.
-     */
-    private void moveOldMembersToRole() throws Exception {
-        // in case there is a pmembers tag around, get rid of that.
-        // these are just discarded, and they have to request again
-        DOMFace pmembers = getChild("pmembers", DOMFace.class);
-        if (pmembers != null) {
-            removeChild(pmembers);
-        }
 
-        DOMFace members = getChild("members", DOMFace.class);
-        if (members == null) {
-            return;
-        }
-        for (String id : members.getVector("member")) {
-            AddressListEntry user = AddressListEntry.newEntryFromStorage(id);
-            executiveRole.addPlayer(user);
-            ownerRole.addPlayer(user);
-        }
-        // now get rid of it so it never is heard from again.
-        removeChild(members);
-
-    }
 
     public static NGBook readSiteByKey(String key) throws Exception {
         if (keyToSite == null) {
@@ -904,6 +866,8 @@ public class NGBook extends ContainerCommon {
         saveStatsFile(siteStats);
         return siteStats;
     }
+    
+    
     public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
         WorkspaceStats ws = getRecentStats();
         return ws.getJSON();
