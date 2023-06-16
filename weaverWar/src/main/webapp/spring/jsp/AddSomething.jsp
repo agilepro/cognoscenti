@@ -69,7 +69,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location = "CloneMeeting.htm?id="+$scope.meetingToClone.id;
     }
     $scope.createEmptyMeeting = function() {
-        window.location = "CloneMeeting.htm";
+        window.location = "MeetingCreate.htm";
     }
     $scope.createDecision = function() {
         window.location = "DecisionList.htm?start=create";

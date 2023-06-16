@@ -321,6 +321,10 @@ public class MeetingControler extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+        if (ngw.isFrozen()) {
+            streamJSP(ar, "WarningFrozen.jsp");
+            return;
+        }
 
         String id = ar.defParam("id", null);
         if (id != null && id.length()>0) {
@@ -335,6 +339,19 @@ public class MeetingControler extends BaseController {
         }
         showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
     }
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingCreate.htm", method = RequestMethod.GET)
+    public void meetingCreateUi(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+        if (ngw.isFrozen()) {
+            streamJSP(ar, "WarningFrozen.jsp");
+            return;
+        }
+        showJSPMembers(ar, siteId, pageId, "MeetingCreate.jsp");
+    }
+
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingList.htm", method = RequestMethod.GET)

@@ -168,10 +168,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         return "Unknown";
     }
     
-    $scope.createMeeting = function() {
-        window.location = "CloneMeeting.htm";
-    }
-    
 });
 </script>
 
@@ -189,7 +185,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new meeting record"
-              href="CloneMeeting.htm" ><i class="fa fa-plus"></i>New Meeting</a></li>
+              href="MeetingCreate.htm" ><i class="fa fa-plus"></i>Create Meeting</a></li>
           
         </ul>
       </span>

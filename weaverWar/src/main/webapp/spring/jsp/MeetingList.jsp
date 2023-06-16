@@ -157,7 +157,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.createMeeting = function() {
-        window.location = "CloneMeeting.htm";
+        window.location = "MeetingCreate.htm";
     }
 });
 </script>
@@ -176,7 +176,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new meeting record"
-              href="CloneMeeting.htm" ><i class="fa fa-plus"></i> Create Meeting</a></li>
+              href="MeetingCreate.htm" ><i class="fa fa-plus"></i> Create Meeting</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Access the new mobile UI in development"
               href="PickMeeting.wmf" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>

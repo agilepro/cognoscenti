@@ -39,10 +39,13 @@
     <div ng-bind-html="learningMode.description|wiki"></div>
   </div>
   <div class="learningVideo" ng-show="learningMode.video">
-    <a href="https://s06.circleweaver.com/{{learningMode.video}}.html"  target="Tutorials">
-        <img src="https://s06.circleweaver.com/tutorial-files/{{learningMode.video}}-thumb.png"
+    <div ng-repeat="vidname in learningMode.video.split(',')" style="margin-bottom:15px">
+      <a href="https://s06.circleweaver.com/{{vidname.trim()}}.html"  target="Tutorials">
+        <img src="https://s06.circleweaver.com/tutorial-files/{{vidname.trim()}}-thumb.png"
              class="tutorialThumbnail"/>
-    </a>
+      </a>
+    </div>
+    <hr/>
   </div>
   <div style="clear:both"></div>
 
