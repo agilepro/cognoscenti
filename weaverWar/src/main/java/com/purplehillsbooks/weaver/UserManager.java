@@ -303,7 +303,7 @@ public class UserManager
         return up;
     }
 
-    public synchronized UserProfile lookupUserByAnyId(String anyId) {
+    public static synchronized UserProfile lookupUserByAnyId(String anyId) {
         //return null if a bogus value passed.
         //fixed bug 12/20/2010 that was finding people with nullstring names
         if (anyId==null || anyId.length()==0)

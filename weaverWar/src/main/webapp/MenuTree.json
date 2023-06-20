@@ -94,7 +94,7 @@
       "opts": [
         {
           "use": ["MeetingList.jsp","MeetingAttendees.jsp"],
-          "href":"CloneMeeting.htm",
+          "href":"MeetingCreate.htm",
           "name":"Create",
           "title":"Create a new, empty meeting"
         },

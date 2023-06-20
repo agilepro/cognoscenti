@@ -17,14 +17,17 @@
     JSONObject userDetails = new JSONObject();
     if (user!=null) {
         userDetails = user.getFullJSON();
+        userKey = user.getKey();
     }
     else {
         userDetails = ale.getJSON();
     }
     
     SiteUsers userMap = site.getUserMap();
-    JSONObject userMapEntry = userMap.getJson().requireJSONObject(ale.getUniversalId());
-    
+    userMap.eliminateUsersWithoutProfiles();
+    JSONObject userMapEntry = userMap.getJson().requireJSONObject(userKey);
+    int editUserCount = userMap.countUpdateUsers();
+    int readUserCount = userMap.countReadOnlyUsers();
 
     JSONObject wsMap = new JSONObject();
     List<NGPageIndex> allWorkspaces = ar.getCogInstance().getNonDelWorkspacesInSite(siteId);
@@ -51,6 +54,7 @@
     for (String tz : TimeZone.getAvailableIDs()) {
         timeZoneList.put(tz);
     }
+    
 
 
 %>
@@ -61,6 +65,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Manage User");
     
+    $scope.userKey = "<%=userKey%>";
     $scope.userMapEntry = <%userMapEntry.write(out,2,4);%>;
     $scope.wsMap = <%wsMap.write(out,2,4);%>;
     $scope.userInfo = <%ale.getJSON().write(out,2,4);%>;
@@ -68,11 +73,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.hasProfile = <%=user!=null%>;
     $scope.userDetails = <%userDetails.write(out,2,4);%>;
     $scope.siteId = "<%=siteId%>";
+    $scope.siteSettings = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.newEmail = "";
     $scope.admin = <%admin.write(out,2,4);%>;
     $scope.showws = {};
     $scope.tzFilter = "";
     $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
+    $scope.editUserCount = <%= editUserCount %>;
+    $scope.readUserCount = <%= readUserCount %>;
     
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -143,25 +151,41 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateUserProfile(["preferred"]);
     }
     
-    $scope.changeAccess = function() {
-        $scope.userMapEntry.readOnly = !$scope.userMapEntry.readOnly;
+    $scope.changeAccess = function(makeReadOnly) {
+        if (makeReadOnly && $scope.readUserCount >= $scope.siteSettings.readUserLimit) {
+            alert("You have too many read-only users: "
+            +$scope.editUserCount
+            +". You are allowed only "
+            +$scope.siteSettings.editUserLimit
+            +" in your plan.  You will need to reduce the number of users or expand the plan.");
+            return;
+        }
+        if (!makeReadOnly && $scope.editUserCount >= $scope.siteSettings.editUserLimit) {
+            alert("You have too many full update users.  You have "
+            +$scope.editUserCount
+            +" but can aonly have "
+            +$scope.siteSettings.editUserLimit
+            +" in your payment plan.  You will probably need to remove some update users or change them to read-only before you can change this user");
+            return;
+        }
+        $scope.userMapEntry.readOnly = makeReadOnly;
         $scope.updateUserMap(["readOnly"]);
     }
     $scope.updateUserMap = function(fields) {
         var postObj = {};
         var userEntry = {};
-        postObj[$scope.userInfo.uid] = userEntry;
         fields.forEach( function(item) {
             console.log("setting: "+item, $scope.userDetails[item]);
             userEntry[item] = $scope.userMapEntry[item];
         });
+        postObj[$scope.userKey] = userEntry;
         var postdata = angular.toJson(postObj);
         $scope.showError=false;
         console.log("UPDATE:", postObj);
         $http.post("SiteUserMap.json" ,postdata)
         .success( function(data) {
             console.log("RESPONSE:", data);
-            //alert("Site User Map has been updated for "+$scope.userInfo.uid);
+            alert("Site User Map has been updated for "+$scope.userKey);
             window.location.reload(false);
         })
         .error( function(data, status, headers, config) {
@@ -357,14 +381,15 @@ app.filter('encode', function() {
       <tr>
         <td class="labelColumn">Permission</td>
         <td>
-            <span ng-hide="userMapEntry.readOnly">User has update access
-            <button ng-click="changeAccess()" class="btn btn-sm btn-primary btn-raised">
-                Make Read Only</button>
+            <span ng-hide="userMapEntry.readOnly || !userMapEntry.hasProfile">User has update access
+            <button ng-click="changeAccess(true)" class="btn btn-sm btn-primary btn-raised">
+                Make Read Only</button> 
             </span>
-            <span ng-show="userMapEntry.readOnly">User has read-only access
-            <button ng-click="changeAccess()" class="btn btn-sm btn-primary btn-raised">
-                Allow Updates</button>
+            <span ng-show="userMapEntry.readOnly || !userMapEntry.hasProfile">User has read-only access
+            <button ng-click="changeAccess(false)" class="btn btn-sm btn-primary btn-raised">
+                Allow Updates</button> ({{editUserCount}} / {{siteSettings.editUserLimit}})
             </span>
+            <span> update: ({{editUserCount}} / {{siteSettings.editUserLimit}}) readonly: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </span>
         </td>
       </tr>
       <tr>

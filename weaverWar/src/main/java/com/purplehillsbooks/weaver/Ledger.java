@@ -414,7 +414,7 @@ public class Ledger {
             File sitefolder = site.getFilePath().getParentFile();
             Ledger ledger = readLedger(sitefolder);
             LedgerCharge chargeMonth = ledger.requiredCharges(year, month);
-            LedgerPlan plan = null; //ledger.getCurrentPlan();
+            LedgerPlan plan = ledger.getPlanForMonth(System.currentTimeMillis());
             double chargeAmt = 10.0;
             
             if (PLAN_TYPE_TRIAL.contentEquals(plan.planName)) {

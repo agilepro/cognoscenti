@@ -263,7 +263,7 @@ myApp.filter('wiki', function() {
 <!-- End AppBar -->
 
 
-<div class="container-fluid">
+<div class="container-fluid" ng-cloak>
   <div class="row">
 
     <!-- Begin SideBar  -->

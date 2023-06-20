@@ -25,7 +25,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.theSite = <%theSite.getConfigJSON().write(out,2,4);%>;
     knownKeys = ["executives","changed","owners","names","key","rootFolder"];
     $scope.boolKeys = ["frozen","isDeleted","showExperimental","offLine"];
-    $scope.stdKeys = [];
+    $scope.stdKeys = ["workspaceLimit", "frozenLimit", "editUserLimit", "viewUserLimit", "emailLimit", "fileSpaceLimit"];
     for (var propertyName in $scope.theSite) {
         var found = false;
         knownKeys.forEach( function(item) {
@@ -38,11 +38,18 @@ app.controller('myCtrl', function($scope, $http) {
                found=true;
            } 
         });
+        $scope.stdKeys.forEach( function(item) {
+           if (propertyName==item) {
+               found=true;
+           } 
+        });
         if (!found) {
             $scope.stdKeys.push(propertyName);
         }
     }
     $scope.siteLedger = <%ledger.generateJson().write(out, 2, 4);%>;
+    
+    
     
     $scope.year = <%=year%>;
     $scope.month = <%=month%>;

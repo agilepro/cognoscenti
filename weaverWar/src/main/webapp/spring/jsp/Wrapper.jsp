@@ -24,8 +24,6 @@
     }
 
     Cognoscenti cog = ar.getCogInstance();
-    
-    
 
 
 

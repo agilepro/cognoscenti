@@ -23,6 +23,7 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.List;
 
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 
@@ -197,5 +198,17 @@ public abstract class NGContainer extends DOMFile
     public long nextActionDue() throws Exception {
         throw new Exception("nextActionDue not implemented");
     }
+    
+    public void addAllUsers(List<String> idSet) throws Exception {
+        for (CustomRole ngr : getAllRoles()) {
+            for (AddressListEntry ale : ngr.getDirectPlayers()) {
+                String uid = ale.getKey();
+                if (!idSet.contains(uid)) {
+                    idSet.add(uid);
+                }
+            }
+        }
+    }
+    
 
  }

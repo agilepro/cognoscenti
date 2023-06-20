@@ -848,8 +848,18 @@ public class DOMFace
         }
         return false;
     }
+    
+    
+    
     public void extractAttributeInt(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, (int) getAttributeLong(fieldName));
+    }
+    public void extractAttributeInt(JSONObject dest, String fieldName, int defValue) throws Exception {
+        int val = (int) getAttributeLong(fieldName);
+        if (val == 0) {
+            val = defValue;
+        }
+        dest.put(fieldName, val);
     }
     public boolean updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {

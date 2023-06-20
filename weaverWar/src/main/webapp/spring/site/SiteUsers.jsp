@@ -10,6 +10,26 @@
     NGBook site = cog.getSiteByIdOrFail(siteId);
 
     SiteUsers userMap = site.getUserMap();
+    userMap.eliminateUsersWithoutProfiles();
+    JSONObject userMapObj = userMap.getJson();
+
+    for (String key : userMapObj.keySet()) {
+        JSONObject userObj = userMapObj.getJSONObject(key);
+        if (userObj.getBoolean("hasProfile")) {
+            UserProfile upt = UserManager.lookupUserByAnyId(key);
+            if (upt==null) {
+                // userObj.put("hasProfile", false);
+                throw new Exception("user profile should exist");
+            }
+        }
+        else { 
+            UserProfile upt = UserManager.lookupUserByAnyId(key);
+            if (upt!=null) {
+                // userObj.put("hasProfile", false);
+                throw new Exception("user profile should NOT exist");
+            }
+        }
+    }
 
 
 %>
@@ -20,6 +40,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List of Users in Site");
     $scope.userMap = <%userMap.getJson().write(out,2,4);%>;
+    $scope.siteSettings = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
     $scope.replaceConfirm = false;
@@ -139,14 +160,14 @@ app.filter('encode', function() {
 </style>
 
 <div ng-hide="addUserPanel">
-  <button class="btn btn-raised" ng-click="addUserPanel=true">Add User</button>
-  &nbsp; This site has {{updateCount()}} users who can update, and {{readOnlyCount()}} read-only users.
-</div>
-<div class="well" ng-show="addUserPanel">
-   <input type="text" ng-model="newEmail" class="form-control"/>
-   <button class="btn btn-primary btn-raised" ng-click="addUser()">Create User With This Email</button>
-   <button class="btn btn-raised" ng-click="addUserPanel=false">Cancel</button>
-   
+  This site has {{updateCount()}} / {{siteSettings.editUserLimit}} users who can update, 
+  and {{readOnlyCount()}} / {{siteSettings.viewUserLimit}} read-only users.
+  <div ng-show="updateCount()>siteSettings.editUserLimit" class="guideVocal">
+    <b>Site has too many full update users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{updateCount()}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
+  </div>
+  <div ng-show="readOnlyCount()>siteSettings.viewUserLimit" class="guideVocal">
+    <b>Site has too many read-only view users.</b>  You are allowed {{siteSettings.viewUserLimit}} in the site who can see the site without editing the site, and you have {{readOnlyCount()}}.  You will not be able to add any new view-only users to the site until you reduce the number of active edit users or you change your payment plan.
+  </div>
 </div>
 {{filter}}
     <div>
@@ -166,10 +187,11 @@ app.filter('encode', function() {
             <img class="img-circle" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
                  style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
         </td>
-        <td>{{value.info.name}}</td>
+        <td><span ng-show="value.hasProfile">{{value.info.name}}</span></td>
         <td>{{value.info.uid}}</td>
-        <td><span ng-hide="value.readOnly || !value.hasProfile"><b>Update</b></span>
-            <span ng-show="value.readOnly || !value.hasProfile" style="color:grey">Read Only</span>
+        <td><span ng-show="!value.hasProfile" style="color:lightblue">No Login</span>
+            <span ng-show="!value.readOnly && value.hasProfile"><b>Update</b></span>
+            <span ng-show="value.readOnly && value.hasProfile" style="color:grey">Read Only</span>
         </td>
         <td><span ng-show="value.info.lastLogin>0">{{value.info.lastLogin|cdate}}</span></td>
         <td>{{value.count}}</td>

@@ -908,11 +908,18 @@ public class NGBook extends ContainerCommon {
         jo.put("showExperimental", getShowExperimental());
         jo.put("changed", getLastModifyTime());
         siteInfoRec.extractAttributeBool(jo, "isDeleted");
-        siteInfoRec.extractAttributeBool(jo, "frozen");
-        siteInfoRec.extractAttributeBool(jo, "offLine");
         siteInfoRec.extractAttributeString(jo, "siteMsg");
         siteInfoRec.extractVectorString(jo, "labelColors");
-        siteInfoRec.extractAttributeInt(jo, "workspaceLimit");
+
+        // these are settable with update config web service
+        siteInfoRec.extractAttributeBool(jo, "frozen");
+        siteInfoRec.extractAttributeBool(jo, "offLine");
+        siteInfoRec.extractAttributeInt(jo, "workspaceLimit", 4);
+        siteInfoRec.extractAttributeInt(jo, "frozenLimit", 12);
+        siteInfoRec.extractAttributeInt(jo, "editUserLimit", 3);
+        siteInfoRec.extractAttributeInt(jo, "viewUserLimit", 50);
+        siteInfoRec.extractAttributeInt(jo, "emailLimit", 100);
+        siteInfoRec.extractAttributeInt(jo, "fileSpaceLimit", 100);
 
         this.extractScalarString(jo, "movedTo");
         NGRole owners = getSecondaryRole();
@@ -948,7 +955,6 @@ public class NGBook extends ContainerCommon {
         this.updateScalarString("movedTo", jo);
     }
 
-    
     /**
      * These are settings that can only be set by a super admin
      * because they pertain the account settings that users should
@@ -959,6 +965,11 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.updateAttributeBool("frozen", jo);
         siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeInt("workspaceLimit", jo);
+        siteInfoRec.updateAttributeInt("frozenLimit", jo);
+        siteInfoRec.updateAttributeInt("editUserLimit", jo);
+        siteInfoRec.updateAttributeInt("viewUserLimit", jo);
+        siteInfoRec.updateAttributeInt("emailLimit", jo);
+        siteInfoRec.updateAttributeInt("fileSpaceLimit", jo);
     }
     
     /**
@@ -1136,6 +1147,13 @@ public class NGBook extends ContainerCommon {
         return jo;
     }
     
+    public int editUserLimit() {
+        return siteInfoRec.getAttributeInt("editUserLimit");
+    }
+    public int readUserLimit() {
+        return siteInfoRec.getAttributeInt("readUserLimit");
+    }
+    
     // there was a problem with this map being out of date.  Nothing was clearing it and
     // causing it to be recreated.   Timeout now will assure that.
     private static long userMapTimeout = System.currentTimeMillis();
@@ -1164,20 +1182,45 @@ public class NGBook extends ContainerCommon {
     
     public SiteUsers getUserMap() throws Exception {
         File cogFolder = new File(siteFolder, ".cog");
-        return SiteUsers.readUsers(cogFolder);
+        SiteUsers siteUsers = SiteUsers.readUsers(cogFolder);
+        
+        List<String> allUsers = findAllUsersInSite();
+        siteUsers.keepTheseUsers(allUsers);
+        
+        return siteUsers;
     }
     
     public SiteUsers updateUserMap(JSONObject delta) throws Exception {
         File cogFolder = new File(siteFolder, ".cog");
         SiteUsers siteUsers = SiteUsers.readUsers(cogFolder);
-        recalcUserStats(siteUsers);
+        
         siteUsers.updateUserMap(delta);
-        setUserUpdateMap(siteUsers);
+        
+        List<String> allUsers = findAllUsersInSite();
+        siteUsers.keepTheseUsers(allUsers);
         
         siteUsers.writeUsers(cogFolder);
         return siteUsers;
     }
     
+    private List<String> findAllUsersInSite() throws Exception{
+        
+        List<String> pop = new ArrayList<String>();
+        
+        //get then user from Site
+        this.addAllUsers(pop);
+        
+        //now add all users from all workspaces
+        List<NGPageIndex> allWorkspaces = cog.getNonDelWorkspacesInSite(key);
+        for (NGPageIndex ngpi : allWorkspaces) {
+            NGWorkspace ngw = ngpi.getWorkspace();
+            ngw.addAllUsers(pop);
+        }
+        
+        return pop;
+    }
+    
+    /*
     private void recalcUserStats(SiteUsers userMap) throws Exception{
                 
         //get then settings from Site
@@ -1193,12 +1236,14 @@ public class NGBook extends ContainerCommon {
         
         userMap.updateUserMap(newUserMap);
     }
+    */
     
+    /*
     private void setUserEntriesForContainer(JSONObject userMap, NGContainer ngw) throws Exception {
         String wsKey = ngw.getKey();
         for (CustomRole ngr : ngw.getAllRoles()) {
             for (AddressListEntry ale : ngr.getDirectPlayers()) {
-                String uid = ale.getUniversalId();
+                String uid = ale.getKey();
     
                 JSONObject userInfo = userMap.requireJSONObject(uid);
                 userInfo.put("count", userInfo.optInt("count", 0)+1);
@@ -1220,6 +1265,7 @@ public class NGBook extends ContainerCommon {
             }
         }
     }
+    */
     
     public boolean isSiteOwner(UserRef user) throws Exception {
         return this.primaryPermission(user);

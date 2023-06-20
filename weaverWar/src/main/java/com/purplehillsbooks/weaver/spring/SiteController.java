@@ -21,6 +21,7 @@
 package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -285,6 +286,16 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            String userKey = ar.reqParam("userKey");
+            
+            // check to see if the user is being referred to by a email address, or the user key
+            // if a key exists, and not using the key, then redirect to the right address with key
+            UserProfile uProf = UserManager.lookupUserByAnyId(userKey);
+            if (uProf != null) {
+                if (!userKey.equals(uProf.getKey())) {
+                    ar.resp.sendRedirect("SiteUserInfo.htm?userKey="+URLEncoder.encode(uProf.getKey(), "UTF-8"));
+                }
+            }
             showJSPExecutives(ar,siteId,"SiteUserInfo.jsp");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
