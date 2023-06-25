@@ -49,7 +49,7 @@
           <th title="Shows an indicator when this person is online and has accessed meeting in last 30 minutes">On</th>
       </tr>
       <tr class="comment-inner" ng-repeat="(key, pers) in meeting.people" class="form-inline form-group">
-          <td >
+          <td  title="Name of the participant">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
                 <img class="img-circle" 
@@ -70,16 +70,16 @@
                 </ul>
               </span>
           </td>
-          <td style="overflow:hidden;white-space:nowrap;width:90px">
+          <td style="overflow:hidden;white-space:nowrap;width:90px" title="Click on these to record whether the user attended or not">
             {{pers.name}}
           </td>
-          <td ng-click="toggleAttend(pers)">
+          <td ng-click="toggleAttend(pers)" title="Click on these to record whether the user attended or not">
             <span ng-show="pers.attended" style="color:green" title="indicates that the user did attend meeting">
                 <span class="fa fa-check"></span></span>
             <span ng-hide="pers.attended" style="color:#eeeeee"  title="indicates that the user did not attend meeting">
                 <span class="fa fa-question-circle"></span></span>
           </td>
-          <td ng-dblclick="toggleEditSitch(pers)">
+          <td ng-dblclick="toggleEditSitch(pers)" title="Shows whether the user is expected to be there or not">
               <div ng-hide="editSitch.uid==pers.uid">{{pers.expect}}</div>
               <div ng-show="editSitch.uid==pers.uid">
                   <select ng-model="editSitch.expect" class="form-control" style="padding:0">
@@ -91,14 +91,14 @@
                   
               </div>
           </td>
-          <td  ng-dblclick="toggleEditSitch(pers)">
+          <td  ng-dblclick="toggleEditSitch(pers)" title="Shows the user explanation of whether they will attend or not">
               <div ng-hide="editSitch.uid==pers.uid">{{pers.situation}}</div>
               <div ng-show="editSitch.uid==pers.uid">
                   <input ng-model="editSitch.situation" class="form-control" style="width:400px;"/>
                   <button ng-click="toggleEditSitch(pers)" class="btn btn-sm btn-primary btn-raised">Close</button>
               </div>
           </td>
-          <td>
+          <td title="Shows what the user selected during the time selection phase, if anything">
                 <span ng-show="pers.available==1" title="Conflict for that time" style="color:red;">
                     <span class="fa fa-minus-circle"></span>
                     <span class="fa fa-minus-circle"></span></span>
@@ -113,7 +113,7 @@
                     <span class="fa fa-plus-circle"></span></span>
           
           </td>
-          <td>
+          <td title="Shows an indicator when this person is online and has accessed meeting in last 30 minutes">
             <span ng-show="isPresent(pers.uid)" style="color:green;text-align:center;" title="this user is online and has accessed this meeting recently"><span class="fa fa-user"></span></span>
             <span ng-hide="isPresent(pers.uid)" style="color:#eeeeee;text-align:center;" title="this user has not accessed this meeting recently"><span class="fa fa-circle-thin"></span></span>
           </td>

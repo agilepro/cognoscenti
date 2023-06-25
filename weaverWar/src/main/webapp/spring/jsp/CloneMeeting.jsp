@@ -149,13 +149,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 newAgenda.readyToGo = false;
                 newAgenda.timerElapsed = 0;
                 newAgenda.comments = [];
+                newAgenda.lastMeetingMinutes = newAgenda.minutes;
+                newAgenda.minutes = "";
                 newMeeting.agenda.push(newAgenda);
             }
         });
         var postURL = "meetingCreate.json";
         var postdata = angular.toJson(newMeeting);
-        //console.log("Structure gor creting meeting", newMeeting);
-        //confirm("click OK to create meeting");
+        console.log("Structure gor creting meeting", newMeeting);
+        confirm("click OK to create meeting");
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

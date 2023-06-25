@@ -27,11 +27,26 @@
       <td ng-style="timerStyleComplete(item)"><span class="h2">
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</span></td>
     </tr>
+    <tr ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer">
+      <td ng-click="openAgendaControlled(item,'Description')" class="labelColumn">Description:</td>
+      <td>
+        <div ng-bind-html="item.descriptionHtml"></div>
+        <div ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
+            Double-click to description
+        </div>
+      </td>
+    </tr>
+    <tr ng-hide="item.isSpacer || !item.lastMeetingMinutes"  style="color: #888">
+      <td class="labelColumn" ng-click="copyNotes(item)">Notes from last meeting:</td>
+      <td ng-dblclick="copyNotes(item)">
+        <div ng-bind-html="item.lastMeetingMinutes | wiki"></div>
+      </td>
+    </tr>
     <tr ng-hide="item.isSpacer">
       <td class="labelColumn" ng-click="openNotesDialog(item)">Notes/Minutes:</td>
       <td ng-dblclick="openNotesDialog(item)">
-        <div ng-bind-html="item.minutesHtml"></div>
-        <div ng-hide="item.minutesHtml" class="doubleClickHint">
+        <div ng-bind-html="item.minutes | wiki"></div>
+        <div ng-hide="item.minutes" class="doubleClickHint">
             Double-click to edit notes
         </div>
       </td>
@@ -131,15 +146,6 @@
         </div>
         <div ng-hide="item.presenterList && item.presenterList.length>0" class="doubleClickHint">
             Double-click to set presenter
-        </div>
-      </td>
-    </tr>
-    <tr ng-dblclick="openAgenda(item,'Description')" ng-show="!item.isSpacer">
-      <td ng-click="openAgenda(item,'Description')" class="labelColumn">Description:</td>
-      <td>
-        <div ng-bind-html="item.descriptionHtml"></div>
-        <div ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
-            Double-click to description
         </div>
       </td>
     </tr>

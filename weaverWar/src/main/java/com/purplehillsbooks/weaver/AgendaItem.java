@@ -375,6 +375,7 @@ public class AgendaItem extends CommentContainer {
         extractAttributeLong(aiInfo, "timerElapsed");
         extractAttributeBool(aiInfo, "proposed");
         extractScalarString(aiInfo, "minutes");
+        extractScalarString(aiInfo, "lastMeetingMinutes");
         
         
         JSONArray topicList = new JSONArray();
@@ -407,6 +408,7 @@ public class AgendaItem extends CommentContainer {
         updateAttributeBool("isSpacer", input);
         updateAttributeBool("showMinutes", input);
         updateAttributeBool("proposed", input);
+        updateScalarString("lastMeetingMinutes", input);
         
         if (input.has("timerElapsed")) {
             if (getAttributeBool("timerRunning")) {
@@ -430,6 +432,9 @@ public class AgendaItem extends CommentContainer {
 
         if (input.has("minutesMerge")) {
         	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
+        }
+        else if (input.has("minutes")) {
+            updateScalarString("minutes", input);
         }
         updateCommentsFromJSON(input, ar);
 

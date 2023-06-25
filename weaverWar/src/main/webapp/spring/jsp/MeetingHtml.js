@@ -616,9 +616,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             agendaItem.subject = "Agenda Item "+(new Date()).getTime();
         }
         fieldList.forEach( function(ele) {
-            //if (agendaItem[ele]) {
-                itemCopy[ele] = agendaItem[ele];
-            //}
+            itemCopy[ele] = agendaItem[ele];
         });
         $scope.saveAgendaItem(itemCopy);
     };
@@ -744,7 +742,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             if (!item.proposed) {
                 totalAgendaTime += item.duration;
             }
-            item.minutesHtml = convertMarkdownToHtml(item.minutes);
             item.descriptionHtml = convertMarkdownToHtml(item.description);
             item.comments.forEach( function(cmt) {
                 $scope.generateCommentHtml(cmt);
@@ -1752,6 +1749,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     }
 
 
+    $scope.openAgendaControlled = function (agendaItem, display) {
+        var allowedit = true;
+        if ($scope.meeting.state>=2) {
+            allowedit = confirm("The 'description' is generally not edited during the running of the meeting. "
+                + "Notes should be kept in the meeting notes field and not the description. "
+                + "Are you sure you want to edit this?");
+        }
+        if (allowedit) {
+            $scope.openAgenda(agendaItem, display);
+        }
+    }
 
     $scope.openAgenda = function (agendaItem, display) {
         if (!embeddedData.canUpdate) {
@@ -2069,6 +2077,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+    }
+    
+    $scope.copyNotes = function(item) {
+        var confirmed = confirm("Do you want to copy last meeting's notes/minutes into the notes for this meeting for this agenda item?");
+        if (confirmed) {
+            item.minutes = item.lastMeetingMinutes;
+            $scope.saveAgendaItemParts(item, ['minutes']);
+        }
     }
     
     $scope.openNotesDialog = function (agendaItem) {
