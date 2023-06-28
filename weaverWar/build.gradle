@@ -56,7 +56,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.purplehillsbooks.weaver.App'
+    mainClass = 'com.purplehillsbooks.weaver.Cognoscenti'
 }
 
 tasks.named('test') {

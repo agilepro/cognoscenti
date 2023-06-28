@@ -7,11 +7,12 @@
 %><%
 
     ar.assertLoggedIn("");
+    Cognoscenti cog = ar.getCogInstance();
     String siteId = ar.reqParam("siteId");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    JSONObject siteInfo = ngb.getConfigJSON();
+    NGBook  site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+    JSONObject siteInfo = site.getConfigJSON();
 
-    WorkspaceStats wStats = ngb.getRecentStats();
+    WorkspaceStats wStats = site.getRecentStats();
 
 /*
 {
@@ -49,6 +50,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Site Statistics");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
+    $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
 
     $scope.showError = false;
@@ -98,8 +100,19 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 </script>
 <style>
-.spacey tr td {
-    padding: 4px;
+.spaceyTable {
+    min-width:800px;
+    max-width:1000px;
+}
+.spaceyTable tr td {
+    padding:8px;
+    border-bottom: 1px solid #ddd;
+}
+.spaceyTable tr:hover {
+    background-color: #f5f5f5;
+}
+.centeredCell {
+    text-align:center;
 }
 </style>
 <div>
@@ -127,150 +140,143 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 
     <div class="generalContent">
-        <table class="table">
+        <table class="spaceyTable">
         <tr>
-           <td>Number of Workspaces:</td>
-           <td>{{stats.numWorkspaces}}</td>
+           <td class="centeredCell"></td>
+           <td class="centeredCell">Entire Site</td>
+           <td class="centeredCell">Site Limit</td>
         </tr>
         <tr>
-           <td>Number of Users:</td>
-           <td>{{stats.numUsers}}</td>
+           <td>Last Change:</td>
+           <td class="centeredCell">{{siteInfo.changed|cdate}}</td>
+           <td class="centeredCell"></td>
         </tr>
         <tr>
-           <td>Number of Topics:</td>
-           <td>{{stats.numTopics}}</td>
+           <td>Full Users:</td>
+           <td class="centeredCell">{{siteStats.editUserCount}}</td>
+           <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
         </tr>
         <tr>
-           <td>Number of Meetings:</td>
-           <td>{{stats.numMeetings}}</td>
+           <td>Read-only Users:</td>
+           <td class="centeredCell">{{siteStats.readUserCount}}</td>
+           <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>
         </tr>
         <tr>
-           <td>Number of Decisions:</td>
-           <td>{{stats.numDecisions}}</td>
-        </tr>
-        <tr>
-           <td>Number of Comments:</td>
-           <td>{{stats.numComments}}</td>
-        </tr>
-        <tr>
-           <td>Number of Proposals:</td>
-           <td>{{stats.numProposals}}</td>
-        </tr>
-        <tr>
-           <td>Number of Documents:</td>
-           <td>{{stats.numDocs}}</td>
-        </tr>
-        <tr>
-           <td>Last WS Change:</td>
-           <td>{{stats.recentChange|cdate}}</td>
+           <td>Emails / Month:</td>
+           <td class="centeredCell"></td>
+           <td class="centeredCell">{{siteInfo.emailLimit}}</td>
         </tr>
         <tr>
            <td>Size of Documents:</td>
-           <td>{{stats.sizeDocuments|number}} bytes</td>
+           <td class="centeredCell">{{siteStats.sizeDocuments|number}}</td>
+           <td class="centeredCell">{{siteInfo.fileSpaceLimit*1000000|number}}</td>
+        </tr>
+        <tr>
+           <td>Active Workspaces:</td>
+           <td class="centeredCell">{{siteStats.numActive}}</td>
+           <td class="centeredCell">{{siteInfo.workspaceLimit}}</td>
+        </tr>
+        <tr>
+           <td>Frozen Workspaces:</td>
+           <td class="centeredCell">{{siteStats.numFrozen}}</td>
+           <td class="centeredCell">{{siteInfo.frozenLimit}}</td>
+        </tr>
+        <tr>
+           <td>Number of Workspaces:</td>
+           <td class="centeredCell">{{stats.numWorkspaces}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Users:</td>
+           <td class="centeredCell">{{stats.numUsers}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Topics:</td>
+           <td class="centeredCell">{{stats.numTopics}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Meetings:</td>
+           <td class="centeredCell">{{stats.numMeetings}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Decisions:</td>
+           <td class="centeredCell">{{stats.numDecisions}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Comments:</td>
+           <td class="centeredCell">{{stats.numComments}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Proposals:</td>
+           <td class="centeredCell">{{stats.numProposals}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Documents:</td>
+           <td class="centeredCell">{{stats.numDocs}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Last WS Change:</td>
+           <td class="centeredCell">{{stats.recentChange|cdate}}</td>
+           <td class="centeredCell"></td>
         </tr>
         <tr>
            <td>Size of Old Versions:</td>
-           <td>{{stats.sizeArchives|number}} bytes</td>
+           <td class="centeredCell">{{stats.sizeArchives|number}} bytes</td>
+           <td class="centeredCell"></td>
         </tr>
-        <tr>
+      </table>
+      <table class="spaceyTable">
+        <tr ng-repeat="(key, value) in stats.topicsPerUser">
            <td>Topics:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.topicsPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.docsPerUser">
            <td>Documents:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.docsPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.commentsPerUser">
            <td>Comments:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.commentsPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.meetingsPerUser">
            <td>Meetings:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.meetingsPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.proposalsPerUser">
            <td>Proposals:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.proposalsPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.responsesPerUser">
            <td>Responses:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.responsesPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.unrespondedPerUser">
            <td>Unresponded:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.unrespondedPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+           <td class="centeredCell">{{value}}</td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.anythingPerUser">
            <td>All Users:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.anythingPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </td>
+           <td class="centeredCell"></td>
         </tr>
-        <tr>
+        <tr ng-repeat="(key, value) in stats.historyPerType">
            <td>History:</td>
-           <td>
-               <table class="spacey">
-                 <tr ng-repeat="(key, value) in stats.historyPerType">
-                   <td>{{key}}:
-                   <td>{{value}}</td>
-                 </tr>
-               </table>
-           </td>
+           <td class="centeredCell">{{key}}:
+           <td class="centeredCell">{{value}}</td>
         </tr>
         </table>
     </div>

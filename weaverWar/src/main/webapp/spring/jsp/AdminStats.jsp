@@ -22,6 +22,7 @@
 
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
+    SiteUsers userMap = site.getUserMap();
 
     List<String> names = ngw.getContainerNames();
 
@@ -132,6 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
     $scope.workspaceInfo = <%ngpi.getJSON4List().write(out,2,4);%>;
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
@@ -331,8 +333,8 @@ app.filter('escape', function() {
 
 <style>
 .spaceyTable {
-    min-width:400px;
-    max-width:800px;
+    min-width:800px;
+    max-width:1000px;
 }
 .spaceyTable tr td {
     padding:8px;
@@ -354,6 +356,9 @@ editBoxStyle {
 .clicker:after {
     content: "Double-click to Set Value"
 }
+.centeredCell {
+    text-align:center;
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
@@ -365,40 +370,94 @@ editBoxStyle {
 
         <table class="spaceyTable">
         <tr>
+           <td class="centeredCell"></td>
+           <td class="centeredCell">This Workspace</td>
+           <td class="centeredCell">Entire Site</td>
+           <td class="centeredCell">Site Limit</td>
+        </tr>
+        <tr>
            <td>Last Change:</td>
-           <td style="text-align:center;">{{workspaceInfo.changed|cdate}}</td>
+           <td class="centeredCell">{{workspaceInfo.changed|cdate}}</td>
+           <td class="centeredCell">{{siteInfo.changed|cdate}}</td>
+           <td class="centeredCell"></td>
         </tr>
         <tr>
-           <td>Number of Topics:</td>
-           <td style="text-align:center;">{{stats.numTopics}}</td>
+           <td>Full Users:</td>
+           <td class="centeredCell">{{stats.editUserCount}}</td>
+           <td class="centeredCell">{{siteStats.editUserCount}}</td>
+           <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
         </tr>
         <tr>
-           <td>Number of Meetings:</td>
-           <td style="text-align:center;">{{stats.numMeetings}}</td>
+           <td>Read-only Users:</td>
+           <td class="centeredCell">{{stats.readUserCount}}</td>
+           <td class="centeredCell">{{siteStats.readUserCount}}</td>
+           <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>
         </tr>
         <tr>
-           <td>Number of Decisions:</td>
-           <td style="text-align:center;">{{stats.numDecisions}}</td>
-        </tr>
-        <tr>
-           <td>Number of Comments:</td>
-           <td style="text-align:center;">{{stats.numComments}}</td>
-        </tr>
-        <tr>
-           <td>Number of Proposals:</td>
-           <td style="text-align:center;">{{stats.numProposals}}</td>
-        </tr>
-        <tr>
-           <td>Number of Documents:</td>
-           <td style="text-align:center;">{{stats.numDocs}}</td>
+           <td>Emails / Month:</td>
+           <td class="centeredCell"></td>
+           <td class="centeredCell"></td>
+           <td class="centeredCell">{{siteInfo.emailLimit}}</td>
         </tr>
         <tr>
            <td>Size of Documents:</td>
-           <td style="text-align:center;">{{stats.sizeDocuments|number}}</td>
+           <td class="centeredCell">{{stats.sizeDocuments|number}}</td>
+           <td class="centeredCell">{{siteStats.sizeDocuments|number}}</td>
+           <td class="centeredCell">{{siteInfo.fileSpaceLimit*1000000|number}}</td>
+        </tr>
+        <tr>
+           <td>Number of Topics:</td>
+           <td class="centeredCell">{{stats.numTopics}}</td>
+           <td class="centeredCell">{{siteStats.numTopics}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Meetings:</td>
+           <td class="centeredCell">{{stats.numMeetings}}</td>
+           <td class="centeredCell">{{siteStats.numMeetings}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Decisions:</td>
+           <td class="centeredCell">{{stats.numDecisions}}</td>
+           <td class="centeredCell">{{siteStats.numDecisions}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Comments:</td>
+           <td class="centeredCell">{{stats.numComments}}</td>
+           <td class="centeredCell">{{siteStats.numComments}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Proposals:</td>
+           <td class="centeredCell">{{stats.numProposals}}</td>
+           <td class="centeredCell">{{siteStats.numProposals}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Number of Documents:</td>
+           <td class="centeredCell">{{stats.numDocs}}</td>
+           <td class="centeredCell">{{siteStats.numDocs}}</td>
+           <td class="centeredCell"></td>
         </tr>
         <tr>
            <td>Number of Old Versions:</td>
-           <td style="text-align:center;">{{stats.sizeArchives|number}}</td>
+           <td class="centeredCell">{{stats.sizeArchives|number}}</td>
+           <td class="centeredCell">{{siteStats.sizeArchives|number}}</td>
+           <td class="centeredCell"></td>
+        </tr>
+        <tr>
+           <td>Active Workspaces:</td>
+           <td class="centeredCell">{{stats.numActive}}</td>
+           <td class="centeredCell">{{siteStats.numActive}}</td>
+           <td class="centeredCell">{{siteInfo.workspaceLimit}}</td>
+        </tr>
+        <tr>
+           <td>Frozen Workspaces:</td>
+           <td class="centeredCell">{{stats.numFrozen}}</td>
+           <td class="centeredCell">{{siteStats.numFrozen}}</td>
+           <td class="centeredCell">{{siteInfo.frozenLimit}}</td>
         </tr>
     </table>
 
@@ -407,24 +466,24 @@ editBoxStyle {
 
 <tr style="background-color:#EEF">
 <td>Filter: <input ng-model="userFilter"></td>
-<td style="text-align:center;">Comments</td>
-<td style="text-align:center;">Docs</td>
-<td style="text-align:center;">Meetings</td>
-<td style="text-align:center;">Proposals</td>
-<td style="text-align:center;">Responses</td>
-<td style="text-align:center;">Unresponded</td>
-<td style="text-align:center;">Access</td>
+<td class="centeredCell">Comments</td>
+<td class="centeredCell">Docs</td>
+<td class="centeredCell">Meetings</td>
+<td class="centeredCell">Proposals</td>
+<td class="centeredCell">Responses</td>
+<td class="centeredCell">Unresponded</td>
+<td class="centeredCell">Access</td>
 </tr>
 
 <tr ng-repeat="(user,val) in getUserStats()">
 <td>{{user}}</td>
-<td style="text-align:center;">{{stats.commentsPerUser[user]}}</td>
+<td class="centeredCell">{{stats.commentsPerUser[user]}}</td>
 <td style="text-align:center;background-color:#fefefe;">{{stats.docsPerUser[user]}}</td>
-<td style="text-align:center;">{{stats.meetingsPerUser[user]}}</td>
+<td class="centeredCell">{{stats.meetingsPerUser[user]}}</td>
 <td style="text-align:center;background-color:#fefefe;">{{stats.proposalsPerUser[user]}}</td>
-<td style="text-align:center;">{{stats.responsesPerUser[user]}}</td>
+<td class="centeredCell">{{stats.responsesPerUser[user]}}</td>
 <td style="text-align:center;background-color:#fefefe;">{{stats.unrespondedPerUser[user]}}</td>
-<td style="text-align:center;">{{stats.access[user]}}</td>
+<td class="centeredCell">{{stats.access[user]}}</td>
 </tr>
 
 </table>

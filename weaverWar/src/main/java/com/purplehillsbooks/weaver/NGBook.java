@@ -143,14 +143,37 @@ public class NGBook extends ContainerCommon {
 
     public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
         if (fromLevel<13) {
-            throw new Exception("data file is too old");
+            // we don't care, there are not and that old, 
+            // the schema version will be set when saved.
         }
     }
     public int currentSchemaVersion() {
         return 13;
     }
 
+    /*
+    private void moveOldMembersToRole() throws Exception {
+        // in case there is a pmembers tag around, get rid of that.
+        // these are just discarded, and they have to request again
+        DOMFace pmembers = getChild("pmembers", DOMFace.class);
+        if (pmembers != null) {
+            removeChild(pmembers);
+        }
 
+        DOMFace members = getChild("members", DOMFace.class);
+        if (members == null) {
+            return;
+        }
+        for (String id : members.getVector("member")) {
+            AddressListEntry user = AddressListEntry.newEntryFromStorage(id);
+            executiveRole.addPlayer(user);
+            ownerRole.addPlayer(user);
+        }
+        // now get rid of it so it never is heard from again.
+        removeChild(members);
+
+    }
+    */
 
     public static NGBook readSiteByKey(String key) throws Exception {
         if (keyToSite == null) {
@@ -863,6 +886,7 @@ public class NGBook extends ContainerCommon {
             siteStats.gatherFromWorkspace(ngw);
             siteStats.numWorkspaces++;
         }
+        siteStats.countUsers(getUserMap());
         saveStatsFile(siteStats);
         return siteStats;
     }

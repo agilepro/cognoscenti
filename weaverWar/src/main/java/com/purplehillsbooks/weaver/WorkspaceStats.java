@@ -19,6 +19,10 @@ public class WorkspaceStats {
     public long sizeArchives = 0;
     public int numWorkspaces = 0;  //only for a site will this be anything other than 1
     public long recentChange = 0;  //will be date for most recently changed workspace
+    public int readUserCount = 0;
+    public int editUserCount = 0;
+    public int numActive     = 0;
+    public int numFrozen     = 0;
 
     public NameCounter topicsPerUser      = new NameCounter();
     public NameCounter docsPerUser        = new NameCounter();
@@ -113,6 +117,34 @@ public class WorkspaceStats {
                 }
             }
         }
+        
+        if (ngw.isFrozen() || ngw.isDeleted()) {
+            numFrozen++;
+        }
+        else {
+            numActive++;
+        }
+    }
+    
+
+    /**
+     * determine readUserCount and editUserCount
+     */
+    public void countUsers(SiteUsers userMap) throws Exception {
+        readUserCount = 0;
+        editUserCount = 0;
+        for (String uid : anythingPerUser.keySet()) {
+            AddressListEntry ale = new AddressListEntry(uid);
+            if (ale.user == null) {
+                readUserCount++;
+            }
+            else if (userMap.isReadOnly(ale.getKey())) {
+                readUserCount++;
+            }
+            else {
+                editUserCount++;
+            }
+        }
     }
 
     private void countComments(List<CommentRecord> comments) throws Exception {
@@ -129,7 +161,7 @@ public class WorkspaceStats {
         }
     }
 
-    public void addAllStats(WorkspaceStats other) {
+    public void addAllStats(NGWorkspace ngw, WorkspaceStats other) throws Exception {
 
         //this is incremented to count the number of smaller collections that have
         //been aggregated into this statistics collection.  This is useful mainly
@@ -172,6 +204,11 @@ public class WorkspaceStats {
         jo.put("sizeArchives",  sizeArchives);
         jo.put("numWorkspaces",  numWorkspaces);
         jo.put("recentChange",  recentChange);
+        jo.put("editUserCount",  editUserCount);
+        jo.put("readUserCount",  readUserCount);
+        jo.put("numActive",      numActive);
+        jo.put("numFrozen",      numFrozen);
+        
         jo.put("numUsers",       anythingPerUser.size());
         jo.put("topicsPerUser",      topicsPerUser.getJSON());
         jo.put("docsPerUser",        docsPerUser.getJSON());

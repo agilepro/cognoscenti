@@ -110,7 +110,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.meeting.descriptionHtml) {
-            alert("Please a short description for the meeting");
+            alert("Please include a description for the meeting");
             return;
         }
         
@@ -156,8 +156,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         var postURL = "meetingCreate.json";
         var postdata = angular.toJson(newMeeting);
-        console.log("Structure gor creting meeting", newMeeting);
-        confirm("click OK to create meeting");
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

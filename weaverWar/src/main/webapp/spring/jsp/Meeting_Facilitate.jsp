@@ -1,6 +1,10 @@
-    <div>
+    <div ng-cloak>
 
-        <div class="panel panel-default" ng-repeat="sim in getSims()">
+        <div class="well" ng-show="meeting.state < 2">
+            <h2>Meeting is not in running state</h2>
+            <button ng-click="changeMeetingState(2)" class="btn btn-primary btn-raised">Start Meeting</button>
+        </div>
+        <div class="panel panel-default" ng-repeat="sim in actionItemSims">
             <div class="panel-heading" >{{sim.item.number}}. {{sim.item.subject}}
                 <span style="font-size:70%" ng-hide="sim.item.needMerge">
                     <span ng-hide="sim.item.timerRunning" style="padding:5px">
@@ -30,7 +34,7 @@
                 {{sim.needsSaving()}}
                 <button class="btn btn-primary btn-raised" style="float:right" ng-click="sim.stopEdit()">Close</button>
             </div>
-            <div class="panel-body" ng-hide="sim.isEditing" ng-dblclick="sim.startEdit()">
+            <div class="panel-body" ng-hide="sim.isEditing" ng-dblclick="openNotesDialog(sim.itemRef)">
                 <div ng-bind-html="sim.vHtml"></div>
                 <div ng-hide="sim.vHtml" style="color:#bbb">Double click to start editing</div>
                 <div>&nbsp;</div>

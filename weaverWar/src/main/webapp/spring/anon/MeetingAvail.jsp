@@ -106,7 +106,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, $scope.emailId);
         
-        $scope.descriptionHtml = data.meetingInfo;
         $scope.findAttendSettings();
     }
     $scope.findAttendSettings = function() {

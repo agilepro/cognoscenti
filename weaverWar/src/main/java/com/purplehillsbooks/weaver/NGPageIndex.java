@@ -701,6 +701,7 @@ public class NGPageIndex {
         //to optimize the background refresh of user stats
         WorkspaceStats wStats = new WorkspaceStats();
         wStats.gatherFromWorkspace(ngw);
+        wStats.countUsers(ngw.getSite().getUserMap());
         HashSet<String> userTempKeys = new HashSet<String>();
         for (String email : wStats.anythingPerUser.keySet()) {
             UserProfile uProf = UserManager.getStaticUserManager().lookupUserByAnyId(email);

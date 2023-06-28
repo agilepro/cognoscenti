@@ -79,8 +79,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return a.proposedTime - b.proposedTime;
         });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, $scope.emailId);
-        
-        $scope.descriptionHtml = data.meetingInfo;
     }    
     $scope.setMeetingData(<%meetingObj.write(out,2,4);%>);
     
@@ -144,7 +142,7 @@ function reloadIfLoggedIn() {
         </h1>
     </div>
     <div>
-        <div ng_bind-html="descriptionHtml"></div>
+        <div ng_bind-html="meeting.description|wiki"></div>
     </div>
 
     <table ng-show="infoOpen" class="table">

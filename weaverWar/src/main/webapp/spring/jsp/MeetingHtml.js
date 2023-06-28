@@ -135,7 +135,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
             var sim = $scope.sims[item.id];
             if (!sim) {
                 sim = new SimText(item.minutes);
+                sim.itemRef = item;
                 $scope.sims[item.id] = sim;
+            }
+            else {
+                // this is wrong for actually editing
+                // because the sims are not actually being used for edit, 
+                // and for display only, so this refreshes them.
+                sim.init(item.minutes);
             }
             //TEMP disable editing
             sim.startEdit = function() {alert('editing not yet enabled on this page');}
@@ -797,6 +804,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         
         $scope.loadAgenda();
         $scope.loadMinutes();
+        
+        $scope.actionItemSims = $scope.getSims();
         window.setMainPageTitle($scope.meeting.name);
     }
     function determineRoleEqualsParticipants() {
@@ -2082,7 +2091,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
     $scope.copyNotes = function(item) {
         var confirmed = confirm("Do you want to copy last meeting's notes/minutes into the notes for this meeting for this agenda item?");
         if (confirmed) {
-            item.minutes = item.lastMeetingMinutes;
+            if (item.minutes) {
+                item.minutes = item.minutes + "\n\n" + item.lastMeetingMinutes;
+            }
+            else {
+                item.minutes = item.lastMeetingMinutes;
+            }
             $scope.saveAgendaItemParts(item, ['minutes']);
         }
     }
@@ -2122,6 +2136,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         }, function () {
             //cancel action - nothing really to do
             $scope.extendBackgroundTime();
+            $scope.getSims();
         });
     };
     $scope.startParticipantEdit = function() {
@@ -2139,7 +2154,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         return found;
     }
     $scope.refreshCommentList = function() {
-        console.log("REFRESH comment list");
         $scope.refreshMeetingPromise(true);
     }
 
