@@ -1,6 +1,7 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -28,7 +29,9 @@ public class SiteUsers {
     public static SiteUsers readUsers(File folder) throws Exception {
         File usersFilePath = new File(folder, "users.json");
         JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
-        return new SiteUsers(jo);
+        SiteUsers su = new SiteUsers(jo);
+        su.patchUpUserKeys();
+        return su;
     }
     public void writeUsers(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "users.json");
@@ -36,11 +39,38 @@ public class SiteUsers {
         kernel.writeToFile(ledgerFilePath);
     }
     
+    /**
+     * we used to allow users without a profile, and therefor without a key.
+     * However, we want to move so that ALL users have a key, and therefor
+     * we can hide their email address.  This method goes and creates profiles
+     * for all the users so they have keys.
+     */
+    private void patchUpUserKeys() throws Exception {
+        JSONObject newKernel = new JSONObject();
+        for (String key : kernel.keySet()) {
+            JSONObject record = kernel.getJSONObject(key);
+            UserProfile user = UserManager.lookupUserByAnyId(key);
+            if (user == null) {
+                user = UserManager.getStaticUserManager().createUserWithId(key);
+                UserManager.getStaticUserManager().saveUserProfiles();
+                key = user.getKey();
+            }
+            newKernel.put(key, record);
+        }
+        kernel = newKernel;
+    }
+    
     public List<String> getAllUserKeys() {
-        return kernel.sortedKeySet();
+        List<String> ret = new ArrayList<>();
+        for (String id : kernel.sortedKeySet()) {
+            ret.add(id);
+        }
+        return ret;
     }
     public JSONObject getUser(String userKey) throws Exception {
-        return kernel.requireJSONObject(userKey);
+        AddressListEntry ale = new AddressListEntry(userKey);
+        String key = ale.getKey();
+        return kernel.requireJSONObject(key);
     }
     public JSONObject getJson() {
         return kernel;
@@ -71,7 +101,7 @@ public class SiteUsers {
     public boolean isReadOnly(String userKey) throws Exception {
         JSONObject userInfo = kernel.requireJSONObject(userKey);
         UserProfile uProf = UserManager.getUserProfileByKey(userKey);
-        if (uProf == null) {
+        if (uProf == null || !uProf.hasLoggedIn()) {
             return true;
         }
         return userInfo.optBoolean("readOnly", false);
@@ -121,7 +151,7 @@ public class SiteUsers {
             }
             AddressListEntry ale = new AddressListEntry(id);
             UserProfile uProf = ale.getUserProfile();
-            if (uProf == null) {
+            if (uProf == null || !uProf.hasLoggedIn()) {
                 userData.put("email", id);
                 userData.put("access", 0);
                 userData.put("hasProfile",  false);

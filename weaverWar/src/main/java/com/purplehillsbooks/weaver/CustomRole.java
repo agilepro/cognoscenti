@@ -288,10 +288,6 @@ public class CustomRole extends DOMFace implements NGRole
                 return;
             }
         }
-        if(newMember.getUserProfile() == null){
-            MicroProfileMgr.findOrCreateMicroProfile(newMember.getUniversalId(), newMember.getNamePart());
-            MicroProfileMgr.save();
-        }
         addPlayer(newMember);
     }
 

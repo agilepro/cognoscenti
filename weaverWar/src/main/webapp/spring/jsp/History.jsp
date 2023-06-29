@@ -36,7 +36,7 @@ Required parameters:
         AddressListEntry ale = new AddressListEntry(hist.getResponsible());
         JSONObject userObject = ale.getJSON();
         UserProfile responsible = ale.getUserProfile();
-        if(responsible!=null) {
+        if(responsible!=null && responsible.hasLoggedIn()) {
             userObject = responsible.getFullJSON();
         }
         else {

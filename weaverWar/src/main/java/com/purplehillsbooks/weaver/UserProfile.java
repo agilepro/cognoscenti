@@ -107,6 +107,18 @@ public class UserProfile implements UserRef
 
         //make sure that this profile has a license token
         getLicenseToken();
+        defaultName();
+    }
+    
+    private void defaultName() {
+        //give them a name if they don't have one.
+        if (name == null || name.length()==0) {
+            String email = getUniversalId();
+            int atPos = email.indexOf("@");
+            if (atPos>0) {
+                name = email.substring(0, atPos).toUpperCase();
+            }
+        }
     }
 
 
@@ -285,9 +297,17 @@ public class UserProfile implements UserRef
     }
 
     public void setName(String newName) {
-        name = newName;
+        if (newName == null || newName.length()==0) {
+            defaultName();
+        }
+        else {
+            name = newName;
+        }
     }
     public String getName() {
+        if (name==null || name.length()==0) {
+            defaultName();
+        }
         return name;
     }
 
@@ -935,5 +955,8 @@ public class UserProfile implements UserRef
     public void setFacilitator(boolean isNow) {
         isFacilitator = isNow;
     }
-    
+
+    public boolean hasLoggedIn() {
+        return (getLastLogin() > 100000);
+    }
 }

@@ -29,6 +29,7 @@ import java.util.List;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -100,13 +101,26 @@ public class AddressListEntry implements UserRef
      */
     public AddressListEntry(String addr) {
         if (addr==null) {
-            throw new ProgramLogicError("attempt to construct an AddressListEntry with a null value");
+            throw new ProgramLogicError("AddressListEntry: attempt to construct an instance with a null value");
         }
         if (addr.indexOf(LAQUO)>=0 || addr.indexOf('<')>=0) {
-            throw new ProgramLogicError("looks like a combined address value and should be using parseCombinedAddress method: "+addr);
+            throw new ProgramLogicError("AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "+addr);
         }
         rawAddress = UserManager.getCorrectedEmail(addr);
-        user = UserManager.getStaticUserManager().lookupUserByAnyId(addr);
+        user = UserManager.lookupUserByAnyId(addr);
+        
+        // now let construct a user profile if one does not exist
+        if (user==null) {
+            try {
+                user = UserManager.getStaticUserManager().createUserWithId(addr);
+                UserManager.getStaticUserManager().saveUserProfiles();
+            }
+            catch (Exception e) {
+                // this is highly improper, but I am trying to patch up the situation that 
+                // some users don't have keys.  Can't change signature to throws.
+                throw new RuntimeException("AddressListEntry Failure: can't create a profile for user: "+addr, e);
+            }
+        }
     }
 
     /**
@@ -133,10 +147,8 @@ public class AddressListEntry implements UserRef
     }
 
 
-    public AddressListEntry(UserProfile knownUser)
-    {
-        if (knownUser==null)
-        {
+    public AddressListEntry(UserProfile knownUser) {
+        if (knownUser==null) {
             throw new RuntimeException("Unable to construct AddressListEntry on a null user profile object");
         }
         user = knownUser;
@@ -366,9 +378,12 @@ public class AddressListEntry implements UserRef
         return retval;
     }
 
-    public UserProfile getUserProfile()
-    {
+    public UserProfile getUserProfile() {
         return user;
+    }
+    
+    public boolean hasLoggedIn() {
+        return (user!=null && user.getLastLogin() > 100000);
     }
 
 

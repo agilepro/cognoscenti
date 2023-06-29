@@ -109,8 +109,8 @@ public class ResponseRecord extends DOMFace
 
         AddressListEntry responder = new AddressListEntry(getUserId());
         UserProfile commenterProfile = responder.getUserProfile();
-        if (commenterProfile==null) {
-            System.out.println("DATA PROBLEM: proposal response came from a person without a profile ("+getUserId()+") ignoring");
+        if (commenterProfile==null || !commenterProfile.hasLoggedIn()) {
+            System.out.println("DATA PROBLEM: proposal response came from a person who has not logged in ("+getUserId()+") ignoring");
             setEmailSent(true);
             return;
         }

@@ -106,7 +106,10 @@ public class ErrorLog extends DOMFile {
 
     private int logsError(UserProfile up,String msg,Throwable ex, String errorURL,
             long nowTime, Cognoscenti cog) throws Exception {
-
+        if (ex==null) {
+            System.out.println("ERROR LOG: attempt to record null exception object");
+            return -1;
+        }
         String userName="GUEST";
 
         if (up!=null) {

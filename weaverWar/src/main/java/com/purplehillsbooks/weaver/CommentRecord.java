@@ -459,8 +459,8 @@ public class CommentRecord extends DOMFace {
             OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
 
             UserProfile commenterProfile = commenter.getUserProfile();
-            if (commenterProfile==null) {
-                System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person without a profile ("+getUser().getEmail()+") ignoring.");
+            if (commenterProfile==null || !commenter.hasLoggedIn()) {
+                System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person who has never logged in: ("+getUser().getEmail()+") ignoring.");
                 setEmailSent(true);
                 setCloseEmailSent(true);
                 return;
@@ -587,10 +587,7 @@ public class CommentRecord extends DOMFace {
     public JSONObject getJSON() throws Exception {
         AddressListEntry ale = getUser();
         UserProfile up = ale.getUserProfile();
-        String userKey = ale.getUniversalId();
-        if (up!=null) {
-            userKey = up.getKey();
-        }
+        String userKey = up.getKey();
         JSONObject commInfo = new JSONObject();
         commInfo.put("containerType",  ""+containerType);
         commInfo.put("containerID",  containerID);

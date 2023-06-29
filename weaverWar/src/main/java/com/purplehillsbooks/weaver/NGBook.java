@@ -1185,20 +1185,24 @@ public class NGBook extends ContainerCommon {
         if (userId==null || userId.length()==0) {
             return true;
         }
+        AddressListEntry ale = new AddressListEntry(userId);
+        String key = ale.getKey();
         if (userAccessMap==null || userMapTimeout < System.currentTimeMillis()) {
             SiteUsers userMap = getUserMap();
             setUserUpdateMap(userMap);
             userMapTimeout = System.currentTimeMillis() + 3_600_000;  //one hour in the future
         }
-        return !userAccessMap.contains(userId);
+        return !userAccessMap.contains(key);
     }
     
     private void setUserUpdateMap(SiteUsers userMap) throws Exception {
         
         Set<String> newMap = new HashSet<String>();
         for (String userId : userMap.getAllUserKeys()) {
-            if (userMap.hasProfile(userId) && !userMap.isReadOnly(userId)) {
-                newMap.add(userId);
+            AddressListEntry ale = new AddressListEntry(userId);
+            String key = ale.getKey();
+            if (userMap.hasProfile(key) && !userMap.isReadOnly(key)) {
+                newMap.add(key);
             }
         }
         userAccessMap = newMap;
