@@ -699,6 +699,7 @@ public class NGPageIndex {
     public void updateAllUsersFromWorkspace(NGWorkspace ngw) throws Exception {
         //now, get a complete listing of all users in the workspace
         //to optimize the background refresh of user stats
+        System.out.println("UPDATE ALL USERS: for workspace: "+ngw.getKey());
         WorkspaceStats wStats = new WorkspaceStats();
         wStats.gatherFromWorkspace(ngw);
         wStats.countUsers(ngw.getSite().getUserMap());

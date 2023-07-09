@@ -881,12 +881,15 @@ public class NGBook extends ContainerCommon {
         //we should figure out how to do this at a time when all the
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
+
         for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(this.getKey())) {
             NGWorkspace ngw = ngpi.getWorkspace();
             siteStats.gatherFromWorkspace(ngw);
             siteStats.numWorkspaces++;
         }
-        siteStats.countUsers(getUserMap());
+        SiteUsers siteUsers = getUserMap();
+        siteUsers.keepTheseUsers(siteStats.listAllUserProfiles());
+        siteStats.countUsers(siteUsers);
         saveStatsFile(siteStats);
         return siteStats;
     }
@@ -1189,46 +1192,33 @@ public class NGBook extends ContainerCommon {
         String key = ale.getKey();
         if (userAccessMap==null || userMapTimeout < System.currentTimeMillis()) {
             SiteUsers userMap = getUserMap();
-            setUserUpdateMap(userMap);
+            userAccessMap = userMap.listAccessibleUserKeys();
             userMapTimeout = System.currentTimeMillis() + 3_600_000;  //one hour in the future
         }
         return !userAccessMap.contains(key);
     }
     
-    private void setUserUpdateMap(SiteUsers userMap) throws Exception {
-        
-        Set<String> newMap = new HashSet<String>();
-        for (String userId : userMap.getAllUserKeys()) {
-            AddressListEntry ale = new AddressListEntry(userId);
-            String key = ale.getKey();
-            if (userMap.hasProfile(key) && !userMap.isReadOnly(key)) {
-                newMap.add(key);
-            }
-        }
-        userAccessMap = newMap;
-    }
     
+    private SiteUsers siteUsers = null;
     public SiteUsers getUserMap() throws Exception {
+        if (siteUsers != null) {
+            return siteUsers;
+        }
         File cogFolder = new File(siteFolder, ".cog");
-        SiteUsers siteUsers = SiteUsers.readUsers(cogFolder);
-        
-        List<String> allUsers = findAllUsersInSite();
-        siteUsers.keepTheseUsers(allUsers);
+        siteUsers = SiteUsers.readUsers(cogFolder);
         
         return siteUsers;
     }
     
     public SiteUsers updateUserMap(JSONObject delta) throws Exception {
         File cogFolder = new File(siteFolder, ".cog");
-        SiteUsers siteUsers = SiteUsers.readUsers(cogFolder);
+        SiteUsers siteUserTemp = SiteUsers.readUsers(cogFolder);
         
-        siteUsers.updateUserMap(delta);
+        siteUserTemp.updateUserMap(delta);
         
-        List<String> allUsers = findAllUsersInSite();
-        siteUsers.keepTheseUsers(allUsers);
-        
-        siteUsers.writeUsers(cogFolder);
-        return siteUsers;
+        siteUserTemp.writeUsers(cogFolder);
+        siteUsers = siteUserTemp;
+        return siteUserTemp;
     }
     
     private List<String> findAllUsersInSite() throws Exception{

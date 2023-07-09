@@ -433,7 +433,7 @@ public class Ledger {
                 chargeAmt = 10;
             }
             chargeMonth.amount =  chargeAmt;
-            SiteUsers siteUser = site.getUserMap();
+            // SiteUsers siteUser = site.getUserMap();
             
         }
     }

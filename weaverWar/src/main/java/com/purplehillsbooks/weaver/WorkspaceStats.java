@@ -1,6 +1,7 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.util.NameCounter;
@@ -42,17 +43,26 @@ public class WorkspaceStats {
         }
         for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
             numTopics++;
-            AddressListEntry modUser = topic.getModUser();
-            String uid = modUser.getUniversalId();
-            topicsPerUser.increment(uid);
+            String uid = topic.getScalar("modifiedby");
+            if (uid!=null && uid.length()>0) {
+                UserProfile uProf = assureProfile(uid);
+                topicsPerUser.increment(uProf.getUniversalId());
+            }
             countComments(topic.getComments());
         }
         for (AttachmentRecord doc : ngw.getAllAttachments()) {
             numDocs++;
             if (!doc.isDeleted()) {
-                AddressListEntry modUser = new AddressListEntry(doc.getModifiedBy());
-                String uid = modUser.getUniversalId();
-                docsPerUser.increment(uid);
+                String modifier = doc.getModifiedBy();
+                
+                // strangely, it appears that doc modified by was added in Aug 2019
+                // and so documents before that have it missing and no information
+                // about who loaded the file into the workspace.  
+                if (modifier!=null && modifier.length()>0) {
+                    UserProfile uProf = assureProfile(modifier);
+                    String uid = uProf.getUniversalId();
+                    docsPerUser.increment(uid);
+                }
             }
             int version = doc.getVersion();
             for (AttachmentVersion ver : doc.getVersions(ngw)) {
@@ -67,9 +77,10 @@ public class WorkspaceStats {
         }
         for (MeetingRecord meet : ngw.getMeetings()) {
             numMeetings++;
-            AddressListEntry modUser = new AddressListEntry(meet.getOwner());
-            String owner = modUser.getUniversalId();
+            String owner = meet.getOwner();
             if (owner!=null && owner.length()>0) {
+                UserProfile uProf = assureProfile(owner);
+                owner = uProf.getUniversalId();
                 meetingsPerUser.increment(owner);
             }
             for (AgendaItem ai : meet.getSortedAgendaItems()) {
@@ -126,7 +137,37 @@ public class WorkspaceStats {
         }
     }
     
+    
+    private UserProfile assureProfile(String uid) throws Exception {
+        UserProfile uProf = UserManager.lookupUserByAnyId(uid);
+        if (uProf != null) {
+            return uProf;
+        }
+        
+        int atPos = uid.indexOf("@");
+        if (atPos>=0) {
+            System.out.println("SCANNING WORKSPACE: user with no profile, creating one: "+uid);
+            uProf = UserManager.getStaticUserManager().createUserWithId(uid);
+            UserManager.getStaticUserManager().saveUserProfiles();
+        }
+        else {
+            System.out.println("SCANNING WORKSPACE: user with no profile, but not email!: "+uid);
+            throw new Exception("SCANNING WORKSPACE: user with no profile, but not email!: "+uid);
+        }
+        return uProf;
+    }
 
+    
+    public List<UserProfile> listAllUserProfiles() throws Exception {
+        List<UserProfile> ret = new ArrayList<>();
+        for (String uid : anythingPerUser.keySet()) {
+            UserProfile uProf = assureProfile(uid);
+            ret.add(uProf);
+        }
+        return ret;
+    }
+    
+    
     /**
      * determine readUserCount and editUserCount
      */
@@ -134,11 +175,11 @@ public class WorkspaceStats {
         readUserCount = 0;
         editUserCount = 0;
         for (String uid : anythingPerUser.keySet()) {
-            AddressListEntry ale = new AddressListEntry(uid);
-            if (ale.user == null) {
+            UserProfile uProf = UserManager.lookupUserByAnyId(uid);
+            if (uProf == null) {
                 readUserCount++;
             }
-            else if (userMap.isReadOnly(ale.getKey())) {
+            else if (userMap.isReadOnly(uProf)) {
                 readUserCount++;
             }
             else {
@@ -150,6 +191,8 @@ public class WorkspaceStats {
     private void countComments(List<CommentRecord> comments) throws Exception {
         for (CommentRecord comm : comments) {
             String ownerId = comm.getUser().getUniversalId();
+            UserProfile uProf = assureProfile(ownerId);
+            ownerId = uProf.getUniversalId();
             if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 numComments++;
                 commentsPerUser.increment(ownerId);

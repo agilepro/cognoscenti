@@ -1,8 +1,14 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -18,8 +24,10 @@ import com.purplehillsbooks.json.JSONObject;
  * Then is a list of charges made.  this includes all the details necessary to 
  */
 public class SiteUsers {
+    
+    public File folder;
 
-    JSONObject kernel;
+    private JSONObject kernel;
     
     private SiteUsers(JSONObject jo) {
         kernel = jo;
@@ -30,6 +38,8 @@ public class SiteUsers {
         File usersFilePath = new File(folder, "users.json");
         JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
         SiteUsers su = new SiteUsers(jo);
+        su.folder = folder;
+        System.out.println("Read File, now checking structure of SiteUsers: "+folder.getAbsolutePath());
         su.patchUpUserKeys();
         return su;
     }
@@ -46,18 +56,24 @@ public class SiteUsers {
      * for all the users so they have keys.
      */
     private void patchUpUserKeys() throws Exception {
+        System.out.println("SITEUSERS: patched kernel BEFORE");
+        showKernel(kernel);
         JSONObject newKernel = new JSONObject();
         for (String key : kernel.keySet()) {
             JSONObject record = kernel.getJSONObject(key);
             UserProfile user = UserManager.lookupUserByAnyId(key);
             if (user == null) {
-                user = UserManager.getStaticUserManager().createUserWithId(key);
-                UserManager.getStaticUserManager().saveUserProfiles();
-                key = user.getKey();
+                continue;
             }
+            key = user.getKey();
+            record.put("hasProfile", user.hasLoggedIn());
+            record.put("info", user.getFullJSON());
+            record.put("lastAccess", user.getLastLogin());
             newKernel.put(key, record);
         }
         kernel = newKernel;
+        System.out.println("SITEUSERS: patched kernel AFTER");
+        showKernel(kernel);
     }
     
     public List<String> getAllUserKeys() {
@@ -67,15 +83,36 @@ public class SiteUsers {
         }
         return ret;
     }
-    public JSONObject getUser(String userKey) throws Exception {
-        AddressListEntry ale = new AddressListEntry(userKey);
-        String key = ale.getKey();
-        return kernel.requireJSONObject(key);
-    }
-    public JSONObject getJson() {
-        return kernel;
+    
+    public Set<String> listAccessibleUserKeys() throws Exception {
+        Set<String> newMap = new HashSet<String>();
+        for (String userId : kernel.sortedKeySet()) {
+            UserProfile uProf = UserManager.lookupUserByAnyId(userId);
+            if (uProf==null) {
+                // a user without a profile can not update
+                continue;
+            }
+            if (!isReadOnly(uProf)) {
+                newMap.add(uProf.getKey());
+            }
+        }
+        return newMap;
     }
     
+    
+    public JSONObject getJson() throws Exception {
+        //File usersFilePath = new File(folder, "users.json");
+        //JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
+        System.out.println("SITEUSERS: requested getJson() "+folder.getAbsolutePath());
+        showKernel(kernel);
+        return UtilityMethods.deepCopy(kernel);
+    }
+    private void showKernel(JSONObject jo) throws Exception {
+        Writer w = new PrintWriter(System.out);
+        jo.write(w, 4, 2);
+        w.flush();
+        System.out.println("\n------------------------------------");
+    }
     
     public int countUpdateUsers() throws Exception {
         int count = 0;
@@ -98,77 +135,37 @@ public class SiteUsers {
         return count;
     }
     
-    public boolean isReadOnly(String userKey) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
-        UserProfile uProf = UserManager.getUserProfileByKey(userKey);
+    public boolean isReadOnly(UserProfile uProf) throws Exception {
+        //UserProfile uProf = UserManager.lookupUserByAnyId(userKey);
         if (uProf == null || !uProf.hasLoggedIn()) {
             return true;
         }
+        JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
         return userInfo.optBoolean("readOnly", false);
     }
-    public void setReadOnly(String userKey, boolean readOnly) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
+    public void setReadOnly(UserProfile uProf, boolean readOnly) throws Exception {
+        JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
         userInfo.put("readOnly", readOnly);
     }
     
-    
-    public boolean hasProfile(String userKey) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
-        return userInfo.optBoolean("hasProfile", false);
-    }
-    public void setHasProfile(String userKey, boolean hasIt) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
-        userInfo.put("hasProfile", hasIt);
-    }
-    
-    
-    public String getName(String userKey) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
-        return userInfo.getString("name");
-    }
-    public void setName(String userKey, String userName) throws Exception {
-        JSONObject userInfo = kernel.requireJSONObject(userKey);
-        userInfo.put("name", userName);
-    }
-    
-    
-    public void eliminateUsersWithoutProfiles() throws Exception {
-        for (String key : kernel.keySet()) {
-            UserProfile uProf = UserManager.lookupUserByAnyId(key);
-            setHasProfile(key, (uProf != null));
-        }
-    }
-    
-    public void keepTheseUsers(List<String> allUsers) throws Exception {
+    public void keepTheseUsers(List<UserProfile> allUsers) throws Exception {
+        int beforeSize = kernel.length();
         JSONObject newKernel = new JSONObject();
-        for (String id : allUsers) {
-            JSONObject userData = null;
-            if (kernel.has(id)) {
-                userData = kernel.getJSONObject(id);
-            }
-            else {
-                userData = new JSONObject();
-            }
-            AddressListEntry ale = new AddressListEntry(id);
-            UserProfile uProf = ale.getUserProfile();
-            if (uProf == null || !uProf.hasLoggedIn()) {
-                userData.put("email", id);
-                userData.put("access", 0);
-                userData.put("hasProfile",  false);
-                userData.put("info", ale.getJSON());
-            }
-            else {
-                userData.put("email", uProf.getPreferredEmail());
-                userData.put("access", uProf.getLastLogin());
-                userData.put("hasProfile",  true);
-                if (!userData.has("name")) {
-                    userData.put("name", uProf.getName());
-                }
-                userData.put("info", uProf.getFullJSON());
-            }
+        for (UserProfile uProf : allUsers) {
+            JSONObject userData = kernel.requireJSONObject(uProf.getKey());
             
-            newKernel.put(id, userData);
+            userData.put("email", uProf.getPreferredEmail());
+            userData.put("lastAccess", uProf.getLastLogin());
+            userData.put("hasProfile",  true);
+            if (!userData.has("name")) {
+                userData.put("name", uProf.getName());
+            }
+            userData.put("info", uProf.getFullJSON());
+            
+            newKernel.put(uProf.getKey(), userData);
         }
+        
+        System.out.println("KEEP USERS RESULT: entries changed from "+beforeSize+" to "+newKernel.length());
         kernel = newKernel;
     }
     
@@ -201,5 +198,6 @@ public class SiteUsers {
         }
 
     }
-
+    
+  
 }

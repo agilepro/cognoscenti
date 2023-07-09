@@ -10,26 +10,7 @@
     NGBook site = cog.getSiteByIdOrFail(siteId);
 
     SiteUsers userMap = site.getUserMap();
-    userMap.eliminateUsersWithoutProfiles();
     JSONObject userMapObj = userMap.getJson();
-
-    for (String key : userMapObj.keySet()) {
-        JSONObject userObj = userMapObj.getJSONObject(key);
-        if (userObj.getBoolean("hasProfile")) {
-            UserProfile upt = UserManager.lookupUserByAnyId(key);
-            if (upt==null) {
-                // userObj.put("hasProfile", false);
-                throw new Exception("user profile should exist");
-            }
-        }
-        else { 
-            UserProfile upt = UserManager.lookupUserByAnyId(key);
-            if (upt!=null) {
-                // userObj.put("hasProfile", false);
-                throw new Exception("user profile should NOT exist");
-            }
-        }
-    }
 
 
 %>
@@ -39,7 +20,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List of Users in Site");
-    $scope.userMap = <%userMap.getJson().write(out,2,4);%>;
+    $scope.userMap = <%userMapObj.write(out,2,4);%>;
     $scope.siteSettings = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
@@ -54,28 +35,6 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.replaceUsers = function() {
-        if (!$scope.replaceConfirm) {
-            alert("If you want to replace the email ids, please check the confirm box");
-            return;
-        }
-        var postObj = {};
-        postObj.sourceUser = $scope.sourceUser
-        postObj.destUser = $scope.destUser
-        var postdata = angular.toJson(postObj);
-        $scope.showError=false;
-        $http.post("replaceUsers.json" ,postdata)
-        .success( function(data) {
-            console.log(JSON.stringify(data));
-            alert("operation changed "+data.updated+" places.");
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
-    $scope.addUser = function() {
-        window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent($scope.newEmail);
-    }
     $scope.visitUser = function(email) {
         window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent(email);
     }
@@ -84,7 +43,7 @@ app.controller('myCtrl', function($scope, $http) {
         var count = 0;
         var keys = Object.keys($scope.userMap);
         keys.forEach( function(key) {
-            if (!$scope.userMap[key].readOnly && $scope.userMap[key].hasProfile) {
+            if (!$scope.userMap[key].readOnly && $scope.userMap[key].lastAccess > 100000) {
                 count++;
             }
         });
@@ -94,7 +53,7 @@ app.controller('myCtrl', function($scope, $http) {
         var count = 0;
         var keys = Object.keys($scope.userMap);
         keys.forEach( function(key) {
-            if ($scope.userMap[key].readOnly || !$scope.userMap[key].hasProfile) {
+            if ($scope.userMap[key].readOnly || !$scope.userMap[key].lastAccess > 100000) {
                 count++;
             }
         });
@@ -121,7 +80,20 @@ app.controller('myCtrl', function($scope, $http) {
             }
         });
         return finalList;
-    }    
+    }
+    $scope.recalcStats = function() {
+        console.log("recalcStats");
+        var getURL = "SiteStatistics.json?recalc=yes";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.stats = data.stats;
+            window.location.reload(false);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -146,6 +118,8 @@ app.filter('encode', function() {
               href="SiteStats.htm">Site Statistics</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteLedger.htm">Site Charges</a></li>
+          <li role="presentation"><a role="menuitem"
+              ng-click="recalcStats()">Recalculate</a></li>
         </ul>
       </span>
     </div>
@@ -163,13 +137,15 @@ app.filter('encode', function() {
   This site has {{updateCount()}} / {{siteSettings.editUserLimit}} users who can update, 
   and {{readOnlyCount()}} / {{siteSettings.viewUserLimit}} read-only users.
   <div ng-show="updateCount()>siteSettings.editUserLimit" class="guideVocal">
-    <b>Site has too many full update users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{updateCount()}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
+    <b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{updateCount()}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
   </div>
   <div ng-show="readOnlyCount()>siteSettings.viewUserLimit" class="guideVocal">
-    <b>Site has too many read-only view users.</b>  You are allowed {{siteSettings.viewUserLimit}} in the site who can see the site without editing the site, and you have {{readOnlyCount()}}.  You will not be able to add any new view-only users to the site until you reduce the number of active edit users or you change your payment plan.
+    <b>Site has too many inactive users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount()}}.<br/>
+    An inactive user is either a user set to read-only access, or a user who has never logged in to the site directly.   You will not be able to add any new email addresses to the site until you reduce the number of inactive users or you change your payment plan.
+    <hr/>
+    To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.
   </div>
 </div>
-{{filter}}
     <div>
     <table class="table">
       <tr>
@@ -189,9 +165,10 @@ app.filter('encode', function() {
         </td>
         <td><span ng-show="value.hasProfile">{{value.info.name}}</span></td>
         <td>{{value.info.uid}}</td>
-        <td><span ng-show="!value.hasProfile" style="color:lightblue">No Login</span>
-            <span ng-show="!value.readOnly && value.hasProfile"><b>Update</b></span>
-            <span ng-show="value.readOnly && value.hasProfile" style="color:grey">Read Only</span>
+        <td>
+            <span ng-show="value.readOnly" style="color:grey">Read Only</span>
+            <span ng-show="!value.readOnly && value.lastAccess < 100000" style="color:lightblue">No Login</span>
+            <span ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
         </td>
         <td><span ng-show="value.info.lastLogin>0">{{value.info.lastLogin|cdate}}</span></td>
         <td>{{value.count}}</td>

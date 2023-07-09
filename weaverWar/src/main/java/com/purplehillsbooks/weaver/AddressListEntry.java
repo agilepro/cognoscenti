@@ -29,7 +29,6 @@ import java.util.List;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -111,6 +110,11 @@ public class AddressListEntry implements UserRef
         
         // now let construct a user profile if one does not exist
         if (user==null) {
+            /*
+            int atPos = addr.indexOf("@");
+            if (atPos < 0) {
+                throw new RuntimeException("Attempt to create a user with a KEY value that does not already exist: "+ addr);
+            }
             try {
                 user = UserManager.getStaticUserManager().createUserWithId(addr);
                 UserManager.getStaticUserManager().saveUserProfiles();
@@ -120,6 +124,7 @@ public class AddressListEntry implements UserRef
                 // some users don't have keys.  Can't change signature to throws.
                 throw new RuntimeException("AddressListEntry Failure: can't create a profile for user: "+addr, e);
             }
+            */
         }
     }
 

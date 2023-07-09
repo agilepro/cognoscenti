@@ -288,7 +288,7 @@ myApp.filter('wiki', function() {
 
 console.log("LOADING WRAP LEARNING");
 function setUpLearningMethods($scope, $modal, $http) {
-    console.log("setUpLearningMethods");
+    console.log("setUpLearningMethods for <%=loggedKey%>");
     $scope.learningModes = <% learningModes.write(out, 2, 2); %>;
     $scope.learningMode = {done: true, mode:"standard"};
     

@@ -134,6 +134,16 @@ public class UserManager
 
         for (int i=0; i<users.length(); i++) {
             UserProfile up = new UserProfile(users.getJSONObject(i));
+            String uid = up.getUniversalId();
+            if (uid==null) {
+                System.out.println("USER ELIMINATION: user ("+up.getKey()+") does not have any universal id");
+                continue;
+            }
+            int atPos = uid.indexOf("@");
+            if (atPos<0) {
+                System.out.println("USER ELIMINATION: user ("+up.getKey()+") universal id is not email: "+uid);
+                continue;
+            }
             String key = up.getKey();
             UserProfile other = keyProfMap.get(key);
             if (other!=null) {
@@ -180,7 +190,7 @@ public class UserManager
             }
             if (up.getAllIds().size()==0) {
                 //there are no more unique global ids, so drop this one the floor.
-                System.out.println("USER MANAGER REMOVING USER COMPLETELY: "+up.getKey());
+                System.out.println("USER ELIMINATION: no email id at all: "+up.getKey());
                 continue;
             }
             //we get here it means that this has unique key and unique global ids.
@@ -348,6 +358,7 @@ public class UserManager
     }
 
     public synchronized UserProfile createUserWithId(String newId) throws Exception {
+        System.out.println("GLOBAL USERS: adding a user with id: "+newId);
         if (lookupUserByAnyId(newId)!=null) {
             throw new ProgramLogicError("Can not create a new user profile using an address that some other profile already has: "+newId);
         }

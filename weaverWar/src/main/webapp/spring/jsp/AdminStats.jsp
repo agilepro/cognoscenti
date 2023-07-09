@@ -45,6 +45,7 @@
     UserManager userManager = UserManager.getStaticUserManager();
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
+    wStats.countUsers(ngw.getSite().getUserMap());
     JSONObject statsObj = wStats.getJSON();
     
     JSONObject allUsers = statsObj.getJSONObject("anythingPerUser");
@@ -55,7 +56,11 @@
             accessStatus.put(aUser, "No Profile");
             continue;
         }
-        if (site.userReadOnly(aUser)) {
+        
+        if (ar.isSuperAdmin(aUserProf.getKey())) {
+            accessStatus.put(aUser, "Super");
+        }
+        else if (site.userReadOnly(aUser)) {
             accessStatus.put(aUser, "Site R/O");
         }
         else if (ngw.canUpdateWorkspace(aUserProf)) {

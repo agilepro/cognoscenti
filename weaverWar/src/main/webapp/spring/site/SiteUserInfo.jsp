@@ -24,7 +24,6 @@
     }
     
     SiteUsers userMap = site.getUserMap();
-    userMap.eliminateUsersWithoutProfiles();
     JSONObject userMapEntry = userMap.getJson().requireJSONObject(userKey);
     int editUserCount = userMap.countUpdateUsers();
     int readUserCount = userMap.countReadOnlyUsers();
@@ -185,7 +184,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $http.post("SiteUserMap.json" ,postdata)
         .success( function(data) {
             console.log("RESPONSE:", data);
-            alert("Site User Map has been updated for "+$scope.userKey);
             window.location.reload(false);
         })
         .error( function(data, status, headers, config) {
@@ -347,7 +345,7 @@ app.filter('encode', function() {
     padding: 0px;
 }
 .workspaceButton:hover {
-    background-color: lightskyblue;
+    background-color: lightskyblue; 
 }
 </style>
 
@@ -381,15 +379,26 @@ app.filter('encode', function() {
       <tr>
         <td class="labelColumn">Permission</td>
         <td>
-            <span ng-hide="userMapEntry.readOnly || !userMapEntry.hasProfile">User has update access
-            <button ng-click="changeAccess(true)" class="btn btn-sm btn-primary btn-raised">
-                Make Read Only</button> 
-            </span>
-            <span ng-show="userMapEntry.readOnly || !userMapEntry.hasProfile">User has read-only access
-            <button ng-click="changeAccess(false)" class="btn btn-sm btn-primary btn-raised">
-                Allow Updates</button> ({{editUserCount}} / {{siteSettings.editUserLimit}})
-            </span>
-            <span> update: ({{editUserCount}} / {{siteSettings.editUserLimit}}) readonly: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </span>
+            <div ng-hide="userMapEntry.readOnly">
+              <div>Allowed to update in this site.</div>
+              <div ng-show="userMapEntry.lastAccess < 1000000">
+                This user has never logged in, and will be counted as inactive until they do.</div>
+              <div>
+                <button class="btn btn-sm">
+                Allow Updates</button>
+                <button ng-click="changeAccess(true)" class="btn btn-sm btn-primary btn-raised">
+                Make Read Only</button>
+              </div>
+            </div>
+            <div ng-show="userMapEntry.readOnly">
+              <div>User set for read-only access</div>
+              <div><button ng-click="changeAccess(false)" class="btn btn-sm btn-primary btn-raised">
+                Allow Updates</button>
+                <button class="btn btn-sm">
+                Make Read Only</button>
+              </div>
+            </div>
+            <div> Site Update Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Read-Only users: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
         </td>
       </tr>
       <tr>

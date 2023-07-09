@@ -44,6 +44,7 @@
 
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
+    wStats.countUsers(ngw.getSite().getUserMap());
 
     boolean foundInRecents = false;
 
