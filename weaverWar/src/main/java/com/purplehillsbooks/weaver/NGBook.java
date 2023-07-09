@@ -151,29 +151,6 @@ public class NGBook extends ContainerCommon {
         return 13;
     }
 
-    /*
-    private void moveOldMembersToRole() throws Exception {
-        // in case there is a pmembers tag around, get rid of that.
-        // these are just discarded, and they have to request again
-        DOMFace pmembers = getChild("pmembers", DOMFace.class);
-        if (pmembers != null) {
-            removeChild(pmembers);
-        }
-
-        DOMFace members = getChild("members", DOMFace.class);
-        if (members == null) {
-            return;
-        }
-        for (String id : members.getVector("member")) {
-            AddressListEntry user = AddressListEntry.newEntryFromStorage(id);
-            executiveRole.addPlayer(user);
-            ownerRole.addPlayer(user);
-        }
-        // now get rid of it so it never is heard from again.
-        removeChild(members);
-
-    }
-    */
 
     public static NGBook readSiteByKey(String key) throws Exception {
         if (keyToSite == null) {
@@ -887,8 +864,15 @@ public class NGBook extends ContainerCommon {
             siteStats.gatherFromWorkspace(ngw);
             siteStats.numWorkspaces++;
         }
+        
+        // Update the SiteUsers with this information, removing all the entries
+        // that do not match to a user with a profile
         SiteUsers siteUsers = getUserMap();
         siteUsers.keepTheseUsers(siteStats.listAllUserProfiles());
+        File cogFolder = new File(siteFolder, ".cog");
+        siteUsers.writeUsers(cogFolder);
+        
+        // Now with updated site users, count the users active and inactive
         siteStats.countUsers(siteUsers);
         saveStatsFile(siteStats);
         return siteStats;
@@ -1238,52 +1222,7 @@ public class NGBook extends ContainerCommon {
         return pop;
     }
     
-    /*
-    private void recalcUserStats(SiteUsers userMap) throws Exception{
-                
-        //get then settings from Site
-        JSONObject newUserMap = new JSONObject();
-        setUserEntriesForContainer(newUserMap, this);
-        
-        //now update for the most recent settings from workspace
-        List<NGPageIndex> allWorkspaces = cog.getNonDelWorkspacesInSite(key);
-        for (NGPageIndex ngpi : allWorkspaces) {
-            NGWorkspace ngw = ngpi.getWorkspace();
-            setUserEntriesForContainer(newUserMap, ngw);
-        }
-        
-        userMap.updateUserMap(newUserMap);
-    }
-    */
-    
-    /*
-    private void setUserEntriesForContainer(JSONObject userMap, NGContainer ngw) throws Exception {
-        String wsKey = ngw.getKey();
-        for (CustomRole ngr : ngw.getAllRoles()) {
-            for (AddressListEntry ale : ngr.getDirectPlayers()) {
-                String uid = ale.getKey();
-    
-                JSONObject userInfo = userMap.requireJSONObject(uid);
-                userInfo.put("count", userInfo.optInt("count", 0)+1);
-                UserProfile user = ale.getUserProfile();
-                if (user==null) {
-                    userInfo.put("info", ale.getJSON());
-                    userInfo.put("hasProfile", false);
-                }
-                else {
-                    userInfo.put("info", user.getFullJSON());
-                    userInfo.put("hasProfile", true);
-                }
-    
-                JSONObject wsMap = userInfo.requireJSONObject("wsMap");
-                if (!wsMap.has(wsKey)) {
-                    wsMap.put(wsKey, ngw.getFullName());
-                }
-                userInfo.put("wscount", wsMap.length());
-            }
-        }
-    }
-    */
+
     
     public boolean isSiteOwner(UserRef user) throws Exception {
         return this.primaryPermission(user);

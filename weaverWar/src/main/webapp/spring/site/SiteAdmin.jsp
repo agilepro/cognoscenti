@@ -101,6 +101,10 @@ app.controller('myCtrl', function($scope, $http) {
               href="SiteLedger.htm">Site Charges</a></li>
           <li role="presentation"><a role="menuitem" 
               href="TemplateEdit.htm">Template Edit</a></li>
+          <% if (ar.isSuperAdmin()) { %>
+          <li role="presentation" style="background-color:yellow"><a role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+          <% } %>
         </ul>
       </span>
     </div>

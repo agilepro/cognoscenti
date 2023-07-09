@@ -46,7 +46,9 @@ public class WorkspaceStats {
             String uid = topic.getScalar("modifiedby");
             if (uid!=null && uid.length()>0) {
                 UserProfile uProf = assureProfile(uid);
-                topicsPerUser.increment(uProf.getUniversalId());
+                if (uProf != null) {
+                    topicsPerUser.increment(uProf.getUniversalId());
+                }
             }
             countComments(topic.getComments());
         }
@@ -152,7 +154,7 @@ public class WorkspaceStats {
         }
         else {
             System.out.println("SCANNING WORKSPACE: user with no profile, but not email!: "+uid);
-            throw new Exception("SCANNING WORKSPACE: user with no profile, but not email!: "+uid);
+            return null;
         }
         return uProf;
     }
@@ -162,7 +164,9 @@ public class WorkspaceStats {
         List<UserProfile> ret = new ArrayList<>();
         for (String uid : anythingPerUser.keySet()) {
             UserProfile uProf = assureProfile(uid);
-            ret.add(uProf);
+            if (uProf != null) {
+                ret.add(uProf);
+            }
         }
         return ret;
     }
@@ -192,6 +196,9 @@ public class WorkspaceStats {
         for (CommentRecord comm : comments) {
             String ownerId = comm.getUser().getUniversalId();
             UserProfile uProf = assureProfile(ownerId);
+            if (uProf==null) {
+                continue;
+            }
             ownerId = uProf.getUniversalId();
             if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 numComments++;

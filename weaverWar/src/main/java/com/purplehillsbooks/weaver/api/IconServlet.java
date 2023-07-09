@@ -74,18 +74,21 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
         
         //if it looks like an email address, then try to look up the user
         UserProfile user = null;
-        int atPos = fileName.indexOf("@");
-        if (atPos>0 && fileName.length()>6) {
-            //strip the .jpg off
-            String userEmail = fileName.substring(0,fileName.length()-4);
-            user = UserManager.getStaticUserManager().lookupUserByAnyId(userEmail);
-            if (user!=null) {
-                fileName = user.getImage();
-                //use first character of the name instead of email address
-                String userName = user.getName();
-                if (userName!=null && userName.length()>0) {
-                    firstChar = userName.substring(0,1).toLowerCase();
-                }
+        //strip the .jpg off
+        String userId = fileName.substring(0,fileName.length()-4);
+        user = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
+        if (user!=null) {
+            fileName = user.getImage();
+            
+            
+            String userName = user.getName();
+            if (userName!=null && userName.length()>0) {
+                //use first character of the name if it is available
+                firstChar = userName.substring(0,1).toLowerCase();
+            }
+            else if (user.getUniversalId()!=null) {
+                //use first character of the email address if it is available
+                firstChar = user.getUniversalId().substring(0,1).toLowerCase();
             }
         }
         

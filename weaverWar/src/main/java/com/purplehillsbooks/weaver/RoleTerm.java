@@ -91,10 +91,16 @@ public class RoleTerm extends DOMFace {
     public void removePlayer(AddressListEntry oldMember) throws Exception {
         String whichId = oldMember.getStorageRepresentation();
         UserProfile up = oldMember.getUserProfile();
-        if (up!=null) {
-            whichId = CustomRole.whichIDForUserOfAddressList(up, getDirectPlayers());
+        List<Element> children = getNamedChildrenVector("players");
+        for (Element child : children) {
+            String childVal = DOMUtils.textValueOf(child, false);
+            if (childVal.equalsIgnoreCase(whichId)) {
+                fEle.removeChild(child);
+            }
+            else if (up != null && up.hasAnyId(childVal)) {
+                fEle.removeChild(child);
+            }
         }
-        removeVectorValue("players", whichId);
     }
     public void removePlayerCompletely(UserRef user) throws Exception {
         List<String> oldPlayers = getVector("players");

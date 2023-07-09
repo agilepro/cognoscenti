@@ -39,26 +39,23 @@ app.controller('myCtrl', function($scope, $http) {
         window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent(email);
     }
     
-    $scope.updateCount = function() {
-        var count = 0;
+    $scope.recountUsers = function() {
+        var activeCount = 0;
+        var inactiveCount = 0;
         var keys = Object.keys($scope.userMap);
         keys.forEach( function(key) {
             if (!$scope.userMap[key].readOnly && $scope.userMap[key].lastAccess > 100000) {
-                count++;
+                activeCount++;
+            }
+            else {
+                inactiveCount++;
             }
         });
-        return count;
+        $scope.activeUserCount = activeCount;
+        $scope.readOnlyCount = inactiveCount;
     }
-    $scope.readOnlyCount = function() {
-        var count = 0;
-        var keys = Object.keys($scope.userMap);
-        keys.forEach( function(key) {
-            if ($scope.userMap[key].readOnly || !$scope.userMap[key].lastAccess > 100000) {
-                count++;
-            }
-        });
-        return count;
-    }
+    $scope.recountUsers();
+    
     $scope.findUsers = function() {
         var keys = Object.keys($scope.userMap);
         var finalList = [];
@@ -72,11 +69,16 @@ app.controller('myCtrl', function($scope, $http) {
         console.log("FILTER LIST", filterlist);
         keys.forEach( function(key) {
             var aUser = $scope.userMap[key];
-            if (containsOne(aUser.info.name, filterlist)) {
-                finalList.push(aUser);
-            }
-            else if (containsOne(aUser.info.uid, filterlist)) {
-                finalList.push(aUser);
+            if (aUser.info) {
+                if (containsOne(aUser.info.name, filterlist)) {
+                    finalList.push(aUser);
+                }
+                else if (containsOne(aUser.info.uid, filterlist)) {
+                    finalList.push(aUser);
+                }
+                else if (containsOne(aUser.info.key, filterlist)) {
+                    finalList.push(aUser);
+                }
             }
         });
         return finalList;
@@ -88,6 +90,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.get(getURL)
         .success( function(data) {
             $scope.stats = data.stats;
+            $scope.recountUsers();
             window.location.reload(false);
         })
         .error( function(data, status, headers, config) {
@@ -120,6 +123,10 @@ app.filter('encode', function() {
               href="SiteLedger.htm">Site Charges</a></li>
           <li role="presentation"><a role="menuitem"
               ng-click="recalcStats()">Recalculate</a></li>
+          <% if (ar.isSuperAdmin()) { %>
+          <li role="presentation" style="background-color:yellow"><a role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+          <% } %>
         </ul>
       </span>
     </div>
@@ -134,13 +141,13 @@ app.filter('encode', function() {
 </style>
 
 <div ng-hide="addUserPanel">
-  This site has {{updateCount()}} / {{siteSettings.editUserLimit}} users who can update, 
-  and {{readOnlyCount()}} / {{siteSettings.viewUserLimit}} read-only users.
-  <div ng-show="updateCount()>siteSettings.editUserLimit" class="guideVocal">
-    <b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{updateCount()}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
+  This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, 
+  and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.
+  <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
+    <b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
   </div>
-  <div ng-show="readOnlyCount()>siteSettings.viewUserLimit" class="guideVocal">
-    <b>Site has too many inactive users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount()}}.<br/>
+  <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
+    <b>Site has too many inactive users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>
     An inactive user is either a user set to read-only access, or a user who has never logged in to the site directly.   You will not be able to add any new email addresses to the site until you reduce the number of inactive users or you change your payment plan.
     <hr/>
     To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.
@@ -163,7 +170,7 @@ app.filter('encode', function() {
             <img class="img-circle" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
                  style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
         </td>
-        <td><span ng-show="value.hasProfile">{{value.info.name}}</span></td>
+        <td>{{value.info.name}}</td>
         <td>{{value.info.uid}}</td>
         <td>
             <span ng-show="value.readOnly" style="color:grey">Read Only</span>

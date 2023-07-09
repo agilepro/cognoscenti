@@ -81,7 +81,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         .success( function(data) {
             $scope.stats = data.stats;
             AllPeople.clearCache($scope.siteInfo.key);
-        
+            window.location.reload(false);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -134,6 +134,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
               href="SiteLedger.htm">Site Charges</a></li>
           <li role="presentation"><a role="menuitem"
               ng-click="recalcStats()">Recalculate</a></li>
+          <% if (ar.isSuperAdmin()) { %>
+          <li role="presentation" style="background-color:yellow"><a role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+          <% } %>
         </ul>
       </span>
     </div>

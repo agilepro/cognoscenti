@@ -679,7 +679,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople, $
         // the preferred email address in the profile, and in that case,
         // you will never fine this address in the list.
         // For now, manual setting of attended ONLY
-        if ($scope.singleTryToAdd) {
+        if ($scope.singleTryToAdd  && !$scope.workspaceInfo.frozen && !$scope.workspaceInfo.deleted) {
             if ($scope.meeting.state==2) {
                 var foundMe = false;
                 $scope.meeting.attended.forEach( function(item) {

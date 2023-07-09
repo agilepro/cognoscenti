@@ -56,14 +56,16 @@ public class SiteUsers {
      * for all the users so they have keys.
      */
     private void patchUpUserKeys() throws Exception {
-        System.out.println("SITEUSERS: patched kernel BEFORE");
-        showKernel(kernel);
         JSONObject newKernel = new JSONObject();
         for (String key : kernel.keySet()) {
             JSONObject record = kernel.getJSONObject(key);
             UserProfile user = UserManager.lookupUserByAnyId(key);
             if (user == null) {
                 continue;
+            }
+            if (!key.equals(user.getKey())) {
+                // this should disappear after all the sites are converted
+                System.out.println("     moving site user entry from ("+key+") to ("+user.getKey()+")");
             }
             key = user.getKey();
             record.put("hasProfile", user.hasLoggedIn());
@@ -72,8 +74,6 @@ public class SiteUsers {
             newKernel.put(key, record);
         }
         kernel = newKernel;
-        System.out.println("SITEUSERS: patched kernel AFTER");
-        showKernel(kernel);
     }
     
     public List<String> getAllUserKeys() {
@@ -101,10 +101,6 @@ public class SiteUsers {
     
     
     public JSONObject getJson() throws Exception {
-        //File usersFilePath = new File(folder, "users.json");
-        //JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
-        System.out.println("SITEUSERS: requested getJson() "+folder.getAbsolutePath());
-        showKernel(kernel);
         return UtilityMethods.deepCopy(kernel);
     }
     private void showKernel(JSONObject jo) throws Exception {

@@ -23,7 +23,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     $scope.theSite = <%theSite.getConfigJSON().write(out,2,4);%>;
-    $scope.siteStats = <%theSite.getStatsJSON().write(out,2,4);%>;
+    $scope.siteStats = <%theSite.getStatsJSON(cog).write(out,2,4);%>;
     knownKeys = ["executives","changed","owners","names","key","rootFolder"];
     $scope.boolKeys = ["frozen","isDeleted","showExperimental","offLine"];
     $scope.stdKeys = ["workspaceLimit", "frozenLimit", "editUserLimit", "viewUserLimit", "emailLimit", "fileSpaceLimit"];

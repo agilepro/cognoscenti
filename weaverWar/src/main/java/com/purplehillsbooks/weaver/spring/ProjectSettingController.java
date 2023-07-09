@@ -350,7 +350,6 @@ public class ProjectSettingController extends BaseController {
             roleId = personalInfo.getString("roleId");
 
             NGRole role = ngw.getRoleOrFail(roleId);
-            AddressListEntry ale = up.getAddressListEntry();
             RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getName(),up.getUniversalId());
 
 
@@ -366,11 +365,11 @@ public class ProjectSettingController extends BaseController {
                     rrr = ngw.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
 
                     NGRole adminRole = ngw.getSecondaryRole();
-                    boolean hasSpecialPermission = adminRole.isPlayer(ale);
+                    boolean hasSpecialPermission = adminRole.isPlayer(up);
 
                     if (!hasSpecialPermission && ngw instanceof NGWorkspace)  {
                         NGRole executiveRole = ngw.getSite().getRole("Executives");//getSecondaryRole();
-                        hasSpecialPermission = executiveRole.isPlayer(ale);
+                        hasSpecialPermission = executiveRole.isPlayer(up);
                     }
 
                     //Note: if there is no administrator for the project, then ANYONE is allowed to
@@ -388,7 +387,7 @@ public class ProjectSettingController extends BaseController {
             }
             else if ("Leave".equals(op)) {
                 if (role.isPlayer(up)) {
-                    role.removePlayer(ale);
+                    role.removePlayerCompletely(up);
                 }
                 if (rrr!=null && !rrr.isCompleted()) {
                     rrr.setResponseDescription("Cancelled by user");

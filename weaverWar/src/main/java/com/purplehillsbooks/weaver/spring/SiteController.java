@@ -417,7 +417,8 @@ public class SiteController extends BaseController {
         }
     }
     /**
-     * This is the Site Administrator version of adding user to role
+     * This is the Site Administrator version of adding user to role.
+     * It receives a workspace, role, and user to either add or remove that user
      */
     @RequestMapping(value = "/{siteId}/$/manageUserRoles.json", method = RequestMethod.POST)
     public void manageUserRoles(@PathVariable String siteId,
@@ -440,15 +441,38 @@ public class SiteController extends BaseController {
             NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspace);
             NGWorkspace ngw = ngpi.getWorkspace();
             CustomRole roleObj = ngw.getRole(roleName);
+            
+            boolean isPresent = roleObj.isExpandedPlayer(user, ngw);
 
             if (add) {
-            	roleObj.addPlayer(user.getAddressListEntry());
+                if (isPresent) {
+                    System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") attempt to add when user is already present: "+userId);
+                }
+                else {
+                    roleObj.addPlayer(user.getAddressListEntry());
+                    
+                    ngw.save();
+                    System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") added user: "+userId);
+                }
             }
             else {
-            	roleObj.removePlayer(user.getAddressListEntry());
-            }
+                if (isPresent) {
+                	roleObj.removePlayerCompletely(user);
+                	
+                	// check to see if removed
+                	roleObj = ngw.getRole(roleName);
+                	if (roleObj.isExpandedPlayer(user, ngw)) {
+                	    throw new Exception("The user did not actually get removed");
+                	}
+                	
+                    ngw.save();
+                    System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") removed user: "+userId);
+                }
+                else {
 
-            ngw.save();
+                    System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") attempt to remove when user is not there: "+userId);
+                }
+            }
 
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){

@@ -67,6 +67,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.userKey = "<%=userKey%>";
     $scope.userMapEntry = <%userMapEntry.write(out,2,4);%>;
     $scope.wsMap = <%wsMap.write(out,2,4);%>;
+    $scope.wsMapFiltered = {};
     $scope.userInfo = <%ale.getJSON().write(out,2,4);%>;
     
     $scope.hasProfile = <%=user!=null%>;
@@ -208,9 +209,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 alert("User "+$scope.userInfo.uid+" has been added to role "+role);
             }
             else {
-                alert("User "+$scope.userInfo.uid+" has been added to role "+role);
+                alert("User "+$scope.userInfo.uid+" has been removed from the role "+role);
             }
             $scope.wsMap[workspace].roles[role] = add;
+            $scope.filterItems();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -295,6 +297,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateUserProfile(["timeZone"]);
     }
     
+    $scope.filterItems = function() {
+        var newMap = {};
+        Object.keys($scope.wsMap).forEach( function(wsId) {
+            var workspace = $scope.wsMap[wsId];
+            var foundOne = false;
+            Object.keys(workspace.roles).forEach( function(roleId) {
+                if (workspace.roles[roleId]) {
+                    foundOne = true;
+                }
+            });
+            if (foundOne || $scope.showAllWorkspaces) {
+                newMap[wsId] = workspace;
+            }
+        });
+        $scope.wsMapFiltered = newMap;
+    }
+    $scope.filterItems();
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -444,10 +463,10 @@ app.filter('encode', function() {
       <tr>
         <td class="labelColumn" ng-click="showImagePanel=!showImagePanel">Image</td>
         <td ng-hide="showImagePanel"  ng-dblclick="showImagePanel=true">
-            <img src=../../../icon/{{userDetails.image}}"/>
+            <img src="../../../icon/{{userDetails.image}}"/>
         </td>
         <td ng-show="showImagePanel">{{userDetails.image}}<br/>
-            <img src=../../../icon/{{userDetails.image}}"/>
+            <img src="../../../icon/{{userDetails.image}}"/>
         </td>
       </tr>
       <tr>
@@ -490,10 +509,10 @@ app.filter('encode', function() {
       </tr>
     </table>
     
-    <h3>Assign to Roles</h3>
+    <h3>Assign to Roles - <input type="checkbox" ng-model="showAllWorkspaces" ng-click="filterItems()"> Show All Workspaces</h3>
     
     <table class="table">
-      <tbody ng-repeat="(key,ws) in wsMap">
+      <tbody ng-repeat="(key,ws) in wsMapFiltered">
         <tr class="workspacerow" ng-click="showws[key] = !showws[key]">
           <td colspan="4">{{ws.name}} &nbsp; ({{key}})
              <div style="float:right"><a href="../{{key}}/RoleManagement.htm">
