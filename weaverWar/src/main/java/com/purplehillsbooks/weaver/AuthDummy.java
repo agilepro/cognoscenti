@@ -26,9 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.streams.NullWriter;
 
 /**
@@ -200,7 +199,7 @@ public class AuthDummy extends AuthRequest
             //The exception that is thrown will not be seen by users.  Once all of the pages
             //have proper URLs constricted for redirecting to other pages, this error will
             //not occur.  Therefor, there is no need to localize this exception.
-            throw new NGException("nugen.exception.parameter.required",new Object[]{paramName,getRequestURL()});
+            throw new JSONException("Required parameter '{0}' is missing from {1}", paramName, getRequestURL());
         }
         return val;
     }

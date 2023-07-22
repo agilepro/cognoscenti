@@ -58,7 +58,6 @@ public class NGBook extends ContainerCommon {
 
     private List<AddressListEntry> allUserList;
     private boolean forceNewStatistics = false;
-    private Set<String> userAccessMap;
 
     //this is the file system folder where site exists
     //workspaces are underneath this folder
@@ -1165,21 +1164,20 @@ public class NGBook extends ContainerCommon {
         return siteInfoRec.getAttributeInt("readUserLimit");
     }
     
-    // there was a problem with this map being out of date.  Nothing was clearing it and
-    // causing it to be recreated.   Timeout now will assure that.
-    private static long userMapTimeout = System.currentTimeMillis();
     public boolean userReadOnly(String userId) throws Exception {
         if (userId==null || userId.length()==0) {
-            return true;
+            throw new Exception("userReadOnly requires a non-empty parameter");
         }
+        SiteUsers siteUsers = getUserMap();
         AddressListEntry ale = new AddressListEntry(userId);
-        String key = ale.getKey();
-        if (userAccessMap==null || userMapTimeout < System.currentTimeMillis()) {
-            SiteUsers userMap = getUserMap();
-            userAccessMap = userMap.listAccessibleUserKeys();
-            userMapTimeout = System.currentTimeMillis() + 3_600_000;  //one hour in the future
+        return siteUsers.isReadOnly(ale.getUserProfile());
+    }
+    public boolean userReadOnly(UserProfile uProf) throws Exception {
+        if (uProf==null) {
+            throw new Exception("userReadOnly requires a non-empty parameter");
         }
-        return !userAccessMap.contains(key);
+        SiteUsers siteUsers = getUserMap();
+        return siteUsers.isReadOnly(uProf);
     }
     
     
@@ -1205,6 +1203,7 @@ public class NGBook extends ContainerCommon {
         return siteUserTemp;
     }
     
+    /*
     private List<String> findAllUsersInSite() throws Exception{
         
         List<String> pop = new ArrayList<String>();
@@ -1221,6 +1220,7 @@ public class NGBook extends ContainerCommon {
         
         return pop;
     }
+    */
     
 
     

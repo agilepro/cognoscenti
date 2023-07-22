@@ -36,6 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class AttachmentRecord extends CommentContainer {
@@ -166,8 +167,7 @@ public class AttachmentRecord extends CommentContainer {
         // consistency check, the display name and file name (in case of file)
         // must not have any slash characters in them
         if (newDisplayName.indexOf("/") > 0 || newDisplayName.indexOf("\\") > 0) {
-            throw new NGException("nugen.exception.display.name.have.slash",
-                    new Object[] { newDisplayName });
+            throw new JSONException("Display name for  a workspace must not have any slashes {0}", newDisplayName);
         }
 
         // also, display name needs to be unique within the workspace

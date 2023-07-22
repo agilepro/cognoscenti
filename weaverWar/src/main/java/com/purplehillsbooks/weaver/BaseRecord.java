@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.json.JSONException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -55,43 +55,31 @@ public class BaseRecord extends DOMFace
     public final static String PRIORITY_MIDIUM__STR = "Medium";
     public final static String PRIORITY_LOW__STR   = "Low";
 
-    public BaseRecord(Document nDoc, Element nEle, DOMFace p)
-    {
+    public BaseRecord(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
     }
 
-    public String getId()
-        throws Exception
-    {
+    public String getId() throws Exception {
         return getAttribute("id");
     }
 
-    public void setId(String newVal)
-        throws Exception
-    {
-        if (newVal.length()!=4)
-        {
-            throw new NGException("nugen.exception.invalid.id", null);
+    public void setId(String newVal) throws Exception {
+        if (newVal.length()!=4) {
+            throw new JSONException("Id is not allowed:  {0}", newVal);
         }
-        for (int i=0; i<4; i++)
-        {
-            if (newVal.charAt(i)<'0' || newVal.charAt(i)>'9')
-            {
-                throw new NGException("nugen.exception.invalid.id", null);
+        for (int i=0; i<4; i++) {
+            if (newVal.charAt(i)<'0' || newVal.charAt(i)>'9') {
+                throw new JSONException("Id is not allowed:  {0}", newVal);
             }
         }
         setAttribute("id", newVal);
     }
 
-    public String getSynopsis()
-        throws Exception
-    {
+    public String getSynopsis() throws Exception {
         return getScalar("synopsis");
     }
 
-    public void setSynopsis(String newVal)
-        throws Exception
-    {
+    public void setSynopsis(String newVal) throws Exception {
         if (newVal == null) {
             newVal = "";
         }
@@ -103,25 +91,18 @@ public class BaseRecord extends DOMFace
     {
         return getScalar("description");
     }
-    public void setDescription(String newVal)
-        throws Exception
-    {
+    public void setDescription(String newVal) throws Exception {
         if (newVal == null) {
             newVal = "";
         }
         setScalar("description", newVal);
     }
 
-    public String getActionScripts()
-        throws Exception
-    {
+    public String getActionScripts() throws Exception {
         return getScalar("actionScripts");
     }
-    public void setActionScripts(String newVal)
-        throws Exception
-    {
-        if (newVal == null)
-        {
+    public void setActionScripts(String newVal) throws Exception {
+        if (newVal == null) {
             newVal = "";
         }
         setScalar("actionScripts", newVal);
@@ -157,11 +138,9 @@ public class BaseRecord extends DOMFace
         String priority = getScalar("priority");
         return safeConvertInt(priority);
     }
-    public static String getPriorityStr(int priority)
-    throws Exception
-    {
-        switch (priority)
-        {
+    /*
+    public static String getPriorityStr(int priority) throws Exception {
+        switch (priority) {
             case 0:
                 return PRIORITY_HIGH_STR;
             case 1:
@@ -172,9 +151,8 @@ public class BaseRecord extends DOMFace
         }
         return PRIORITY_LOW__STR;
     }
-    public void setPriority(int newVal)
-        throws Exception
-    {
+    */
+    public void setPriority(int newVal) throws Exception {
         setScalar("priority", Integer.toString(newVal));
     }
 

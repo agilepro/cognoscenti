@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 

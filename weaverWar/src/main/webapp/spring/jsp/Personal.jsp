@@ -10,30 +10,32 @@
 <%
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    ar.setPageAccessLevels(ngw);
     ar.assertLoggedIn("Must be logged in to set your personal settings");
-    NGBook site = ngp.getSite();
+    NGBook site = ngw.getSite();
 
     UserProfile uProf = ar.getUserProfile();
     Date date = new Date(ar.getSuperAdminLogFile().getLastNotificationSentTime());
-    List<CustomRole> roles = ngp.getAllRoles();
+    List<CustomRole> roles = ngw.getAllRoles();
+    
+    SiteUsers siteUsers = site.getUserMap();
 
     JSONArray roleList = new JSONArray();
     for (CustomRole crole : roles) {
         JSONObject jObj = crole.getJSON();
         jObj.put("player", crole.isPlayer(uProf));
-        RoleRequestRecord rrr = ngp.getRoleRequestRecord(crole.getName(),uProf.getUniversalId());
+        RoleRequestRecord rrr = ngw.getRoleRequestRecord(crole.getName(),uProf.getUniversalId());
         jObj.put("reqPending", (rrr!=null && !rrr.isCompleted()));
         roleList.put(jObj);
     }
     
-    JSONObject personalSettings = ngp.getPersonalWorkspaceSettings(uProf);
+    JSONObject personalSettings = ngw.getPersonalWorkspaceSettings(uProf);
     /*new JSONObject();
     personalSettings.put("isWatching", uProf.isWatch(siteId+"|"+pageId));
     personalSettings.put("reviewTime", uProf.watchTime(siteId+"|"+pageId));
     personalSettings.put("isNotify", uProf.isNotifiedForProject(siteId+"|"+pageId));
-    personalSettings.put("isMute", ngp.getMuteRole().isPlayer(uProf));*/
+    personalSettings.put("isMute", ngw.getMuteRole().isPlayer(uProf));*/
 
 %>
 <script type="text/javascript">
@@ -193,6 +195,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
     </table>
 
+  <div class="well">
+    
+    <div>User = <%=uProf.getName()%></div>
+    <div>Key = <%=uProf.getKey()%></div>
+    <div>Roles<br/>
+    <%
+        for (NGRole role : ngw.findRolesOfPlayer(uProf)) {
+            
+            %>* <%=role.getName()%>  update: <%=role.allowUpdateWorkspace()%><br/><%
+        }
+    %>
+    </div>
+    <div>AR Update = <%=ar.canUpdateWorkspace()%></div>
+    <div>Workspace Update = <%=ngw.canUpdateWorkspace(uProf)%></div>
+    <div>Site Read Only = <%=site.userReadOnly(uProf.getUniversalId())%></div>
+    <div>Site Read Only = <%=siteUsers.isReadOnly(uProf)%></div>
+    
+  </div>
 
     <div style="height:100px"></div>
 

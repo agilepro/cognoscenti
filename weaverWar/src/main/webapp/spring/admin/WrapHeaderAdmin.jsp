@@ -100,6 +100,7 @@
             <li><a href="UserList.htm" >Users</a></li>
             <li><a href="SiteRequests.htm" >Requested Sites</a></li>
             <li><a href="ListSites.htm" >List All Sites</a></li>
+            <li><a href="EstimateCosts.htm" >Estimate Site Costs</a></li>
             <li><a href="EmailScanner.htm" >Scan All Email</a></li>
             <li><a href="EmailTest.htm" >Test Email</a></li>
             <li><a href="BlockedEmail.htm" >Blocked Email</a></li>

@@ -36,10 +36,10 @@ public class SiteUsers {
 
     public static SiteUsers readUsers(File folder) throws Exception {
         File usersFilePath = new File(folder, "users.json");
+        System.out.println("SITEUSERS: Reading: "+usersFilePath.getAbsolutePath());
         JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
         SiteUsers su = new SiteUsers(jo);
         su.folder = folder;
-        System.out.println("Read File, now checking structure of SiteUsers: "+folder.getAbsolutePath());
         su.patchUpUserKeys();
         return su;
     }
@@ -61,6 +61,12 @@ public class SiteUsers {
             JSONObject record = kernel.getJSONObject(key);
             UserProfile user = UserManager.lookupUserByAnyId(key);
             if (user == null) {
+                // if this file was moved from another server, the internal key might be different
+                // so look up by email address if you can
+                user = UserManager.lookupUserByAnyId(record.getString("email"));
+            }
+            if (user == null) {
+                // user does not have a profile.  We don't create that here
                 continue;
             }
             if (!key.equals(user.getKey())) {

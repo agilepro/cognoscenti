@@ -26,9 +26,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
 
@@ -226,8 +225,7 @@ public class AttachmentVersion {
             String newSubFileName = "att"+attachmentId+"-"+newSubVersion+fileExtension;
             File newCogFile = new File(cogFolder, newSubFileName);
             if (!tempCogFile.renameTo(newCogFile)) {
-                throw new NGException("nugen.exception.unable.to.rename.temp.file",
-                        new Object[]{tempCogFile,newCogFile});
+                throw new JSONException("Failure renaming the file name from {0} to {1}", tempCogFile, newCogFile);
             }
 
             return new AttachmentVersion(att, newCogFile, newSubVersion);

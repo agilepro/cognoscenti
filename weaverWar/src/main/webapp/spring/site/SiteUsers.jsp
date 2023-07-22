@@ -9,8 +9,7 @@
     Cognoscenti cog = ar.getCogInstance();
     NGBook site = cog.getSiteByIdOrFail(siteId);
 
-    SiteUsers userMap = site.getUserMap();
-    JSONObject userMapObj = userMap.getJson();
+    SiteUsers siteUsers = site.getUserMap();
 
 
 %>
@@ -20,7 +19,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List of Users in Site");
-    $scope.userMap = <%userMapObj.write(out,2,4);%>;
+    $scope.siteUsers = <%siteUsers.getJson().write(out,2,4);%>;
     $scope.siteSettings = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
@@ -42,9 +41,9 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.recountUsers = function() {
         var activeCount = 0;
         var inactiveCount = 0;
-        var keys = Object.keys($scope.userMap);
+        var keys = Object.keys($scope.siteUsers);
         keys.forEach( function(key) {
-            if (!$scope.userMap[key].readOnly && $scope.userMap[key].lastAccess > 100000) {
+            if (!$scope.siteUsers[key].readOnly && $scope.siteUsers[key].lastAccess > 100000) {
                 activeCount++;
             }
             else {
@@ -57,18 +56,18 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.recountUsers();
     
     $scope.findUsers = function() {
-        var keys = Object.keys($scope.userMap);
+        var keys = Object.keys($scope.siteUsers);
         var finalList = [];
         if (!$scope.filter) {
             keys.forEach( function(key) {
-                finalList.push($scope.userMap[key]);
+                finalList.push($scope.siteUsers[key]);
             });
             return finalList;
         }
         var filterlist = parseLCList($scope.filter);
         console.log("FILTER LIST", filterlist);
         keys.forEach( function(key) {
-            var aUser = $scope.userMap[key];
+            var aUser = $scope.siteUsers[key];
             if (aUser.info) {
                 if (containsOne(aUser.info.name, filterlist)) {
                     finalList.push(aUser);
@@ -185,3 +184,14 @@ app.filter('encode', function() {
     </div>
 </div>
 
+<div class="well">
+<%
+    for (String key: siteUsers.getAllUserKeys()) {
+        %><div><%=key%></div><%
+    }
+%>
+<div>PATH = <%=siteUsers.folder.getAbsolutePath()%></div>
+<pre>
+<%siteUsers.getJson().write(out,2,0);%>
+</pre>
+</div>

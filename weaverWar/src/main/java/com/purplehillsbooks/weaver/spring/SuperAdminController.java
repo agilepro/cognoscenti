@@ -132,7 +132,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "UserList.jsp");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+             throw new JSONException("Unable to show all users {0}", ex, ar.getBestUserId());
          }
      }
 
@@ -143,7 +143,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "SiteRequests.jsp");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+             throw new JSONException("Unable to show requested sites for {0}", ex, ar.getBestUserId());
          }
      }
 
@@ -154,7 +154,18 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "ListSites.jsp");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+             throw new JSONException("Unable to list sites for administrator {0}", ex, ar.getBestUserId());
+         }
+     }
+
+     @RequestMapping(value = "/su/EstimateCosts.htm", method = RequestMethod.GET)
+     public void estimateCosts(HttpServletRequest request, HttpServletResponse response)
+             throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             streamAdminJSP(ar, "EstimateCosts.jsp");
+         }catch(Exception ex){
+             throw new JSONException("Unable to estimate costs for administrator {0}", ex, ar.getBestUserId());
          }
      }
 

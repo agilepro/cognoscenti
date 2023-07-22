@@ -1397,10 +1397,10 @@ public class NGWorkspace extends NGPage {
      * able to have read-only access, but if the role is a role that allows update
      * then they will have update access.     
      */
-    public boolean canUpdateWorkspace(UserRef user) throws Exception {
+    public boolean canUpdateWorkspace(UserProfile user) throws Exception {
         //The administrator can control which users are update users and 
         //which users are read only.
-        if (getSite().userReadOnly(user.getUniversalId())) {
+        if (getSite().userReadOnly(user)) {
             return false;
         }
         //now look through all the roles and see if this person plays any

@@ -580,7 +580,7 @@ public class AuthRequest
 
     public UserPage getUserPage() throws Exception {
         if (user==null) {
-            throw new NGException("nugen.exception.login.to.get.user",null);
+            throw new JSONException("Unableto get user page, you don't appear to be logged in");
         }
         return cog.getUserManager().findOrCreateUserPage(user.getKey());
     }
@@ -700,7 +700,7 @@ public class AuthRequest
                         +URLEncoder.encode(getRequestURL(),"UTF-8");
                 resp.sendRedirect(configDest);
             }
-            throw new NGException("nugen.exception.server.not.initialized",null, cog.lastFailureMsg);
+            throw new JSONException("Server is not initialized", cog.lastFailureMsg);
         }
 
         if (isLoggedIn()) {
@@ -831,7 +831,7 @@ public class AuthRequest
         }
         if (ngp instanceof NGBook) {
             NGBook site = ((NGBook)ngp);
-            return site.userReadOnly(getBestUserId());
+            return site.userReadOnly(user);
         }
         else if (ngp instanceof NGWorkspace) {
             NGWorkspace workspace = ((NGWorkspace)ngp);
@@ -1780,16 +1780,12 @@ public class AuthRequest
         return result;
     }
 
-    public void assertNotFrozen(NGContainer ngc)
-    throws Exception
-    {
-        if (ngc==null)
-        {
+    public void assertNotFrozen(NGContainer ngc) throws Exception {
+        if (ngc==null) {
             throw new ProgramLogicError("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
-        if (ngc.isFrozen())
-        {
-            throw new NGException("nugen.project.freezed.msg", null);
+        if (ngc.isFrozen()) {
+            throw new JSONException("Workspace is frozen");
         }
     }
 
