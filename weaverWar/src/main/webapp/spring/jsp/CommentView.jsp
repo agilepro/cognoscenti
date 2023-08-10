@@ -551,6 +551,16 @@ function setUpCommentMethods($scope, $http, $modal) {
            title="closing outcome of the round/proposal">
         <div ng-bind-html="getOutcomeHtml(cmt)"></div>
       </div>
+      <div>
+        <button class="btn btn-sm btn-warning btn-raised" ng-click="deleteComment(cmt)" 
+                ng-show="cmt.state<=12">Delete</button>
+        <button class="btn btn-sm btn-default btn-raised" ng-click="openCommentEditor(null,cmt)"
+                 ng-show="cmt.state<=12">Edit</button>
+        <button class="btn btn-sm btn-primary btn-raised" ng-click="openCommentCreator(item,2,cmt,cmt.body)"
+                 ng-show="cmt.state==12">Make Modified Proposal</button>
+        <button class="btn btn-sm btn-primary btn-raised" ng-click="openDecisionEditor(item, cmt)"
+                 ng-show="cmt.state==12">Close with Decision</button>
+      </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
         See proposals:
         <span ng-repeat="reply in cmt.replies"><a href="CommentZoom.htm?cid={{reply}}" >

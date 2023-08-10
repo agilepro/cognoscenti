@@ -9,7 +9,7 @@
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    String mode   = ar.defParam("mode", "Items");
+    String mode   = ar.defParam("mode", "Settings");
     ar.assertLoggedIn("Meeting page designed for people logged in");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
@@ -168,10 +168,6 @@
 %>
 
 <style>
-.labelColumn:hover {
-    background-color:#ECB6F9;
-    cursor:pointer;
-}
 .labelButton {
     width:180px;
     overflow: hidden;
@@ -418,7 +414,10 @@ embeddedData.canUpdate = <%=canUpdate%>;
     </div>
 </div>
 
-
+    <div ng-show="meeting.agenda.length==0" class="guideVocal">
+      This meeting does not have any agenda items.<br/>
+      Use the <button class="btn btn-sm btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
+    </div>
 </td>
 </tr></table>
 

@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.ServletExit;
 import com.purplehillsbooks.json.JSONException;
@@ -493,8 +492,7 @@ public class AuthRequest
             }
             licenseid = lid;
         }
-        if (userid!=null)
-        {
+        if (userid!=null) {
             user = UserManager.getStaticUserManager().lookupUserByAnyId(userid);
         }
     }
@@ -730,7 +728,7 @@ public class AuthRequest
             return;
         }
         if (!ngp.primaryOrSecondaryPermission(getUserProfile())) {
-            throw new NGException("nugen.exception.login.with.admin.rights", new Object[]{opDescription});
+            throw new JSONException("Admin privelege is required for %s", opDescription);
         }
     }
 
@@ -1514,7 +1512,7 @@ public class AuthRequest
         try {
             nestingCount++;
             if (nestingCount>10) {
-                throw new NGException("nugen.exception.nested.jsp.call", new Object[]{JSPName,getCompleteURL()});
+                throw new JSONException("Nesting cound for JSP has exceeded limit of 10 for "+JSPName);
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");
@@ -1523,7 +1521,7 @@ public class AuthRequest
             if (rd==null) {
                 //at one point we needed a retPath in here, but now we
                 //don't need it, and I am not sure why....
-                throw new NGException("nugen.exception.unable.to.find.resource", new Object[]{relPath+JSPName});
+                throw new JSONException("Unable to construct a RequestDispatcher for JSP "+JSPName);
             }
             Writer saveWriter = w;
             rd.include(req, resp);

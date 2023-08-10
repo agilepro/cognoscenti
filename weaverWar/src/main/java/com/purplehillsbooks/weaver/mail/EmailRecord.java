@@ -31,10 +31,10 @@ import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
 import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -249,7 +249,7 @@ public class EmailRecord extends DOMFace
         return getScalar("exception");
     }
     public void setExceptionMessage(Exception e) {
-        setScalar("exception", NGException.getFullMessage(e));
+        setScalar("exception", JSONException.getFullMessage(e));
     }
 
     public List<String> getAttachmentIds() {

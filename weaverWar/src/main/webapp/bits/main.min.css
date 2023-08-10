@@ -527,3 +527,9 @@ h3{
     margin-left:20px;
     margin-top:20px;
 }
+
+
+.labelColumn:hover {
+    background-color:#ECB6F9;
+    cursor:pointer;
+}

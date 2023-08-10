@@ -202,7 +202,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <span class="fa fa-clone"></span>
                 </button>
               </a>
-              <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click=    "deleteRow(rec)">
+              <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
                 <button type="button" name="delete" class='btn btn-warning'>
                     <span class="fa fa-trash"></span>
                 </button>
@@ -216,7 +216,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </a>
             </td>
             <td><b><a title="Meeting User Interface" 
-                 href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
+                 href="MeetingHtml.htm?id={{rec.id}}">
                 {{rec.name}}</a></b>
             </td>
             <td>

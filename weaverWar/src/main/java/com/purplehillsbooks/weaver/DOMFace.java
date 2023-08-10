@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -438,7 +437,7 @@ public class DOMFace
             if (retval == null) {
                 // this should absolutely never happen, but putting this check
                 // here to make absolutely sure.
-                throw new NGException("nugen.exception.fail.in.java.instantiator", null);
+                throw new JSONException("Constructor did not work");
             }
             return retval;
         }

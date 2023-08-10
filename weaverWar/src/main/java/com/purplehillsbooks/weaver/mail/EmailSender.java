@@ -41,7 +41,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONArray;
@@ -549,9 +548,8 @@ public class EmailSender extends TimerTask {
             throw new Exception("Email config file is missing the protocol setting");
         }
         if (!proto.equals("smtp") && !proto.equals("none")) {
-            throw new NGException(
-                    "nugen.exception.email.config.file.smtp.issue",
-                    new Object[] { proto });
+            throw new JSONException(
+                    "Email is not configured correctly, must be SMTP or NONE, but got {0}", proto);
         }
         String auth = getProperty("mail.smtp.auth");
         if ("true".equals(auth)) {

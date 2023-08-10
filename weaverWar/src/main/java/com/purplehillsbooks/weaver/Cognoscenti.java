@@ -12,9 +12,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.weaver.api.IconServlet;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailListener;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -287,9 +287,9 @@ System.out.println("Weaver Server Object == Start the Server");
     public void assertInitialized() throws Exception {
         if (!isInitialized()) {
             if (lastFailureMsg != null) {
-                throw new NGException("nugen.exception.sys.not.initialize.correctly", null, lastFailureMsg);
+                throw new JSONException("Weaver server has not initialized correctly ", lastFailureMsg);
             }
-            throw new ProgramLogicError("NGPageIndex has never been initialized");
+            throw new ProgramLogicError("Weaver server has never been initialized");
         }
     }
 
@@ -333,7 +333,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public NGPageIndex getSiteByKeyOrFail(String key) throws Exception {
         NGPageIndex ngpi = getSiteByKey(key);
         if (ngpi == null) {
-            throw new NGException("nugen.exception.container.not.found", new Object[] { key });
+            throw new JSONException("No site is found with the id {0}", key);
         }
         return ngpi;
     }
@@ -412,7 +412,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         NGTerm term = NGTerm.findTerm(pageName);
         if (term == null) {
-            throw new NGException("nugen.exception.key.dont.have.alphanum", null);
+            throw new JSONException("No workspace can be found for {0}", pageName);
         }
         return term.targetLeaves;
     }

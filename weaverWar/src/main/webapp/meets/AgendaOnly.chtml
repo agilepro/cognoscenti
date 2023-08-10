@@ -50,15 +50,7 @@ No agenda items specified for this meeting
 {% endloop %}
 </table>
 <div class="emailbody"></div>
-<br/>
-<p >Proposed, but not yet accepted items:</p>
-{% loop in $agenda as $agItem counter=$i,1 %}
-<ul>
-{% if ($agItem.proposed == true) %}
-<li>{$agItem.subject|html}</li>
-{% endif %}
-</ul>
-{% endloop %}
+
 </div>
 
 
