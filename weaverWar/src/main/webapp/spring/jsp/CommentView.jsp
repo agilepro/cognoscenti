@@ -164,8 +164,13 @@ function setUpCommentMethods($scope, $http, $modal) {
         }
         return "Completed";
     }
-    $scope.createModifiedProposal = function(cmt) {
-        $scope.openCommentCreator(null,2,cmt,cmt.body);  //proposal
+    $scope.createModifiedProposal = function(item, cmt) {
+        //close the comment 
+        cmt.state = 13;
+        cmt.outcome = "Proposal modified\n\n" + cmt.outcome;
+        $scope.updateComment(cmt);
+        
+        $scope.openCommentCreator(item,2,cmt,cmt.body);  //proposal
     }
     $scope.replyToComment = function(cmt) {
         $scope.openCommentCreator(null,1,cmt);  //simple comment
@@ -330,13 +335,13 @@ function setUpCommentMethods($scope, $http, $modal) {
         });
     };
 
-    $scope.openDecisionEditor = function (itemNotUsed, cmt) {
-        /*
-        if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
-            return;
-        }
-        */
+    // close the proposal and create a decision
+    $scope.openDecisionEditor = function (cmt) {
+        //close the comment 
+        cmt.state = 13;
+        cmt.outcome = "Decision created\n\n" + cmt.outcome;
+        $scope.updateComment(cmt);
+        
         $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
@@ -435,10 +440,10 @@ function setUpCommentMethods($scope, $http, $modal) {
               <a role="menuitem" ng-click="openCommentCreator(item,1,cmt)">
               Reply</a></li>
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="openCommentCreator(item,2,cmt,cmt.body)">
+              <a role="menuitem" ng-click="createModifiedProposal(item,cmt)">
               Make Modified Proposal</a></li>
             <li role="presentation">
-              <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">
+              <a role="menuitem" ng-click="openDecisionEditor(cmt)">
               Create New Decision</a></li>
             </ul>
           </div>
@@ -556,9 +561,9 @@ function setUpCommentMethods($scope, $http, $modal) {
                 ng-show="cmt.state<=12">Delete</button>
         <button class="btn btn-sm btn-default btn-raised" ng-click="openCommentEditor(null,cmt)"
                  ng-show="cmt.state<=12">Edit</button>
-        <button class="btn btn-sm btn-primary btn-raised" ng-click="openCommentCreator(item,2,cmt,cmt.body)"
+        <button class="btn btn-sm btn-primary btn-raised" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
-        <button class="btn btn-sm btn-primary btn-raised" ng-click="openDecisionEditor(item, cmt)"
+        <button class="btn btn-sm btn-primary btn-raised" ng-click="openDecisionEditor(cmt)"
                  ng-show="cmt.state==12">Close with Decision</button>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
