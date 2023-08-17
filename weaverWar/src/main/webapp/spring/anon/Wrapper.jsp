@@ -37,7 +37,35 @@
     loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
     loginConfigSetup.put("serverUrl",   ar.baseURL);
     
+    JSONArray learningModes = new JSONArray();
     boolean expectedLoginState = ar.isLoggedIn();
+    String currentPageURL = ar.getCompleteURL();
+    UserProfile user = ar.getUserProfile();
+    
+    String loggedKey = "";
+    if (ar.isLoggedIn()) {
+        loggedKey = user.getKey();
+        UserPage userPage = user.getUserPage();
+
+        learningModes = userPage.getLearningPathForUser(wrappedJSP);
+        if (learningModes.length()==0) {
+            learningModes = new JSONArray();
+            JSONObject lm = new JSONObject();
+            lm.put("description", "Learn about "+wrappedJSP
+                    +"\n\nMust create some text for this before you can hide it");
+            lm.put("done", false);
+            lm.put("mode", "standard");
+            learningModes.put(lm);
+        }
+        JSONObject learningMode = null;
+        for (JSONObject oneLearn : learningModes.getJSONObjectList()) {
+            if (oneLearn.getBoolean("done")) {
+                continue;
+            }
+            learningMode = oneLearn;
+            break;
+        }
+    }
 
 
 %>
@@ -150,6 +178,72 @@ function setMainPageTitle(str) {
 }
 
 function setUpLearningMethods($scope, $modal, $http) {
+    console.log("setUpLearningMethods for <%=loggedKey%>");
+    $scope.learningModes = <% learningModes.write(out, 2, 2); %>;
+    $scope.learningMode = {done: true, mode:"standard"};
+    
+    $scope.findLearningMode = function() {
+        $scope.learningMode = {done: true, mode:"standard"};
+        $scope.learningModes.forEach(function(item) {
+            if (!item.done && $scope.learningMode.done) {
+                $scope.learningMode = item;
+            }
+        });
+        console.log("LEARNING MODE", $scope.learningMode);
+    }
+    
+    $scope.findLearningMode();
+    
+    $scope.markLearningDone = function() {
+        $scope.learningMode.done = true;
+        $scope.findLearningMode();
+    }
+    
+    $scope.openLearningEditor = function () {
+        console.log("trying ot open it");
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/LearningEditModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'LearningEditCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                wrappedJSP: function () {
+                    return "<%=wrappedJSP%>";
+                }
+            }
+        });
+        modalInstance.result
+        .then(function () {
+            window.location.reload();
+        }, function () {
+            window.location.reload();
+        });
+        
+    }
+    
+    $scope.setLearningDone = function(option) {
+        console.log("MARK DONE", $scope.learningMode);
+        var toPost = {}
+        toPost.jsp = "<%=wrappedJSP%>";
+        toPost.mode = $scope.learningMode.mode;
+        toPost.done = option;        
+        var postdata = angular.toJson(toPost);
+        var postURL = "MarkLearningDone.json";
+        console.log(postURL,toPost);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            window.location.reload();
+        })
+        .error( function(data) {
+            errorPanelHandler($scope, data);
+        });
+    }
+    $scope.toggleLearningDone = function() {
+        $scope.setLearningDone(true);
+    }
+        
+    mainScope = $scope;
 }
 
  </script>

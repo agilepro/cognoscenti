@@ -102,6 +102,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("<%ar.writeJS(originalSubject);%>");
     $scope.topicId = "<%ar.writeJS(topicId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";

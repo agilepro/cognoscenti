@@ -11,6 +11,10 @@
   padding: 15px 45px;
   min-height: 400px;
 }
+.reading-width {
+  max-width:600px;
+  line-height: 1.5em;
+}
 .tutorialThumbnail {
     border-radius:15px;
     box-shadow: 5px 5px 5px gray;
@@ -31,4 +35,8 @@ table tr td {
     padding: 15px;
     vertical-align: top;
     margin: 15px;
+}
+p {
+  max-width:600px;
+  line-height: 1.5em;
 }

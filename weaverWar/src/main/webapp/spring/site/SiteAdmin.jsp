@@ -7,11 +7,12 @@
 %><% 
 
     ar.assertLoggedIn("");
+    Cognoscenti cog = ar.getCogInstance();
     String siteId = ar.reqParam("siteId");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    JSONObject siteInfo = ngb.getConfigJSON();
+    NGBook  site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+    JSONObject siteInfo = site.getConfigJSON();
 
-    WorkspaceStats wStats = ngb.getRecentStats();
+    WorkspaceStats wStats = site.getRecentStats();
 
  
 %> 
@@ -22,6 +23,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Site Administration");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
+    $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
     $scope.colorList = $scope.siteInfo.labelColors.join(",");
 
@@ -32,6 +34,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    
+    $scope.chargeCreator = 1;
+    $scope.chargeReader = 0.05;
+    $scope.chargeActive = 1;
+    $scope.chargeFrozen = 0.05;
+    $scope.chargeDocument = 0.001;
+    $scope.chargeEmail = 0.01;
     
     $scope.removeName = function(oldName) {
         $scope.siteInfo.names = $scope.siteInfo.names.filter( function(item) {
@@ -61,7 +70,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.siteInfo = data;
+            $scope.setSiteInfo(data);
             $scope.isEditing = '';
         })
         .error( function(data, status, headers, config) {
@@ -69,6 +78,36 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.isEditing = '';
         });
     };
+    
+    $scope.setSiteInfo = function(info) {
+        $scope.siteInfo = info;
+        
+        $scope.chargeCreator = 1;
+    $scope.chargeReader = 0.05;
+    $scope.chargeActive = 1;
+    $scope.chargeFrozen = 0.05;
+    $scope.chargeDocument = 0.001;
+    
+        $scope.limitCharge = $scope.siteInfo.frozenLimit * $scope.chargeFrozen
+            + $scope.siteInfo.workspaceLimit * $scope.chargeActive
+            + $scope.siteInfo.viewUserLimit * $scope.chargeReader
+            + $scope.siteInfo.editUserLimit * $scope.chargeCreator
+            + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
+        $scope.currentCharge = $scope.siteStats.numFrozen * $scope.chargeFrozen
+            + $scope.siteStats.numActive * $scope.chargeActive
+            + $scope.siteStats.readUserCount * $scope.chargeReader
+            + $scope.siteStats.editUserCount * $scope.chargeCreator
+            + $scope.siteStats.sizeDocuments * $scope.chargeDocument / 1000000;
+        $scope.limitDue = $scope.limitCharge - 6;
+        if ($scope.limitDue<0) {
+            $scope.limitDue = 0;
+        }
+        $scope.currentDue = $scope.currentCharge - 6;
+        if ($scope.currentDue<0) {
+            $scope.currentDue = 0;
+        }
+    }
+    $scope.setSiteInfo($scope.siteInfo);
     
     $scope.toggleEditor = function(editorName) {
         if ($scope.isEditing == editorName) {
@@ -95,6 +134,13 @@ app.controller('myCtrl', function($scope, $http) {
 }
 .dataColumn {
     max-width:400px;
+}
+.numberColumn {
+    width:150px;
+    text-align: right;
+}
+p {
+    max-width:600px;
 }
 </style>
 
@@ -189,14 +235,29 @@ app.controller('myCtrl', function($scope, $http) {
                     Use web standard color names to create the set of colors that you can set on labels.
                 </td>
             </tr>
+        </table>
+        
+        <div style="height:100px"></div>
+        <h2>Your Budget</h2>
+        
+        <table class="spaceyTable">
+            <tr>
+                <td></td>
+                <td class="numberColumn">Your Limits</td>
+                <td class="numberColumn">Current Usage</td>
+                <td class="helpColumn"></td>
+            </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Creator User Limit:</td>
-                <td class=" dataColumn" ng-hide="isEditing =='CreatorLimit'">
+                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Creator Users:</td>
+                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
                     {{siteInfo.editUserLimit}}
                 </td>
-                <td class=" dataColumn" ng-show="isEditing =='CreatorLimit'">
+                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'" colspan="2" >
                     <input type="text" ng-model="siteInfo.editUserLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                    {{siteStats.editUserCount}}
                 </td>
                 <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
@@ -204,13 +265,16 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('ReaderLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('ReaderLimit')">Reader User Limit:</td>
-                <td ng-hide="isEditing =='ReaderLimit'">
+                <td class="labelColumn" ng-click="toggleEditor('ReaderLimit')">Reader Users:</td>
+                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
                     {{siteInfo.viewUserLimit}}
                 </td>
-                <td ng-show="isEditing =='ReaderLimit'">
+                <td ng-show="isEditing =='ReaderLimit'" colspan="2" >
                     <input type="text" ng-model="siteInfo.viewUserLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                    {{siteStats.readUserCount}}
                 </td>
                 <td ng-hide="isEditing =='ReaderLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='ReaderLimit'" class="helpColumn guideVocal">
@@ -218,13 +282,16 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('WorkspaceLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspace Limit:</td>
-                <td ng-hide="isEditing =='WorkspaceLimit'">
+                <td class="labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspaces:</td>
+                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
                     {{siteInfo.workspaceLimit}}
                 </td>
-                <td ng-show="isEditing =='WorkspaceLimit'">
+                <td ng-show="isEditing =='WorkspaceLimit'" colspan="2">
                     <input type="text" ng-model="siteInfo.workspaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                    {{siteStats.numActive}}
                 </td>
                 <td ng-hide="isEditing =='WorkspaceLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='WorkspaceLimit'" class="helpColumn guideVocal">
@@ -232,13 +299,16 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('FrozenLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('FrozenLimit')">Frozen Workspace Limit:</td>
-                <td ng-hide="isEditing =='FrozenLimit'">
+                <td class="labelColumn" ng-click="toggleEditor('FrozenLimit')">Frozen Workspaces:</td>
+                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
                     {{siteInfo.frozenLimit}}
                 </td>
-                <td ng-show="isEditing =='FrozenLimit'">
+                <td ng-show="isEditing =='FrozenLimit'" colspan="2">
                     <input type="text" ng-model="siteInfo.frozenLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                    {{siteStats.numFrozen}}
                 </td>
                 <td ng-hide="isEditing =='FrozenLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='FrozenLimit'" class="helpColumn guideVocal">
@@ -246,20 +316,63 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('DocumentLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('DocumentLimit')">Document Limit:</td>
-                <td ng-hide="isEditing =='DocumentLimit'">
-                    {{siteInfo.fileSpaceLimit}} Megabytes
+                <td class="labelColumn" ng-click="toggleEditor('DocumentLimit')">Documents:</td>
+                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                    {{siteInfo.fileSpaceLimit|number}} MB
                 </td>
-                <td ng-show="isEditing =='DocumentLimit'">
+                <td ng-show="isEditing =='DocumentLimit'" colspan="2">
                     <input type="text" ng-model="siteInfo.fileSpaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
                 </td>
                 <td ng-hide="isEditing =='DocumentLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='DocumentLimit'" class="helpColumn guideVocal">
                     A site owner can set a limit to the total size (in megabytes) for all documents the site is allowed to have.  This allows the site owner to control costs by preventing more documents from being added to the site.  When this limit is reached in the site, you will need to delete some documents before you another document can be added.
                 </td>
             </tr>
+            <tr >
+                <td >Charges:</td>
+                <td class="numberColumn">
+                    $ {{limitCharge | number: '2'}}
+                </td>
+                <td class="numberColumn">
+                    $ {{currentCharge | number: '2'}}
+                </td>
+                <td class="helpColumn"></td>
+                    
+                </td>
+            </tr>
+            <tr >
+                <td >Due:</td>
+                <td class="numberColumn">
+                    $ {{limitDue | number: '2'}}
+                </td>
+                <td class="numberColumn">
+                    $ {{currentDue | number: '2'}}
+                </td>
+                <td class="helpColumn"></td>
+                    
+                </td>
+            </tr>
+        </table>
+        
+        <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
+        
+        <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
+        
+        <p>Weaver will help you stay under the limits, by preventing addition of new resources over the limits that you set.  You can change the limits at any time.  If you raise the limit you can immediately add resources.  The limit does not automatically reduce your resource usage.  If you lower the limit, you must remove the excess resources yourself.  Again, Weaver will only charge you for the resources you actually use.</p>
+        
+        
+        
+        
+        <div style="height:300px"></div>
+        <hr/>
+        
         <% if (ar.isSuperAdmin()) { %>
+        <h3>Super Admin Only</h3>
+        <table class="spaceyTable">
             <tr ng-dblclick="toggleEditor('Flags')">
                 <td class="labelColumn"  ng-click="toggleEditor('Flags')">Flags:</td>
                 <td class=" dataColumn" ng-hide="isEditing =='Flags'">
@@ -280,12 +393,10 @@ app.controller('myCtrl', function($scope, $http) {
                     Super admin only.  John, you know who you are.</td>
                 <td ng-hide="isEditing =='Flags'" class="helpColumn"></td>
             </tr>
-        <% } %>
             <tr>
                 <td class="labelColumn">Site Key:</td>
                 <td>{{siteInfo.key}}</td>
             </tr>
-        <% if (ar.isSuperAdmin()) { %>
             <tr ng-dblclick="toggleEditor('CurrentNames')">
                 <td class="labelColumn" valign="top">Current Names:</td>
                  
@@ -299,8 +410,8 @@ app.controller('myCtrl', function($scope, $http) {
                     Sites can have more than one names, but you can ignore that.</td>
                 <td ng-hide="showHelpNames" ng-click="showHelpNames = !showHelpNames" class="helpColumn"></td>
             </tr>
-        <% } %>
         </table>
+        <% } %>
     </div>
     <div style="height:400px"></div>
 </div>
