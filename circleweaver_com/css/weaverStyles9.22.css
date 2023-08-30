@@ -2,123 +2,126 @@
 /* CSS Document */
 
 .site-title {
-    font-size: 28px;
-    font-size: 1.75rem;
-    line-height: 1.25;
-    margin-top: -2em;
+  font-size: 28px;
+  font-size: 1.75rem;
+  line-height: 1.5;
+  margin-top: -2em;
 }
-.site-header    {
-    background-color: #fff;
-    padding: 0.2em 1% .5;
-    margin-left: 1em;
+.site-header {
+  background-color: #fff;
+  padding: 0.2em 1% 0.5;
+  margin-left: 1em;
 }
-.site-branding a, .site-branding a:hover{
-    text-align: right;
-    text-decoration: none;
+.site-branding a,
+.site-branding a:hover {
+  text-align: right;
+  text-decoration: none;
 }
 .site-branding a p {
-    margin-top: -1em;
+  margin-top: -1em;
 }
 .container .footer-menu {
-    position:relative;
-    color: #39174B;
-    display: -ms-flexbox;
-    display: block;
-    flex-wrap: wrap;
-    -ms-flex-align: center;
-    align-items: center;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    padding: 0.5rem 1rem;
+  position: relative;
+  color: #39174b;
+  display: -ms-flexbox;
+  display: block;
+  flex-wrap: wrap;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
 }
 .footer-menu li.nav-item {
-    font-weight: 400;
-    align-items: center;
-    color:#ECECE8;
+  font-weight: 400;
+  align-items: center;
+  color: #ecece8;
 }
-.footer-menu li.nav-item.active a{
-    font-weight: 400;
-    align-items: center;
-    color:#ECECE8;
+.footer-menu li.nav-item.active a {
+  font-weight: 400;
+  align-items: center;
+  color: #ecece8;
 }
 #menu-toggle {
-    display: none;
+  display: none;
 }
 .dropdown-toggle,
 .main-navigation ul .dropdown-toggle.toggled-on,
 .site-header .social-navigation,
 .site-footer .main-navigation {
-    display: flex;  
-}   
+  display: flex;
+}
 .site-header .main-navigation + .social-navigation {
-    margin-top: 0em;
+  margin-top: 0em;
 }
 .dropdown-toggle,
 .main-navigation ul .dropdown-toggle.toggled-on,
 .menu-toggle,
 .site-header .social-navigation,
 .site-footer .main-navigation {
-    display: inherit;
+  display: inherit;
 }
 
 .site-header-main {
-    -webkit-align-items: flex-start;
-    -ms-flex-align: start;
-    align-items: flex-start;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 .custom-logo {
-    max-width: 200px;
-    margin: 0 auto;
-    align-content: center;
-    padding-bottom: 1em;
-    margin-bottom: 0em;
+  max-width: 200px;
+  margin: 0 auto;
+  align-content: center;
+  padding-bottom: 1em;
+  margin-bottom: 0em;
 }
 .custom-logo .site-header-main {
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 .site-branding {
-    margin: 0 auto 0 0;
-    /* Avoid overflowing wide custom logo in small screens in Firefox and IEs */
-    max-width: 100%;
-    min-width: 0;
+  margin: 0 auto 0 0;
+  /* Avoid overflowing wide custom logo in small screens in Firefox and IEs */
+  max-width: 100%;
+  min-width: 0;
 }
 
 .custom-logo-link {
-    display: block;
+  display: block;
 }
 
 .custom-logo {
-    max-width: 320px;
+  max-width: 320px;
 }
 .site-branding .site-title a {
-    color: #1a1a1a;
+  color: #1a1a1a;
 }
 .site-branding .site-title,
 .site-description {
-    clip: rect(1px, 1px, 1px, 1px);
-    position: absolute;
-    display: block;
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute;
+  display: block;
 }
 .site-branding .site-title a:hover,
 .site-branding .site-title a:focus {
-    color: #AB37C8;
+  color: #ab37c8;
 }
 .site-title {
-    font-size: 28px;
-    font-size: 1.75rem;
-    line-height: 1.25;
-    margin-top: -2em;
+  font-size: 28px;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  margin-top: -2em;
 }
 /*slide show styles*/
-* {box-sizing:border-box}
+* {
+  box-sizing: border-box;
+}
 
 /* Slideshow container */
 .slideshow-container {
@@ -133,16 +136,17 @@
   display: none;
 }
 .mySlides h2 {
-    font-size: 1.75rem;
-    font-weight: 500;
+  font-size: 1.75rem;
+  font-weight: 500;
 }
 .mySlides h3 {
-    font-size: 1.25rem;
-    font-weight: 300;
-    padding: 15px 35px;
+  font-size: 1.25rem;
+  font-weight: 300;
+  padding: 15px 35px;
 }
 /* Next & previous buttons */
-.prev, .next {
+.prev,
+.next {
   cursor: pointer;
   position: absolute;
   top: 50%;
@@ -164,8 +168,9 @@
 }
 
 /* On hover, add a black background color with a little bit see-through */
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 /* Caption text */
@@ -201,7 +206,8 @@
   transition: background-color 0.6s ease;
 }
 
-.active, .dot:hover {
+.active,
+.dot:hover {
   background-color: inherit;
 }
 
@@ -212,8 +218,12 @@
 }
 
 @keyframes fade {
-  from {opacity: .4}
-  to {opacity: 1}
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
 }
 /*end slideshow styles*/
 
@@ -223,11 +233,10 @@
   width: 100%;
   height: auto;
 }
-.image-frame    {
-    border: double;
-    border-color: #ECECE8;
-    width: 100%;
-    
+.image-frame {
+  border: double;
+  border-color: #ecece8;
+  width: 100%;
 }
 
 .overlay {
@@ -235,15 +244,15 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #39174B;
+  background-color: #39174b;
   overflow: hidden;
   width: 100%;
   height: 100%;
   -webkit-transform: scale(0);
   -ms-transform: scale(0);
   transform: scale(0);
-  -webkit-transition: .3s ease;
-  transition: .3s ease;
+  -webkit-transition: 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .col-lg-4:hover .overlay {
@@ -265,10 +274,10 @@
 }
 .CTA-button {
   padding: 0.25rem 1.5rem 0.5rem;
-  background-color: #ECECE8;
-  border:10px #954D9E;
-  color: #39174B;
-  font-size: 2rem; 
+  background-color: #ecece8;
+  border: 10px #954d9e;
+  color: #39174b;
+  font-size: 2rem;
   margin: 10px auto;
   cursor: pointer;
   border-radius: 6px;
