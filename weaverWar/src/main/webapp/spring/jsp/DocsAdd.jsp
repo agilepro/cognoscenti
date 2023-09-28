@@ -51,7 +51,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <div class="guideVocal" style="margin-top:80px">
     You are not allowed to add a document to the workspace, because
-    you are a passive 'read-only' user.  You can access documents, but you can 
+    you are an observer.  You can access documents, but you can 
     not add them or update them.
     
     If you wish to add a document, speak to the administrator of this 

@@ -176,7 +176,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.startEdit = function() {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         if ($scope.workspaceInfo.frozen) {
@@ -211,7 +211,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.mergeUpdateDoc = function(changeEditing) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         if (!changeEditing) {
@@ -239,7 +239,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.saveEdits = function(fields) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
@@ -718,7 +718,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     $scope.openAttachDocument = function () {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -757,7 +757,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.openAttachAction = function (item) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -796,7 +796,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     $scope.openModalActionItem = function (goal, start) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();

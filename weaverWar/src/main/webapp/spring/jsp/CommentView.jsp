@@ -309,7 +309,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     $scope.createDecision = function(newDecision) {
         /*
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are a READ-ONLY user");
+            alert("Unable to update topic because you are an observer");
             return;
         }
         */

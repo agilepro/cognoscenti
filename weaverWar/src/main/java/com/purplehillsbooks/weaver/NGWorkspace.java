@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 //import org.apache.commons.io.FileUtils;
@@ -144,7 +145,7 @@ public class NGWorkspace extends NGPage {
     ///////////////// TOPICS //////////////////////
 
     public List<TopicRecord> getAllDiscussionTopics() throws Exception {
-        return noteParent.getChildren("note", TopicRecord.class);
+        return Collections.unmodifiableList(noteParent.getChildren("note", TopicRecord.class));
     }
 
     public List<TopicRecord> getDraftNotes(AuthRequest ar)
@@ -213,7 +214,7 @@ public class NGWorkspace extends NGPage {
                 list.add(note);
             }
         }
-        return list;
+        return Collections.unmodifiableList(list);
     }
 
 
@@ -412,7 +413,7 @@ public class NGWorkspace extends NGPage {
                 att.setType("FILE");
             }
         }
-        return list;
+        return Collections.unmodifiableList(list);
     }
     public List<AttachmentRecord> getListedAttachments(List<String> idList) throws Exception {
         List<AttachmentRecord> list = new ArrayList<AttachmentRecord>();
@@ -423,7 +424,7 @@ public class NGWorkspace extends NGPage {
                 }
             }
         }
-        return list;
+        return Collections.unmodifiableList(list);
     }
     public AttachmentRecord findAttachmentOrNull(String docId) throws Exception {
         for (AttachmentRecord aRec : getAllAttachments()) {
@@ -733,7 +734,7 @@ public class NGWorkspace extends NGPage {
             SharePortRecord spr = new SharePortRecord(onePort);
             res.add(spr);
         }
-        return res;
+        return Collections.unmodifiableList(res);
     }
     public SharePortRecord createSharePort() throws Exception {
         JSONArray ports = workspaceJSON.requireJSONArray("sharePorts");
@@ -928,7 +929,7 @@ public class NGWorkspace extends NGPage {
             RoleInvitation spr = new RoleInvitation(riObj);
             res.add(spr);
         }
-        return res;
+        return Collections.unmodifiableList(res);
     }
     public void removeOldInvitations() throws Exception {
         if (!getWorkspaceJSON().has("roleInvitations")) {

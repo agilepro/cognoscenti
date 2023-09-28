@@ -220,7 +220,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.toggleNoteDel = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this topic because you are a READ-ONLY user");
+            alert("You are not able to update this topic because you are an observer");
             return;
         }        newRec = {};
         newRec.id = rec.id;
@@ -231,7 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.updateNote = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this topic because you are a READ-ONLY user");
+            alert("You are not able to update this topic because you are an observer");
             return;
         }
         var postURL = "updateNote.json?nid="+rec.id;
@@ -260,7 +260,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openTopicCreator = function() {
         
         if (!$scope.canUpdate) {
-            alert("You are not able to create a topic because you are a READ-ONLY user");
+            alert("You are not able to create a topic because you are an observer");
             return;
         }
         if ($scope.workspaceInfo.frozen) {

@@ -67,7 +67,7 @@
             accessStatus.put(aUser, "Can Edit");
         }
         else if (ngw.canAccessWorkspace(aUserProf)) {
-            accessStatus.put(aUser, "Read Only");
+            accessStatus.put(aUser, "Observer");
         }
         else {
             accessStatus.put(aUser, "No Access");
@@ -387,13 +387,13 @@ editBoxStyle {
            <td class="centeredCell"></td>
         </tr>
         <tr>
-           <td>Full Users:</td>
+           <td>Users:</td>
            <td class="centeredCell">{{stats.editUserCount}}</td>
            <td class="centeredCell">{{siteStats.editUserCount}}</td>
            <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
         </tr>
         <tr>
-           <td>Read-only Users:</td>
+           <td>Observers:</td>
            <td class="centeredCell">{{stats.readUserCount}}</td>
            <td class="centeredCell">{{siteStats.readUserCount}}</td>
            <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>

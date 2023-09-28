@@ -803,7 +803,7 @@ public class AuthRequest
     }
 
     /**
-     * Identifies if the current logged in user is a read only 
+     * Identifies if the current logged in user is an observer
      * user in the current workspace.  If anything is wrong, like
      * the user is not logged in or the workspace not set then 
      * it presumes the most restrictive: true.
@@ -840,7 +840,7 @@ public class AuthRequest
     
     public void assertNotReadOnly(String opDescription) throws Exception {
         if (isReadOnly()) {
-            throw new JSONException("Read only user; can not update anything. {0}", opDescription);
+            throw new JSONException("Observer; can not update anything. {0}", opDescription);
         }
     }
 

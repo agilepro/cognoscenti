@@ -153,7 +153,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.changeAccess = function(makeReadOnly) {
         if (makeReadOnly && $scope.readUserCount >= $scope.siteSettings.readUserLimit) {
-            alert("You have too many read-only users: "
+            alert("You have too many observers: "
             +$scope.editUserCount
             +". You are allowed only "
             +$scope.siteSettings.editUserLimit
@@ -165,7 +165,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             +$scope.editUserCount
             +" but can aonly have "
             +$scope.siteSettings.editUserLimit
-            +" in your payment plan.  You will probably need to remove some update users or change them to read-only before you can change this user");
+            +" in your payment plan.  You will probably need to remove some update users or change them to observers before you can change this user");
             return;
         }
         $scope.userMapEntry.readOnly = makeReadOnly;
@@ -401,23 +401,23 @@ app.filter('encode', function() {
             <div ng-hide="userMapEntry.readOnly">
               <div>Allowed to update in this site.</div>
               <div ng-show="userMapEntry.lastAccess < 1000000">
-                This user has never logged in, and will be counted as inactive until they do.</div>
+                This user has never logged in, and will be counted as observer until they do.</div>
               <div>
                 <button class="btn btn-sm">
-                Allow Updates</button>
+                Make Creator</button>
                 <button ng-click="changeAccess(true)" class="btn btn-sm btn-primary btn-raised">
-                Make Read Only</button>
+                Make Observer</button>
               </div>
             </div>
             <div ng-show="userMapEntry.readOnly">
-              <div>User set for read-only access</div>
+              <div>Observer, can not update the site</div>
               <div><button ng-click="changeAccess(false)" class="btn btn-sm btn-primary btn-raised">
-                Allow Updates</button>
+                Make Creator</button>
                 <button class="btn btn-sm">
-                Make Read Only</button>
+                Make Observer</button>
               </div>
             </div>
-            <div> Site Update Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Read-Only users: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
+            <div> Site Creator Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Observers: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
         </td>
       </tr>
       <tr>

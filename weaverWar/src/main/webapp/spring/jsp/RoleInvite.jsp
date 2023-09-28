@@ -148,7 +148,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <div class="guideVocal" style="margin-top:80px">
     You are not allowed to invite people to the workspace, because
-    you are a passive 'read-only' user.  
+    you are an observer.  
     
     If you wish to invite people, speak to the administrator of this 
     workspace / site and have your membership level changed to an

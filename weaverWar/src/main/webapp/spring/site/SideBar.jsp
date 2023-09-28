@@ -82,7 +82,7 @@
               <div class="sublist" style="color:black"><ul><%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
                     if (userIsReadOnly && !jo2.has("readOnly")) {
-                        //skip anything not marked for read only when user is readonly.
+                        //skip anything not marked for observer when user is readonly.
                         continue;
                     }
                     %>
@@ -107,7 +107,7 @@
         %></li><% 
     }
     %>
-    <li style="color:black">  <% if (userIsReadOnly) { %>READ ONLY<% } else { %>WRITEABLE<% } %></li>
+    <li style="color:black">  <% if (userIsReadOnly) { %>OBSERVER<% } else { %>WRITEABLE<% } %></li>
     
   </ul>
   <%if (false) {ar.write(wrappedJSP);} %>

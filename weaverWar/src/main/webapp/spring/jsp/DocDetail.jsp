@@ -410,9 +410,9 @@ function copyTheLink() {
       be deleted soon.
   </div>
   <div ng-hide="canUpdate">
-      You are a read-only member of this site. 
+      You are an observer of this site. 
       If you wish to update this document, ask the site administrator to make you
-      an active (writeable) member of the site.
+      a creating user of the site.
   </div>
   <div ng-show="canUpdate">
     <button class="btn btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>

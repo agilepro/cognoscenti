@@ -146,8 +146,8 @@ app.filter('encode', function() {
     <b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
   </div>
   <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
-    <b>Site has too many inactive users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>
-    An inactive user is either a user set to read-only access, or a user who has never logged in to the site directly.   You will not be able to add any new email addresses to the site until you reduce the number of inactive users or you change your payment plan.
+    <b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>
+    Any user who has never logged in to the site directly is considered an observer.   You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.
     <hr/>
     To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.
   </div>
@@ -172,7 +172,7 @@ app.filter('encode', function() {
         <td>{{value.info.name}}</td>
         <td>{{value.info.uid}}</td>
         <td>
-            <span ng-show="value.readOnly" style="color:grey">Read Only</span>
+            <span ng-show="value.readOnly" style="color:grey">Observer</span>
             <span ng-show="!value.readOnly && value.lastAccess < 100000" style="color:lightblue">No Login</span>
             <span ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
         </td>

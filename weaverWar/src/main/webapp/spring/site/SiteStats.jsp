@@ -161,7 +161,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
            <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
         </tr>
         <tr>
-           <td>Read-only Users:</td>
+           <td>Observers:</td>
            <td class="centeredCell">{{siteStats.readUserCount}}</td>
            <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>
         </tr>

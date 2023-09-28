@@ -153,7 +153,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.openDocDialog = function (doc) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are a READ-ONLY user");
+            alert("Unable to update meeting because you are an observer");
             return;
         }
         var docsDialogInstance = $modal.open({

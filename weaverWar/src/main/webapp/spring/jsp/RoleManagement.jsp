@@ -119,7 +119,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.updateRole = function(role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are a read-only user");
+            alert("You are not able to update this role because you are an observer");
             return;
         }
         var key = role.name;
@@ -143,7 +143,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.removePlayer = function(role, player) {
         if (!$scope.canUpdate) {
-            alert("You are not able to remove player from this role because you are a read only user");
+            alert("You are not able to remove player from this role because you are an observer");
             return;
         }
         var newPlayers = [];
@@ -168,7 +168,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.deleteRole = function(role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to delete this role because you are a read only user");
+            alert("You are not able to delete this role because you are an observer");
             return;
         }
         var key = role.name;
@@ -211,7 +211,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are a read only user");
+            alert("You are not able to update this role because you are an observer");
             return;
         }
 
@@ -247,7 +247,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.openRoleModal = function (role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to edit this role because you are a read only user");
+            alert("You are not able to edit this role because you are an observer");
             return;
         }
         var isNew = false;
@@ -284,7 +284,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are a read only user");
+            alert("You are not able to update this role because you are an observer");
             return;
         }
         if (!role.terms) {
@@ -416,7 +416,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
                 <div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
-                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">READ ONLY</div>
+                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>
             </td>
             <td style="width:200px">
               <div ng-hide="roleDetailToggle[role.name]">

@@ -49,11 +49,6 @@ public class AgendaItem extends CommentContainer {
                 System.out.println("MEETING TIMER cancelled on meeting agenda item #"+this.getId()+" after running "+newElapse+" hours");
             }
         }
-        
-        long lockTime = getLockTime();
-        if (lockTime>0 && lockTime < System.currentTimeMillis()-30*60000) {
-            clearLock();
-        }
     }
     public void setMeeting(MeetingRecord m) {
         meeting = m;
@@ -269,17 +264,6 @@ public class AgendaItem extends CommentContainer {
             return null;
         }
         return new AddressListEntry(user);
-    }
-    public long getLockTime() {
-        return safeConvertLong( getScalar("editTime"));
-    }
-    public void setLock(UserRef ur, long time) {
-        setScalar("editUser", ur.getUniversalId());
-        setScalar("editTime", Long.toString(time));
-    }
-    public void clearLock() {
-        setScalar("editUser", null);
-        setScalar("editTime", null);
     }
 
     public void startTimer() {
@@ -500,20 +484,6 @@ public class AgendaItem extends CommentContainer {
 
         if (input.has("presenters")) {
             setPresenters(constructVector(input.getJSONArray("presenters")));
-        }
-
-
-        if (input.has("setLock")) {
-            AddressListEntry currentLocker = getLockUser();
-            if (currentLocker==null) {
-                setLock(ar.getUserProfile(), ar.nowTime);
-            }
-        }
-        if (input.has("clearLock")) {
-            AddressListEntry currentLocker = getLockUser();
-            if (currentLocker!=null && ar.getUserProfile().equals(currentLocker)) {
-                clearLock();
-            }
         }
     }
 

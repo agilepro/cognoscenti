@@ -243,12 +243,15 @@ p {
         <table class="spaceyTable">
             <tr>
                 <td></td>
-                <td class="numberColumn">Your Limits</td>
                 <td class="numberColumn">Current Usage</td>
+                <td class="numberColumn">Your Limits</td>
                 <td class="helpColumn"></td>
             </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
                 <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Creator Users:</td>
+                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                    {{siteStats.editUserCount}}
+                </td>
                 <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
                     {{siteInfo.editUserLimit}}
                 </td>
@@ -256,16 +259,17 @@ p {
                     <input type="text" ng-model="siteInfo.editUserLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
-                    {{siteStats.editUserCount}}
-                </td>
                 <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
                     A site owner can set a limit to the number of creator users that the site is allowed to have.  This allows the site owner to control costs by preventing more creator users from being added to the site.
+                    The charge is $ {{chargeCreator|number}} per creator user.
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('ReaderLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('ReaderLimit')">Reader Users:</td>
+                <td class="labelColumn" ng-click="toggleEditor('ReaderLimit')">Observers:</td>
+                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                    {{siteStats.readUserCount}}
+                </td>
                 <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
                     {{siteInfo.viewUserLimit}}
                 </td>
@@ -273,16 +277,18 @@ p {
                     <input type="text" ng-model="siteInfo.viewUserLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
-                    {{siteStats.readUserCount}}
-                </td>
                 <td ng-hide="isEditing =='ReaderLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='ReaderLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of read-only users that the site is allowed to have.  This allows the site owner to control costs by preventing more reader users from being added to the site.
+                    A site owner can set a limit to the number of observers that the site is allowed to have.  
+                    This allows the site owner to control costs by preventing more observers from being added to the site.
+                    The charge is $ {{chargeReader|number}} per observer.
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('WorkspaceLimit')">
                 <td class="labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspaces:</td>
+                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                    {{siteStats.numActive}}
+                </td>
                 <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
                     {{siteInfo.workspaceLimit}}
                 </td>
@@ -290,16 +296,17 @@ p {
                     <input type="text" ng-model="siteInfo.workspaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
-                    {{siteStats.numActive}}
-                </td>
                 <td ng-hide="isEditing =='WorkspaceLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='WorkspaceLimit'" class="helpColumn guideVocal">
                     A site owner can set a limit to the number of active workspace that the site is allowed to have.  This allows the site owner to control costs by preventing more workspaces from being added to the site.  When this limit is reached in the site, you will need to either freeze or delete a workspace before you can add a new one.
+                    The charge is $ {{chargeActive|number}} per frozen workspace.
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('FrozenLimit')">
                 <td class="labelColumn" ng-click="toggleEditor('FrozenLimit')">Frozen Workspaces:</td>
+                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                    {{siteStats.numFrozen}}
+                </td>
                 <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
                     {{siteInfo.frozenLimit}}
                 </td>
@@ -307,16 +314,17 @@ p {
                     <input type="text" ng-model="siteInfo.frozenLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
-                    {{siteStats.numFrozen}}
-                </td>
                 <td ng-hide="isEditing =='FrozenLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='FrozenLimit'" class="helpColumn guideVocal">
                     A site owner can set a limit to the number of frozen workspace that the site is allowed to have.  This allows the site owner to control costs by preventing more workspaces from being added to the site.  When this limit is reached in the site, you will need to delete a workspace before you another workspace can be frozen.
+                    The charge is $ {{chargeFrozen|number}} per frozen workspace.
                 </td>
             </tr>
             <tr ng-dblclick="toggleEditor('DocumentLimit')">
                 <td class="labelColumn" ng-click="toggleEditor('DocumentLimit')">Documents:</td>
+                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
+                </td>
                 <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
                     {{siteInfo.fileSpaceLimit|number}} MB
                 </td>
@@ -324,21 +332,18 @@ p {
                     <input type="text" ng-model="siteInfo.fileSpaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
-                </td>
                 <td ng-hide="isEditing =='DocumentLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='DocumentLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the total size (in megabytes) for all documents the site is allowed to have.  This allows the site owner to control costs by preventing more documents from being added to the site.  When this limit is reached in the site, you will need to delete some documents before you another document can be added.
+                    A site owner can set a limit to the total size (in megabytes) for all documents the site is allowed to have.  This allows the site owner to control costs by preventing more documents from being added to the site.  When this limit is reached in the site, you will need to delete some documents before you another document can be added.   The charge is $ {{chargeDocument * 1000|number}} per gigabyte.
                 </td>
             </tr>
             <tr >
                 <td >Charges:</td>
                 <td class="numberColumn">
-                    $ {{limitCharge | number: '2'}}
+                    $ {{currentCharge | number: '2'}}
                 </td>
                 <td class="numberColumn">
-                    $ {{currentCharge | number: '2'}}
+                    $ {{limitCharge | number: '2'}}
                 </td>
                 <td class="helpColumn"></td>
                     
@@ -347,10 +352,10 @@ p {
             <tr >
                 <td >Due:</td>
                 <td class="numberColumn">
-                    $ {{limitDue | number: '2'}}
+                    $ {{currentDue | number: '2'}}
                 </td>
                 <td class="numberColumn">
-                    $ {{currentDue | number: '2'}}
+                    $ {{limitDue | number: '2'}}
                 </td>
                 <td class="helpColumn"></td>
                     
