@@ -176,7 +176,7 @@ public class SiteReqFile {
         newRequest.assertSiteNotExist(cog);
 
         String preApprove = newSiteReq.optString("preapprove", "").toLowerCase();
-        if (preApprove.equals("CRN22")) {
+        if (preApprove.equalsIgnoreCase("CRN23")) {
             HistoricActions ha = new HistoricActions(ar);
             ha.completeSiteRequest(newRequest, true);
         }

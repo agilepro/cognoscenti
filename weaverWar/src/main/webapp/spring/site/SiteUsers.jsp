@@ -184,14 +184,3 @@ app.filter('encode', function() {
     </div>
 </div>
 
-<div class="well">
-<%
-    for (String key: siteUsers.getAllUserKeys()) {
-        %><div><%=key%></div><%
-    }
-%>
-<div>PATH = <%=siteUsers.folder.getAbsolutePath()%></div>
-<pre>
-<%siteUsers.getJson().write(out,2,0);%>
-</pre>
-</div>

@@ -28,7 +28,37 @@
         cal.set(Calendar.MILLISECOND, 0);
         cal.roll(Calendar.HOUR_OF_DAY, 1);
         proposedStartTime = cal.getTime().getTime();
-        meetingInfo.put("agenda", new JSONArray());
+        JSONArray newAgenda = new JSONArray();
+        
+        JSONObject firstItem = new JSONObject();
+        firstItem.put("selected", true);
+        firstItem.put("subject", "Check In");
+        firstItem.put("description", "Go around the circle and get the status from everyone");
+        firstItem.put("duration", 10);
+        newAgenda.put(firstItem);
+        
+        JSONObject secItem = new JSONObject();
+        secItem.put("selected", true);
+        secItem.put("subject", "Admin");
+        secItem.put("description", "Admin:\n* Announcements\n* Accept agenda\n* Review / approve last meeting minutes\n* When is the next meeeting");
+        secItem.put("duration", 10);
+        newAgenda.put(secItem);
+        
+        JSONObject thirdItem = new JSONObject();
+        thirdItem.put("selected", true);
+        thirdItem.put("subject", "Content ");
+        thirdItem.put("description", "(( Ahead of the meeting, put here (in one to four agenda items) the actual meeting agenda topics ))");
+        thirdItem.put("duration", 10);
+        newAgenda.put(thirdItem);
+        
+        JSONObject fourthItem = new JSONObject();
+        fourthItem.put("selected", true);
+        fourthItem.put("subject", "Content ");
+        fourthItem.put("description", "Get final review of meeting");
+        fourthItem.put("duration", 10);
+        newAgenda.put(fourthItem);
+        
+        meetingInfo.put("agenda", newAgenda);
     }
     else {
         MeetingRecord oneRef   = ngw.findMeeting(meetId);
@@ -292,7 +322,7 @@ function GetFirstHundredNoHtml(input) {
           </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
-              <h3>Cloning Agenda Items</h3>
+              <h3>Agenda Items</h3>
               <div class="form-group">
               <table class="table table-striped table-hover" width="100%">
                   <tr>
@@ -321,6 +351,7 @@ function GetFirstHundredNoHtml(input) {
           </div>
         </div>
           <!-- Form Control BUTTONS Begin -->
+
           <div class="form-group text-right">
             <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
             <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()"><%=pageTitle%></button>
