@@ -47,7 +47,7 @@
         JSONObject thirdItem = new JSONObject();
         thirdItem.put("selected", true);
         thirdItem.put("subject", "Content ");
-        thirdItem.put("description", "(( Ahead of the meeting, put here (in one to four agenda items) the actual meeting agenda topics ))");
+        thirdItem.put("description", "(( Ahead of the meeting, put here (in one or more agenda items) the actual meeting agenda topics ))");
         thirdItem.put("duration", 10);
         newAgenda.put(thirdItem);
         

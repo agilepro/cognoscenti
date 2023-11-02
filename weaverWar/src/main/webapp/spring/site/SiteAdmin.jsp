@@ -35,12 +35,12 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
     
-    $scope.chargeCreator = 1;
-    $scope.chargeReader = 0.05;
-    $scope.chargeActive = 1;
-    $scope.chargeFrozen = 0.05;
-    $scope.chargeDocument = 0.001;
-    $scope.chargeEmail = 0.01;
+    $scope.chargeCreator = 3;
+    $scope.chargeReader = 0;
+    $scope.chargeActive = 0;
+    $scope.chargeFrozen = 0;
+    $scope.chargeDocument = 0;
+    $scope.chargeEmail = 0;
     
     $scope.removeName = function(oldName) {
         $scope.siteInfo.names = $scope.siteInfo.names.filter( function(item) {
@@ -81,31 +81,21 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.setSiteInfo = function(info) {
         $scope.siteInfo = info;
-        
-        $scope.chargeCreator = 1;
-    $scope.chargeReader = 0.05;
-    $scope.chargeActive = 1;
-    $scope.chargeFrozen = 0.05;
-    $scope.chargeDocument = 0.001;
-    
+        $scope.siteInfo.workspaceLimit = $scope.siteInfo.editUserLimit;
+        $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
+        $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
+        $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
+            
         $scope.limitCharge = $scope.siteInfo.frozenLimit * $scope.chargeFrozen
             + $scope.siteInfo.workspaceLimit * $scope.chargeActive
             + $scope.siteInfo.viewUserLimit * $scope.chargeReader
-            + $scope.siteInfo.editUserLimit * $scope.chargeCreator
+            + ($scope.siteInfo.editUserLimit-1) * $scope.chargeCreator
             + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
         $scope.currentCharge = $scope.siteStats.numFrozen * $scope.chargeFrozen
             + $scope.siteStats.numActive * $scope.chargeActive
             + $scope.siteStats.readUserCount * $scope.chargeReader
-            + $scope.siteStats.editUserCount * $scope.chargeCreator
+            + ($scope.siteStats.editUserCount-1) * $scope.chargeCreator
             + $scope.siteStats.sizeDocuments * $scope.chargeDocument / 1000000;
-        $scope.limitDue = $scope.limitCharge - 6;
-        if ($scope.limitDue<0) {
-            $scope.limitDue = 0;
-        }
-        $scope.currentDue = $scope.currentCharge - 6;
-        if ($scope.currentDue<0) {
-            $scope.currentDue = 0;
-        }
     }
     $scope.setSiteInfo($scope.siteInfo);
     
@@ -116,6 +106,25 @@ app.controller('myCtrl', function($scope, $http) {
         else {
             $scope.isEditing = editorName;
         }
+    }
+    $scope.recalcStats = function() {
+        console.log("recalcStats");
+        var getURL = "SiteStatistics.json?recalc=yes";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.setSiteInfo(data.stats);
+            window.location.reload(false);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
+    // auto refresh if stats are empty
+    if ($scope.siteStats.editUserCount < 1) {
+        console.log("Automatically recalculating statistics");
+        $scope.recalcStats();
     }
 
 
@@ -248,25 +257,25 @@ p {
                 <td class="helpColumn"></td>
             </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Creator Users:</td>
-                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</td>
+                <td class="numberColumn">
                     {{siteStats.editUserCount}}
                 </td>
                 <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
                     {{siteInfo.editUserLimit}}
                 </td>
-                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'" colspan="2" >
-                    <input type="text" ng-model="siteInfo.editUserLimit">
+                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                    <input type="text" ng-model="siteInfo.editUserLimit"  style="width:50px">
                 </td>
                 <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
                 <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of creator users that the site is allowed to have.  This allows the site owner to control costs by preventing more creator users from being added to the site.
-                    The charge is $ {{chargeCreator|number}} per creator user.
+                    A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
+                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.
                 </td>
             </tr>
-            <tr ng-dblclick="toggleEditor('ReaderLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('ReaderLimit')">Observers:</td>
+            <tr>
+                <td>Observers:</td>
                 <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
                     {{siteStats.readUserCount}}
                 </td>
@@ -277,15 +286,13 @@ p {
                     <input type="text" ng-model="siteInfo.viewUserLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td ng-hide="isEditing =='ReaderLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='ReaderLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of observers that the site is allowed to have.  
-                    This allows the site owner to control costs by preventing more observers from being added to the site.
-                    The charge is $ {{chargeReader|number}} per observer.
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 4 additional guest observer users.
                 </td>
             </tr>
-            <tr ng-dblclick="toggleEditor('WorkspaceLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspaces:</td>
+            <tr>
+                <td >Active Workspaces:</td>
                 <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
                     {{siteStats.numActive}}
                 </td>
@@ -296,14 +303,13 @@ p {
                     <input type="text" ng-model="siteInfo.workspaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td ng-hide="isEditing =='WorkspaceLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='WorkspaceLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of active workspace that the site is allowed to have.  This allows the site owner to control costs by preventing more workspaces from being added to the site.  When this limit is reached in the site, you will need to either freeze or delete a workspace before you can add a new one.
-                    The charge is $ {{chargeActive|number}} per frozen workspace.
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 1 active workspace.
                 </td>
             </tr>
-            <tr ng-dblclick="toggleEditor('FrozenLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('FrozenLimit')">Frozen Workspaces:</td>
+            <tr>
+                <td>Frozen Workspaces:</td>
                 <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
                     {{siteStats.numFrozen}}
                 </td>
@@ -314,14 +320,13 @@ p {
                     <input type="text" ng-model="siteInfo.frozenLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td ng-hide="isEditing =='FrozenLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='FrozenLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of frozen workspace that the site is allowed to have.  This allows the site owner to control costs by preventing more workspaces from being added to the site.  When this limit is reached in the site, you will need to delete a workspace before you another workspace can be frozen.
-                    The charge is $ {{chargeFrozen|number}} per frozen workspace.
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 2 additional frozen (archived) workspaces.
                 </td>
             </tr>
-            <tr ng-dblclick="toggleEditor('DocumentLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('DocumentLimit')">Documents:</td>
+            <tr>
+                <td>Documents:</td>
                 <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
                     {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
                 </td>
@@ -332,13 +337,13 @@ p {
                     <input type="text" ng-model="siteInfo.fileSpaceLimit">
                     <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
                 </td>
-                <td ng-hide="isEditing =='DocumentLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='DocumentLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the total size (in megabytes) for all documents the site is allowed to have.  This allows the site owner to control costs by preventing more documents from being added to the site.  When this limit is reached in the site, you will need to delete some documents before you another document can be added.   The charge is $ {{chargeDocument * 1000|number}} per gigabyte.
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 100 MB of documents.
                 </td>
             </tr>
             <tr >
-                <td >Charges:</td>
+                <td >Charges / Month:</td>
                 <td class="numberColumn">
                     $ {{currentCharge | number: '2'}}
                 </td>
@@ -349,20 +354,9 @@ p {
                     
                 </td>
             </tr>
-            <tr >
-                <td >Due:</td>
-                <td class="numberColumn">
-                    $ {{currentDue | number: '2'}}
-                </td>
-                <td class="numberColumn">
-                    $ {{limitDue | number: '2'}}
-                </td>
-                <td class="helpColumn"></td>
-                    
-                </td>
-            </tr>
         </table>
         
+        <p><button ng-click="recalcStats()" class="btn btn-primary btn-raised">Recalculate Current Usage</button>
         <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
         
         <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
