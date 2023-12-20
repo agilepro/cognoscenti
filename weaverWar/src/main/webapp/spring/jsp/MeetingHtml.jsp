@@ -315,9 +315,14 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
 <td class="leftColumn">
 
-
-<button ng-click="changeMeetingMode('Agenda')"   ng-class="labelButtonClass('Agenda')"  >Agenda</button><br/>
-<button ng-click="changeMeetingMode('Minutes')"  ng-class="labelButtonClass('Minutes')" >Minutes</button>
+<table width="100%"><tr><td >
+<button ng-click="changeMeetingMode('Agenda')"   ng-class="btn btn-small"
+  style="margin-left: auto; margin-right: auto;"><span class="fa  fa-file-o"></span></br>Agenda</button>
+</td><td>
+<button ng-click="changeMeetingMode('Minutes')"  ng-class="btn btn-small"
+  style="margin-left: auto; margin-right: auto;"><span class="fa  fa-file-text-o"></span></br>Minutes</button>
+</td></tr></table>
+<br/>
 <button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button>
 <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')">Participants</button>
 <button ng-click="changeMeetingMode('Times')"    ng-class="labelButtonClass('Times')"   >Start Time</button>

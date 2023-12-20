@@ -1277,7 +1277,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <h2>Adjust Subscribers:</h2>
           <div>
               <tags-input ng-model="subscriberBuffer" 
-                          placeholder="Enter users to send notification email to"
+                          placeholder="Enter users to update about changes"
                           display-property="name" key-property="uid"
                           replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                           on-tag-added="updatePlayers()" 

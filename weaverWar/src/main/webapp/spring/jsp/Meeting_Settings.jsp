@@ -15,7 +15,7 @@
             </td>
           </tr>
           <tr>
-            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
+            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:<br/>(incl. purpose, goals, location, conference link)</td>
             <td ng-dblclick="editMeetingDesc=true">
               <div ng-bind-html="meeting.descriptionHtml"></div>
               <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
@@ -41,46 +41,6 @@
             <td>Called By:</td>
             <td>
               {{meeting.owner}}
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='notifyLayout'" class="labelColumn">Agenda Layout:</td>
-            <td ng-hide="'notifyLayout'==editMeetingPart" ng-dblclick="editMeetingPart='notifyLayout'">
-              {{meeting.notifyLayout}} 
-            </td>
-            <td ng-show="'notifyLayout'==editMeetingPart">
-              <div class="well form-inline form-group" style="max-width:400px">
-                <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
-                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='defaultLayout'" class="labelColumn">Minutes Layout:</td>
-            <td ng-hide="'defaultLayout'==editMeetingPart" ng-dblclick="editMeetingPart='defaultLayout'">
-              {{meeting.defaultLayout}} 
-            </td>
-            <td ng-show="'defaultLayout'==editMeetingPart">
-              <div class="well form-inline form-group" style="max-width:400px">
-                <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
-                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='targetRole'" class="labelColumn">Target Role:</td>
-            <td ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
-              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
-              <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
-                  . . . includes people who are not meeting participants!
-              </span>
-            </td>
-            <td ng-show="'targetRole'==editMeetingPart">
-                <div class="well form-inline form-group" style="max-width:400px">
-                    <select class="form-control" ng-model="meeting.targetRole" 
-                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
             </td>
           </tr>
           <tr ng-show="previousMeeting.id">
@@ -116,6 +76,50 @@
                         <option>Days</option>
                         </select>
                     before the meeting, ({{meeting.reminderTime}} minutes)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+              <td></td>
+              <td><button ng-click="expertMode = !expertMode" class="btn btn-default btn-raised">Expert Mode</button></td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td ng-click="editMeetingPart='notifyLayout'" class="labelColumn">Agenda Layout:</td>
+            <td ng-hide="'notifyLayout'==editMeetingPart" ng-dblclick="editMeetingPart='notifyLayout'">
+              {{meeting.notifyLayout}} 
+            </td>
+            <td ng-show="'notifyLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td ng-click="editMeetingPart='defaultLayout'" class="labelColumn">Minutes Layout:</td>
+            <td ng-hide="'defaultLayout'==editMeetingPart" ng-dblclick="editMeetingPart='defaultLayout'">
+              {{meeting.defaultLayout}} 
+            </td>
+            <td ng-show="'defaultLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td ng-click="editMeetingPart='targetRole'" class="labelColumn">Target Role:</td>
+            <td ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
+              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
+              <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
+                  . . . includes people who are not meeting participants!
+              </span>
+            </td>
+            <td ng-show="'targetRole'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:400px">
+                    <select class="form-control" ng-model="meeting.targetRole" 
+                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
             </td>

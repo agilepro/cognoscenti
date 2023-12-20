@@ -12,7 +12,7 @@
       <div class="well" ng-show="editMeetingPart=='participants'">
           <div>
               <tags-input ng-model="participantEditCopy" 
-                          placeholder="Enter users to send notification email to"
+                          placeholder="Enter users to participate in the meeting"
                           display-property="name" key-property="uid"
                           replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                       on-tag-added="updateParticipants()" 

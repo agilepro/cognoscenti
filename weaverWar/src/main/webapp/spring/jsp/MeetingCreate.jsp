@@ -46,15 +46,15 @@
         
         JSONObject thirdItem = new JSONObject();
         thirdItem.put("selected", true);
-        thirdItem.put("subject", "Content ");
+        thirdItem.put("subject", "Content");
         thirdItem.put("description", "(( Ahead of the meeting, put here (in one or more agenda items) the actual meeting agenda topics ))");
         thirdItem.put("duration", 10);
         newAgenda.put(thirdItem);
         
         JSONObject fourthItem = new JSONObject();
         fourthItem.put("selected", true);
-        fourthItem.put("subject", "Content ");
-        fourthItem.put("description", "Get final review of meeting");
+        fourthItem.put("subject", "Closing");
+        fourthItem.put("description", "Evaluation of meeting and possible topics for next meeting.");
         fourthItem.put("duration", 10);
         newAgenda.put(fourthItem);
         
@@ -343,7 +343,7 @@ function GetFirstHundredNoHtml(input) {
                               <span ng-show="rec.topics.length()>0">(Linked Topic)</span>
                           </b>
                           </td>
-                      <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
+                      <td style="line-height: 1.3;"><div ng-bind-html="trimDesc(rec)|wiki"></div></td>
                       <td title="Expected duration of the agenda item in minutes">
                           <input class="form-control" style="width:80px" ng-model="rec.duration"></td>
                   </tr>

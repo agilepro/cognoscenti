@@ -30,24 +30,6 @@
               {{meeting.owner}}
             </td>
           </tr>
-          <tr>
-            <td>Agenda Layout:</td>
-            <td >
-              {{meeting.notifyLayout}} 
-            </td>
-          </tr>
-          <tr>
-            <td>Minutes Layout:</td>
-            <td >
-              {{meeting.defaultLayout}} 
-            </td>
-          </tr>
-          <tr>
-            <td>Target Role:</td>
-            <td>
-              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
-            </td>
-          </tr>
           <tr ng-show="previousMeeting.id">
             <td>Previous Meeting:</td>
             <td>
@@ -72,6 +54,28 @@
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
                 <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
+            </td>
+          </tr>
+          <tr>
+              <td></td>
+              <td><button ng-click="expertMode = !expertMode" class="btn btn-default btn-raised">Expert Mode</button></td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td>Agenda Layout:</td>
+            <td >
+              {{meeting.notifyLayout}} 
+            </td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td>Minutes Layout:</td>
+            <td >
+              {{meeting.defaultLayout}} 
+            </td>
+          </tr>
+          <tr ng-show="expertMode">
+            <td>Target Role:</td>
+            <td>
+              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
             </td>
           </tr>
         </table>

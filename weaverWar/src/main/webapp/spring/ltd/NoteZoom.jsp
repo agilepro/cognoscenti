@@ -755,7 +755,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <div class="well" ng-show="addressMode" ng-cloak>
       <h2>Email Notification To (Subscribers):</h2>
       <div>
-          <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notification email to"
+          <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notify about changes"
                       display-property="name" key-property="uid"
                       replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                       on-tag-added="updatePlayers()" 
