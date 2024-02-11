@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.api.AuthStatus;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;

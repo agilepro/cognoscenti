@@ -454,7 +454,7 @@ public class ExceptionBase extends Exception {
             try {
                 bundle = ResourceBundle.getBundle(bundleName, locale);
                 ibpmResourceBundles.put(bundleKey, bundle);
-            } catch (MissingResourceException mre) {
+            } catch (Exception mre) {
                 throw new RuntimeException("getResourceBundle: "
                         + "Failed to load resource bundle '"
                         + bundleName + "' for locale '" + locale.getDisplayName() + "'.  ",mre);

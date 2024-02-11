@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.UserManager;
@@ -55,7 +55,7 @@ import com.purplehillsbooks.json.JSONTokener;
  *
  */
 @SuppressWarnings("serial")
-public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
+public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
 
     private static String trusterProviderUrl = "https://interstagebpm.com/eid/";
 

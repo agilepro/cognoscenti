@@ -1,6 +1,6 @@
 package com.purplehillsbooks.weaver.api;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class AuthStatus {
 

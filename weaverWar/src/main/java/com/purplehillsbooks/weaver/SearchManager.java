@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Path;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -67,11 +68,12 @@ public class SearchManager {
     
     private Directory getStore() throws Exception {
         File directoryFolder = new File(cog.getConfig().getUserFolderOrFail(), ".search");
+        Path dirPath = directoryFolder.toPath();
         System.out.println("SearchManager - starting to build index in ("+directoryFolder.getCanonicalPath()+")");
 
         //directory = new RAMDirectory();
         if (directoryStore==null) {
-            directoryStore = FSDirectory.open(directoryFolder);
+            directoryStore = FSDirectory.open(dirPath);
         }
         
         return directoryStore;
@@ -79,7 +81,7 @@ public class SearchManager {
     
     public void cleanOutIndex() throws Exception {
         Directory dirStore = getStore();
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
         IndexWriter iWriter = new IndexWriter(dirStore, config);
         try {
             iWriter.deleteAll();
@@ -156,14 +158,14 @@ public class SearchManager {
     }    
     
     private synchronized void initializeIndex() throws Exception {
-        analyzer = new StandardAnalyzer(Version.LUCENE_42);
+        analyzer = new StandardAnalyzer();
 
         long startTime = System.currentTimeMillis();
 
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
 
         Directory dirStore = getStore();
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
 
@@ -218,7 +220,7 @@ public class SearchManager {
 
             try {
                 //delete all documents with workspace equal to the workspace key
-                QueryParser parser = new QueryParser(Version.LUCENE_42, "BODY", analyzer);
+                QueryParser parser = new QueryParser("BODY", analyzer);
                 Query query = parser.parse("PAGEKEY:"+workspaceKey);
                 iWriter.deleteDocuments(query);
                 
@@ -445,10 +447,10 @@ public class SearchManager {
         IndexSearcher isearcher = new IndexSearcher(ireader);
         
         // Parse a simple query that searches for "text":
-        QueryParser parser = new QueryParser(Version.LUCENE_42, "BODY", analyzer);
+        QueryParser parser = new QueryParser("BODY", analyzer);
         Query query = parser.parse(queryStr);
         
-        TopDocs td = isearcher.search(query, null, 1000);
+        TopDocs td = isearcher.search(query, 1000);
         ScoreDoc[] hits = td.scoreDocs;
 
         UserProfile up = ar.getUserProfile();

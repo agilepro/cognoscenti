@@ -20,10 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
@@ -48,11 +46,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+// import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
+import java.util.List;
 
 /**
  * This class will handle all requests managing process/tasks. Currently this is
@@ -68,7 +67,6 @@ public class ProjectGoalController extends BaseController {
     public static final String SUCCESS_REMOTE = "success_remote";
     public static final String REMOTE_PROJECT = "Remote_project";
     public static final String LOCAL_PROJECT = "Local_Project";
-
 
 
     ///////////////////////// MAIN VIEWS ////////////////////////////////////
@@ -210,6 +208,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/subtask.htm", method = RequestMethod.GET)
     public ModelAndView showSubTask(@PathVariable
     String siteId, @PathVariable
@@ -229,6 +228,7 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.create.task.page", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
     //TODO: is this still used?
     private void taskActionUpdate(AuthRequest ar, NGWorkspace ngw, String parentTaskId)

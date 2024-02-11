@@ -18,8 +18,8 @@ package com.purplehillsbooks.weaver.api;
 
 import java.io.File;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.ConfigFile;
 import com.purplehillsbooks.weaver.UserManager;
@@ -33,7 +33,7 @@ import com.purplehillsbooks.streams.StreamHelper;
  * The xxxxxxxx is either a user key or an email address
  */
 @SuppressWarnings("serial")
-public class IconServlet extends javax.servlet.http.HttpServlet {
+public class IconServlet extends jakarta.servlet.http.HttpServlet {
     private static ConfigFile theConfig;
     private static File userFolder;
     private static File applicationUsersFolder;

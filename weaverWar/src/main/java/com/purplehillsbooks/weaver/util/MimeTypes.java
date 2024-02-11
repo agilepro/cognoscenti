@@ -25,8 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.activation.FileTypeMap;
+import jakarta.activation.MimetypesFileTypeMap;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 

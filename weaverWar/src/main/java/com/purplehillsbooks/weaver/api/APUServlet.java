@@ -16,10 +16,10 @@
 
 package com.purplehillsbooks.weaver.api;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.BaseRecord;
@@ -63,7 +63,7 @@ import com.purplehillsbooks.json.JSONObject;
  *
  */
 @SuppressWarnings("serial")
-public class APUServlet extends javax.servlet.http.HttpServlet {
+public class APUServlet extends jakarta.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         //this is an API to be read by others, so you have to set the CORS to

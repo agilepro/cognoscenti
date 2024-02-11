@@ -93,15 +93,6 @@ public class AuthDummy extends AuthRequest
         + "so whatever method is calling for a session can not run in background.");
     }
 
-    /**
-    * take the relative path, split it on slash characters, and
-    * and parse it into an array os string values, properly converting
-    * each element of the array for URL encoding.
-    */
-    public List<String> getParsedPath() {
-        return new ArrayList<String>();
-    }
-
     @SuppressWarnings("unused")
     private void resolveUser() throws Exception
     {

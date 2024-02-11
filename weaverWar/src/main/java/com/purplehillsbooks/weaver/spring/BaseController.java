@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -101,6 +101,8 @@ public class BaseController {
         catch (Exception e) {
             JSONException.traceException(System.out, e,
                     "%%%%%% Exception while reporting exception in BaseController");
+            JSONException.traceException(System.out, extd,
+                    "%%%%%% Exception that was being reported");
         }
     }
 

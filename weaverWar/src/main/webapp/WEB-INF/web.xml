@@ -31,17 +31,6 @@
          <listener>
             <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
          </listener>
-
-
-    <!--servlet>
-        <servlet-name>DataFeedServlet</servlet-name>
-        <servlet-class>com.purplehillsbooks.weaver.rest.DataFeedServlet</servlet-class>
-    </servlet-->
-    <!--servlet-mapping>
-        <servlet-name>DataFeedServlet</servlet-name>
-        <url-pattern>/servlet/DataFeedServlet</url-pattern>
-    </servlet-mapping-->
-    
     
 
     <servlet>
@@ -52,16 +41,6 @@
         <servlet-name>apiServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    
-    
-    <!--servlet>
-        <servlet-name>apuServlet</servlet-name>
-        <servlet-class>com.purplehillsbooks.weaver.api.APUServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>apuServlet</servlet-name>
-        <url-pattern>/apu/*</url-pattern>
-    </servlet-mapping-->
 
     <servlet>
         <servlet-name>authServlet</servlet-name>
@@ -108,23 +87,6 @@
         <servlet-name>EmergencyConfigServlet</servlet-name>
         <url-pattern>/init/*</url-pattern>
     </servlet-mapping>
-
-   <security-constraint>
-    <web-resource-collection>
-        <web-resource-name>Deny Direct Access</web-resource-name>
-        <description>
-        Deny direct access to JSPs by associating them with denied role
-        </description>
-        <url-pattern>/springbogus/*</url-pattern>
-        <http-method>GET</http-method>
-        <http-method>POST</http-method>
-    </web-resource-collection>
-
-    <auth-constraint>
-        <role-name>Denied</role-name>
-    </auth-constraint>
-
-  </security-constraint>
 
   <security-role>
     <role-name>Denied</role-name>
