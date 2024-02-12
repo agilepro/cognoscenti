@@ -17,10 +17,10 @@ public class StringCounter {
     public int increment(String sVal) {
         Integer iVal = guts.get(sVal);
         if (iVal==null) {
-            iVal = new Integer(1);
+            iVal = Integer.valueOf(1);
         }
         else {
-            iVal = new Integer(iVal.intValue()+1);
+            iVal = Integer.valueOf(iVal.intValue()+1);
         }
         guts.put(sVal, iVal);
         return iVal.intValue();
@@ -34,7 +34,7 @@ public class StringCounter {
         return iVal.intValue();
     }
     public int setCount(String sVal, int count) {
-        return guts.put(sVal, new Integer(count));
+        return guts.put(sVal, Integer.valueOf(count));
     }
 
     public Set<String> keySet() {

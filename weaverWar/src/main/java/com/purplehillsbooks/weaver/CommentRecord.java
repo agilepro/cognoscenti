@@ -316,7 +316,7 @@ public class CommentRecord extends DOMFace {
         ArrayList<Long> ret = new ArrayList<Long>();
         for(String val : getVector("replies")) {
             long longVal = safeConvertLong(val);
-            ret.add(new Long(longVal));
+            ret.add(Long.valueOf(longVal));
         }
         return ret;
     }

@@ -37,7 +37,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.Ledger;
 import com.purplehillsbooks.weaver.LedgerCharge;
-import com.purplehillsbooks.weaver.LedgerPayment;
 import com.purplehillsbooks.weaver.SiteMailGenerator;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
@@ -743,7 +742,7 @@ public class SiteController extends BaseController {
             Ledger ledger = site.getLedger();
             
             long timestamp = Ledger.getTimestamp(year, month, day);
-            LedgerPayment payment = ledger.createPayment(timestamp, amount);
+            ledger.createPayment(timestamp, amount);
             site.saveLedger(ledger);
 
             JSONObject jo = ledger.generateJson();

@@ -22,12 +22,8 @@ package com.purplehillsbooks.weaver;
 
 import java.io.Writer;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import jakarta.servlet.http.HttpSession;
-
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;

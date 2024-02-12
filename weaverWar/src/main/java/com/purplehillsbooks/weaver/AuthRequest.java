@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -115,7 +114,7 @@ public class AuthRequest
 
     //the relative path parsed and properly URLDecoded into an
     //array of string.
-    private List<String> parsedPath = null;
+    //private List<String> parsedPath = null;
 
     /**
     * baseURL is the full external global URL path to the base of the application
@@ -1609,7 +1608,7 @@ public class AuthRequest
     */
     private static File logFile = null;
     private static long logRestartTime = 0;
-    private static Integer synchObject = new Integer(0);
+    private static String synchObject = "goofy string";
     public void logCompletedRequest()
     {
         try

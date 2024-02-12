@@ -49,7 +49,7 @@ public class NameCounter extends Hashtable<String,Integer>
                 remove(key);
             }
             else {
-                put(key, new Integer(ival - 1));
+                put(key, Integer.valueOf(ival - 1));
             }
         }
     }
@@ -61,20 +61,20 @@ public class NameCounter extends Hashtable<String,Integer>
                 throw new RuntimeException("Strange, map should contain an element for (" + key
                         + ") but got a null back.");
             }
-            put(key, new Integer(i.intValue() + 1));
+            put(key, Integer.valueOf(i.intValue() + 1));
         }
         else {
-            put(key, new Integer(1));
+            put(key, Integer.valueOf(1));
         }
     }
     
     public void modifyCount(String key, int delta) {
         if (containsKey(key)) {
             Integer i = get(key);
-            put(key, new Integer(i.intValue() + delta));
+            put(key, Integer.valueOf(i.intValue() + delta));
         }
         else {
-            put(key, new Integer(delta));
+            put(key, Integer.valueOf(delta));
         }
     }
     

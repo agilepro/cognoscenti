@@ -120,6 +120,13 @@ public class MeetingRecord extends DOMFace {
         this.setVector("participants", newSet);
     }
 
+    public String getConferenceUrl() {
+        return getAttribute("conferenceUrl");
+    }
+    public void setConferenceUrl(String newVal) throws Exception {
+        setAttribute("conferenceUrl", newVal);
+    }
+
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
         List<String> partUsers = this.getVector("participants");
@@ -576,6 +583,7 @@ public class MeetingRecord extends DOMFace {
         extractScalarString   (meetingInfo, "defaultLayout");
         extractScalarString   (meetingInfo, "notifyLayout");
         extractAttributeString(meetingInfo, "minutesId");
+        extractAttributeString(meetingInfo, "conferenceUrl");
         return meetingInfo;
     }
 
@@ -780,9 +788,9 @@ public class MeetingRecord extends DOMFace {
         
         
         updateScalarString("previousMeeting", input);
-
         updateScalarString("defaultLayout", input);
         updateScalarString("notifyLayout", input);
+        updateAttributeString("conferenceUrl", input);
 
         if (input.has("owner")) {
             setOwner(input.getString("owner"));

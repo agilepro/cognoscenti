@@ -868,7 +868,7 @@ public class DOMUtils {
     }
 
     private static TransformerFactory transformerFactory = null;
-    private static final Long mutex2 = new Long(2);
+    private static final String mutex2 = "goofy string";
     private static final void initTransformer()
             throws TransformerFactoryConfigurationError,
             TransformerConfigurationException {

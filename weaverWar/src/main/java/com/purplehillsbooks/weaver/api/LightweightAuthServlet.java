@@ -18,8 +18,7 @@ package com.purplehillsbooks.weaver.api;
 
 import java.io.InputStream;
 import java.io.Writer;
-import java.net.URL;
-
+import java.net.URI;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -228,7 +227,7 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
     public static JSONObject postToTrustedProvider(String postFix, JSONObject objIn) throws Exception {
         String destUrl = trusterProviderUrl + postFix;
         APIClient client = new APIClient();
-        JSONObject response = client.postToRemote(new URL(destUrl), objIn);
+        JSONObject response = client.postToRemote(URI.create(destUrl).toURL(), objIn);
         return response;
     }
     
