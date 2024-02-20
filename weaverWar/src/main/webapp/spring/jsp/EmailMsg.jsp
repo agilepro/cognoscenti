@@ -51,11 +51,11 @@
 
 /* PROTOTYPE EMAIL RECORD
       {
-        "from": "Keith local Test <kswenson@us.fujitsu.com>",
+        "from": "Keith local Test <kswenson@example.com>",
         "sendDate": 1431876589439,
         "status": "Sent",
         "subject": "This is a new NOTE",
-        "to": ["kswenson@us.fujitsu.com"]
+        "to": ["kswenson@example.com"]
       },
 */
 

@@ -179,12 +179,12 @@ Optional Parameters:
           {
             "content": "xxx",
             "time": 1435356818486,
-            "user": "kswenson@us.fujitsu.com"
+            "user": "kswenson@example.com"
           },
           {
             "content": "yyy",
             "time": 1435356822441,
-            "user": "kswenson@us.fujitsu.com"
+            "user": "kswenson@example.com"
           }
         ],
         "deleted": false,
@@ -199,7 +199,7 @@ Optional Parameters:
         "modTime": 1435356792085,
         "modUser": {
           "name": "Keith Swenson",
-          "uid": "kswenson@us.fujitsu.com"
+          "uid": "kswenson@example.com"
         },
         "pin": 0,
         "public": true,
@@ -234,7 +234,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.recipient = {};
-    $scope.recipientList = [{uid:"kswenson@us.fujitsu.com",name:"K Swenson"}];
+    $scope.recipientList = [{uid:"kswenson@example.com",name:"K Swenson"}];
     $scope.renderedEmail = "<div>not specified yet</div>";
 
     $scope.newEmailAddress = "";

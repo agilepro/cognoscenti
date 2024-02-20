@@ -53,12 +53,12 @@
           {
             "content": "this is a comment",
             "time": 1435036060903,
-            "user": "kswenson@us.fujitsu.com"
+            "user": "kswenson@us.example.com"
           },
           {
             "content": "another comment",
             "time": 1435036329093,
-            "user": "kswenson@us.fujitsu.com"
+            "user": "kswenson@example.com"
           }
         ],
         "deleted": false,
@@ -70,7 +70,7 @@
         "modTime": 1434492969035,
         "modUser": {
           "name": "Keith Swenson",
-          "uid": "kswenson@us.fujitsu.com"
+          "uid": "kswenson@example.com"
         },
         "pin": 0,
         "public": false,

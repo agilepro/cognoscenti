@@ -20,7 +20,7 @@
   "siteId": "anaxaman",
   "stats": {
     "anythingPerUser": {
-      "kswenson@us.fujitsu.com": 7
+      "kswenson@example.com": 7
     },
     "commentsPerUser": {},
     "docsPerUser": {},
