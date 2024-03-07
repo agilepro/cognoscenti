@@ -20,16 +20,6 @@
 
 package com.purplehillsbooks.weaver.test;
 
-import java.io.PrintWriter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.TreeSet;
-
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
 //import com.gargoylesoftware.htmlunit.BrowserVersion;
 //import com.gargoylesoftware.htmlunit.JavaScriptPage;
 //import com.gargoylesoftware.htmlunit.Page;

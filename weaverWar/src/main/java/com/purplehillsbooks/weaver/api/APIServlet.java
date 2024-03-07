@@ -21,10 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
@@ -109,7 +109,7 @@ import com.purplehillsbooks.streams.StreamHelper;
  * A POST to this address will update the action item in JSON format
  */
 @SuppressWarnings("serial")
-public class APIServlet extends javax.servlet.http.HttpServlet {
+public class APIServlet extends jakarta.servlet.http.HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {

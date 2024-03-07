@@ -120,6 +120,13 @@ public class MeetingRecord extends DOMFace {
         this.setVector("participants", newSet);
     }
 
+    public String getConferenceUrl() {
+        return getAttribute("conferenceUrl");
+    }
+    public void setConferenceUrl(String newVal) throws Exception {
+        setAttribute("conferenceUrl", newVal);
+    }
+
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
         List<String> partUsers = this.getVector("participants");
@@ -576,6 +583,7 @@ public class MeetingRecord extends DOMFace {
         extractScalarString   (meetingInfo, "defaultLayout");
         extractScalarString   (meetingInfo, "notifyLayout");
         extractAttributeString(meetingInfo, "minutesId");
+        extractAttributeString(meetingInfo, "conferenceUrl");
         return meetingInfo;
     }
 
@@ -780,9 +788,9 @@ public class MeetingRecord extends DOMFace {
         
         
         updateScalarString("previousMeeting", input);
-
         updateScalarString("defaultLayout", input);
         updateScalarString("notifyLayout", input);
+        updateAttributeString("conferenceUrl", input);
 
         if (input.has("owner")) {
             setOwner(input.getString("owner"));
@@ -1417,7 +1425,7 @@ public class MeetingRecord extends DOMFace {
         AddressListEntry ale = new AddressListEntry(getOwner());
         w.write("BEGIN:VCALENDAR\n");
         w.write("VERSION:2.0\n");
-        w.write("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
+        w.write("PRODID:-//example/Weaver//NONSGML v1.0//EN\n");
         w.write("BEGIN:VEVENT\n");
         w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
         w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");

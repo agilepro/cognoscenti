@@ -23,10 +23,10 @@ package com.purplehillsbooks.weaver.rest;
 import java.io.File;
 import java.io.Writer;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.HttpServletResponseWithoutBug;
@@ -103,7 +103,7 @@ import com.purplehillsbooks.temps.TemplateStreamer;
  *
  */
 @SuppressWarnings("serial")
-public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
+public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
 
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {

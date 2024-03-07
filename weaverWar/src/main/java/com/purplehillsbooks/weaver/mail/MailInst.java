@@ -8,19 +8,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.mail.Address;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
+import jakarta.activation.DataHandler;
+import jakarta.mail.Address;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeUtility;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -547,11 +547,11 @@ public class MailInst extends JSONWrapper {
      * A simple authenticator class that gets the username and password
      * from the properties object if mail.smtp.auth is set to true.
      *
-     * documentation on javax.mail.Authenticator says that if you want
+     * documentation on jakarta.mail.Authenticator says that if you want
      * authentication, return an object, otherwise return null.  So
      * null is returned if no auth setting or user/password.
      */
-    private static class MyAuthenticator extends javax.mail.Authenticator {
+    private static class MyAuthenticator extends jakarta.mail.Authenticator {
         private Properties props;
 
         public MyAuthenticator(Properties _props) {

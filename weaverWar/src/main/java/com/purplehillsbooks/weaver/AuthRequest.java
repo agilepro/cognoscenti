@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,13 +36,13 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.ServletExit;
@@ -115,7 +114,7 @@ public class AuthRequest
 
     //the relative path parsed and properly URLDecoded into an
     //array of string.
-    private List<String> parsedPath = null;
+    //private List<String> parsedPath = null;
 
     /**
     * baseURL is the full external global URL path to the base of the application
@@ -415,52 +414,6 @@ public class AuthRequest
     */
     public String getSystemProperty(String name) {
         return cog.getConfig().getProperty(name);
-    }
-
-    /**
-    * take the relative path, split it on slash characters, and
-    * and parse it into an array os string values, properly converting
-    * each element of the array for URL encoding.
-    */
-    public List<String> getParsedPath()
-    {
-        if (parsedPath!=null) {
-            return parsedPath;
-        }
-        Object URIObj =  req.getAttribute("javax.servlet.forward.request_uri");
-        String URI="";
-        String ctxtroot="";
-        String requrl="";
-        String url = req.getRequestURL().toString();
-        if(URIObj!=null){
-             URI = req.getAttribute("javax.servlet.forward.request_uri").toString();
-             ctxtroot = req.getAttribute("javax.servlet.forward.context_path").toString();
-             requrl = url.substring(0, url.indexOf(ctxtroot))+URI;
-        }
-        else{
-             ctxtroot = req.getContextPath();
-             requrl=url;
-        }
-        int indx = requrl.indexOf(ctxtroot);
-
-        int bindx = indx + ctxtroot.length() + 1;
-
-        List<String> rawPath = UtilityMethods.splitString(requrl.substring(bindx), '/');
-        List<String> decodedPath = new ArrayList<String>();
-
-        //must do the URLDecoding AFTER parsing the slashes out
-        //but remember that browsers will reject URLEncoded slash character!
-        for (String token : rawPath) {
-            try {
-                decodedPath.add(URLDecoder.decode(token, "UTF-8"));
-            }
-            catch (java.io.UnsupportedEncodingException e) {
-                //it is not possible that UTF-8 is not supported
-                //but in that case, leave it encoded.
-            }
-        }
-        parsedPath = decodedPath;
-        return parsedPath;
     }
 
     private void resolveUser() throws Exception
@@ -1655,7 +1608,7 @@ public class AuthRequest
     */
     private static File logFile = null;
     private static long logRestartTime = 0;
-    private static Integer synchObject = new Integer(0);
+    private static String synchObject = "goofy string";
     public void logCompletedRequest()
     {
         try

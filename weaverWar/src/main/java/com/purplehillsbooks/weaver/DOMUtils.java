@@ -660,58 +660,12 @@ public class DOMUtils {
     }
 
 
-    /**
-     * @Deprecated - you should never convert a string to a DOM because a string
-     * is composed of 16-bit characters, and XML is typically a sequence of 8-bit
-     * byte values.  The conversion of 8-bit to 16-bit might or might not be done
-     * correctly.  DOM serialization does it correctly according to the encoding
-     * placed at the beginning of the file.
-     *
-     * There are some places where we need get AML as a (16-bit char) string and
-     * convert, so this method remains here, but it should be AVOIDED if at all
-     * possible.
-     *
-     * Instead use the Stream interfaces for streaming bytes in and out of DOM.
-     */
-    public static Document convertStringToDocument(String xmlString, boolean validate,
-                  boolean isNamespaceAware)
-        throws Exception
-    {
-        DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-        dfactory.setNamespaceAware(isNamespaceAware);
-        dfactory.setValidating(validate) ;
-        dfactory.setIgnoringElementContentWhitespace(true) ;
-        DocumentBuilder bldr = dfactory.newDocumentBuilder();
-        bldr.setErrorHandler(new ErrorHandler()
-        {
-            public void warning (SAXParseException exception) throws SAXException {
-                //ignore warnings
-            }
-            public void error (SAXParseException exception) throws SAXException {
-                // ignore parse validation errors
-            }
-            public void fatalError (SAXParseException exception) throws SAXException {
-                throw exception ;
-            }
-        });
-        Document doc = bldr.parse(new InputSource(new StringReader(xmlString)));
-        return doc;
-    }
-
-    public static void writeDom(Document doc, OutputStream out)
+    private static void writeDom(Document doc, OutputStream out)
         throws Exception
     {
         DOMSource docSource = new DOMSource(doc);
         Transformer transformer = getXmlTransformer();
         transformer.transform(docSource, new StreamResult(out));
-    }
-
-    public static void writeDom(Document doc, Writer w)
-        throws Exception
-    {
-        DOMSource docSource = new DOMSource(doc);
-        Transformer transformer = getXmlTransformer();
-        transformer.transform(docSource, new StreamResult(w));
     }
 
     public static void writeDomToFile(Document doc, File outFile)
@@ -780,64 +734,7 @@ public class DOMUtils {
         }
     }
 
-    /**
-     * Utility method to do XML escaping for the given xml string.
-     *
-     * @param xmlStr
-     *                Source XML String
-     * @return escaped String.
-     */
-    public static String xmlEscape(String str) {
-        StringBuilder validStr = new StringBuilder(str.length());
-        for (int i = 0; i < str.length(); i++) {
-            char currentChar = str.charAt(i);
-            switch (currentChar) {
-            case '\"': {
-                validStr.append("&quot;");
-                break;
-            }
-            case '\'': {
-                validStr.append("&apos;");
-                break;
-            }
-            case '<': {
-                validStr.append("&lt;");
-                break;
-            }
-            case '>': {
-                validStr.append("&gt;");
-                break;
-            }
-            case '&': {
-                validStr.append("&amp;");
-                break;
-            }
-            default:
-                validStr.append(currentChar);
-            }
-        }
-        return validStr.toString();
-    }
 
-    /**
-     * This method is used to Serialize the DOM Document Object into a String.
-     * This is the preferred way to convert an XML dom tree to a String, but
-     * PLEASE try not to use this. Creating XML copies as strings in memory is a
-     * bad practice. Streaming them directly to a file, or to a socket, is
-     * better. But, if you need to have a String, use this one.
-     *
-     * @param doc
-     *                Document Object.
-     * @return XML String.
-     * @throws Exception
-     */
-    public static String convertDomToStringAvoidUsingThis(Document doc) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DOMSource docSource = new DOMSource(doc);
-        Transformer transformer = getXmlTransformer();
-        transformer.transform(docSource, new StreamResult(baos));
-        return baos.toString("UTF-8");
-    }
 
     private static Transformer getXmlTransformer() throws Exception {
         /*
@@ -868,7 +765,7 @@ public class DOMUtils {
     }
 
     private static TransformerFactory transformerFactory = null;
-    private static final Long mutex2 = new Long(2);
+    private static final String mutex2 = "goofy string";
     private static final void initTransformer()
             throws TransformerFactoryConfigurationError,
             TransformerConfigurationException {
@@ -877,35 +774,6 @@ public class DOMUtils {
                 transformerFactory = TransformerFactory.newInstance();
             }
         }
-    }
-
-    public static void setSchemAttribute(Element root, String schema)
-    {
-        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-
-        String targetns = "http://nugen.fujitsu.com";
-        if(schema.endsWith("BookContent.xsd")) {
-            targetns = "http://nugenextn.fujitsu.com/bookcontent/schema";
-        }
-        else if(schema.endsWith("PageList.xsd")) {
-            targetns = "http://nugenextn.fujitsu.com/pagelist/schema";
-        }
-        else if(schema.endsWith("Status.xsd")) {
-            targetns = "http://nugenextn.fujitsu.com/status/schema";
-        }
-        else if(schema.endsWith("UsersList.xsd")) {
-            targetns = "http://nugenextn.fujitsu.com/userlist/schema";
-        }
-        else if(schema.endsWith("SearchResults.xsd")) {
-            targetns = "http://nugenextn.fujitsu.com/search/schema";
-        }
-        else {
-            targetns = "http://nugen.fujitsu.com";
-        }
-
-        root.setAttribute("xmlns", targetns);
-        String schemloc = targetns + " " + schema;
-        root.setAttribute("xsi:schemaLocation", schemloc);
     }
 
 }

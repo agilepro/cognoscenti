@@ -256,7 +256,7 @@ public class EmailSender extends TimerTask {
         }
     }
 
-    Object globalEmailFileLock = new Integer(999);
+    Object globalEmailFileLock = Integer.valueOf(999);
 
     private void handleGlobalEmail() {
         synchronized(this) {

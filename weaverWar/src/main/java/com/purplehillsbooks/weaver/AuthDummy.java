@@ -21,8 +21,6 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -91,15 +89,6 @@ public class AuthDummy extends AuthRequest
     {
         throw new RuntimeException("The AuthDummy does not have a session object and "
         + "so whatever method is calling for a session can not run in background.");
-    }
-
-    /**
-    * take the relative path, split it on slash characters, and
-    * and parse it into an array os string values, properly converting
-    * each element of the array for URL encoding.
-    */
-    public List<String> getParsedPath() {
-        return new ArrayList<String>();
     }
 
     @SuppressWarnings("unused")

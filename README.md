@@ -1,9 +1,9 @@
 # cognoscenti
 Major Adaptive CaseManagement, Coordination, Communication, Collaboration System
 
-!PREREQUIREMENTS
+# Prerequisites
 
-You must have Java installed, version 8 or later.
+You must have Java installed, preferably Java 21 or later.
 
 You must have Mongo installed and running on the standard port for Mongo.
 

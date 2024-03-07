@@ -23,8 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.util.UnclosableWriter;
 
@@ -107,7 +107,7 @@ import com.purplehillsbooks.weaver.util.UnclosableWriter;
 * need to test for null everywhere because code can assure
 * non-null up front.  It really solves a lot of problems
 */
-public class HttpServletResponseWithoutBug extends javax.servlet.http.HttpServletResponseWrapper
+public class HttpServletResponseWithoutBug extends jakarta.servlet.http.HttpServletResponseWrapper
 {
     public ServletOutputStream out;
     public PrintWriter writer;

@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -375,7 +374,7 @@ public class ExceptionBase extends Exception {
     }
 
     private String getFormattedNumber(Integer number, Locale locale) {
-        return getFormattedNumber(new Long(number.intValue()), locale);
+        return getFormattedNumber(Long.valueOf(number.intValue()), locale);
     }
 
     private String getFormattedNumber(Long number, Locale locale) {
@@ -454,7 +453,7 @@ public class ExceptionBase extends Exception {
             try {
                 bundle = ResourceBundle.getBundle(bundleName, locale);
                 ibpmResourceBundles.put(bundleKey, bundle);
-            } catch (MissingResourceException mre) {
+            } catch (Exception mre) {
                 throw new RuntimeException("getResourceBundle: "
                         + "Failed to load resource bundle '"
                         + bundleName + "' for locale '" + locale.getDisplayName() + "'.  ",mre);

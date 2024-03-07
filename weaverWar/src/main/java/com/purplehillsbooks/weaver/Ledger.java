@@ -42,6 +42,7 @@ public class Ledger {
     public List<LedgerCharge> charges = new ArrayList<>();
     public List<LedgerPayment> payments = new ArrayList<>();
     
+    @SuppressWarnings("deprecation")
     public static Ledger readLedger(File folder) throws Exception {
         // disable is deprecated, but not clear what the replacement is
         // except for using a builder which seems like pointless
@@ -410,7 +411,7 @@ public class Ledger {
         
         for (NGPageIndex ngpi : cog.getAllSites()) {
             NGBook site = ngpi.getSite();
-            WorkspaceStats stats = site.recalculateStats(cog);
+            site.recalculateStats(cog);
             File sitefolder = site.getFilePath().getParentFile();
             Ledger ledger = readLedger(sitefolder);
             LedgerCharge chargeMonth = ledger.requiredCharges(year, month);

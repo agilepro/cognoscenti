@@ -1128,7 +1128,7 @@ public class GoalRecord extends BaseRecord {
         UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
         w.write("BEGIN:VCALENDAR\n");
         w.write("VERSION:2.0\n");
-        w.write("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
+        w.write("PRODID:-//example/Weaver//NONSGML v1.0//EN\n");
         w.write("BEGIN:VEVENT\n");
         w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
         w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");

@@ -48,10 +48,10 @@ public class UploadRequest {
 
         if (m_parameters.containsKey(name)) {
             Hashtable<Integer, String> values = m_parameters.get(name);
-            values.put(new Integer(values.size()), value);
+            values.put(Integer.valueOf(values.size()), value);
         } else {
             Hashtable<Integer, String> values = new Hashtable<Integer, String>();
-            values.put(new Integer(0), value);
+            values.put(Integer.valueOf(0), value);
             m_parameters.put(name, values);
         }
     }
@@ -65,7 +65,7 @@ public class UploadRequest {
             return null;
         }
         else {
-            return values.get(new Integer(0));
+            return values.get(Integer.valueOf(0));
         }
     }
 
@@ -83,7 +83,7 @@ public class UploadRequest {
         }
         String strValues[] = new String[values.size()];
         for (int i = 0; i < values.size(); i++) {
-            strValues[i] = values.get(new Integer(i));
+            strValues[i] = values.get(Integer.valueOf(i));
         }
 
         return strValues;

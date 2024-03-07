@@ -22,12 +22,8 @@ package com.purplehillsbooks.weaver;
 
 import java.io.Writer;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.servlet.http.HttpSession;
-
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
@@ -203,48 +199,6 @@ public class UtilityMethods {
             }
 
         }
-    }
-
-    public static String getSessionString(HttpSession session, String paramName, String defaultValue) {
-        String val = (String) session.getAttribute(paramName);
-        if (val == null) {
-            session.setAttribute(paramName, defaultValue);
-            return defaultValue;
-        }
-        return val;
-    }
-
-    public static int getSessionInt(HttpSession session, String paramName, int defaultValue) {
-        Integer val = (Integer) session.getAttribute(paramName);
-        if (val == null) {
-            session.setAttribute(paramName, new Integer(defaultValue));
-            return defaultValue;
-        }
-        return val.intValue();
-    }
-
-    public static void setSessionInt(HttpSession session, String paramName, int val) {
-        session.setAttribute(paramName, new Integer(val));
-    }
-
-    public static String getXMLDateFormat(long ms) {
-        if (ms <= 0) {
-            return "";
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        Date dt = new Date(ms);
-        return sdf.format(dt);
-    }
-
-    public static long getDateTimeFromXML(String date) throws Exception {
-        if (date == null) {
-            return 0;
-        }
-        if (date.trim().equals("")) {
-            return 0;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return sdf.parse(date).getTime();
     }
 
     static char[] hexchars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',

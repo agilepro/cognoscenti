@@ -23,8 +23,8 @@ package com.purplehillsbooks.weaver.spring;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -42,7 +42,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
@@ -223,7 +222,7 @@ public class MainTabsViewControler extends BaseController {
 
 
      @RequestMapping(value = "/index.htm", method = RequestMethod.GET)
-     public ModelAndView showLandingPage(HttpServletRequest request, HttpServletResponse response)
+     public void showLandingPage(HttpServletRequest request, HttpServletResponse response)
                 throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -232,11 +231,11 @@ public class MainTabsViewControler extends BaseController {
              if (ar.isLoggedIn())
              {
                  response.sendRedirect(ar.retPath+"v/"+ar.getUserProfile().getKey()+"/UserHome.htm");
-                 return null;
+                 return;
              }
 
              streamJSPAnon(ar, "Index.jsp");  /*needtest*/
-             return null;
+             return;
          }catch(Exception ex){
              throw new Exception("Failed to open welcome page." , ex);
          }

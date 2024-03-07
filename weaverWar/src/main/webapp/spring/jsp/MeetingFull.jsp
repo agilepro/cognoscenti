@@ -157,12 +157,12 @@
       {
         "attType": "FILE",
         "deleted": false,
-        "description": "Original Contract from the SEC to Fujitsu",
+        "description": "Original Contract from the SEC to example",
         "id": "1002",
         "labelMap": {},
         "modifiedtime": 1391185776500,
-        "modifieduser": "cparker@us.fujitsu.com",
-        "name": "Contract 13-C-0113-Fujitsu.pdf",
+        "modifieduser": "cparker@us.example.com",
+        "name": "Contract 13-C-0113-example.pdf",
         "public": false,
         "size": 409333,
         "universalid": "CSWSLRBRG@sec-inline-xbrl@0056"

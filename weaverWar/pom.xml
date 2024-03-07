@@ -1,0 +1,239 @@
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+      <modelVersion>4.0.0</modelVersion>
+     
+      <groupId>com.purplehillsbooks.weaver</groupId>
+      <artifactId>weaver</artifactId>
+      <version>3.0</version>
+      <packaging>war</packaging>
+     
+      <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+     
+      <dependencies>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.13.2</version>
+          <scope>test</scope>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.purplehillsbooks.purple/purple -->
+		<dependency>
+		    <groupId>com.purplehillsbooks.purple</groupId>
+		    <artifactId>purple</artifactId>
+		    <version>3.2</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/lib/purple-3.2.jar</systemPath>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.17.2</version>
+		</dependency>
+		
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+		<dependency>
+		    <groupId>jakarta.servlet</groupId>
+		    <artifactId>jakarta.servlet-api</artifactId>
+		    <version>6.1.0-M1</version>
+		    <scope>provided</scope>
+		</dependency>
+				
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-catalina -->
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-catalina</artifactId>
+		    <version>11.0.0-M15</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpcore</artifactId>
+		    <version>4.4.16</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.14</version>
+		</dependency>
+        
+        <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.11.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>9.9.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>8.11.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.geckoprojects.search/org.apache.lucene.queryparser -->
+        <dependency>
+            <groupId>org.geckoprojects.search</groupId>
+            <artifactId>org.apache.lucene.queryparser</artifactId>
+            <version>9.8.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>6.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>6.1.2</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/com.x5dev/chunk-templates -->
+        <dependency>
+            <groupId>com.x5dev</groupId>
+            <artifactId>chunk-templates</artifactId>
+            <version>3.6.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib -->
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp/jakarta.servlet.jsp-api -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>4.0.0-M1</version>
+            <!--scope>provided</scope-->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.26</version>
+        </dependency>
+        <dependency>
+              <groupId>com.purplehillsbooks</groupId>
+              <artifactId>pdflayout</artifactId>
+              <version>3.2</version>
+              <scope>system</scope>
+              <systemPath>${project.basedir}/lib/pdflayout-3.2.jar</systemPath>
+        </dependency>
+        
+		<!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
+		<dependency>
+		    <groupId>jakarta.servlet.jsp.jstl</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+		    <version>3.0.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.web</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+		    <version>3.0.1</version>
+		</dependency>
+
+		
+      </dependencies>
+      
+      <build>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <version>3.12.1</version>
+	            <configuration>
+	                <source>21</source>
+	                <target>21</target>
+                    <parameters>true</parameters>
+	            </configuration>
+	        </plugin>
+	        <plugin>
+			    <artifactId>maven-war-plugin</artifactId>
+	            <version>3.4.0</version>
+			    <configuration>
+			        <attachClasses>true</attachClasses>
+			        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+			        <webResources>
+			            <resource>
+			                <directory>src/main/webapp</directory>
+			            </resource>
+                        <resource>
+                           <directory>lib</directory>
+                           <targetPath>WEB-INF/lib</targetPath>
+                        </resource>
+			        </webResources>
+			    </configuration>
+			</plugin>
+	        
+	    </plugins>
+	</build>
+
+</project>

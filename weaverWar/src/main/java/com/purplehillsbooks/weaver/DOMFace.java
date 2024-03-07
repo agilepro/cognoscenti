@@ -711,7 +711,7 @@ public class DOMFace
         for (int i = 0; i<top; i++) {
             long longVal = inputArray.getLong(i);
             //assure uniqueness of the values in the list, don't allow duplicates
-            Long objVal = new Long(longVal);
+            Long objVal = Long.valueOf(longVal);
             if (!list.contains(objVal)) {
                 list.add(objVal);
             }

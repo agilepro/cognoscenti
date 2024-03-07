@@ -24,8 +24,8 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -37,7 +37,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.Ledger;
 import com.purplehillsbooks.weaver.LedgerCharge;
-import com.purplehillsbooks.weaver.LedgerPayment;
 import com.purplehillsbooks.weaver.SiteMailGenerator;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
@@ -743,7 +742,7 @@ public class SiteController extends BaseController {
             Ledger ledger = site.getLedger();
             
             long timestamp = Ledger.getTimestamp(year, month, day);
-            LedgerPayment payment = ledger.createPayment(timestamp, amount);
+            ledger.createPayment(timestamp, amount);
             site.saveLedger(ledger);
 
             JSONObject jo = ledger.generateJson();

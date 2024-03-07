@@ -19,11 +19,11 @@
 
 /* PROTOTYPE EMAIL RECORD
       {
-        "Addressee": "Bernd.Schroettle@xx.fujitsu.com",
-        "AttachmentFiles": ["/opt/weaver_sites/fujitsu/fujitsu-distinguished-engineer/.cog/meet1923.ics"],
+        "Addressee": "Bernd.Schroettle@example.com",
+        "AttachmentFiles": ["/opt/weaver_sites/example/example-distinguished-engineer/.cog/meet1923.ics"],
         "BodyText": "....\n",
         "CreateDate": 1534966224915,
-        "From": "john.schwartz@xx.fujitsu.com",
+        "From": "john.schwartz@example.com",
         "FromName": "JOHN SCHWARTZ",
         "LastSentDate": 1534966478516,
         "Status": "Sent",

@@ -12,17 +12,17 @@ loginConfig = {
     "serverUrl": (url to server auth api)
 }
 loginInfo = {
-    "email": "kswenson@fujitsu.com",
+    "email": "kswenson@example.com",
     "emailConfirmed": false,
     "go": "http://bobcat/weaver/t/index.htm",
     "isLDAP": false,
     "isLocal": true,
     "isLoggedIn": true,
     "msg": "Logged In",
-    "presumedId": "kswenson@fujitsu.com",
-    "source": "UI:kswenson@fujitsu.com",
+    "presumedId": "kswenson@example.com",
+    "source": "UI:kswenson@example.com",
     "ss": "SZBC-BE-INL-BD-OUH",
-    "userId": "kswenson@fujitsu.com",
+    "userId": "kswenson@example.com",
     "userName": "Keith 🥴 Swenson"
 }
 statusCallback is a function that takes loginInfo as a parameter.  Every time

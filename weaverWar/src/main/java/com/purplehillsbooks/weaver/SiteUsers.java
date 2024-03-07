@@ -1,14 +1,11 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -108,12 +105,6 @@ public class SiteUsers {
     
     public JSONObject getJson() throws Exception {
         return UtilityMethods.deepCopy(kernel);
-    }
-    private void showKernel(JSONObject jo) throws Exception {
-        Writer w = new PrintWriter(System.out);
-        jo.write(w, 4, 2);
-        w.flush();
-        System.out.println("\n------------------------------------");
     }
     
     public int countUpdateUsers() throws Exception {

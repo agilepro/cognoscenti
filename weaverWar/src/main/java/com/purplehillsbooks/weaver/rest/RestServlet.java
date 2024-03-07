@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
@@ -51,7 +51,7 @@ import com.purplehillsbooks.weaver.NGPageIndex;
  *
  */
 @SuppressWarnings("serial")
-public class RestServlet extends javax.servlet.http.HttpServlet {
+public class RestServlet extends jakarta.servlet.http.HttpServlet {
 
     /**
      * This servlet handles REST style requests for XML content
