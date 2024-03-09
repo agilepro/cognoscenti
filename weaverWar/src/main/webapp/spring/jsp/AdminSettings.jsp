@@ -556,9 +556,9 @@ label {
                       </div>
                     </td>
                     <td  valign="top" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
-                        <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
-                        <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
-                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
+                        <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'.  Open this option to undelete the workspace.</span>
+                        <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.  Open this option to unfreeze or delete the workspace.</span>
+                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.  Open this option to either freeze or delete the workspace.</span>
                     </td>
                 </tr>
                 <tr>
