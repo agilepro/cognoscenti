@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.Locale;
 
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 
 /**
@@ -43,11 +45,14 @@ public class SuperAdminLogFile extends DOMFile {
 
     public static SuperAdminLogFile getInstance(Cognoscenti cog) throws Exception {
         File superAdminFile = new File( cog.getConfig().getUserFolderOrFail(), "SuperAdminInfo.xml");
-        Document newDoc = readOrCreateFile(superAdminFile, "super-admin");
-        return new SuperAdminLogFile(superAdminFile, newDoc);
+        try {
+            Document newDoc = readOrCreateFile(superAdminFile, "super-admin");
+            return new SuperAdminLogFile(superAdminFile, newDoc);
+        }
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to load the SuperAdminLogFile from %s", e, superAdminFile.getAbsolutePath());
+        }
     }
-
-
 
 
     public void createAdminEvent(String objectId, long modTime,

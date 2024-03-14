@@ -596,7 +596,7 @@ public class BaseController {
 
     protected void streamException(Exception e, AuthRequest ar) {
         try {
-            System.out.println("EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", unlock, "+ar.getCompleteURL());
+            System.out.println("EXCEPTION (BaseController) tid="+Thread.currentThread().threadId()+", unlock, "+ar.getCompleteURL());
 
             //if a project was registered, it will be removed from the cache, causing the next
             //access to come from the previously saved disk file
@@ -624,7 +624,7 @@ public class BaseController {
 
             ar.logException("EXCEPTION (BaseController)", e);
 
-            JSONObject errorResponse = JSONException.convertToJSON(e, "BaseController Exception tid="+Thread.currentThread().getId());
+            JSONObject errorResponse = JSONException.convertToJSON(e, "BaseController Exception tid="+Thread.currentThread().threadId());
 
             ar.resp.setStatus(400);
             if (ar.resp.getStatus()!=400) {
@@ -635,7 +635,7 @@ public class BaseController {
             ar.flush();
         } catch (Exception eeeee) {
             // nothing we can do here...
-            System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", "+eeeee.toString());
+            System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().threadId()+", "+eeeee.toString());
         }
     }
 
@@ -657,7 +657,7 @@ public class BaseController {
     }
     protected static void releaseLock() throws Exception {
         NGPageIndex.clearLocksHeldByThisThread();
-        System.out.println("     locks released tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+        System.out.println("     locks released tid="+Thread.currentThread().threadId()+" time="+(System.currentTimeMillis()%10000));
     }
     /**
      * Call this to properly send the JSON back to the client.

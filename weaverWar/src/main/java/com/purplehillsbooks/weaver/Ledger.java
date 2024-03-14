@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 
 /**
@@ -139,9 +140,9 @@ public class Ledger {
     public static long getNextMonth(long timestamp) {
         int year = getYear(timestamp);
         int month = getMonth(timestamp);
-        if (month >= 11) {
+        if (month >= 12) {
             year++;
-            month = 0;
+            month = 1;
         }
         else {
             month++;
@@ -160,7 +161,7 @@ public class Ledger {
             res.add(timestamp);
             long nextMonth = getNextMonth(timestamp);
             if (timestamp >= nextMonth) {
-                throw new Exception("ERROR, the next month calculation did not work");
+                throw WeaverException.newBasic("getNextMonth(%s) returned %s", timestamp, nextMonth);
             }
             timestamp = nextMonth;
             if (guard-- < 0) {
@@ -368,7 +369,7 @@ public class Ledger {
         }
         return ja;
     }
-    
+
     /**
      * find the charges for a given year and month.
      * Month is defined in the standard Java way 0 - 11

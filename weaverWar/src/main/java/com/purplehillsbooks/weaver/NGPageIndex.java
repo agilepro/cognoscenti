@@ -443,7 +443,7 @@ public class NGPageIndex {
             //during initialization all locks are ignored
             return;
         }
-        long thisThread = Thread.currentThread().getId();
+        long thisThread = Thread.currentThread().threadId();
         try {
             if (lockedBy == thisThread) {
                 // thread already has this lock, so ignore this. Everything is
@@ -496,7 +496,7 @@ public class NGPageIndex {
             //during initialization all locks are ignored
             return;
         }
-        long thisThread = Thread.currentThread().getId();
+        long thisThread = Thread.currentThread().threadId();
         String ctid = "tid:" + thisThread;
         try {
             if (lockedBy != thisThread) {
@@ -556,7 +556,7 @@ public class NGPageIndex {
             //during initialization all locks are ignored
             return;
         }
-        long thisThread = Thread.currentThread().getId();
+        long thisThread = Thread.currentThread().threadId();
         String ctid = "tid:" + thisThread;
         if (lockMap.containsKey(ctid)) {
 
@@ -580,7 +580,7 @@ public class NGPageIndex {
             //during initialization all locks are ignored
             return;
         }
-        String ctid = "tid:" + Thread.currentThread().getId();
+        String ctid = "tid:" + Thread.currentThread().threadId();
         List<NGPageIndex> indexList = lockMap.remove(ctid);
         if (indexList == null) {
             return;
@@ -596,7 +596,7 @@ public class NGPageIndex {
             return;
         }
         String ckey = ngc.getKey();
-        String ctid = "tid:" + Thread.currentThread().getId();
+        String ctid = "tid:" + Thread.currentThread().threadId();
         List<NGPageIndex> indexList = lockMap.get(ctid);
         if (indexList == null) {
             return;

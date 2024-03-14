@@ -282,7 +282,7 @@ public abstract class NGPage extends ContainerCommon {
     //This is for config changes, NOT content changes
     public void saveWithoutMarkingModified(String modUser, String comment, Cognoscenti cog) throws Exception
     {
-        long thisThread = Thread.currentThread().getId();
+        long thisThread = Thread.currentThread().threadId();
         try {
             System.out.println("FILESAVE ("+getKey()+") tid="+thisThread+" by ("+modUser+") for ("+comment+")");
             save();

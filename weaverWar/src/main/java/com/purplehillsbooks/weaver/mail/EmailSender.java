@@ -221,7 +221,7 @@ public class EmailSender extends TimerTask {
     
             // make sure that this method doesn't throw any exception
             try {
-                //System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().getId());
+                //System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().threadId());
                 NGPageIndex.assertNoLocksOnThread();
                 checkAndSendDailyDigest(ar);
                 handleAllOverdueScheduledEvents(ar);

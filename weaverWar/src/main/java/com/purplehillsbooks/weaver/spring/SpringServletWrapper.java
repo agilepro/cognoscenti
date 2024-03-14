@@ -72,7 +72,7 @@ public class SpringServletWrapper extends HttpServlet
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         String userId = "unknown";
         String requestAddr = "unknown";
-        long tid = Thread.currentThread().getId();
+        long tid = Thread.currentThread().threadId();
 
         try {
             if (ar.isLoggedIn()) {

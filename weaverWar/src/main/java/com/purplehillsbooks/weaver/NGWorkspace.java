@@ -288,7 +288,7 @@ public class NGWorkspace extends NGPage {
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         super.saveFile(ar, comment);
         assureLaunchingPad(ar);
-        System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+        System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().threadId()+" time="+(System.currentTimeMillis()%10000));
         
         NGPageIndex ngpi = ar.cog.getWSBySiteAndKey(getSiteKey(), getKey());
         ngpi.updateAllUsersFromWorkspace(this);

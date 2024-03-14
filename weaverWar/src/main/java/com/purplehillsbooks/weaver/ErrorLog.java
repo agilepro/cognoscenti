@@ -163,10 +163,10 @@ public class ErrorLog extends DOMFile {
 
             //redundantly included in the system out as well
             //maybe someday this will not be necessary???
-            System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().getId()
+            System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().threadId()
                      +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis()));
             if (msg==null || msg.length()==0) {
-                msg = "LOGGED EXCEPTION: t="+Thread.currentThread().getId()
+                msg = "LOGGED EXCEPTION: t="+Thread.currentThread().threadId()
                         +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
             }
             if (JSONException.containsMessage(ex, "Must be logged in")) {
