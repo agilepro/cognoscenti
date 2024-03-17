@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 
 public class SectionAttachments extends SectionUtil implements SectionFormat
@@ -271,7 +272,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             att = ngw.findAttachmentByNameOrFail(fileName);
 
             if (!att.hasContents()) {
-                throw new NGException("nugen.exception.unable.to.serve.attachment", new Object[]{att.getType()});
+                throw WeaverException.newBasic("Can only serve up attachments of type FILE, this attachment appears to be of type '%s'", att.getType());
             }
 
             AttachmentVersion attachmentVersion = att.getSpecificVersion(ngw, version);

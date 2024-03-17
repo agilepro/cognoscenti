@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.util.LRUCache;
@@ -65,7 +66,7 @@ public abstract class NGPage extends ContainerCommon {
     NGSection noteParent;
     NGSection attachParent;
     NGSection taskParent;
-    
+
     //Least Recently Used Cache .... keep copies of the last ten
     //page objects in memory for reuse
     protected static LRUCache pageCache = new LRUCache(10);
@@ -75,10 +76,10 @@ public abstract class NGPage extends ContainerCommon {
         super(theFile, newDoc);
 
         if (!"ProjInfo.xml".equals(theFile.getName())) {
-            throw new Exception("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
+            throw WeaverException.newBasic("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
         }
         if (site==null) {
-            throw new Exception("workspaces have to be created with a site object sent in now");
+            throw WeaverException.newBasic("workspaces have to be created with a site object sent in now");
         }
 
 
@@ -88,7 +89,7 @@ public abstract class NGPage extends ContainerCommon {
 
         prjSite = site;
         pageInfo.setSiteKey(site.getKey());
-        
+
 
         attParent = getRequiredSection("Attachments");
         SectionAttachments.assureSchemaMigration(attParent, (NGWorkspace)this);
@@ -159,7 +160,7 @@ public abstract class NGPage extends ContainerCommon {
         getRequiredRole("Operations Leader");
         getRequiredRole("Representative");
         getRequiredRole("External Expert");
-        
+
         // this is the old name, the new name is Meeting Manager
         removeIfEmpty("Circle Administrator");
 
@@ -176,8 +177,8 @@ public abstract class NGPage extends ContainerCommon {
                 }
             }
         }
-        
-        
+
+
         //eliminate old meetings that were just backlog containers
         //added Dec 2021 cleanup schema migration
         for (MeetingRecord meet: getMeetings()) {
@@ -263,8 +264,7 @@ public abstract class NGPage extends ContainerCommon {
             saveWithoutMarkingModified(ar.getBestUserId(), comment, ar.getCogInstance());
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file",
-                    new Object[] { getFilePath().toString() }, e);
+            throw WeaverException.newWrap("Unable to save workspace: %s", e, getFilePath().toString());
         }
     }
 
@@ -295,8 +295,7 @@ public abstract class NGPage extends ContainerCommon {
             System.out.println("FILESAVE done ("+getKey()+") tid="+thisThread);
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file",
-                    new Object[]{getFilePath().toString()}, e);
+            throw WeaverException.newWrap("Unable to save workspace: %s", e, getFilePath().toString());
         }
     }
 
@@ -309,7 +308,7 @@ public abstract class NGPage extends ContainerCommon {
         String siteKey = getSiteKey();
         NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey, key);
         if (ngpi == null) {
-            throw new JSONException("unable to find a workspace with site ({0}) and key ({1})", siteKey, key);
+            throw WeaverException.newBasic("unable to find a workspace with site (%s) and key (%s)", siteKey, key);
         }
         ngpi.unlinkAll();
         ngpi.buildLinks(this);
@@ -438,13 +437,13 @@ public abstract class NGPage extends ContainerCommon {
     */
     private NGSection getRequiredSection(String secName) throws Exception {
         if (secName==null) {
-            throw new RuntimeException("getRequiredSection was passed a null secName parameter.");
+            throw WeaverException.newBasic("getRequiredSection was passed a null secName parameter.");
         }
         NGSection sec = internalScanForSection(secName);
         if (sec==null) {
             sec = createSection(secName, null);
             if (sec == null) {
-                throw new Exception("Unable to create a section named: "+secName);
+                throw WeaverException.newBasic("Unable to create a section named: %s", secName);
             }
             getAllSections().add(sec);
         }
@@ -459,7 +458,7 @@ public abstract class NGPage extends ContainerCommon {
         for (NGSection sec : getChildren("section", NGSection.class)) {
             String thisName = sec.getName();
             if (thisName == null || thisName.length() == 0) {
-                throw new NGException("nugen.exception.section.not.have.name", null);
+                throw WeaverException.newBasic("found a section without a name");
             }
             if (sectionNameToLookFor.equals(thisName)) {
                 return sec;
@@ -483,16 +482,13 @@ public abstract class NGPage extends ContainerCommon {
     */
     private NGSection createSection(String secName, AuthRequest ar) throws Exception {
         SectionDef sd = SectionDef.getDefByName(secName);
-        if (sd==null) {
-            throw new NGException("nugen.exception.no.section.with.given.name", new Object[]{secName});
-        }
         return createSection(sd, ar);
     }
 
 
-    
-    
-    /* 
+
+
+    /*
      * this is the external one
      */
     public NGSection getSection(String sectionNameToLookFor) throws Exception {
@@ -504,13 +500,10 @@ public abstract class NGPage extends ContainerCommon {
         }
         return null;
     }
-    public NGSection getSectionOrFail(String sectionNameToLookFor)
-            throws Exception
-        {
+    public NGSection getSectionOrFail(String sectionNameToLookFor) throws Exception {
             NGSection ngs = getSection(sectionNameToLookFor);
-            if (ngs==null)
-            {
-                throw new NGException("nugen.exception.unable.to.locate.section", new Object[]{sectionNameToLookFor,getKey()});
+            if (ngs==null) {
+                throw WeaverException.newBasic("Unable to locate a section named (%s) in workspace (%s)", sectionNameToLookFor, getKey());
             }
             return ngs;
         }
@@ -529,9 +522,8 @@ public abstract class NGPage extends ContainerCommon {
     * in for the AuthRecord, and nothing will be recorded.
     */
     private NGSection createSection(SectionDef sd, AuthRequest ar) throws Exception {
-        if (sd==null)
-        {
-            throw new RuntimeException("createSection was passed a null sd parameter");
+        if (sd==null) {
+            throw WeaverException.newBasic("createSection was passed a null sd parameter");
         }
         //clear the cached vector, force regeneration in any case
         sectionElements = null;
@@ -612,7 +604,7 @@ public abstract class NGPage extends ContainerCommon {
         //However, there are no name-links today, so there is nothing to preserve.
         //It is confusing to have to delete the OLD names, so changed this function
         //to simply replace the entire list of names, with the single new name.
-        
+
         nameSet.add(newName);
         setPageNames(nameSet);
     }
@@ -625,11 +617,11 @@ public abstract class NGPage extends ContainerCommon {
         //It is confusing to have to delete the OLD names, so changed this function
         //to simply replace the entire list of names, with the single new name.
         //
-        //This function need consider only the first name, and if the name to delete 
+        //This function need consider only the first name, and if the name to delete
         //is not that name, just delete all except the first.
         //If there is NO names, then just make the one to delete be the only name.
         //This function should be deprecated.
-        
+
         if (nameSet.size()>1) {
             String firstName = nameSet.get(0);
             setNewName(firstName);
@@ -646,15 +638,15 @@ public abstract class NGPage extends ContainerCommon {
         }
     }
 
+    /*
     public void findTags(List<String> v) throws Exception {
         //Tags not implemented any more
     }
+    */
 
 
     @Override
-    public long getLastModifyTime()
-        throws Exception
-    {
+    public long getLastModifyTime() throws Exception {
         long timeAttrib = pageInfo.getModTime();
         if (timeAttrib>0)
         {
@@ -677,9 +669,7 @@ public abstract class NGPage extends ContainerCommon {
         return latestSecTime;
     }
 
-    public String getLastModifyUser()
-        throws Exception
-    {
+    public String getLastModifyUser() throws Exception {
         String modUser = pageInfo.getModUser();
         if (modUser!=null)
         {
@@ -703,10 +693,7 @@ public abstract class NGPage extends ContainerCommon {
         return modUser;
      }
 
-    public void setLastModify(AuthRequest ar)
-        throws Exception
-    {
-        //ar.assertLoggedIn("Must be logged in in order to modify page.");
+    public void setLastModify(AuthRequest ar) throws Exception {
         pageInfo.setModTime(ar.nowTime);
         pageInfo.setModUser(ar.getBestUserId());
     }
@@ -789,7 +776,7 @@ public abstract class NGPage extends ContainerCommon {
         if (pageProcess!=null) {
             return pageProcess;
         }
-        throw new Exception("Looks like NGPage was not initialized correctly, missing pageProcess");
+        throw WeaverException.newBasic("Looks like NGPage was not initialized correctly, missing pageProcess");
     }
 
 
@@ -815,14 +802,14 @@ public abstract class NGPage extends ContainerCommon {
     public GoalRecord getGoalOrFail(String id) throws Exception {
         GoalRecord task = getGoalOrNull(id);
         if (task==null) {
-            throw new JSONException("Could not find a action item with the id={0}", id);
+            throw WeaverException.newBasic("Could not find a action item with the id=%s", id);
         }
         return task;
     }
 
     public GoalRecord getGoalOrNull(String id) throws Exception {
         if (id==null) {
-            throw new Exception("getGoalOrNull requires a non-null id parameter");
+            throw WeaverException.newBasic("getGoalOrNull requires a non-null id parameter");
         }
         List<GoalRecord> list = taskParent.getChildren("task", GoalRecord.class);
         for (GoalRecord goal : list) {
@@ -1091,14 +1078,14 @@ public abstract class NGPage extends ContainerCommon {
         if (m!=null) {
             return m;
         }
-        throw new JSONException("Could not find a meeting with the id={0}", id);
+        throw WeaverException.newBasic("Could not find a meeting with the id=%s", id);
     }
     public MeetingRecord findMeetingOrNull(String id) throws Exception {
         if (id==null) {
-            throw new Exception("Program Logic Error: attempt to find meeting but passed null id value");
+            throw WeaverException.newBasic("Program Logic Error: attempt to find meeting but passed null id value");
         }
         if (id.length()==0) {
-            throw new Exception("Program Logic Error: attempt to find meeting but passed null-string id value");
+            throw WeaverException.newBasic("Program Logic Error: attempt to find meeting but passed empty-string for id value");
         }
         for (MeetingRecord m : getMeetings()) {
             if (id.equals(m.getId())) {
@@ -1155,7 +1142,7 @@ public abstract class NGPage extends ContainerCommon {
         if (dr!=null) {
             return dr;
         }
-        throw new JSONException("Could not find a decision with the number={0}", num);
+        throw WeaverException.newBasic("Could not find a decision with the number=%s", num);
     }
 
 
@@ -1174,7 +1161,7 @@ public abstract class NGPage extends ContainerCommon {
     public EmailGenerator getEmailGeneratorOrFail(String id) throws Exception {
         EmailGenerator egen = getEmailGeneratorOrNull(id);
         if (egen==null) {
-            throw new Exception("Not able to find an Email Generator with the ID="+id);
+            throw WeaverException.newBasic("Not able to find an Email Generator with the ID=%s", id);
         }
         return egen;
     }
@@ -1230,7 +1217,7 @@ public abstract class NGPage extends ContainerCommon {
     public NGLabel getLabelRecordOrFail(String name) throws Exception {
         NGLabel label = getLabelRecordOrNull(name);
         if (label==null) {
-            throw new JSONException("Not able to find a Label Record with the name={0}", name);
+            throw WeaverException.newBasic("Not able to find a Label Record with the name=%s", name);
         }
         return label;
     }
@@ -1296,7 +1283,7 @@ public abstract class NGPage extends ContainerCommon {
     public abstract JSONObject getConfigJSON() throws Exception;
 
     public abstract void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception;
-    
+
 
 
 
@@ -1348,9 +1335,8 @@ public abstract class NGPage extends ContainerCommon {
 
         AttachmentRecord ret =  findAttachmentByID( id );
 
-        if (ret==null)
-        {
-            throw new NGException("nugen.exception.unable.to.locate.att.with.id", new Object[]{id, getFullName()});
+        if (ret==null) {
+            throw WeaverException.newBasic("Unable to find a document (id=%s) in workspace (%s)", id, getFullName());
         }
         return ret;
     }
@@ -1375,9 +1361,8 @@ public abstract class NGPage extends ContainerCommon {
 
         AttachmentRecord ret =  findAttachmentByName( name );
 
-        if (ret==null)
-        {
-            throw new NGException("nugen.exception.unable.to.locate.att.with.name", new Object[]{name, getFullName()});
+        if (ret==null) {
+            throw WeaverException.newBasic("Unable to find a document (name=%s) in workspace (%s)", name, getFullName());
         }
         return ret;
     }
@@ -1463,8 +1448,8 @@ public abstract class NGPage extends ContainerCommon {
         return requestList;
     }
 
-    
-    
+
+
     public RoleRequestRecord getRoleRequestRecordById(String requestId) throws Exception{
         RoleRequestRecord requestRecord = null;
         for (RoleRequestRecord roleRequestRecord : getAllRoleRequest()) {

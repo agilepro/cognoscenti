@@ -108,7 +108,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <td></td>
         <td>Charge</td>
         <td>Payment</td>
-        <td>Balance</td>
+        <td>Balance Owed</td>
     </tr>
     <tbody ng-repeat="month in ledgerInfo">
       <tr>
@@ -138,6 +138,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     </tbody>
     </table>
 
+
+<pre>
+{{ledgerInfo|json}}
+</pre>
+</div>
 <script src="../../../jscript/AllPeople.js"></script>
 
 

@@ -51,6 +51,7 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -251,7 +252,7 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    
+
     /**
      * This is a view that prompts the user to specify how they want the PDF to be produced.
      */
@@ -264,7 +265,7 @@ public class ProjectDocsController extends BaseController {
 
 
 
-    
+
 
     /**
     * note that the docid in the path is not needed, but it will be different for
@@ -328,7 +329,7 @@ public class ProjectDocsController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Failure accessing document "+did, ex);
+            Exception ee = WeaverException.newWrap("Failure accessing document "+did, ex);
             streamException(ee, ar);
         }
     }
@@ -345,7 +346,7 @@ public class ProjectDocsController extends BaseController {
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot update a document.");
-            
+
             JSONObject docInfo = getPostedObject(ar);
             int historyEventType = 0;
 
@@ -373,7 +374,7 @@ public class ProjectDocsController extends BaseController {
             JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update document "+did, ex);
+            Exception ee = WeaverException.newWrap("Unable to update document $s", ex, did);
             streamException(ee, ar);
         }
     }
@@ -407,7 +408,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("docs", attachmentList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of attachments ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of attachments ", ex);
             streamException(ee, ar);
         }
     }
@@ -446,7 +447,7 @@ public class ProjectDocsController extends BaseController {
 
             AttachmentRecord oldDoc = fromWS.findAttachmentByID(docId);
             if (oldDoc==null) {
-                throw new Exception("Unable to find a document with id="+docId);
+                throw WeaverException.newBasic("Unable to find a document with id=%s", docId);
             }
 
             String docName = oldDoc.getDisplayName();
@@ -465,17 +466,17 @@ public class ProjectDocsController extends BaseController {
             String docType = oldDoc.getType();
             newCopy.setType(docType);
 
-            if ("FILE".equals(docType)) {
+            if (oldDoc.isFile()) {
                 AttachmentVersion av = oldDoc.getLatestVersion(fromWS);
                 InputStream is = av.getInputStream();
                 newCopy.streamNewVersion(ar, thisWS, is);
                 is.close();
             }
-            else if ("URL".equals(docType)) {
+            else if (oldDoc.isURL()) {
                 newCopy.setURLValue(oldDoc.getURLValue());
             }
             else {
-                throw new Exception("Don't understand how to move document '"+docName+"' type "+docType);
+                throw WeaverException.newBasic("Don't understand how to move document '%s' type %s ", docName, oldDoc.getType());
             }
 
             if (deleteOld) {
@@ -490,7 +491,7 @@ public class ProjectDocsController extends BaseController {
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to copy/move the document", ex);
+            Exception ee = WeaverException.newWrap("Unable to copy/move the document", ex);
             streamException(ee, ar);
         }
     }
@@ -517,7 +518,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("shares", shareList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of share ports ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of share ports ", ex);
             streamException(ee, ar);
         }
     }
@@ -553,7 +554,7 @@ public class ProjectDocsController extends BaseController {
             JSONObject repo = spr.getFullJSON(ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of share ports ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of share ports ", ex);
             streamException(ee, ar);
         }
     }
@@ -571,16 +572,16 @@ public class ProjectDocsController extends BaseController {
                     +id+".  Maybe it was deleted, or maybe the link was damaged?");
             return;
         }
-        
+
         ar.setParam("id", id);
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
         streamJSPAnon(ar, "Share.jsp");
     }
 
-    
+
     //this is the old pattern, harder to accommodate in the ring scheme, so change to a
-    //new one which is more the regular pattern.   This needed in case there are 
+    //new one which is more the regular pattern.   This needed in case there are
     //old emails around with the old pattern.
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
     public void forwardReply(@PathVariable String siteId,
@@ -623,8 +624,8 @@ public class ProjectDocsController extends BaseController {
 
         ar.resp.sendRedirect(responseUrl);
     }
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/Reply.htm", method = RequestMethod.GET)
     public void specialReply(@PathVariable String siteId,
             @PathVariable String pageId,
@@ -639,7 +640,7 @@ public class ProjectDocsController extends BaseController {
             specialReplyOld(siteId, pageId, request, response);
             return;
         }
-        
+
         long msgId = MailInst.getCreateDateFromLocator(msgLocator);
         if (msgId==0) {
             //this is a special case where the message prototype is being displayed
@@ -652,7 +653,7 @@ public class ProjectDocsController extends BaseController {
             return;
         }
         long commentId = MailInst.getCommentIdFromLocator(msgLocator);
-        
+
         MailInst foundMsg = EmailSender.findEmailById(msgId);
         if (foundMsg==null) {
             showWarningDepending(ar, "Can not find that email with id="+msgId+".  Maybe the email has been deleted?");
@@ -661,23 +662,23 @@ public class ProjectDocsController extends BaseController {
 
         String containerKey = foundMsg.getCommentContainer();
         if (containerKey==null) {
-            throw new Exception("stored email message is missing container key,   msgLocator="+msgLocator);
+            throw WeaverException.newBasic("stored email message is missing container key,   msgLocator=%s", msgLocator);
         }
-        
+
         //check for consistency as a way to avoid hacking
         if (commentId>0 && commentId != foundMsg.getCommentId()) {
-            throw new Exception("Can msg locator has wrong comment id in it: "+msgLocator);
+            throw WeaverException.newBasic("Can msg locator has wrong comment id in it: %s", msgLocator);
         }
-        
+
         //if you get here, then you have a link and the email msg id and the comment id match
         //which means you are not a hacker, so we can allow access to the content.
-        
+
         CommentContainer container = ngw.findContainerByKey(containerKey);
         if (container==null) {
-            throw new Exception("Unable to find a container comment with key="+containerKey);
+            throw WeaverException.newBasic("Unable to find a container comment with key=%s", containerKey);
         }
         if (!containerKey.contentEquals(container.getGlobalContainerKey(ngw))) {
-            throw new Exception("Something is wrong, container keys don't match: "+containerKey+" AND "+container.getGlobalContainerKey(ngw));
+            throw WeaverException.newBasic("Something is wrong, container keys don't match: %s AND %s", containerKey, container.getGlobalContainerKey(ngw));
         }
 
 
@@ -701,7 +702,7 @@ public class ProjectDocsController extends BaseController {
             ar.setParam("docId", doc.getId());
         }
         else {
-            throw new Exception("Can not understand why comment container is a "+container.getClass().getCanonicalName());
+            throw WeaverException.newBasic("Can not understand why comment container is a %s", container.getClass().getCanonicalName());
         }
         ar.setParam("emailId", foundMsg.getFromAddress());
         ar.setParam("commentId", commentId);
@@ -721,7 +722,7 @@ public class ProjectDocsController extends BaseController {
         String meetId = ar.defParam("meetId", null);
         String agendaId = ar.defParam("agendaId", null);
         String emailId = ar.defParam("emailId", null);
-        
+
         boolean specialAccess = false;
         if (meetId!=null) {
             MeetingRecord meet = ngw.findMeeting(meetId);
@@ -776,13 +777,13 @@ public class ProjectDocsController extends BaseController {
             ar.assertNotFrozen(ngw);
             JSONObject input = getPostedObject(ar);
             if (!input.has("comments")) {
-                throw new Exception("posted object to specialReplySave needs to have a comments list");
+                throw WeaverException.newBasic("posted object to specialReplySave needs to have a comments list");
             }
             String topicId  = input.optString("topicId");
             String docId    = input.optString("docId");
             String meetId   = input.optString("meetId");
             String agendaId = input.optString("agendaId");
-            
+
             if (!ar.isLoggedIn()) {
                 String emailId = input.optString("emailId", null);
                 UserManager userMgr = UserManager.getStaticUserManager();
@@ -828,7 +829,7 @@ public class ProjectDocsController extends BaseController {
                 }
                 note.updateCommentsFromJSON(input, ar);
                 repo = note.getJSONWithComments(ar, ngw);
-                
+
                 //check and see if this person is subscriber, if not add them.
                 if (ar.isLoggedIn()) {
                     NGRole subscribers = note.getSubscriberRole();
@@ -849,13 +850,13 @@ public class ProjectDocsController extends BaseController {
                 repo = doc.getJSON4Doc(ar, ngw);
             }
             else {
-                throw new Exception("SaveReply call was missing a parameter or two");
+                throw WeaverException.newBasic("SaveReply call was missing a parameter or two");
             }
             ngw.saveFile(ar, "saving comment using SaveReply");
             sendJson(ar, repo);
         }
         catch (Exception ex) {
-            Exception ee = new Exception("Unable to update the comment in SaveReply", ex);
+            Exception ee = WeaverException.newBasic("Unable to update the comment in SaveReply", ex);
             streamException(ee, ar);
         }
     }
@@ -875,6 +876,22 @@ public class ProjectDocsController extends BaseController {
         ar.reqParam("path");
         BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug.jsp");
     }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/ShowWebFile.htm", method = RequestMethod.GET)
+    public void showWebFile(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.reqParam("att");
+        BaseController.showJSPMembers(ar, siteId, pageId, "ShowWebFile.jsp");
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/ShowWebPage.htm", method = RequestMethod.GET)
+    public void ShowWebPage(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.reqParam("att");
+        BaseController.showJSPMembers(ar, siteId, pageId, "ShowWebPage.jsp");
+    }
+
 
     /**
      * Both get and update the list of documents attached to either a meeting agenda item,
@@ -954,7 +971,7 @@ public class ProjectDocsController extends BaseController {
                     docList = eg.getAttachments();
                 }
                 else {
-                    throw new Exception("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this POST URL");
+                    throw WeaverException.newBasic("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this POST URL");
                 }
                 ngw.save();
             }
@@ -982,11 +999,11 @@ public class ProjectDocsController extends BaseController {
                     docList = eg.getAttachments();
                 }
                 else {
-                    throw new Exception("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this GET URL");
+                    throw WeaverException.newBasic("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this GET URL");
                 }
             }
             else {
-                throw new Exception("attachedDocs.json only allows GET or POST");
+                throw WeaverException.newBasic("attachedDocs.json only allows GET or POST");
             }
 
             JSONObject repo = new JSONObject();
@@ -1002,7 +1019,7 @@ public class ProjectDocsController extends BaseController {
             sendJson(ar, repo);
         }
         catch (Exception ex) {
-            Exception ee = new Exception("Unable to GET/POST attachedDocs.json", ex);
+            Exception ee = WeaverException.newWrap("Unable to GET/POST attachedDocs.json", ex);
             streamException(ee, ar);
         }
     }
@@ -1024,7 +1041,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("list", attachmentList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of all action items ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of all action items ", ex);
             streamException(ee, ar);
         }
     }
@@ -1073,7 +1090,7 @@ public class ProjectDocsController extends BaseController {
                     MeetingRecord mr = ngw.findMeeting(meetId);
                     String agendaId = request.getParameter("ai");
                     if (agendaId == null) {
-                        throw new Exception("must specify the agenda item with an 'ai' parameter");
+                        throw WeaverException.newBasic("must specify the agenda item with an 'ai' parameter");
                     }
                     AgendaItem ai = mr.findAgendaItem(agendaId);
                     ai.setActionItems(newActionItems);
@@ -1086,7 +1103,7 @@ public class ProjectDocsController extends BaseController {
                     actionItemList = nr.getActionList();
                 }
                 else {
-                    throw new Exception("attachedActions.json requires a meet or note parameter on this URL");
+                    throw WeaverException.newBasic("attachedActions.json requires a meet or note parameter on this URL");
                 }
                 ngw.save();
             }
@@ -1095,7 +1112,7 @@ public class ProjectDocsController extends BaseController {
                     MeetingRecord mr = ngw.findMeeting(meetId);
                     String agendaId = request.getParameter("ai");
                     if (agendaId == null) {
-                        throw new Exception("must specify the agenda item with an 'ai' parameter");
+                        throw WeaverException.newBasic("must specify the agenda item with an 'ai' parameter");
                     }
                     AgendaItem ai = mr.findAgendaItem(agendaId);
                     actionItemList = ai.getActionItems();
@@ -1105,11 +1122,11 @@ public class ProjectDocsController extends BaseController {
                     actionItemList = nr.getActionList();
                 }
                 else {
-                    throw new Exception("attachedActions.json requires a meet or note parameter on this URL");
+                    throw WeaverException.newBasic("attachedActions.json requires a meet or note parameter on this URL");
                 }
             }
             else {
-                throw new Exception("attachedActions.json only allows GET or POST");
+                throw WeaverException.newBasic("attachedActions.json only allows GET or POST");
             }
 
             JSONObject repo = new JSONObject();
@@ -1121,12 +1138,12 @@ public class ProjectDocsController extends BaseController {
             sendJson(ar, repo);
         }
         catch (Exception ex) {
-            Exception ee = new Exception("Unable to GET/POST attachedActions.json", ex);
+            Exception ee = WeaverException.newWrap("Unable to GET/POST attachedActions.json", ex);
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/GetScratchpad.json", method = RequestMethod.GET)
     public void getScratchpad(@PathVariable String siteId,
             @PathVariable String pageId,
@@ -1142,7 +1159,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("scratchpad", uc.getScratchPad());
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -1160,28 +1177,28 @@ public class ProjectDocsController extends BaseController {
             JSONObject posted = getPostedObject(ar);
             uc.updateScratchPad(posted);
             uc.save();
-            
+
             JSONObject repo = new JSONObject();
             repo.put("scratchpad", uc.getScratchPad());
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
     ///////////////////// DEPRECATED ////////////////////////////
-    
+
     //This is the OLD pattern we want to get rid of with aid embedded in the page name
     //instead use DocDetails.htm?aid={aid}
     @Deprecated
@@ -1198,5 +1215,5 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
     }
 
-    
+
 }

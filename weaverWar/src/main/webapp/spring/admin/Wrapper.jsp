@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
 %><%
     long renderStart = System.currentTimeMillis();
     ar.assertLoggedIn("Must be logged in for administration pages");

@@ -38,6 +38,8 @@ import com.purplehillsbooks.weaver.ReminderRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -446,39 +448,27 @@ public class UploadFileController extends BaseController {
             }
         }
 
-        //NOTE: currently deleted documents are still present in the
-        //project folder.  They probably should not be there.
-        //TODO: remove deleted documents from project folder
-        //so they do not cause a name clash that can not be seen.
-
         AttachmentRecord att = ngw.findAttachmentByName(trialName);
         int iteration = 0;
         while (att != null) {
 
             if (att.getType().equals("EXTRA")) {
-                //This may be an attempt by the user to "reclaim" an attachment that had
-                //been renamed, and discovered as a EXTRA file.   If this is the
-                //case, then remove the EXTRA record.
-                ngw.eraseAttachmentRecord(att.getId());
-                att = null;
+                throw WeaverException.newBasic("Found an attachment of type EXTRA and there should not be any");
             }
-            else {
-                trialName = proposedRoot + "-"
-                        + Integer.toString(++iteration)
-                        + proposedExt;
+            trialName = proposedRoot + "-"
+                    + Integer.toString(++iteration)
+                    + proposedExt;
 
-                if (currentName.equals(trialName)) {
-                    return; // nothing to do
-                }
-                if (attachment.equivalentName(trialName)) {
-                    attachment.setDisplayName(trialName);
-                    return;
-                }
-                att = ngw.findAttachmentByName(trialName);
+            if (currentName.equals(trialName)) {
+                return; // nothing to do
             }
+            if (attachment.equivalentName(trialName)) {
+                attachment.setDisplayName(trialName);
+                return;
+            }
+            att = ngw.findAttachmentByName(trialName);
         }
-        // if we get here, then there exists no other attachment with the trial
-        // name
+        // if we get here, then there exists no other attachment with the trial name
         attachment.setDisplayName(trialName);
     }
     

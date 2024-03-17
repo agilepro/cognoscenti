@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -104,7 +104,6 @@ public class NGPageIndex {
 
     public List<NGTerm> nameTerms;
     public List<NGTerm> refTerms;
-    public List<NGTerm> hashTags;
     public long lastChange;
     public boolean requestWaiting;
     public boolean isDeleted;
@@ -223,7 +222,7 @@ public class NGPageIndex {
      */
     public static List<NGPageIndex> getContainersForTag(String tag) throws Exception {
         if (tag == null) {
-            throw new ProgramLogicError("null value tag given to getPagesForTag");
+            throw WeaverException.newBasic("null value tag given to getPagesForTag");
         }
         NGTerm tagTerm = NGTerm.findTagIfExists(tag);
         if (tagTerm == null) {
@@ -255,7 +254,7 @@ public class NGPageIndex {
             return NGBook.readSiteByKey(containerKey);
         }
         else {
-            throw new JSONException("Unspecified or illegal containerType value: {0}", containerType);
+            throw WeaverException.newBasic("Unspecified or illegal containerType value: %s", containerType);
         }
     }
 
@@ -269,8 +268,8 @@ public class NGPageIndex {
         if (val != null) {
             return val;
         }
-        throw new NGException("nugen.exception.fail.to.locate.container.obj", new Object[] {
-                containerName, containerKey });
+        throw WeaverException.newBasic("Unable to locate the container object for '%s'.  The index entry for %s' exists, but appears to be invalid.",
+                containerName, containerKey);
     }
 
     public void writeTruncatedLink(AuthRequest ar, int len) throws Exception {
@@ -486,8 +485,7 @@ public class NGPageIndex {
             ngpiList.add(this);
         }
         catch (Exception e) {
-            String msg = "Failed to set up the lock for Edit of ("+this.containerKey+") tid="+thisThread;
-            throw new Exception(msg, e);
+            throw WeaverException.newWrap("Failed to set up the lock for Edit of (%s) tid=%s", e, this.containerKey, thisThread);
         }
     }
 
@@ -613,7 +611,7 @@ public class NGPageIndex {
         }
 
     }
-    
+
     public boolean isFrozen() {
         return isFrozen;
     }
@@ -644,11 +642,11 @@ public class NGPageIndex {
         // consistency check, either the nameTerms or refTerms vectors must
         // be missing or empty.
         if (nameTerms != null && nameTerms.size() > 0) {
-            throw new RuntimeException(
+            throw WeaverException.newBasic(
                     "Program logic is asking for building nameTerms links when it already has some.");
         }
         if (refTerms != null && refTerms.size() > 0) {
-            throw new RuntimeException(
+            throw WeaverException.newBasic(
                     "Program logic is asking for building refTerms links when it already has some.");
         }
 
@@ -662,8 +660,8 @@ public class NGPageIndex {
             containerType = CONTAINER_TYPE_SITE;
         }
         else {
-            throw new Exception("Program Logic Error: don't know what kind of container this is: "
-                    + containerPath);
+            throw WeaverException.newBasic("Program Logic Error: don't know what kind of container this is: %s",
+                    containerPath);
         }
 
         initNameTerms(container);
@@ -679,7 +677,7 @@ public class NGPageIndex {
             admins[i++] = ale.getUniversalId();
         }
 
-        initIndexForHashTags(container);
+        //initIndexForHashTags(container);
 
         if (container instanceof NGWorkspace) {
             NGWorkspace ngw = (NGWorkspace) container;
@@ -690,12 +688,12 @@ public class NGPageIndex {
                 wsSiteKey = ngb.getKey();
             }
             parentKey = ngw.getParentKey();
-            
+
             updateAllUsersFromWorkspace(ngw);
         }
         nextScheduledAction = container.nextActionDue();
     }
-    
+
     public void updateAllUsersFromWorkspace(NGWorkspace ngw) throws Exception {
         //now, get a complete listing of all users in the workspace
         //to optimize the background refresh of user stats
@@ -796,8 +794,7 @@ public class NGPageIndex {
             if (!refTermTmp.contains(term)) {
                 refTermTmp.add(term);
                 if (isInVector(term.sourceLeaves)) {
-                    throw new NGException("nugen.exception.duplicacy.problem.with.source.leaves",
-                            null);
+                    throw WeaverException.newBasic("Problem with source leaves while trying to link");
                 }
                 term.sourceLeaves.add(this);
                 sortByName(term.sourceLeaves);
@@ -806,40 +803,6 @@ public class NGPageIndex {
         // update this all at once at the end to avoid multi-threading problems
         // with half-built indices
         refTerms = refTermTmp;
-    }
-
-    /**
-     * Page objects can have hash tags in the description. The hash tag starts
-     * with a # character and continues to the first white space A NGTerm object
-     * is created for each tag, and made to point to this page Each NGPageIndex
-     * object contains a vector of such hash terms. If each page lists their
-     * hash tags, and links to all the other pages that have that hash tag, then
-     * it is an easy way to link similar pages together automatically in both
-     * directions.
-     */
-    private void initIndexForHashTags(NGContainer container) throws Exception {
-        List<String> tagVals = new ArrayList<String>();
-        if (container instanceof NGWorkspace) {
-            NGWorkspace ngw = (NGWorkspace) container;
-            ngw.findTags(tagVals);
-        }
-        List<NGTerm> hashTagsTmp = new ArrayList<NGTerm>();
-        for (String hashVal : tagVals) {
-            if (hashVal.length() < 3) {
-                continue;
-            }
-            NGTerm term = NGTerm.findOrCreateTag(hashVal);
-
-            // term can be null if the tag value was not a valid tag value
-            // for example it was zero length, or consisted only of punctuation.
-            // also, eliminate duplicates at this step
-            if (term != null && !hashTagsTmp.contains(term)) {
-                term.targetLeaves.add(this);
-                sortByName(term.targetLeaves);
-                hashTagsTmp.add(term);
-            }
-        }
-        hashTags = hashTagsTmp;
     }
 
     /**
@@ -857,11 +820,6 @@ public class NGPageIndex {
             term.removeSource(this);
         }
         refTerms.clear();
-
-        for (NGTerm term : hashTags) {
-            term.removeTarget(this);
-        }
-        hashTags.clear();
     }
 
     public JSONObject getJSON4List() throws Exception {

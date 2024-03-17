@@ -390,8 +390,8 @@ function copyTheLink() {
         <div ng-show="hasURL">
           <a href="<%ar.write(permaLink); %>" target="_blank"><img
              src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
-          <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
-             <button class="btn btn-primary btn-raised">View Text Only</button></a>
+          <a href="ShowWebFile.htm?att=<% ar.writeURLData(aid); %>" target="_blank">
+             <button class="btn btn-primary btn-raised">Web File</button></a>
         </div>
         <div ng-hide="hasURL">
             <button class="btn btn-danger btn-raised">

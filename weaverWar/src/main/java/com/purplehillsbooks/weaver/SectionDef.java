@@ -23,6 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 /**
 * a monomorphic class which holds details about a section definition
 * read from the configuration file.  Users can create new definitions
@@ -116,14 +118,14 @@ public class SectionDef
             initialize();
         }
         if (defName==null||defName.length()==0) {
-            throw new RuntimeException("Must pass a non-null name to getDefByName");
+            throw WeaverException.newBasic("Must pass a non-null name to getDefByName");
         }
         for (SectionDef sd : allDefs) {
             if (sd.getTypeName().equals(defName)) {
                 return sd;
             }
         }
-        
-        throw new RuntimeException("Unable to find a section with the name: "+defName);
+
+        throw WeaverException.newBasic("Unable to find a section with the name: %s", defName);
     }
 }

@@ -1,5 +1,5 @@
 <%@page errorPage="error.jsp"
-%><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
+%><%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"
 %><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
 %><%@page import="com.purplehillsbooks.weaver.GoalRecord"

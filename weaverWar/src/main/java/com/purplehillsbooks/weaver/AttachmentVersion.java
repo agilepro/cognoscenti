@@ -277,7 +277,7 @@ public class AttachmentVersion {
     }
 
     public String getLink() {
-        if ("URL".equals(attachment.getType())) {
+        if (attachment.isURL()) {
             return attachment.getURLValue();
         }
         else {

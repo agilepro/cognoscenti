@@ -28,7 +28,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.capture.HtmlToWikiConverter2;
+import com.purplehillsbooks.weaver.capture.WebFile;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -166,14 +169,14 @@ public class AttachmentRecord extends CommentContainer {
         // consistency check, the display name and file name (in case of file)
         // must not have any slash characters in them
         if (newDisplayName.indexOf("/") > 0 || newDisplayName.indexOf("\\") > 0) {
-            throw new JSONException("Display name for  a workspace must not have any slashes {0}", newDisplayName);
+            throw WeaverException.newBasic("Display name for  a workspace must not have any slashes %s", newDisplayName);
         }
 
         // also, display name needs to be unique within the workspace
         AttachmentRecord otherFileWithSameName = container.findAttachmentByName(newDisplayName);
         if (otherFileWithSameName!=null) {
-            throw new Exception("Can't rename this attachment because there is another attachment named "
-                    + otherFileWithSameName.getDisplayName() + " in this workspace.");
+            throw WeaverException.newBasic("Can't rename this attachment because there is another attachment named %s  in this workspace.",
+                    otherFileWithSameName.getDisplayName());
         }
 
         setAttribute("displayName", newDisplayName);
@@ -222,6 +225,34 @@ public class AttachmentRecord extends CommentContainer {
         setAttribute("file", newURI);
     }
 
+    private File getWebPageFile() {
+        String fileName = "webPage"+getId()+".json";
+        File workspaceFolder = container.containingFolder;
+        File cogFolder = new File(workspaceFolder, ".cog");
+        File webFilePath = new File(cogFolder, fileName);
+        return webFilePath;
+    }
+
+    public boolean doesWebFileExist() {
+        File webFilePath = getWebPageFile();
+        return webFilePath.exists();
+    }
+
+    public WebFile getWebFile() throws Exception {
+        if (!isURL()) {
+            throw WeaverException.newBasic("Attempt to download web page, but this is not a web page attachment (%s)", getId());
+        }
+        File webFilePath = getWebPageFile();
+        return WebFile.readOrCreate(webFilePath, getURLValue());
+    }
+
+    public void refreshWebFile() throws Exception {
+
+        WebFile wf = getWebFile();
+        wf.refreshFromWeb();
+        wf.save();
+    }
+
     /**
      * There are three types of attachment:
      *
@@ -249,6 +280,12 @@ public class AttachmentRecord extends CommentContainer {
         }
         return val;
     }
+    public boolean isFile() {
+        return "FILE".equals(getType());
+    }
+    public boolean isURL() {
+        return "URL".equals(getType());
+    }
 
     public void setType(String type) {
         // check that a valid string id being passed
@@ -272,7 +309,7 @@ public class AttachmentRecord extends CommentContainer {
 
     public AddressListEntry getModifier() {
         String modifiedBy = checkAndReturnAttributeValue("modifiedBy");
-        
+
         //clean up old email addresses, and send latest if found
         return new AddressListEntry(modifiedBy);
     }
@@ -335,13 +372,13 @@ public class AttachmentRecord extends CommentContainer {
     public List<AttachmentVersion> getVersions(NGWorkspace ngc)
         throws Exception {
         if (!(ngc instanceof NGWorkspace)) {
-            throw new Exception("Problem: workspace Attachment should only belong to NGWorkspace, "
+            throw WeaverException.newBasic("Problem: workspace Attachment should only belong to NGWorkspace, "
                     +"but somehow got a different kind of container.");
         }
 
         File workspaceFolder = ngc.containingFolder;
         if (workspaceFolder==null) {
-            throw new Exception("NGWorkspace container has no containing folder????");
+            throw WeaverException.newBasic("NGWorkspace container has no containing folder????");
         }
 
         List<AttachmentVersion> list =
@@ -449,15 +486,15 @@ public class AttachmentRecord extends CommentContainer {
     * copy the contents into here, and then create a new version for that file, and
     * return the AttachmentVersion object that represents that new version.
     */
-    public AttachmentVersion streamNewVersion(NGWorkspace ngc, InputStream contents,
+    public AttachmentVersion streamNewVersion(NGWorkspace ngw, InputStream contents,
             String userId, long timeStamp) throws Exception {
 
-        if (!(ngc instanceof NGWorkspace)) {
-            throw new Exception("Problem: workspace Attachment should only belong to NGWorkspace, but somehow got a different kind of container.");
+        if (!(ngw instanceof NGWorkspace)) {
+            throw WeaverException.newBasic("Problem: workspace Attachment should only belong to NGWorkspace, but somehow got a different kind of container.");
         }
-        File workspaceFolder = ngc.containingFolder;
+        File workspaceFolder = ngw.containingFolder;
         if (workspaceFolder==null) {
-            throw new Exception("NGWorkspace container has no containing folder????");
+            throw WeaverException.newBasic("NGWorkspace container has no containing folder????");
         }
 
         //in case the attachment is deleted, undelete it for this new version
@@ -596,10 +633,10 @@ public class AttachmentRecord extends CommentContainer {
      */
     public List<NGLabel> getLabels() throws Exception {
         if (container==null) {
-            throw new ProgramLogicError("call to getLabels must be made AFTER the container is set.");
+            throw WeaverException.newBasic("call to getLabels must be made AFTER the container is set.");
         }
         if (!(container instanceof NGWorkspace)) {
-            throw new ProgramLogicError("Container must be a Workspace style container.");
+            throw WeaverException.newBasic("Container must be a Workspace style container.");
         }
         NGWorkspace ngw = container;
         List<NGLabel> res = new ArrayList<NGLabel>();
@@ -731,8 +768,8 @@ public class AttachmentRecord extends CommentContainer {
     public void setPurgeDate(long val) {
         setAttributeLong("purgeDate", val);
     }
-    
-    
+
+
     public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGWorkspace ngw, List<String> docUIDs) throws Exception {
         JSONArray attachInfo = new JSONArray();
         for (String docUID : docUIDs) {
@@ -751,7 +788,7 @@ public class AttachmentRecord extends CommentContainer {
         jo.put("attList", attachInfo);
         return true;
     }
-    
+
     public JSONObject getLinkableJSON() throws Exception {
         JSONObject thisDoc = new JSONObject();
         thisDoc.put("id", this.getId());
@@ -789,9 +826,9 @@ public class AttachmentRecord extends CommentContainer {
             allCommentss.put(cr.getJSONWithDocs(ngw));
         }
         thisDoc.put("comments",  allCommentss);
-        
+
         if (ar.canAccessWorkspace()) {
-            //this should only be given to members, it allows them to give 
+            //this should only be given to members, it allows them to give
             //others access to the document.  Some people getting document
             //info do not have access to the document, and therefor this prevents
             //them from giving themselves (or anyone else) access.
@@ -888,8 +925,7 @@ public class AttachmentRecord extends CommentContainer {
         String universalid = docInfo.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
-            throw new Exception("Error trying to update the record for an action item with UID ("
-                    +getUniversalId()+") with post from action item with UID ("+universalid+")");
+            throw WeaverException.newBasic("Error trying to update the record for an action item with UID (%s) with post from action item with UID (%s)", getUniversalId(), universalid);
         }
         boolean changed = updateFromJSON(docInfo, (NGWorkspace)ar.ngp, ar);
 
@@ -901,8 +937,7 @@ public class AttachmentRecord extends CommentContainer {
                     //TODO: better handling duplicate here
                     //This just throws up hands and gives up, and you will get the same next
                     //time.  Better to rename this to a unique name.
-                    throw new Exception("Unable to change name to '"+newName
-                            +"' because another document already exists with that name.");
+                    throw WeaverException.newBasic("Unable to change name '%s' because another document already exists with that name.", newName);
                 }
                 setDisplayName(newName);
                 changed = true;
@@ -998,7 +1033,7 @@ public class AttachmentRecord extends CommentContainer {
 
     /**
      * We used to keep a duplicate copy of the file in the workspace directory.
-     * That is, one copy in the workspace directory, and then a file for 
+     * That is, one copy in the workspace directory, and then a file for
      * every version in the .cog folder.   We only need the versions inside
      * the cog folder, so get rid of the extra copy in the workspace folder.
      */
@@ -1011,9 +1046,9 @@ public class AttachmentRecord extends CommentContainer {
             throw new RuntimeException("Tried and failed to delete file: "+currentFile.getAbsolutePath());
         }
     }
-    
+
     public String getGlobalContainerKey(NGWorkspace ngw) {
         return "A"+getId();
     }
-    
+
 }
