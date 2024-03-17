@@ -43,7 +43,7 @@ import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 
 import org.springframework.stereotype.Controller;
@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -86,7 +85,7 @@ public class MeetingControler extends BaseController {
             }
 
             ar.setParam("pageId", pageId);
-            ar.setParam("siteId", siteId);            
+            ar.setParam("siteId", siteId);
             if(!ar.isLoggedIn()) {
                 streamJSPAnon(ar, "MeetingAnon.jsp");  /*needtest*/
                 return;
@@ -111,7 +110,7 @@ public class MeetingControler extends BaseController {
 
             streamJSP(ar, "MeetingFull.jsp");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the meeting page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
     }
 
@@ -139,17 +138,17 @@ public class MeetingControler extends BaseController {
             showJSPDepending(ar, ngw, "../anon/MeetingAvail.jsp", canAccess);
         }
         catch(Exception ex){
-            throw new NGException("Unable to generate meeting page for id={0}", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the meeting availability page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
-    }    
-    
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/meetingHtml.htm", method = RequestMethod.GET)
     public void meetingHtmllowercase(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         meetingHtml(siteId,pageId,request, response);
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingHtml.htm", method = RequestMethod.GET)
     public void meetingHtml(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -172,7 +171,7 @@ public class MeetingControler extends BaseController {
             showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
         }
         catch(Exception ex){
-            throw new NGException("Unable to generate meeting page for id={0}", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the meeting display page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
     }
 
@@ -200,7 +199,7 @@ public class MeetingControler extends BaseController {
 
             streamJSP(ar, "MeetMerge.jsp");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the Meet Merge page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
     }
 
@@ -222,7 +221,7 @@ public class MeetingControler extends BaseController {
             }
             String template = ar.reqParam("tem");
             if (!template.endsWith("chtml")) {
-                throw new JSONException("Meeting template must end with 'chtml'.  Do you have the right file name? {0}", template);
+                throw WeaverException.newBasic("Meeting template must end with 'chtml'.  Do you have the right file name? %s", template);
             }
             String baseTemplateName = template.substring(0, template.length()-6);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
@@ -232,9 +231,9 @@ public class MeetingControler extends BaseController {
             }
 
             JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
-            
+
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
-            
+
             UserProfile uProf = ar.getUserProfile();
             if (uProf != null) {
             	//if a user is logged in, stream with their calendar (timezone)
@@ -246,10 +245,9 @@ public class MeetingControler extends BaseController {
             }
 
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the Meeting Print page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
     }
-    
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingMinutes.htm", method = RequestMethod.GET)
     public void meetingMinutes(@PathVariable String siteId,@PathVariable String pageId,
@@ -276,7 +274,7 @@ public class MeetingControler extends BaseController {
             ar.setParam("pageId", pageId);
             ar.invokeJSP("/spring/jsp/MeetingMinutes.jsp");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Unable to construct the meeting minutes page for workspace (%s) in site (%s)", ex, pageId,siteId);
         }
     }
 
@@ -307,7 +305,7 @@ public class MeetingControler extends BaseController {
             ar.flush();
 
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create the ICS calendar file for meeting "+meetId, ex);
+            Exception ee = WeaverException.newWrap("Unable to create the ICS calendar file for meeting %s", ex, meetId);
             streamException(ee, ar);
         }
     }
@@ -415,11 +413,11 @@ public class MeetingControler extends BaseController {
               ar.setPageAccessLevels(ngw);
               ar.assertNotFrozen(ngw);
               ar.assertNotReadOnly("Cannot create a meeting");
-              
+
               JSONObject meetingInfo = getPostedObject(ar);
               String name = meetingInfo.getString("name");
               if (name==null || name.length()==0) {
-                  throw new Exception("You must supply a meeting name to create a meeting.");
+                  throw WeaverException.newBasic("You must supply a meeting name to create a meeting.");
               }
               MeetingRecord newMeeting = ngw.createMeeting();
               newMeeting.setOwner(ar.getBestUserId());
@@ -433,7 +431,7 @@ public class MeetingControler extends BaseController {
               JSONObject repo = newMeeting.getFullJSON(ar, ngw, true);
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create meeting.", ex);
+              Exception ee = WeaverException.newWrap("Unable to create meeting.", ex);
               streamException(ee, ar);
           }
       }
@@ -474,8 +472,8 @@ public class MeetingControler extends BaseController {
           }
 
       }
-      
-      
+
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
       public void meetingListB(@PathVariable String siteId,@PathVariable String pageId,
@@ -495,7 +493,7 @@ public class MeetingControler extends BaseController {
               sendJson(ar, jo);
           }
           catch(Exception ex){
-              Exception ee = new Exception("Unable to access meeting list.", ex);
+              Exception ee = WeaverException.newWrap("Unable to access meeting list.", ex);
               streamException(ee, ar);
           }
       }
@@ -511,11 +509,11 @@ public class MeetingControler extends BaseController {
               addVisitors(ar, jo, siteId, pageId);
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to access meeting information.", ex);
+              Exception ee = WeaverException.newWrap("Unable to access meeting information.", ex);
               streamException(ee, ar);
           }
       }
-      
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingUpdate.json", method = RequestMethod.POST)
       public void meetingUpdate(@PathVariable String siteId,@PathVariable String pageId,
@@ -529,9 +527,9 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               if (!AccessControl.canAccessMeeting(ar, ngw, meeting)) {
                   if (ar.isLoggedIn()) {
-                      throw new Exception("User "+ar.getBestUserId()+" not able to access meeting "+id);
+                      throw WeaverException.newBasic("User "+ar.getBestUserId()+" not able to access meeting %s", id);
                   }
-                  throw new Exception("Anonymous not able to access meeting "+id);
+                  throw WeaverException.newBasic("Anonymous not able to access meeting %s", id);
               }
 
               JSONObject meetingInfo = getPostedObject(ar);
@@ -563,7 +561,7 @@ public class MeetingControler extends BaseController {
               repo.put("serverTime", System.currentTimeMillis());
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to update meeting information.", ex);
+              Exception ee = WeaverException.newWrap("Unable to update meeting information.", ex);
               streamException(ee, ar);
           }
       }
@@ -590,7 +588,7 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("not a member and no magic number");
+                  throw WeaverException.newBasic("not a member and no magic number");
               }
               JSONObject timeUpdateInfo = getPostedObject(ar);
 
@@ -603,7 +601,7 @@ public class MeetingControler extends BaseController {
               repo.put("serverTime", System.currentTimeMillis());
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to update meeting proposed times.", ex);
+              Exception ee = WeaverException.newWrap("Unable to update meeting proposed times.", ex);
               streamException(ee, ar);
           }
       }
@@ -619,9 +617,9 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("not a member and no magic number");
+                  throw WeaverException.newBasic("not a member and no magic number");
               }
-              
+
               //NOTE: we trust this to be legitimate.   We allow anonymous people
               //to set these values without logging in.  Not dangerous.
               JSONObject userSituation = getPostedObject(ar);
@@ -632,10 +630,10 @@ public class MeetingControler extends BaseController {
               JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
               addVisitors(ar, repo, siteId, pageId);
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
-              
+
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to update meeting proposed times.", ex);
+              Exception ee = WeaverException.newWrap("Unable to update meeting proposed times.", ex);
               streamException(ee, ar);
           }
       }
@@ -653,7 +651,7 @@ public class MeetingControler extends BaseController {
               addVisitors(ar, jo, siteId, pageId);
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to access meeting notes.", ex);
+              Exception ee = WeaverException.newWrap("Unable to access meeting notes.", ex);
               streamException(ee, ar);
           }
       }
@@ -676,7 +674,7 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to access meeting "+id);
+                  throw WeaverException.newBasic("Unable to access meeting %s", id);
               }
               ar.assertNotFrozen(ngw);
               meeting.updateMeetingNotes(meetingInfo);
@@ -685,7 +683,7 @@ public class MeetingControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Updated Meeting Notes");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to read meeting notes.", ex);
+              Exception ee = WeaverException.newWrap("Unable to read meeting notes.", ex);
               streamException(ee, ar);
           }
       }
@@ -703,7 +701,7 @@ public class MeetingControler extends BaseController {
               ar.assertUpdateWorkspace("Must be able to update a workspace to delete a meeting.");
               ar.assertNotFrozen(ngw);
               ar.assertNotReadOnly("Cannot delete a meeting");
-              
+
               JSONObject meetingInfo = getPostedObject(ar);
               meetingId = meetingInfo.getString("id");
               ngw.removeMeeting(meetingId);
@@ -711,7 +709,7 @@ public class MeetingControler extends BaseController {
               ar.write("deleted Meeting "+meetingId);
               ar.flush();
           } catch(Exception ex){
-              Exception ee = new Exception("Unable to delete meeting "+meetingId, ex);
+              Exception ee = WeaverException.newWrap("Unable to delete meeting %s", ex, meetingId);
               streamException(ee, ar);
           }
       }
@@ -730,14 +728,14 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to update meeting "+id);
+                  throw WeaverException.newBasic("Unable to update meeting %s",id);
               }
               ar.assertNotFrozen(ngw);
               JSONObject agendaInfo = getPostedObject(ar);
 
               String subject = agendaInfo.getString("subject");
               if (subject==null || subject.length()==0) {
-                  throw new Exception("You must supply a agenda subject to create an agenda item.");
+                  throw WeaverException.newBasic("You must supply a agenda subject to create an agenda item.");
               }
               AgendaItem ai = meeting.createAgendaItem(ngw);
               ai.setPosition(99999);
@@ -750,7 +748,7 @@ public class MeetingControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create agenda item on meeting", ex);
+              Exception ee = WeaverException.newWrap("Unable to create agenda item on meeting", ex);
               streamException(ee, ar);
           }
       }
@@ -767,7 +765,7 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to update meeting "+id);
+                  throw WeaverException.newBasic("Unable to update meeting %s", id);
               }
               JSONObject agendaInfo = getPostedObject(ar);
 
@@ -779,7 +777,7 @@ public class MeetingControler extends BaseController {
               ar.write("deleted agenda item "+agendaId);
               ar.flush();
           } catch(Exception ex){
-              Exception ee = new Exception("Unable to delete agenda item from meeting.", ex);
+              Exception ee = WeaverException.newWrap("Unable to delete agenda item from meeting.", ex);
               streamException(ee, ar);
           }
       }
@@ -798,7 +796,7 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(src);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to update meeting "+src);
+                  throw WeaverException.newBasic("Unable to update meeting %s", src);
               }
               ar.assertNotFrozen(ngw);
               MeetingRecord destMeeting = ngw.findMeeting(dest);
@@ -820,7 +818,7 @@ public class MeetingControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Move Agenda Item");
               sendJson(ar, repo);
           } catch(Exception ex){
-              Exception ee = new Exception("Unable to move agenda item.", ex);
+              Exception ee = WeaverException.newWrap("Unable to move agenda item.", ex);
               streamException(ee, ar);
           }
       }
@@ -837,14 +835,14 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to access agenda of meeting "+id);
+                  throw WeaverException.newBasic("Unable to access agenda of meeting %s", id);
               }
               String aid = ar.reqParam("aid");
               AgendaItem ai = meeting.findAgendaItem(aid);
               JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to update agenda item.", ex);
+              Exception ee = WeaverException.newWrap("Unable to update agenda item.", ex);
               streamException(ee, ar);
           }
       }
@@ -862,14 +860,14 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to update agenda of meeting "+id);
+                  throw WeaverException.newBasic("Unable to update agenda of meeting %s", id);
               }
               String aid = ar.reqParam("aid");
               AgendaItem ai = null;
               if (!"~new~".equals(aid)) {
                   ai = meeting.findAgendaItem(aid);
                   if (ai==null) {
-                      throw new Exception("Can not find an agenda item ("+aid+") in meeting ("+id+")");
+                      throw WeaverException.newBasic("Can not find an agenda item (%s) in meeting (%s)", aid, id);
                   }
               }
               else {
@@ -897,7 +895,7 @@ public class MeetingControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to update agenda item.", ex);
+              Exception ee = WeaverException.newWrap("Unable to update agenda item.", ex);
               streamException(ee, ar);
           }
       }
@@ -915,12 +913,12 @@ public class MeetingControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
               if (!canAccess) {
-                  throw new Exception("Unable to create minutes of meeting "+id);
+                  throw WeaverException.newBasic("Unable to create minutes of meeting "+id);
               }
               ar.assertNotFrozen(ngw);
 
               TopicRecord nr = null;
-              
+
               if (nr==null) {
                   nr = ngw.createNote();
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());
@@ -947,7 +945,7 @@ public class MeetingControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Topic for minutes of meeting.", ex);
+              Exception ee = WeaverException.newWrap("Unable to create Topic for minutes of meeting.", ex);
               streamException(ee, ar);
           }
       }
@@ -1009,7 +1007,7 @@ public class MeetingControler extends BaseController {
 
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to calculate time zone list.", ex);
+              Exception ee = WeaverException.newWrap("Unable to calculate time zone list.", ex);
               streamException(ee, ar);
           }
       }

@@ -40,6 +40,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.download = function() {
         window.location="ShowWebFile.htm?att=<%=attachmentId%>&capture=y";
     }
+    $scope.sharable = function() {
+        window.location="WebFilePrint.htm?aid=<%=attachmentId%>";
+    }
 });
 </script>
 <style>
@@ -68,7 +71,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="cleanedWebStyle">
     
         <button class="btn btn-default btn-raised" ng-click="openOriginal()">Open Original</button>
-        <button class="btn btn-default btn-raised" ng-click="download()">Download Copy from Web</button>
+        <button class="btn btn-default btn-raised" ng-click="download()">Refresh from Web</button>
+        <button class="btn btn-default btn-raised" ng-click="sharable()">Sharable View</button>
         <table class="table">
             <tr ng-repeat="art in webFile.articles" >
             
@@ -99,4 +103,4 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
 </div>
-<!-- end addDocument.jsp -->
+<!-- end ShowWebFile.jsp -->

@@ -1188,6 +1188,30 @@ public class ProjectDocsController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/WebFilePrint.htm", method = RequestMethod.GET)
+    public void webFilePrint(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+
+            String id = ar.reqParam("aid");
+            AttachmentRecord att = ngw.findAttachmentByID(id);
+            if (att==null) {
+                showWarningDepending(ar, "Can not find document with the id  "+id
+                        +".  Was it deleted?");
+                return;
+            }
+            // boolean canAccess = AccessControl.canAccessDoc(ar, ngw, att);
+
+            ar.invokeJSP("/spring/jsp/WebFilePrint.jsp");
+
+        }catch(Exception ex){
+            throw WeaverException.newWrap("Unable to construct the WebFile Print page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        }
+    }
 
 
 
