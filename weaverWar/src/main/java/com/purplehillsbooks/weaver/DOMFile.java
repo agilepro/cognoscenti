@@ -30,6 +30,8 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -67,8 +69,8 @@ public class DOMFile extends DOMFace {
             return userDoc;
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.read.create.xml.file",
-                    new Object[] { path.toString() }, e);
+            throw WeaverException.newWrap("Unable to read or create an XML file: %s", e,
+                    path.getAbsolutePath());
         }
     }
 
@@ -78,8 +80,8 @@ public class DOMFile extends DOMFace {
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file",
-                    new Object[] { associatedFile.toString() }, e);
+            throw WeaverException.newWrap("Unable to save file: %s", e,
+                    associatedFile.getAbsolutePath());
         }
     }
 
@@ -88,8 +90,8 @@ public class DOMFile extends DOMFace {
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file",
-                    new Object[] { associatedFile.toString() }, e);
+            throw WeaverException.newWrap("Unable to save file: %s", e,
+                    associatedFile.getAbsolutePath());
         }
     }
 
@@ -99,8 +101,8 @@ public class DOMFile extends DOMFace {
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file",
-                    new Object[] { associatedFile.toString() }, e);
+            throw WeaverException.newWrap("Unable to save file: %s", e,
+                    associatedFile.getAbsolutePath());
         }
     }
 

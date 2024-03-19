@@ -1,19 +1,19 @@
     <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
       <modelVersion>4.0.0</modelVersion>
-     
+
       <groupId>com.purplehillsbooks.weaver</groupId>
       <artifactId>weaver</artifactId>
       <version>3.0</version>
       <packaging>war</packaging>
-     
+
       <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
       </properties>
-     
+
       <dependencies>
         <dependency>
           <groupId>junit</groupId>
@@ -21,7 +21,7 @@
           <version>4.13.2</version>
           <scope>test</scope>
         </dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/com.purplehillsbooks.purple/purple -->
 		<dependency>
 		    <groupId>com.purplehillsbooks.purple</groupId>
@@ -30,14 +30,14 @@
 		    <scope>system</scope>
 		    <systemPath>${project.basedir}/lib/purple-3.2.jar</systemPath>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
 		    <version>1.17.2</version>
 		</dependency>
-		
+
         <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
 		<dependency>
 		    <groupId>jakarta.servlet</groupId>
@@ -45,7 +45,7 @@
 		    <version>6.1.0-M1</version>
 		    <scope>provided</scope>
 		</dependency>
-				
+
 		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-catalina -->
 		<dependency>
 		    <groupId>org.apache.tomcat</groupId>
@@ -53,7 +53,7 @@
 		    <version>11.0.0-M17</version>
 		    <scope>provided</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
@@ -66,7 +66,7 @@
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5.14</version>
 		</dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -97,7 +97,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.16.1</version>
         </dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
         <dependency>
             <groupId>jakarta.mail</groupId>
@@ -109,7 +109,7 @@
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
         <dependency>
             <groupId>org.apache.lucene</groupId>
@@ -138,19 +138,19 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.1.2</version>
+            <version>6.1.4</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>6.1.2</version>
+            <version>6.1.4</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>6.1.2</version>
+            <version>6.1.4</version>
         </dependency>
 
 
@@ -166,7 +166,7 @@
             <artifactId>imgscalr-lib</artifactId>
             <version>4.2</version>
         </dependency>
-        
+
         <!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp/jakarta.servlet.jsp-api -->
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
@@ -188,7 +188,7 @@
               <scope>system</scope>
               <systemPath>${project.basedir}/lib/pdflayout-3.2.jar</systemPath>
         </dependency>
-        
+
 		<!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
 		<dependency>
 		    <groupId>jakarta.servlet.jsp.jstl</groupId>
@@ -201,9 +201,9 @@
 		    <version>3.0.1</version>
 		</dependency>
 
-		
+
       </dependencies>
-      
+
       <build>
 	    <plugins>
 	        <plugin>
@@ -232,7 +232,7 @@
 			        </webResources>
 			    </configuration>
 			</plugin>
-	        
+
 	    </plugins>
 	</build>
 

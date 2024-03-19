@@ -148,8 +148,7 @@ public abstract class ContainerCommon extends NGContainer
         return ret;
     }
 
-    public CustomRole createRole(String roleName, String description)
-            throws Exception {
+    public CustomRole createRole(String roleName, String description) throws Exception {
         if (roleName==null || roleName.length()==0) {
             throw new NGException("nugen.exception.role.cant.be.empty",null);
         }
@@ -175,7 +174,7 @@ public abstract class ContainerCommon extends NGContainer
     /**
     * just a shortcut for getRole(roleName).addPlayer(newMember)
     */
-    public void addPlayerToRole(String roleName,String newMember)throws Exception
+    public void addPlayerToRole(String roleName,String newMember) throws Exception
     {
         NGRole role= getRoleOrFail(roleName);
         role.addPlayer(new AddressListEntry(newMember));
@@ -197,16 +196,14 @@ public abstract class ContainerCommon extends NGContainer
 
     ////////////////////// WRITE LINKS //////////////////////////
 
- 
-    public String trimName(String nameOfLink, int len)
-    {
-        if (nameOfLink.length()>len)
-        {
+
+    public String trimName(String nameOfLink, int len) {
+        if (nameOfLink.length()>len) {
             return nameOfLink.substring(0,len-1)+"...";
         }
         return nameOfLink;
     }
-    
+
     protected void removeIfEmpty(String roleName) throws Exception {
         NGRole role = getRole(roleName);
         if (role!=null && role.getDirectPlayers().size() == 0) {

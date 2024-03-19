@@ -42,6 +42,7 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
@@ -90,15 +91,15 @@ public class EmailSender extends TimerTask {
      * Updated only if there are no failure in processing.
      */
     public static long lastEmailProcessTime = 0;
- 
+
     /**
      * If we got an exception while sending email record it here
      */
     public static Exception lastEmailSendFailure;
     public static long lastEmailFailureTime = 0;
-    
+
     /**
-     * This is the number of email messages sent since the last 
+     * This is the number of email messages sent since the last
      * server reboot.
      */
     public static long emailSendCount = 0;
@@ -113,9 +114,9 @@ public class EmailSender extends TimerTask {
         refreshProperties(cog);
         assertEmailConfigOK();
         db = new MongoDB();
-        
+
         long thirtyDaysAgo = System.currentTimeMillis() - 30L * 24 * 3_600_000;
-        
+
         //find the highest created time in the database so far
         //but limit the query to the last 30 days
         JSONObject query = new JSONObject();
@@ -134,8 +135,8 @@ public class EmailSender extends TimerTask {
             System.out.println("EMAIL INIT: the database appears to be empty???");
         }
     }
-    
-    
+
+
     public void updateEmailInDB(MailInst msg) throws Exception {
         System.out.println(" EMAIL DB: msg "+msg.getCreateDate()+" has comment container: "+msg.getCommentContainer());
         long id = msg.getCreateDate();
@@ -154,7 +155,7 @@ public class EmailSender extends TimerTask {
         File configFile = cog.getConfig().getFile("EmailNotification.properties");
 
         if (!configFile.exists()) {
-            throw new JSONException("Email config file does not exist: {0}", configFile.getAbsolutePath());
+            throw WeaverException.newBasic("Email config file does not exist: %s", configFile.getAbsolutePath());
         }
         FileInputStream fis = new FileInputStream(configFile);
         Properties props = new Properties();
@@ -218,7 +219,7 @@ public class EmailSender extends TimerTask {
             AuthRequest ar = AuthDummy.serverBackgroundRequest();
             long startTime = System.currentTimeMillis();
             ar.nowTime = startTime;
-    
+
             // make sure that this method doesn't throw any exception
             try {
                 //System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().threadId());
@@ -229,7 +230,10 @@ public class EmailSender extends TimerTask {
                 lastEmailProcessTime = startTime;
                 //System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
-                Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
+                if (WeaverException.contains(e, "InterruptedException")) {
+                    throw WeaverException.newWrap("Got InterruptedException at the root level of EmailSender.", e);
+                }
+                Exception failure = WeaverException.newWrap("EmailSender-TimerTask failed in run method.", e);
                 JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
                 threadLastCheckException = failure;
             }
@@ -238,7 +242,7 @@ public class EmailSender extends TimerTask {
                 NGPageIndex.clearLocksHeldByThisThread();
             }
             long duration = System.currentTimeMillis() - startTime;
-    
+
             //suppress the number of trace statements to one per hour.
             runCount++;
             totalTime += duration;
@@ -275,24 +279,24 @@ public class EmailSender extends TimerTask {
             }
         }
     }
-    
+
     private boolean sendAllMailFromDB() throws Exception {
 
         JSONObject query = new JSONObject();
         query.put("Status",  MailInst.READY_TO_GO);
-        
+
         JSONArray allUnsentMail = db.queryRecords(query);
         boolean allSentOK = true;
 
         for (JSONObject msgObj : allUnsentMail.getJSONObjectList()) {
             MailInst inst = new MailInst(msgObj);
-            
+
             //check that the query worked.
             if (!MailInst.READY_TO_GO.equals(inst.getStatus())) {
                 System.out.println("MAIL DB ERROR: query for 'Ready' email, but got '"+inst.getStatus()+"' instead.");
                 continue;
             }
-            
+
             if (inst.sendPreparedMessageImmediately(emailProperties)) {
                 updateEmailInDB(inst);
             }
@@ -328,7 +332,7 @@ public class EmailSender extends TimerTask {
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
                 boolean sentMsg = ngw.transferEmailToDB(cog, this);
-                
+
                 if (ngw.generateNotificationEmail(ar, this, nowTime)) {
                     sentMsg = true;
                 }
@@ -348,13 +352,13 @@ public class EmailSender extends TimerTask {
                 if (sentMsg) {
                     site.save(); //save all the changes from the removal of email and scheduling of events
                 }
-                
+
             }
             NGPageIndex.clearLocksHeldByThisThread();
 
             Thread.sleep(200);  //just small delay to avoid saturation
         }
-        
+
         if (iCount>0) {
             System.out.println("EMAIL SENDER: Processed "+iCount+" background events at "
                 +SectionUtil.currentTimeString());
@@ -498,7 +502,7 @@ public class EmailSender extends TimerTask {
             }
         }
         catch (Exception e) {
-            throw new Exception("Failure while composing an email message for the global archive", e);
+            throw WeaverException.newWrap("Failure while composing an email message for the global archive", e);
         }
     }
 
@@ -545,29 +549,29 @@ public class EmailSender extends TimerTask {
 
         String proto = getProperty("mail.transport.protocol");
         if (proto == null || proto.length() == 0) {
-            throw new Exception("Email config file is missing the protocol setting");
+            throw WeaverException.newBasic("Email config file is missing the protocol setting");
         }
         if (!proto.equals("smtp") && !proto.equals("none")) {
-            throw new JSONException(
-                    "Email is not configured correctly, must be SMTP or NONE, but got {0}", proto);
+            throw WeaverException.newBasic(
+                    "Email is not configured correctly, must be SMTP or NONE, but got %s", proto);
         }
         String auth = getProperty("mail.smtp.auth");
         if ("true".equals(auth)) {
             //in this case you need both a user name and a password
             String user = getProperty("mail.smtp.user");
             if (user==null){
-                throw new Exception("When mail.smtp.auth=true you need to specify a user name:  mail.smtp.user");
+                throw WeaverException.newBasic("When mail.smtp.auth=true you need to specify a user name:  mail.smtp.user");
             }
             String password = getProperty("mail.smtp.password");
             if (password==null){
-                throw new Exception("When mail.smtp.auth=true you need to specify a password:  mail.smtp.password");
+                throw WeaverException.newBasic("When mail.smtp.auth=true you need to specify a password:  mail.smtp.password");
             }
         }
         else if (!"false".equals(auth)) {
-            throw new Exception("mail.smtp.auth must be set to 'true' or 'false' - value ("+auth+") is not allowed.");
+            throw WeaverException.newBasic("mail.smtp.auth must be set to 'true' or 'false' - value (%s) is not allowed.", auth);
         }
     }
-    
+
     public synchronized long getUniqueTime() {
         long newTime = System.currentTimeMillis();
         if (newTime<=lastEmailCreateDate) {
@@ -583,42 +587,42 @@ public class EmailSender extends TimerTask {
                 String addressee) throws Exception {
         try {
             if (emailRec.getSubject() == null || emailRec.getSubject().length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non null 'subject' parameter");
+                throw WeaverException.newBasic("createEmailRecord requires a non null 'subject' parameter");
             }
             if (emailRec.getBodyText() == null || emailRec.getBodyText().length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non null 'body' parameter");
+                throw WeaverException.newBasic("createEmailRecord requires a non null 'body' parameter");
             }
             if (addressee == null || addressee.length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non empty 'addresses' parameter");
+                throw WeaverException.newBasic("createEmailRecord requires a non empty 'addresses' parameter");
             }
             if (from == null) {
-                throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
+                throw WeaverException.newBasic("createEmailRecord requires a non null 'from' parameter");
             }
 
             emailRec.setFromName(from.getName());
             emailRec.setFromAddress(from.getEmail());
             emailRec.setAddressee(addressee);
-        
-            
+
+
             updateEmailInDB(emailRec);
             return emailRec;
         }
         catch (Exception e) {
-            throw new JSONException("Unable to compose email record from '{0}' on: {1}", e, from, addressee);
+            throw WeaverException.newWrap("Unable to compose email record from '%s' on: %s", e, from, addressee);
         }
     }
-    
-    
+
+
     /*
      * following fields are allowed in the query
-     * 
+     *
      * offset: starting point in the list of records
      * batch: size of the batch, default 50
      * includeBody: whether email body should be included for size reasons
      * searchValue: thing being searched for
      */
     public static JSONObject queryWorkspaceEmail(NGWorkspace ngw, JSONObject query) throws Exception {
-        
+
         int offset = query.optInt("offset", 0);
         if (offset<0) {
             offset = 0;
@@ -627,11 +631,11 @@ public class EmailSender extends TimerTask {
         //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
         String searchValue  = query.optString("searchValue", "");
         long msgId  = query.optLong("msgId", 0);
-        
+
         JSONObject sort = new JSONObject().put("CreateDate", -1);
-        
+
         //the query is to find all email messages for that site,
-        //and that workspace, where either the subject or the 
+        //and that workspace, where either the subject or the
         //address contains the search value using regex
         JSONObject mongoQuery = new JSONObject();
         JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
@@ -653,9 +657,9 @@ public class EmailSender extends TimerTask {
         res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
         return res;
     }
-    
+
     public static JSONObject querySiteEmail(NGBook ngb, JSONObject query) throws Exception {
-        
+
         int offset = query.optInt("offset", 0);
         if (offset<0) {
             offset = 0;
@@ -664,11 +668,11 @@ public class EmailSender extends TimerTask {
         //boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
         String searchValue  = query.optString("searchValue", "");
         long msgId  = query.optLong("msgId", 0);
-        
+
         JSONObject sort = new JSONObject().put("CreateDate", -1);
-        
+
         //the query is to find all email messages for that site,
-        //and that workspace, where either the subject or the 
+        //and that workspace, where either the subject or the
         //address contains the search value using regex
         JSONObject mongoQuery = new JSONObject();
         JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
@@ -689,10 +693,10 @@ public class EmailSender extends TimerTask {
         res.put("query", mongoQuery);
         res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
         return res;
-    }    
-    
+    }
+
     public static JSONObject queryUserEmail(JSONObject query) throws Exception {
-        
+
         int offset = query.optInt("offset", 0);
         if (offset<0) {
             offset = 0;
@@ -704,17 +708,17 @@ public class EmailSender extends TimerTask {
         String userKey  = query.optString("userKey", null);
         String userEmail  = query.optString("userEmail", null);
         if (userKey==null && userEmail==null) {
-            throw new Exception("Must specify either a 'userKey' or a 'userEmail' for the user being searched in queryUserEmail");
+            throw WeaverException.newBasic("Must specify either a 'userKey' or a 'userEmail' for the user being searched in queryUserEmail");
         }
-        
+
         JSONObject sort = new JSONObject().put("CreateDate", -1);
-        
+
         //the query is to find all email messages for that site,
-        //and that workspace, where either the subject or the 
+        //and that workspace, where either the subject or the
         //address contains the search value using regex
         JSONObject mongoQuery = new JSONObject();
         JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
-        
+
         JSONObject userOr = new JSONObject();
         JSONArray userOrArray = userOr.requireJSONArray("$or");
         if (userKey!=null) {
@@ -724,7 +728,7 @@ public class EmailSender extends TimerTask {
             userOrArray.put( new JSONObject().put("Addressee", userEmail));
         }
         basicAnd.put(userOr);
-        
+
         if (msgId>0) {
             basicAnd.put( new JSONObject().put("CreateDate", msgId));
         }
@@ -740,10 +744,10 @@ public class EmailSender extends TimerTask {
         res.put("query", mongoQuery);
         res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
         return res;
-    }    
-   
+    }
+
     public static JSONObject querySuperAdminEmail(JSONObject query) throws Exception {
-        
+
         int offset = query.optInt("offset", 0);
         if (offset<0) {
             offset = 0;
@@ -758,11 +762,11 @@ public class EmailSender extends TimerTask {
             //there has to be at least one condition . . .
             workspace = "$";
         }
-        
+
         JSONObject sort = new JSONObject().put("CreateDate", -1);
-        
+
         //the query is to find all email messages for that site,
-        //and that workspace, where either the subject or the 
+        //and that workspace, where either the subject or the
         //address contains the search value using regex
         JSONObject mongoQuery = new JSONObject();
         JSONArray basicAnd = mongoQuery.requireJSONArray("$and");
@@ -787,15 +791,15 @@ public class EmailSender extends TimerTask {
         res.put("query", mongoQuery);
         res.put("list", singletonSender.db.querySortRecords(mongoQuery, sort, offset, batch));
         return res;
-    }    
-   
-    
+    }
+
+
     public static MailInst findEmailById(NGWorkspace ngw, long msgId) throws Exception {
-        
+
         JSONObject query = new JSONObject().put("msgId", msgId);
-        
+
         JSONObject res = queryWorkspaceEmail(ngw, query);
-        
+
         JSONArray list = res.requireJSONArray("list");
         if (list.length()>0) {
             return new MailInst(list.getJSONObject(0));
@@ -803,11 +807,11 @@ public class EmailSender extends TimerTask {
         return null;
     }
     public static MailInst findEmailById(long msgId) throws Exception {
-        
+
         JSONObject query = new JSONObject().put("msgId", msgId);
-        
+
         JSONObject res = querySuperAdminEmail(query);
-        
+
         JSONArray list = res.requireJSONArray("list");
         if (list.length()>0) {
             return new MailInst(list.getJSONObject(0));

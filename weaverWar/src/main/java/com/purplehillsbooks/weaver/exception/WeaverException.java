@@ -19,7 +19,7 @@ package com.purplehillsbooks.weaver.exception;
 import com.purplehillsbooks.json.JSONException;
 
 /**
- * WeaverException is a barebones exception that wraps the 
+ * WeaverException is a barebones exception that wraps the
  * JSONException with static factory methods.
  * Uses Java String.format style formatting
  */
@@ -39,5 +39,15 @@ public class WeaverException extends JSONException {
         return new WeaverException(String.format(msg, params), cause);
     }
 
+
+    public static boolean contains(Throwable e, String searchToken) {
+        while (e != null) {
+            if (e.toString().contains(searchToken)) {
+                return true;
+            }
+            e = e.getCause();
+        }
+        return false;
+    }
 
 }

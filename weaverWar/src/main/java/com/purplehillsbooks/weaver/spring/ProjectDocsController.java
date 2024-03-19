@@ -50,6 +50,7 @@ import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
+import com.purplehillsbooks.weaver.capture.WebFile;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
@@ -877,19 +878,20 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug.jsp");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/ShowWebFile.htm", method = RequestMethod.GET)
-    public void showWebFile(@PathVariable String siteId,@PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/WebFileShow.htm", method = RequestMethod.GET)
+    public void webFileShow(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        ar.reqParam("att");
-        BaseController.showJSPMembers(ar, siteId, pageId, "ShowWebFile.jsp");
+        ar.reqParam("aid");
+        BaseController.showJSPMembers(ar, siteId, pageId, "WebFileShow.jsp");
     }
-    @RequestMapping(value = "/{siteId}/{pageId}/ShowWebPage.htm", method = RequestMethod.GET)
-    public void ShowWebPage(@PathVariable String siteId,@PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/WebFileEdit.htm", method = RequestMethod.GET)
+    public void webFileEdit(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        ar.reqParam("att");
-        BaseController.showJSPMembers(ar, siteId, pageId, "ShowWebPage.jsp");
+        ar.reqParam("aid");
+        ar.reqParam("sec");
+        BaseController.showJSPMembers(ar, siteId, pageId, "WebFileEdit.jsp");
     }
 
 
@@ -1159,7 +1161,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("scratchpad", uc.getScratchPad());
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to GetScratchpad in workspace (%s)", ex, pageId);
             streamException(ee, ar);
         }
     }
@@ -1182,7 +1184,7 @@ public class ProjectDocsController extends BaseController {
             repo.put("scratchpad", uc.getScratchPad());
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to UpdateScratchpad in workspace (%s)", ex, pageId);
             streamException(ee, ar);
         }
     }
@@ -1215,6 +1217,82 @@ public class ProjectDocsController extends BaseController {
 
 
 
+
+    @RequestMapping(value = "/{siteId}/{pageId}/GetWebFile.json", method = RequestMethod.GET)
+    public void getWebFile(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+
+        String aid = request.getParameter("aid");
+        try{
+            ar.assertLoggedIn("WebFiles are available only when logged in.");
+            Cognoscenti cog = ar.getCogInstance();
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            AttachmentRecord att = ngw.findAttachmentByIDOrFail(aid);
+            WebFile wf = att.getWebFile();
+
+            JSONObject repo =wf.getJson();
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = WeaverException.newWrap("Unable to GetWebFile for attachement %s in workspace (%s)", ex, aid, pageId);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/UpdateWebFile.json", method = RequestMethod.POST)
+    public void updateWebFile(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String aid = request.getParameter("aid");
+        try{
+            ar.assertLoggedIn("WebFiles are available only when logged in.");
+            Cognoscenti cog = ar.getCogInstance();
+            NGWorkspace ngw = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            AttachmentRecord att = ngw.findAttachmentByIDOrFail(aid);
+            WebFile wf = att.getWebFile();
+
+            JSONObject posted = getPostedObject(ar);
+            wf.updateData(posted);
+            wf.save();
+
+            JSONObject repo = wf.getJson();
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = WeaverException.newWrap("Unable to UpdateWebFile for attachement %s in workspace (%s)", ex, aid, pageId);
+            streamException(ee, ar);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/UpdateWebFileComments.json", method = RequestMethod.POST)
+    public void updateWebFileComments(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String aid = request.getParameter("aid");
+        String userKey = ar.getUserProfile().getKey();
+        try{
+            int sec = (int) ar.reqParamLong("sec");
+            ar.assertLoggedIn("WebFiles are available only when logged in.");
+            Cognoscenti cog = ar.getCogInstance();
+            NGWorkspace ngw = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            AttachmentRecord att = ngw.findAttachmentByIDOrFail(aid);
+            WebFile wf = att.getWebFile();
+
+            JSONObject posted = getPostedObject(ar);
+            wf.updateUserComments(sec, userKey, posted);
+            wf.save();
+
+            JSONObject repo = wf.getJson();
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = WeaverException.newWrap("Unable to UpdateWebFileComments for attachement %s in workspace (%s) for user (%s)",
+                    ex, aid, pageId, userKey);
+            streamException(ee, ar);
+        }
+    }
 
 
 

@@ -7,14 +7,14 @@
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    
+
     AttachmentRecord att = ngw.findAttachmentByIDOrFail(attachmentId);
     String title = att.getNiceName();
     WebFile wf = att.getWebFile();
     JSONObject wfjson = wf.getJson();
-    JSONArray articles = wfjson.requireJSONArray("articles");
+    JSONArray sections = wfjson.requireJSONArray("sections");
     JSONArray links = wfjson.requireJSONArray("links");
-    boolean available = articles.length()>0;
+    boolean available = sections.length()>0;
     WikiConverter wc = new WikiConverter(ar);
 %>
 
@@ -64,36 +64,36 @@
 
     <div class="cleanedWebStyle">
         <h1><% ar.writeHtml(title); %></h1>
-    
+
         <p>Compressed Web View, <a href="<%= wfjson.getString("url") %>" target="_blank">View Uncompressed</a></p>
         <table class="tabledd">
-        <% for (JSONObject article : articles.getJSONObjectList()) { %>
+        <% for (JSONObject article : sections.getJSONObjectList()) {
+               if( "article".equals(article.getString("group") ) ) {   %>
             <tr >
-            
+
                 <td style="max-width: 600px"><div class="segmentBox">
-                <% 
+                <%
                 String markDown = article.getString("content");
                 wc.writeWikiAsHtml(markDown);
                 %>
                 </div></td>
             </tr>
-        <% } %>
-            <hr/>
-            <hr/>
-        <% for (JSONObject link : links.getJSONObjectList()) { %>
+        <% }  } %>
+        <% for (JSONObject link : links.getJSONObjectList()) {
+               if( "links".equals(link.getString("group") ) ) {  %>
             <tr >
                 <td style="max-width: 600px"><div class="segmentBox">
-                <% 
+                <%
                 String markDown = link.getString("content");
                 wc.writeWikiAsHtml(markDown);
                 %>
                 </div></td>
             </tr>
-        <% } %>
+        <% }  } %>
         </table>
-        
 
-        
+
+
     </div>
 
 </div>
