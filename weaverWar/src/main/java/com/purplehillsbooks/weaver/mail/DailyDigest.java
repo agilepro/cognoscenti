@@ -49,7 +49,7 @@ public class DailyDigest {
     public static void sendDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
-        System.out.println("DAILYDIGEST: called at "+SectionUtil.currentTimeString());
+        System.out.println("DAILYDIGEST: called at "+SectionUtil.currentTimestampString());
         JSONObject logFile = new JSONObject();
         JSONArray logEntries = new JSONArray();
         logFile.put("events", logEntries);
@@ -284,8 +284,8 @@ public class DailyDigest {
                 }
 
                 if (clone.isSuperAdmin(up.getKey())) {
-                    
-                    //TODO: not sure that this double check is valid.   I think 
+
+                    //TODO: not sure that this double check is valid.   I think
                     //superadmin value can have multiple ids now, so this is wrong
                     //however I am not seeing the error message in debug out put so not sure.
                     String doublecheck = clone.getSystemProperty("superAdmin");
@@ -322,7 +322,7 @@ public class DailyDigest {
                 String thisSubj = "Daily Digest - " + numberOfUpdates
                         + " updates, " + numTasks + " tasks, "
                         + numReminders + " reminders.";
-                
+
                 MailInst msg = MailInst.genericEmail("$", "$", thisSubj, body.toString());
 
                 //Actually SEND the email here
@@ -468,9 +468,9 @@ public class DailyDigest {
         return totalHistoryCount;
     }
 
-    
-    /** 
-     * this is a reminder to super admins that there are sites waiting to be 
+
+    /**
+     * this is a reminder to super admins that there are sites waiting to be
      * granted or not.   Not sure this is needed.
      * @param clone
      * @param delayedSites
@@ -549,7 +549,7 @@ public class DailyDigest {
                 continue;
             }
             taskNum++;
-                    
+
 
             ar.write("\n <tr");
             if (taskNum % 2 == 0) {

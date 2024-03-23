@@ -11,6 +11,7 @@ import java.util.List;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
@@ -155,7 +156,129 @@ public class WebFile {
         return "";
     }
 
-    private void copyIfPresent(JSONObject oldObj, JSONObject newObj, String key) {
+    public JSONObject getSectionParagraphsAndSentences(int secNum) throws Exception {
+        String entireBlock = null;
+        for (JSONObject oldSection : webFile.getJSONArray("sections").getJSONObjectList()) {
+            if (secNum == oldSection.getInt("originPos")) {
+                entireBlock = oldSection.getString("content");
+            }
+        }
+        if (entireBlock == null) {
+            throw WeaverException.newBasic("Can not find section %d in this web file", secNum);
+        }
+
+        JSONObject total = new JSONObject();
+        JSONArray paragraphs = total.requireJSONArray("paragraphs");
+
+        int paraNum = 0;
+        for (String para : findParagraphs(entireBlock)) {
+            JSONObject onePara = new JSONObject();
+            onePara.put("original", para);
+            paragraphs.put(onePara);
+            onePara.put("paraNum", ++paraNum);
+            JSONArray lines = onePara.requireJSONArray("lines");
+            int lineNum = 0;
+            for (String line : findSentences(para)) {
+                JSONObject oneLine = new JSONObject();
+                lines.put(oneLine);
+                oneLine.put("lineNum", ++lineNum);
+                oneLine.put("text", line);
+            }
+        }
+        return total;
+    }
+
+    public static List<String> findParagraphs(String block) {
+        List<String> listOfParagraphs = new ArrayList<>();
+        StringBuilder paragraph = new StringBuilder();
+        for (String line : block.split("\n")) {
+            line = line.trim();
+            boolean isNewParagraph = (line.length()==0);
+            if (line.startsWith("*")) {
+                isNewParagraph = true;
+            }
+            if (line.startsWith("!")) {
+                isNewParagraph = true;
+            }
+            if (isNewParagraph) {
+                String full = paragraph.toString().trim();
+                if (full.length()>0) {
+                    listOfParagraphs.add(full);
+                }
+                paragraph = new StringBuilder();
+            }
+            paragraph.append(line);
+            paragraph.append(" ");
+        }
+        String full2 = paragraph.toString().trim();
+        if (full2.length()>0) {
+            listOfParagraphs.add(full2.trim());
+        }
+        return listOfParagraphs;
+    }
+
+    public static List<String> findSentences(String paragraph) {
+        List<String> listOfSentences = new ArrayList<>();
+        int start = skipWhite(0, paragraph);
+        while (start < paragraph.length()) {
+            int pos = findSentenceEnd(paragraph, start);
+            String trimmedLine = paragraph.substring(start, pos).trim();
+            if (trimmedLine.length()>0) {
+                listOfSentences.add(trimmedLine);
+            }
+            start = skipWhite(pos, paragraph);
+        }
+        return listOfSentences;
+    }
+
+    private static int skipWhite(int pos, String val) {
+        if (pos>= val.length()) {
+            return pos;
+        }
+
+        while (pos<val.length()) {
+            char ch = val.charAt(pos);
+            if (!Character.isWhitespace(ch) && 160 != ch) {
+                return pos;
+            }
+            pos++;
+        }
+        return pos;
+    }
+
+    private static int findSentenceEnd(String paragraph, int start) {
+        int i = start + 10;
+        if (i >= paragraph.length()) {
+            return paragraph.length();
+        }
+        boolean skipHyperLink = false;
+        while (i < paragraph.length()) {
+            char ch = paragraph.charAt(i);
+            i++;
+            if (skipHyperLink) {
+                if (ch==']') {
+                    skipHyperLink = false;
+                }
+            }
+            else {
+                if (ch=='[') {
+                    skipHyperLink = true;
+                }
+                else if (i<paragraph.length() && (ch == '.' || ch == ';' || ch == '?' || ch == '!')) {
+                    ch = paragraph.charAt(i);
+                    while (i<paragraph.length() &&
+                            (ch == '\"' || ch == '”' || ch == '\'' || ch == '’' || ch == ')')) {
+                        i++;
+                        ch = paragraph.charAt(i);
+                    }
+                    return i;
+                }
+            }
+        }
+        return paragraph.length();
+    }
+
+    private static void copyIfPresent(JSONObject oldObj, JSONObject newObj, String key) {
         if (newObj.has(key)) {
             oldObj.put(key, newObj.get(key));
         }

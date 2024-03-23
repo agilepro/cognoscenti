@@ -170,15 +170,15 @@ public class ServerInitializer extends TimerTask {
         System.out.println("COG SERVER CHANGE - New state "+getServerStateString());
     }
 
-    public synchronized void run()
-    {
+    public synchronized void run() {
+        System.out.println("ServerInitializer started on thread: "+Thread.currentThread().getName() + " -- " + SectionUtil.currentTimestampString());
         //any non-FAILED state, there is nothing to do, so exit quick as possible
         //this get hit every 30 seconds or so while running.
         if (serverInitState != STATE_FAILED) {
             return;
         }
 
-        System.out.println("COG SERVER INIT - Starting state ("+getServerStateString()+") at "+SectionUtil.currentTimeString());
+        System.out.println("COG SERVER INIT - Starting state ("+getServerStateString()+") at "+SectionUtil.currentTimestampString());
         //only if it is in FAILED state, it should attempt to reinitialize everything.
         //Init fails if any init method throws an exception
 
@@ -227,6 +227,13 @@ public class ServerInitializer extends TimerTask {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         System.out.println("COG SERVER INIT - Concluding state "+getServerStateString());
+    }
+
+    public void shutDown() {
+        System.out.println("STOP - ServerInitializer shutdown, killing timers");
+        System.err.println("\n=======================\nSTOP - ServerInitializer shutdown, killing timers");
+        timerForInit.cancel();
+        timerForOtherTasks.cancel();
     }
 
     public String getServerStateString() {

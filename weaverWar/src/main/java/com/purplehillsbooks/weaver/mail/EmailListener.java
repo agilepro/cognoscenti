@@ -62,8 +62,8 @@ import com.purplehillsbooks.json.JSONException;
 public class EmailListener extends TimerTask{
 
     private static EmailListener singletonListener = null;
-    private MongoDB db;
-    
+    public MongoDB db;
+
     public static Exception threadLastCheckException = null;
 
     //expressed in milliseconds
@@ -89,6 +89,11 @@ public class EmailListener extends TimerTask{
         cog = _cog;
     }
 
+    public static void shutDown() {
+        singletonListener.db.close();
+        singletonListener.db = null;
+    }
+
     /**
      * This is an initialization routine, and should only be called once, when the
      * server starts up.  There are some error checks to make sure that this is the case.
@@ -112,11 +117,16 @@ public class EmailListener extends TimerTask{
      static long lastRunTime = 0;
      static Exception lastException = null;
 
-     //this is the minimum pause since last time.   This pause is bigger when it gets
-     //an error.   45 seconds if no error,   5 min if error is coming.
+     // this is the minimum pause since last time.   This pause is bigger when it gets
+     // an error.   45 seconds if no error,   5 min if error is coming.
      static long minPause = 45000;
 
      public void run() {
+        if (db == null) {
+           System.out.println("INVALID CALL - EmailListener.run called after being closed.");
+           return;
+        }
+        System.out.println("EmailListener started on thread: "+Thread.currentThread().getName() + " -- " + SectionUtil.currentTimestampString());
          // When you computer goes to sleep for a while and wakes up, the Java
          // system will send you all the events to make up for all the events it
          // missed while asleep.   We don't really need that.  Every time we get an
@@ -164,7 +174,7 @@ public class EmailListener extends TimerTask{
          }
          catch(Exception e) {
              if (exceptionsAreEqual(lastException, e)) {
-                 System.out.println("EMAIL LISTENER PROBLEM: same failure. "+SectionUtil.currentTimeString());
+                 System.out.println("EMAIL LISTENER PROBLEM: same failure. "+SectionUtil.currentTimestampString());
                  //make the delay 5 minutes before trying again
                  minPause = 300000;
                  return;
@@ -300,13 +310,13 @@ public class EmailListener extends TimerTask{
             for (int i = 0; i < messages.length; i++) {
                 Message message = messages[i];
                 String subject = message.getSubject();
-                
+
                 // most of the POP mail servers/providers does not support flags
                 // for other then delete
                 if (message.isSet(Flag.DELETED)) {
                     continue;
                 }
-                
+
                 //this just makes sure we avoid multiple processing when DELETE is not working
                 String signature = subject + message.getSentDate();
                 if (alreadyProcessed.contains(signature)) {
@@ -315,14 +325,14 @@ public class EmailListener extends TimerTask{
                 }
                 alreadyProcessed.add(signature);
 
-                
-                
+
+
                 MailInst msg = new MailInst();
                 msg.setSiteKey("~");
                 msg.setWorkspaceKey("~");
                 msg.setSubject(subject);
                 msg.setStatus(EmailRecord.RECEIVED);
-                
+
                 //returns an array, but keep just the first one if any
                 Address[] from = message.getFrom();
                 if (from!=null) {
@@ -331,10 +341,10 @@ public class EmailListener extends TimerTask{
                         break;
                     }
                 }
-                
+
                 parseAndSetBody(msg, message);
                 parseLinkKey(msg, subject);
-                
+
                 System.out.println("WEAVERPOP handlePOP3Folder message "+i+"-----------------\n"+msg.getListableJSON().toString(2)+"\n-----------------");
 
 
@@ -363,9 +373,9 @@ public class EmailListener extends TimerTask{
             }
         }
     }
-    
+
     private MailInst parseLinkKey(MailInst msg, String subject) throws Exception {
-        
+
         int bracketPos = subject.indexOf("[$");
         if (bracketPos < 0) {
             System.out.println("WEAVERPOP ******* FAIL: No start token in subject: "+subject);
@@ -377,16 +387,16 @@ public class EmailListener extends TimerTask{
             return null;
         }
         String emailLocator = subject.substring(bracketPos+2, endPos);
-        
+
         long oldMsgId = MailInst.getCreateDateFromLocator(emailLocator);
-        
+
         MailInst oldMail = EmailSender.findEmailById(oldMsgId);
-        
+
         if (oldMail==null) {
             System.out.println("WEAVERPOP ********** FAIL: got email reply, but original email not found: "+oldMsgId);
             return null;
         }
-        
+
 
         System.out.println("WEAVERPOP  Found old email and processing: "+emailLocator);
         msg.setCommentContainer(oldMail.getCommentContainer());
@@ -394,7 +404,7 @@ public class EmailListener extends TimerTask{
         msg.setWorkspaceKey(oldMail.getWorkspaceKey());
         return oldMail;
     }
-    
+
     private void parseAndSetBody(MailInst msg, Message message) throws Exception {
         String body = null;
         Object messageContent = message.getContent();
@@ -419,15 +429,15 @@ public class EmailListener extends TimerTask{
             }
             body = (String) mbpContent;
         }
-        
+
         if (body==null) {
             System.out.println("WEAVERPOP ********** FAIL: message did not have any body parts: ");
             msg.setBodyText("Message received did not have any body parts: ");
             return;
         }
-        
+
         //System.out.println("WEAVERPOP DUMP body text\n"+body+"\n=========================");
-        
+
         //This is currently the text that we put at the start of the bottom of the comment message
         //if we find this exact phrase, then delete it and everything after it.
         //we can be somewhat confident that everything after this is not user text.
@@ -446,8 +456,8 @@ public class EmailListener extends TimerTask{
         if (trailerPos>0) {
             body = body.substring(0,trailerPos);
         }
-         
-        
+
+
         msg.setBodyText(body);
     }
 
@@ -455,7 +465,7 @@ public class EmailListener extends TimerTask{
         try{
 
             storeInboundMsg(msg);
-            
+
             String siteKey = msg.getSiteKey();
             String workspaceKey = msg.getWorkspaceKey();
             if (siteKey==null || siteKey.length()==0) {
@@ -477,35 +487,35 @@ public class EmailListener extends TimerTask{
                 System.out.println("WEAVERPOP: did not find  a containerKey");
                 return;
             }
-            
+
             CommentContainer cc = ngw.findContainerByKey(containerKey);
             if (cc == null) {
                 System.out.println("WEAVERPOP: did not find container with "+containerKey);
                 return;
             }
-            
+
             String userEmail = msg.getFromAddress();
             if (userEmail==null) {
                 System.out.println("WEAVERPOP: did not find the from address from the message");
                 return;
             }
-            
+
             UserProfile hintedUser = cog.getUserManager().lookupUserByAnyId(userEmail);
             if (hintedUser == null) {
                 return;
             }
             ar.setPossibleUser(hintedUser);
             ar.nowTime = System.currentTimeMillis();
-            
+
             CommentRecord cr = cc.addComment(ar);
             String markdown = HtmlToWikiConverter.htmlToWiki(msg.getBodyText());
             cr.setContent(markdown);
             cr.setState(CommentRecord.COMMENT_STATE_CLOSED);
-                
+
             ngw.saveFile(ar, "received email");
             //this should re-send the email back out again to the others.
-            
-            
+
+
         }catch (Exception e) {
             //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
             throw new JSONException("Unable to process email message subject={0}", e, msg.getSubject());
@@ -518,7 +528,7 @@ public class EmailListener extends TimerTask{
     private void storeInboundMsg(MailInst message) throws Exception {
 
         System.out.println("WEAVERPOP storeInboundMsg "+message.toString());
-        
+
         db.createRecord(message.getJSON());
     }
 

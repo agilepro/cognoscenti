@@ -24,24 +24,25 @@ public class MongoDB {
     MongoDatabase db;
     MongoCollection<org.bson.Document> emaildb;
     public int limit = 100;
-    
+
     public MongoDB() {
         mongoClient = MongoClients.create(uri);
         db = mongoClient.getDatabase("weaver");
         emaildb = db.getCollection("email");
     }
-    
+
     public void setLimit(int i) {
         limit = i;
     }
-    
+
     /**
      * don't try to use this after closing
      */
     public void close() {
+        System.out.println("MONGO DB - closed");
         mongoClient.close();
     }
-    
+
     /**
      * simple default query that gets all the records up to a limit
      * probably only useful for testing/debugging
@@ -49,15 +50,16 @@ public class MongoDB {
     public JSONArray findAllRecords() throws Exception {
         FindIterable<Document> resultSet = emaildb.find();
         MongoCursor<Document> cursor = resultSet.iterator();
-        
+
         JSONArray ja = new JSONArray();
         int count = 0;
         while (count++ < limit && cursor.hasNext()) {
             Document d = cursor.next();
-            
+
             JSONObject jo = new JSONObject(new JSONTokener( d.toJson() ));
             ja.put(jo);
         }
+        cursor.close();
         return ja;
     }
     public JSONArray queryRecords(JSONObject query) throws Exception {
@@ -72,7 +74,7 @@ public class MongoDB {
     public JSONArray querySortRecords(JSONObject query, JSONObject sort, int skip, int batchSize) throws Exception {
         String queryString = query.toString(0);
         long startTime = System.currentTimeMillis();
-        
+
         Document dq = Document.parse(queryString);
         FindIterable<Document> resultSet = emaildb.find(dq);
         if (sort!=null) {
@@ -80,7 +82,7 @@ public class MongoDB {
         }
         resultSet.skip(skip);
         MongoCursor<Document> cursor = resultSet.iterator();
-        
+
         JSONArray ja = new JSONArray();
         int count = 0;
         while (cursor.hasNext() && count < batchSize) {
@@ -93,15 +95,16 @@ public class MongoDB {
         if (count>0) {
             System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);
         }
+        cursor.close();
         return ja;
     }
-    
+
     public void createRecord(JSONObject emailRecord) throws Exception {
         String rep = emailRecord.toString(2);
         //System.out.println("=============INSERTING===============\n"+rep+"\n=========================");
         emaildb.insertOne(Document.parse(rep));
     }
-    
+
     public void replaceRecord(JSONObject query, JSONObject emailRecord) throws Exception {
         String queryStr = query.toString(0);
         Document queryDoc = Document.parse(query.toString(0));

@@ -18,7 +18,7 @@
     WikiConverter wc = new WikiConverter(ar);
 %>
 
-<!-- BEGIN Wrapper.jsp Layout-->
+<!-- BEGIN WebFilePrint.jsp Layout-->
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -26,23 +26,88 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <!-- INCLUDE web fonts -->
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
-    <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <title><% ar.writeHtml(title); %></title>
+
+    <!-- for the Lora Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
 </head>
 
-<body style="padding:10px;">
+<body>
 
 <style>
-.cleanedWebStyle {
+body {
+    width: 100%;
+    padding-top: 0px;
+    font-family: Lora, sans-serif;
+}
+.toptop { 
+    padding: 10px;
+    margin: auto;
+    margin-bottom: 20px;
+    width: 728px; 
+}
+.smalltime {
+    font-size: 12px;
+    border:2px #EEE solid;
+    border-radius:5px;
+}
+.container {
+    padding: 0;
+    margin: auto;
+    width: 728px;
+}
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 36px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    overflow-wrap: break-word;
+}
+h2 {
+    color: rgb(140, 140, 140);
+    cursor: default;
+    font-kerning: auto;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 24px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 12px;
+    overflow-wrap: break-word;
+}
+h3 {
+    color: rgb(140, 140, 140);
+    cursor: default;
+    font-kerning: auto;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 12px;
+    overflow-wrap: break-word;
+}
+p {
+    color: rgb(64, 64, 64);
+    cursor: default;
+    font-kerning: auto;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 .cleanTitleBox{
     border:2px #EEE solid;
@@ -50,34 +115,29 @@
     margin:0px;
     padding:8px
 }
-.segmentBox{
-    border:2px #F0F0F0 solid;
-    border-radius:15px;
-    margin:0px;
-    padding:8px;
-    max-width: 600px;
+.segmentBox {
+    max-width: 728px;
 }
 
 </style>
 
-<div ng-cloak>
+<div >
+    <div class="container toptop">
+        <p class="smalltime"><% ar.writeHtml(title); %>
+        Compressed Web View, 
+        <a href="<%= wfjson.getString("url") %>" target="_blank">View Uncompressed</a></p>
+    </div>
+    <div class="container">
 
-    <div class="cleanedWebStyle">
-        <h1><% ar.writeHtml(title); %></h1>
-
-        <p>Compressed Web View, <a href="<%= wfjson.getString("url") %>" target="_blank">View Uncompressed</a></p>
-        <table class="tabledd">
         <% for (JSONObject article : sections.getJSONObjectList()) {
                if( "article".equals(article.getString("group") ) ) {   %>
-            <tr >
 
-                <td style="max-width: 600px"><div class="segmentBox">
+            <div class="segmentBox">
                 <%
                 String markDown = article.getString("content");
                 wc.writeWikiAsHtml(markDown);
                 %>
-                </div></td>
-            </tr>
+            </div>
         <% }  } %>
         <% for (JSONObject link : links.getJSONObjectList()) {
                if( "links".equals(link.getString("group") ) ) {  %>

@@ -31,8 +31,8 @@ import com.purplehillsbooks.weaver.spring.BaseController;
  */
 public class Cognoscenti {
 
-
     public ServerInitializer initializer = null;
+    public static Cognoscenti cog = null;
 
     public Exception lastFailureMsg = null;
     public boolean isInitialized = false;
@@ -103,7 +103,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         //first thing to do is to get the cognoscenti object associated with this app
         ServletContext sc = config.getServletContext();
-        Cognoscenti cog = Cognoscenti.getInstance(sc);
+        cog = Cognoscenti.getInstance(sc);
 
         if (cog.initializer != null) {
             //report this, but otherwise ignore it.  Not bad enough to throw exception.
@@ -116,7 +116,13 @@ System.out.println("Weaver Server Object == Start the Server");
         cog.initializer.run();
     }
 
-
+    public static void shutDownTheServer() {
+        System.out.println("STOP - Cognoscenti shutdown");
+        System.err.println("\n=======================\nSTOP - Cognoscenti shutdown");
+        cog.initializer.shutDown();
+        EmailSender.shutDown();
+        EmailListener.shutDown();
+    }
 
     /**
      * For most of the server functions, this is the method to test to
@@ -223,7 +229,6 @@ System.out.println("Weaver Server Object == Start the Server");
             initIndexOfContainers();
             if (backgroundTimer!=null) {
                 EmailSender.initSender(backgroundTimer, this);
-                //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer, this);
             }
 
@@ -237,7 +242,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
             BaseController.initBaseController(this);
             LearningPath.init(this);
-            
+
             isInitialized = true;
         }
         catch (Exception e) {
@@ -498,7 +503,7 @@ System.out.println("Weaver Server Object == Start the Server");
                 // only consider workspace style containers
                 continue;
             }
-            if (ngpi.isDeleted) { 
+            if (ngpi.isDeleted) {
                 continue;
             }
             if (!accountKey.equals(ngpi.wsSiteKey)) {
@@ -846,7 +851,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return res;
     }
 
-    
+
     private static long lastTimeValue = System.currentTimeMillis();
     /**
      * This returns the current time EXCEPT it guarantees
@@ -861,5 +866,5 @@ System.out.println("Weaver Server Object == Start the Server");
         lastTimeValue = newTime;
         return newTime;
     }
-    
+
 }

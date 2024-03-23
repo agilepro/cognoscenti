@@ -321,17 +321,20 @@ public class SectionUtil
         write4Digits(out, year);
     }
 
-    public static String getDateAndTime(long timestamp)throws Exception{
+    public static String getDateAndTime(long timestamp) {
         StringWriter out = new StringWriter(20);
-        nicePrintDateAndTime(out, timestamp);
+        try {
+            nicePrintDateAndTime(out, timestamp);
+        }
+        catch (Exception e) {
+            // should not ever happen
+        }
         return out.toString();
     }
     /**
     * format is MM/DD/YYYY hh:mm:ss
     */
-    public static void nicePrintDateAndTime(Writer out, long timestamp)
-        throws Exception
-    {
+    public static void nicePrintDateAndTime(Writer out, long timestamp) throws Exception {
         if (timestamp==0)
         {
             //special null value
@@ -449,6 +452,10 @@ public class SectionUtil
     public static String currentTimeString() {
         return getNicePrintDate(System.currentTimeMillis());
     }
+    public static String currentTimestampString() {
+        return getDateAndTime(System.currentTimeMillis());
+    }
+
 
     public static String getNicePrintDate(long timestamp, String timeZone) throws Exception {
         StringWriter out = new StringWriter(20);

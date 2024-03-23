@@ -193,6 +193,11 @@ public class EmailSender extends TimerTask {
         timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
     }
 
+    public static void shutDown() {
+        singletonSender.db.close();
+        singletonSender.db = null;
+    }
+
     public static void dumpPropertiesToLog() {
         System.out.println("%%%%%%% EMAIL PROPERTY FILE %%%%%%");
         for (String key : emailProperties.stringPropertyNames()) {
@@ -203,7 +208,7 @@ public class EmailSender extends TimerTask {
                 System.out.println("    - "+key+" = "+emailProperties.getProperty(key));
             }
         }
-        System.out.println("");
+        System.out.println("%%%%%%% ------------------ %%%%%%");
     }
 
 
@@ -219,6 +224,7 @@ public class EmailSender extends TimerTask {
             AuthRequest ar = AuthDummy.serverBackgroundRequest();
             long startTime = System.currentTimeMillis();
             ar.nowTime = startTime;
+            System.out.println("EmailSender started on thread: "+Thread.currentThread().getName() + " -- " + SectionUtil.currentTimestampString());
 
             // make sure that this method doesn't throw any exception
             try {
@@ -230,6 +236,9 @@ public class EmailSender extends TimerTask {
                 lastEmailProcessTime = startTime;
                 //System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
+                System.out.println("=================== EXCEPTION IN SENDMAIL =====================");
+                e.printStackTrace();
+                System.out.println("=================== --------------------L =====================");
                 if (WeaverException.contains(e, "InterruptedException")) {
                     throw WeaverException.newWrap("Got InterruptedException at the root level of EmailSender.", e);
                 }
@@ -361,7 +370,7 @@ public class EmailSender extends TimerTask {
 
         if (iCount>0) {
             System.out.println("EMAIL SENDER: Processed "+iCount+" background events at "
-                +SectionUtil.currentTimeString());
+                +SectionUtil.currentTimestampString());
         }
     }
 

@@ -249,7 +249,7 @@ public class MeetingRecord extends DOMFace {
     public boolean deprecatedBacklogMeetingNoLongerAllowed() {
         return "true".equals(getAttribute("isBacklog"));
     }
-    
+
     public boolean isScheduled() {
         return getStartTime()>100000000;
     }
@@ -514,8 +514,8 @@ public class MeetingRecord extends DOMFace {
             foundOne.setScalar("situation", attendValues.getString("situation"));
         }
     }
-    
-    
+
+
     public boolean removeFromRollCall(String sourceUser) throws Exception {
         AddressListEntry ale = new AddressListEntry(sourceUser);
         DOMFace foundOne = null;
@@ -594,7 +594,7 @@ public class MeetingRecord extends DOMFace {
     public JSONObject getListableJSON(AuthRequest ar) throws Exception {
         JSONObject meetingInfo = getMinimalJSON();
         meetingInfo.put("description", getMeetingDescription());
-        
+
         //REMOVE THIS sometime soon, no more HTML needed
         //String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
         //meetingInfo.put("meetingInfo", htmlVal);
@@ -705,10 +705,10 @@ public class MeetingRecord extends DOMFace {
             AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
             if (peopleMap.has(ale.getKey())) {
                 JSONObject personRecord = peopleMap.getJSONObject(ale.getKey());
-    
+
                 //whether they expect to attend or not
                 personRecord.put("expect", onePerson.getScalar("attend"));
-    
+
                 // a comment about their situation
                 personRecord.put("situation", onePerson.getScalar("situation"));
             }
@@ -785,8 +785,8 @@ public class MeetingRecord extends DOMFace {
             setMeetingInfo(markdown);
             hasSetMeetingInfo = true;
         }
-        
-        
+
+
         updateScalarString("previousMeeting", input);
         updateScalarString("defaultLayout", input);
         updateScalarString("notifyLayout", input);
@@ -854,7 +854,7 @@ public class MeetingRecord extends DOMFace {
             stopTimer();
         }
     }
-    
+
     public void removeUserFromVector(String memberName, String value) {
         AddressListEntry ale = new AddressListEntry(value);
         if (memberName == null) {
@@ -885,7 +885,7 @@ public class MeetingRecord extends DOMFace {
         }
         createChildElement(memberName, newUser.getKey());
     }
-    
+
 
     /**
      * This will update the existing agenda items with values from
@@ -1357,7 +1357,7 @@ public class MeetingRecord extends DOMFace {
                      +SectionUtil.getNicePrintDate(futureTimeToSend())+") is still in the future!");
             }
 
-            System.out.println("SENDING MEETING NOTICE: "+SectionUtil.currentTimeString()+" with SENDTIME: "
+            System.out.println("SENDING MEETING NOTICE: "+SectionUtil.currentTimestampString()+" with SENDTIME: "
                     +SectionUtil.getNicePrintDate(futureTimeToSend())+" and MEETTIME: "
                     +SectionUtil.getNicePrintDate(meet.getStartTime()));
             meet.sendReminderEmail(ar, ngw, mailFile);
@@ -1497,10 +1497,10 @@ public class MeetingRecord extends DOMFace {
         File meetingLayoutFile = ar.findChunkTemplate(layoutName);
         return meetingLayoutFile;
     }
-    
+
     /**
      * This produces a list of meeting attendees, but ONLY those who are members
-     * of the site in the list of site users.   Ad-hoc users added to a meeting 
+     * of the site in the list of site users.   Ad-hoc users added to a meeting
      * are ignored.
      */
     public static JSONObject findAttendeeMatrix(NGWorkspace ngw) throws Exception {

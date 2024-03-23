@@ -31,6 +31,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.SectionUtil;
+
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.purplehillsbooks.streams.SSLPatch;
@@ -115,6 +117,7 @@ public class SpringServletWrapper extends HttpServlet
     /**
     * Initializes the entire Cognoscenti system by calling SystemInitializer
     */
+    @Override
     public void init(ServletConfig config) throws ServletException  {
         // first reflect the init method to the wrapped class
         wrappedServlet.init(config);
@@ -138,6 +141,13 @@ public class SpringServletWrapper extends HttpServlet
 
         //store a pointer to this object AFTER it is initialized
         instance = this;
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("STOP - SpringServletWrapper has been called to DESTROY " + SectionUtil.currentTimestampString());
+        System.err.println("\n=======================\nSTOP - SpringServletWrapper has been called to DESTROY " + SectionUtil.currentTimestampString());
+        Cognoscenti.shutDownTheServer();
     }
 
 

@@ -127,7 +127,7 @@ public class RoleInvitation extends JSONWrapper {
         jo.put("msg", msg);
         jo.put("return", returnUrl);
         jo.put("ss", ss);
-        
+
         String url = "?openid.mode=apiSendInvite&ss="+URLEncoder.encode(ss, "UTF-8");
 
         JSONObject res = LightweightAuthServlet.postToTrustedProvider(url, jo);
@@ -172,7 +172,7 @@ public class RoleInvitation extends JSONWrapper {
         @Override
         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if ("New".equals(ri.getStatus())) {
-                System.out.println("ROLE INVITATION: "+SectionUtil.currentTimeString()+" to "+ri.getEmail()+" sending.");
+                System.out.println("ROLE INVITATION: "+SectionUtil.currentTimestampString()+" to "+ri.getEmail()+" sending.");
                 ri.sendEmail(ar);
             }
         }

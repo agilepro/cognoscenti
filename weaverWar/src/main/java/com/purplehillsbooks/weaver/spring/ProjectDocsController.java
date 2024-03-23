@@ -1206,9 +1206,8 @@ public class ProjectDocsController extends BaseController {
                         +".  Was it deleted?");
                 return;
             }
-            // boolean canAccess = AccessControl.canAccessDoc(ar, ngw, att);
 
-            ar.invokeJSP("/spring/jsp/WebFilePrint.jsp");
+            ar.invokeJSP("/spring/anon/WebFilePrint.jsp");
 
         }catch(Exception ex){
             throw WeaverException.newWrap("Unable to construct the WebFile Print page for workspace (%s) in site (%s)", ex, pageId,siteId);

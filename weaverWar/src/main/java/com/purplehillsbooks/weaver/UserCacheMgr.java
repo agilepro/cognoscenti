@@ -36,7 +36,7 @@ public class UserCacheMgr {
         UserCache theCache = new UserCache(cog, userKey);
         /*
         if (needsRecalc.contains(userKey)) {
-            System.out.println("USERCACHE: refreshed cache for: "+userKey+" - "+SectionUtil.currentTimeString());
+            System.out.println("USERCACHE: refreshed cache for: "+userKey+" - "+SectionUtil.currentTimestampString());
             theCache.refreshCache(cog);
             theCache.save();
             needsRecalc.remove(userKey);

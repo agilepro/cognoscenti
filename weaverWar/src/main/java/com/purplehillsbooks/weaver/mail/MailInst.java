@@ -56,7 +56,7 @@ public class MailInst extends JSONWrapper {
 
     public MailInst() throws Exception {
         super(new JSONObject());
-        //this is the ID of the message, each message has a unique create time, which is 
+        //this is the ID of the message, each message has a unique create time, which is
         //the time that this code is run, and the record saved in the DB.
         setCreateDate(Cognoscenti.getUniqueTime());
         setStatus(READY_TO_GO);
@@ -64,7 +64,7 @@ public class MailInst extends JSONWrapper {
     public MailInst(JSONObject _kernel) {
         super(_kernel);
     }
-    
+
     public MailInst cloneMsg() throws Exception {
         MemFile mf = new MemFile();
         Writer w = mf.getWriter();
@@ -75,7 +75,7 @@ public class MailInst extends JSONWrapper {
         clone.setCreateDate(Cognoscenti.getUniqueTime());
         return clone;
     }
-    
+
     public static MailInst genericEmail(String site, String workspace, String subject, String body) throws Exception {
         MailInst msg = new MailInst();
         msg.setSiteKey(site);
@@ -84,7 +84,7 @@ public class MailInst extends JSONWrapper {
         msg.setBodyText(body);
         return msg;
     }
-    
+
     /**
      * The CreateDate is the ID of the message, it is tracked through all
      * the placed by create date.
@@ -95,11 +95,11 @@ public class MailInst extends JSONWrapper {
     private void setCreateDate(long val) throws Exception {
         kernel.put("CreateDate", val);
     }
-    
+
     /**
      * Some email message object get created, but are not stored in
-     * the database.  Instead, they are needed to create temporary 
-     * results.   This sets the create date to -1 so that rendered 
+     * the database.  Instead, they are needed to create temporary
+     * results.   This sets the create date to -1 so that rendered
      * output can identify that the message is not stored in the DB.
      */
     public void markNotReal() throws Exception {
@@ -147,7 +147,7 @@ public class MailInst extends JSONWrapper {
         return kernel.getString("UserKey");
     }
     /*
-     * Set both the addressee (To field) as well as the 
+     * Set both the addressee (To field) as well as the
      * associated UserKey for that user if there is one.
      * Specify the email address of the addressee.
      * The user key will be looked up.
@@ -213,7 +213,7 @@ public class MailInst extends JSONWrapper {
         String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
         setBodyText(body);
     }
-    
+
     public String getExceptionMessage() throws Exception {
         return kernel.getString("Exception");
     }
@@ -227,10 +227,10 @@ public class MailInst extends JSONWrapper {
     public void setCommentId(long val) throws Exception {
         kernel.put("CommentId", val);
     }
-    
+
     public String getEmailLocator() throws Exception {
         long cmt = getCommentId();
-        
+
         if (cmt>0) {
             return Long.toString(getCreateDate()) + "-" + cmt;
         }
@@ -238,7 +238,7 @@ public class MailInst extends JSONWrapper {
             return Long.toString(getCreateDate());
         }
     }
-    
+
     public static long getCreateDateFromLocator(String locator) {
         int dashPos = locator.indexOf("-");
         if (dashPos>0) {
@@ -255,18 +255,18 @@ public class MailInst extends JSONWrapper {
         else {
             return -1;
         }
-        
+
     }
-    
-    
+
+
     public String getCommentContainer() {
         return kernel.optString("CommentContainer");
     }
     public void setCommentContainer(String val) throws Exception {
         kernel.put("CommentContainer", val);
     }
-        
-    
+
+
     public boolean containsValue(String s) throws Exception {
         if ((s==null) || s.length()==0) {
             return true;
@@ -340,7 +340,7 @@ public class MailInst extends JSONWrapper {
 
             transport = mailSession.getTransport();
             transport.connect();
-            
+
 
             //for some reason email is not able to handle the upper ascii
             //even though it seems to correctly encoded, the decoding seems to
@@ -382,7 +382,7 @@ public class MailInst extends JSONWrapper {
 
             //Always use a fixed from address to avoid being tagged as a spammer
             String stdFromAddress = mailProps.getProperty("mail.smtp.from");
-            
+
             //add identifying character (※) in front of name
             message.setFrom(makeAddress("\u203B "+fromName, stdFromAddress)[0]);
 
@@ -391,7 +391,7 @@ public class MailInst extends JSONWrapper {
             if (emailLocator!=null && emailLocator.length()>3) {
                 rawSubject = rawSubject + " [$" + emailLocator + "]";
             }
-            
+
             message.setSubject(MimeUtility.encodeText(rawSubject, "utf-8", "B"));
 
             MimeBodyPart textPart = new MimeBodyPart();
@@ -429,13 +429,13 @@ public class MailInst extends JSONWrapper {
             setLastSentDate(sendStart);
             setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             return true;
-        } 
+        }
         catch (Exception me) {
             EmailSender.lastEmailFailureTime = System.currentTimeMillis();
             EmailSender.lastEmailSendFailure = me;
-          
+
             try {
-                String context = "Email Send Failed ("+SectionUtil.currentTimeString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
+                String context = "Email Send Failed ("+SectionUtil.currentTimestampString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
                 setExceptionMessage(me, context);
                 setLastSentDate(sendStart);
                 JSONException.traceException(System.out, me, context);
@@ -446,7 +446,7 @@ public class MailInst extends JSONWrapper {
                 setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             }
             catch (Exception eee) {
-                System.out.println("EXCEPTION within EXCEPTION: "+eee+" @ "+SectionUtil.currentTimeString());
+                System.out.println("EXCEPTION within EXCEPTION: "+eee+" @ "+SectionUtil.currentTimestampString());
                 JSONException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
             }
             return false;
