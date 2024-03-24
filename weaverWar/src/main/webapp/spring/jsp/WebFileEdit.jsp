@@ -59,7 +59,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.oldComments = $scope.section.comments[$scope.userKey];
     }
     
-    console.log("WEBFILE", $scope.webFile);
+    console.log("OLDCOMMENTS", $scope.oldComments);
 
     $scope.openOriginal = function() {
         window.open($scope.originalUrl, "_blank");
@@ -86,12 +86,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.saveComments = function() {
         let commentList = [];
         let paraNum = 0;
-        for (let paragraph of $scope.sectionLines) {
+        for (let paragraph of $scope.sectionLines.paragraphs) {
             paraNum++;
             let sentNum = 0;
-            for (let sent of paragraph.sents) {
+            for (let sent of paragraph.lines) {
                 sentNum++;
-                if (sent.cmt.trim().length>0) {
+                if (sent.cmt && sent.cmt.trim().length>0) {
                     commentList.push( {
                         para: paraNum,
                         sent: sentNum,
@@ -182,77 +182,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return res;
     }
-    function convert(input) {
-        console.log("conversion started");
-        $scope.restext = [];
-        var firstList = input.split("\n");
-        var runner = "";
-        var listOfParagraphs = [];
-        let paraCount = 0;
-        for (let item of firstList) {
-            item = item.trim();
-            let isNewParagraph = (item.length==0);
-            if (item.startsWith("*")) {
-                isNewParagraph = true;
-            }
-            if (item.startsWith("!")) {
-                isNewParagraph = true;
-            }
-            if (isNewParagraph) {
-                runner = runner.trim();
-                if (runner.length>0) {
-                    listOfParagraphs.push({paraNum: ++paraCount, block: runner});
-                }
-                runner = item + " ";
-            }
-            else {
-                runner += item + " ";
+    
+    
+    function addComments() {
+        for (let paragraph of $scope.sectionLines.paragraphs) {
+            for (let line of paragraph.lines) {
+                line.cmt = findComment(paragraph.paraNum, line.lineNum);
             }
         }
-        runner = runner.trim();
-        if (runner.length>0) {
-            listOfParagraphs.push({paraNum: ++paraCount, block: runner});
-        }
-        var thirdList = [];
-        paraCount = 0;
-        for (let paragraph of listOfParagraphs) {
-            paraCount++;
-            let block = paragraph.block.trim();
-            paragraph.sents = [];
-            if (block.length==0) {
-                //do nothing
-            }
-            else if (block.length<80) {
-                paragraph.sents.push({text: block.trim(), cmt: findComment(paraCount, 1), num: 1});
-            }
-            else {
-                let sentCount = 0;
-                var dotPos = findBreak(block);
-                while(dotPos>0) {
-                    ++sentCount;
-                    paragraph.sents.push({
-                        text: block.substring(0,dotPos+1).trim(), 
-                        cmt: findComment(paraCount, sentCount), 
-                        num: sentCount});
-                    block = block.substring(dotPos+1).trim();
-                    dotPos = findBreak(block);
-                }
-                if (block.length>0) {
-                    ++sentCount;
-                    paragraph.sents.push({
-                        text: block.trim(), 
-                        cmt: findComment(paraCount, sentCount), 
-                        num: sentCount});
-                }
-            }
-        }
-
-        console.log("conversion complete", listOfParagraphs);
-        return listOfParagraphs;
     }
     
-    
-    //$scope.sectionLines =  convert($scope.section.content);
+    addComments();
     console.log($scope.sectionLines);
     
 });

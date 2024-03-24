@@ -194,11 +194,18 @@ public class WebFile {
         for (String line : block.split("\n")) {
             line = line.trim();
             boolean isNewParagraph = (line.length()==0);
+            int start = 0;
             if (line.startsWith("*")) {
                 isNewParagraph = true;
+                start = skipChar(0, line, '*');
             }
             if (line.startsWith("!")) {
                 isNewParagraph = true;
+                start = skipChar(0, line, '!');
+            }
+            if (line.startsWith(":")) {
+                isNewParagraph = true;
+                start = skipChar(0, line, ':');
             }
             if (isNewParagraph) {
                 String full = paragraph.toString().trim();
@@ -207,7 +214,9 @@ public class WebFile {
                 }
                 paragraph = new StringBuilder();
             }
-            paragraph.append(line);
+            start = skipWhite(start, line);
+            // pull the preceeding markdown out
+            paragraph.append(line.substring(start));
             paragraph.append(" ");
         }
         String full2 = paragraph.toString().trim();
@@ -246,13 +255,29 @@ public class WebFile {
         return pos;
     }
 
+    private static int skipChar(int pos, String val, char match) {
+        if (pos>= val.length()) {
+            return pos;
+        }
+
+        while (pos < val.length()) {
+            char ch = val.charAt(pos);
+            if (match != ch) {
+                return pos;
+            }
+            pos++;
+        }
+        return pos;
+    }
+
     private static int findSentenceEnd(String paragraph, int start) {
-        int i = start + 10;
+        int i = start;
+        int limit = paragraph.length()-1;
         if (i >= paragraph.length()) {
             return paragraph.length();
         }
         boolean skipHyperLink = false;
-        while (i < paragraph.length()) {
+        while (i < limit) {
             char ch = paragraph.charAt(i);
             i++;
             if (skipHyperLink) {
@@ -264,14 +289,17 @@ public class WebFile {
                 if (ch=='[') {
                     skipHyperLink = true;
                 }
-                else if (i<paragraph.length() && (ch == '.' || ch == ';' || ch == '?' || ch == '!')) {
+                else if (i < limit && (ch == '.' || ch == ';' || ch == '?' || ch == '!')) {
                     ch = paragraph.charAt(i);
-                    while (i<paragraph.length() &&
+                    while (i < limit &&
                             (ch == '\"' || ch == '”' || ch == '\'' || ch == '’' || ch == ')')) {
                         i++;
                         ch = paragraph.charAt(i);
                     }
-                    return i;
+                    if (i > 10) {
+                        // avoid the worst of sequences like a.b.c.d.e.f.
+                        return i;
+                    }
                 }
             }
         }

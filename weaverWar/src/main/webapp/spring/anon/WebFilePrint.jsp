@@ -7,6 +7,7 @@
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    String userKey = "j9iyux0nhu6mh9n2";
 
     AttachmentRecord att = ngw.findAttachmentByIDOrFail(attachmentId);
     String title = att.getNiceName();
@@ -60,8 +61,13 @@ body {
     padding: 0;
     margin: auto;
     width: 728px;
+    font-kerning: auto;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32px;
 }
 h1 {
+    color: rgb(60, 30, 0);
     font-size: 32px;
     font-weight: 600;
     line-height: 36px;
@@ -118,6 +124,14 @@ p {
 .segmentBox {
     max-width: 728px;
 }
+a {
+    color:rgb(64, 64, 64);
+}
+.commentBox {
+    margin-left: 80px;
+    padding-left: 10px;
+    border-left: double skyblue 6px;
+}
 
 </style>
 
@@ -130,16 +144,28 @@ p {
     <div class="container">
 
         <% for (JSONObject article : sections.getJSONObjectList()) {
-               if( "article".equals(article.getString("group") ) ) {   %>
+               if( "article".equals(article.getString("group") ) ) {   
+                   String markDown = article.getString("content");
+                   JSONObject commentMap = article.requireJSONObject("comments");
+                   JSONArray comments = commentMap.requireJSONArray(userKey);
+                   int paraNum = 0;
+               %> <div class="segmentBox"> <%
+                   for (String paragraph : WebFile.findParagraphs(markDown)) {
+                       paraNum++;
+                       wc.writeWikiAsHtml(paragraph);
+                       for (JSONObject comment : comments.getJSONObjectList()) {
+                           if (paraNum == comment.getInt("para")) {
+                               %> <div class="commentBox"> <%
+                               wc.writeWikiAsHtml(comment.optString("cmt", ""));
+                               %> </div> <% 
+                           }
+                       }
+                   }
+                %> </div> <% 
 
-            <div class="segmentBox">
-                <%
-                String markDown = article.getString("content");
-                wc.writeWikiAsHtml(markDown);
-                %>
-            </div>
-        <% }  } %>
-        <% for (JSONObject link : links.getJSONObjectList()) {
+               }  
+           } %>
+        <% for (JSONObject link : sections.getJSONObjectList()) {
                if( "links".equals(link.getString("group") ) ) {  %>
             <tr >
                 <td style="max-width: 600px"><div class="segmentBox">
