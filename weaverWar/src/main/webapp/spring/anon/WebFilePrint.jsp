@@ -7,7 +7,6 @@
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    String userKey = "j9iyux0nhu6mh9n2";
 
     AttachmentRecord att = ngw.findAttachmentByIDOrFail(attachmentId);
     String title = att.getNiceName();
@@ -147,18 +146,20 @@ a {
                if( "article".equals(article.getString("group") ) ) {   
                    String markDown = article.getString("content");
                    JSONObject commentMap = article.requireJSONObject("comments");
-                   JSONArray comments = commentMap.requireJSONArray(userKey);
                    int paraNum = 0;
                %> <div class="segmentBox"> <%
                    for (String paragraph : WebFile.findParagraphs(markDown)) {
                        paraNum++;
                        wc.writeWikiAsHtml(paragraph);
-                       for (JSONObject comment : comments.getJSONObjectList()) {
+                       for (String userKey : commentMap.keySet()) {
+                         JSONArray comments = commentMap.getJSONArray(userKey);
+                         for (JSONObject comment : comments.getJSONObjectList()) {
                            if (paraNum == comment.getInt("para")) {
                                %> <div class="commentBox"> <%
                                wc.writeWikiAsHtml(comment.optString("cmt", ""));
                                %> </div> <% 
                            }
+                         }
                        }
                    }
                 %> </div> <% 
