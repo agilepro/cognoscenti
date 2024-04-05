@@ -34,6 +34,20 @@
       "useOpts": []
     },
     {
+      "href":"SiteStats.htm",
+      "name":"Statistics",
+      "title":"Key information about the resources used by the site.",
+      "opts": [],
+      "useOpts": []
+    },
+    {
+      "href":"SiteLedger.htm",
+      "name":"Charges",
+      "title":"History of charges and payments.",
+      "opts": [],
+      "useOpts": []
+    },
+    {
       "href":"SiteUsers.htm",
       "name":"Users",
       "title":"Add, remove, and configure users.",

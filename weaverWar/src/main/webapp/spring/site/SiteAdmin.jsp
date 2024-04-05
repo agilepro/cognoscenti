@@ -27,6 +27,86 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newName = $scope.siteInfo.names[0];
     $scope.colorList = $scope.siteInfo.labelColors.join(",");
 
+    $scope.purchaseCount = {user10: 0, user5: 0, ws3: 0, ws1: 0};
+    let remainingUsers = $scope.siteStats.editUserCount - 10;
+    while (remainingUsers > 5) {
+        remainingUsers = remainingUsers - 10;
+        $scope.purchaseCount.user10 = $scope.purchaseCount.user10 + 1
+    }
+    while (remainingUsers > 0) {
+        remainingUsers = remainingUsers - 5;
+        $scope.purchaseCount.user5 = $scope.purchaseCount.user5 + 1
+    }
+    
+    
+    let remainingWS = $scope.siteStats.numActive - 3;
+    while (remainingWS > 2) {
+        remainingWS = remainingWS - 3;
+        $scope.purchaseCount.ws3 = $scope.purchaseCount.ws3 + 1
+    }
+    while (remainingWS > 0) {
+        remainingWS = remainingWS - 1;
+        $scope.purchaseCount.ws1 = $scope.purchaseCount.ws1 + 1
+    }
+    $scope.calc = function() {
+        $scope.purchaseCost = {};
+        $scope.purchaseCost.user10 = $scope.purchaseCount.user10 * 8;
+        $scope.purchaseCost.user5 = $scope.purchaseCount.user5 * 5;
+        $scope.purchaseCost.ws3 = $scope.purchaseCount.ws3 * 6;
+        $scope.purchaseCost.ws1 = $scope.purchaseCount.ws1 * 4;
+        $scope.purchaseCost.total = $scope.purchaseCost.user10 + $scope.purchaseCost.user5 + $scope.purchaseCost.ws3 + $scope.purchaseCost.ws1;
+        
+        $scope.purchaseUsers = {};
+        $scope.purchaseUsers.user10 = $scope.purchaseCount.user10 * 10;
+        $scope.purchaseUsers.user5 = $scope.purchaseCount.user5 * 5;
+        $scope.purchaseUsers.ws3 = 0;
+        $scope.purchaseUsers.ws1 = 0;
+        $scope.purchaseUsers.total = 10 + $scope.purchaseUsers.user10 + $scope.purchaseUsers.user5 + $scope.purchaseUsers.ws3 + $scope.purchaseUsers.ws1;
+        
+        $scope.purchaseWS = {};
+        $scope.purchaseWS.user10 = 0;
+        $scope.purchaseWS.user5 = 0;
+        $scope.purchaseWS.ws3 = $scope.purchaseCount.ws3 * 3;
+        $scope.purchaseWS.ws1 = $scope.purchaseCount.ws1;
+        $scope.purchaseWS.total = 3 + $scope.purchaseWS.user10 + $scope.purchaseWS.user5 + $scope.purchaseWS.ws3 + $scope.purchaseWS.ws1;  
+        
+        $scope.extraDocCount = ($scope.siteStats.sizeDocuments/1000000)-(500 * $scope.purchaseUsers.total);
+        if ($scope.extraDocCount < 0) {
+            $scope.extraDocCount = 0;
+        }
+        
+        if ($scope.siteStats.editUserCount - $scope.purchaseUsers.total >= 5) {
+            $scope.purchaseCount.user10 = $scope.purchaseCount.user10 + 1;
+            $scope.calc();
+        }
+        if ($scope.siteStats.editUserCount - $scope.purchaseUsers.total >= 1) {
+            $scope.purchaseCount.user5 = $scope.purchaseCount.user5 + 1;
+            $scope.calc();
+        }
+        if ($scope.siteStats.numActive - $scope.purchaseWS.total >= 3) {
+            $scope.purchaseCount.ws3 = $scope.purchaseCount.ws3 + 1;
+            $scope.calc();
+        }
+        if ($scope.siteStats.numActive - $scope.purchaseWS.total >= 1) {
+            $scope.purchaseCount.ws1 = $scope.purchaseCount.ws1 + 1;
+            $scope.calc();
+        }
+    }
+    $scope.calc();
+    $scope.incr = function(name) {
+        $scope.purchaseCount[name] = $scope.purchaseCount[name] + 1;
+        $scope.calc();
+    }
+    $scope.decr = function(name) {
+        if ($scope.purchaseCost[name]>0) {
+            $scope.purchaseCount[name] = $scope.purchaseCount[name] - 1;
+        }
+        else {
+            $scope.purchaseCount[name] = 0;
+        }
+        $scope.calc();
+    }
+
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -81,7 +161,12 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.setSiteInfo = function(info) {
         $scope.siteInfo = info;
-        $scope.siteInfo.workspaceLimit = $scope.siteInfo.editUserLimit;
+        if ($scope.siteInfo.editUserLimit < 10) {
+            $scope.siteInfo.editUserLimit = 10;
+        }
+        if ($scope.siteInfo.workspaceLimit < 3) {
+            $scope.siteInfo.workspaceLimit = 3;
+        }
         $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
         $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
         $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
@@ -91,11 +176,22 @@ app.controller('myCtrl', function($scope, $http) {
             + $scope.siteInfo.viewUserLimit * $scope.chargeReader
             + ($scope.siteInfo.editUserLimit-1) * $scope.chargeCreator
             + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
-        $scope.currentCharge = $scope.siteStats.numFrozen * $scope.chargeFrozen
-            + $scope.siteStats.numActive * $scope.chargeActive
-            + $scope.siteStats.readUserCount * $scope.chargeReader
-            + ($scope.siteStats.editUserCount-1) * $scope.chargeCreator
-            + $scope.siteStats.sizeDocuments * $scope.chargeDocument / 1000000;
+        let charge = 16;
+        $scope.siteStats.includeDocs = 5000;
+        if ($scope.siteStats.editUserCount > 10) {
+            charge = charge + ($scope.siteStats.editUserCount-10);
+            $scope.siteStats.includeDocs = $scope.siteStats.editUserCount*500;
+        }
+        if ($scope.siteStats.numActive > 3) {
+            charge = charge + ($scope.siteStats.numActive-3)*2;
+        }
+        let docMB = $scope.siteStats.sizeDocuments/1000000;
+        console.log("DOC GB", docMB);
+        if (docMB > $scope.siteStats.includeDocs) {
+            charge = charge + (docMB-$scope.siteStats.includeDocs)/1000;
+        console.log("DOC charge", (docMB-$scope.siteStats.includeDocs)/1000);
+        }
+        $scope.currentCharge = charge;
     }
     $scope.setSiteInfo($scope.siteInfo);
     
@@ -126,6 +222,22 @@ app.controller('myCtrl', function($scope, $http) {
         console.log("Automatically recalculating statistics");
         $scope.recalcStats();
     }
+    
+    $scope.garbageCollect = function() {
+        if (!confirm("Do you really want to delete the workspaces marked for deletion?")) {
+            return;
+        }
+        var postURL = "GarbageCollect.json";
+        $http.get(postURL)
+        .success( function(data) {
+            console.log("Garbage Results", data);
+            alert("Success.  REFRESHING the page");
+            window.location.reload();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 
 
 });
@@ -145,11 +257,14 @@ app.controller('myCtrl', function($scope, $http) {
     max-width:400px;
 }
 .numberColumn {
-    width:150px;
+    width:120px;
     text-align: right;
 }
 p {
     max-width:600px;
+}
+.headerRow {
+    background-color: lightskyblue;
 }
 </style>
 
@@ -158,29 +273,20 @@ p {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
+<% if (ar.isSuperAdmin()) { %>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" 
-              href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem" 
-              href="SiteUsers.htm">User List</a></li>
-          <li role="presentation"><a role="menuitem" 
-              href="SiteStats.htm">Site Statistics</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteLedger.htm">Site Charges</a></li>
-          <li role="presentation"><a role="menuitem" 
               href="TemplateEdit.htm">Template Edit</a></li>
-          <% if (ar.isSuperAdmin()) { %>
-          <li role="presentation" style="background-color:yellow"><a role="menuitem"
+           <li role="presentation" style="background-color:yellow"><a role="menuitem"
               href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
-          <% } %>
         </ul>
       </span>
     </div>
-
+<% } %>
 
     <div class="generalContent">
          <table class="spaceyTable">
@@ -247,122 +353,148 @@ p {
         </table>
         
         <div style="height:100px"></div>
-        <h2>Your Budget</h2>
+        <h2>Payment Plan</h2>
         
         <table class="spaceyTable">
-            <tr>
+          <tr class="headerRow">
+            <td>Item</td>
+            <td class="numberColumn">Count</td>
+            <td></td>
+            <td class="numberColumn">Users</td>
+            <td class="numberColumn">Workspaces</td>
+            <td class="numberColumn">Cost</td>
+          </tr>
+          <tr>
+            <td>Basic 10 users 3 workspaces @ $16</td>
+            <td class="numberColumn">1</td>
+            <td></td>
+            <td class="numberColumn">10</td>
+            <td class="numberColumn">3</td>
+            <td class="numberColumn">$ {{16|number}}</td>
+          </tr>
+          <tr>
+            <td>User 10 pack @ $8</td>
+            <td class="numberColumn">{{purchaseCount.user10}}</td>
+            <td>
+                <button ng-click="incr('user10')">+</button>
+                <button ng-click="decr('user10')">-</button>
+            </td>
+            <td class="numberColumn">{{purchaseUsers.user10|number}}</td>
+            <td class="numberColumn">{{purchaseWS.user10|number}}</td>
+            <td class="numberColumn">$ {{purchaseCost.user10|number}}</td>
+          </tr>
+          <tr>
+            <td>User 5 pack @ $5</td>
+            <td class="numberColumn">{{purchaseCount.user5}}</td>
+            <td>
+                <button ng-click="incr('user5')">+</button>
+                <button ng-click="decr('user5')">-</button>
+            </td>
+            <td class="numberColumn">{{purchaseUsers.user5|number}}</td>
+            <td class="numberColumn">{{purchaseWS.user5|number}}</td>
+            <td class="numberColumn">$ {{purchaseCost.user5|number}}</td>
+          </tr>
+          <tr>
+            <td>Workspace 3 Pack @ $6</td>
+            <td class="numberColumn">{{purchaseCount.ws3}}</td>
+            <td>
+                <button ng-click="incr('ws3')">+</button>
+                <button ng-click="decr('ws3')">-</button>
+            </td>
+            <td class="numberColumn">{{purchaseUsers.ws3|number}}</td>
+            <td class="numberColumn">{{purchaseWS.ws3|number}}</td>
+            <td class="numberColumn">$ {{purchaseCost.ws3|number}}</td>
+          </tr>
+          <tr>
+            <td>Workspace Individual @ $4</td>
+            <td class="numberColumn">{{purchaseCount.ws1}}</td>
+            <td>
+                <button ng-click="incr('ws1')">+</button>
+                <button ng-click="decr('ws1')">-</button>
+            </td>
+            <td class="numberColumn">{{purchaseUsers.ws1|number}}</td>
+            <td class="numberColumn">{{purchaseWS.ws1|number}}</td>
+            <td class="numberColumn">$ {{purchaseCost.ws1|number}}</td>
+          </tr>
+          <tr>
+            <td>Totals</td>
+            <td class="numberColumn">0</td>
+            <td></td>
+            <td class="numberColumn">{{purchaseUsers.total|number}}</td>
+            <td class="numberColumn">{{purchaseWS.total|number}}</td>
+            <td class="numberColumn">$ {{purchaseCost.total|number}}</td>
+          </tr>
+        </table>
+        
+        <br/>
+        <br/>
+        
+        <table class="spaceyTable">
+            <tr class="headerRow">
                 <td></td>
                 <td class="numberColumn">Current Usage</td>
-                <td class="numberColumn">Your Limits</td>
-                <td class="helpColumn"></td>
+                <td class="numberColumn">Included</td>
+                <td class="numberColumn">Extra</td>
+                <td class="numberColumn">Cost</td>
             </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</td>
-                <td class="numberColumn">
-                    {{siteStats.editUserCount}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
-                    {{siteInfo.editUserLimit}}
-                </td>
-                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                    <input type="text" ng-model="siteInfo.editUserLimit"  style="width:50px">
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
-                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.
-                </td>
-            </tr>
-            <tr>
-                <td>Observers:</td>
-                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
-                    {{siteStats.readUserCount}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
-                    {{siteInfo.viewUserLimit}}
-                </td>
-                <td ng-show="isEditing =='ReaderLimit'" colspan="2" >
-                    <input type="text" ng-model="siteInfo.viewUserLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 4 additional guest observer users.
-                </td>
+                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Active Users:</td>
+                <td class="numberColumn">{{siteStats.editUserCount}}</td>
+                <td class="numberColumn">{{purchaseUsers.total|number}}</td>
+                <td class="numberColumn"></td>
             </tr>
             <tr>
                 <td >Active Workspaces:</td>
-                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
-                    {{siteStats.numActive}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
-                    {{siteInfo.workspaceLimit}}
-                </td>
-                <td ng-show="isEditing =='WorkspaceLimit'" colspan="2">
-                    <input type="text" ng-model="siteInfo.workspaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 1 active workspace.
-                </td>
-            </tr>
-            <tr>
-                <td>Frozen Workspaces:</td>
-                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
-                    {{siteStats.numFrozen}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
-                    {{siteInfo.frozenLimit}}
-                </td>
-                <td ng-show="isEditing =='FrozenLimit'" colspan="2">
-                    <input type="text" ng-model="siteInfo.frozenLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 2 additional frozen (archived) workspaces.
-                </td>
+                <td class="numberColumn">{{siteStats.numActive}}</td>
+                <td class="numberColumn">{{purchaseWS.total|number}}</td>
+                <td class="numberColumn"></td>
             </tr>
             <tr>
                 <td>Documents:</td>
                 <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
+                    {{ siteStats.sizeDocuments/1000000|number: '0'}} MB
                 </td>
-                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{siteInfo.fileSpaceLimit|number}} MB
+                <td class="numberColumn">{{500 * purchaseUsers.total|number}} MB</td>
+                <td class="numberColumn" ng-show="extraDocCount>0">
+                    {{extraDocCount|number: '0'}} MB
                 </td>
-                <td ng-show="isEditing =='DocumentLimit'" colspan="2">
-                    <input type="text" ng-model="siteInfo.fileSpaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 100 MB of documents.
-                </td>
+                <td class="numberColumn" ng-show="extraDocCount>0">$ {{extraDocCount/1000|number: '0'}}</td>
             </tr>
-            <tr >
-                <td >Charges / Month:</td>
+            <tr>
+                <td>Observers:</td>
                 <td class="numberColumn">
-                    $ {{currentCharge | number: '2'}}
+                    {{siteStats.readUserCount}}
                 </td>
+                <td class="numberColumn">All</td>
+                <td class="numberColumn"></td>
+                <td class="numberColumn"></td>
+            </tr>
+            <tr>
+                <td>Frozen Workspaces:</td>
                 <td class="numberColumn">
-                    $ {{limitCharge | number: '2'}}
+                    {{siteStats.numFrozen}}
                 </td>
-                <td class="helpColumn"></td>
-                    
-                </td>
+                <td class="numberColumn">All</td>
+                <td class="numberColumn""></td>
+                <td class="numberColumn"></td>
             </tr>
         </table>
         
-        <p><button ng-click="recalcStats()" class="btn btn-primary btn-raised">Recalculate Current Usage</button>
-        <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
-        
-        <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
-        
-        <p>Weaver will help you stay under the limits, by preventing addition of new resources over the limits that you set.  You can change the limits at any time.  If you raise the limit you can immediately add resources.  The limit does not automatically reduce your resource usage.  If you lower the limit, you must remove the excess resources yourself.  Again, Weaver will only charge you for the resources you actually use.</p>
-        
+
+<div style="margin:100px"></div>
+
+<div class="guideVocal">
+<p>Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p>
+<button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
+</div>
+
+<div class="guideVocal">
+<p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time.
+In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
+<button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
+</div>
+    
+            
         
         
         
