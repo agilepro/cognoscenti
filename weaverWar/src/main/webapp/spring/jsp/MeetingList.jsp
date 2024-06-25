@@ -145,10 +145,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "background-color:yellow";
         }
         if (val<=1) {
-            return "background-color:white";
+            return "background-color:lightblue";
         }
         if (val==2) {
-            return "background-color:lightgreen";
+            return "background-color:lightgray";
         }
         if (val>2) {
             return "background-color:gray";

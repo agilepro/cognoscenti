@@ -77,7 +77,7 @@
     %>
 
 <!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->
-<html>
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -86,7 +86,8 @@
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.js"></script>
     <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
@@ -94,7 +95,10 @@
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    <link
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
@@ -108,27 +112,23 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design -->
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-
-    <!-- INCLUDE web fonts -->
+    <!-- INCLUDE web fonts for icons -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
       <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+  <!-- Bootstrap 5.0-->
 
     <!-- Date and Time Picker -->
+
     <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
     <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
     <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
     <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+    
 
  
     <title><% ar.writeHtml(title); %></title>
@@ -139,11 +139,11 @@ $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
     /* INIT Bootstrap Material Design */
-    $.material.init();
+    //$.material.init();
 });
 
 //Must initialize the app with all the right packages here, before the 
-//individual pages create the controlles
+//individual pages create the controls
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
 myApp.filter('cdate', function() {
@@ -212,31 +212,35 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
 <!-- Begin AppBar -->
 <%@ include file="AppBar.jsp" %>
 <!-- End AppBar -->
-
-
-<div class="container-fluid">
+<div class="container-fluid px-0" ng-cloak>
   <div class="row">
-
+      <!--Sidebar Column -->
+      <div class="d-flex col-1">
+          <div class="container-fluid min-vh-100 sidebar bg-weaverdark"></div>
+      </div>
 
     <!-- Begin mainContent -->
-    <div class="main-content">
+    <div class="col-11 main-content">
 
-      <!-- BEGIN Breadcrumbs -->
-      <div class="mainBeadCrumbs">
-        <span class="page-name"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></span>
-        &gt;
+      <!-- BEGIN Title and Breadcrumbs -->
+
+      <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb px-3">
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
+            User: <% ar.writeHtml(pageUserName); %></a></li>
+            &nbsp; &gt; &nbsp;
         <span id="mainPageTitle">Untitled Page</span>
-      </div>
+        </ol>
+        </nav>
       
       <!-- Welcome Message -->
-      <div id="welcomeMessage"></div>
+      <div class="page-name px-3 text-weaverlight" id="welcomeMessage"></div>
 
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
       
-        <div style="clear:both"></div>
+        
 
       <% if(ar.isSuperAdmin()) { %>
 

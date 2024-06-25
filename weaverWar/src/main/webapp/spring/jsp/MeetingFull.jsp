@@ -277,14 +277,15 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
 
 <%if (true) { %>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown" ng-show="meeting.state<=0">
+    
+        <!-- meeting State start -->
+    <span class="dropdown" ng-show="meeting.state<=0">
           <button class="btn btn-default btn-primary btn-raised"
                   ng-click="startSend()"
                   title="Post this meeting to allow others to start planning for it">
           Post Meeting </button>
-      </span>
-      <span class="dropdown" title="Control the way people see this meeting." 
+    </span>
+    <span class="dropdown" title="Control the way people see this meeting." 
             ng-hide="meeting.state<=0">
           <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
           State: {{meetingStateName()}} <span class="caret"></span></button>
@@ -303,7 +304,9 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 ng-click="changeMeetingState(3)">Complete Meeting</a></li>
           </ul>
       </span>
-      <span class="dropdown">
+      <!-- meeting State end -->
+       <!--options button start removed for new UI-->
+      <!--<span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -317,11 +320,13 @@ embeddedData.canUpdate = <%=canUpdate%>;
               title="Return back to the list of all meetings in the workspace"
               href="MeetingList.htm">List All Meetings</a></li>
         </ul>
-      </span>
-
-    </div>
+      </span>-->
+      <!--options button end-->
+<!--meeting Manager sidebar start-->
+<div class="row">
+<div class="col-md-2 col-sm-6">
+    
 <% } %>
-
 
 <hr/>
 <div class="bordereddiv">

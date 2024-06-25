@@ -81,6 +81,24 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem"
+              href="SiteAdmin.htm">Site Admin</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteUsers.htm">User List</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteStats.htm">Site Statistics</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteLedger.htm">Site Charges</a></li>
+          <li role="presentation"><a role="menuitem"
+              ng-click="recalcStats()">Recalculate</a></li>
+        </ul>
+      </span>
+    </div>
 
     <h2>Monthly Summary</h2>
     <table class="table">
@@ -90,7 +108,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <td></td>
         <td>Charge</td>
         <td>Payment</td>
-        <td>Balance Owed</td>
+        <td>Balance</td>
     </tr>
     <tbody ng-repeat="month in ledgerInfo">
       <tr>
@@ -120,11 +138,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     </tbody>
     </table>
 
-
-<pre>
-{{ledgerInfo|json}}
-</pre>
-</div>
 <script src="../../../jscript/AllPeople.js"></script>
 
 

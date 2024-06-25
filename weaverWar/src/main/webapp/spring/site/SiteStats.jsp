@@ -95,23 +95,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     }
 
     $scope.getStats();
-    
-    $scope.garbageCollect = function() {
-        if (!confirm("Do you really want to delete the workspaces marked for deletion?")) {
-            return;
-        }
-        var postURL = "GarbageCollect.json";
-        $http.get(postURL)
-        .success( function(data) {
-            console.log("Garbage Results", data);
-            alert("Success.  REFRESHING the page");
-            window.location.reload();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
-
 
 });
 
@@ -135,6 +118,29 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
+
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem"
+              href="SiteAdmin.htm">Site Admin</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteUsers.htm">User List</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteStats.htm">Site Statistics</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="SiteLedger.htm">Site Charges</a></li>
+          <li role="presentation"><a role="menuitem"
+              ng-click="recalcStats()">Recalculate</a></li>
+          <% if (ar.isSuperAdmin()) { %>
+          <li role="presentation" style="background-color:yellow"><a role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+          <% } %>
+        </ul>
+      </span>
+    </div>
 
 
     <div class="generalContent">
@@ -278,17 +284,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         </tr>
         </table>
     </div>
-</div>
-
-<div class="guideVocal">
-<p>Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p>
-<button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
-</div>
-
-<div class="guideVocal">
-<p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time.
-In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
-<button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
 </div>
 
 <script src="../../../jscript/AllPeople.js"></script>

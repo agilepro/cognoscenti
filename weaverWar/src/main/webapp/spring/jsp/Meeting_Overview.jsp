@@ -1,36 +1,44 @@
-    <div class="well" ng-cloak>
-        <table>
+  <div class="accordion" id="accordionOverview"> 
+    <div class="accordion-item collapsed">
+      <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgOverview">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgOverview" aria-expanded="false" aria-controls="collapseMtgOverview"> Overview 
+        </button>
+      </h2>
+      <div id="collapseMtgOverview" class="accordion-collapse collapse" aria-labelledby="mtgOverview" data-bs-parent="#accordionOverview">
+        <div class="accordion-body">
+          <div class="well" ng-cloak>
+            <table>
         <tr>
         <td>
           <div class="{{meeting.state==0 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(0)}}" 
+            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(0)}}" 
                   ng-click="changeMeetingState(0)">Draft</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==1 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(1)}}" 
+            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(1)}}" 
                   ng-click="changeMeetingState(1)">Planning</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==2 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
+            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(2)}}" 
                   ng-click="changeMeetingState(2)">Running</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==3 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
+            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(3)}}" 
                   ng-click="changeMeetingState(3)">Completed</span>
           </div>
         </td>
         </tr>
-        </table>
-      <div ng-show="meeting.state<=2">
+            </table>
+            <div ng-show="meeting.state<=2">
           <p ng-show="meeting.state<=0">Meeting is in draft mode and is hidden from the participants.
              Advance the meeting to planning mode to let them know about it
              before the meeting starts.</p>
@@ -40,7 +48,8 @@
           <p ng-show="meeting.state==2">
           Meeting is in running mode and will allow updates normally done during the meeting.
           </p>
-      <table class="table">
+            </div>
+            <table class="table">
         <tr>
           <th></th>
           <th>Presenter</th>
@@ -134,7 +143,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <!--<tr>
             <td><br/><br/><b>Proposed:</b></td>
             <td></td>
             <td></td>
@@ -142,7 +151,7 @@
             <td></td>
             <td></td>
             <td></td>
-        </tr>
+        </tr>-->
         <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed" >
           <td  ng-dblclick="openAgenda(item)">
                 <span>--</span>
@@ -168,14 +177,15 @@
           </td>
         </tr>        
       </table>
-      <div style="margin:20px;">
+      <!--<div style="margin:20px;">
         <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New Agenda Item</button>
-      </div>
+      </div>-->
 
       </div>
-      <div ng-show="meeting.state>=3">
+
+        <div ng-show="meeting.state>=3">
           <p>Meeting is completed and no more updates are expected.</p>
-      <table class="table">
+        <table class="table">
         <tr>
           <th></th>
           <th>Presenter</th>
@@ -223,4 +233,7 @@
         </tr>
       </table>
     </div>
-    </div>
+            </table>
+          </div>
+        </div>
+      </div>

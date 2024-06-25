@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
+%><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
 %><%
     long renderStart = System.currentTimeMillis();
     ar.assertLoggedIn("Must be logged in for administration pages");
@@ -21,37 +22,50 @@
     
 %>
 <!-- BEGIN Wrapper.jsp Layout-->
-<html>
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular_1.8.js"></script>
     <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls-2.5.0.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
- 
-    <script src="<%=ar.baseURL%>jscript/common.js"></script>
+    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+
+    <!-- INCLUDE web fonts for icons -->
+    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+        data-semver="4.3.0" data-require="font-awesome@*" />
+    <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+        
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+
 
     <link href="<%=ar.retPath%>bits/superAdminStyle.css" rel="styleSheet" type="text/css" media="screen" />
     
-    <script src="<%=ar.retPath%>bits/moment.js"></script>
     <title>Administration Page</title>
     
     

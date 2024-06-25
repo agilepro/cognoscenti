@@ -20,7 +20,7 @@ Required parameters:
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace(); 
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
     String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
@@ -48,7 +48,7 @@ Required parameters:
         permaLink = attachment.getURLValue();
     }
     boolean hasURL = (permaLink != null && permaLink.length()>0);
-
+    
     JSONObject workspaceInfo = ngp.getConfigJSON();
     AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
 
@@ -84,16 +84,16 @@ Required parameters:
     String privateLink = ar.baseURL + ar.getResourceURL(ngp, "DocDetail.htm?aid="+aid);
 
     JSONArray allLabels = ngp.getJSONLabels();
-
+    
     List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
-
+    
     JSONArray allHistory = new JSONArray();
     for (HistoryRecord hist : histRecs) {
         JSONObject jo = hist.getJSON(ngp, ar);
         allHistory.put(jo);
     }
-
-
+    
+    
 %>
 
 <script type="text/javascript">
@@ -134,7 +134,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
     $scope.primitiveURL = "<%=ar.baseURL%><%ar.writeJS(permaLink);%>";
 
-
+    
     $scope.navigateToActionItem = function(act) {
         window.location="task"+act.id+".htm";
     }
@@ -185,7 +185,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return res;
     }
-
+    
     $scope.setDocumentData = function(data) {
         data.comments.forEach( function(cmt) {
             $scope.generateCommentHtml(cmt);
@@ -214,7 +214,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.getDocumentInfo();
     $scope.openDocDialog = function (doc) {
-
+        
         var docsDialogInstance = $modal.open({
             animation: true,
             templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
@@ -264,7 +264,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.composeEmail = function() {
         window.location="SendNote.htm?att="+$scope.docInfo.id;
     }
-
+    
 
     $scope.generateLink = function() {
         if ($scope.linkScope == "Public") {
@@ -275,7 +275,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
     }
     $scope.generateLink();
-
+    
     $scope.refreshCommentList = function() {
         $scope.getDocumentInfo();
     }
@@ -285,7 +285,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.extendBackgroundTime = function() {
         //does not do anything now, no refresh on this page
     }
-
+    
     $scope.tuneNewComment = function(newComment) {
         newComment.containerType = "A";
         newComment.containerID = $scope.docId;
@@ -300,7 +300,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     setUpCommentMethods($scope, $http, $modal);
     $scope.setDocumentData(<% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>);
-
+    
 });
 
 function copyTheLink() {
@@ -312,7 +312,7 @@ function copyTheLink() {
 
   /* Copy the text inside the text field */
   document.execCommand("copy");
-}
+} 
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
@@ -332,11 +332,11 @@ function copyTheLink() {
 .centered {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: center; 
 }
 .clipping {
     overflow: hidden;
-    text-overflow: clip;
+    text-overflow: clip; 
     border-bottom:1px solid #EEEEEE;
     white-space: nowrap
 }
@@ -356,7 +356,7 @@ function copyTheLink() {
 
 <div class="col col-lg-6 col-sm-12">
   <div class="well">
-    <div><b>{{docInfo.name}}</b>
+    <div><b>{{docInfo.name}}</b> 
         <span ng-show="docInfo.deleted" style="color:red">
                 <i class="fa fa-trash"></i> (DELETED)
         </span>
@@ -366,11 +366,11 @@ function copyTheLink() {
         {{docInfo.modifiedtime|cdate}} &nbsp;
         <span class="dropdown">
             <span id="menu1" data-toggle="dropdown">
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg"
+            <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" 
                  style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
             </span>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" style="background-color:lightgrey"><a role="menuitem"
+              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
                   tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
                   {{creator.name}}<br/>{{creator.uid}}</a></li>
               <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
@@ -389,9 +389,9 @@ function copyTheLink() {
       <div ng-show="docInfo.attType=='URL'">
         <div ng-show="hasURL">
           <a href="<%ar.write(permaLink); %>" target="_blank"><img
-             src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
-          <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
-             <button class="btn btn-primary btn-raised">Web File</button></a>
+             src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+          <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
+             <button class="btn btn-primary btn-raised">View Text Only</button></a>
         </div>
         <div ng-hide="hasURL">
             <button class="btn btn-danger btn-raised">
@@ -404,13 +404,13 @@ function copyTheLink() {
   <div ng-hide="canAccess">
       <p>You are not able to access this document.</p>
   </div>
-
+  
   <div ng-show="docInfo.deleted">
-      This document has been put into the <i class="fa fa-trash"></i> trash and will
+      This document has been put into the <i class="fa fa-trash"></i> trash and will 
       be deleted soon.
   </div>
   <div ng-hide="canUpdate">
-      You are an observer of this site.
+      You are an observer of this site. 
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
   </div>
@@ -425,11 +425,11 @@ function copyTheLink() {
     <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.<p>
     <div ng-show="makeLink">
       <div class="roomy">
-        <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()">
+        <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()"> 
         <b>Private</b> - document can be accessed only by workspace members.
       </div>
       <div class="roomy">
-        <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()">
+        <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()"> 
         <b>Public</b> - document can be accessed by anyone on the Internet.
       </div>
       <div class="roomy">
@@ -448,20 +448,20 @@ function copyTheLink() {
 </div>
 <div class="col col-lg-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
     <h2>Sharing</h2>
-    <p>Documents can be shared directly from Weaver,
+    <p>Documents can be shared directly from Weaver, 
     internally to current members and externally to anyone in the world.</p>
     <div class="centered"><img src="../../../bits/safety-icon.png"/></div>
     <p>Sending a link to download directly from Weaver is <i>safer</i> than sending the document as an
-    attachment to email, because the download is through a secure HTTPS channel.
+    attachment to email, because the download is through a secure HTTPS channel.  
     Unlike emailing an attachment nobody else can intercept, see, or manipulate the contents of the file.
     The recipient will always get exactly the contents that were uploaded to Weaver.</p>
     <div class="centered"><img src="../../../bits/fast-email.png"/></div>
-    <p>A link is smaller and more efficient than an attachment,
-    so it can be sent to anyone without cluttering their inbox.
-    This is great espectially important for very large files.
+    <p>A link is smaller and more efficient than an attachment, 
+    so it can be sent to anyone without cluttering their inbox. 
+    This is great espectially important for very large files.  
     Sending a link to 100 MB or GB files avoids problems with size limits on email.</p>
     <div class="centered"><img src="../../../bits/clock-change.png"/></div>
-    <p>Also, with a link, if the document is still changing,
+    <p>Also, with a link, if the document is still changing, 
     all recipients will always have access to the latest version at the time they download.
     They never receive an out-of-date copy.</p>
 </div>
@@ -501,7 +501,7 @@ function copyTheLink() {
       <tr ng-repeat="cmt in docInfo.comments">
          <%@ include file="/spring/jsp/CommentView.jsp"%>
       </tr>
-    </table>
+    </table>    
     <div ng-hide="isCreatingComment" style="margin:20px;">
       <button ng-click="openCommentCreator(null, 1)" class="btn btn-default btn-raised">
         Create New <i class="fa fa-comments-o"></i> Comment</button>
@@ -515,13 +515,13 @@ function copyTheLink() {
             <td class="projectStreamIcons" style="padding:10px;">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle"
-                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg"
-                     style="width:32px;height:32px"
+                <img class="img-circle" 
+                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" 
+                     style="width:32px;height:32px" 
                      title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem"
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
                       tabindex="-1" style="text-decoration: none;text-align:center">
                       {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
@@ -548,3 +548,4 @@ function copyTheLink() {
 <script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+

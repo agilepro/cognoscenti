@@ -46,12 +46,12 @@ Required parameters:
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
     
-    <!-- Bootstrap Material Design -->    
+    <!-- Bootstrap Material Design     
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-
+-->
 	<!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />

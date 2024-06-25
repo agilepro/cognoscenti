@@ -78,7 +78,7 @@
         throw new Exception("don't understand header type: "+headerTypeStr);
     }
 
-
+ 
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
     if (!"DisplayException.jsp".equals(wrappedJSP)) {
@@ -196,24 +196,28 @@
     %>
 
 <!-- BEGIN Wrapper.jsp Layout wrapping (jsp/<%=wrappedJSP%>) -->
-<html>
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.js"></script>
     <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/jquery-3.6.0.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
@@ -227,43 +231,40 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design -->
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-
-    <!-- INCLUDE web fonts -->
+    <!-- INCLUDE web fonts for icons -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+    <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+        <!-- Bootstrap 5.0-->
 
     <!-- Date and Time Picker -->
+
     <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
     <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
     <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
     <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+
+
 
  
     <title><% ar.writeHtml(title); %></title>
 
 <script>
-/* NEW UI TEMPPORARY SCRIPTS */
+/* NEW UI TEMPORARY SCRIPTS */
 // TODO Remove this after removing the options dropdown
 $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
     /* INIT Bootstrap Material Design */
-    $.material.init();
+    //$.material.init();
 });
 
 //Must initialize the app with all the right packages here, before the 
-//individual pages create the controlles
+//individual pages create the controls
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
 myApp.filter('cdate', function() {
@@ -362,47 +363,39 @@ function showLearningPath() {
     mainScope.setLearningDone(false);
 }
 </script>
-<style>
-.navbar.navbar-default.sidebar {
-	margin-bottom: 0;
-	background-color: #ab37c8;
-	border: 0
-}
-</style>
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
-  <div class="bodyWrapper">
+<div class="bodyWrapper">
 
 <!-- Begin AppBar -->
 <%@ include file="AppBar.jsp" %>
 <!-- End AppBar -->
+<div class="container-fluid px-0" ng-cloak>
+    <div class="row">
+<!-- Begin SideBar  -->
+<div class="d-flex">
+      <%@ include file="SideBar_new.jsp" %>
 
-
-<div class="container-fluid" ng-cloak>
-  <div class="row">
-
-    <!-- Begin SideBar  -->
-    <div class="col-sm-1 col-lg-1">
-      <%@ include file="SideBar.jsp" %>
-    </div>
     <!-- End SideBar -->
 
     <!-- Begin mainContent -->
-    <div class="col-sm-10 col-lg-11 main-content">
+    <div class="col-10 col-lg-11 main-content">
     
       <%@ include file="WrapLearning.jsp" %>
       <script>
       console.log("loaded the LEARNING module");
       </script> 
 
-      <!-- BEGIN Title and Breadcrump -->
-      <ol class="title">
+      <!-- BEGIN Title and Breadcrumb -->
+      <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb px-3">
       <% if(!ar.isLoggedIn()) { %>
           <!-- user is not logged in, don't display any breadcrumbs -->
       <% } else { %>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngw.getKey());%>/FrontPage.htm">
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+        
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngw.getKey());%>/FrontPage.htm">
             <%ar.writeHtml(ngw.getFullName());%></a>
                 <span style="color:gray">
                 <%if (ngw.isDeleted()) {ar.write(" (DELETED) ");}
@@ -410,15 +403,16 @@ function showLearningPath() {
                 </span>
             </li>
       <% } %>
-        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
-      </ol>
+        </ol>
+      </nav>
+      <!-- END Breadcrumb -->
       <script>
       function setMainPageTitle(str) {
           document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
       }
       </script>
-      <!-- BEGIN Title and Breadcrumb -->
+      
 
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
@@ -474,10 +468,8 @@ function showLearningPath() {
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
     </div>
-  </div>
-</div>
 <!-- End mainContent -->
-
+</div>
 </div>
 <!-- End body wrapper -->
 

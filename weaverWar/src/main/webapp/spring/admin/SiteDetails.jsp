@@ -294,9 +294,8 @@ app.controller('myCtrl', function($scope, $http) {
     <hr/>
     
     <div class="well">
-    <h2>Site Ledger: Plans, Charges, and Payments</h2> 
-    <p>Each charge is associated with a particular calendar month.  You can have only one charge per month, so any attempt to add a chanrge for a given month will overwrite whatever charge you had there before.  Remove a charge by setting the charge to 0 for that month.  Missing months will show zeros.  You can add charges for future months, and they will not appear until the time of that month.</p>
-	<p>Set the first plan to the first month that you want to display charges.  You must have a 'plan' in place for the ledger to be active.  Currently the plan is just a string name without any significance, so use 'General' if you don't have any other particular setting.   You set the date that a particular plan starts, and it is ended by whatever the next plan is.  The ledger will start with the earliest plan, and continue to present.   Currently no way to delete a plan.</p>
+    <h2>Site Payment</h2>
+        
     <table class="table">
       <tr>
         <td>

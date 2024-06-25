@@ -31,55 +31,75 @@
 </div>
 <div class="modal-body">
    <div ng-show="selectedTab=='Existing'">
-      <table style="width:100%"><tr>
-      <td style="width:50%;vertical-align:top;padding:10px;"
-          title="This is a list of the existing action items in the workspace that are available to be attached.">
-        <div class="sBoxTop"> 
-          Existing Action Items - Filter <input type="text" ng-model="realFilter"> 
+    <div ng-show="selectedTab == 'Existing'">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6" title="This is a list of the existing action items in the workspace that are available to be attached." style="padding:10px;">
+              <div class="card">
+                <div class="card-header">
+                  Existing Action Items - Filter
+                  <input type="text" class="form-control form-control-sm" ng-model="realFilter">
+                </div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <tbody>
+                      <tr ng-repeat="act in filterActions()" ng-click="addActionToList(act)" title="Click to add this action item to the list" style="cursor:pointer">
+                        <td>
+                          <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
+                        </td>
+                        <td>
+                          <button ng-hide="itemHasAction(act)" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-arrow-right"></i>
+                          </button>
+                          <button ng-show="itemHasAction(act)" class="btn btn-sm btn-outline-secondary">&nbsp; &nbsp;</button>
+                        </td>
+                      </tr>
+                      <tr ng-show="filterActions().length == 0">
+                        <td colspan="2" class="text-muted">
+                          No action items to choose from.<br/><br/>
+                          Use 'Create New Action' above.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- Right Column -->
+            <div class="col-md-6" title="This is a list of the action items that have been selected and are attached, if any." style="padding:10px;">
+              <div class="card">
+                <div class="card-header">
+                  Chosen Action Items
+                </div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <tbody>
+                      <tr ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" title="Click to remove this action item from the list" style="cursor:pointer">
+                        <td>
+                          <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-danger">
+                            <i class="fa fa-close"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr ng-show="itemActions().length == 0">
+                        <td colspan="2" class="text-muted">
+                          No actions items attached.<br/><br/>
+                          <span ng-show="filterActions().length > 0">Click on an action item on the left, to add to the list here on the right.</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="sBoxMain">
-          <table class="docTable">
-            <tr ng-repeat="act in filterActions()" ng-click="addActionToList(act)" 
-                title="click to add this action item to the list" style="cursor:pointer">
-                <td> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </td>
-                <td>
-                    <button ng-hide="itemHasAction(act)"
-                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
-                    <button  ng-show="itemHasAction(act)"
-                        class="btn">&nbsp; &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="filterActions().length==0">
-                <td class="instruction">No action items to choose from.<br/><br/>
-                Use 'Create New Action' above.</td>
-            </tr>
-         </table>
-        </div>
-      </td>
-      <td style="width:50%;vertical-align:top;padding:10px;"
-          title="This is a list of the action items that have been seleted and are attached, if any.">
-        <div class="sBoxTop"> 
-          Chosen Action Items
-        </div>
-        <div class="sBoxMain">
-          <table class="docTable">
-            <tr ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" 
-                title="Click to remove this action item from the list"  style="cursor:pointer">
-                <td> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </td>
-                <td>
-                    <button 
-                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="itemActions().length==0">
-                <td class="instruction">No actions items attached.<br/><br/>
-                <span ng-show="filterActions().length>0">Click on an action item on the left, to add to the list here on the right.</span></td>
-            </tr>
-          </table>
-        </div>
-      </td>
-      </tr>
-      </table>
+      </div>
+      
    </div>
    <div ng-show="selectedTab=='Create'">
         <div >

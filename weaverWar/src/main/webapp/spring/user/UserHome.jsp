@@ -116,46 +116,28 @@ myApp.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
-<style>
-.clipping {
-    overflow: hidden;
-    text-overflow: clip; 
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-.headingfont {
-    font-family: Arial, Helvetica, Verdana, sans-serif;
-    font-size:20px;
-    font-weight:normal;
-    color:red;
-}
-a {
-    color: black;
-}
-</style>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div class="row">
+    <div class="page-name px-5 text-weaverlight">
+        <h1 class="h3 bold"id="mainPageTitle">Untitled Page</h1></div>
+<div ng-cloak>
 
  
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <style>
-    </style>
+<div class="row px-3">
 
 <!-- COLUMN 1 -->
     <div class="col-md-4 col-sm-12">
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Top Action Items</span></div>
-              <div style="float:right">
-                  <a href="UserActiveTasks.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <div  ng-repeat="item in openActionItems | limitTo: 10" class="clipping">
+        <div class="card my-2">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of all action items">
+              <h3 class="h5 mb-0">Top Action Items</h3><a href="UserActiveTasks.htm"><i class="ms-5 fa fa-check-circle-o"></i>
+                  
+                      </a></div>
+          <div class="card-body">
+            <div ng-repeat="item in openActionItems | limitTo: 10" class="clipping">
                 <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm">
                  {{item.synopsis}}</a>
@@ -167,12 +149,11 @@ a {
           </div>
         </div>
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Planned Meetings</span></div>
-              <div style="clear:both"></div>
+        <div class="card my-3">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Go to a list of all meetings in the workspace">
+              <h5 class="mb-0"><span translate>Planned Meetings</span></h5><a href="MeetingList.htm"><i class="ms-5 fa fa-gavel"></i></a>
           </div>
-          <div class="panel-body">
+          <div class="card-body">
             <div  ng-repeat="item in futureMeetings | limitTo: 10"  class="clipping">
 
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">
@@ -181,55 +162,34 @@ a {
             <!-- should have a button here to get to all meetings -->
           </div>
         </div>
-
-        <a class="btn btn-default btn-raised" href="UserHome.htm?ref=<%=ar.nowTime%>" translate
-                title="{{'Use this option if you want to see changes that occurred in the past 24 hours'|translate}}">
-          Recalculate Page</a>
-        <a class="btn btn-default btn-raised" 
-            href="UserAlerts.htm" translate
-            title="{{'A list of things that have changed in the pages that you watch'|translate}}">
-            User Alerts</a> 
-        <a class="btn btn-default btn-raised" 
-            href="EmailUser.htm" translate
-            title="{{'All email sent to this user'|translate}}">
-            Email</a>
     </div>
 
 
 <!-- COLUMN 2 -->
     <div class="col-md-4 col-sm-12">
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Need to Respond</span></div>
-              <div style="float:right">
+        <div class="card my-2">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of response requests">
+              <h3 class="h5 mb-0"><span translate>Need to Respond</span></h3>
                   <a href="userMissingResponses.htm">
                       <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-              <div ng-repeat="item in proposals | limitTo: 10" class="clipping">
+            <div class="card-body">
+                <div ng-repeat="item in proposals | limitTo: 10" class="clipping">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{item.content}}</a>
-               </div>
-               <div ng-show="proposals.length>10">
+                </div>
+                <div ng-show="proposals.length>10">
                  <a href="userMissingResponses.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
-               </div>
-          </div>
+                     class="btn btn-sm btn-secondary btn-raised" translate>See all...</a>
+                </div>
+            </div>
         </div>
 
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Need to Complete</span></div>
-              <div style="float:right">
+        <div class="card my-3">
+            <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of items to complete and post">
+              <h3 class="h5 mb-0"><span translate>Need to Complete</span></h3>
                   <a href="userOpenRounds.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
+                      <i class="fa fa-list"></i></a>
+            </div>
+            <div class="card-body">
                <div ng-repeat="item in openRounds | limitTo: 10" class="clipping">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixNull(item.content)}}</a>
                </div>
@@ -237,15 +197,15 @@ a {
                  <a href="userOpenRounds.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
-          </div>
-       </div>
+            </div>
+        </div>
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Unposted Draft Topics</span></div>
-              <div style="clear:both"></div>
+        <div class="card my-3">
+            <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of Forums to complete and post">
+                <h3 class="h5 mb-0"><span translate>Draft Forums</span></h3><a href="userDraftTopics.htm">
+                <i class="text-secondary fa fa-lightbulb-o ms-5"></i></a>
           </div>
-          <div class="panel-body">
+          <div class="card-body">
                <div ng-repeat="item in userCache.draftTopics | limitTo: 10" class="clipping">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/noteZoom{{item.id}}.htm">{{fixNull(item.subject)}}</a>
                </div>
@@ -257,15 +217,12 @@ a {
 <!-- COLUMN 3 -->
     <div class="col-md-4 col-sm-12">
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Watched Workspaces</span></div>
-              <div style="float:right">
+        <div class="card my-2">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of workspaces you are watching">
+              <h3 class="h5 mb-0"><span translate>Watched Workspaces</span></h3>
                   <a href="WatchedProjects.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
+                      <i class="ms-5 fa fa-list"></i></a></div>
+          <div class="card-body">
                <div ng-repeat="item in wList | limitTo: 10" class="clipping">
                    <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/FrontPage.htm">
                    {{item.name}}
@@ -278,15 +235,12 @@ a {
           </div>
         </div>
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Accessible Workspaces</span></div>
-              <div style="float:right">
+        <div class="card my-3">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of workspaces you can access">
+              <h3 class="h5 mb-0"><span translate>Accessible Workspaces</span></h3>
                   <a href="ParticipantProjects.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
+                      <i class="ms-5 fa fa-list"></i></a></div>
+          <div class="card-body">
                <div ng-repeat="item in accWSpaces | limitTo: 10" class="clipping">
                    <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/FrontPage.htm">
                    {{item.name}}
@@ -300,15 +254,12 @@ a {
         </div>
 
 
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Sites you Manage</span></div>
-              <div style="float:right">
+        <div class="card my-3">
+          <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of sites you manage">
+              <h3 class="h5 mb-0"><span translate>Sites you Manage</span></h3>
                   <a href="userSites.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
+                      <i class="ms-5 fa fa-list"></i></a></div>
+          <div class="card-body">
                <div ng-repeat="item in siteList | limitTo: 10" class="clipping">
                    <a href="<%=ar.retPath%>t/{{item.key}}/$/SiteWorkspaces.htm">
                    {{item.names[0]}}
@@ -321,6 +272,20 @@ a {
            </div>
        </div>
     </div>
+</div>
+<div class="row"><hr class="divider"> </div>
+<div class="row"> <div class="mx-5 col-md-10 d-flex align-items center justify-content-evenly">
 
-
+        <button class="btn btn-primary btn-raised my-3" ng-click="UserHome.htm?ref=<%=ar.nowTime%>" translate
+            title="{{'Use this option if you want to see changes that occurred in the past 24 hours'|translate}}">
+      Recalculate Page</button>
+    <button class="btn btn-primary btn-raised my-3" 
+        ng-click="UserAlerts.htm" translate
+        title="{{'A list of things that have changed in the pages that you watch'|translate}}">
+        User Alerts</button> 
+    <button class="btn btn-primary btn-raised my-3" 
+        ng-click="EmailUser.htm" translate
+        title="{{'All email sent to this user'|translate}}">
+        Email</button>
+    </div>
 </div>

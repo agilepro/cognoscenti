@@ -1,36 +1,26 @@
-
-    <div style="max-width:800px">
-      <div style="margin:10px;vertical-align:middle">
-          <span class="h2">Meeting Participants: </span> 
-          <span ng-hide="editMeetingPart=='participants'">
-              <button class="btn btn-default btn-primary btn-raised" 
-                      ng-click="startParticipantEdit()"
-                      title="Add more people to the list below">
-              <span class="fa fa-plus"></span> Add Participants </button>
-          </span>
-      </div>
-      <div class="well" ng-show="editMeetingPart=='participants'">
-          <div>
-              <tags-input ng-model="participantEditCopy" 
-                          placeholder="Enter users to participate in the meeting"
-                          display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                      on-tag-added="updateParticipants()" 
-                      on-tag-removed="updateParticipants()">
-                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-              </tags-input>
-          </div>
-          <div>
-          <span class="dropdown">
-              <button class="btn btn-default btn-primary btn-raised" 
-                      ng-click="addParticipants()"
-                      title="Add these people to the list of participants">
-              <span class="fa fa-plus"></span> Add </button>
-              <button class="btn btn-default btn-danger btn-raised" type="button" 
-                      ng-click="editMeetingPart=''"
-                      title="Ignore what has been put here and close box">
-              Cancel </button>
-              <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" 
+<div ng-hide="editMeetingDesc">
+    <div class="container">
+        <h2 class="h4">Meeting Participants: </h2> 
+        <span ng-hide="editMeetingPart=='participants'">
+            <button class="btn btn-primary btn-raised"           ng-click="startParticipantEdit()" title="Add more people to the list below">
+                <span class="fa fa-plus"></span> Add Participants 
+            </button>
+        </span>
+    </div>
+    <div class="well" ng-show="editMeetingPart=='participants'">
+        <div>
+            <tags-input ng-model="participantEditCopy" placeholder="Enter users to participate in the meeting" display-property="name" key-property="uid" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updateParticipants()"  on-tag-removed="updateParticipants()">
+                <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+            </tags-input>
+        </div>
+        <div>
+            <span class="dropdown">
+                <button class="btn btn-primary btn-raised"  ng-click="addParticipants()" title="Add these people to the list of participants">
+                    <span class="fa fa-plus"></span> Add 
+                </button>
+                <button class="btn btn-default btn-danger btn-raised" type="button"  ng-click="editMeetingPart=''" title="Ignore what has been put here and close box"> Cancel 
+                </button>
+                <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" 
                       ng-hide="roleEqualsParticipants" 
                       title="Look at the workspace role, and suggest anyone not already a participant">
                   Add Everyone from {{meeting.targetRole}}

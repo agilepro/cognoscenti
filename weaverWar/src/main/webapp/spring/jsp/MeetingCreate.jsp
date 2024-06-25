@@ -279,47 +279,43 @@ function GetFirstHundredNoHtml(input) {
 </div>
 
 <% } else { %>
-  
-  <div class="container">
-    <div class="col-md-11">
-      <div class="well">
+
+<div class="container-fluid col-md-11">
+    <div class="row shadow-lg">
         <form class="horizontal-form">
-          <fieldset>
+            <fieldset>
             <!-- Form Control NAME Begin -->
-            <div class="form-group">
-              <label class="col-md-2 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Name</label>
-              <div class="col-md-10">
-                <input type="text" class="form-control" ng-model="meeting.name"
-                       title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
-              </div>
-            </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Meeting Name</label>
+                    <div class="col-md-10">
+                    <input type="text" class="form-control" ng-model="meeting.name"
+                    title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
+                </div>
+                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
             <!-- Form Control DATE Begin -->
             <div class="form-group form-inline">
                 <label class="col-md-2 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
-                  Date &amp; Time
+                    Date &amp; Time
                 </label>
-                <div class="col-md-10" 
-                         title="Date and time for the beginning of the meeting in YOUR time zone">
-                  <span datetime-picker ng-model="meeting.startTime" 
-                        class="form-control" style="width:180px">
-                      {{meeting.startTime|sdate:"DD-MMM-YYYY &nbsp; HH:mm"}}
-                  </span> 
-                  <span style="padding:10px">{{browserZone}}</span>
-                  <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
+                <div class="col-md-10" title="Date and time for the beginning of the meeting in YOUR time zone">
+                    <span datetime-picker ng-model="meeting.startTime" 
+                        class="form-control" style="width:180px">{{meeting.startTime|sdate:"DD-MMM-YYYY &nbsp; HH:mm"}}
+                    </span> 
+                    <span style="padding:10px">{{browserZone}}</span>
+                    <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
                 </div>
                 <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
             </div>
             <!-- Form Control DESCRIPTION Begin -->
-            <div class="form-group">
-                <label class="col-md-2 control-label">
-                  Description
-                </label>
-                <div class="col-md-10">
-                  <textarea ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
-                       class="leafContent form-control" style="min-height:200px;"></textarea>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        Description
+                    </label>
+                    <div class="col-md-10">
+                        <textarea ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml" class="leafContent form-control" style="min-height:200px;"></textarea>
+                    </div>
                 </div>
-            </div>
-          </fieldset>
+            </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
               <h3>Agenda Items</h3>

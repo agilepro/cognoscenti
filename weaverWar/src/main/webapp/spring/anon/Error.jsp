@@ -1,4 +1,4 @@
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page isErrorPage="true"
 %><%@include file="/spring/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
@@ -34,10 +34,11 @@
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <!--
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
+    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">-->
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
 
     <!-- INCLUDE web fonts -->
