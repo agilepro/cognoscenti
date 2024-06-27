@@ -22,19 +22,31 @@
           <div class="timers col-auto ms-auto" >
             <div class="row col-12">
               <span class="col-4">
-              <span ng-dblclick="openAgenda(item)"  ng-hide="item.proposed">
-                <span ng-hide="item.timerRunning">
-                    <button class="btn btn-md m-1 fixed-width-sm" ng-click="agendaStartButton(item)">Start</button>
+                <div class="m-2 pt-2 fixed-width-sm" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
+                  {{meetingStateName()}} Mode
+                          <span ng-hide="item.timerRunning">
+                    <button class="btn fixed-width-sm" ng-click="agendaStartButton(item)">Start</button>
                 </span>
                 <span ng-show="item.timerRunning">
-                    <button class="btn btn-md m-1 fixed-width-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+                    <button class="btn fixed-width-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                 </span>
+              </div>
+              
               </span>
-              </span>
+
               <span class="col-4">
-              <span ng-click="openAgenda(item)">Actual Time:</span><br>
-                <span ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} </span>
+                <ul class="navbar-nav">
+                  <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> <span class="dropdown-toggle-label" translate>Set Timer</span></a>
+               
+                <ul class="dropdown-menu pt-0">
+                  <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:
+                  <span ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} </span></span></a></li>
+                  <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-down Timer<span class="timerStyleComplete"> <br>Remaining Time: <span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span></span></a></li>
+                </ul>
+              </li> 
+            </ul>
               </span>
+              
               <span class="col-4" ng-dblclick="openAgenda(item)" ng-hide="item.isSpacer">
                   <!--<div ng-click="openAgenda(item)" class="h6"> Presenter: </div>-->
                   <div ng-repeat="presenter in item.presenterList">
@@ -59,95 +71,11 @@
                   </div>
               </span>
             </div>
-          
-            <div class="row col-12">
-                <div class="col-4 ms-3 me-2 pt-2 fixed-width-sm" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
-        {{meetingStateName()}} Mode
-                </div>
-                <span class="col-4">
-                <span> Remaining Time: </span><span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span>
-              </span>
 
-                
-                <span class="col-4" ng-dblclick="openAgenda(item)" ng-hide="item.proposed">
-                    <div ng-click="openAgenda(item)" class="labelColumn">Proposed:</div>
-                    <span>{{item.status}}</span>
-                    <div ng-style="timerStyleComplete(item)"><!--This item is proposed, and not accepted yet.  -->
-                      <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised" ng-show="item.proposed">
-                        <a><i class="fa fa-check"></i> Accept Proposed Item</a></button>
-                    </div>
-                </span>
-      
-            </div>
           </div>
         </div>
       </div>
-    <!-- Set Presenter Modal -->
-<div class="modal fade" id="agendaItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="agendaItemLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="card col-md-12 align-top">
-            <div class="card-header border-1">
-              Agenda Item Settings
-            </div>
-            <div class="card-body container-fluid">
-              <div class="row">
-                <div class="col-6">
-                <div class="form-group">
-                <label for="labels">Name of Agenda Item:</label>
-                <input ng-model="agendaItem.subject"  class="form-control" style="max-width:400px;"
-                           placeholder="Enter Agenda Item Name"/>
-                </div>
-                <div class="form-check my-3 mx-2">
-                    <input class="form-check-input form-control-md" type="checkbox"  ng-model="agendaItem.isSpacer">
-                    This is a break time (check if true)
-                </div>
-                <div class="form-group row g-3">
-                <div class="col-auto">
-                <label for="labels">Planned Duration: (minutes)</label>
-                <input ng-model="agendaItem.duration" class="form-control" />
-                </div>
-              &nbsp;
-            
-                <div class="form-group row g-3">
-                  <div class="col-auto">
-                <label for="labels">Actual Duration: (minutes)</label>
-                <input ng-model="agendaItem.previousElapsed"  class="form-control"  ng-hide="agendaItem.timerRunning"/>
-                <span class="form-control" ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
-                </span>
-                  </div>
-                </div>
-              </div>
-                </div>
-                <div class="col-6">
-                <div class="form-group">
-                  <label for="labels">Presenter:</label>
-                  <tags-input ng-model="agendaItem.presenterList" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-added="updatePresenters()"  on-tag-removed="updatePresenters()">
-                    <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
-                  </tags-input>
-                </div>
-                <div class="form-check my-3 mx-2">
-                  <input class="form-check-input" type="checkbox"  ng-model="agendaItem.proposed"/>
-                    Proposed (remove check to accept)
-                </div>
-                </div>
-              </div>
-            </div>
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="me-auto btn btn-danger" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Update</button>
-      </div>
-    </div>
-  </div>
-</div>
+    
       <hr/>
       <!--Minutes and Notes-->
       <div class="row px-3">
@@ -159,7 +87,7 @@
           <span ng-hide="item.isSpacer">
             <h4 class="h6" ng-click="openNotesDialog(item)">Current Meeting Minutes</h4>
           </span>
-        </div>
+        </div><!--END Current Meeting Minutes card header-->
         <div class="card-body">
             <span ng-dblclick="openNotesDialog(item)">
               <div ng-bind-html="item.minutes | wiki"></div>
@@ -167,8 +95,8 @@
               Double-click to edit notes
               </div>
             </span>
-        </div>
-      </div>
+        </div><!--END Current Meeting Minutes card body-->
+      </div><!--END Current Meeting Minutes card-->
       </div>
     <!-- Column 2 -->
       <div class="col-md-6 col-sm-12">
@@ -181,19 +109,19 @@
             <span ng-dblclick="copyNotes(item)">
               <div ng-bind-html="item.lastMeetingMinutes | wiki"></div>
             </span>
-          </div>
+          </div><!--END Precious Meeting Minutes card header-->
           <div class="card-body">
             <span ng-dblclick="copyNotes(item)">
               <div ng-hide="item.lastMeetingMinutes" class="doubleClickHint">
               Double-click to copy notes
               </div>
             </span>
-          </div>
-        </div>
+          </div><!--END Precious Meeting Minutes card body-->
+        </div><!--END Precious Meeting Minutes card-->
       </div>
       </div><!--END Minutes and Notes-->
       <hr/>
-    <!--Assets Row-->
+    <!--Assets Section-->
   <div class="container">
     <div class="row justify-content-center">
     <!--Action Items-->
@@ -235,7 +163,7 @@
           <div type="button" class="col-5 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attachAction"> Attach/Remove Existing Action Items 
           </div>
         </div>
-        </div>
+        </div><!--END Buttons to trigger action item modals -->
 
 <!-- Create Action Item Modal -->
         <div class="modal fade" id="createActionItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createActionItemLabel" aria-hidden="true">
@@ -296,7 +224,7 @@
       </div>
     </div>
   </div>
-        </div>
+        </div><!--END Create Action Item Modal-->
 <!-- Attach Action Item Modal -->
         <div class="modal fade" id="attachAction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="attachActionLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
@@ -365,14 +293,13 @@
       </div>
     </div>
   </div>
-        </div>
+        </div><!--END AttachAction Item Modal-->
           </div><!--END Action Items card body-->
           </div>
         </div>
         </div><!--END Action Items accordion-->
       </div>
-    </div>
-    <!--END Action Items-->
+    </div><!--END Action Items-->
 
     <!--Documents/Attachment-->
     <div class="col-4">
@@ -569,11 +496,10 @@
         </div>
         </div>
       </div>
-    </div>
-    <!--END Documents/Attachment-->
+    </div><!--END Documents/Attachment-->
 
     <!--Forum-->
-    <div class="col-4">
+      <div class="col-4">
       <div ng-hide="item.isSpacer">
         <div class="accordion accordionAssets" 
       id="accordionForum">
@@ -667,22 +593,16 @@
         </div>
         </div>
       </div>  
-    </div>
-    <!--END Forum-->
-    </div>
-  </div>
-  <!--END Assets Row-->
+      </div><!--END Forum-->
+    </div><!--END Assets Row-->
+  </div><!--END Assets Section-->
   <hr/>
   <!--Create Comment/Proposal/Round Row-->
   <div class="row row-cols-3">
-    <div ng-repeat="cmt in item.comments"  ng-hide="item.isSpacer">
-
-        <%@ include file="/spring/jsp/CommentView.jsp"%>
-
-    </div>
 
 
-      <div class="d-flex col-12 justify-content-center">
+
+      <div class="d-flex col-12 mb-3">
           <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
               Create New <i class="fa fa-comments-o"></i> Comment</button>
           <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
@@ -691,29 +611,17 @@
               Create New <i class="fa fa-question-circle"></i> Round</button>
       </div>
 
+     
+  </div> <hr/>
+      <div ng-repeat="cmt in item.comments"  ng-hide="item.isSpacer">
 
-  </div>
+        <%@ include file="/spring/jsp/CommentView.jsp"%>
+
+    </div>
   <!--END Create Comment/Proposal/Round Row-->
   <hr/>
   <hr/>
-  <!--Logistics Row 1-->
-        <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
-        <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
-        <span ng-hide="item.readyToGo" >
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
-                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                 style="width:24px;height=24px">
-                 Not ready yet.
-        </span>
-        <span ng-show="item.readyToGo"  >
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
-                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
-                 style="width:24px;height=24px">
-                 Ready to go.  Presentation attached (if any).
-        </span>
-      </div>
-    </div>
-  </div>
+
 
 
     <div ng-hide="item">
@@ -723,6 +631,75 @@
     </div>
 
   </div>
+
+  <!--Modals for meeting_edit.jsp-->
+
+  <!-- Set Presenter Modal -->
+<div class="modal fade" id="agendaItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="agendaItemLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="card col-md-12 align-top">
+            <div class="card-header border-1">
+              Agenda Item Settings
+            </div>
+            <div class="card-body container-fluid">
+              <div class="row">
+                <div class="col-6">
+                <div class="form-group">
+                <label for="labels">Name of Agenda Item:</label>
+                <input ng-model="agendaItem.subject"  class="form-control" style="max-width:400px;"
+                           placeholder="Enter Agenda Item Name"/>
+                </div>
+                <div class="form-check my-3 mx-2">
+                    <input class="form-check-input form-control-md" type="checkbox"  ng-model="agendaItem.isSpacer">
+                    This is a break time (check if true)
+                </div>
+                <div class="form-group row g-3">
+                <div class="col-auto">
+                <label for="labels">Planned Duration: (minutes)</label>
+                <input ng-model="agendaItem.duration" class="form-control" />
+                </div>
+              &nbsp;
+            
+                <div class="form-group row g-3">
+                  <div class="col-auto">
+                <label for="labels">Actual Duration: (minutes)</label>
+                <input ng-model="agendaItem.previousElapsed"  class="form-control"  ng-hide="agendaItem.timerRunning"/>
+                <span class="form-control" ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
+                </span>
+                  </div>
+                </div>
+              </div>
+                </div>
+                <div class="col-6">
+                <div class="form-group">
+                  <label for="labels">Presenter:</label>
+                  <tags-input ng-model="agendaItem.presenterList" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-added="updatePresenters()"  on-tag-removed="updatePresenters()">
+                    <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
+                  </tags-input>
+                </div>
+                <div class="form-check my-3 mx-2">
+                  <input class="form-check-input" type="checkbox"  ng-model="agendaItem.proposed"/>
+                    Proposed (remove check to accept)
+                </div>
+                </div>
+              </div>
+            </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="me-auto btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
     <!--<tr ng-show="meeting.state<=1">
       
       start top 4 buttons for moving agenda items

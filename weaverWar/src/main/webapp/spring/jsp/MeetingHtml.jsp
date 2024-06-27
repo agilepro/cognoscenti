@@ -230,8 +230,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
         <div class="row">
             <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
-
-<div class="accordion" id="accordionSetup">
+<!--Setup Accordion-->
+                <div class="accordion" id="accordionSetup">
     <div class="accordion-item">
         <div class="accordion-header" id="headingOne">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -251,7 +251,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
             </div>
         </div>
     </div>
-</div>
+                </div>
 <hr/>
 <!--Agenda Panel-->
                 <div style="height: 0.5rem">&nbsp;</div>
@@ -281,23 +281,21 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 </div>
 
                 <div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
+                    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
          ng-dblclick="openAgenda(selectedItem)">
         <span ng-show="item.proposed">Proposed</span>
         <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
-    </div>
+                    </div>
                 </div>
 <hr/>
                 <div class="d-flex justify-content-center m-2" ng-show="meeting.state<3">
                     <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
-                </div>
+                </div> <!--END OF Agenda Panel-->
                 
 <!--Static Display buttons-->
-
-
-                    <!--Agenda and Minutes buttons start - relocate to  -->
-                <h3 class="h5 mt-4">Static Displays:</h3>
-                <div class="d-flex justify-content-start">
+<!--Agenda and Minutes buttons start - relocate to  -->
+                <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
+                <div class="my-3 d-flex justify-content-start">
                 <div class="smallButton mx-3">
                     <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
@@ -308,7 +306,34 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 </div>
 
                 </div>
-            </div>
+<!--Preparation Status Row-->
+    <div class="d-flex col-12 mt-5">
+        <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
+        <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
+        <span ng-hide="item.readyToGo" >
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                 style="width:24px;height=24px">
+                 Not ready yet.
+        </span>
+        <span ng-show="item.readyToGo"  >
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting.">
+                 Ready to go.  Presentation attached (if any).
+        </span>
+        </div>
+
+        <span  ng-dblclick="openAgenda(item)" ng-hide="item.proposed">
+            <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised" ng-show="item.proposed">
+              <a><i class="fa fa-check"></i> Accept Proposed Item</a></button>
+          <!--<div ng-click="openAgenda(item)" class="labelColumn">Proposed Item</div>
+          <span>{{item.status}}</span>
+          <div ng-style="timerStyleComplete(item)"> This item is proposed, and not accepted yet. </div>-->
+        </span>
+        
+    </div>
+  </div><!--END Preparation Status Row-->
+           
 <!--Agenda and Minutes buttons end bottom of left column-->
 
             <div class="d-flex col-9"><div class="contentColumn">
@@ -379,7 +404,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
     <br/>
 
         </div>
-            </div>
+        </div>
 </div>
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>

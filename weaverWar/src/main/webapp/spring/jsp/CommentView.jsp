@@ -398,116 +398,124 @@ function setUpCommentMethods($scope, $http, $modal) {
 </script>
 
 
-
-  <td style="width:50px;vertical-align:top;padding:15px">
-      <span class="dropdown" ng-show="cmt.commentType!=4">
+<div class="container-fluid col-12 mt-0">
+    <div class="row col-8 vertical-align-top">
+        <!--user profile img-->
+        <span class="col-1 nav-item dropdown" ng-show="cmt.commentType!=4">
         <span id="menu1" data-toggle="dropdown">
           <img class="img-circle" 
              ng-src="<%=ar.retPath%>icon/{{cmt.userKey}}.jpg" 
-             style="width:50px;height:50px" 
              title="{{cmt.userName}} - {{cmt.user}}">
         </span>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-              tabindex="-1" style="text-decoration: none;text-align:center">
+          <li role="presentation" class="dropdown-header"><a class="dropdown-item" 
+              tabindex="-1">
               {{cmt.userName}}<br/>{{cmt.user}}</a></li>
           <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
               ng-click="navigateToCommentor(cmt)">
               <span class="fa fa-user"></span> Visit Profile</a></li>
         </ul>
-      </span>
-  </td>
-  <td>
-    <div class="comment-outer  {{stateClass(cmt)}}">
-      <div>
-        <div class="dropdown" style="float:left" ng-show="cmt.commentType!=6">
-          <button class="dropdown-toggle specCaretBtn" type="button"  id="menu"
-                  data-toggle="dropdown"> 
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-            <li role="presentation">
-              <a role="menuitem" ng-click="openCommentEditor(null,cmt)">Edit {{commentTypeName(cmt)}}</a></li>
-            <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="openResponseEditor(cmt, '<%ar.writeJS(currentUser);%>')">
-                Create/Edit Response:</a></li>
-            <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
-            <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="deleteComment(cmt)">
-              Delete {{commentTypeName(cmt)}}</a></li>
-            <li role="presentation" ng-show="cmt.commentType==1">
-              <a role="menuitem" ng-click="openCommentCreator(item,1,cmt)">
-              Reply</a></li>
-            <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="createModifiedProposal(item,cmt)">
-              Make Modified Proposal</a></li>
-            <li role="presentation">
-              <a role="menuitem" ng-click="openDecisionEditor(cmt)">
-              Create New Decision</a></li>
-            </ul>
-          </div>
+        </span><!--END user profile img-->
 
-        <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
-          <i class="fa fa-comments-o" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==2" title="{{cmtStateName(cmt)}} Proposal">
-          <i class="fa fa-star-o" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
-          <i class="fa fa-question-circle" style="font-size:130%"></i></span>
-        <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
-          <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
+    <div class="d-inline comment-outer col-7">
+        <div class=" {{stateClass(cmt)}}">
+            <span class="nav-item dropdown" ng-show="cmt.commentType!=6">
+                <a class="nav-link dropdown-toggle specCaretBtn" role="button"  id="menu"
+                  data-bs-toggle="dropdown"> 
+                    <span class="bi-caret-down-square-fill"></span>
+                </a>
+                <ul class="dropdown-menu p-1" role="menu" aria-labelledby="menu">
+                    <li role="presentation">
+                        <a role="dropdown-item" ng-click="openCommentEditor(null,cmt)">Edit {{commentTypeName(cmt)}}</a>
+                    </li>
+                    <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
+                        <a role="dropdown-item" ng-click="openResponseEditor(cmt, '<%ar.writeJS(currentUser);%>')"> Create/Edit Response:</a>
+                    </li>
+                    <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                        <a role="dropdown-item" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a>
+                    </li>
+                    <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
+                        <a role="dropdown-item" ng-click="deleteComment(cmt)">Delete {{commentTypeName(cmt)}}</a>
+                    </li>
+                    <li role="presentation" ng-show="cmt.commentType==1">
+                        <a role="dropdown-item" ng-click="openCommentCreator(item,1,cmt)"> Reply</a>
+                    </li>
+                    <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
+                            <a role="dropdown-item" ng-click="createModifiedProposal(item,cmt)"> Make Modified Proposal</a>
+                    </li>
+                    <li role="presentation">
+                        <a role="dropdown-item" ng-click="openDecisionEditor(cmt)">Create New Decision</a>
+                    </li>
+                </ul>
+            </span>
+            <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
+                        <i class="fa fa-comments-o" style="font-size:130%"></i>
+                    </span>
+            <span ng-show="cmt.commentType==2" title="{{cmtStateName(cmt)}} Proposal">
+                <i class="fa fa-star-o" style="font-size:130%"></i>
+            </span>
+            <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
+                <i class="fa fa-question-circle" style="font-size:130%">
+                </i>
+            </span>
+            <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
+                <i class="fa fa-file-code-o" style="font-size:130%"></i>
+            </span>
                &nbsp; 
-        <span title="Created {{cmt.dueDate|cdate}}"
-              ng-click="openCommentEditor(null,cmt)">{{cmt.time|cdate}}</span> -
-        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/UserSettings.htm">
-          <span class="red">{{cmt.userName}}</span>
-        </a>
-        <span ng-show="cmt.emailPending && !cmt.suppressEmail" 
-              ng-click="openCommentEditor(null,cmt)">-email pending-</span>
-        <span ng-show="cmt.replyTo">
-          <span ng-show="cmt.commentType==1">
-            In reply to                 
-            <a style="border-color:white;" href="CommentZoom.htm?cid={{cmt.replyTo}}">
-              <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
-          </span>
-          <span ng-show="cmt.commentType>1">Based on
-            <a style="border-color:white;" href="CommentZoom.htm?cid={{cmt.replyTo}}">
-            <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
-          </span>
+            <span  title="Created {{cmt.dueDate|cdate}}" ng-click="openCommentEditor(null,cmt)">{{cmt.time|cdate}}
+            </span> -
+            <a href="<%=ar.retPath%>v/{{cmt.userKey}}/UserSettings.htm">
+                <span class="red">{{cmt.userName}}</span>
+            </a>
+            <span ng-show="cmt.emailPending && !cmt.suppressEmail" ng-click="openCommentEditor(null,cmt)">-email pending-
+            </span>
+            <span ng-show="cmt.replyTo">
+                <span ng-show="cmt.commentType==1">In reply to                 
+                    <a style="border-color:white;" href="CommentZoom.htm?cid={{cmt.replyTo}}">
+                        <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
+                </span>
+                <span ng-show="cmt.commentType>1">Based on
+                    <a style="border-color:white;" href="CommentZoom.htm?cid={{cmt.replyTo}}">
+                        <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
+                </span>
+            </span>
+            <span ng-show="cmt.includeInMinutes" style="color:gray" ng-click="openCommentEditor(null,cmt)"> [+minutes] 
+            </span>
+            <span ng-show="cmt.commentType==6" style="color:green">
+                <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase
+            </span>
+            <span class="float-end">
+            <span>&nbsp;<a href="CommentZoom.htm?cid={{cmt.time}}"><i class="fa fa-external-link"></i></a>
+            </span>
+            <span ng-show="containerLink(cmt)">&nbsp;<a href="{{containerLink(cmt)}}"><i class="fa fa-bullseye"></i></a>
+            </span>
+            <span class="success" title="Due {{cmt.dueDate|cdate}}">{{calcDueDisplay(cmt)}}
+            </span>
         </span>
-        <span ng-show="cmt.includeInMinutes" style="color:gray"
-              ng-click="openCommentEditor(null,cmt)"> [+minutes] </span>
-        <span ng-show="cmt.commentType==6" style="color:green">
-            <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
-        <span style="float:right" >&nbsp;<a href="CommentZoom.htm?cid={{cmt.time}}"><i class="fa fa-external-link"></i></a></span>
-        <span style="float:right" ng-show="containerLink(cmt)">&nbsp;<a href="{{containerLink(cmt)}}"><i class="fa fa-bullseye"></i></a></span>
-        <span style="float:right;color:green;" title="Due {{cmt.dueDate|cdate}}">{{calcDueDisplay(cmt)}}</span>
-        <div style="clear:both"></div>
-      </div>
-      <div ng-show="cmt.state==11">
+        </div>
+    <div class="my-2 comment-inner p-2" ng-show="cmt.state==11">
         Draft {{commentTypeName(cmt)}} needs posting to be seen by others
-      </div>
-      <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6"
+    </div>
+    <div class="leafContent" ng-hide="cmt.meet || cmt.commentType==6"
            ng-dblclick="openCommentEditor(null,cmt)">
         <div ng-bind-html="cmt.html2"></div>
-      </div>
-      <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-           ng-click="navigateToMeeting(cmt.meet)">
+    </div>
+    <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised m-2" ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
-      </div>
-        <div ng-repeat="doc in cmt.docDetails">
-         <span ng-show="doc.attType=='FILE'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+    </div>
+    <div ng-repeat="doc in cmt.docDetails">
+        <span ng-show="doc.attType=='FILE'">
+            <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
               &nbsp;
-              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
-          </span>
-          <span  ng-show="doc.attType=='URL'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+            <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+        </span>
+        <span  ng-show="doc.attType=='URL'">
+            <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
               &nbsp;
-              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
-          </span>
+            <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+        </span>
           &nbsp; {{doc.name}}
-        </div>
+    </div>
 
       <table style="min-width:500px;overflow:hidden;table-layout:fixed" ng-show="cmt.commentType==2 || cmt.commentType==3">
         <col style="width:120px;white-space:nowrap">
@@ -557,11 +565,11 @@ function setUpCommentMethods($scope, $http, $modal) {
         <div ng-bind-html="getOutcomeHtml(cmt)"></div>
       </div>
       <div>
-        <button class="btn btn-sm btn-warning btn-raised" ng-click="deleteComment(cmt)" 
+        <button class="btn btn-danger mb-2" ng-click="deleteComment(cmt)" 
                 ng-show="cmt.state<=12">Delete</button>
-        <button class="btn btn-sm btn-default btn-raised" ng-click="openCommentEditor(null,cmt)"
+        <button class="btn btn-comment btn-raised mb-2 ms-5" ng-click="openCommentEditor(null,cmt)"
                  ng-show="cmt.state<=12">Edit</button>
-        <button class="btn btn-sm btn-primary btn-raised" ng-click="createModifiedProposal(item,cmt)"
+        <button class="btn btn-sm btn-comment btn-raised" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
         <button class="btn btn-sm btn-primary btn-raised" ng-click="openDecisionEditor(cmt)"
                  ng-show="cmt.state==12">Close with Decision</button>
@@ -585,7 +593,8 @@ function setUpCommentMethods($scope, $http, $modal) {
           #{{cmt.decision}}</a>
       </div>
     </div>
-  </td>
+  </div>
+
    
    
 
