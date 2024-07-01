@@ -289,7 +289,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 </div>
 <hr/>
                 <div class="d-flex justify-content-center m-2" ng-show="meeting.state<3">
-                    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
+                    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised" data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
                 </div> <!--END OF Agenda Panel-->
                 
 <!--Static Display buttons-->

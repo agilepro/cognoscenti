@@ -9,7 +9,7 @@
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
       </div>
       <div class="row">
-        <div class="col-6">
+        <div class="col-7">
           <div ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
             <h4 ng-click="openAgendaControlled(item,'Description')" class="h6 mb-auto">Description: </h4>
             <div class="p pt-4 flex-grow-1" ng-bind-html="item.descriptionHtml"></div>
@@ -18,9 +18,9 @@
             </span>
           </div>
         </div>
-        <div class="col-6">
-          <div class="timers col-auto ms-auto" >
-            <div class="row col-12">
+        <div class="col-5">
+          <div class="timers" >
+            <div class="row col-12 justify-content-between">
               <span class="col-4">
                 <div class="m-2 pt-2 fixed-width-sm" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
@@ -36,18 +36,16 @@
 
               <span class="col-4">
                 <ul class="navbar-nav">
-                  <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> <span class="dropdown-toggle-label" translate>Set Timer</span></a>
-               
-                <ul class="dropdown-menu pt-0">
+                  <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> 
+                    <span class="dropdown-toggle-label" translate>Set Timer</span></a>
+                    <ul class="dropdown-menu pt-0">
                   <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:
                   <span ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} </span></span></a></li>
                   <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-down Timer<span class="timerStyleComplete"> <br>Remaining Time: <span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span></span></a></li>
+                    </ul>
+                  </li> 
                 </ul>
-              </li> 
-            </ul>
-              </span>
-              
-              <span class="col-4" ng-dblclick="openAgenda(item)" ng-hide="item.isSpacer">
+                <span ng-dblclick="openAgenda(item)" ng-hide="item.isSpacer">
                   <!--<div ng-click="openAgenda(item)" class="h6"> Presenter: </div>-->
                   <div ng-repeat="presenter in item.presenterList">
                     <span class="dropdown" >
@@ -67,11 +65,11 @@
                   </div>
                   <div ng-hide="item.presenterList && item.presenterList.length>0">
                   </div>
-                  <div type="button" class="m-2 btn btn-sm btn-outline-primary fixed-width-sm" data-bs-toggle="modal" data-bs-target="#agendaItem"> Select Presenter
+                  <div type="button" class="me-auto btn btn-raised" data-bs-toggle="modal" data-bs-target="#agendaItem"> <i class="fa fa-user"></i> Select Presenter
                   </div>
+                </span>
               </span>
             </div>
-
           </div>
         </div>
       </div>
