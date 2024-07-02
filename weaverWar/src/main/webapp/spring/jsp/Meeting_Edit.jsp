@@ -632,7 +632,7 @@
 
   <!--Modals for meeting_edit.jsp-->
 
-  <!-- Set Presenter Modal -->
+  <!-- Agenda Item Modal -->
 <div class="modal fade" id="agendaItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="agendaItemLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
@@ -682,9 +682,12 @@
                   </tags-input>
                 </div>
                 <div class="form-check my-3 mx-2">
-                  <input class="form-check-input" type="checkbox"  ng-model="agendaItem.proposed"/>
-                    Proposed (remove check to accept)
+                  <input class="form-check-input" type="checkbox"  ng-model="agendaItem.proposed" />
+                    Proposed Item
                 </div>
+                <div class="form-group">
+                  <label for="labels">Description:</label>
+                  <textarea ng-model="agendaItem.descriptionHtml" ui-tinymce="tinymceOptions"></textarea>
                 </div>
               </div>
             </div>
@@ -692,8 +695,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="me-auto btn btn-danger" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Update</button>
+        <button type="button" class="me-auto btn btn-danger" data-bs-dismiss="modal" ng-click="cancel()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="ok()">Update</button>
       </div>
     </div>
   </div>

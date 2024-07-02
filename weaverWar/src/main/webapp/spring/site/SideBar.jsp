@@ -52,8 +52,9 @@
 %>
 
 <!-- Side Bar -->
-<nav class="navbar navbar-default navbar-fixed-side sidebar navbar-responsive-collapse" role="navigation">
-  <ul>
+<nav class="sidebar bg-primary">
+  <div class="container-fluid min-vh-100 sidebar bg-primary">
+    <ul class="sidebar-nav list-unstyled py-2">
     <% 
     for (JSONObject jo : fullMenu.getJSONObjectList()) {
         if (userIsReadOnly && !jo.has("readOnly")) {
@@ -61,7 +62,8 @@
             continue;
         }
     %>
-      <li><a<%
+      <li class="nav-item dropdown pb-2">
+        <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown"<%
         if (jo.has("href")) {
             %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
         }
@@ -74,12 +76,17 @@
         if (jo.has("external")) {
             %> target="_blank"<%
         }
-        %>><% ar.writeHtml(jo.getString("name")); if (jo.has("external")) {ar.write(" <i class=\"fa fa-external-link\"></i>");}%></a><%
+        %>> <% 
+        if (jo.has("icon")) {
+            %><img src="../../../assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
+        }
+
+        %></a><%
         if (jo.has("opts")) {
             JSONArray options = getOptions(jo, wrappedJSP);
             if (options.length()>0) {
             %>
-              <div class="sublist" style="color:black"><ul><%
+              <div class="sublist"><ul class="dropdown-menu bg-weaverbody"><%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
                     if (userIsReadOnly && !jo2.has("readOnly")) {
                         //skip anything not marked for observer when user is readonly.
@@ -107,9 +114,18 @@
         %></li><% 
     }
     %>
-    <li style="color:black">  <% if (userIsReadOnly) { %>OBSERVER<% } else { %>WRITEABLE<% } %></li>
+    <li class="my-5 text-weaverbody">  <% if (userIsReadOnly) { %>
+        <img src="<%=ar.retPath%>assets/ReadIndicator.png" title="You have observer access to this workspace" 
+        class="accessIndicator"/>
+    <% } else { %>
+        <img src="<%=ar.retPath%>assets/Site-Writable.png" title="You have full edit access to this workspace" 
+    class="accessIndicator"/>
+    <% } %></li>
     
-  </ul>
+    </ul>
+  </div>
+
+  
   <%if (false) {ar.write(wrappedJSP);} %>
 </nav>
 <!-- END SideBar.jsp -->

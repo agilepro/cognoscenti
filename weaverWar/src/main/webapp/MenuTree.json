@@ -16,7 +16,8 @@
       "title": "Graphical map of all workspaces in the site.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "SiteMap.png"
     },
     {
       "href": "SiteWorkspaces.htm",
@@ -24,14 +25,32 @@
       "title": "Lists all the workspaces that are in this site.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Workspaces.png"
     },
     {
       "href": "SiteAdmin.htm",
       "name": "Site Admin",
       "title": "View and adjust the main settings for the site.",
       "opts": [],
-      "useOpts": []
+      "useOpts": [],
+      "icon": "SiteAdmin.png"
+    },
+    {
+      "href": "SiteStats.htm",
+      "name": "Site Statistics",
+      "title": "View content statistics for the site.",
+      "opts": [],
+      "useOpts": [],
+      "icon": "Site-Stats.png"
+    },
+    {
+      "href": "SiteLedger.htm",
+      "name": "Site Charges",
+      "title": "View the monthly summary of charges for the site.",
+      "opts": [],
+      "useOpts": [],
+      "icon": "Site-Ledger.png"
     },
     {
       "href": "SiteUsers.htm",
@@ -39,14 +58,16 @@
       "title": "Add, remove, and configure users.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true
+      "readOnly": true,
+      "icon": "Site-Users.png"
     },
     {
       "href": "SiteRoles.htm",
       "name": "Roles",
       "title": "Role define who can do what within this site.",
       "opts": [],
-      "useOpts": []
+      "useOpts": [],
+      "icon": "Site-Roles.png"
     }
   ],
   "workMode": [

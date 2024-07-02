@@ -174,10 +174,13 @@
     <script src="<%=ar.baseURL%>jscript/angular.js"></script>
     <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/jquery-3.6.0.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
@@ -191,18 +194,10 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design 
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
--->
-    <!-- INCLUDE web fonts -->
+    <!-- INCLUDE web fonts for icons-->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
       <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
-
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
     <!-- Date and Time Picker -->
     <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
@@ -210,8 +205,9 @@
     <script src="<%=ar.retPath%>bits/moment.js"></script>
     <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+    <!-- Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
 
  
     <title><% ar.writeHtml(title); %></title>
@@ -263,11 +259,11 @@ myApp.filter('wiki', function() {
 <!-- End AppBar -->
 
 
-<div class="container-fluid" ng-cloak>
+<div class="container-fluid px-0" ng-cloak>
   <div class="row">
 
     <!-- Begin SideBar  -->
-    <div class="col-sm-2 col-lg-1">
+    <div class="d-flex">
       <%@ include file="SideBar.jsp" %>
     </div>
     <!-- End SideBar -->
@@ -276,36 +272,39 @@ myApp.filter('wiki', function() {
     
     <div class="col-sm-10 col-lg-11 main-content">
 
-      <!-- BEGIN Title and Breadcrump -->
-      <ol class="title">
-      <% if(!ar.isLoggedIn()) { %>
+      <!-- BEGIN Title and Breadcrumb -->
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb px-3">
+            <% if(!ar.isLoggedIn()) { %>
           <!-- user is not logged in, don't display any breadcrumbs -->
-      <% } else if(isUserHeader) { %>
-        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></div></li>
-      <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(siteId);%>/$/SiteWorkspaces.htm">
-            Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
-      <% } else { %>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
+            <% } else if(isUserHeader) { %>
+            <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
+            User: <%ar.writeHtml(pageUserName);%></a></li>
+
+            <% } else if(isSiteHeader) { %>
+            <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(siteId);%>/$/SiteWorkspaces.htm">
+            Site: '<%ar.writeHtml(mainSiteName);%>'</a></li>
+
+            <% } else { %>
+            <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+
+            <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a>
                 <span style="color:gray">
                 <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
                   else if (ngp.isFrozen()) {ar.write(" (FROZEN) ");}%>
                 </span>
             </li>
-      <% } %>
-        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
-      </ol>
+        <% } %>
+        </ol>
+    </nav><!--END Breadcrumb-->
       <script>
       function setMainPageTitle(str) {
           document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }
       </script>
-      <!-- BEGIN Title and Breadcrump -->
-
+    
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
       <script>
@@ -352,10 +351,8 @@ myApp.filter('wiki', function() {
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
     </div>
-  </div>
-</div>
 <!-- End mainContent -->
-
+</div>
 </div>
 <!-- End body wrapper -->
 

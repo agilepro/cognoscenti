@@ -196,7 +196,7 @@
               <% ar.writeHtml(userName); %>
             </span>
           </a>
-          <ul class="dropdown-menu bg-weaverbody text-wwaverdark">
+          <ul class="dropdown-menu bg-weaverbody text-weaverdark">
             <li><a class="dropdown-item" href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
             <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
@@ -207,7 +207,7 @@
             <li><a class="dropdown-item" href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>
 <%} %>
             <li class="dropdown-divider"></li>
-            <li><a onclick='logOutPage();'>Log Out</a></li>
+            <li><a class="dropdown-item" onclick='logOutPage();'>Log Out</a></li>
 <% } %> 
           </ul>
         </li>
