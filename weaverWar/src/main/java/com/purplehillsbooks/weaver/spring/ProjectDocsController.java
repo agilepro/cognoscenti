@@ -1295,26 +1295,4 @@ public class ProjectDocsController extends BaseController {
 
 
 
-
-
-
-    ///////////////////// DEPRECATED ////////////////////////////
-
-    //This is the OLD pattern we want to get rid of with aid embedded in the page name
-    //instead use DocDetails.htm?aid={aid}
-    @Deprecated
-    @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
-    private void docInfoView(@PathVariable String siteId,
-             @PathVariable String pageId, @PathVariable String aid,
-             HttpServletRequest request,  HttpServletResponse response) throws Exception {
-        System.out.println("Deprecated address docinfo{aid}.htm is still being used, please replace with DocDetail.htm");
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        request.setAttribute("aid", aid);
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-        AttachmentRecord att = ngw.findAttachmentByID(aid);
-        boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
-        BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
-    }
-
-
 }

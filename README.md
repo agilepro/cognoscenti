@@ -5,16 +5,20 @@ Major Adaptive CaseManagement, Coordination, Communication, Collaboration System
 
 You must have Java installed, preferably Java 21 or later.
 
+You must have Maven installed and working with the Java.
+
+You must have TomCat v10 or later installed.
+
 You must have Mongo installed and running on the standard port for Mongo.
 
 # Build
 
-The project is built with Gradle.   A version of gradle is included.  You only need to build from the weaverWar folder.  If you have java installed, all you have 
+The project is built with MAven.  You only need to build from the weaverWar folder.  If you have java installed, all you have 
 
     cd weaverWar
-    ../gradlew clean build
+    mvn clean package
 
-This should produce a WAR file in the weaverWar/build/libs folder
+This should produce a WAR file in the weaverWar/target folder
  
 # Configure
  
@@ -35,7 +39,7 @@ The value "JDVBRFKFH" is the user key in this url. This user key will be differe
 
 # Testing
 
-If you are going to be doing a lot of testing, there are two more servers you will want t o run.
+If you are going to be doing a lot of testing, there are two more servers you will want to run.
 
 POSTHOC - this is a small TomCat service that appears like a SMTP email server, but it also has a user interface for viewing email received.  PostHoc will never forward email to any real email inbox.  It holds it all, no matter what the email address.  This will prevent you from accidentally spamming a lot of people because of email addresses that happen to be in the test data.  Email will only to go PostHoc and no further.
 
