@@ -108,17 +108,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newProfile.timeZone = newTimeZone;
         $scope.updateServer(newProfile);
     }
-    $scope.updateServer = function(newProfile) {
-        console.log("UPDATE PROFILE WITH", newProfile);
-        var postURL = "updateProfile.json";
-        $http.post(postURL, JSON.stringify(newProfile))
-        .success( function(data) {
-            $scope.userInfo = data;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
         
     $scope.updateFacilitator = function() {
         console.log("USER CACHE: ", $scope.userCache);
@@ -146,12 +135,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateServer(newProfile);
         $scope.editField="";
     }
-    $scope.updateServer = function(newProfile) {
+    $scope.updateServer = function(newProfile, refresh) {
         console.log("UPDATE PROFILE WITH", newProfile);
         var postURL = "updateProfile.json";
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
             $scope.userInfo = data;
+            console.log("REFRESH is ", refresh);
+            if (refresh) {
+                window.location.reload();
+            }
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -181,8 +174,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.switchToNewUI = function() {
         var newProfile = {};
         newProfile.useNewUI = true;
-        $scope.updateServer(newProfile);
-        //window.location.reload();
+        $scope.updateServer(newProfile, true);
     }
 
     
@@ -460,7 +452,7 @@ if (ar.isLoggedIn()) { %>
             </td>
             <td ng-show="helpUI" ng-click="helpUI=!helpUI">
               <div class="guideVocal thinnerGuide">
-                Click this to switch to the new, experimental UI
+                Click this to switch to the NEW UI
               </div>
             </td>
         </tr>
