@@ -50,6 +50,7 @@ public class UserProfile implements UserRef
     private String timeZone = "America/Los_Angeles";
     private JSONObject wsSettings = new JSONObject();
     private boolean isFacilitator = false;
+    public boolean useNewUI = false;
 
     public UserProfile(String preferredEmail) throws Exception {
         userKey = IdGenerator.generateKey();
@@ -97,6 +98,7 @@ public class UserProfile implements UserRef
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
         isFacilitator = fullJO.optBoolean("isFacilitator", false);
+        useNewUI      = fullJO.optBoolean("useNewUI", false);
 
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
@@ -849,6 +851,7 @@ public class UserProfile implements UserRef
 
         jObj.put("wsSettings",  wsSettings);
         jObj.put("isFacilitator", isFacilitator);
+        jObj.put("useNewUI",    useNewUI);
         return jObj;
     }
 
@@ -897,6 +900,9 @@ public class UserProfile implements UserRef
         }
         if (input.has("isFacilitator")) {
             isFacilitator = input.getBoolean("isFacilitator");
+        }
+        if (input.has("useNewUI")) {
+            useNewUI = input.getBoolean("useNewUI");
         }
     }
 

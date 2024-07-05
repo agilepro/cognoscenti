@@ -1463,9 +1463,22 @@ public class AuthRequest
     */
     public void invokeJSP(String JSPName) throws Exception {
         try {
+            if (!JSPName.startsWith("/spring")) {
+                System.out.println("invokeJSP hsa been invoked with something OTHER than spring!!!");
+            }
+            else {
+                UserProfile uProf = getUserProfile();
+                if (uProf!=null && uProf.useNewUI) {
+                    JSPName = "/spring2" + JSPName.substring(7);
+                    System.out.println("Using NEW UI: "+JSPName);
+                }
+                else {
+                    System.out.println("Using OLD UI: "+JSPName);
+                }
+            }
             nestingCount++;
             if (nestingCount>10) {
-                throw new JSONException("Nesting cound for JSP has exceeded limit of 10 for "+JSPName);
+                throw new JSONException("Nesting count for JSP has exceeded limit of 10 for "+JSPName);
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");

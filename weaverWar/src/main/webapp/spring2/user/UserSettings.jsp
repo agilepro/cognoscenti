@@ -178,9 +178,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.editField='';
     }
     
-    $scope.switchToNewUI = function() {
+    $scope.switchToOldUI = function() {
         var newProfile = {};
-        newProfile.useNewUI = true;
+        newProfile.useNewUI = false;
         $scope.updateServer(newProfile);
         //window.location.reload();
     }
@@ -452,15 +452,14 @@ if (ar.isLoggedIn()) { %>
         </tr>
         <tr>
             <td class="firstcol">UI Mode:</td>
-            <td>
-                You are currently viewing the OLD user interface<br/>
-                <button ng-click="switchToNewUI()"/>Switch to New UI</button></td>
+            <td>You are currently viewing the NEW user interface<br/>
+                <button ng-click="switchToOldUI()"/>Switch back to OLD UI</button></td>
             <td ng-hide="helpUI" ng-click="helpUI=!helpUI">
                 <button class="btn">?</button>
             </td>
             <td ng-show="helpUI" ng-click="helpUI=!helpUI">
               <div class="guideVocal thinnerGuide">
-                Click this to switch to the new, experimental UI
+                Click this to switch to the OLDER tried and true UI
               </div>
             </td>
         </tr>

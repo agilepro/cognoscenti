@@ -9,4 +9,4 @@ bin
 .settings
 .project
 .classpath
-
+.vscode
