@@ -1,0 +1,102 @@
+
+<html>
+  <body>
+<div class="modal-header qqTabHeader" tabindex="-1">
+  <div class="qqTabBand">
+    <span ng-click="editMode='edit'" 
+          ng-class="editMode=='edit'?'qqTabSelected':'qqTabUnselected'">
+    Edit Meeting Notes
+    </span>
+    <span ng-click="editMode='legend'" 
+          ng-class="editMode=='legend'?'qqTabSelected':'qqTabUnselected'">
+    Markdown
+    </span>
+  </div>
+</div>
+<div class="modal-body" ng-style="bodyStyle()">
+  <div ng-show="editMode=='edit'">
+    <div class="form-group" 
+         title="The status is text describing the current situation for all the actions in this area.">
+      <label for="labels">Status:</label>
+      <div style="margin-bottom:15px;">
+    	<div ui-tinymce="tinymceOptions" ng-model="agendaHtml" 
+             class="leafContent" style="min-height:250px;" ></div>
+      </div>
+      <!--<textarea ng-model="agendaData.new" class="form-control markDownEditor" style="height:250px;width:80%"
+      placeholder="Enter meeting notes" ng-disabled="!isEditing"></textarea-->
+    </div>
+  </div>
+  <div ng-show="editMode=='legend'">
+    <div class="col-sm-12 col-md-6">
+      <p><b>At Beginning of Line</b></p>
+      <table class="table">
+        <tr>
+          <th>Put</th>
+          <th>Meaning</th>
+        </tr>
+        <tr>
+          <td>*</td>
+          <td>First level bullet</td>
+        </tr>
+        <tr>
+          <td>**</td>
+          <td>Second level bullet</td>
+        </tr>
+        <tr>
+          <td>***</td>
+          <td>Third level bullet</td>
+        </tr>
+        <tr>
+          <td>!!!</td>
+          <td>Heading 1</td>
+        </tr>
+        <tr>
+          <td>!!</td>
+          <td>Heading 2</td>
+        </tr>
+        <tr>
+          <td>!</td>
+          <td>Heading 3</td>
+        </tr>
+      </table>
+    </div>
+    <div class="col-sm-12 col-md-6">
+      <p><b>Surrounding text in the Line</b></p>
+      <table class="table">
+        <tr>
+          <th>Use</th>
+          <th>Meaning</th>
+        </tr>
+        <tr>
+          <td>''abc''</td>
+          <td>Two single quotes make italic</td>
+        </tr>
+        <tr>
+          <td>__abc__</td>
+          <td>Two underscores make it bold</td>
+        </tr>
+        <tr>
+          <td>[http://xyz]</td>
+          <td>Square bracket simple hyperlink</td>
+        </tr>
+        <tr>
+          <td>[NAME | http://xyz]</td>
+          <td>Brackets and vertical bar hyperlink</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div style="clear:both"></div>
+</div>
+<div class="modal-footer">
+    <button ng-hide="id=='~new~'" class="btn btn-warning btn-raised pull-left"
+        type="button" ng-click="ok()">Exit</button>
+    <button ng-hide="agendaData.needsMerge" class="btn">
+        <input type="checkbox" ng-model="autoMerge"> Automatically Merge (danger)
+    </button>
+    <button ng-show="agendaData.needsMerge" class="btn btn-danger btn-raised"
+        type="button" ng-click="mergeNewData()"><i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
+</div>
+</body>
+</html>

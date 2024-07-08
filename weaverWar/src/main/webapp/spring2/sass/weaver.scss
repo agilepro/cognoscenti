@@ -1,0 +1,602 @@
+//Customizing styles for Weaver
+$primary: #39134C;
+$secondary: #672a79;
+$tertiary: #AB37C8;
+$quaternary: #954c9e;
+$danger: #610c0c;
+$success: #034603;
+$info: #0a0a0a;
+$warning: #d69e02;
+$light: #fefefe;
+$dark: #20082c;
+
+
+// import the functions & variables
+@import "../node_modules/bootstrap/scss/_functions";
+@import "../node_modules/bootstrap/scss/_variables";
+
+
+$custom-weaver-colors: (
+    "weaverdark": #39134C,
+    "weaverlight": #AB37C8,
+    "weaverbody": #fefefe,
+    "weaverBtnlight": #EEEEEE,
+    "weaverBtnDark": #39134C,  
+    "weaverFrozen": #e2efff, 
+    "lightgreen": #90b990,
+);
+
+
+    $primary-90: #4d2f5e;
+    $primary-80: #614570;
+    $primary-70: #755d82;
+    $primary-60: #887494;
+    $primary-50: #9f8fae;
+    $primary-40: #b0a2b7;
+    $primary-30: #c3b9c9;
+    $primary-20: #d7d1db;
+    $primary-10: #ebe7ed;     
+
+
+    $secondary-90: #774088;
+    $secondary-80: #865595;
+    $secondary-70: #966aa2;
+    $secondary-60: #a47faf;
+    $secondary-50: #b394bc;
+    $secondary-40: #c3aaca;
+    $secondary-30: #d1bfb7;
+    $secondary-20: #e1d4e4;
+    $secondary-10: #f0e9f1;     
+
+
+
+    $tertiary-90: #a05ea8;
+    $tertiary-80: #aa70b1;
+    $tertiary-70: #b582bb;
+    $tertiary-60: #bf94c5;
+    $tertiary-50: #caa5ce;
+    $tertiary-40: #d5b7d8;
+    $tertiary-30: #dfc9e2;
+    $tertiary-20: #eadbec;
+    $tertiary-10: #f4edf5;      
+
+
+
+$primary-100: tint-color($primary, 80%);
+$primary-200: tint-color($primary, 60%);
+$primary-300: tint-color($primary, 40%);
+$primary-400: tint-color($primary, 20%);
+$primary-500: $primary;
+$primary-600: shade-color($primary, 20%);
+$primary-700: shade-color($primary, 40%);
+$primary-800: shade-color($primary, 60%);
+$primary-900: shade-color($primary, 80%);
+
+$secondary-100: tint-color($secondary, 80%);
+$secondary-200: tint-color($secondary, 60%);
+$secondary-300: tint-color($secondary, 40%);
+$secondary-400: tint-color($secondary, 20%);
+$secondary-500: $secondary;
+$secondary-600: shade-color($secondary, 20%);
+$secondary-700: shade-color($secondary, 40%);
+$secondary-800: shade-color($secondary, 60%);
+$secondary-900: shade-color($secondary, 80%);
+
+
+
+$breadcrumb-divider: ("  >  ");
+$breadcrumb-divider-active: ("  >  ");
+$breadcrumb-divider-color: #AB37C8;
+$breadcrumb-item-color: #fefefe;
+$breadcrumb-font-size: .90rem;
+$breadcrumb-bg: transparent;
+$breadcrumb-margin-bottom: 0;
+$breadcrumb-padding-x: 1rem;
+$breadcrumb-padding-y: 0;
+$breadcrumb-item-padding-x: .5rem;
+$breadcrumb-item-color: #AB37C8;
+
+$body-bg: #fefefe;
+$body-color: #39134C;
+$link-color: $secondary;
+$text-decoration-color: #AB37C8;
+
+$sidebar-bg-color: #AB37C8;
+$sidebar-text-color: #fefefe;
+$sidebar-hover-bg-color: $secondary-50;
+$dropdown-margin-left: 0.1rem;
+
+$appbar: 0;
+
+h5, .h5 {
+    font-size: calc(1rem + .25vw);
+}
+h6, .h6 {
+    font-size: calc(.75rem + .5vw);
+}
+
+[ng\:cloak], 
+[ng-cloak], 
+[data-ng-cloak], 
+[x-ng-cloak], 
+.ng-cloak, 
+.x-ng-cloak {
+    display: none !important;
+  }
+
+a {
+    color: $link-color;
+    font-size: 1rem;
+    font-weight: 500;
+
+    &:hover {
+        color: $tertiary;
+}
+}
+
+.sidebar {
+    background-color: $tertiary;
+    padding-top: 1rem;
+
+    .nav-link {
+        color: $sidebar-text-color;
+
+    &:hover{
+        background-color: $sidebar-hover-bg-color;
+    }
+    
+    }
+    .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: 0;
+        margin-left: $dropdown-margin-left;
+    }
+}
+
+.dropdown-toggle::after {
+   display: none;
+}
+
+.card {
+    background-color: $primary-20;
+    color: $body-color;
+
+    .clipping {
+        overflow: hidden;
+        text-overflow: clip; 
+        border-bottom:1px solid #EEEEEE;
+        white-space: nowrap
+    }
+    .card-body {
+        a {
+            color: $link-color;
+        }
+
+        .spacytable tr td {
+        padding:2px;
+        }
+    }
+    .card-header    {
+        background-color: $primary-70;
+        color: $primary-10;
+        border-bottom: 3px solid $primary-20;
+
+        a {
+            color: $primary-10;
+        }
+    }
+}
+
+
+
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.planning-mode {
+    color: #672978;
+    text-align: right;
+    position: relative;
+    font-weight: 700;
+
+    .planning-mode * {
+        box-sizing: border-box;
+    }
+}
+
+
+.blankTitle {
+    font-size: 130%;
+    font-weight: bold;
+}
+.agendaTitle {
+    font-size: 130%;
+    padding:5px;
+    cursor:pointer;
+    border: 3px solid white;
+    border-right: none;
+}
+.agendaTitleSelected {
+    font-size: 130%;
+    padding:5px;
+    border: 3px solid black;
+    border-right: none;
+    cursor:pointer;
+}
+.agendaTitle:hover {
+    font-size: 130%;
+    padding:5px;
+    cursor:pointer;
+    color:black;
+    background-color:skyblue;
+}
+.spaceyTable tr td {
+    vertical-align: top;
+}
+.spacydiv {
+    padding:5px;
+}
+.votingButton {
+    padding:2px;
+    margin:0px;
+    font-size: 130%;
+}
+.buttonSpacerOff {
+    border: 5px solid white;
+    padding:5px;
+}
+.buttonSpacerOn {
+    border: 5px solid lightgrey;
+    padding:5px;
+}
+.leftColumn {
+    border-right: 1px solid #39134C;
+    padding: 0px 5px;
+    justify-content: center;
+}
+.col-fixed {
+    flex: 0 0 auto;
+    width: 250px !important;
+}
+.fixed-width {
+    width: 250px !important;
+}
+.fixed-width-sm {
+    width: 150px !important;
+}
+.contentColumn {
+    width:100%; 
+}
+
+.labelButton {
+    padding: 1px 4px;
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    margin: 0px 10px 10px 0px;
+    border-radius: 3px;
+    border: 1px solid $secondary-700 !important;
+    background-color: #f5f5f5;
+    color: $tertiary;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+}
+
+.labelColumn {
+    padding: 5px;
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    margin: 0px 10px 10px 0px;
+    background-color: #f5f5f5;
+    color: $secondary;
+    font-weight: 600 !important;
+
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.labelCheck {
+    padding: 1px 4px;
+    color: $secondary;
+    font-size: calc(1rem - 1px);
+    font-weight: 600 !important;
+    background-color: transparent;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.labelText {
+    padding: 5px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+.agendaItemFull {
+    border: 1px solid lightgrey;
+    border-radius:10px;
+    margin-top:20px;
+}
+.agendaItemBlank {
+    background-color:lightgray;
+    margin-top:20px;
+}
+
+
+.btn    {
+    width: 160px;
+    position: unset;
+    border-color:#672978;
+    border: 3px, solid, #672978;
+    color:#39134C;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.btn-flex {
+    width: auto;
+    min-width: 75px;
+    max-width: 160px;
+    flex-grow: 1;
+}
+
+.accordion-button:not(.collapsed) { 
+    color:$primary !important; 
+    font-size: 1.2rem;
+    font-weight: 700;
+    background-color: $primary-50 !important;
+}
+.accordion-header {
+    color:$primary;
+    background-color: $primary-40;
+}
+.accordion-button {
+    color:$primary;
+    font-size: 1.1rem;
+    font-weight: 500;
+
+    a {
+        color:$primary;
+    }
+}
+.accordion-item .collapsed {
+    background-color: $primary-40;
+}
+
+.accordion-item.active .accordion-content {
+    display: block;
+}
+.accordionAssets {
+    .accordion-item .collapsed {
+        background-color: $primary-40;
+
+    }
+    .accordion-button:not(.collapsed) { 
+        color:$primary !important; 
+        font-size: 1rem;
+        font-weight: 500;
+        background-color: $primary-200 !important;
+    }
+}
+.well .btn-raised {
+    margin: 5px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.description-container {
+    display: inline-flex;
+    align-items: center;
+}
+.description-container h4 {
+    margin-right: 10px;
+}
+//From main.min.css
+
+.doubleClickHint {
+    background-color:transparent;
+    color:$secondary-400;
+    padding:4px;
+    max-width:400px
+}
+.btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+}
+.button {
+    .btn {
+        background-color: inherit;
+    }
+    
+    .btn-small {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: 1rem;
+        border: $secondary solid 3px;
+    }
+    
+}
+
+.comment-state-complete {
+    background-color: $secondary-20;
+}
+.comment-outer {
+    border: $secondary-60 solid 1px;
+    background-color: $secondary-10;
+    border-radius: 5px;
+    margin-top: 5px;  
+    cursor: pointer;
+}
+.comment-inner {
+        padding: 2px;
+        border-radius: 5px;
+        border: $secondary-60 solid 1px;
+        background-color: white;
+    }
+
+
+//from MeetingHtml.jsp
+
+.blankTitle {
+    font-size: 130%;
+    font-weight: bold;
+}
+.agendaTitle {
+    font-size: 130%;
+    padding:5px;
+    cursor:pointer;
+    border: 3px solid white;
+    border-right: none;
+}
+.agendaTitleSelected {
+    font-size: 130%;
+    padding:5px;
+    border: 3px solid black;
+    border-right: none;
+    cursor:pointer;
+}
+.agendaTitle:hover {
+    font-size: 130%;
+    padding:5px;
+    cursor:pointer;
+    color:black;
+    background-color:skyblue;
+}
+.spaceyTable tr td {
+    padding:5px;
+}
+.spacydiv {
+    padding:5px;
+}
+.votingButton {
+    padding:2px;
+    margin:0px;
+    font-size: 130%;
+}
+.buttonSpacerOff {
+    border: 5px solid white;
+    padding:5px;
+}
+.buttonSpacerOn {
+    border: 5px solid lightgrey;
+    padding:5px;
+}
+.form-control {
+    padding: 0;
+    margin: 0;
+    background-color: white !important;
+    border: grey solid 1px !important;
+}
+.form-control-sm {
+    padding: 0;
+    margin: 0;
+}
+
+.timers {
+    border: $secondary solid 1px;
+    border-radius: 3px;
+    background-color: $primary-10;
+    padding: 5px;
+    margin: 5px;
+    .btn {
+        color: inherit;
+        font-size: 1rem;
+        font-weight: 400;
+        border: none;
+    }
+    .btn-sm {
+            background-color: inherit;
+            color: $primary;
+            font-size: 1rem;
+            border: $primary solid 1px;
+            border-radius: 5px;
+
+    }
+}
+
+        .nav-link {
+            border: $secondary solid 1px;
+            border-radius: 3px;
+            background-color: $primary;
+            padding: 5px 10px;
+            margin-top: 10px;
+            margin-bottom:  0px;
+            color: $primary-10;
+            font-size: 1rem;
+            font-weight: 400;
+            
+            &:hover {
+                background-color: "weaverbody";
+                color: "weaverdark";
+            }
+        }
+        
+.text-secondary {
+    color: $primary-60 !important;
+}
+
+.form-control {
+    .check  {
+    height: 25px;
+    width: 25px;
+}
+}
+
+.page-name{
+    font-size: 2rem;
+    font-weight: 700;
+    color: $secondary-70;
+    margin: .5em;
+}
+
+.timerStyleComplete {
+    color: $primary-60;
+    font-weight: 600;
+    font-size: .65rem;
+    margin-left: 3px;
+    margin-bottom: 0px;
+}
+
+.mainPageTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $secondary-70;
+    margin: 2em;
+}
+
+$vertical-align-classes: (
+        property: vertical-align,
+        class: align,
+        values: (
+            top: top,
+            middle: middle,
+            bottom: bottom
+        )
+    );
+
+$enable-gradients: true;
+$enable-shadows: false;
+$enable-rounded: false;
+$enable-grid-classes: true;
+
+
+
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-weaver-colors);
+
+
+
+//import bootstrap
+@import "../node_modules/bootstrap/scss/bootstrap";
+

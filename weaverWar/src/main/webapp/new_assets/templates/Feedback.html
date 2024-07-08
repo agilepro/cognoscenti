@@ -1,0 +1,28 @@
+<html>
+<body>
+<style>
+.headerLines {
+    padding:5px;
+    border-top:1px lightgray solid;
+}
+</style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+    Feedback on Weaver
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+    <div class="headerLines">From:  {{userId}}</div>
+    <div class="headerLines">Page:  {{uri}}</div>
+    <div class="headerLines">Date:  {{nowTime | date:"yyyy-MM-dd 'at' HH:mm"}}</div>
+    <textarea ng-model="message" class="form-control visibleBox" style="height:200px"
+              placeholder="Enter some text describing what you would like to see, or like to see changed"></textarea>
+</div>
+<div class="modal-footer">
+      <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
+      <button ng-click="ok()" class="btn btn-primary btn-raised">Send Feedback</button>
+</div>
+</body>
+</html>
