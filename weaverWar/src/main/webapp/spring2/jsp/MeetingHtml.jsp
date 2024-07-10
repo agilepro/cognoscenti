@@ -167,22 +167,6 @@
 
 %>
 
-<style>
-.labelButton {
-    width:180px;
-    overflow: hidden;
-    color: red;
-}
-.agendaItemFull {
-    border: 1px solid lightgrey;
-    border-radius:10px;
-    margin-top:20px;
-}
-.agendaItemBlank {
-    background-color:lightgray;
-    margin-top:20px;
-}
-</style>
 
 <script src="../../../jscript/AllPeople.js"></script>
 
@@ -205,69 +189,29 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 embeddedData.canUpdate = <%=canUpdate%>;
 
-
-
 </script>
+<script>
+    function toggleAccordion(event) {
+    var currentItem = event.currentTarget.parentElement;
+    var accordion = currentItem.parentElement;
+    var items = accordion.getElementsByClassName('accordion-item');
+  
+    // Close all accordion items
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.remove('active');
+      items[i].querySelector('.accordion-content').style.display = 'none';
+    }
+  
+    // Open the clicked accordion item
+    currentItem.classList.add('active');
+    currentItem.querySelector('.accordion-content').style.display = 'block';
+  }
+  </script>
+
 <script src="../../../spring/jsp/MeetingHtml.js"></script>
 
 
-<style>
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
-}
 
-.blankTitle {
-    font-size: 130%;
-    font-weight: bold;
-}
-.agendaTitle {
-    font-size: 130%;
-    padding:5px;
-    cursor:pointer;
-    border: 3px solid white;
-    border-right: none;
-}
-.agendaTitleSelected {
-    font-size: 130%;
-    padding:5px;
-    border: 3px solid black;
-    border-right: none;
-    cursor:pointer;
-}
-.agendaTitle:hover {
-    font-size: 130%;
-    padding:5px;
-    cursor:pointer;
-    color:black;
-    background-color:skyblue;
-}
-.spaceyTable tr td {
-    vertical-align: top;
-}
-.spacydiv {
-    padding:5px;
-}
-.votingButton {
-    padding:2px;
-    margin:0px;
-    font-size: 130%;
-}
-.buttonSpacerOff {
-    border: 5px solid white;
-    padding:5px;
-}
-.buttonSpacerOn {
-    border: 5px solid lightgrey;
-    padding:5px;
-}
-.leftColumn {
-    border-right: 3px solid black;
-    width:150px; 
-}
-.contentColumn {
-    width:1000px; 
-}
-</style>
 
     
 <div ng-cloak>
@@ -275,163 +219,162 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <%@include file="ErrorPanel.jsp"%>
 
 
+<div class="container-fluid">
 
-    <div class="upRightOptions rightDivContent">
-      <button class="btn btn-default btn-raised" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'">
-          State: {{meetingStateName()}}</button>
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              title="Compose an email messsage about this meeting and send it"
-              href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Open the editor for the minutes of the meeting"
-              ng-click="openEditor()">Edit Meeting Notes</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Display the meeting as a HTML page that can be copied into an editor"
-              href="meetingFull.htm?id={{meeting.id}}">Show Single Page Display</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Display the meeting as a HTML page that can be copied into an editor"
-              href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Make a copy of this meeting for a new timeslot"
-              href="CloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Return back to the list of all meetings in the workspace"
-              href="MeetingList.htm">List All Meetings</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Access the new mobile UI in development"
-              href="RunMeeting.wmf?meetId={{meeting.id}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>
-        </ul>
-      </span>
-
-    </div>
-
-
-<table class="spaceyTable"><tr>
-
-<td class="leftColumn">
-
-<table width="100%"><tr><td >
-<button ng-click="changeMeetingMode('Agenda')"   ng-class="btn btn-small"
-  style="margin-left: auto; margin-right: auto;"><span class="fa  fa-file-o"></span></br>Agenda</button>
-</td><td>
-<button ng-click="changeMeetingMode('Minutes')"  ng-class="btn btn-small"
-  style="margin-left: auto; margin-right: auto;"><span class="fa  fa-file-text-o"></span></br>Minutes</button>
-</td></tr></table>
-<br/>
-<button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button>
-<button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')">Participants</button>
-<button ng-click="changeMeetingMode('Times')"    ng-class="labelButtonClass('Times')"   >Start Time</button>
-<button ng-click="changeMeetingMode('Status')"   ng-class="labelButtonClass('Status')"  >Overview</button>
-<button ng-click="changeMeetingMode('Facilitate')" ng-class="labelButtonClass('Facilitate')"  >Note Taker</button>
-
-<div style="height:70px">&nbsp;</div>
-
-<div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed"
-         ng-dblclick="openAgenda(selectedItem)">
-        <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
-        <span ng-show="item.isSpacer" style="color:grey">Break</span>
-        <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
-        <span style="float:right" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
-        <br/>
-        
-        <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+        <div class="row">
+            <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
+<!--Setup Accordion-->
+<div class="accordion" id="accordionSetup">
+    <div class="accordion-item">
+        <div class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                <h3 class="h5 mb-0">Setup Tools</h3>
+            </button>
+        </div>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionSetup">
+            <div class="accordion-body">
+                <div class="justify-content-between"> 
+                    <span class="btn btn-setup btn-flex">
+                    <button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button></span>
+                    <span class="btn btn-setup btn-flex">
+                    <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')" >Participants</button></span>
+                    <span class="btn btn-setup btn-flex">
+                    <button ng-click="changeMeetingMode('Facilitate')" ng-class="labelButtonClass('Facilitate')" >Note Taker</button></span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<div>
-    <span style="float:right">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;</span>
-</div>
 
-<div style="height:70px">&nbsp;</div>
-
-<div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
-         ng-dblclick="openAgenda(selectedItem)">
-        <span ng-show="item.proposed" style="color:grey">Proposed</span>
-        <br/>
-        <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
-    </div>
-</div>
 <hr/>
-<div style="margin:20px;" ng-show="meeting.state<3">
-    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
-</div>
-</td>
-<td class="contentColumn">
+<!--Agenda Panel-->
+                <div style="height: 0.5rem">&nbsp;</div>
+                <h3 class="h5 mb-0">Agenda:</h3>
+                <div ng-repeat="item in getAgendaItems()">
+                    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed" ng-dblclick="openAgenda(selectedItem)">
+                        <div class="d-flex justify-content-start">
+                            <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
+                            <span ng-show="item.isSpacer" style="color:grey">Break</span>
+                            <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
+        <br/>
+                            <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+                            <span style="ms-auto" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
+                        </div>
+                    </div>
+                </div>
+<hr/>
+                <div class="d-flex justify-content-start">
+                    <h3 class="h6">Proposed End Time:</h3>
+                    <span class="h6 ms-5">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;</span>
+                </div>
+                <div style="height:0.5rem">&nbsp;</div>
+
+                <div class="d-flex justify-content-start text-weaverlight"><h3 class="h6 mb-0 me-4">Anticipated End:</h3> 
+                    <span class="h6 ms-5">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;
+                    </span> 
+                </div>
+
+                <div ng-repeat="item in getAgendaItems()">
+                    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
+         ng-dblclick="openAgenda(selectedItem)">
+        <span ng-show="item.proposed">Proposed</span>
+        <button ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+                    </div>
+                </div>
+<hr/>
+                <div class="d-flex justify-content-center m-2" ng-show="meeting.state<3">
+                    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised" data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
+                </div> <!--END OF Agenda Panel-->
+                
+<!--Static Display buttons-->
+<!--Agenda and Minutes buttons  -->
+                <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
+                <div class="my-3 d-flex justify-content-start">
+                <div class="smallButton mx-3">
+                    <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>\assets\navicon\agendaIcon.png"></br> Agenda
+                    </button>
+                </div>
+                <div class="smallButton mx-3">
+                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>\assets\navicon\minutesIcon.png"></br> Minutes
+                    </button>
+                </div>
+
+                </div>
+<!--Preparation Status Row-->
+    <div class="d-flex col-12 mt-5">
+        <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
+        <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
+        <span ng-hide="item.readyToGo" >
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                 style="width:24px;height=24px">
+                 Not ready yet.
+        </span>
+        <span ng-show="item.readyToGo"  >
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting.">
+                 Ready to go.  Presentation attached (if any).
+        </span>
+        </div>
+
+        <span  ng-dblclick="openAgenda(item)" ng-hide="item.proposed">
+            <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised" ng-show="item.proposed">
+              <a><i class="fa fa-check"></i> Accept Proposed Item</a></button>
+          <!--<div ng-click="openAgenda(item)" class="labelColumn">Proposed Item</div>
+          <span>{{item.status}}</span>
+          <div ng-style="timerStyleComplete(item)"> This item is proposed, and not accepted yet. </div>-->
+        </span>
+        
+    </div>
+  </div><!--END Preparation Status Row-->
+           
+
+
+    <div class="d-flex col-9"><div class="contentColumn">
+
+<!-- ============================================================================================== -->
+
+<div ng-show="displayMode=='Agenda'">Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+    (available to anonymous users)
+                        <div ng-bind-html="htmlAgenda"></div>
+                </div>
+                <div ng-show="displayMode=='Minutes'">Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+    (available to anonymous users)
+                        <div ng-bind-html="htmlMinutes"> </div>
+                </div>
+                                <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
+                        <%@ include file="Meeting_Edit.jsp"%>
+                </div>
+                <div ng-show="displayMode=='General'">
+                    <%@ include file="Meeting_Settings.jsp"%>
+                    <%@ include file="Meeting_Overview.jsp"%>
+                    <%@ include file="Meeting_Times.jsp"%>
+                </div>
+
+                <div ng-show="displayMode=='Attendance'">
+                    <%@ include file="Meeting_Participants.jsp"%>
+                </div>
+                <div ng-show="displayMode=='Facilitate'">
+                    <%@ include file="Meeting_Facilitate.jsp"%>
+                </div>
+
+
 
 
 
 <!-- ============================================================================================== -->
 
 
-<div ng-show="displayMode=='General'">
-<%@include file="Meeting_Settings.jsp"%>
-</div>
-
-
-<div ng-show="displayMode=='Attendance'">
-<%@include file="Meeting_Participants.jsp"%>
-</div>    
-    
-
-<div ng-show="displayMode=='Times'">
-<%@include file="Meeting_Times.jsp"%>
-</div>
-
-
-<div ng-show="displayMode=='Status'">
-<%@include file="Meeting_Overview.jsp"%>
-</div>
-
-
-<div ng-show="displayMode=='Items'">
-<div ng-repeat="item in [selectedItem]">
-<%@include file="Meeting_Edit.jsp"%>
-</div>
-</div>
-
-
-<div ng-show="displayMode=='Facilitate'">
-<%@include file="Meeting_Facilitate.jsp"%>
-</div>
-
-
 
 <link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
 
-<div ng-show="displayMode=='Agenda'">
-    Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
-    (available to anonymous users)
-    <div class="well" ng-bind-html="htmlAgenda">
-    </div>
-</div>
-<div ng-show="displayMode=='Minutes'">
-    Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">
-    {{meeting.name}}</a>' 
-    (available to anonymous users)
-    <div class="well"> 
-    <div ng-bind-html="htmlMinutes"> </div>
-    </div>
-</div>
+                <div ng-show="meeting.agenda.length==0" class="guideVocal">This meeting does not have any agenda items.<br/> Use the <button class="btn btn-sm btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
+                </div>
+            
 
-    <div ng-show="meeting.agenda.length==0" class="guideVocal">
-      This meeting does not have any agenda items.<br/>
-      Use the <button class="btn btn-sm btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
-    </div>
-</td>
-</tr></table>
-
-<span>
-Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
-</span> 
 
    
-<span ng-show="meeting.state>=2">
+        <span ng-show="meeting.state>=2">
  elapsed duration: {{meeting.timerTotal|minutes}},
 <button ng-click="stopAgendaRunning()" ng-show="meeting.state==2"><i class="fa fa-clock-o"></i> Stop</button>
 </span>
@@ -439,14 +382,17 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
     
 
     <br/>
+
+
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
     <br/>
     <br/>
     <br/>
     <br/>
 
+        </div>
+        </div>
 </div>
-
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>

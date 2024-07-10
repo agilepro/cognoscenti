@@ -1,7 +1,17 @@
-      <div ng-hide="editMeetingDesc">
+
+
+
+        <div class="container">
+          <div class="accordion" id="accordionSettings">
+            <div class="accordion-item">
+              <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgSettings">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgSettings" aria-expanded="true" aria-controls="collapseMtgSettings"> Settings 
+                </button>
+              </h2>
+              <div id="collapseMtgSettings" class="accordion-collapse collapse show" aria-labelledby="mtgSettings" data-bs-parent="#accordionSettings">
+                <div class="accordion-body">
+
         <table class="table">
-          <col width="130px">
-          <col width="*">
           <tr>
             <td ng-click="editMeetingPart='name'" class="labelColumn">Name:</td>
             <td ng-hide="'name'==editMeetingPart" ng-dblclick="editMeetingPart='name'">
@@ -135,3 +145,7 @@
             <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
         </div>
     </div>
+</div>
+</div>
+</div>
+</div>

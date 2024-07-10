@@ -1,0 +1,46 @@
+<html>
+<body>
+<style>
+    .ta-editor.form-control.myform2-height  {
+        height: 200px;
+        min-height: 200px;
+    }
+    .spacey tr td {
+        padding:8px;
+    }
+    .clipping {
+        overflow: hidden;
+        text-overflow: clip; 
+        border-bottom:1px solid #EEEEEE;
+        border:1px solid gray;
+        height:200px;
+    }
+    .smallType {
+        font-size:10px;
+    }
+</style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Update'" 
+          ng-class="selectedTab=='Update'?'qqTabSelected':'qqTabUnselected'">
+    Learning Script
+    </span>
+  </div>
+</div>
+<div class="modal-body" style="min-height:400px">
+    <div ng-show="selectedTab=='Update'">
+    	<div ui-tinymce="tinymceOptions" ng-model="simDescript.vHtml" 
+             class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
+    </div>
+    Video: <input type="text" ng-model="learning.video" class="form-control" placeholder="Specify the video name">
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning btn-raised pull-left"  ng-show="">first button is strange</button>
+    <button class="btn btn-warning btn-raised pull-left" ng-click="saveAndClose()" ng-hide="unsaved==0">Save / Exit</button>
+    <button class="btn btn-warning btn-raised pull-left" ng-click="saveAndClose()" ng-show="unsaved==0">Save</button>
+</div>
+</body>
+</html>
+
+
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>

@@ -1,0 +1,99 @@
+
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="editMode='decision'"  
+          ng-class="editMode=='decision'?'qqTabSelected':'qqTabUnselected'">
+    Edit Decision
+    </span>
+    <span ng-click="editMode='details'"  
+          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
+    Details
+    </span>
+  </div>
+</div>
+<div class="modal-body" ng-show="editMode=='decision'">
+    <div style="margin-bottom:15px;">
+    	<div ui-tinymce="tinymceOptions" ng-model="htmlEditing" 
+             class="leafContent" style="min-height:200px;" ></div>
+    </div>
+    <div>
+       Labels:
+      <span class="dropdown" ng-repeat="role in allLabels">
+        <button class="dropdown-toggle labelButton" ng-click="toggleLabel(role)"
+           style="background-color:{{role.color}};"
+           ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+      </span>
+      <span>
+         <span class="dropdown">
+           <button class="btn btn-sm btn-primary btn-raised labelButton" 
+               type="button" 
+               id="menu1" 
+               data-toggle="dropdown"
+               title="Add Filter"
+               style="padding:5px 10px">
+               <i class="fa fa-plus"></i></button>         
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+               style="width:320px;left:-130px">
+             <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                     {{rolex.name}}</button>
+             </li>
+                 <div class="dropdown-divider" style="float:clear"></div>               
+                 <li role="presentation" style="float:right">
+                   <button role="menuitem" ng-click="openEditLabelsModal()" class="dropdown-item btn btn-sm btn-primary btn-raised">
+                       Add/Remove Labels</button>
+                 </li>
+           </ul>
+         </span>
+      </span>
+    </div>
+</div>
+<div class="modal-body" ng-show="editMode=='details'">
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="startdate">Created Date:</label>
+            <span datetime-picker ng-model="decision.timestamp" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="decision.timestamp>1000000" 
+                      datetime-picker ng-model="decision.timestamp" > 
+                    {{decision.timestamp|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="decision.timestamp<=1000000" datetime-picker 
+                      ng-model="decision.timestamp" > 
+                    not set </span>
+            </span> 
+        </div>
+        <div class="form-group">
+            <label for="startdate">Review Date:</label>
+            <span datetime-picker ng-model="decision.reviewDate" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="decision.reviewDate>1000000" 
+                      datetime-picker ng-model="decision.reviewDate" > 
+                    {{decision.reviewDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="decision.reviewDate<=1000000" datetime-picker 
+                      ng-model="decision.reviewDate" > 
+                    not set </span>
+            </span> 
+        </div>
+        <div class="form-group">
+            <label for="startdate">Review Completed:</label>
+            <button class="btn btn-primary" ng-click="advanceReviewDate()">Advance by 1 year</button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <button class="btn btn-primary btn-danger btn-raised" ng-click="deleteDecision()" ng-hide="decision.deleteMe">DELETE DECISION</button>
+        <p ng-show="decision.deleteMe">Click 'Save' to actually delete the decision</p>
+        <button class="btn btn-primary btn-warning btn-raised" ng-click="deleteCancel()" ng-show="decision.deleteMe">Cancel Delete</button>
+      </div>
+</div>
+    <div style="clear:both"></div>
+<div class="modal-footer">
+    <button ng-show="decision.num=='~new~'" class="btn btn-primary btn-raised"
+        type="button" ng-click="ok()">Create</button>
+    <button ng-hide="decision.num=='~new~'" class="btn btn-primary btn-raised"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>
+

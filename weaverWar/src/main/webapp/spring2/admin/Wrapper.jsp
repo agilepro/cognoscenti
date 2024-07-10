@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
     long renderStart = System.currentTimeMillis();
     ar.assertLoggedIn("Must be logged in for administration pages");
@@ -21,37 +21,57 @@
     
 %>
 <!-- BEGIN Wrapper.jsp Layout-->
-<html>
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
 
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
-    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
- 
-    <script src="<%=ar.baseURL%>jscript/common.js"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <link href="<%=ar.retPath%>bits/superAdminStyle.css" rel="styleSheet" type="text/css" media="screen" />
-    
-    <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce-ng.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/textAngular-sanitize.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+
+    <script src="<%=ar.baseURL%>new_assets/jscript/common.js"></script>
+    <link href="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.css" rel="stylesheet">
+
+    <!-- INCLUDE web fonts for icons -->
+    <link href="<%=ar.retPath%>new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+        data-semver="4.3.0" data-require="font-awesome@*" />
+    <link href="<%=ar.retPath%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+        
+  
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
+
+    <!--Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link href="<%=ar.retPath%>new_assets/css/superAdminStyle.css" rel="styleSheet" type="text/css" media="screen" />
+      <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
+
+
     <title>Administration Page</title>
     
     
@@ -113,13 +133,13 @@ myApp.filter('cdate', function() {
   <div class="bodyWrapper">
 
 <!-- Begin Top Navigation Area -->
-<div class="topNav">
+
 <%@ include file="WrapHeaderAdmin.jsp" %>
 </div>
 <!-- End Top Navigation Area -->
 
 <!-- Begin mainContent -->
-<div id="mainContent">
+<div id="mainContent" class="m-2">
 <jsp:include page="<%=wrappedJSP%>" />
 </div>
 <!-- End mainContent -->

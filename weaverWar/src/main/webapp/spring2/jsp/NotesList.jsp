@@ -477,7 +477,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <td>Last Update by:</td> 
                       <td>
                         <span class="dropdown">
-                            <span id="menu1" data-toggle="dropdown">
+                            <span id="menu_1" data-toggle="dropdown">
                             <img class="img-circle" src="<%=ar.retPath%>icon/{{rec.modUser.key}}.jpg" 
                                  style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
                             </span>
@@ -506,7 +506,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <td>
                         <span ng-repeat="person in rec.subscribers">
                           <span class="dropdown">
-                            <span id="menu1" data-toggle="dropdown">
+                            <span id="menu_2" data-toggle="dropdown">
                             <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                                  style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                             </span>

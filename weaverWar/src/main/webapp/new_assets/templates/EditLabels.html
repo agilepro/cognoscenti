@@ -1,0 +1,108 @@
+<style>
+spaceTable {
+
+}
+spaceTable tr {
+
+}
+spaceTable tr td {
+
+}
+.btn-sm {
+    margin: 2px;
+    padding: 2px;
+}
+</style>
+
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Existing'" 
+          ng-class="selectedTab=='Existing'?'qqTabSelected':'qqTabUnselected'">
+    Edit Labels
+    </span>
+    <span ng-click="selectedTab='Creating'" 
+          ng-class="selectedTab=='Creating'?'qqTabSelected':'qqTabUnselected'">
+    Create Label
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+   <div ng-show="selectedTab=='Existing'">
+        <div style="max-height:400px;overflow: auto">
+        <table class="spaceTable">
+            <tr>
+                <td style="width:200px;">Label</td>
+                <td style="width:80px;">Color</td>
+                <td style="width:100px;"></td>
+            </tr>
+            <tr ng-repeat="label in allLabels" ng-dblclick="label.isEdit=true;label.editedName=label.name">
+                <td ng-show="label.isEdit || label.isNew">
+                    <input type="text" ng-model="label.editedName" style="width:200px;"
+                        placeholder="Enter Label Name" class="form-control">
+                </td>
+                <td ng-hide="label.isEdit || label.isNew">
+                    <button style="background-color:{{label.color}};" class="labelButton"
+                        placeholder="Enter Label Name">{{label.name}}</button>
+                </td>
+                <td>
+                    <div class="dropdown" ng-show="label.isEdit || label.isNew">
+                        <button class="form-control dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{label.color}};">
+                        {{label.color}} <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                            <li role="presentation" ng-repeat="color in colors">
+                                <a role="menuitem" style="background-color:{{color}};"
+                                href="#"  ng-click="label.color=color">{{color}}</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown" ng-hide="label.isEdit || label.isNew">
+                        {{label.color}}
+                    </div>
+                </td>
+                <td ng-hide="label.isEdit || label.isNew">
+                    <button class="btn btn-sm btn-primary btn-raised" 
+                        ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
+                </td>
+                <td ng-show="label.isEdit">
+                    <button class="btn btn-sm btn-warning btn-raised" ng-click="updateLabel(label)">Save</button>
+                </td>
+                <td ng-show="label.isEdit">
+                    <button class="btn btn-sm btn-warning btn-raised" ng-click="deleteLabel(label)">Delete</button>
+                </td>
+                <td ng-hide="label.isEdit">
+                    
+                </td>
+                <td ng-show="label.isNew">
+                    <button class="btn btn-sm btn-primary btn-raised" ng-click="updateLabel(label)">Create</button>
+                </td>
+            </tr>
+        </table>
+        </div>   </div>
+   <div ng-show="selectedTab=='Creating'">
+        <div>
+          <label>Name:</label>
+          <input ng-model="newLabel.editedName" class="form-control"></input>
+        </div>
+        <div>
+          <label>Color: <span style="color:red">{{nameMessage()}}</label>
+            <div class="dropdown">
+                <button class="form-control dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{newLabel.color}};">
+                {{newLabel.color}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                    <li role="presentation" ng-repeat="color in colors">
+                        <a role="menuitem" style="background-color:{{color}};"
+                        href="#"  ng-click="newLabel.color=color">{{color}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div>
+        </div>
+   </div>
+   <div style="clear: both"></div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="exitPopup()">
+        Exit</button>
+    <button class="btn btn-primary btn-raised" ng-click="createLabel()" ng-show="selectedTab=='Creating'">
+         Create</button>
+</div>

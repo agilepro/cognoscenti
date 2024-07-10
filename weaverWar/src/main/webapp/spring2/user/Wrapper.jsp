@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
@@ -77,7 +77,7 @@
     %>
 
 <!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->
-<html>
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -86,49 +86,49 @@
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
-    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/jquery.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
+    <link
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
-    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
-    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+    <script src='<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce.min.js'></script>
+    <script src='<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce-ng.js'></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/textAngular-sanitize.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
 
-    <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <script src="<%=ar.baseURL%>new_assets/jscript/common.js"></script>
+    <link href="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design -->
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-
-    <!-- INCLUDE web fonts -->
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+    <!-- INCLUDE web fonts for icons -->
+    <link href="<%=ar.retPath%>new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+      <link href="<%=ar.retPath%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+  <!-- Bootstrap 5.0-->
 
     <!-- Date and Time Picker -->
-    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
-    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
-    <script src="<%=ar.retPath%>bits/moment.js"></script>
+
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+    
 
  
     <title><% ar.writeHtml(title); %></title>
@@ -139,11 +139,11 @@ $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
     /* INIT Bootstrap Material Design */
-    $.material.init();
+    //$.material.init();
 });
 
 //Must initialize the app with all the right packages here, before the 
-//individual pages create the controlles
+//individual pages create the controls
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
 myApp.filter('cdate', function() {
@@ -212,31 +212,39 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
 <!-- Begin AppBar -->
 <%@ include file="AppBar.jsp" %>
 <!-- End AppBar -->
-
-
-<div class="container-fluid">
+<div class="container-fluid px-0" ng-cloak>
   <div class="row">
+      <!--Sidebar Column -->
+      <div class="d-flex">
+        <%@ include file="SideBar_new.jsp" %>
 
 
     <!-- Begin mainContent -->
-    <div class="main-content">
+    <div class="col-10 col-lg-11 main-content">
 
-      <!-- BEGIN Breadcrumbs -->
-      <div class="mainBeadCrumbs">
-        <span class="page-name"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></span>
-        &gt;
-        <span id="mainPageTitle">Untitled Page</span>
-      </div>
+      <!-- BEGIN Title and Breadcrumbs -->
+
+      <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb px-3">
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
+            User: <% ar.writeHtml(pageUserName); %></a></li>
+            &nbsp; &gt; &nbsp;
+        
+        </ol>
+        </nav>
       
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
 
+
+
+
+<h1 class="page-name px-3" id="mainPageTitle"></h1>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
       
-        <div style="clear:both"></div>
+        
 
       <% if(ar.isSuperAdmin()) { %>
 
@@ -274,7 +282,7 @@ window.setInterval(function() {
 
 </script>
 
-<script src="<%=ar.baseURL%>jscript/translation.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/translation.js"></script>
 
 
 </body>

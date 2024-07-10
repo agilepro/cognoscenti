@@ -1,0 +1,70 @@
+
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Settings'" 
+          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
+    Agenda Item Settings
+    </span>
+    <span ng-click="selectedTab='Description'"  
+          ng-class="selectedTab=='Description'?'qqTabSelected':'qqTabUnselected'">
+    Description
+    </span>
+  </div>
+</div>
+<div class="modal-body" style="min-height:300px">
+    <div ng-show="selectedTab=='Settings'">
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="labels">Name of Agenda Item:</label>
+            <input ng-model="agendaItem.subject"  class="form-control" style="max-width:400px;"
+                       placeholder="Enter Agenda Item Name"/>
+        </div>
+        <div class="form-inline form-group">
+                <input type="checkbox"  ng-model="agendaItem.isSpacer"
+                         class="form-control" style="width:50px;"/>
+                This is a break time
+        </div>
+        <table><tr><td>
+        <div class="form-group">
+            <label for="labels">Planned Duration: (minutes)</label>
+            <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"/>
+        </div>
+        </td><td>&nbsp;
+        </td><td>
+        <div class="form-group">
+            <label for="labels">Actual Duration: (minutes)</label>
+            <input ng-model="agendaItem.previousElapsed"  class="form-control" 
+                   style="width:100px;" ng-hide="agendaItem.timerRunning"/>
+            <span class="form-control" style="width:100px;color:lightgray" 
+                  ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}</span>
+        </div>
+        </td></tr></table>
+      </div>
+      <div class="col-sm-12 col-md-6">
+       <div class="form-group">
+            <label for="labels">Presenter:</label>
+            <tags-input ng-model="agendaItem.presenterList"
+                      placeholder="Enter user name or id"
+                      display-property="name" key-property="uid"
+                      on-tag-added="updatePresenters()" 
+                      on-tag-removed="updatePresenters()">
+                <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
+            </tags-input>
+        </div>
+        <div class="form-inline form-group">
+                <input type="checkbox"  ng-model="agendaItem.proposed"
+                         class="form-control" style="width:50px;"/>
+                Proposed (Not Accepted Yet)
+        </div>
+      </div>
+    </div>
+    <div ng-show="selectedTab=='Description'">
+        <div ng-model="agendaItem.descriptionHtml" ui-tinymce="tinymceOptions"></div>
+    </div>
+            
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-raised" type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="cancel()">Cancel</button>
+</div>

@@ -116,7 +116,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<div>
+<div ng-cloak>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 

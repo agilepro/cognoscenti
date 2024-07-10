@@ -1,0 +1,62 @@
+
+
+
+<div class="modal fade" id="CreateActionItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="CreateActionItemLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="card col-md-12 align-top">
+             <div class="card-header border-1">Create New Action Item</div>
+            <div class="card-body">
+              <div class="form-group">
+                <div>
+                  <label>Synopsis: this is it?</label>
+                  <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                </div>
+                <div>
+                  <label class="gridTableColummHeader">Assignee:</label>
+                    <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id" 
+                                display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                        <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                    </tags-input>
+                </div>
+                <div>
+                  <label class="gridTableColummHeader">Description:</label>
+                      <textarea type="text" ng-model="newGoal.description" class="form-control markDownEditor"
+                          style="width:450px;height:100px" placeholder="Details"></textarea>
+                </div>
+                <div>
+                  <label class="gridTableColummHeader">Due Date:</label>
+                      <span datetime-picker ng-model="newGoal.dueDate"  
+                          class="form-control" style="max-width:300px;height:25px">
+                          {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                      </span> 
+                      <!--input type="text"
+                          style="width:150;margin-top:10px;"
+                          class="form-control"
+                          datepicker-popup="dd-MMMM-yyyy"
+                          ng-model="dummyDate1"
+                          is-open="datePickOpen1"
+                          min-date="minDate"
+                          datepicker-options="datePickOptions"
+                          date-disabled="datePickDisable(date, mode)"
+                          ng-required="true"
+                          ng-click="openDatePicker1($event)"
+                          close-text="Close"/-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="me-auto btn btn-danger"  data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="createActionItem()">Create Action Item</button>
+      </div>
+    </div>
+  </div>
+        </div><!--END Create Action Item Modal-->

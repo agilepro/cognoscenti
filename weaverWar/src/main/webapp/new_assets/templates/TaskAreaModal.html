@@ -1,0 +1,61 @@
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+    Edit Task Area
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group" 
+         title="Name appears in places where action items are grouped into areas.">
+      <label for="labels">Name:</label>
+      <input ng-model="taskArea.name" class="form-control" placeholder="Enter Displayed Name"/>
+    </div>
+    <div class="form-group" 
+         title="Simple Red-Yellow-Green assessment of the situation.">
+      <label for="labels">R-Y-G:</label>
+      <div>
+          <img src="../../../assets/goalstate/red_off.png" ng-hide="taskArea.prospects=='bad'"
+               title="Red: In trouble" ng-click="changeProspect('bad')">
+          <img src="../../../assets/goalstate/red_on.png"  ng-show="taskArea.prospects=='bad'"
+               title="Red: In trouble" >
+          <img src="../../../assets/goalstate/yellow_off.png" ng-hide="taskArea.prospects=='ok'"
+               title="Yellow: Warning" ng-click="changeProspect('ok')">
+          <img src="../../../assets/goalstate/yellow_on.png"  ng-show="taskArea.prospects=='ok'"
+               title="Yellow: Warning" >
+          <img src="../../../assets/goalstate/green_off.png" ng-hide="taskArea.prospects=='good'"
+               title="Green: Good shape" ng-click="changeProspect('good')">
+          <img src="../../../assets/goalstate/green_on.png"  ng-show="taskArea.prospects=='good'"
+               title="Green: Good shape">
+       </div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group" 
+         title="Assignee is the person who is tracking status on items assigned to this area">
+      <label for="labels">Assignee:</label>
+      <tags-input ng-model="taskArea.assignees" placeholder="Enter user name or id" display-property="name" key-property="uid">
+          <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+      </tags-input>
+    </div>
+    
+    <div class="form-group" 
+         title="The status is text describing the current situation for all the actions in this area.">
+      <label for="labels">Status:</label>
+      <textarea ng-model="taskArea.status" class="form-control" placeholder="Current status"></textarea>
+    </div>
+  </div>
+  
+  <div style="clear:both"></div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning btn-raised pull-left" ng-click="cancel()">
+        Cancel</button>
+    <button ng-show="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+        Create</button>
+    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+        Save</button>
+</div>
+

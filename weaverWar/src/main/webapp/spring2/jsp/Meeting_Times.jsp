@@ -1,5 +1,12 @@
+<div class="accordion" id="accordionstartTime">
+  <div class="accordion-item collapsed">
+    <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgstartTime">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgstartTime" aria-expanded="true" aria-controls="collapseMtgstartTime"> Scheduled Start Time 
+      </button>
+    </h2>
+    <div id="collapseMtgstartTime" class="accordion-collapse collapse" aria-labelledby="mtgstartTime" data-bs-parent="#accordionstartTime">
+      <div class="accordion-body">
     <div class="well">
-      <span class="h3">Scheduled Time</span>
       <button ng-hide="'startTime'==editMeetingPart" 
           ng-click="editMeetingPart='startTime'">Edit</button>
     
@@ -48,7 +55,7 @@
     </div>
 
     <hr/>
-    <h3>Availability for Proposed Times</h3>
+    <h3 class="h5">Availability for Proposed Times</h3>
 
     <table class="table">
     <tr>
@@ -161,4 +168,7 @@
         or <button ng-click="showTimeAdder=false" 
                  class="btn btn-warning btn-raised">Cancel</button>
     </div>
-    
+      </div>
+    </div>
+</div>
+</div>
