@@ -108,12 +108,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newProfile.timeZone = newTimeZone;
         $scope.updateServer(newProfile);
     }
-    $scope.updateServer = function(newProfile) {
+    $scope.updateServer = function(newProfile, refresh) {
         console.log("UPDATE PROFILE WITH", newProfile);
         var postURL = "updateProfile.json";
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
             $scope.userInfo = data;
+            console.log("REFRESH is ", refresh);
+            if (refresh) {
+                window.location.reload();
+            }
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -146,17 +150,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateServer(newProfile);
         $scope.editField="";
     }
-    $scope.updateServer = function(newProfile) {
-        console.log("UPDATE PROFILE WITH", newProfile);
-        var postURL = "updateProfile.json";
-        $http.post(postURL, JSON.stringify(newProfile))
-        .success( function(data) {
-            $scope.userInfo = data;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
 
     $scope.queryMailStatus = function() {
         var postURL = "MailProblemsUser.json";
@@ -176,6 +169,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newProfile.preferred = email;
         $scope.updateServer(newProfile);
         $scope.editField='';
+    }
+    
+    $scope.switchToOldUI = function() {
+        var newProfile = {};
+        newProfile.useNewUI = false;
+        $scope.updateServer(newProfile, true);
     }
 
     
@@ -432,38 +431,6 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
-        <!--
-        <tr>
-            <td class="firstcol">Phone:</td>
-            <td>
-                <input type="text" ng-model="userCache.facilitator.phone" ng-blur="updateFacilitator()"/> 
-                
-            </td>
-            <td ng-hide="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
-                <button class="btn" >?</button>
-            </td>
-            <td ng-show="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
-              <div class="guideVocal thinnerGuide">
-                A phone number of people to contact you at
-              </div>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Region:</td>
-            <td>
-                <input type="text" ng-model="userCache.facilitator.region" ng-blur="updateFacilitator()"/> 
-                
-            </td>
-            <td ng-hide="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
-                <button class="btn" >?</button>
-            </td>
-            <td ng-show="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
-              <div class="guideVocal thinnerGuide">
-                Your region and how you might access meetings
-              </div>
-            </td>
-        </tr>
-        -->
 <%if (viewingSelf){ %>
 
     <%if (ar.isSuperAdmin()){ %>
@@ -474,6 +441,19 @@ if (ar.isLoggedIn()) { %>
             </td>
             <td></td>
             <td></td>
+        </tr>
+        <tr>
+            <td class="firstcol">UI Mode:</td>
+            <td>You are currently viewing the NEW user interface<br/>
+                <button ng-click="switchToOldUI()"/>Switch back to OLD UI</button></td>
+            <td ng-hide="helpUI" ng-click="helpUI=!helpUI">
+                <button class="btn">?</button>
+            </td>
+            <td ng-show="helpUI" ng-click="helpUI=!helpUI">
+              <div class="guideVocal thinnerGuide">
+                Click this to switch to the OLDER tried and true UI
+              </div>
+            </td>
         </tr>
     <% } %>
 
@@ -506,76 +486,6 @@ if (ar.isLoggedIn()) { %>
             </td>
         </tr>
     </table>
-    
-    <!--
-    <div>
-        <button class="btn btn-default btn-raised" ng-click="queryMailStatus()">Check Email Status</button>
-    </div>
-    <div ng-show="mailBlockers" class="well">
-        <h2>Mail Your Provider Refused to Deliver</h2>
-        
-        <div ng-show="mailBlockers.length==0">No email blockers found</div>
-        
-        <table class="table" ng-hide="mailBlockers.length==0" style="max-width:1000px">
-            <tr>
-                <td>Blocked</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailBlockers">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-
-    <div ng-show="mailBlockers" class="well">
-        <h2>Mail Bounced due to Address Problems</h2>
-        
-        <div ng-show="mailBounces.length==0">No bounces found</div>
-        
-        <table class="table" ng-hide="mailBounces.length==0" style="max-width:1000px">
-            <tr>
-                <td>Bounced</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailBounces">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-    <div ng-show="mailSpams" class="well">
-        <h2>Mail Marked by Receiver as Spam</h2>
-        
-        <div ng-show="mailSpams.length==0">No messages marked as spam</div>
-        
-        <table class="table" ng-hide="mailSpams.length==0" style="max-width:1000px">
-            <tr>
-                <td>Spammed</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailSpams">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-    -->
     
     
     
