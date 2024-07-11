@@ -108,12 +108,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newProfile.timeZone = newTimeZone;
         $scope.updateServer(newProfile);
     }
-    $scope.updateServer = function(newProfile) {
+    $scope.updateServer = function(newProfile, refresh) {
         console.log("UPDATE PROFILE WITH", newProfile);
         var postURL = "updateProfile.json";
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
             $scope.userInfo = data;
+            console.log("REFRESH is ", refresh);
+            if (refresh) {
+                window.location.reload();
+            }
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -146,17 +150,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateServer(newProfile);
         $scope.editField="";
     }
-    $scope.updateServer = function(newProfile) {
-        console.log("UPDATE PROFILE WITH", newProfile);
-        var postURL = "updateProfile.json";
-        $http.post(postURL, JSON.stringify(newProfile))
-        .success( function(data) {
-            $scope.userInfo = data;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    }
 
     $scope.queryMailStatus = function() {
         var postURL = "MailProblemsUser.json";
@@ -177,40 +170,63 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateServer(newProfile);
         $scope.editField='';
     }
+    
+    $scope.switchToOldUI = function() {
+        var newProfile = {};
+        newProfile.useNewUI = false;
+        $scope.updateServer(newProfile, true);
+    }
 
     
 });
 </script>
 
-
+<style>
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
+.secondcol {
+    width:600px;
+}
+.thirdcol {
+    width:400px;
+}
+.thinnerGuide {
+    margin:2px;
+    width:400px;
+}
+.canClick:hover {
+    background-color:#ECB6F9;
+    cursor:pointer;
+}
+</style>
 
 
 <div class="userPageContents" ng-cloak>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-                <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
-                    <a class="nav-link" ng-click="goToEdit()" >
+    
+      <a class="btn btn-default btn-raised" ng-click="goToEdit()" >
                 <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                Update Settings</a></span>
-                <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" ng-click="openSendEmail()" >
-                Send Email to this User</a></span>
-                <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="UserHome.htm" >
-                Show Home</a></span>
-            </div>
-            <div class="d-flex col-9">
-                <div class="contentColumn">
-                <table class="spacey table">
-                    <tr ng-show="userInfo.disabled">
-                        <td class="firstcol">Status:</td>
-                        <td>
-                            <span style="color:red">DISABLED</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="firstcol canClick" ng-click="editField='name'">Full Name:</td>
+                Update Settings</a>
+      <a class="btn btn-default btn-raised" ng-click="openSendEmail()" >
+                Send Email to this User</a>
+      <a class="btn btn-default btn-raised" href="UserHome.htm" >
+                Show Home</a>
+
+    <table class="spacey table">
+        <tr ng-show="userInfo.disabled">
+            <td class="firstcol">Status:</td>
+            <td><span style="color:red">DISABLED</span></td>
+        </tr>
+        <tr>
+            <td class="firstcol canClick" ng-click="editField='name'">Full Name:</td>
             <td class="secondcol" ng-dblclick="editField='name'">
               <div ng-hide="editField=='name'">{{userInfo.name}}</div>
               <div ng-show="editField=='name'">
@@ -415,38 +431,6 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
-        <!--
-        <tr>
-            <td class="firstcol">Phone:</td>
-            <td>
-                <input type="text" ng-model="userCache.facilitator.phone" ng-blur="updateFacilitator()"/> 
-                
-            </td>
-            <td ng-hide="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
-                <button class="btn" >?</button>
-            </td>
-            <td ng-show="helpFacilitatorPhone" ng-click="helpFacilitatorPhone=!helpFacilitatorPhone">
-              <div class="guideVocal thinnerGuide">
-                A phone number of people to contact you at
-              </div>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Region:</td>
-            <td>
-                <input type="text" ng-model="userCache.facilitator.region" ng-blur="updateFacilitator()"/> 
-                
-            </td>
-            <td ng-hide="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
-                <button class="btn" >?</button>
-            </td>
-            <td ng-show="helpFacilitatorRegion" ng-click="helpFacilitatorRegion=!helpFacilitatorRegion">
-              <div class="guideVocal thinnerGuide">
-                Your region and how you might access meetings
-              </div>
-            </td>
-        </tr>
-        -->
 <%if (viewingSelf){ %>
 
     <%if (ar.isSuperAdmin()){ %>
@@ -460,15 +444,14 @@ if (ar.isLoggedIn()) { %>
         </tr>
         <tr>
             <td class="firstcol">UI Mode:</td>
-            <td>
-                You are currently viewing the NEW user interface<br/>
-                <button ng-click="switchToOldUI()">Switch to Old UI</button></td>
+            <td>You are currently viewing the NEW user interface<br/>
+                <button ng-click="switchToOldUI()"/>Switch back to OLD UI</button></td>
             <td ng-hide="helpUI" ng-click="helpUI=!helpUI">
                 <button class="btn">?</button>
             </td>
             <td ng-show="helpUI" ng-click="helpUI=!helpUI">
               <div class="guideVocal thinnerGuide">
-                Click this to switch to the Old UI
+                Click this to switch to the OLDER tried and true UI
               </div>
             </td>
         </tr>
@@ -502,85 +485,13 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
-        
-                </table>
-    
-    
-    <!--
-    <div>
-        <button class="btn btn-default btn-raised" ng-click="queryMailStatus()">Check Email Status</button>
-    </div>
-    <div ng-show="mailBlockers" class="well">
-        <h2>Mail Your Provider Refused to Deliver</h2>
-        
-        <div ng-show="mailBlockers.length==0">No email blockers found</div>
-        
-        <table class="table" ng-hide="mailBlockers.length==0" style="max-width:1000px">
-            <tr>
-                <td>Blocked</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailBlockers">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-
-    <div ng-show="mailBlockers" class="well">
-        <h2>Mail Bounced due to Address Problems</h2>
-        
-        <div ng-show="mailBounces.length==0">No bounces found</div>
-        
-        <table class="table" ng-hide="mailBounces.length==0" style="max-width:1000px">
-            <tr>
-                <td>Bounced</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailBounces">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-    <div ng-show="mailSpams" class="well">
-        <h2>Mail Marked by Receiver as Spam</h2>
-        
-        <div ng-show="mailSpams.length==0">No messages marked as spam</div>
-        
-        <table class="table" ng-hide="mailSpams.length==0" style="max-width:1000px">
-            <tr>
-                <td>Spammed</td>
-                <td>Email</td>
-                <td>Reason</td>
-                <td>Status</td>
-            </tr>
-            <tr ng-repeat="block in mailSpams">
-                <td>{{block.created*1000|date}}</td>
-                <td>{{block.email}}</td>
-                <td><div style="max-width:600px;">{{block.reason}}</div></td>
-                <td>{{block.status}}</td>
-            </tr>
-        </table>
-    
-    </div>
-    -->
+    </table>
     
     
     
 <%if (viewingSelf){ %>
-
-    <table class="spacey table">
+    <hr/>
+    <table class="spacey">
         <tr>
             <td class="firstcol">Password:</td>
             <td><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></td>
@@ -588,7 +499,7 @@ if (ar.isLoggedIn()) { %>
     </table>
 <% } %>
 <%} %>
-                </div>
+
 </div>
 
 <script src="<%=ar.retPath%>templates/EmailModal.js"></script>
