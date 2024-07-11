@@ -130,21 +130,23 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div style="margin-bottom:30px;">
-        <a href="History.htm?start=<%=start-size%>" title="Back 50 records">
+    <div class="container-fluid m-2">
+        <div class="row">
+            <div class="d-flex col-12">
+<span class="btn">
+        <a class="btn-comment btn-secondary" href="History.htm?start=<%=start-size%>" title="Back 50 records">
           <i class="fa  fa-arrow-circle-left"></i></a>
         <%=start%> - <%=endRecord%> 
-        <a href="History.htm?start=<%=start+size%>" title="Forward 50 records">
+        <a class="btn-comment btn-secondary" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
           <i class="fa  fa-arrow-circle-right"></i></a>
-    </div>
-
+</span>
     <table>
 
         <tr ng-repeat="hist in getHistory()"  >
             <td class="projectStreamIcons" style="padding-bottom:20px;">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
-                  <img class="img-circle" 
+                  <img class="img-circle pe-2" 
                      ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg" 
                      style="width:50px;height:50px" 
                      title="{{hist.responsible.name}} - {{hist.responsible.uid}}">

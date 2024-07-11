@@ -74,24 +74,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="" ng-click="createPdf()">Export PDF</a></li>
-        </ul>
-      </span>
-    </div>
-
-
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link "  role="menuitem" tabindex="-1"
+            href="" ng-click="createPdf()">Export PDF</a>
+        </span>
+        </div>
+        <div class="d-flex col-9"><div class="contentColumn">
     <form name="exportPdfFrom" id="exportPdfFrom"  action="pdf/page.pdf"  method="get">
         <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-        <input type="submit" class="btn btn-primary btn-raised" value="Export PDF" />
+        
 
         <table class="table">
-        <tr><td>Decisions : </td>
+        <tr><td width="75%">Decisions : </td>
             <td><input type="checkbox" checked="checked" name="decisions"  value="decisions"/></td></tr>
         <tr><td>Attachments : </td>
             <td><input type="checkbox" checked="checked" name="attachments"  value="attachments"/></td></tr>
@@ -104,7 +100,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr><td>Debug Lines : </td>
             <td><input type="checkbox" name="debugLines"  value="debugLines"/></td></tr>
         </table>
-
+<hr/>
         <div class="generalHeading">Discussion Topics :</div>
         <table border="0px solid gray" class="table">
             <thead>
@@ -135,7 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
           %>
         </table>
-        
+        <hr/>
         
         <div class="generalHeading">Meetings :</div>
         <table border="0px solid gray" class="table">
@@ -162,5 +158,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           %>
         </table>
     </form>
-
+        </div>
+    </div>
 </div>

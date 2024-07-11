@@ -221,8 +221,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
 <div class="container-fluid">
 
-        <div class="row">
-            <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
+    <div class="row">
+        <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
 <!--Setup Accordion-->
 <div class="accordion" id="accordionSetup">
     <div class="accordion-item">
@@ -326,7 +326,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
         </span>
         
     </div>
-  </div><!--END Preparation Status Row-->
+        </div><!--END Preparation Status Row-->
            
 
 
@@ -338,13 +338,12 @@ embeddedData.canUpdate = <%=canUpdate%>;
     (available to anonymous users)
                         <div ng-bind-html="htmlAgenda"></div>
                 </div>
-                <div ng-show="displayMode=='Minutes'">Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+<div ng-show="displayMode=='Minutes'">Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
     (available to anonymous users)
                         <div ng-bind-html="htmlMinutes"> </div>
                 </div>
-                                <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
-                        <%@ include file="Meeting_Edit.jsp"%>
-                </div>
+
+
                 <div ng-show="displayMode=='General'">
                     <%@ include file="Meeting_Settings.jsp"%>
                     <%@ include file="Meeting_Overview.jsp"%>
@@ -357,7 +356,9 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 <div ng-show="displayMode=='Facilitate'">
                     <%@ include file="Meeting_Facilitate.jsp"%>
                 </div>
-
+                <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
+                        <%@ include file="Meeting_Edit.jsp"%>
+                </div>
 
 
 
@@ -392,7 +393,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
         </div>
         </div>
-</div>
+    </div>
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>

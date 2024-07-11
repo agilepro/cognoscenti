@@ -124,19 +124,6 @@ myApp.controller('myCtrl', function($scope, $http) {
 </script>
 
 
-<style>
-.spacey {
-    max-width:600px;
-}
-.spacey tr td {
-    padding:3px;
-}
-.firstcol {
-    width:130px;
-}
-</style>
-
-
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>

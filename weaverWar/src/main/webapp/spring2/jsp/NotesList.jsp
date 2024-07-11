@@ -339,99 +339,55 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+      
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
+                </span>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()">
-              Create New Topic</a>
-          </li>
-
-          <li role="presentation"><a role="menuitem" href="SendNote.htm">
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
               Send Email</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="PDFExport.htm">
-              Create PDF</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
-              Search All Topics </a>
-          </li>
-        </ul>
-      </span>
-     </div>
-     
-    <div class="well">
-        Filter <input ng-model="filter"> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizDel">
-            Deleted</span> &nbsp;
-        <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="labelButton" ng-click="toggleLabel(role)"
-               style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>
-        <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
-                       title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" >
+              Create PDF</a>
+        </span>
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >  
+              Search All Topics </a>
+        </span>
+      </div>
+      <div class="d-flex col-9"><div class="contentColumn">
+     
+        <div class="well">Filter <input ng-model="filter"> &nbsp;
+            <span class="dropdown" ng-repeat="role in allLabelFilters()">
+                <button class="labelButton" ng-click="toggleLabel(role)"
+                   style="background-color:{{role.color}};"
+                   ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+            </span>
+            <span class="dropdown">
+               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
+                       type="button" id="menu1" data-toggle="dropdown"
+                     
+                       title="Add Filter by Label">
+                    <i class="fa fa-filter"></i></button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                   style="width:320px;left:-130px">
+               style="width:320px;left:-130px">
                  <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
                      <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
                      ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                          {{rolex.name}}</button>
                  </li>
                </ul>
-             </span>
-        </span>
-    </div>
+            </span> &nbsp;
+            <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+            <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+        </div>
      
-     
-    <style>
-    .regularTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:#F8EEEE;
-    }
-    .draftTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:yellow;
-    }
-    .trashTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:pink;
-    }
-    .infoRow {
-        min-height:35px;
-        padding:5px;
-    }
-    .infoRow td {
-        padding:5px 10px;
-    }
-
-    </style>
 
     <div style="height:20px;"></div>
-
-    <% if (isMember) { %>
-        <div>
-            <button class="btn btn-primary btn-raised" ng-click="openTopicCreator()">
-                <i class="fa fa-plus"></i> Create New Topic
-            </button>
-        </div>
-    <% } %>
     
-        <div ng-repeat="rec in getRows()">
+        <div class=" my-3" ng-repeat="rec in getRows()">
             <div class="{{getTopicStyle(rec)}}">
                 <div id="headline" >
                   <span class="dropdown">

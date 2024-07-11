@@ -157,10 +157,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             return "background-color:yellow";
         }
         if (val<=1) {
-            return "background-color:white";
+            return "background-color:lightblue";
         }
         if (val==2) {
-            return "background-color:lightgreen";
+            return "background-color:lightgray";
         }
         if (val>2) {
             return "background-color:gray";
@@ -178,27 +178,17 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Create a new meeting record"
-              href="MeetingCreate.htm" ><i class="fa fa-plus"></i>Create Meeting</a></li>
+              href="MeetingCreate.htm" ><i class="fa fa-plus"></i> Create Meeting</a></span>
           
-        </ul>
-      </span>
 </div>
 
-<style>
-.centerCell {
-    align-items:center;
-    text-align:center;
-}
-</style>
 
-
+<div class="d-flex col-9"><div class="contentColumn">
     <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
             <th width="200px">Meeting</th>

@@ -121,27 +121,23 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="EmailCreated.htm">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
               Email Prepared</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="EmailSent.htm">
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
               Email Sent</a>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="SendNote.htm">
+            </span>
+          <hr/>
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm">
               Create Email</a>
-          </li>
-        </ul>
-      </span>
+          </span>
     </div>
     
-    <div>
-        Filter: <input ng-model="filter">
+    <div class="d-flex col-9"><div class="contentColumn">
+        <div class="well">Filter: <input ng-model="filter">
     </div>
     <div style="height:20px;"></div>
 
@@ -173,7 +169,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             <td>{{stateName(rec.state)}}</td>
             <td ng-show="rec.state<=1">
               <a role="menuitem" tabindex="-1" title="Delete Email" href="#" ng-click="deleteEmail(rec)">
-                <button type="button" name="delete" class='btn btn-warning'>
+                <button type="button" name="delete" class="btn-sm btn-comment bg-danger-subtle text-danger">
                     <span class="fa fa-trash"></span>
                 </button>
               </a>

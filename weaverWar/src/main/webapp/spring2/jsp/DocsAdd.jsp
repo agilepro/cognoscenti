@@ -46,7 +46,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-
+<div class="container-fluid">
+    <div class="row">
 <% if (userReadOnly) { %>
 
 <div class="guideVocal" style="margin-top:80px">
@@ -73,39 +74,34 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% } else { %>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Add Document
-        </div>
-    </div>
 
     <table>
 
     <tr>
-        <td colspan="3" class="linkWizardHeading">How do you want to attach the file?:</td>
+        <td colspan="3" class=" p-3 h5 linkWizardHeading">How do you want to attach the file?:</td>
     </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
+    <tr>
+        <td class="px-5 py-1">
             <button class="btn btn-primary btn-raised" onClick="location.href='DocsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
-        <td style="padding:15px">
+        <td class="py-1">
             <p>Take files from your local disk, and using your browser upload them to the workspace.</p>
         </td>
     </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
+    <tr>
+        <td class="px-5 py-1">
             <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
         </td>
-        <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
+        <td class="py-1"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
                but instead will provide an easy way for other users to access the web page in their browser.</p></td>
     </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
+    <tr>
+        <td class="px-5 py-1">
             <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
         </td>
-        <td style="padding:15px">
+        <td class="py-1">
             <p>You can either copy or move documents, topics, action items, or meetings from another workspace to this one.
             </p>
         </td>

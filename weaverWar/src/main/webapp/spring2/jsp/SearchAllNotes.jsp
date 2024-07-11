@@ -81,17 +81,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="clearResults()">Clear Results</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link">Clear Results</a></span>
+        </div>
 
+
+    <div class="d-flex col-9"><div class="contentColumn">
     <table>
         <tr >
             <td class="gridTableColummHeader">Search For:</td>
@@ -145,6 +142,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
     </table>
 
+    </div>
 
-</div>
 <!-- MAIN CONTENT SECTION END -->

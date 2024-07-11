@@ -344,42 +344,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
 <% if (canUpdate) { %>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="RoleManagement.htm">
-              <span class="fa fa-group"></span> Manage Roles</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="RoleInvite.htm">
-              <span class="fa fa-phone"></span> Invite Users</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="MultiInvite.htm">
-              <span class="fa fa-phone"></span> Multi-Person Invite</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
-              <span class="fa fa-plus-square"></span> Create New Role</a></li>
-        </ul>
-      </span>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+
+      <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleManagement.htm">
+              <span class="fa fa-group"></span> &nbsp;Manage Roles</a></span>
+
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+              <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
+
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
+              <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite</a></span>
+          <hr/>
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+              <span class="fa fa-plus-square"></span> &nbsp;Create New Role</a></span>
     </div>
 <% } %>
 
-    <style>
-    .spacey tr td{
-        padding: 8px;
-    }
-    .spacey tr:hover {
-        background-color:lightgrey;
-    }
-    .spacey {
-        width: 100%;
-    }
-    .updateStyle {
-        padding:5px;
-        color:grey;
-        border-radius:15px;
-        font-size:10px;
-    }
-    </style>
+<div class="d-flex col-9"><div class="contentColumn">
     
 <% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p>
 <% } %>
@@ -387,25 +370,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <tr ng-repeat="role in allRoles">
             <td>
 <% if (canUpdate) { %>
-              <div class="dropdown">
+              <div class="nav-item dropdown">
                 <button class="dropdown-toggle specCaretBtn"
-                        type="button" id="menu4" data-toggle="dropdown">
-                    <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu4">
-                  <li role="presentation"><a role="menuitem" 
+                        type="button" id="roleMembers" data-toggle="dropdown">
+                    </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="roleMembers">
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       ng-click="openRoleModal(role)">
                       <span class="fa fa-edit"></span> Edit All Players </a></li>
-                  <li role="presentation"><a role="menuitem" 
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       href="RoleDefine.htm?role={{role.name}}">
                       <span class="fa fa-street-view"></span> Define Role </a></li>
-                  <li role="presentation"><a role="menuitem" 
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       ng-click="goNomination(role)">
                       <span class="fa fa-flag-o"></span> Role Elections </a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       href="MultiInvite.htm?role={{role.name}}">
-                      <span class="fa fa-phone"></span>Multi-Person Invite</a></li>
+                      <span class="fa fa-envelope-o"></span> Multi-Person Invite</a></li>
                   <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a role="menuitem" 
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       ng-click="deleteRole(role)">
                       <span class="fa fa-times"></span> Delete Role</a></li>
                 </ul>
@@ -451,13 +434,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <div ng-show="roleDetailToggle[role.name]"> 
                 <div ng-repeat="player in role.players"  style="height:40px">
                   <span class="dropdown" >
-                    <span id="menu1" data-toggle="dropdown">
+                    <span id="playerRole" data-toggle="dropdown">
                     <img class="img-circle" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
                     </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="playerRole">
                       <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
                           tabindex="-1" style="text-decoration: none;text-align:center">
                           {{player.name}}<br/>{{player.uid}}</a></li>

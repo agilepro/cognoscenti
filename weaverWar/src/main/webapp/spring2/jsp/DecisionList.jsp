@@ -288,18 +288,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="startCreating()">Create New Decision</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startCreating()">Create New Decision</a></span>
+      </div>
 
 
+
+    <div class="d-flex col-9"><div class="contentColumn">
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <span ng-repeat="role in allLabelFilters()">
@@ -311,7 +308,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <span>
              <span class="dropdown">
                <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
-                       type="button" id="menu2" data-toggle="dropdown"
+                       type="button" id="menu3" data-toggle="dropdown"
                        title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                    style="width:320px;left:-130px">
@@ -328,9 +325,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </span>
     </div>
 
-<div>
-    <button class="btn btn-primary btn-raised" ng-click="startCreating()"><i class="fa fa-plus"></i> Create Decision</button>
-</div>
+
 
   <div  id="searchresultdiv0">
     <div class="taskListArea">

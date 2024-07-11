@@ -1043,48 +1043,33 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown" ng-show="noteInfo.draft">
-          <button class="btn btn-default btn-primary btn-raised" ng-click="startSend()"
-                  title="Post this topic to take it out of Draft mode and allow others to see it">
-          Post Topic </button>
-      </span>
-      <span class="dropdown" ng-hide="noteInfo.draft">
-          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-          {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
-                ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
-          </ul>
-      </span>
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="NotesList.htm">List Topics</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="startEdit()" target="_blank">Edit This Topic</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="sendNoteByMail()">Send Topic By Email</a></li>
-          <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
-              ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
-          <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
-              ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></li>
-          <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
-              ng-click="openFeedbackModal()">Feedback</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+
+
+
+      <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="NotesList.htm">List Topics</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="sendNoteByMail()">Send Topic By Email</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-hide="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="openFeedbackModal()">Feedback</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Access the new mobile UI in development"
-              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>
-
-        </ul>
-      </span>
+              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
     </div>
-
+    <div class="d-flex col-9"><div class="contentColumn">
     <div class="well" ng-show="addressMode" ng-cloak>
       <h2>Email Notification To (Subscribers):</h2>
       <div>
@@ -1097,17 +1082,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           </tags-input>
       </div>
       <span class="dropdown">
-          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
+          <button class="btn btn-primary btn-raised fs-6" type="button" ng-click="postIt(false)"
                   title="Post this topic but don't send any email">
           Post Without Email </button>
       </span>
       <span class="dropdown">
-          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
+          <button class="btn btn-sm btn-primary btn-raised fs-6" type="button" ng-click="postIt(true)"
                   title="Post this topic and send the email to selected users">
           Post &amp; Send Email </button>
       </span>
       <span class="dropdown">
-          <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
+          <button class="btn btn-sm btn-danger btn-raised fs-6" type="button" ng-click="addressMode = false"
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
       </span>
@@ -1142,6 +1127,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <% } %>
 
 <table class="table">
+
 <col style="width:150px">
 <tr>
     <td>Last modified:</td><td>{{noteInfo.modTime|cdate}}</td>
@@ -1271,7 +1257,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
     </td>
 </tr>
-<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+
 </table>
       <div class="well" ng-show="editMeetingPart=='subscribers'">
           <h2>Adjust Subscribers:</h2>
@@ -1295,7 +1281,22 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           </div>
       </div>
 
+<tr class="dropdown ms-auto" ng-show="noteInfo.draft">
 
+    <span class="nav-item dropdown" ng-hide="noteInfo.draft">
+        <button class="btn btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+        <ul class="dropdown-menu me-auto" role="menu" aria-labelledby="menu1">
+          <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item" role="menuitem"
+              ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+        </ul>
+    </span>    
+    <span class="ms-5">
+        <button class="btn btn-primary btn-raised" ng-click="startSend()"
+            title="Post this topic to take it out of Draft mode and allow others to see it">
+    Post Topic </button>
+</span>
+</tr>
 <table style="max-width:800px">
   <tr ng-repeat="cmt in getComments()">
 

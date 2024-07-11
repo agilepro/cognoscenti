@@ -265,45 +265,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="DocsFolder.htm">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="DocsFolder.htm">
               Show Folders</a>
-          </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="DocsAdd.htm">
+            </span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="addDocument"><a class="nav-link"  href="DocsAdd.htm">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
-          </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="SendNote.htm">
+          </span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="SharePorts.htm">
+          </span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="SharePorts"><a class="nav-link"  href="SharePorts.htm">
               Share Ports</a>
-          </li>
+          </span>
           
-        </ul>
-      </span>
-    </div>
+        </div>
+
     
-<style>
-.checkButton {
-    vertical-align:middle;
-    border: none;
-    border-radius:2px;
-    box-shadow: 2px 2px 5px #CCCCCC;
-    padding:5px 10px;
-    cursor:pointer;
-}
-.gridTable2 tr td {
-    border-bottom: 1px solid lightgray;
-    padding-bottom: 3px;
-    padding-top: 3px;
-}
-</style>
-
-
+    <div class="d-flex col-9"><div class="contentColumn">
     <div class="well">Filter <input ng-model="filter"> &nbsp;
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
             <button class="labelButton" ng-click="toggleLabel(role)"
@@ -313,7 +294,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <span class="dropdown">
            <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
                    type="button" id="menu1" data-toggle="dropdown"
-                   style="padding: 2px 5px;font-size: 11px;" 
+                  
                    title="Add Filter by Label">
                 <i class="fa fa-filter"></i></button>
            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
@@ -332,7 +313,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div style="height:20px;"></div>
 
     <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
+        <tr class=" my-2 gridTableHeader">
             <td width="50px">
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
