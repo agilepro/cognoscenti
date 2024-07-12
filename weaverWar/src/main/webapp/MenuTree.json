@@ -1,9 +1,9 @@
 {
   "userMode": [
     {
-      "href": "UserHome.htm",
-      "name": "User Home",
-      "title": "All User Specific Info.",
+      "href":"UserHome.htm",
+      "name":"User Home",
+      "title":"All User Specific Info.",
       "opts": [],
       "useOpts": [],
       "readOnly": true
@@ -11,727 +11,394 @@
   ],
   "siteMode": [
     {
-      "href": "FrontTop.htm",
-      "name": "Site Map",
-      "title": "Graphical map of all workspaces in the site.",
+      "href":"FrontTop.htm",
+      "name":"Site Map",
+      "title":"Graphical map of all workspaces in the site.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true,
-      "icon": "SiteMap.png"
+      "readOnly": true
     },
     {
-      "href": "SiteWorkspaces.htm",
-      "name": "Workspaces in Site",
-      "title": "Lists all the workspaces that are in this site.",
+      "href":"SiteWorkspaces.htm",
+      "name":"Workspaces in Site",
+      "title":"Lists all the workspaces that are in this site.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true,
-      "icon": "Workspaces.png"
+      "readOnly": true
     },
     {
-      "href": "SiteAdmin.htm",
-      "name": "Site Admin",
-      "title": "View and adjust the main settings for the site.",
+      "href":"SiteAdmin.htm",
+      "name":"Site Admin",
+      "title":"View and adjust the main settings for the site.",
       "opts": [],
-      "useOpts": [],
-      "icon": "SiteAdmin.png"
+      "useOpts": []
     },
     {
-      "href": "SiteStats.htm",
-      "name": "Site Statistics",
-      "title": "View content statistics for the site.",
+      "href":"SiteStats.htm",
+      "name":"Statistics",
+      "title":"Key information about the resources used by the site.",
       "opts": [],
-      "useOpts": [],
-      "icon": "Site-Stats.png"
+      "useOpts": []
     },
     {
-      "href": "SiteLedger.htm",
-      "name": "Site Charges",
-      "title": "View the monthly summary of charges for the site.",
+      "href":"SiteLedger.htm",
+      "name":"Charges",
+      "title":"History of charges and payments.",
       "opts": [],
-      "useOpts": [],
-      "icon": "Site-Ledger.png"
+      "useOpts": []
     },
     {
-      "href": "SiteUsers.htm",
-      "name": "Users",
-      "title": "Add, remove, and configure users.",
+      "href":"SiteUsers.htm",
+      "name":"Users",
+      "title":"Add, remove, and configure users.",
       "opts": [],
       "useOpts": [],
-      "readOnly": true,
-      "icon": "Site-Users.png"
+      "readOnly": true
     },
     {
-      "href": "SiteRoles.htm",
-      "name": "Roles",
-      "title": "Role define who can do what within this site.",
+      "href":"SiteRoles.htm",
+      "name":"Roles",
+      "title":"Role define who can do what within this site.",
       "opts": [],
-      "useOpts": [],
-      "icon": "Site-Roles.png"
+      "useOpts": []
     }
   ],
   "workMode": [
     {
-      "href": "FrontPage.htm",
-      "name": "Front Page",
-      "title": "Get the main overview of the workspace and recent changes",
+      "href":"FrontPage.htm",
+      "name":"Front Page",
+      "title":"Get the main overview of the workspace and recent changes",
       "opts": [
         {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "FrontPage.htm",
-          "name": "Front Page",
-          "title": "Get the main overview of the workspace and recent changes",
+          "use": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
+          "href":"CommentList.htm",
+          "name":"Comments",
+          "title":"View all the comments in this workspace",
           "readOnly": true
         },
         {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "CommentList.htm",
-          "name": "Comments",
-          "title": "View all the comments in this workspace",
+          "use": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
+          "href":"History.htm",
+          "name":"History",
+          "title":"See the detailed display of all history",
           "readOnly": true
         },
         {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "History.htm",
-          "name": "History",
-          "title": "See the detailed display of all history",
+          "use": ["FrontPage.jsp", "CommentList.jsp","History.jsp"],
+          "href":"searchAllNotes.htm",
+          "name":"Search",
+          "title":"Search through all the workspaces",
           "readOnly": true
         },
         {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "searchAllNotes.htm",
-          "name": "Search",
-          "title": "Search through all the workspaces",
-          "readOnly": true
-        },
-        {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "PDFExport.htm",
-          "name": "Create PDF",
-          "title": "Create a PDF of a topic or topics"
-        },
-        {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "DecisionList.htm",
-          "ng-click": "startCreating()",
-          "name": "Decisions",
-          "title": "Manage task areas",
-          "opts": [
-            {
-              "use": [
-                "DecisionList.jsp"
-              ],
-              "ng-click": "startCreating()",
-              "name": "Create",
-              "title": "Manage task areas",
-              "readOnly": true
-            }
-          ]
-        },
-        {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "EmailCreated.htm",
-          "name": "Email",
-          "title": "Create a new email message to send",
-          "readOnly": true,
-          "opts": [
-            {
-              "use": [
-                "EmailCreated.jsp",
-                "EmailSent.jsp"
-              ],
-              "href": "SendNote.htm",
-              "name": "Create",
-              "title": "Create a new email message to send"
-            },
-            {
-              "use": [
-                "EmailCreated.jsp",
-                "EmailSent.jsp",
-                "SendNote.jsp"
-              ],
-              "href": "EmailSent.htm",
-              "name": "Sent",
-              "title": "Create a new email message to send",
-              "readOnly": true
-            }
-          ]
-        },
-        {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "RoleManagement.htm",
-          "name": "Roles",
-          "title": "Manage the roles that define who is able to what in this workspace",
-          "readOnly": true,
-          "opts": [
-            {
-              "use": [
-                "RoleManagement.jsp",
-                "RoleMap.jsp"
-              ],
-              "ng-click": "openRoleModal(null)",
-              "name": "Create",
-              "title": "Create a new role"
-            },
-            {
-              "use": [
-                "RoleManagement.jsp",
-                "RoleInvite.jsp",
-                "MultiInvite.jsp",
-                "RoleMap.jsp"
-              ],
-              "href": "RoleMap.htm",
-              "name": "User Map",
-              "title": "Table view of all roles and all users in a grid"
-            },
-            {
-              "use": [
-                "RoleManagement.jsp",
-                "RoleInvite.jsp",
-                "MultiInvite.jsp",
-                "RoleMap.jsp"
-              ],
-              "href": "RoleInvite.htm",
-              "name": "Invite User",
-              "title": "Invite individual users to a role"
-            },
-            {
-              "use": [
-                "RoleManagement.jsp",
-                "RoleInvite.jsp",
-                "MultiInvite.jsp",
-                "RoleMap.jsp"
-              ],
-              "href": "MultiInvite.htm",
-              "name": "Multi-Invite",
-              "title": "Invite multiple users to a role"
-            }
-          ]
-        },
-        {
-          "use": [
-            "FrontPage.jsp",
-            "CommentList.jsp",
-            "History.jsp",
-            "DecisionList.jsp",
-            "EmailCreated.jsp",
-            "EmailSent.jsp",
-            "SendNote.jsp",
-            "AdminSettings.jsp",
-            "AdminStats.jsp",
-            "AdminAPI.jsp",
-            "RoleRequest.jsp",
-            "LabelList.jsp"
-          ],
-          "href": "AdminSettings.htm",
-          "name": "Admin",
-          "title": "See and adjust all the settings for this workspace if you are in the administrator role",
-          "readOnly": true,
-          "opts": [
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "RoleRequest.htm",
-              "name": "Role Requests",
-              "title": "Check on who has requested a position in a role"
-            },
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "LabelList.htm",
-              "name": "Labels",
-              "title": "Create labels to help categorize documents, discussions, and action items."
-            },
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "AdminStats.htm",
-              "name": "Statistics",
-              "title": "Statistics about the workspace"
-            },
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "AdminAPI.htm",
-              "name": "API",
-              "title": "The REST API for the workspace"
-            },
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}",
-              "name": "New Child",
-              "title": "Create a new workspace that is a child of this workspace"
-            },
-            {
-              "use": [
-                "AdminSettings.jsp",
-                "AdminStats.jsp",
-                "AdminAPI.jsp",
-                "RoleRequest.jsp",
-                "LabelList.jsp"
-              ],
-              "href": "../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}",
-              "name": "New Sibling",
-              "title": "Create a new workspace that is a sibling of this workspace"
-            }
-          ]
+          "use": ["FrontPage.jsp", "CommentList.jsp","History.jsp"],
+          "href":"PDFExport.htm",
+          "name":"Create PDF",
+          "title":"Create a PDF of a topic or topics"
         }
       ],
-      "useOpts": [
-        "FrontPage.jsp",
-        "CommentList.jsp",
-        "History.jsp",
-        "DecisionList.jsp",
-        "EmailCreated.jsp",
-        "EmailSent.jsp",
-        "SendNote.jsp",
-        "AdminSettings.jsp",
-        "AdminStats.jsp",
-        "AdminAPI.jsp",
-        "RoleRequest.jsp",
-        "LabelList.jsp"
-      ],
+      "useOpts": ["FrontPage.jsp","CommentList.jsp","History.jsp"],
       "readOnly": true,
       "icon": "FrontPage.png"
     },
     {
-      "href": "MeetingList.htm",
-      "name": "Meetings",
-      "title": "List and manage all the meetings in this workspace",
+      "href":"MeetingList.htm",
+      "name":"Meetings",
+      "title":"List and manage all the meetings in this workspace",
       "opts": [
         {
-          "use": [
-            "MeetingList.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "MeetingList.htm",
-          "name": "Meeting List",
-          "title": "List and manage all the meetings in this workspace"
+          "use": ["MeetingList.jsp","MeetingAttendees.jsp"],
+          "href":"MeetingCreate.htm",
+          "name":"Create",
+          "title":"Create a new, empty meeting"
         },
         {
-          "use": [
-            "MeetingList.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "MeetingCreate.htm",
-          "name": "Create",
-          "title": "Create a new, empty meeting"
+          "use": ["MeetingHtml.jsp"],
+          "href":"SendNote.htm?meet={{meetId}}",
+          "name":"Send Email",
+          "title":"Send email about this particular meeting"
         },
         {
-          "use": [
-            "MeetingHtml.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "CloneMeeting.htm?id={{meetId}}",
-          "name": "Clone",
-          "title": "Clone this particular meeting"
+          "use": ["MeetingHtml.jsp"],
+          "href":"CloneMeeting.htm?id={{meetId}}",
+          "name":"Clone",
+          "title":"Clone this particular meeting"
         },
         {
-          "use": [
-            "MeetingList.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "MeetingAttendees.htm",
-          "name": "Attendance",
-          "title": "A list of who attended which meetings",
+          "use": ["MeetingHtml.jsp"],
+          "href":"MeetMerge.htm?id={{meetId}}&tem=FullDetail.chtml",
+          "name":"Layouts",
+          "title":"Send email about this particular meeting"
+        },
+        {
+          "use": ["MeetingList.jsp","MeetingAttendees.jsp"],
+          "href":"MeetingAttendees.htm",
+          "name":"Attendance",
+          "title":"A list of who attended which meetings",
           "readOnly": true
-        },
-        {
-          "use": [
-            "MeetingHtml.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "SendNote.htm?meet={{meetId}}",
-          "name": "Send Email",
-          "title": "Send email about this particular meeting"
         }
       ],
-      "useOpts": [
-        "MeetingList.jsp",
-        "MeetingAttendees.jsp"
-      ],
+      "useOpts": ["MeetingList.jsp", "MeetingAttendees.jsp"],
       "readOnly": true,
       "icon": "Meeting.png"
     },
     {
-      "href": "NotesList.htm",
-      "name": "Topics",
-      "title": "List and manage the discussions in the workspace.",
+      "href":"NotesList.htm",
+      "name":"Topics",
+      "title":"List and manage the discussions in the workspace.",
       "opts": [
         {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "href": "NotesList.htm",
-          "name": "Forum List",
-          "title": "List of forum topics"
+          "use": ["NotesList.jsp"],
+          "ng-click":"openTopicCreator()",
+          "name":"Create",
+          "title":"Create a new discussion topic"
         },
         {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "ng-click": "openTopicCreator()",
-          "name": "Create",
-          "title": "Create a new discussion topic"
+          "use": ["NoteZoom.jsp"],
+          "href":"SendNote.htm?noteId={{topicId}}",
+          "name":"Send Email",
+          "title":"Send an email about this discussion topic"
         },
         {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "href": "SendNote.htm?noteId={{topicId}}",
-          "name": "Send Email",
-          "title": "Send an email about this discussion topic"
+          "use": ["NotesList.jsp", "NoteZoom.jsp"],
+          "href":"PDFExport.htm",
+          "name":"Create PDF",
+          "title":"Create a PDF of a topic or topics"
         },
         {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "href": "PDFExport.htm",
-          "name": "Create PDF",
-          "title": "Create a PDF of a topic or topics"
-        },
-        {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "href": "searchAllNotes.htm",
-          "name": "Search",
-          "title": "Search through all the topics",
+          "use": ["NotesList.jsp", "NoteZoom.jsp"],
+          "href":"searchAllNotes.htm",
+          "name":"Search",
+          "title":"Search through all the topics",
           "readOnly": true
         }
       ],
-      "useOpts": [
-        "NotesList.jsp",
-        "NoteZoom.jsp"
-      ],
+      "useOpts": ["NotesList.jsp", "NoteZoom.jsp"],
       "readOnly": true,
       "icon": "Topics.png"
     },
     {
-      "href": "DocsList.htm",
-      "name": "Documents",
-      "title": "List and access all the attached documents in the workspace.",
+      "href":"DocsList.htm",
+      "name":"Documents",
+      "title":"List and access all the attached documents in the workspace.",
       "opts": [
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocsList.htm",
-          "name": "Documents List",
-          "title": "List and access all the attached documents in the workspace."
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "SharePorts.jsp", "DocDetail.jsp", "DocsRevise.jsp", "DocsAdd.jsp"],
+          "href":"DocsAdd.htm",
+          "name":"Add",
+          "title":"Upload or link documents to this workspace"
         },
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocsAdd.htm",
-          "name": "Add Documents",
-          "title": "Upload or link documents to this workspace"
-        },
-        {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocsFolder.htm",
-          "name": "Folders",
-          "title": "Display documents grouped into folders",
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
+          "href":"DocsFolder.htm",
+          "name":"Folders",
+          "title":"Display documents grouped into folders",
           "readOnly": true
         },
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "SharePorts.htm",
-          "name": "Share Ports",
-          "title": "Display share ports"
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
+          "href":"SharePorts.htm",
+          "name":"Share Ports",
+          "title":"Display share ports"
         },
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocDetail.htm?aid={{docId}}",
-          "name": "Access",
-          "title": "Upload or link documents to this workspace",
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
+          "href":"DocDetail.htm?aid={{docId}}",
+          "name":"Access",
+          "title":"Upload or link documents to this workspace",
           "readOnly": true
         },
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocsRevise.htm?aid={{docId}}",
-          "name": "Document Versions",
-          "title": "List versions of this document",
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
+          "href":"DocsRevise.htm?aid={{docId}}",
+          "name":"Versions",
+          "title":"List versions of this document",
           "readOnly": true
         },
         {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "SendNote.htm?att={{docId}}",
-          "name": "Send Email",
-          "title": "Send email with this document attached"
+          "use": ["DocDetail.jsp", "DocsRevise.jsp"],
+          "href":"SendNote.htm?att={{docId}}",
+          "name":"Send Email",
+          "title":"Send email with this document attached"
         }
       ],
-      "useOpts": [
-        "DocsList.jsp",
-        "DocsFolder.jsp",
-        "SharePorts.jsp",
-        "DocDetail.jsp",
-        "DocsRevise.jsp",
-        "DocsAdd.jsp"
-      ],
+      "useOpts": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
       "readOnly": true,
       "icon": "Documents.png"
     },
     {
-      "href": "GoalStatus.htm",
-      "name": "Action Items",
-      "title": "List and update all the action items in the workspace, current and historical",
+      "href":"GoalStatus.htm",
+      "name":"Action Items",
+      "title":"List and update all the action items in the workspace, current and historical",
       "opts": [
         {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "TaskAreas.jsp"
-          ],
-          "href": "GoalList.htm",
-          "name": "Item View",
-          "title": "List the actions items in the simpler items view",
+          "use": ["GoalStatus.jsp", "GoalList.jsp"],
+          "ng-click":"openModalActionItem(newGoal,'details')",
+          "name":"Create",
+          "title":"Create a new action item"
+        },
+        {
+          "use": ["GoalList.jsp", "TaskAreas.jsp"],
+          "href":"GoalStatus.htm",
+          "name":"Status View",
+          "title":"List the actions items in a table",
           "readOnly": true
         },
         {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "TaskAreas.jsp"
-          ],
-          "ng-click": "openModalActionItem(newGoal,'details')",
-          "name": "Create",
-          "title": "Create a new action item"
-        },
-        {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "TaskAreas.jsp"
-          ],
-          "href": "GoalStatus.htm",
-          "name": "Status View",
-          "title": "List the actions items in a table",
+          "use": ["GoalStatus.jsp", "TaskAreas.jsp"],
+          "href":"GoalList.htm",
+          "name":"Item View",
+          "title":"List the actions items in the simpler items view",
           "readOnly": true
         },
         {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "TaskAreas.jsp"
-          ],
-          "href": "TaskAreas.htm",
-          "name": "Task Areas",
-          "title": "Manage task areas"
+          "use": ["GoalStatus.jsp", "GoalList.jsp"],
+          "href":"TaskAreas.htm",
+          "name":"Task Areas",
+          "title":"Manage task areas"
         }
       ],
-      "useOpts": [
-        "GoalStatus.jsp",
-        "GoalList.jsp",
-        "TaskAreas.jsp"
-      ],
+      "useOpts": ["GoalStatus.jsp", "GoalList.jsp", "TaskAreas.jsp"],
       "readOnly": true,
       "icon": "ActionItems.png"
     },
     {
-      "href": "Personal.htm",
-      "name": "Personal",
-      "title": "See your own settings that are unique to this workspace",
+      "href":"DecisionList.htm",
+      "name":"Decisions",
+      "title":"Each workspace has a list of decisions that have been made over time.",
       "opts": [
         {
-          "use": [
-            "Personal.jsp"
-          ],
-          "href": "EmailSent.htm?f={{preferred}}",
-          "name": "View Email",
-          "title": "View the email messages sent to you or from you"
+          "use": ["DecisionList.jsp"],
+          "ng-click":"startCreating()",
+          "name":"Create",
+          "title":"Manage task areas"
         }
       ],
-      "useOpts": [
-        "Personal.jsp"
+      "useOpts": ["DecisionList.jsp"],
+      "readOnly": true,
+      "icon": "Decisions.png"
+    },
+    {
+      "href":"EmailCreated.htm",
+      "name":"Email",
+      "title":"Email that has been sent by anyone about this workspace.",
+      "opts": [
+        {
+          "use": ["EmailCreated.jsp", "EmailSent.jsp"],
+          "href":"SendNote.htm",
+          "name":"Create",
+          "title":"Create a new email message to send"
+        },
+        {
+          "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
+          "href":"EmailSent.htm",
+          "name":"Sent",
+          "title":"Create a new email message to send",
+          "readOnly": true
+        }
       ],
+      "useOpts": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
+      "readOnly": true,
+      "icon": "Email.png"
+    },
+    {
+      "href":"RoleManagement.htm",
+      "name":"Roles",
+      "title":"Manage the roles that define who is able to what in this workspace",
+      "opts": [
+        {
+          "use": ["RoleManagement.jsp", "RoleMap.jsp"],
+          "ng-click":"openRoleModal(null)",
+          "name":"Create",
+          "title":"Create a new role"
+        },
+        {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
+          "href":"RoleMap.htm",
+          "name":"User Map",
+          "title":"Table view of all roles and all users in a grid"
+        },
+        {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
+          "href":"RoleInvite.htm",
+          "name":"Invite User",
+          "title":"Invite individual users to a role"
+        },
+        {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
+          "href":"MultiInvite.htm",
+          "name":"Multi-Invite",
+          "title":"Invite multiple users to a role"
+        }
+      ],
+      "useOpts": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp", "RoleMap.jsp"],
+      "readOnly": true,
+      "icon": "Roles.png"
+    },
+    {
+      "href":"AdminSettings.htm",
+      "name":"Admin",
+      "title":"See and adjust all the settings for this workspace if you are in the administrator role",
+      "opts": [
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"RoleRequest.htm",
+          "name":"Role Requests",
+          "title":"Check on who has requested a position in a role"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"LabelList.htm",
+          "name":"Labels",
+          "title":"Create labels to help categorize documents, discussions, and action items."
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"AdminStats.htm",
+          "name":"Statistics",
+          "title":"Statistics about the workspace"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"AdminAPI.htm",
+          "name":"API",
+          "title":"The REST API for the workspace"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}",
+          "name":"New Child",
+          "title":"Create a new workspace that is a child of this workspace"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}",
+          "name":"New Sibling",
+          "title":"Create a new workspace that is a sibling of this workspace"
+        }
+      ],
+      "useOpts": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+      "icon": "Admin.png"
+    },
+    {
+      "href":"Personal.htm",
+      "name":"Personal",
+      "title":"See your own settings that are unique to this workspace",
+      "opts": [
+        {
+          "use": ["Personal.jsp"],
+          "href":"EmailSent.htm?f={{preferred}}",
+          "name":"View Email",
+          "title":"View the email messages sent to you or from you"
+        }
+      ],
+      "useOpts": ["Personal.jsp"],
       "readOnly": true
     },
     {
-      "href": "../../su/Feedback.htm?url=",
-      "name": "Feedback",
-      "title": "Tells us what you think about this page or what happened when you used it.",
+      "href":"../../su/Feedback.htm?url=",
+      "name":"Feedback",
+      "title":"Tells us what you think about this page or what happened when you used it.",
       "opts": [],
       "useOpts": [],
       "readOnly": true
@@ -739,9 +406,9 @@
   ],
   "allModes": [
     {
-      "href": "https://s06.circleweaver.com/TutorialList.html",
-      "name": "Training",
-      "title": "Lots of videos on YouTube to help you learn how to use Weaver.",
+      "href":"https://s06.circleweaver.com/TutorialList.html",
+      "name":"Training",
+      "title":"Lots of videos on YouTube to help you learn how to use Weaver.",
       "opts": [],
       "external": true,
       "useOpts": [],
@@ -750,9 +417,9 @@
   ],
   "hidden": [
     {
-      "href": "NoShow.htm",
-      "name": "No Show",
-      "title": "Lots of videos on YouTube to help you learn how to use Weaver.",
+      "href":"NoShow.htm",
+      "name":"No Show",
+      "title":"Lots of videos on YouTube to help you learn how to use Weaver.",
       "opts": [],
       "useOpts": []
     }

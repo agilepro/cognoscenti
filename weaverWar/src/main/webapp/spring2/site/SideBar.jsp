@@ -29,7 +29,7 @@
     
     
     
-    File menuFile = ar.getCogInstance().getConfig().getFileFromRoot("MenuTree.json");
+    File menuFile = ar.getCogInstance().getConfig().getFileFromRoot("MenuTree2.json");
     allMenu = JSONObject.readFromFile(menuFile);
     
     JSONArray fullMenu = new JSONArray();
