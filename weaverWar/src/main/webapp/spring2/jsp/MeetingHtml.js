@@ -1367,7 +1367,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: embeddedData.retPath + "templates/ActionItem.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/ActionItem.html" + templateCacheDefeater,
             controller: 'ActionItemCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1639,7 +1639,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath + "templates/AttachDocument.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/AttachDocument.html" + templateCacheDefeater,
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1678,7 +1678,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath + "templates/AttachTopic.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/AttachTopic.html" + templateCacheDefeater,
             controller: 'AttachTopicCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1718,7 +1718,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath + "templates/AttachAction.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/AttachAction.html" + templateCacheDefeater,
             controller: 'AttachActionCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1789,7 +1789,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         var agendaModalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath + "templates/Agenda.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/Agenda.html" + templateCacheDefeater,
             controller: 'AgendaCtrl',
             size: 'lg',
             backdrop: "static",
@@ -2116,7 +2116,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         var notesModalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath + "templates/MeetingNotes.html" + templateCacheDefeater,
+            templateUrl: embeddedData.retPath + "new_assets/templates/MeetingNotes.html" + templateCacheDefeater,
             controller: 'MeetingNotesCtrlx',
             size: 'lg',
             backdrop: "static",

@@ -574,6 +574,33 @@ a {
     margin: 2em;
 }
 
+.modal-backdrop {
+    &:fade   {
+        opacity: 0.5;
+    } 
+}
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    color: $primary;
+    background-clip: padding-box;
+    border: $secondary solid 1px;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 0.3rem;
+    opacity: 1;
+}
+.fade {  
+    &:not(.show) {
+      opacity: 1;
+    }
+  }
+
+
+
 $vertical-align-classes: (
         property: vertical-align,
         class: align,
