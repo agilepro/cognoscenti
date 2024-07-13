@@ -1,79 +1,62 @@
-<style>
-.docTable {
-    width:100%;
-}
-.docTable tr td {
-    padding:2px;
-}
-.docTable tr td button {
-    height:25px;
-    width:25px;
-    padding:2px;
-    margin:2px;
-}
 
-</style>
-
-
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
+  <h5 class="modal-title" id="attachDocumentLabel"></h5>
     Link to Discussion Topic
-    </span>
+    <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
-</div>
 <div class="modal-body">
-   <div >
-      <table style="width:100%"><tr>
-      <td style="width:50%;vertical-align:top;padding:10px;">
-        <div class="sBoxTop"> 
-            Existing Topics - Filter <input type="text" ng-model="realDocumentFilter">
+   <div class="container gx-0">
+    <div class="row gx-0">
+      <div class="card col-md-6 align-top">
+        <div class="card-header border-1 d-flex vh-65"> 
+            Existing Topics - Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-width:40%; max-height: 25px;">
         </div>
-        <div class="sBoxMain">
-          <table class="docTable">
-            <tr ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
+        <div class="card-body">
+          <div class="row col-12 align-top">
+            <div ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
                 title="Click to link to this topic">
-                <td> {{doc.subject}} </td>
-                <td>
+                <span class="col-4" limit-to="10">{{doc.subject}} </span>
+                <span class="col-1">
                     <button ng-hide="itemHasDoc(doc)"
-                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
-                    <button  ng-show="itemHasDoc(doc)"
-                        class="btn">&nbsp; &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="filterDocs().length==0">
-                <td class="instruction">No topics to choose from.<br/><br/>Filter: {{realDocumentFilter}}</td>
-            </tr>
-          </table>
+                        class="btn-sm border-0" > <i class="fa fa-arrow-right"></i></button>
+                    <button ng-show="itemHasDoc(doc)"
+                         title="Discussion forum is already linked.">&nbsp;</button>
+                </span>
+            </div>
+            <div ng-show="filterDocs().length==0">
+                <span class="instruction">No topics to choose from.<br/><br/>Filter: {{realDocumentFilter}}</span>
+            </div>
+          </div>
         </div>
-      </td>
-      <td style="width:50%;vertical-align:top;padding:10px;">
-        <div class="sBoxTop"> 
+      </div>
+      <div class="card col-md-6 align-top">
+        <div class="card-header border-1 vh-65"> 
             Selected Topics
         </div>
-        <div class="sBoxMain">
-          <table class="docTable">
-            <tr ng-repeat="topic in fullTopics" ng-click="removeTopicFromItem(topic)" 
+        <div class="card-body">
+          <div class="row-col-12 align-top">
+            <div ng-repeat="topic in fullTopics" ng-click="removeTopicFromItem(topic)" 
                 title="Click to unlink the discussion topic"  style="cursor:pointer">
-                <td> {{topic.subject}} </td>
-                <td>
-                    <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="fullTopics.length==0">
+                <span class="col-4"> {{topic.subject}} </span>
+                <span class="col-1">
+                    <button class="btn-sm border-0"><i class="fa fa-close"></i> </button>
+                </span>
+            </div>
+            <div ng-show="fullTopics.length==0">
                 <td class="instruction">No topic linked..<br/><br/>
                 <span ng-show="filterDocs().length>0">Click on an topic on the left, to set it here on the right.  Since only one can be linked it will replace whatever was linked before.</span></td>
-            </tr>
-          </table>
+            </div>
+          </div>
         </div>
-      </td>
-      </tr>
-      </table>
+      </div>
+    </div>
+  </div>
    </div>
-</div>
+
 <div class="modal-footer">
-    <button class="btn btn-primary btn-raised"
+    <button class="btn btn-danger me-auto" type="button" ng-click="cancel()">
+        Cancel</button>
+        <button class="btn btn-primary"
         type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="cancel()">
-        Exit</button>
+    
 </div>

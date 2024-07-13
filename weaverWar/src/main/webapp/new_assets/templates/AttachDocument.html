@@ -1,106 +1,73 @@
-<style>
-.docTable {
-  width:100%;
-}
-.docTable tr td {
-  padding:2px;
-}
-.docTable tr td button {
-  height:25px;
-  width:25px;
-  padding:2px;
-  margin:2px;
-}
-.docTable tr:hover {
-   background-color: #F0D7F7;
-}
 
-.lvl-over {
-  background-color: lawngreen;
-}
-
-
-</style>
-
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="selectedTab='Settings'" 
-          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
-    Attach Documents
-    </span>
-    <span ng-click="selectedTab='Upload'"  
-          ng-class="selectedTab=='Upload'?'qqTabSelected':'qqTabUnselected'">
-    Upload New Document
-    </span>
-    <span ng-click="selectedTab='Link'"  
-          ng-class="selectedTab=='Link'?'qqTabSelected':'qqTabUnselected'">
-    New Web Link
-    </span>
-  </div>
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
+  <h5 class="modal-title" id="attachDocumentLabel">
+    Attach/Remove Existing Documents
+  </h5>
+  <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
 </div>
-<div class="modal-body {{greenOnDrag()}}"  style="min-height:300px" 
+<div class="modal-body {{greenOnDrag()}}"  
     ondragover="window.MY_SCOPE.dragIn(event)"
     ondragleave="window.MY_SCOPE.dragOut(event)"
     ondrop="window.MY_SCOPE.dragDrop(event)">
-   <div ng-show="selectedTab=='Settings'">
-      <table style="width:100%"><tr>
-      <td style="width:50%;vertical-align:top;padding:10px;">
-        <div class="sBoxTop"> Available Documents - Filter <input type="text" ng-model="realDocumentFilter"> </div>
-        <div class="sBoxMain">
-          <table class="docTable" style="">
-            <tr ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" 
-                title="Click to add document to the list.">
-                <td >
-                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </td>
-                <td>
+    <div class="container gx-0">
+      <div class="row gx-0">
+        <div class="card col-md-7 align-top">
+          <span title="This is a list of the existing action items in the workspace that are available to be attached.">
+            <div class="card-header border-1 d-flex"> Available Documents - Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-height: 25px;"> 
+            </div>
+          </span>
+        <div class="card-body">
+          <div class="row col-12 align-top">
+            <div ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" title="Click to add document to the list.">
+              <span class="col-4">
+                <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </span>
+                <span class="col-2">
                     <button ng-hide="itemHasDoc(doc)"
                         class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
                     <button  ng-show="itemHasDoc(doc)"
                         class="btn" title="Document is already added.">&nbsp; &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="filterDocs().length==0">
-                <td class="instruction">No documents to choose from.<br/><br/>Drag and drop a document to upload.</td>
-            </tr>
-          </table>
+                </span>
+            </div>
+            <div ng-show="filterDocs().length==0">
+                <span class="instruction">No documents to choose from.</span>
+            </div>
+          </div>
         </div>
-      </td>
-      <td style="width:50%;vertical-align:top;padding:10px;">
-        <div class="sBoxTop"> Chosen Documents </div>
-        <div class="sBoxMain">
-          <table class="docTable">
-            <tr ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
+      </div>
+      <div class="card col-md-5 align-top">
+        <div class="card-header border-1 vh-65"> Chosen Documents </div>
+        <div class="card-body">
+          <div class="row-col-12 align-top">
+            <div ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
                 title="Click to remove document from list." style="cursor:pointer">
-                <td >
-                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </td>
-                <td>
+                <span class="col-4"> <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} 
+                </span>
+                <span class="col-2">
                     <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
-                </td>
-            </tr>
-            <tr ng-show="itemDocs().length==0">
-                <td class="instruction">Nothing chosen to be attached.<br/><br/>
-                <span ng-show="filterDocs().length>0">Click on a document on the left, to add to the attachments listed here on the right.</span></td>
-            </tr>
-          </table>
+                </span>
+            </div>
+            <div class="row" ng-show="itemDocs().length==0">
+                <span class="instruction">Nothing chosen to be attached.<br/><br/>
+                <span ng-show="filterDocs().length>0">Click on a document on the left, to add to the attachments listed here on the right.</span></span>
+            </div>
+          </div>
         </div>
-      </td>
-      </tr>
-      </table>
+      </div>
     </div>
-    <div ng-show="selectedTab=='Upload'">
+  </div>
+    </div>
         <div>
-            <div ng-repeat="fp in fileProgress" class="well" style="min-width:400px;">
+            <div ng-repeat="fp in fileProgress" class="well mx-2" >
               <div >
-                  <div style="float:left;"><b>{{fp.file.name}}</b></div>
-                  <div style="float:right;">{{fp.status}}</div>
-                  <div style="clear:both;"></div>
+                  <div class="ms-1 fw-bold">{{fp.file.name}}</div>
+                  <div class="me-auto">{{fp.status}}</div>
               </div>
               <div ng-hide="fp.done">
                  How is this document related to this workspace?:<br/>
-                 <textarea ng-model="fp.description" class="form-control markDownEditor"></textarea>
+                 <textarea ng-model="fp.description" class="form-control markDownEditor fullWidth"></textarea>
               </div>
-              <div style="padding:3px;" ng-hide="fp.done">
-                  <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
+              <div class="py-2" ng-hide="fp.done">
+                  <div class="text-align-center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
                   <div class="progress">
                       <div class="progress-bar progress-bar-success" role="progressbar"
                            aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
@@ -109,43 +76,44 @@
                   </div>
               </div>
               <div ng-hide="fp.done">
-                  <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
-                  <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
+                  <button ng-click="startUpload(fp)" class="btn btn-primary btn-sm">Upload</button>
+                  <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-sm">Cancel</button>
               </div>
             </div>
         </div>
         <div ng-show="!fileProgress || fileProgress.length==0" 
              style="width:100%;text-align:center">
-            <span class="instruction">
-                To upload new file: Drop  anywhere in panel
+            <span class="instruction my-2 fs-5 fw-bold">
+                To upload new file drop anywhere in the panel above
             </span>
         </div>
-
-    </div>
-    <div ng-show="selectedTab=='Link'">
-      <div class="form-group">
-        <div>
+        <div class="header mt-2 bg-primary-subtle text-primary">
+          <h5 class="modal-title p-2" id="attachWebLinkLabel">New Web Link</h5></div>
+      <div class="form-group px-2">
+        <div >
           <label>URL:</label>
-          <input ng-model="newLink.url" class="form-control"></input>
+          <input ng-model="newLink.url" class="form-control fullWidth"/>
         </div>
         <div>
           <label>Name: <span style="color:red">{{nameMessage()}}</span></label>
-          <input ng-model="newLink.name" class="form-control"></input>
+          <input ng-model="newLink.name" class="form-control fullWidth"/>
         </div>
         <div>
           <label>Description:</label>
-          <textarea ng-model="newLink.description" class="form-control"></textarea>
+          <textarea ng-model="newLink.description" class="form-control fullWidth"></textarea>
         </div>
-        <div>
-          
-        </div>
+
       </div>
-    </div>    
-</div>
+   
+
 <div class="modal-footer">
-    <span class="instruction" style="margin-right:40px">To upload new file: Drop anywhere in panel</span>
-    <button ng-click="addLink()" class="btn btn-primary btn-raised" ng-show="newLink.url && newLink.name">
+  <span class="instruction my-2 fs-6 fw-bold">
+    "Exit" will save all changes <i class="fa fa-arrow-right"></i>
+</span>
+    <button ng-click="addLink()" class="btn btn-primary" ng-show="newLink.url && newLink.name">
         Attach Link</button>
-    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="cancel()">
+    <button class="ms-auto btn btn-primary" type="button" ng-click="cancel()">
         Exit</button>
+        <button class="btn btn-primary"
+        type="button" ng-click="ok()">Save</button>
 </div>

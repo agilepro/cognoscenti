@@ -138,24 +138,21 @@
     <!--Action Items-->
     <div class="col-4">
       <div ng-hide="item.isSpacer">
-        <div class="accordion accordionAssets" id="accordionActionItems">
+        <div class="accordion accordionAssets" 
+        id="accordionActionItems">
         <div class="accordion-item">
           <div class="h6 accordion-header" id="headingActionItems">
           <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActionItems" aria-expanded="false" aria-labelledby="collapseActionItems" aria-controls="collapseActionItems">
             <i class="fa fa-check-circle-o"></i> &nbsp;Action Items:</div> 
           </div>
           <div id="collapseActionItems" class="accordion-collapse collapse" aria-labelledby="headingActionItems" data-bs-parent="#accordionActionItems">
-          <div class="acordion-body">
-            <div class="row" ng-repeat="goal in itemGoals(item)">
-              <span>
-                <a href="task{{goal.id}}" title="access action item details">
+          <div class="accordion-body">
+            <div class="mb-2" ng-repeat="goal in itemGoals(item)">
+                <a href="task{{goal.id}}" class="me-2" title="access action item details">
                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
-              </span>
-              <span ng-dblclick="openModalActionItem(item, goal)">
-              {{goal.synopsis}}
-              </span>
-              <span>
-                <div ng-repeat="person in goal.assignTo">
+                <span class="me-2" ng-click="openModalActionItem(item, goal)">{{goal.synopsis}}
+                </span>
+                <span class="ms-auto" ng-repeat="person in goal.assignTo">
                   <span class="dropdown" >
                     <span id="menuMbrs" data-toggle="dropdown">
                       <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
@@ -169,151 +166,32 @@
                       </li>
                     </ul>
                   </span>
-                </div>
-              </span>
-              <div ng-click="openModalActionItem(item, goal)">
-                <div>{{goal.status}}</div>
+                </span>
+                <div ng-click="openModalActionItem(item, goal)">
+                <span>{{goal.status}}</span>
                 <div ng-repeat="ci in coal.checkitems">
                   <span ng-click="toggleCheckItem($event, goal, ci.index)" style="cursor:pointer">
                     <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
                     <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>&nbsp; 
                   </span>{{ci.name}}
                 </div>
-              </div>
+                </div>
             </div>
-<!-- Buttons to trigger action item modals -->
         <!--Button to create new action item-->
         <div class="container-fluid">
-        <div class="row py-3 gap-2 justify-content-center">      
-          <div type="button" class="col-5 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createActionItem"> Create New Action Item 
-          </div>
-        <!--Button to attach or remove existing action items-->
-          <div type="button" class="col-5 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attachAction"> Attach/Remove Existing Action Items 
-          </div>
+        <div class="row py-3 ">      
+          <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
+          </span>
         </div>
-        </div><!--END Buttons to trigger action item modals -->
+        </div>
+        <!--END Buttons to trigger action item modals -->
 
-<!-- Create Action Item Modal -->
-        <div class="modal fade" id="createActionItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createActionItemLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header"><h4 class="modal-title" id="createActionItemLabel">Create New Action Item</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="card col-md-12 align-top">
-            <div class="card-body">
-              <div class="form-group">
-                <div>
-                  <label>Synopsis:</label>
-                  <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                </div>
-                <div>
-                  <label class="gridTableColummHeader">Assignee:</label>
-                    <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id" 
-                                display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-                        <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                    </tags-input>
-                </div>
-                <div>
-                  <label class="gridTableColummHeader">Description:</label>
-                      <textarea type="text" ng-model="newGoal.description" class="form-control markDownEditor"
-                          style="width:450px;height:100px" placeholder="Details"></textarea>
-                </div>
-                <div>
-                  <label class="gridTableColummHeader">Due Date:</label>
-                      <span datetime-picker ng-model="newGoal.dueDate"  
-                          class="form-control" style="max-width:300px;height:25px">
-                          {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                      </span> 
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="me-auto btn btn-danger" data-bs-dismiss="modal">Close</button>
-          <button type="button" ng-click="createActionItem()" class="btn btn-primary">Create Action Item</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div><!--END Create Action Item Modal-->
-<!-- Attach Action Item Modal -->
-        <div class="modal fade" id="attachAction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="attachActionLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="attachActionLabel">Attach/Remove Existing Action Items</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="row g-0">
-          <div class="card col-md-6 align-top">
-            <div class="card-header border-1">Existing Action Items - Filter
-              &nbsp;<input type="text" ng-model="realFilter"></div>
-            <div class="card-body">
-              <div class="docTable">
-                <div ng-repeat="act in filterActions()" ng-click="addActionToList(act)" title="Click to add this action item to the list" style="cursor:pointer">
-                  <span>
-                    <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
-                  </span>
-                  <span>
-                    <button ng-hide="itemHasAction(act)" class="btn btn-sm btn-outline-primary">
-                      <i class="fa fa-arrow-right"></i>
-                    </button>
-                    <button ng-show="itemHasAction(act)" class="btn btn-sm btn-outline-secondary">&nbsp; &nbsp;</button>
-                  </span>
-                </div>
-                <div ng-show="filterActions().length == 0">
-                  <span colspan="2" class="text-muted">
-                    No action items to choose from.<br/><br/>
-                    Use 'Create New Action' above.
-                  </span>
-                </div>  
-              </div>
-              </div>
-          </div>
-          <div class="card col-md-6 align-top">
-            <div class="card-header border-1">Selected Action Items</div>
-            <div class="card-body">
-              <div class="docTable">
-                <div ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" title="Click to remove this action item from the list" style="cursor:pointer">
-                  <span>
-                    <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
-                  </span>
-                  <span>
-                    <button class="btn">
-                      <i class="fa fa-close"></i> &nbsp;
-                    </button>
-                  </span>
-                </div>
-                <div ng-show="itemActions().length == 0">
-                  <span colspan="2" class="text-muted">
-                    No actions items attached.<br/><br/>
-                    <span ng-show="filterActions().length > 0">Click on an action item on the left, to add to the list here on the right.</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-        <div class="modal-footer">
-              <button type="button" class="me-auto btn btn-danger me-auto" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Attach Action Item</button>
-        </div>
-    </div>
-    </div>
-  </div>
-        </div><!--END AttachAction Item Modal-->
       </div><!--END Action Items card body-->
           </div>
         </div>
         </div><!--END Action Items accordion-->
       </div>
+    </div>
     </div><!--END Action Items-->
 
     <!--Documents/Attachment-->
@@ -326,7 +204,7 @@
           </div>
           <div id="collapseAttachments" class="accordion-collapse collapse" aria-labelledby="headingAttachments" data-bs-parent="#accordionAttachments">
             <div class="accordion-body">
-              <div ng-repeat="docid in item.docList track by $index">
+              <div class="mb-2" ng-repeat="docid in item.docList track by $index">
                 <div ng-repeat="fullDoc in getSelectedDocList(docid)"> 
                   <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
                     <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
@@ -339,171 +217,19 @@
                   {{fullDoc.name}}
                 </div>
               </div>
-              <div ng-hide="item.docList && item.docList.length>0">
+              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">Double-click to add / remove attachments
               </div>
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid">
-      <div class="row justify-content-center">        
-        <div type="button" class="col-4 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attachDocs"> Attach Document
+      <div class="row justify-content-center"> 
+        <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachDocument(item)">  Attach/Upload Assets</span>
         </div>
 
-        <div type="button" class="col-4 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadDocs"> Upload New Document
-        </div>
-
-        <div type="button" class="col-4 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newWebLink"> New Web Link
-        </div>
       </div>
       </div>
-      <!-- Attach Docs Modal -->
-              <div class="modal fade" id="attachDocs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="attachDocsLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="attachDocsLabel">Attach Documents</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="container-fluid">
-                        <div class="row g-0">
-                          <div class="card col-md-6 align-top">
-                            <div class="card-header border-1"> Available Documents - Filter &nbsp;<input type="text" ng-model="realDocumentFilter"> 
-                            </div>
-                            <div class="card-body">
-                              <div class="docTable">
-                                <div ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" 
-                                title="Click to add document to the list.">
-                                <span >
-                                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}}
-                                </span>
-                                <span>
-                                  <button ng-hide="itemHasDoc(doc)"
-                                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
-                                  <button  ng-show="itemHasDoc(doc)"
-                                        class="btn" title="Document is already added.">&nbsp; &nbsp;</button>
-                                </span>
-                            </div>
-                            <div ng-show="filterDocs().length==0">
-                                <span class="instruction">No documents to choose from.<br/><br/>Drag and drop a document to upload.</span>
-                            </div>
-                          </div>
-                            </div>
-                          </div>
-                          <div class="card col-md-6 align-top">
-                        <div class="card-header border-1"> Selected Documents </div>
-                        <div class="card-body">
-                          <div class="docTable">
-                            <div ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
-                                title="Click to remove document from list." style="cursor:pointer">
-                                <span >
-                                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </span>
-                                <span>
-                                    <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
-                                </span>
-                            </div>
-                            <div ng-show="itemDocs().length==0">
-                                <span class="instruction">Nothing chosen to be attached.<br/><br/>
-                                <span ng-show="filterDocs().length>0">Click on a document on the left, to add to the attachments listed here on the right.</span></span>
-                            </div>
-                          </div>
-                        </div>
 
-                      </div>
-                        </div>
-                      </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-danger me-auto" data-bs-dismiss="modal">Close</button>
-                          <button type="button" class="btn btn-primary">Attach Document</button>
-                        </div>
-                  </div>
-                </div>
-                </div>
-              </div>
-      <!-- Upload Docs Modal -->
-              <div class="modal fade" id="uploadDocs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploadDocsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="uploadDocsLabel">Upload Documents</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="container-fluid">
-                <div class="card col-md-12 align-top">
-                    <div class="card-body">
-                      <div class="docTable">
-                        <div>
-                          <div ng-repeat="fp in fileProgress" class="well" style="min-width:400px;">
-                            <div >
-                                <div class="me-auto"><b>{{fp.file.name}}</b></div>
-                                <div class="ms-auto">{{fp.status}}</div>
-                            </div>
-                            <div ng-hide="fp.done">
-                               How is this document related to this workspace?:<br/>
-                               <textarea ng-model="fp.description" class="form-control markDownEditor"></textarea>
-                            </div>
-                            <div style="padding:3px;" ng-hide="fp.done">
-                                <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-success" role="progressbar"
-                                         aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
-                                         style="width:{{fp.percent}}%">
-                                    </div>
-                                </div>
-                            </div>
-                            <div ng-hide="fp.done">
-                                <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
-                                <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
-                            </div>
-                          </div>
-                        </div>
-                        <div ng-show="!fileProgress || fileProgress.length==0" 
-                           style="width:100%;text-align:center">
-                          <span class="instruction">
-                              To upload new file: Drop  anywhere in panel
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-              </div>
-      <!-- New Web Link Modal -->
-              <div class="modal fade" id="newWebLink" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newWebLinkLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-          <div class="modal-content">
-            <div class="modal-header"><h4 class="modal-title" id="newWebLinkLabel">New Web Link</h4>
 
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="container-fluid">
-                <div class="card col-md-12 align-top">
-                    <div class="card-body">
-                      <div class="form-group">
-                        <div>
-                          <label>URL:</label>
-                          <input ng-model="newLink.url" class="form-control">
-                        </div>
-                        <div>
-                          <label>Name:</label>
-                          <input ng-model="newLink.name" class="form-control"></input>
-                        </div>  
-                        <div>
-                          <label>Description:</label>
-                          <textarea ng-model="newLink.description" class="form-control"></textarea>
-                        </div>
 
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-              </div>
             </div>
           </div>
         </div>
@@ -524,16 +250,20 @@
         <div id="collapseForum" class="accordion-collapse collapse" data-bs-parent="#accordionForum">
 
           <div class="accordion-body">
-            <div ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default btn-raised" ng-click="navigateToTopics(topic.universalid)">
-            </div>{{topic.subject}}</div>
-            <!--This is where the button for opening the forum is with the idea that if there are no forums it will still shop up-->
-<!-- Button trigger modal -->
-        <div class="container-fluid">
-          <div class="row gap-2 justify-content-center">
-            <div type="button" class="col-10 btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attachForum">Attach Forum Discussion
-            </div>
+            <div class="row d-flex mb-2 ms-0" 
+            ng-repeat="topic in itemTopics(item)" style="cursor: pointer">
+            <span ng-click="navigateToTopic(topic.universalid)" ><i class="fa fa-lightbulb-o fs-5" ></i>&nbsp;
+            {{topic.subject}}</span></div>
+            <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
+              Double-click to set or unset linked topic
           </div>
-        </div>
+<!-- Button trigger modal -->
+<div class="container-fluid">
+  <div class="row py-3 ">      
+    <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachTopics(item)"> Attach/Remove Discussion Forums 
+    </span>
+  </div>
+  </div>
 <!-- ForumModal -->
             <div class="modal fade" id="attachForum" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="attachForumLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
@@ -610,6 +340,7 @@
       </div><!--END Forum-->
     </div><!--END Assets Row-->
   </div><!--END Assets Section-->
+  <div>&nbsp;</div>
   <hr/>
   <!--Create Comment/Proposal/Round Row-->
   <div class="row row-cols-3">
@@ -633,8 +364,7 @@
 
     </div>
   <!--END Create Comment/Proposal/Round Row-->
-  <hr/>
-  <hr/>
+
 
 
 

@@ -1,108 +1,70 @@
-<style>
-.docTable {
-    width:100%;
-}
-.docTable tr td {
-    padding:2px;
-}
-.docTable tr td button {
-    height:25px;
-    width:25px;
-    padding:2px;
-    margin:2px;
-}
-.spaceyTable tr td {
-    padding:5px;
-}
-</style>
 
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="selectedTab='Existing'" 
-          ng-class="selectedTab=='Existing'?'qqTabSelected':'qqTabUnselected'">
-    Attach/Remove Existing Action Items
-    </span>
-    <span ng-click="selectedTab='Create'"  
-          ng-class="selectedTab=='Create'?'qqTabSelected':'qqTabUnselected'">
-    Create New Action Item
-    </span>
+
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
+    <h5 class="modal-title" id="attachExActionLabel">Attach/Remove Existing Action Items</h5>
+    <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
-</div>
 <div class="modal-body">
-   <div ng-show="selectedTab=='Existing'">
-    <div ng-show="selectedTab == 'Existing'">
-        <div class="container-fluid">
-          <div class="row">
-            <!-- Left Column -->
-            <div class="col-md-6" title="This is a list of the existing action items in the workspace that are available to be attached." style="padding:10px;">
-              <div class="card">
-                <div class="card-header">
-                  Existing Action Items - Filter
-                  <input type="text" class="form-control form-control-sm" ng-model="realFilter">
-                </div>
-                <div class="card-body">
-                  <table class="table table-striped">
-                    <tbody>
-                      <tr ng-repeat="act in filterActions()" ng-click="addActionToList(act)" title="Click to add this action item to the list" style="cursor:pointer">
-                        <td>
-                          <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
-                        </td>
-                        <td>
-                          <button ng-hide="itemHasAction(act)" class="btn btn-sm btn-outline-primary">
-                            <i class="fa fa-arrow-right"></i>
-                          </button>
-                          <button ng-show="itemHasAction(act)" class="btn btn-sm btn-outline-secondary">&nbsp; &nbsp;</button>
-                        </td>
-                      </tr>
-                      <tr ng-show="filterActions().length == 0">
-                        <td colspan="2" class="text-muted">
-                          No action items to choose from.<br/><br/>
-                          Use 'Create New Action' above.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+    <div class="container gx-0">
+        <div class="row gx-0">
+        <div class="card col-md-7 align-top">
+            <span title="This is a list of the existing action items in the workspace that are available to be attached.">
+                <div class="card-header border-1 d-flex"> 
+          Existing Action Items - Filter &nbsp;&nbsp;<input type="text" ng-model="realFilter" style="max-height: 25px;"> 
+                    </div>
+                </span>
+        <div class="card-body">
+            <div class="row col-12 align-top">
+            <div ng-repeat="act in filterActions()" ng-click="addActionToList(act)" 
+                title="click to add this action item to the list" style="cursor:pointer">
+                <span class="col-4"> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </span>
+                <span class="col-2">
+                    <button ng-hide="itemHasAction(act)"
+                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
+                    <button  ng-show="itemHasAction(act)"
+                        class="btn">&nbsp; &nbsp;</button>
+                </span>
             </div>
-            <!-- Right Column -->
-            <div class="col-md-6" title="This is a list of the action items that have been selected and are attached, if any." style="padding:10px;">
-              <div class="card">
-                <div class="card-header">
-                  Chosen Action Items
-                </div>
-                <div class="card-body">
-                  <table class="table table-striped">
-                    <tbody>
-                      <tr ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" title="Click to remove this action item from the list" style="cursor:pointer">
-                        <td>
-                          <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}}
-                        </td>
-                        <td>
-                          <button class="btn btn-sm btn-outline-danger">
-                            <i class="fa fa-close"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr ng-show="itemActions().length == 0">
-                        <td colspan="2" class="text-muted">
-                          No actions items attached.<br/><br/>
-                          <span ng-show="filterActions().length > 0">Click on an action item on the left, to add to the list here on the right.</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+            <div ng-show="filterActions().length==0">
+                <td class="instruction">No action items to choose from.<br/><br/>
+                Use 'Create New Action' above.</td>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="card col-md-5 align-top" title="This is a list of the action items that have been selected and are attached, if any.">
+        <div class="card-header border-1 vh-65"> Chosen Action Items
+        </div>
+        <div class="card-body">
+          <div class="row-col-12 align-top">
+            <div ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" 
+                title="Click to remove this action item from the list"  style="cursor:pointer">
+                <span class="col-4"> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </span>
+                <span class="col-2">
+                    <button 
+                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                </span>
+            </div>
+            <div class="row" ng-show="itemActions().length==0">
+                <span class="instruction">No actions items attached.<br/><br/>
+                <span ng-show="filterActions().length>0">Click on an action item on the left, to add to the list here on the right.</span></span>
             </div>
           </div>
         </div>
-      </div>
-      
-   </div>
-   <div ng-show="selectedTab=='Create'">
-        <div >
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
+    <h5 class="modal-title" id="attachActionLabel">Create New Action Item</h5>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="card col-md-12 align-top">
+            <div class="card-body" >
+
             <table class="spaceyTable">
                <tr>
                     <td class="gridTableColummHeader">Synopsis:</td>
@@ -134,7 +96,7 @@
                     <td style="width:20px;"></td>
                     <td colspan="2">
                         <span datetime-picker ng-model="newGoal.dueDate"  
-                            class="form-control" style="max-width:300px">
+                            class="form-control" style="max-width:300px; min-height:30px">
                             {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                         </span> 
                         <!--input type="text"
@@ -154,11 +116,12 @@
             </table>
         </div>
    </div>
-   <div style="clear: both"></div>
 </div>
-<div class="modal-footer">
-    <button class="btn btn-primary btn-raised " ng-show="selectedTab=='Create'"
-        type="button" ng-click="createActionItem()">Create Action Item</button>
-    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="exitPopup()">
+<div class="modal-footer d-flex">
+    <button class="me-auto btn btn-danger" type="button" ng-click="exitPopup()">
         Exit</button>
+        
+        <button class="btn btn-primary " ng-show="selectedTab=='Create'"
+        type="button" ng-click="createActionItem()">Attach Action Item</button>
+    
 </div>
