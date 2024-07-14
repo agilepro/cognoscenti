@@ -208,7 +208,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
   }
   </script>
 
-<script src="../../../spring/jsp/MeetingHtml.js"></script>
+<script src="../../../spring2/jsp/MeetingHtml.js"></script>
 
 
 
@@ -291,11 +291,11 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
                 <div class="my-3 d-flex justify-content-start">
                 <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>\assets\navicon\agendaIcon.png"></br> Agenda
+                    <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
                 </div>
                 <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>\assets\navicon\minutesIcon.png"></br> Minutes
+                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
                     </button>
                 </div>
 
@@ -305,13 +305,13 @@ embeddedData.canUpdate = <%=canUpdate%>;
         <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
         <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
         <span ng-hide="item.readyToGo" >
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
                  title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
                  Not ready yet.
         </span>
         <span ng-show="item.readyToGo"  >
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-ready-to-go.png"
                  title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting.">
                  Ready to go.  Presentation attached (if any).
         </span>

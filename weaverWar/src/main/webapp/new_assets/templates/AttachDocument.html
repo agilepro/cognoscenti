@@ -5,6 +5,9 @@
   </h5>
   <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
 </div>
+<div class="instruction align-text-center text-weaverlight mx-auto fs-4 fw-bold mt-2">
+  To upload new file drag &amp; drop anywhere in the panel below
+</div>
 <div class="modal-body {{greenOnDrag()}}"  
     ondragover="window.MY_SCOPE.dragIn(event)"
     ondragleave="window.MY_SCOPE.dragOut(event)"
@@ -83,9 +86,7 @@
         </div>
         <div ng-show="!fileProgress || fileProgress.length==0" 
              style="width:100%;text-align:center">
-            <span class="instruction my-2 fs-5 fw-bold">
-                To upload new file drop anywhere in the panel above
-            </span>
+
         </div>
         <div class="header mt-2 bg-primary-subtle text-primary">
           <h5 class="modal-title p-2" id="attachWebLinkLabel">New Web Link</h5></div>
@@ -107,13 +108,11 @@
    
 
 <div class="modal-footer">
-  <span class="instruction my-2 fs-6 fw-bold">
-    "Exit" will save all changes <i class="fa fa-arrow-right"></i>
+  <span class="instruction my-2 fs-6 fw-bold me-auto">
+    Refresh browser after saving to see changes <i class="fa fa-exclamation-triangle"></i>
 </span>
     <button ng-click="addLink()" class="btn btn-primary" ng-show="newLink.url && newLink.name">
         Attach Link</button>
-    <button class="ms-auto btn btn-primary" type="button" ng-click="cancel()">
-        Exit</button>
         <button class="btn btn-primary"
         type="button" ng-click="ok()">Save</button>
 </div>

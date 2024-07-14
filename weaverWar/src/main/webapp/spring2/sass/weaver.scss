@@ -10,6 +10,29 @@ $warning: #d69e02;
 $light: #fefefe;
 $dark: #20082c;
 
+//Custom colors
+
+    $blue: #0563c7;
+    $red: #610c0c;
+    $green: #034603;
+    $yellow: #d19a02;
+    $gray: #6c666e;
+    $black: #07010a;
+    $white: #fefefe;
+    $purple: #672a79;
+    $pink: #c83798;
+    $orange: #bd6604;
+    $cyan: #0497d1;
+    $lightgreen: #8cca8c;
+    $darkgreen: #04330a;
+    $lightblue: #7dc7ff;
+    $darkblue: #020d6d;
+    $lightpurple: #ab37c8;
+    $darkpurple: #39134c;
+    $lightpink: #e293d5;
+    $darkpink: #8f028f;
+
+    
 
 // import the functions & variables
 @import "../node_modules/bootstrap/scss/_functions";
@@ -24,7 +47,26 @@ $custom-weaver-colors: (
     "weaverBtnDark": #39134C,  
     "weaverFrozen": #e2efff, 
     "lightgreen": #90b990,
+    "blue": #0563c7,
+    "red": #610c0c,
+    "green": #034603,
+    "yellow": #f0c85a,
+    "gray": #6c666e,    
+    "black": #07010a,
+    "white": #fefefe,
+    "purple": #672a79,
+    "pink": #c83798,
+    "orange": #bd6604,
+    "cyan": #0497d1,
+    "darkgreen": #04330a,
+    "lightblue": #7dc7ff,
+    "darkblue": #020d6d,
+    "lightpurple": #ab37c8,
+    "darkpurple": #39134c,
+    "lightpink": #e293d5,
+    "darkpink": #8f028f,
 );
+
 
 
     $primary-90: #4d2f5e;
@@ -161,7 +203,10 @@ a {
 .card {
     background-color: $primary-20;
     color: $body-color;
-
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
     .clipping {
         overflow: hidden;
         text-overflow: clip; 
@@ -180,7 +225,6 @@ a {
     .card-header    {
         background-color: $primary-70;
         color: $primary-10;
-        border-bottom: 3px solid $primary-20;
 
         a {
             color: $primary-10;
@@ -579,6 +623,11 @@ a {
         opacity: 0.5;
     } 
 }
+.modal-header {
+    border-bottom: $secondary solid 1px;
+    padding: 0rem
+}
+
 .modal-content {
     position: relative;
     display: flex;
@@ -598,7 +647,9 @@ a {
       opacity: 1;
     }
   }
-
+.nav-item {
+    list-style-type: none;
+}
 
 
 $vertical-align-classes: (

@@ -357,16 +357,16 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.meetingStateStyle = function (val) {
         if (val <= 0) {
-            return "background-color:yellow; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#f0c85a; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
         }
         if (val <= 1) {
-            return "background-color:lightblue; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#7dc7ff; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
         }
         if (val == 2) {
             return "background-color:#90b990; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
         }
         if (val > 2) {
-            return "background-color:gray; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#9f8fae; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
         }
         return "Unknown";
     }
@@ -375,19 +375,19 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             return "background-color:#90b990";
         }
         if (item.status == 2) {
-            return "background-color:yellow";
+            return "background-color:#f0c85a";
         }
         if (item.status > 2) {
             return "background-color:red";
         }
-        return "background-color:lavender";
+        return "background-color:primary-subtle";
     }
     $scope.goalStateStyle = function (goal) {
         if (goal.prospects == "good") {
             return "background-color:#90b990";
         }
         if (goal.prospects == "ok") {
-            return "background-color:yellow";
+            return "background-color:#f0c85a";
         }
         if (goal.prospects == "bad") {
             return "background-color:red";
@@ -477,7 +477,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         if (!item.timerRunning) {
             if (item.proposed) {
-                return { "background-color": "yellow" };
+                return { "background-color": "#f0c85a" };
             }
             if (item.isSpacer) {
                 return { "background-color": "#bbbbbb" }
@@ -495,7 +495,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             return {};
         }
         let style = {
-            "background-color": "white",
+            "background-color": "#fefefe",
             "color": "black",
             "margin-top": "10px",
             "margin-bottom": "10px",
@@ -504,7 +504,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         };
         if (!item.timerRunning) {
             if (item.proposed) {
-                style["background-color"] = "yellow";
+                style["background-color"] = "#f0c85a";
             }
             else if (item.isSpacer) {
                 style["background-color"] = "#bbbbbb";

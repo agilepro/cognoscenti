@@ -22,7 +22,7 @@
           <div class="timers" >
             <div class="row g-1 justify-content-between">
               <span class="col-6">
-                <div class="m-2 pt-2 fixed-width-sm" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
+                <div class="m-2 pt-2 fixed-width-sm text-center" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                           <span ng-hide="item.timerRunning">
                     <button class="btn fixed-width-sm" ng-click="agendaStartButton(item)">Start</button>
@@ -39,7 +39,7 @@
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
                   <div ng-hide="item.presenterList && item.presenterList.length>0">
                   </div>
-                  <div type="button" class="btn btn-flex btn-raised btn-primary text-weaverbody"><span ng-click="openAgenda(item)"></span> <!--data-bs-toggle="modal" data-bs-target="#agendaItem"> --><i class="fa fa-user"></i> &nbsp;Select Presenter
+                  <div type="button" class="btn btn-flex btn-raised btn-primary text-weaverbody my-2"><span ng-click="openAgenda(item)"></span> <i class="fa fa-user"></i> &nbsp;Select Presenter
                   </div>                  
                   <div class="my-2" ng-repeat="presenter in item.presenterList">
                     <span class="dropdown" >
@@ -57,13 +57,13 @@
                     </span>
                       {{presenter.name}}
                   </div>
-                  <ul class="navbar-nav ps-1 btn btn-flex btn-raised btn-primary text-weaverbody">
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> 
+                  <ul type="button" class="text-center btn btn-flex btn-raised btn-primary my-2" style="width: 160px;max-height: 36px;">
+                    <li class="nav-item dropdown"><a class="text-weaverbody dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> 
                       <span class="dropdown-toggle-label" translate>Set Timer</span></a>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:
+                        <li><a class="dropdown-item" ng-click="#">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:
                           <span ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} </span></span></a></li>
-                          <li><a class="dropdown-item" ng-click="timerStyleComplete(item)">Count-down Timer<span class="timerStyleComplete"> <br>Remaining Time: <span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span></span></a>
+                          <li><a class="dropdown-item" ng-click="#">Count-down Timer<span class="timerStyleComplete"> <br>Remaining Time: <span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span></span></a>
                         </li>
                       </ul>
                     </li> 
@@ -89,22 +89,15 @@
         </div><!--END Current Meeting Minutes card header-->
         <div class="card-body">
           <div ng-hide="item.isSpacer">
-          <div class="modal-body" ng-style="bodyStyle()">
+            <div class="modal-body" ng-style="bodyStyle()">
               <div class="form-group" >
-                <label for="labels">Status:</label>
-                <textarea ng-model="agendaData.new" class="form-control markDownEditor" style="height:250px;width:80%"
-                placeholder="Enter meeting notes" ng-disabled="!isEditing"></textarea>
+                <span ng-click="openNotesDialog(item)">
+                  <label for="labels">Status:</label>
+                
+                  <div ng-bind-html="item.minutes | wiki"></div>
+                </span>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
-              <button ng-hide="id=='~new~'" class="btn btn-warning btn-raised me-auto"
-                  type="button" ng-click="ok()">Exit</button>
-              <button ng-hide="agendaData.needsMerge" class="btn">
-                  <input type="checkbox" ng-model="autoMerge"> Automatically Merge (danger)
-              </button>
-              <button ng-show="agendaData.needsMerge" class="btn btn-danger btn-raised"
-                  type="button" ng-click="mergeNewData()"><i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
           </div>
         </div><!--END Current Meeting Minutes card body-->
       </div><!--END Current Meeting Minutes card-->
@@ -114,19 +107,20 @@
         <!--Previous Meeting Minutes - top of second column-->
         <div class="card my-2">
           <div class="d-flex card-header" title="Minutes from last meeting">
-            <span> <!--ng-hide="item.isSpacer || !item.lastMeetingMinutes">-->
+            <span ng-hide="item.isSpacer">
               <h4 class="h6" ng-click="copyNotes(item)">Last Meeting Minutes</h4>
             </span>
-            <span ng-dblclick="copyNotes(item)">
-              <div ng-bind-html="item.lastMeetingMinutes | wiki"></div>
-            </span>
-          </div><!--END Precious Meeting Minutes card header-->
+          </div><!--END Previous Meeting Minutes card header-->
           <div class="card-body">
-            <span ng-dblclick="copyNotes(item)">
-              <div ng-hide="item.lastMeetingMinutes" class="doubleClickHint">
-              Double-click to copy notes
+            <div ng-hide="item.isSpacer">
+              <div class="modal-body" ng-style="bodyStyle()">
+                <div class="form-group">  
+                  <span ng-click="copyNotes(item)">
+                    <div ng-bind-html="item.lastMeetingMinutes | wiki"></div>
+                  </span>
+                </div>
               </div>
-            </span>
+            </div>
           </div><!--END Precious Meeting Minutes card body-->
         </div><!--END Precious Meeting Minutes card-->
       </div>

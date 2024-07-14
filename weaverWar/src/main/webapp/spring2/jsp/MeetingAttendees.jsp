@@ -154,16 +154,16 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
     $scope.meetingStateStyle = function(val) {
         if (val<=0) {
-            return "background-color:yellow";
+            return "background-color:#f0c85a";
         }
         if (val<=1) {
-            return "background-color:lightblue";
+            return "background-color:#7dc7ff";
         }
         if (val==2) {
-            return "background-color:lightgray";
+            return "background-color:#c3b9c9";
         }
         if (val>2) {
-            return "background-color:gray";
+            return "background-color:#6c666e";
         }
         return "Unknown";
     }

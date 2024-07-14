@@ -1,18 +1,12 @@
 
 <html>
   <body>
-<div class="modal-header qqTabHeader" tabindex="-1">
-  <div class="qqTabBand">
-    <span ng-click="editMode='edit'" 
-          ng-class="editMode=='edit'?'qqTabSelected':'qqTabUnselected'">
+    <div class="modal-header mt-2 bg-primary-subtle text-primary">
+      <h5 class="modal-title" id="attachDocumentLabel">
     Edit Meeting Notes
-    </span>
-    <span ng-click="editMode='legend'" 
-          ng-class="editMode=='legend'?'qqTabSelected':'qqTabUnselected'">
-    Markdown
-    </span>
+      </h5>
+
   </div>
-</div>
 <div class="modal-body" ng-style="bodyStyle()">
   <div ng-show="editMode=='edit'">
     <div class="form-group" 
@@ -90,13 +84,17 @@
   <div style="clear:both"></div>
 </div>
 <div class="modal-footer">
-    <button ng-hide="id=='~new~'" class="btn btn-warning btn-raised pull-left"
-        type="button" ng-click="ok()">Exit</button>
-    <button ng-hide="agendaData.needsMerge" class="btn">
+    
+    <button ng-hide="agendaData.needsMerge" class="me-auto btn">
         <input type="checkbox" ng-model="autoMerge"> Automatically Merge (danger)
     </button>
     <button ng-show="agendaData.needsMerge" class="btn btn-danger btn-raised"
         type="button" ng-click="mergeNewData()"><i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
-</div>
+        <span class="instruction my-2 fs-6 fw-bold me-auto">
+          Clicking exit will save changes <i class="fa fa-arrow-right"></i>
+      </span>
+        <button ng-hide="id=='~new~'" class=" btn btn-secondary btn-raised pull-left"
+        type="button" ng-click="ok()">Exit</button>
+      </div>
 </body>
 </html>
