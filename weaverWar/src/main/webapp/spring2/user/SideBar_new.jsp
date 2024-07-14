@@ -70,7 +70,7 @@
                         }
                         %>> <% 
                         if (jo.has("icon")) {
-                            %><img src="../../../assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
+                            %><img src="../../new_assets/assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
                         }
 
                         

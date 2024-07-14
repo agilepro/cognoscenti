@@ -276,17 +276,17 @@ myApp.controller('myCtrl', function($scope, $http) {
 <div class="row"> 
     <div class="mx-5 col-md-10 d-flex align-items center">
 
-        <button class="btn btn-primary btn-raised m-1" ng-click="UserHome.htm?ref=<%=ar.nowTime%>" translate
+        <a class="btn btn-primary btn-raised m-1" href="UserHome.htm?ref=<%=ar.nowTime%>" translate
             title="{{'Use this option if you want to see changes that occurred in the past 24 hours'|translate}}">
-      Recalculate Page</button>
-    <button class="btn btn-primary btn-raised m-1" 
-        ng-click="UserAlerts.htm" translate
+      Recalculate Page</a>
+    <a class="btn btn-primary btn-raised m-1" 
+        href="UserAlerts.htm" translate
         title="{{'A list of things that have changed in the pages that you watch'|translate}}">
-        User Alerts</button> 
-    <button class="btn btn-primary btn-raised m-1" 
-        ng-click="EmailUser.htm" translate
+        User Alerts</a> 
+    <a class="btn btn-primary btn-raised m-1" 
+        href="EmailUser.htm" translate
         title="{{'All email sent to this user'|translate}}">
-        Email</button>
+        Email</a>
     </div>
 </div>
 </div>
