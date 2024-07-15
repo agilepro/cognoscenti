@@ -14,9 +14,9 @@
     ondrop="window.MY_SCOPE.dragDrop(event)">
     <div class="container gx-0">
       <div class="row gx-0">
-        <div class="card col-md-7 align-top">
+        <div class="card col-md-6 align-top">
           <span title="This is a list of the existing action items in the workspace that are available to be attached.">
-            <div class="card-header border-1 d-flex"> Available Documents - Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-height: 25px;"> 
+            <div class="card-header border-1 d-flex"> Available Documents: Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-width:40%;max-height: 25px;"> 
             </div>
           </span>
         <div class="card-body">
@@ -24,11 +24,11 @@
             <div ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" title="Click to add document to the list.">
               <span class="col-4">
                 <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </span>
-                <span class="col-2">
+                <span class="col-1">
                     <button ng-hide="itemHasDoc(doc)"
-                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
+                        class="btn btn-tiny border-0" >&nbsp; <i class="fa fa-arrow-right"></i></button>
                     <button  ng-show="itemHasDoc(doc)"
-                        class="btn" title="Document is already added.">&nbsp; &nbsp;</button>
+                        class="btn btn-tiny border-0" title="Document is already added.">&nbsp; &nbsp;</button>
                 </span>
             </div>
             <div ng-show="filterDocs().length==0">
@@ -37,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div class="card col-md-5 align-top">
+      <div class="card col-md-6 align-top">
         <div class="card-header border-1 vh-65"> Chosen Documents </div>
         <div class="card-body">
           <div class="row-col-12 align-top">
@@ -45,8 +45,8 @@
                 title="Click to remove document from list." style="cursor:pointer">
                 <span class="col-4"> <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} 
                 </span>
-                <span class="col-2">
-                    <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                <span class="col-1">
+                    <button class="btn btn-tiny border-0"><i class="fa fa-close"></i> &nbsp;</button>
                 </span>
             </div>
             <div class="row" ng-show="itemDocs().length==0">

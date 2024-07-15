@@ -1,7 +1,7 @@
 
 <div class="modal-header mt-2 bg-primary-subtle text-primary">
-  <h5 class="modal-title" id="attachDocumentLabel"></h5>
-    Link to Discussion Topic
+  <h5 class="modal-title" id="attachDocumentLabel">
+    Link to Discussion Topic</h5>
     <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
 <div class="modal-body">
@@ -9,16 +9,16 @@
     <div class="row gx-0">
       <div class="card col-md-6 align-top">
         <div class="card-header border-1 d-flex vh-65"> 
-            Existing Topics - Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-width:40%; max-height: 25px;">
+            Existing Topics: Filter &nbsp;&nbsp;<input type="text" ng-model="realDocumentFilter" style="max-width:40%; max-height: 25px;">
         </div>
         <div class="card-body">
           <div class="row col-12 align-top">
             <div ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
                 title="Click to link to this topic">
                 <span class="col-4" limit-to="10">{{doc.subject}} </span>
-                <span class="col-1">
+                <span class="col-2">
                     <button ng-hide="itemHasDoc(doc)"
-                        class="btn-sm border-0" > <i class="fa fa-arrow-right"></i></button>
+                        class="btn btn-tiny border-0" > <i class="fa fa-arrow-right"></i></button>
                     <button ng-show="itemHasDoc(doc)" title="Discussion forum is already linked.">&nbsp;</button>
                 </span>
             </div>
@@ -38,7 +38,7 @@
                 title="Click to unlink the discussion topic"  style="cursor:pointer">
                 <span class="col-4"> {{topic.subject}} </span>
                 <span class="col-1">
-                    <button class="btn-sm border-0"><i class="fa fa-close"></i> </button>
+                    <button class="btn btn-tiny border-0"><i class="fa fa-close"></i> </button>
                 </span>
             </div>
             <div ng-show="fullTopics.length==0">

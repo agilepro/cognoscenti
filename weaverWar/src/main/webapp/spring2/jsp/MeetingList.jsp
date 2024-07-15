@@ -142,16 +142,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.meetingStateStyle = function(val) {
         if (val<=0) {
-            return "background-color:yellow";
+            return "background-color:#f0c85a";
         }
         if (val<=1) {
-            return "background-color:white";
+            return "background-color:#7dc7ff";
         }
         if (val==2) {
-            return "background-color:lightgreen";
+            return "background-color:#c3b9c9";
         }
         if (val>2) {
-            return "background-color:gray";
+            return "background-color:#6c666e";
         }
         return "Unknown";
     }
@@ -168,49 +168,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-
-<div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Create a new meeting record"
-              href="MeetingCreate.htm" ><i class="fa fa-plus"></i> Create Meeting</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Access the new mobile UI in development"
-              href="PickMeeting.wmf" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></li>
-                    
-        </ul>
-      </span>
+<div class="row">
+    <div class="d-flex col-12 mb-2">
+        <button class="btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>
+    </div>
 </div>
 
     <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
-            <th width="100px">Actions</th>
-            <th width="50px">Agenda</th>
-            <th width="200px">Meeting</th>
-            <th width="200px">Date ({{browserZone}})</th>
-            <th width="50px">Minutes</th>
-            <th width="80px">State</th>
-            <th width="80px">Duration</th>
+            <th scope="col" width="50px">Actions</th>
+            <th scope="col" width="50px">Agenda</th>
+            <th scope="col" width="200px">Meeting</th>
+            <th scope="col" width="200px">Date ({{browserZone}})</th>
+            <th scope="col" width="50px">Minutes</th>
+            <th scope="col" width="80px">State</th>
+            <th scope="col" width="80px">Duration</th>
         </tr>
         <tr ng-repeat="rec in meetings">
-            <td class="actions">
+            <td class="actions col-1">
               <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
-                <button type="button" name="clone" class='btn btn-default'>
+                <button type="button" name="clone" class="btn-sm btn-comment">
                     <span class="fa fa-clone"></span>
                 </button>
               </a>
               <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
-                <button type="button" name="delete" class='btn btn-warning'>
+                <button type="button" name="delete" class="btn-sm btn-comment bg-danger-subtle text-danger">
                     <span class="fa fa-trash"></span>
                 </button>
               </a>
             </td>
             <td class="actions"><a title="Meeting Agenda" 
                  href="MeetingHtml.htm?id={{rec.id}}&mode=Agenda">
-                <button type="button" name="edit" class='btn btn-primary'> 
+                <button type="button" name="edit" class="btn btn-raised btn-secondary"> 
                     <span class="fa  fa-file-o"></span>
                 </button>
               </a>
@@ -236,7 +225,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
     </table>
 <% if (userCanUpdate) { %>
-    <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
+    <div class="row">
+        <div class="d-flex col-12 m-2">
+            <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
+        </div>
+    </div>
 <% } %>
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     There are no meetings in this workspace yet.<br/>
@@ -244,7 +237,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% if (userCanUpdate) { %>  <br/>  Create a meeting records to hold the agenda of an upcoming meeting.  
     <br/>
     Later use the meeting record to check everyone in, help
-    keep notes, and generate the minutes of the meetng.
+    keep notes, and generate the minutes of the meeting.
 <% } %>    
     </div>
 

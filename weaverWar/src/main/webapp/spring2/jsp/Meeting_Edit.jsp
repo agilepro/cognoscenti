@@ -39,7 +39,7 @@
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
                   <div ng-hide="item.presenterList && item.presenterList.length>0">
                   </div>
-                  <div type="button" class="btn btn-flex btn-raised btn-primary text-weaverbody my-2"><span ng-click="openAgenda(item)"></span> <i class="fa fa-user"></i> &nbsp;Select Presenter
+                  <div type="button" class="btn btn-raised btn-primary text-weaverbody my-2"><span ng-click="openAgenda(item)"></span> <i class="fa fa-user"></i> &nbsp;Select Presenter
                   </div>                  
                   <div class="my-2" ng-repeat="presenter in item.presenterList">
                     <span class="dropdown" >
@@ -57,8 +57,9 @@
                     </span>
                       {{presenter.name}}
                   </div>
-                  <ul type="button" class="text-center btn btn-flex btn-raised btn-primary my-2" style="width: 160px;max-height: 36px;">
-                    <li class="nav-item dropdown"><a class="text-weaverbody dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> 
+                  <ul type="button" class="text-center btn btn-raised btn-primary my-2" style="width: 160px;max-height: 36px;">
+                    <li class="nav-item dropdown">
+                      <a class="text-weaverbody dropdown-toggle" id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i> 
                       <span class="dropdown-toggle-label" translate>Set Timer</span></a>
                       <ul class="dropdown-menu">
                         <li><a class="dropdown-item" ng-click="#">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:

@@ -175,7 +175,7 @@
 
 
 %>
-
+<!--
 <style>
 .labelColumn:hover {
     background-color:#ECB6F9;
@@ -191,7 +191,7 @@
     background-color:lightgray;
     margin-top:20px;
 }
-</style>
+</style>-->
 
 <script src="../../../jscript/AllPeople.js"></script>
 
@@ -219,56 +219,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 <script src="../../../spring/jsp/MeetingHtml.js"></script>
 
 
-<style>
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
-}
 
-.blankTitle {
-    font-size: 130%;
-    font-weight: bold;
-}
-.agendaTitle {
-    font-size: 130%;
-    padding:5px;
-    cursor:pointer;
-    border: 3px solid white;
-    border-right: none;
-}
-.agendaTitleSelected {
-    font-size: 130%;
-    padding:5px;
-    border: 3px solid black;
-    border-right: none;
-    cursor:pointer;
-}
-.agendaTitle:hover {
-    font-size: 130%;
-    padding:5px;
-    cursor:pointer;
-    color:black;
-    background-color:skyblue;
-}
-.spaceyTable tr td {
-    padding:5px;
-}
-.spacydiv {
-    padding:5px;
-}
-.votingButton {
-    padding:2px;
-    margin:0px;
-    font-size: 130%;
-}
-.buttonSpacerOff {
-    border: 5px solid white;
-    padding:5px;
-}
-.buttonSpacerOn {
-    border: 5px solid lightgrey;
-    padding:5px;
-}
-</style>
 
     
 <div ng-cloak>
@@ -353,8 +304,8 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 
 
-
-<link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
+<!--
+<link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>-->
 
 <div ng-show="displayMode=='Agenda'">
     Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 

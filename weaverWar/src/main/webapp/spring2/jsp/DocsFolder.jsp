@@ -348,94 +348,75 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="DocsList.htm">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+      
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="DocsList.htm">
               Show Without Folders</a>
-          </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
+        </span>
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="addDocs"><a class="nav-link" role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
-          </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="SendNote.htm">
+          </span>
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" role="menuitem" tabindex="-1" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
-          </li>
-        </ul>
-      </span>
-    </div>
+          </span>
+        </div>
 
+    <div class="d-flex col-9">
+        <div class="contentColumn">
+            <div class=" bg-secondary-subtle p-3" id="allthefolders" >
 
-    <div id="allthefolders" style="padding:30px">
-
-        <div class="folderLine" style="cursor:pointer">
-            <span ng-click="trimFolderPath(0)">
+                <div class="folderLine bg-secondary-subtle p-3" style="cursor:pointer">
+                    <span class="fs-5 fw-bold" ng-click="trimFolderPath(0)">
                 <img src="<%=ar.retPath%>assets/iconFolder.gif">
                 <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Workspace
-            </span>
-        </div>
-        <div class="folderLine" style="margin-left:{{$index*15+15}}px;cursor:pointer" ng-repeat="folder in folderPath">
-            <span ng-click="trimFolderPath($index+1)">
-                <img src="<%=ar.retPath%>assets/iconFolder.gif">
-                <img src="<%=ar.retPath%>assets/images/collapseIcon.gif">
-                <button class="labelButton"
-                    style="background-color:{{folder.color}};">{{folder.name}}
-                </button>
-            </span>
-        </div>
-        <div class="well" ng-show="getAvailableFolders().length>0">
-            Choose Folder: <span class="folderLine" style="cursor:pointer" ng-repeat="folder in getAvailableFolders()">
-                <span ng-click="addFolderPath(folder)">
+                    </span>
+                </div>
+                <div class="folderLine" style="margin-left:{{$index*15+15}}px;cursor:pointer" ng-repeat="folder in folderPath">
+                    <span ng-click="trimFolderPath($index+1)">
+                        <img src="<%=ar.retPath%>assets/iconFolder.gif">
+                        <img src="<%=ar.retPath%>assets/images/collapseIcon.gif">
+                        <button class="labelButton" style="background-color:{{folder.color}};">{{folder.name}}
+                        </button>
+                    </span>
+                </div>
+                <div class="well" ng-show="getAvailableFolders().length>0"> Choose Folder: 
+                    <span class="folderLine" style="cursor:pointer" ng-repeat="folder in getAvailableFolders()">
+                        <span ng-click="addFolderPath(folder)">
                     <button class="labelButton"
                         style="background-color:{{folder.color}};">{{folder.name}}
                     </button>
-                </span>
-            </span>
-        </div>
-
-    </div>
+                        </span>
+                    </span>
+                </div>
+            </div>
 
     <table class="table" width="100%">
         <tr class="gridTableHeader">
             <td width="50px">
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
-                      <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" />
-                      Add Document</a>
-                  </li>
-                </ul>
-              </div>
+                
+
             </td>
             <td width="80px"></td>
-            <td width="420px">Name ~ Description</td>
-            <td width="80px">Date</td>
+            <td width="420px"><h2 class="text-secondary fs-5">Documents ~ Description</h2></td>
+            <td width="80px"><span class="text-secondary fs-5">Date</span></td>
         </tr>
         <tr ng-repeat="rec in getUnmarked()" ng-dblclick="openDocDialog(rec)">
             <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
-                  <li role="presentation" ng-show="rec.attType=='FILE'">
-                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Document Settings</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
+                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
+                            <li ng-show="rec.attType=='FILE'">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a> </li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Document Settings</a></li>
+                            <hr>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
+                        </ul>
+                    </li>
                 </ul>
-              </div>
-            </td>
             <td>
                 <span ng-show="rec.attType=='FILE'" ng-click="openDocDialog(rec)">
                    <img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
@@ -463,6 +444,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
     
 </div>
+</div>
+</div>
 
 
-<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DocumentDetail2.js"></script>

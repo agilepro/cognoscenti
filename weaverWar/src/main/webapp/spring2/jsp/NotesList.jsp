@@ -387,23 +387,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
     
-        <div class=" my-3" ng-repeat="rec in getRows()">
+        <div class="my-3" ng-repeat="rec in getRows()">
             <div class="{{getTopicStyle(rec)}}">
                 <div id="headline" >
-                  <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="sendNoteByMail(rec)">Send Email</a></li>
-                      <li role="presentation" ng-hide="rec.deleted">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
-                      <li role="presentation" ng-show="rec.deleted">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a></li>
+                    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                        <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
+                                <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
+                                <li ng-hide="rec.deleted">
+                                    <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
+                                <li ng-show="rec.deleted">
+                                    <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
-                  </span>
                   <span style="color:#220011;">
                     <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
 

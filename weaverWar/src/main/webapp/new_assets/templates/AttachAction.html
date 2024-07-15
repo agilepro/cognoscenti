@@ -63,10 +63,10 @@
 <div class="modal-body">
     <div class="container gx-0">
         <div class="row gx-0">
-        <div class="card col-md-7 align-top">
+        <div class="card col-md-6 align-top">
             <span title="This is a list of the existing action items in the workspace that are available to be attached.">
                 <div class="card-header border-1 d-flex"> 
-          Existing Action Items - Filter &nbsp;&nbsp;<input type="text" ng-model="realFilter" style="max-height: 25px;"> 
+          Existing Action Items: Filter &nbsp;&nbsp;<input type="text" ng-model="realFilter" style="max-width:40%;max-height: 25px;"> 
                     </div>
                 </span>
         <div class="card-body">
@@ -77,7 +77,7 @@
                     <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </span>
                 <span class="col-2">
                     <button ng-hide="itemHasAction(act)"
-                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
+                        class="btn btn-tiny border-0" > <i class="fa fa-arrow-right"></i></button>
                     <button  ng-show="itemHasAction(act)"
                         class="btn">&nbsp; &nbsp;</button>
                 </span>
@@ -89,7 +89,7 @@
             </div>
         </div>
         </div>
-        <div class="card col-md-5 align-top" title="This is a list of the action items that have been selected and are attached, if any.">
+        <div class="card col-md-6 align-top" title="This is a list of the action items that have been selected and are attached, if any.">
         <div class="card-header border-1 vh-65"> Chosen Action Items
         </div>
         <div class="card-body">
@@ -97,9 +97,9 @@
             <div ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" 
                 title="Click to remove this action item from the list"  style="cursor:pointer">
                 <span class="col-4"> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </span>
-                <span class="col-2">
+                <span class="col-1">
                     <button 
-                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                        class="btn btn-tiny border-0"><i class="fa fa-close"></i> &nbsp;</button>
                 </span>
             </div>
             <div class="row" ng-show="itemActions().length==0">

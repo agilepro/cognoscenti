@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGLabel"
 %><%@page import="com.purplehillsbooks.weaver.LabelRecord"
 %><%
@@ -60,7 +60,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/EditLabels.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/EditLabels.html<%=templateCacheDefeater%>',
             controller: 'EditLabelsCtrl',
             size: 'lg',
             resolve: {
@@ -125,48 +125,49 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 }
 </style>
 
-
- 
-    
-    <div class="well">
-        <h2>Add and Remove Labels</h2>
-        <button class="btn btn-sm btn-primary btn-raised" ng-click="openEditLabelsModal()">Pop Up</button>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+                    <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
+                        <a class="nav-link">Add and Remove Labels &amp; Folders</a>
+                    </span>
                     
     </div>
     
-    <div class="well">
-    <h2>Copy Labels from another Workspace</h2>
-    <table>
-    <tr style="height:50px;padding:15px" ng-hide="selectedWS.name">
-        <td style="padding:15px">
+    <div class="d-flex col-9"><div class="contentColumn">
+    <h2 class="text-secondary fs-3">Copy Labels from another Workspace</h2>
+    <div class="row col-12">
+    <div class="bg-weaver-white p-2" ng-hide="selectedWS.name">
+        <div class="ms-3 fs-4 fw-bold ">
             From:
-        </td>
-        <td style="padding:15px">
-            <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-small btn-raised">{{ws.name}}</button>
-        </td>
-    </tr>
-    <tr style="height:50px;padding:15px" ng-show="selectedWS.name">
-        <td style="padding:15px">
+        </div>
+        <span class="p-3">
+            <button class="btn btn-wide btn-flex btn-outline-secondary btn-raised shadow-sm mx-2 my-0" ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)">{{ws.name}}</button>
+        </span>
+    
+    <span class="p-2" ng-show="selectedWS.name">
+        <span class="p-2">
             Confirm:
-        </td>
-        <td style="padding:15px">
+        </span>
+        <span class="p-2">
             <button ng-click="copyLabels()" class="btn btn-small btn-warning btn-raised">Add all labels from --{{selectedWS.name}}-- to this workspace.</button>
             <button ng-click="cancelCopy()" class="btn btn-small btn-default btn-raised">Cancel</button>
-        </td>
-    </tr>
-    <tr style="height:50px;padding:15px" ng-show="newLabelsCreated.length>0">
-        <td style="padding:15px">
+        </span>
+    </span>
+    <span class="p-2" ng-show="newLabelsCreated.length>0">
+        <span class="p-2">
             Created:
-        </td>
-        <td style="padding:15px">
+        </span>
+        <span class="p-2">
             <div ng-repeat="lab in newLabelsCreated">
             <button style="background-color:{{lab.color}};" class="labelButton">{{lab.name}}</button>
             </div>
-        </td>
-    </tr>
-    </table>  
+        </span>
+    </span>
+    </div>
+</div>  
     </div>    
 </div>
 
 
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

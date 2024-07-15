@@ -1,86 +1,25 @@
 
-
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="editMode='status'" 
-          ng-class="editMode=='status'?'qqTabSelected':'qqTabUnselected'">
-    Action Item Status XXXX
-    </span>
-    <span ng-click="editMode='details'"  
-          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
-    Details
-    </span>
-    <span ng-click="editMode='assignee'"  
-          ng-class="editMode=='assignee'?'qqTabSelected':'qqTabUnselected'">
-    <img ng-src="../../../assets/goalstate/small{{goal.state}}.gif"> Assignment
-    </span>
-    <span class="qqTabUnselected">
-        </span>    
-    </div>
-</div>
-<div class="modal-body" style="min-height:300px">
-<style>
-.spacyTable tr td {
-    padding:10px;
-}
-</style>
-  <div ng-show="editMode=='status'">
-    <div style="text-align:center">
-      {{goal.synopsis}}
-    </div>
-    <div>
-      <div class="col-sm-12 col-md-6">
-        <div class="form-group" 
-             title="status is a freeform text statement about your current progress on action item">
-            <label for="synopsis">Status:</label>
-            <textarea ng-model="goal.status" class="form-control"     
-                placeholder="Enter text describing the current status"></textarea>            
-        </div>
-        <div class="form-group">
-            <div style="padding:10px;">
-              <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-                   title="Red: In trouble" ng-click="changeRAG(goal, 'bad')">
-              <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-                   title="Red: In trouble" >
-              <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-                   title="Yellow: Warning" ng-click="changeRAG(goal, 'ok')">
-              <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-                   title="Yellow: Warning" >
-              <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-                   title="Green: Good shape" ng-click="changeRAG(goal, 'good')">
-              <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-                   title="Green: Good shape">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="synopsis">Due Date:</label>
-            <div>
-                <span datetime-picker ng-model="goal.duedate" 
-                    class="form-control" style="max-width:300px;display:inline">
-                    <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
-                    <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
-                </span> 
-                <span style="padding:10px">
-                   <a href="ActionItem{{goal.id}}Due.ics">calendar</a>
-                </span>
-            </div>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6">
-        <div class="form-group">
-            <label for="synopsis">Checklist:</label>
-              <textarea class="form-control" ng-model="goal.checklist" style="min-height:200px"></textarea>
-        </div>
-      </div>
-    </div>
+  <div class="modal-header mt-2 bg-primary-subtle text-primary">
+    <h5 class="modal-title" id="attachDocumentLabel">Action Item</h5>
+    <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
-  <div ng-show="editMode=='details'">
-    <div>
-      <div class="col-sm-12 col-md-6">
+
+<div class="modal-body">
+
+  <div class="container-fluid">
+    <div class="row col-12">
+    <div class="card col-6 align-top">
+        <div class="card-body" >
         <div class="form-group">
             <label for="synopsis">Synopsis:</label>
             <input ng-model="goal.synopsis" class="form-control" placeholder="Enter synopsis"/>
         </div>
+        <div class="form-group">
+            <label for="assignee">Assignee:</label>
+            <tags-input ng-model="goal.assignTo" placeholder="Enter user name or id"
+                        display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+            </tags-input>
         <div class="form-group">
             <label for="description">Description:</label>
             <textarea ng-model="goal.description" class="form-control markDownEditor" placeholder="Enter description"></textarea>
@@ -92,7 +31,8 @@
             </select>
         </div>
       </div>
-      <div class="col-sm-12 col-md-6">
+    </div>
+      <div class="card col-6">
         <div class="form-group">
             <label for="labels">Labels:</label>
             <span class="dropdown" ng-repeat="role in allLabels">
@@ -161,6 +101,61 @@
     </div>
     <div style="clear:both"></div>
   </div>
+  <div ng-show="editMode=='status'">
+    <div style="text-align:center">
+      {{goal.synopsis}}
+    </div>
+    <div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group" 
+             title="status is a freeform text statement about your current progress on action item">
+            <label for="synopsis">Status:</label>
+            <textarea ng-model="goal.status" class="form-control"     
+                placeholder="Enter text describing the current status"></textarea>            
+        </div>
+        <div class="form-group">
+            <div style="padding:10px;">
+              <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
+                   title="Red: In trouble" ng-click="changeRAG(goal, 'bad')">
+              <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
+                   title="Red: In trouble" >
+              <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+                   title="Yellow: Warning" ng-click="changeRAG(goal, 'ok')">
+              <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+                   title="Yellow: Warning" >
+              <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+                   title="Green: Good shape" ng-click="changeRAG(goal, 'good')">
+              <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+                   title="Green: Good shape">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="synopsis">Due Date:</label>
+            <div>
+                <span datetime-picker ng-model="goal.duedate" 
+                    class="form-control" style="max-width:300px;display:inline">
+                    <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
+                </span> 
+                <span style="padding:10px">
+                   <a href="ActionItem{{goal.id}}Due.ics">calendar</a>
+                </span>
+            </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Checklist:</label>
+              <textarea class="form-control" ng-model="goal.checklist" style="min-height:200px"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
   <div ng-show="editMode=='assignee'">
     <div>
       <div class="col-sm-12 col-md-6">
@@ -256,6 +251,8 @@
     </div>
     <div style="clear:both"></div>
   </div>
+
+
   <div ng-show="editMode=='error'">
     <h2>An error occurred</h2>
     <div style="text-align:center">
