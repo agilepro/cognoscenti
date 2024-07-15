@@ -1,7 +1,7 @@
 {
   "userMode": [
     {
-      "href": "UserHome.jsp",
+      "href": "UserHome.htm",
       "name": "User Home",
       "title": "All User Specific Info.",
       "opts": [],
@@ -10,7 +10,7 @@
       "icon": "FrontPage.png"
     },
     {
-      "href": "WatchedProjects.jsp",
+      "href": "WatchedProjects.htm",
       "name": "Watched Workspaces",
       "title": "Access the list of workspaces you are watching",
       "opts": [],
@@ -19,7 +19,7 @@
       "icon": "Workspaces-UserHome.png"
     },
     {
-      "href": "ParticipantProjects.jsp",
+      "href": "ParticipantProjects.htm",
       "name": "Accessible Workspaces",
       "title": "Access the list of workspaces you can access",
       "opts": [],
@@ -28,7 +28,7 @@
       "icon": "Workspaces-UserHome.png"
     },
     {
-      "href": "OwnerProjects.jsp",
+      "href": "OwnerProjects.htm",
       "name": "Sites you Manage",
       "title": "Access the list of sites you manage",
       "opts": [],
@@ -39,7 +39,7 @@
   ],
   "siteMode": [
     {
-      "href": "FrontTop.jsp",
+      "href": "FrontTop.htm",
       "name": "Site Map",
       "title": "Graphical map of all workspaces in the site.",
       "opts": [],
@@ -48,7 +48,7 @@
       "icon": "SiteMap.png"
     },
     {
-      "href": "SiteWorkspaces.jsp",
+      "href": "SiteWorkspaces.htm",
       "name": "Workspaces in Site",
       "title": "Lists all the workspaces that are in this site.",
       "opts": [],
@@ -57,7 +57,7 @@
       "icon": "Workspaces.png"
     },
     {
-      "href": "SiteAdmin.jsp",
+      "href": "SiteAdmin.htm",
       "name": "Site Admin",
       "title": "View and adjust the main settings for the site.",
       "opts": [],
@@ -65,7 +65,7 @@
       "icon": "SiteAdmin.png"
     },
     {
-      "href": "SiteStats.jsp",
+      "href": "SiteStats.htm",
       "name": "Site Statistics",
       "title": "View content statistics for the site.",
       "opts": [],
@@ -73,7 +73,7 @@
       "icon": "Site-Stats.png"
     },
     {
-      "href": "SiteLedger.jsp",
+      "href": "SiteLedger.htm",
       "name": "Site Charges",
       "title": "View the monthly summary of charges for the site.",
       "opts": [],
@@ -81,7 +81,7 @@
       "icon": "Site-Ledger.png"
     },
     {
-      "href": "SiteUsers.jsp",
+      "href": "SiteUsers.htm",
       "name": "Users",
       "title": "Add, remove, and configure users.",
       "opts": [],
@@ -90,7 +90,7 @@
       "icon": "Site-Users.png"
     },
     {
-      "href": "SiteRoles.jsp",
+      "href": "SiteRoles.htm",
       "name": "Roles",
       "title": "Role define who can do what within this site.",
       "opts": [],
@@ -100,7 +100,7 @@
   ],
   "workMode": [
     {
-      "href": "FrontPage.jsp",
+      "href": "FrontPage.htm",
       "name": "Front Page",
       "title": "Get the main overview of the workspace and recent changes",
       "opts": [
@@ -119,7 +119,7 @@
             "RoleRequest.jsp",
             "LabelList.jsp"
           ],
-          "href": "FrontPage.jsp",
+          "href": "FrontPage.htm",
           "name": "Front Page",
           "title": "Get the main overview of the workspace and recent changes",
           "readOnly": true
@@ -139,7 +139,7 @@
             "RoleRequest.jsp",
             "LabelList.jsp"
           ],
-          "href": "CommentList.jsp",
+          "href": "CommentList.htm",
           "name": "Comments",
           "title": "View all the comments in this workspace",
           "readOnly": true
@@ -703,7 +703,7 @@
             "GoalList.jsp",
             "TaskAreas.jsp"
           ],
-          "ng-click": "openModalActionItem(newGoal,'details')",
+          "ng-click": "openActionItem(item)",
           "name": "Create",
           "title": "Create a new action item"
         },
