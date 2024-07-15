@@ -4,7 +4,7 @@
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.TaskArea"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 /*
 Required parameters:
@@ -128,22 +128,21 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="openTaskAreaEditor({id:'~new~'})">Create New Task Area</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="GoalList.htm">Action Items View</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="GoalStatus.htm">Status List View</a></li>
-          <li role="presentation"><a style="color:lightgrey">Manage Task Areas</a></li>
-        </ul>
-      </span>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
+          ng-click="isCreating=true" role="menuitem" tabindex="-1"
+              ng-click="openTaskAreaEditor({id:'~new~'})">Create New Task Area</a></span>
+          <hr>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="GoalList.htm">Action Items View</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="GoalStatus.htm">Status List View</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link">Manage Task Areas</a></span>
     </div>
+
+    <div class="d-flex col-9"><div class="contentColumn">
 
 
   <div class="guideVocal" ng-hide="loaded">

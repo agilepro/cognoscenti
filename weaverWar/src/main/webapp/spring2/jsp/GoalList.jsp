@@ -533,7 +533,7 @@ function addvalue() {
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
                     <li class="nav-item dropdown"> <a class=" dropdown-toggle" id="GoalList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="Actionlist">
-                    <li><a class="dropdown-item" role="menuitem" tabindex="-1"
+                    <li><a class="dropdown-item" role="menuitem"
                       ng-click="openModalActionItem(rec, 'details')">Edit Action Item</a></li>
                       <li><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="swapItems(rec, -1)">Move Up</a></li>

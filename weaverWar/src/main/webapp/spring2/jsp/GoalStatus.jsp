@@ -727,17 +727,18 @@ function addvalue() {
 
   <table style="width:100%">
     <tr>
-       <th></th>
+       <th>Area</th>
        <th>Synopsis</th>
        <th>Assigned</th>
        <th title="Dates that the action was started, due, and completed">Dates</th>
-       <th title="Give a Red-Yellow-Green indication of how it is going"></th>
+       <th title="Give a Red-Yellow-Green indication of how it is going"> Progress</th>
        <th title="A written summary of the current status">Status</th>
     </tr>
     <tbody ng-repeat="area in taskAreaList">
       <tr class="headerRow">
-        <td colspan="2" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
-        <td colspan="2">
+        <td class="fw-bold" style="width:100px" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
+        <td style="width:400px">{{area.description}}</td>
+        <td style="width:100px">
             <div ng-repeat="person in area.assignees">
               <span class="dropdown">
                 <span id="menu1" data-toggle="dropdown">
@@ -755,7 +756,8 @@ function addvalue() {
               </span>
             </div>
         </td>
-        <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
+        <td style="width:200px">{{area.dueDate}}</td>
+        <td style="width:100px;text-align:center" title="Give a Red-Yellow-Green indication of how it is going">
           <span>
             <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
                  title="Red: In trouble" ng-click="setProspectArea(area, 'bad', $event)" class="stoplight">
@@ -774,63 +776,55 @@ function addvalue() {
         <td ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</td>
       </tr>
       <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
-        <td  style="width:70px">
-        <div style="float:left;margin:3px">
-          <div class="dropdown">
-            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                data-toggle="dropdown"> <span class="caret"></span> </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem"
-                  href="task{{rec.id}}.htm">Edit Action Item</a></li>
-              <li role="presentation"><a role="menuitem"
-                  ng-click="swapItems(rec, -1)">Move Up</a></li>
-              <li role="presentation"><a role="menuitem"
-                  ng-click="swapItems(rec, 1)">Move Down</a></li>
-              <li role="presentation" ng-show="rec.state<2">
-                  <a role="menuitem" ng-click="makeState(rec, 2)">
-                      <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
-                      Start & Offer
-                  </a>
-              </li>
-
-              <li role="presentation" ng-show="rec.state==2">
-                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
-                      <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
-                      Mark Accepted
-                  </a>
-              </li>
-              <li role="presentation" ng-show="rec.state!=5">
-                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
-                      <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
+        <td style="width:100px">
+            <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsFolders" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="docFolderList">
+                        <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="task{{rec.id}}.htm">Edit Action Item</a></li>
+                        <li><a class="dropdown-item" role="menuitem" ng-click="swapItems(rec, -1)">Move Up</a></li>
+                        <li><a class="dropdown-item" role="menuitem" ng-click="swapItems(rec, 1)">Move Down</a></li>
+                        <li ng-show="rec.state<2">
+                        <a class="dropdown-item" role="menuitem" ng-click="makeState(rec, 2)">
+                        <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
+                      Start &amp; Offer
+                        </a>
+                        </li>
+                        <li ng-show="rec.state==2">
+                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
+                            <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />Mark Accepted
+                        </a>
+                        </li>
+                        <li ng-show="rec.state!=5">
+                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
+                            <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
                       Mark Completed
-                  </a>
-              </li>
-              <li role="presentation" ng-show="rec.state!=6">
-                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 6)">
-                      <img src="<%=ar.retPath%>assets/goalstate/small6.gif" alt="completed"  />
+                        </a>
+                        </li>
+                        <li ng-show="rec.state!=6">
+                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="makeState(rec, 6)">
+                            <img src="<%=ar.retPath%>assets/goalstate/small6.gif" alt="completed"  />
                       Mark Skipped
-                  </a>
-              </li>
+                        </a>
+                    </li>
+                    </ul>
+                </li>
             </ul>
-          </div>
-        </div>
-        <div style="float:left;margin:2px">
-          <a href="task{{rec.id}}.htm">
-            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
-        </div>
+            <span class="ms-auto">
+                <a href="task{{rec.id}}.htm">
+                    <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+            </span>
         </td>
-        <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'details')"
+        <td style="max-width:400px"  ng-dblclick="openModalActionItem(rec, 'details')"
            title="The synopsis (name) and description of the action item.">
-          <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></span>
+          <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></div>
           <span ng-repeat="label in getGoalLabels(rec)">
             <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
               {{label.name}}
             </button>
           </span>
-          </div>
           <div ng-show="showDescription" ng-bind-html="rec.html"></div>
         </td>
-        <td title="People assigned to complete this action item." style="width:70px">
+        <td title="People assigned to complete this action item." style="width:100px">
           <div>
             <div ng-repeat="person in rec.assignTo">
               <span class="dropdown">
@@ -850,7 +844,7 @@ function addvalue() {
             </div>
           </div>
         </td>
-        <td style="width:150px"  ng-dblclick="openModalActionItem(rec, 'status')"
+        <td style="width:200px"  ng-dblclick="openModalActionItem(rec, 'status')"
             title="Dates the action item was started, due, or completed">
           <div ng-show="rec.startdate>100" >
             start: {{rec.startdate | cdate}}
@@ -862,7 +856,7 @@ function addvalue() {
             end: {{rec.enddate | cdate}}
           </div>
         </td>
-        <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"
+        <td style="width:100px; text-align:center" title="Give a Red-Yellow-Green indication of how it is going"
             ng-dblclick="openModalActionItem(rec, 'status')">
           <span>
             <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"

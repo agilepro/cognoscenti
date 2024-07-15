@@ -384,7 +384,20 @@ a {
     max-width: 160px;
     flex-grow: 1;
 }
-
+.btn-sm {
+    width: fit-content;
+    max-width: 160px;
+    text-align: center;
+    vertical-align: middle;
+    flex-grow: 1;
+    border: #4d2f5e 1px solid;
+    border-radius: 10px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
 .btn.btn-tiny {
     width: 30px;
     height: 30px;

@@ -201,7 +201,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         
         var docsDialogInstance = $modal.open({
             animation: true,
-            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
+            templateUrl: "<%= ar.retPath%>new_assets/templates/DocumentDetail2.html<%=templateCacheDefeater%>",
             controller: 'DocumentDetailsCtrl',
             size: 'lg',
             backdrop: "static",
@@ -315,43 +315,31 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <table class="gridTable2" width="100%">
         <tr class=" my-2 gridTableHeader">
             <td width="50px">
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsAdd.htm"> <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a></li>
-                </ul>
-              </div>
             </td>
             <td width="40px"></td>
-            <td width="420px">Name ~ Description</td>
+            <td width="420px"><h2 class="text-secondary fs-5">Name ~ Description</h2></td>
             <td width="40px"></td>
             <td width="40px"></td>
-            <td width="80px">Date</td>
-            <td width="80px">Size</td>
+            <td width="80px"><span class="text-secondary fs-5">Date</span></td>
+            <td width="80px"><span class="text-secondary fs-5">Size</span></td>
         </tr>
         <tr ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
             <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
-                  <li role="presentation" ng-show="rec.attType=='FILE'">
-                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
-                         <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a></li>
+                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
+                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
+                            <li ng-show="rec.attType=='FILE'">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
+                            <hr>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
+                                <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
-              </div>
-            </td>
             <td style="text-align: center">
               <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
                 <span class="fa fa-external-link"></span></span>
@@ -411,6 +399,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 <!--have to make room for menu on bottom line-->
 <div style="height:300px"></div>
 
-<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DocumentDetail2.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>
 

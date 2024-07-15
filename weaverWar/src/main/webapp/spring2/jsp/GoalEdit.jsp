@@ -460,7 +460,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -490,7 +490,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -524,7 +524,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
           animation: false,
-          templateUrl: '<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>',
+          templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
           size: 'lg',
           backdrop: "static",
@@ -582,18 +582,15 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="GoalStatus.htm">List Action Items</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#" ng-click="startEdit('details')">Edit Details</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
+            ng-click="isCreating=true">List Action Items</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startEdit('details')">Edit Details</a>
+            </span>
+        </div>
+
     
 <style>
 .spaceyTable {
@@ -606,7 +603,7 @@ function addvalue() {
     max-width:150px;
 }
 </style>    
-
+<div class="d-flex col-9"><div class="contentColumn">
     <table ng-hide="editGoalInfo" class="spaceyTable">
         <tr class="clickable" ng-click="startEdit('assignee')" 
             title="Click here to update the status of this action item">
@@ -619,7 +616,7 @@ function addvalue() {
         </tr>
         <tr class="clickable" ng-click="startEdit('details')" 
             title="Click here to update the description of this action item">
-            <td >Summary:</td>
+            <td class="fs-5 fw-bold">Summary:</td>
             <td>
                 <div><b>{{goalInfo.synopsis}}</b></div>
                 <div ng-bind-html="goalInfo.description|wiki"></div>
@@ -631,7 +628,7 @@ function addvalue() {
             </td>
         </tr>
         <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed." class="clickable">
-            <td  ng-click="startEdit('assignee')" >Assigned To:</td>
+            <td class="fs-5 fw-bold" ng-click="startEdit('assignee')" >Assigned To:</td>
             <td>
                 <div ng-repeat="player in goalInfo.assignTo"  style="height:40px">
                   <span class="dropdown" >
@@ -669,7 +666,7 @@ function addvalue() {
         </tr>
         <tr class="clickable" ng-click="startEdit('status')" 
             title="Click here to update the status of this action item">
-            <td >Status:</td>
+            <td class="fs-5 fw-bold">Status:</td>
             <td>
                 {{goalInfo.status}}
                 <span ng-hide="goalInfo.status" class="instruction"
@@ -679,7 +676,7 @@ function addvalue() {
         </tr>
         <tr class="clickable"  
             title="Manage the check list of items to do for this action">
-            <td ng-click="startEdit('status')" >Checklist:</td>
+            <td class="fs-5 fw-bold" ng-click="startEdit('status')" >Checklist:</td>
             <td>
                 <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
                     <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
@@ -692,7 +689,7 @@ function addvalue() {
             </td>
         </tr>
         <tr title="Red-Yellow-Green is a high-level status saying how things are going generally">
-            <td >R-Y-G:</td>
+            <td class="fs-5 fw-bold">R-Y-G:</td>
             <td>
                 <span>
                     <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
@@ -727,50 +724,53 @@ function addvalue() {
             </td>
         </tr>
         <tr><td></td>
-            <td>
-                <button class="btn btn-default btn-raised" ng-click="setState(2)" ng-show="goalInfo.state<2">
+            <td><span class="row g-4">
+                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
-                <button class="btn btn-default btn-raised" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
-                <button class="btn btn-default btn-raised" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
-
-                <span class="dropdown">
-                    <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                    Other <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <span class="col-3">
+                    <ul class="dropdown mx-0 my-1">
+                        <li class="nav-item dropdown btn btn-outline-secondary btn-raised" type="button" id="changeStatus" data-toggle="dropdown">
+                    Select State <span class="caret"></span>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                          <a class="dropdown-item " role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small1.gif"> Unstarted
                           </a>
                       </li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
+                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered
                           </a>
                       </li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
+                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
                           </a>
                       </li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
+                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
                           </a>
                       </li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
+                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
                           </a>
                       </li>
+                        </ul>
+                        </li>
                     </ul>
                 </span>
-            </td>
-        </tr>
+            </span>
+        </td>
+
         <tr class="clickable" >
-            <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
-            <td ng-dblclick="openAttachDocument()">
+            <td class="fs-5 fw-bold" ng-click="openAttachDocument()">Attachments:</td>
+            <td ng-click="openAttachDocument()">
                 <div ng-repeat="doc in fullDocList" style="vertical-align: top">
                   <span ng-show="doc.attType=='FILE'">
                       <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
@@ -787,12 +787,12 @@ function addvalue() {
                   &nbsp; {{doc.name}}
                 </div>
                 <div ng-hide="fullDocList && fullDocList.length>0" class="doubleClickHint">
-                    Double-click to add / remove attachments
+                    Click to add / remove attachments
                 </div>
             </td>
         </tr>        
         <tr>
-            <td title="On the discussion topic page, you can link action items, and those topics will appear here">Linked Topics:</td>
+            <td class="fs-5 fw-bold" title="On the discussion topic page, you can link action items, and those topics will appear here">Linked Topics:</td>
             <td title="On the discussion topic page, you can link action items, and those topics will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
@@ -804,10 +804,10 @@ function addvalue() {
             </td>
         </tr>
         <tr>
-            <td title="On the meeting page, you can link action items, and those meetings will appear here">
+            <td class="fs-5 fw-bold" title="On the meeting page, you can link action items, and those meetings will appear here">
                 Linked Meetings:</td>
             <td title="On the meeting page, you can link action items, and those meetings will appear here">
-                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-outline-secondary btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                 </span>
@@ -956,8 +956,8 @@ function updateVal(){
 
 </div>
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
 
 
