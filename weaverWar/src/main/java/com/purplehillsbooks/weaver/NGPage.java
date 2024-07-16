@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
@@ -33,7 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**

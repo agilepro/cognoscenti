@@ -37,6 +37,7 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionWiki;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -132,13 +133,13 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
-                throw new JSONException("Server is not ready to handle requests.");
+                throw WeaverException.newBasic("Server is not ready to handle requests.");
             }
 
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
 
             streamException(ctx, ar);
         }
@@ -157,32 +158,32 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
                 streamDocument(ar, resDec);
             }
             else if (resDec.isSwagger){
-                throw new JSONException("don't understand that isSwagger resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that isSwagger resource URL: %s", ar.getCompleteURL());
                 //genSwagger(ar, resDec);
             }
             else if (resDec.isSite){
-                throw new JSONException("don't understand that isSite resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that isSite resource URL: %s ", ar.getCompleteURL());
                 //genSiteListing(ar, resDec);
             }
             else if (resDec.isListing){
-                throw new JSONException("don't understand that isListing resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that isListing resource URL: %s", ar.getCompleteURL());
                 //getWorkspaceListing(ar, resDec);
             }
             else if (resDec.isGoal) {
-                throw new JSONException("don't understand that isGoal resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that isGoal resource URL: %s", ar.getCompleteURL());
                 //genGoalInfo(ar, resDec);
             }
             else if (resDec.isNote) {
-                throw new JSONException("don't understand that isNote resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that isNote resource URL: %s", ar.getCompleteURL());
                 //streamNote(ar, resDec);
             }
             else {
-                throw new JSONException("don't understand that resource URL: "+ar.getCompleteURL());
+                throw WeaverException.newBasic("don't understand that resource URL: %s", ar.getCompleteURL());
             }
             ar.flush();
 
         } catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -209,12 +210,12 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
                 result.write(ar.resp.getWriter(), 2, 0);
             }
             else {
-                throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
+                throw WeaverException.newBasic("Can not do a PUT to that resource URL: %s", ar.getCompleteURL());
             }
             ar.flush();
         }
         catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle PUT to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle PUT to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -239,7 +240,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             String op = objIn.getString("operation");
             System.out.println("API_POST: operation="+op);
             if (op==null || op.length()==0) {
-                throw new JSONException("Request object needs to have a specified 'operation'."
+                throw WeaverException.newBasic("Request object needs to have a specified 'operation'."
                         +" None found.");
             }
 
@@ -254,7 +255,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             ar.flush();
         }
         catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle POST to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle POST to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -273,21 +274,21 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
         }
 
         if (resDec.site==null) {
-            throw new JSONException("Unable to fine a site with the id: {0}",resDec.siteId);
+            throw WeaverException.newBasic("Unable to fine a site with the id: %s",resDec.siteId);
         }
         if (!resDec.site.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new JSONException("The license ({0}) has expired.  "
+            throw WeaverException.newBasic("The license (%s) has expired.  "
                     +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
         if (resDec.lic.isReadOnly()) {
-            throw new JSONException("The license ({0}) is a read-only license and "
+            throw WeaverException.newBasic("The license (%s) is a read-only license and "
                     +"can not be used to update information on this server.", resDec.licenseId);
         }
 
         responseOK.put("license", getLicenseInfo(resDec.lic));
         if ("createProject".equals(op)) {
             if (!"$".equals(resDec.projId)) {
-                throw new JSONException("create workspace can only be called on a site URL, not workspace: {0} ",resDec.projId);
+                throw WeaverException.newBasic("create workspace can only be called on a site URL, not workspace: %s ",resDec.projId);
             }
             NGBook site = resDec.site;
             String projectName = objIn.getString("projectName");
@@ -309,7 +310,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             return responseOK;
         }
 
-        throw new JSONException("API does not understand operation: {0}",op);
+        throw WeaverException.newBasic("API does not understand operation: %s",op);
     }
 
 
@@ -326,17 +327,17 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
 
         NGWorkspace ngw = resDec.workspace;
         if (ngw == null) {
-            throw new JSONException("Unable to find a workspace with the id {0}",resDec.projId);
+            throw WeaverException.newBasic("Unable to find a workspace with the id %s",resDec.projId);
         }
         if (resDec.lic == null) {
-            throw new JSONException("Unable to find a license with the id {0}",resDec.licenseId);
+            throw WeaverException.newBasic("Unable to find a license with the id %s",resDec.licenseId);
         }
         if (!ngw.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new JSONException("The license ({0}) has expired.  "
+            throw WeaverException.newBasic("The license (%s) has expired.  "
                     +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
         if (resDec.lic.isReadOnly()) {
-            throw new JSONException("The license ({0}) is a read-only license and "
+            throw WeaverException.newBasic("The license (%s) is a read-only license and "
                     +"can not be used to update information on this server.", resDec.licenseId);
         }
 
@@ -352,7 +353,8 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
         if ("newNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             if (!ar.canUpdateWorkspace()) {
-                throw new JSONException("The license ({0}) does not have full member access which is needed in order to create a new topic.", resDec.licenseId);
+                throw WeaverException.newBasic("The license (%s) does not have full member access which is needed in order to create a new topic.", 
+                        resDec.licenseId);
             }
             TopicRecord newNote = resDec.workspace.createNote();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
@@ -367,10 +369,10 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             String noteUID = newNoteObj.getString("universalid");
             TopicRecord note = resDec.workspace.getDiscussionTopic(noteUID);
             if (note==null) {
-                throw new JSONException("Unable to find an existing topic with UID ("+noteUID+")");
+                throw WeaverException.newBasic("Unable to find an existing topic with UID (%s)", noteUID);
             }
             if (!resDec.canAccessNote(note)) {
-                throw new JSONException("The license ({0}) does not have right to access topic ({1}).", resDec.licenseId, noteUID);
+                throw WeaverException.newBasic("The license (%s) does not have right to access topic (%s).", resDec.licenseId, noteUID);
             }
             note.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.workspace, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,

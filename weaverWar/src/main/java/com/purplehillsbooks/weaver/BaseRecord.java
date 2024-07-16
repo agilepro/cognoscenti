@@ -20,7 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,11 +66,11 @@ public class BaseRecord extends DOMFace
 
     public void setId(String newVal) throws Exception {
         if (newVal.length()!=4) {
-            throw new JSONException("Id is not allowed:  {0}", newVal);
+            throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
         }
         for (int i=0; i<4; i++) {
             if (newVal.charAt(i)<'0' || newVal.charAt(i)>'9') {
-                throw new JSONException("Id is not allowed:  {0}", newVal);
+                throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
             }
         }
         setAttribute("id", newVal);

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
@@ -153,7 +152,7 @@ public class Ledger {
     public static List<Long> getAllMonthsInRange(long startDate, long endDate) throws Exception {
         long timestamp = getFirstOfMonth(startDate);
         if (startDate > endDate) {
-            throw new JSONException("end date must be after the start date");
+            throw WeaverException.newBasic("end date must be after the start date");
         }
         List<Long> res = new ArrayList<>();
         int guard = 100;

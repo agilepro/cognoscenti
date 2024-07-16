@@ -46,7 +46,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.ServletExit;
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
@@ -531,7 +531,7 @@ public class AuthRequest
 
     public UserPage getUserPage() throws Exception {
         if (user==null) {
-            throw new JSONException("Unableto get user page, you don't appear to be logged in");
+            throw WeaverException.newBasic("Unable to get user page, you don't appear to be logged in");
         }
         return cog.getUserManager().findOrCreateUserPage(user.getKey());
     }
@@ -651,7 +651,7 @@ public class AuthRequest
                         +URLEncoder.encode(getRequestURL(),"UTF-8");
                 resp.sendRedirect(configDest);
             }
-            throw new JSONException("Server is not initialized", cog.lastFailureMsg);
+            throw WeaverException.newWrap("Server is not initialized", cog.lastFailureMsg);
         }
 
         if (isLoggedIn()) {
@@ -668,7 +668,7 @@ public class AuthRequest
 
         // even in redirect case, we need to throw exception to stop the processing
         // of the calling code.
-        throw new JSONException("User is not logged in. {0}", opDescription);
+        throw WeaverException.newBasic("User is not logged in. %s", opDescription);
     }
 
 
@@ -681,7 +681,7 @@ public class AuthRequest
             return;
         }
         if (!ngp.primaryOrSecondaryPermission(getUserProfile())) {
-            throw new JSONException("Admin privelege is required for %s", opDescription);
+            throw WeaverException.newBasic("Admin privilege is required for %s", opDescription);
         }
     }
 
@@ -695,7 +695,7 @@ public class AuthRequest
         //check the container rules on who can update
         NGWorkspace ngw = (NGWorkspace) ngp;
         if (!ngw.canUpdateWorkspace(user)) {
-            throw new JSONException("User is not in an update role for the workspace. {0}", opDescription);
+            throw WeaverException.newBasic("User is not in an update role for the workspace. %s", opDescription);
         }
     }
     public void assertAccessWorkspace(String opDescription) throws Exception {
@@ -708,7 +708,7 @@ public class AuthRequest
         NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
-            throw new JSONException("User is not logged in, not a role of workspace. {0}", opDescription);
+            throw WeaverException.newBasic("User is not logged in, not a role of workspace. %s", opDescription);
         }
 
         if (isSuperAdmin()) {
@@ -723,7 +723,7 @@ public class AuthRequest
 
         //check the container rules on who can be a member
         if (!ngw.canAccessWorkspace(user)) {
-            throw new JSONException("User is not a member of this workspace. {0}", opDescription);
+            throw WeaverException.newBasic("User is not a member of this workspace. %s", opDescription);
         }
     }
     public void assertExecutive(String opDescription) throws Exception {
@@ -734,7 +734,7 @@ public class AuthRequest
             throw new Exception("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
         }
         if (!isLoggedIn()) {
-            throw new JSONException("User is not logged in, not an executive of site. {0}", opDescription);
+            throw WeaverException.newBasic("User is not logged in, not an executive of site. %s", opDescription);
         }
         NGBook ngb = (NGBook) ngp;
 
@@ -744,14 +744,14 @@ public class AuthRequest
         }
 
         if (!ngb.isSiteExecutive(user)) {
-            throw new JSONException("User is not executive of this site. {0}", opDescription);
+            throw WeaverException.newBasic("User is not executive of this site. %s", opDescription);
         }
     }
 
     public void assertSuperAdmin(String opDescription) throws Exception {
         assertLoggedIn(opDescription);
         if (!isSuperAdmin()) {
-            throw new JSONException("User is not a a super-admin. {0}", opDescription);
+            throw WeaverException.newBasic("User is not a a super-admin. %s", opDescription);
         }
     }
 
@@ -793,7 +793,7 @@ public class AuthRequest
     
     public void assertNotReadOnly(String opDescription) throws Exception {
         if (isReadOnly()) {
-            throw new JSONException("Observer; can not update anything. {0}", opDescription);
+            throw WeaverException.newBasic("Observer; can not update anything. %s", opDescription);
         }
     }
 
@@ -808,7 +808,7 @@ public class AuthRequest
             return true;
         }
         if (!(ngp instanceof NGBook)) {
-            throw new Exception("Program Logic Error: canAccessSite is called when not manipulating a site.");
+            throw WeaverException.newBasic("Program Logic Error: canAccessSite is called when not manipulating a site.");
         }
         return (ngp.primaryOrSecondaryPermission(user));
     }
@@ -1317,14 +1317,14 @@ public class AuthRequest
     public String reqParam(String paramName) throws Exception {
         String val = defParam(paramName, null);
         if (val == null || val.length()==0) {
-            throw new JSONException("A parameter named '{0}' is required for page '{1}'.", paramName, getRequestURL());
+            throw WeaverException.newBasic("A parameter named '%s' is required for page '%s'.", paramName, getRequestURL());
         }
         return val;
     }
     public long reqParamLong(String paramName) throws Exception {
         String val = defParam(paramName, null);
         if (val == null || val.length()==0) {
-            throw new JSONException("A parameter named '{0}' is required for page '{1}'.", paramName, getRequestURL());
+            throw WeaverException.newBasic("A parameter named '%s' is required for page '%s'.", paramName, getRequestURL());
         }
         return DOMFace.safeConvertLong(val);
     }
@@ -1335,14 +1335,14 @@ public class AuthRequest
     */
     public void setParam(String paramName, String paramValue) throws Exception {
         if (req==null) {
-            throw new ProgramLogicError("Calling setParam on an AuthRequest, but the "
+            throw WeaverException.newBasic("Calling setParam on an AuthRequest, but the "
                     +"request object is null!?!?!?");
         }
         req.setAttribute(paramName, paramValue);
     }
     public void setParam(String paramName, long paramValue) throws Exception {
         if (req==null) {
-            throw new ProgramLogicError("Calling setParam on an AuthRequest, but the "
+            throw WeaverException.newBasic("Calling setParam on an AuthRequest, but the "
                     +"request object is null!?!?!?");
         }
         req.setAttribute(paramName, Long.toString(paramValue));
@@ -1478,7 +1478,7 @@ public class AuthRequest
             }
             nestingCount++;
             if (nestingCount>10) {
-                throw new JSONException("Nesting count for JSP has exceeded limit of 10 for "+JSPName);
+                throw WeaverException.newBasic("Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");
@@ -1487,7 +1487,7 @@ public class AuthRequest
             if (rd==null) {
                 //at one point we needed a retPath in here, but now we
                 //don't need it, and I am not sure why....
-                throw new JSONException("Unable to construct a RequestDispatcher for JSP "+JSPName);
+                throw WeaverException.newBasic("Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
             rd.include(req, resp);
@@ -1499,7 +1499,7 @@ public class AuthRequest
             flush();
         }
         catch (Exception e) {
-            throw new JSONException("Unable to invoke JSP '{0}'", e, JSPName);
+            throw WeaverException.newWrap("Unable to invoke JSP '%s'", e, JSPName);
         }
         finally {
             nestingCount--;
@@ -1749,7 +1749,7 @@ public class AuthRequest
             throw new ProgramLogicError("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         if (ngc.isFrozen()) {
-            throw new JSONException("Workspace is frozen");
+            throw WeaverException.newBasic("Workspace is frozen");
         }
     }
 
@@ -1869,7 +1869,7 @@ public class AuthRequest
          }
          
          
-         throw new JSONException("The standard chunk template '{0}' does not exist!", templateName);
+         throw WeaverException.newBasic("The standard chunk template '%s' does not exist!", templateName);
      }
 
 }

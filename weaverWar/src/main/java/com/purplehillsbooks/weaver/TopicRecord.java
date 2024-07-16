@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -35,7 +37,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -879,7 +880,7 @@ public class TopicRecord extends CommentContainer {
          String universalid = noteObj.getString("universalid");
          if (!universalid.equals(getUniversalId())) {
              //just checking, this should never happen
-             throw new JSONException("Error trying to update the record for a note with UID ({0}) with post from topic with UID ({1})",
+             throw WeaverException.newBasic("Error trying to update the record for a note with UID (%s) with post from topic with UID (%s)",
                      getUniversalId(), universalid);
          }
          if (noteObj.has("subject")) {

@@ -24,11 +24,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -202,7 +203,7 @@ public class UserPage extends ContainerCommon
             }
         }
 
-        throw new JSONException("Unable to find a status report with id ({0})", id);
+        throw WeaverException.newBasic("Unable to find a status report with id (%s)", id);
     }
 
     public StatusReport createStatusReport() throws Exception {
@@ -295,7 +296,7 @@ public class UserPage extends ContainerCommon
 
         for (ProfileRef tr : getProfileRefs()) {
             if (urlAddress.equals(tr.getAddress())) {
-                throw new JSONException("The reference address already exists: {0}", urlAddress);
+                throw WeaverException.newBasic("The reference address already exists: %s", urlAddress);
             }
         }
 
@@ -326,7 +327,7 @@ public class UserPage extends ContainerCommon
 
         NGPageIndex.assertNoLocksOnThread();
         if (up == null) {
-            throw new JSONException("getTaskListJSON requires a UserProfile but got a null");
+            throw WeaverException.newBasic("getTaskListJSON requires a UserProfile but got a null");
         }
         JSONArray list = new JSONArray();
 

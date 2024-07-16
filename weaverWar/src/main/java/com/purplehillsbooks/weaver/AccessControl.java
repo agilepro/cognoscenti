@@ -24,7 +24,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class AccessControl {
 
@@ -246,7 +246,7 @@ public class AccessControl {
     }
     public static void assertAccessTopic(AuthRequest ar, NGWorkspace ngc, TopicRecord topicRec) throws Exception {
         if (!canAccessTopic(ar, ngc, topicRec)) {
-            throw new JSONException("User {0} is not able to access topic {1}", ar.getBestUserId(), topicRec.getId());
+            throw WeaverException.newBasic("User %s is not able to access topic %s", ar.getBestUserId(), topicRec.getId());
         }
     }
     public static void allowSpecialAccessTopic(AuthRequest ar, NGWorkspace ngw, TopicRecord topicRec) {

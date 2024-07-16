@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.streams.NullWriter;
 
 /**
@@ -188,7 +188,7 @@ public class AuthDummy extends AuthRequest
             //The exception that is thrown will not be seen by users.  Once all of the pages
             //have proper URLs constricted for redirecting to other pages, this error will
             //not occur.  Therefor, there is no need to localize this exception.
-            throw new JSONException("Required parameter '{0}' is missing from {1}", paramName, getRequestURL());
+            throw WeaverException.newBasic("Required parameter '%s' is missing from %s", paramName, getRequestURL());
         }
         return val;
     }
