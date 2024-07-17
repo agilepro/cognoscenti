@@ -83,50 +83,48 @@
 
 
 
-<nav class="navbar navbar-default">
-  <div >
-    <div class="navbar-header">
-        <a id="weaver-logo-header" href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page"><img src="<%=ar.retPath%>bits/weaver-logo-header.png"></a>
-    </div>
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
-             aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="ErrorList.htm" >Error List</a></li>
-            <li><a href="EmailListnerSettings.htm" >Listener Settings</a></li>
-            <li><a href="NotificationStatus.htm" >Notification Settings</a></li>
-            <li><a href="UserList.htm" >Users</a></li>
-            <li><a href="SiteRequests.htm" >Requested Sites</a></li>
-            <li><a href="ListSites.htm" >List All Sites</a></li>
-            <li><a href="EstimateCosts.htm" >Estimate Site Costs</a></li>
-            <li><a href="EmailScanner.htm" >Scan All Email</a></li>
-            <li><a href="EmailTest.htm" >Test Email</a></li>
-            <li><a href="BlockedEmail.htm" >Blocked Email</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
-             aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(userName); %><span class="caret"></span></a>
-          <ul class="dropdown-menu">
+<nav class="navbar navbar-expand-lg bg-primary-subtle p-2">
+    <div class="container-fluid">
+        <a id="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page">
+            <img src="<%=ar.retPath%>bits/weaver-logo-header.png"></a>
+        <div class="collapse navbar-collapse mx-3">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="ErrorList.htm" >Error List</a></li>
+                        <li><a class="dropdown-item" href="EmailListnerSettings.htm" >Listener Settings</a></li>
+                        <li><a class="dropdown-item" href="NotificationStatus.htm" >Notification Settings</a></li>
+                        <li><a class="dropdown-item" href="UserList.htm" >Users</a></li>
+                        <li><a class="dropdown-item" href="SiteRequests.htm" >Requested Sites</a></li>
+                        <li><a class="dropdown-item" href="ListSites.htm" >List All Sites</a></li>
+                        <li><a class="dropdown-item" href="EstimateCosts.htm" >Estimate Site Costs</a></li>
+                        <li><a class="dropdown-item" href="EmailScanner.htm" >Scan All Email</a></li>
+                        <li><a class="dropdown-item" href="EmailTest.htm" >Test Email</a></li>
+                        <li><a class="dropdown-item" href="BlockedEmail.htm" >Blocked Email</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle text-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(userName); %><span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
 <% if (uProf==null) { %>
-            <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
+                        <li><a class="dropdown-item" href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>
 <% } else { %>
-            <li><a onclick='logOutPage()'>Log Out</a></li>
+                        <li><a class="dropdown-item" onclick='logOutPage()'>Log Out</a></li>
 <% } %>
-            <li><a href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
-            <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
-            <li><a href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
-            <li><a href="<%=userRelPath%>EmailListnerSettings.htm">Administration</a></li>
-          </ul>
-        </li>
-      </ul>
+                        <li><a class="dropdown-item" class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
+                        <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
+                        <li><a class="dropdown-item" href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
+                        <li><a class="dropdown-item" href="<%=userRelPath%>EmailListnerSettings.htm">Administration</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 
