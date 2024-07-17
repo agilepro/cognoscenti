@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@include file="/spring2/jsp/include.jsp"
 %><%
     UserProfile uProf = ar.getUserProfile();
     Cognoscenti cog = ar.getCogInstance();
@@ -120,21 +120,16 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="SiteCreateWorkspace.htm" >Create New Workspace</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" 
-              ng-click="garbageCollect()">Garbage Collect</a></li>
-        </ul>
-      </span>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="SiteCreateWorkspace.htm" >Create New Workspace</a></span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              ng-click="garbageCollect()">Garbage Collect</a></span>
     </div>
 
-
+    <div class="d-flex col-9"><div class="contentColumn">
     <div class="well">Filter <input ng-model="filter"></div>
     <div style="height:10px;"></div>
 
@@ -147,17 +142,15 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr ng-repeat="rec in getRows()">
             <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
-                  <li role="presentation"><a role="menuitem"
+                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="SiteWorkspaces" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="siteWorkspaces">
+                    <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
+                    <li><a class="dropdown-item" role="menuitem"
                       href="SiteCreateWorkspace.htm?parent={{rec.pageKey}}" >Create Child Workspace</a></li>
                 </ul>
-              </div>
-            </td>
+            </li>
+                </ul>
             <td class="repositoryName">
                 <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
                    {{rec.name}}
@@ -167,14 +160,13 @@ app.controller('myCtrl', function($scope, $http) {
                 </a>
             </td>
             <td>{{rec.changed|cdate}}</td>
-            <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a></td>
+            <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a>
+            </td>
+            </td>
         </tr>
     </table>
     
     <div>
-        <a href="SiteCreateWorkspace.htm" >
-            <button class="btn btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button>
-        </a>
         Site can have {{siteInfo.workspaceLimit}} active workspaces.
     </div>
 

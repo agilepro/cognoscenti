@@ -416,6 +416,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return res;
     }
+    $scope.createNewGoal = function() {
+        var newRec = $scope.newGoal;
+        newRec.id = "~new~";
+        newRec.universalid = "~new~";
+        newRec.assignTo = [];
+        newRec.state = 2;
+        newRec.assignTo = newRec.assignList;
+
+        var postURL = "updateGoal.json?gid=~new~";
+        var postData = angular.toJson(newRec);
+        $http.post(postURL, postData)
+        .success( function(data) {
+            $scope.allGoals.push(data);
+            $scope.newGoal = {};
+            $scope.isCreating = false;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
     $scope.getName = function(uid) {
         var person = $scope.getPeople(uid);
         if (!person) {
@@ -658,7 +678,61 @@ function addvalue() {
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="TaskAreas.htm">Manage Task Areas</a></span>
       </div>
       <div class="d-flex col-9"><div class="contentColumn">
-
+        <div class="well generalSettings" ng-show="isCreating">
+            <table>
+               <tr>
+                    <td class="gridTableColummHeader">New Synopsis:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                    </td>
+               </tr>
+               <tr><td style="height:10px"></td></tr>
+               <tr>
+                    <td class="gridTableColummHeader">Assignee:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                      <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
+                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
+                          <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
+                      </tags-input>
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Description:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <textarea type="text" ng-model="newGoal.description" class="form-control"
+                            style="width:450px;height:100px" placeholder="Details"></textarea>
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Due Date:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <span datetime-picker ng-model="newRec.duedate"  
+                            class="form-control" style="max-width:300px; min-height: 25px;">
+                            {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                        </span> 
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader"></td>
+                    <td style="width:20px;"></td>
+                    <td colspan="3">
+                        <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
+                        <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
+                        
+                    </td>
+                </tr>
+            </table>
+        </div>
     <div class="well" ng-show="!isCreating">
         Filter <input ng-model="filter"> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">

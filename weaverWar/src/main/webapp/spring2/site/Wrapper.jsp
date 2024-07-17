@@ -343,7 +343,7 @@ myApp.filter('wiki', function() {
 
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
-<h1 id="mainPageTitle"></h1>
+<h1 class="px-3 page-name" id="mainPageTitle"></h1>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->

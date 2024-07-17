@@ -62,8 +62,8 @@
             continue;
         }
     %>
-      <li class="nav-item dropdown pb-2">
-        <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown"<%
+      <li class="nav-item pb-2">
+        <a class="nav-link" <%
         if (jo.has("href")) {
             %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
         }
@@ -78,7 +78,7 @@
         }
         %>> <% 
         if (jo.has("icon")) {
-            %><img src="../../../assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
+            %><img src="../../../new_assets/assets/navicon/<% ar.writeHtml(jo.getString("icon")); %>"><%
         }
 
         %></a><%
@@ -116,10 +116,10 @@
     }
     %>
     <li class="my-5 text-weaverbody">  <% if (userIsReadOnly) { %>
-        <img src="<%=ar.retPath%>assets/ReadIndicator.png" title="You have observer access to this workspace" 
+        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
         class="accessIndicator"/>
     <% } else { %>
-        <img src="<%=ar.retPath%>assets/Site-Writable.png" title="You have full edit access to this workspace" 
+        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
     class="accessIndicator"/>
     <% } %></li>
     

@@ -55,7 +55,7 @@
     %>  
             
                 <li class="nav-item dropdown pb-2">
-                    <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown"<%
+                    <a class="nav-link dropdown" <%
                         if (jo.has("href")) {
                             %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
                         }

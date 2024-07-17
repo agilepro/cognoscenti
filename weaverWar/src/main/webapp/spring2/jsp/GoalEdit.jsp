@@ -586,7 +586,7 @@ function addvalue() {
     <div class="row">
       <div class="col-md-auto fixed-width border-end border-1 border-secondary">
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
-            ng-click="isCreating=true">List Action Items</a></span>
+            href="GoalList.htm">List Action Items</a></span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startEdit('details')">Edit Details</a>
             </span>
         </div>

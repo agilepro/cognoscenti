@@ -1,5 +1,5 @@
-<%@ include file="/spring/jsp/include.jsp"
-%><%@ include file="/spring/jsp/functions.jsp"
+<%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/functions.jsp"
 %><%
 /*
 Required parameter:
@@ -196,7 +196,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     margin-top:25px;
 }
 </style>
-<div style="max-width:500px" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
+<div class="container" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
 
     <div class="form-group">
         <label ng-click="showNameHelp=!showNameHelp">
@@ -296,7 +296,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 
     <div class="form-group">
-        <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">
+        <button class="btn btn-primary btn-raised ms-auto" ng-click="createNewWorkspace()">
             Create Workspace</button>
     </div>
 
@@ -311,7 +311,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 <div style="max-width:500px" ng-show="siteInfo.offLine">
     <div class="guideVocal">This site is off line and no workspaces can be created in it at this time.</div>
 </div>
-
+<div class="container my-2">
     <div class="guideVocal">
         <p>
        If you would like some guidance in how to create a workspace, and how sites and workspaces work,
@@ -324,6 +324,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                 class="tutorialThumbnail"/>
        </a>
        </p>
-    </div>
+    </div></div>
 
 </div>
