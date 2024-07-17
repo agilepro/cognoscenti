@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.streams.StreamHelper;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 
 /**
@@ -159,7 +159,7 @@ public class ConfigFile {
         if (props == null) {
             // this will only happen if the server is not initializing classes
             // in the right order so no reason to translate.
-            throw new JSONException("Weaver has not been initialized and can not provide properties");
+            throw WeaverException.newBasic("Weaver has not been initialized and can not provide properties");
         }
         return props;
     }
@@ -191,7 +191,7 @@ public class ConfigFile {
      */
     public void setProperty(String name, String value) throws Exception {
         if (props == null) {
-            throw new JSONException("Weaver has not been initialized and can not set properties");
+            throw WeaverException.newBasic("Weaver has not been initialized and can not set properties");
         }
         if (value == null) {
             props.remove(name);
@@ -203,7 +203,7 @@ public class ConfigFile {
 
     public void save() throws Exception {
         if (props == null) {
-            throw new JSONException("Weaver has not been initialized and can not save a config file");
+            throw WeaverException.newBasic("Weaver has not been initialized and can not save a config file");
         }
         saveConfigFile(props);
     }
@@ -230,10 +230,10 @@ public class ConfigFile {
     public File getFolderOrFail(String folderPath) throws Exception {
         File root = new File(folderPath);
         if (!root.exists()) {
-            throw new JSONException("Folder does not exist {0}", folderPath);
+            throw WeaverException.newBasic("Folder does not exist %s", folderPath);
         }
         if (!root.isDirectory()) {
-            throw new JSONException("Path does not identify a folder: {0}", folderPath);
+            throw WeaverException.newBasic("Path does not identify a folder: %s", folderPath);
         }
         return root;
     }
@@ -247,11 +247,11 @@ public class ConfigFile {
 
         String baseURL = props.getProperty("baseURL");
         if (baseURL==null) {
-            throw new JSONException("System is improperly configured: baseURL is not set");
+            throw WeaverException.newBasic("System is improperly configured: baseURL is not set");
         }
         String identityProvider = props.getProperty("identityProvider");
         if (identityProvider==null) {
-            throw new JSONException("System is improperly configured: identityProvider is not set");
+            throw WeaverException.newBasic("System is improperly configured: identityProvider is not set");
         }
     }
 
@@ -312,10 +312,10 @@ public class ConfigFile {
             genFolderPath.mkdirs();
         }
         if (!genFolderPath.exists()) {
-            throw new Exception("For some reason can not find or create the folder: "+genFolderPath);
+            throw WeaverException.newBasic("For some reason can not find or create the folder: %s", genFolderPath);
         }
         if (!genFolderPath.isDirectory()) {
-            throw new JSONException("Path exists but is not a  folder: {0}", genFolderPath.getAbsolutePath());
+            throw WeaverException.newBasic("Path exists but is not a folder: %s", genFolderPath.getAbsolutePath());
         }
         return genFolderPath;
     }

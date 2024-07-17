@@ -27,85 +27,85 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newName = $scope.siteInfo.names[0];
     $scope.colorList = $scope.siteInfo.labelColors.join(",");
 
-    $scope.purchaseCount = {user10: 0, user5: 0, ws3: 0, ws1: 0};
-    let remainingUsers = $scope.siteStats.editUserCount - 10;
-    while (remainingUsers > 5) {
-        remainingUsers = remainingUsers - 10;
-        $scope.purchaseCount.user10 = $scope.purchaseCount.user10 + 1
+
+    $scope.changePeople = function(amt) {
+        $scope.siteInfo.editUserLimit = $scope.siteInfo.editUserLimit + amt;
+        if ($scope.siteInfo.editUserLimit < 1) {
+            $scope.siteInfo.editUserLimit = 1
+        }
+        $scope.saveSiteInfo();
     }
-    while (remainingUsers > 0) {
-        remainingUsers = remainingUsers - 5;
-        $scope.purchaseCount.user5 = $scope.purchaseCount.user5 + 1
+    $scope.changeWS = function(amt) {
+        $scope.siteInfo.workspaceLimit = $scope.siteInfo.workspaceLimit + amt;
+        if ($scope.siteInfo.workspaceLimit < 1) {
+            $scope.siteInfo.workspaceLimit = 1
+        }
+        $scope.saveSiteInfo();
     }
     
-    
-    let remainingWS = $scope.siteStats.numActive - 3;
-    while (remainingWS > 2) {
-        remainingWS = remainingWS - 3;
-        $scope.purchaseCount.ws3 = $scope.purchaseCount.ws3 + 1
-    }
-    while (remainingWS > 0) {
-        remainingWS = remainingWS - 1;
-        $scope.purchaseCount.ws1 = $scope.purchaseCount.ws1 + 1
-    }
-    $scope.calc = function() {
-        $scope.purchaseCost = {};
-        $scope.purchaseCost.user10 = $scope.purchaseCount.user10 * 8;
-        $scope.purchaseCost.user5 = $scope.purchaseCount.user5 * 5;
-        $scope.purchaseCost.ws3 = $scope.purchaseCount.ws3 * 6;
-        $scope.purchaseCost.ws1 = $scope.purchaseCount.ws1 * 4;
-        $scope.purchaseCost.total = $scope.purchaseCost.user10 + $scope.purchaseCost.user5 + $scope.purchaseCost.ws3 + $scope.purchaseCost.ws1;
-        
-        $scope.purchaseUsers = {};
-        $scope.purchaseUsers.user10 = $scope.purchaseCount.user10 * 10;
-        $scope.purchaseUsers.user5 = $scope.purchaseCount.user5 * 5;
-        $scope.purchaseUsers.ws3 = 0;
-        $scope.purchaseUsers.ws1 = 0;
-        $scope.purchaseUsers.total = 10 + $scope.purchaseUsers.user10 + $scope.purchaseUsers.user5 + $scope.purchaseUsers.ws3 + $scope.purchaseUsers.ws1;
-        
-        $scope.purchaseWS = {};
-        $scope.purchaseWS.user10 = 0;
-        $scope.purchaseWS.user5 = 0;
-        $scope.purchaseWS.ws3 = $scope.purchaseCount.ws3 * 3;
-        $scope.purchaseWS.ws1 = $scope.purchaseCount.ws1;
-        $scope.purchaseWS.total = 3 + $scope.purchaseWS.user10 + $scope.purchaseWS.user5 + $scope.purchaseWS.ws3 + $scope.purchaseWS.ws1;  
-        
-        $scope.extraDocCount = ($scope.siteStats.sizeDocuments/1000000)-(500 * $scope.purchaseUsers.total);
-        if ($scope.extraDocCount < 0) {
-            $scope.extraDocCount = 0;
-        }
-        
-        if ($scope.siteStats.editUserCount - $scope.purchaseUsers.total >= 5) {
-            $scope.purchaseCount.user10 = $scope.purchaseCount.user10 + 1;
-            $scope.calc();
-        }
-        if ($scope.siteStats.editUserCount - $scope.purchaseUsers.total >= 1) {
-            $scope.purchaseCount.user5 = $scope.purchaseCount.user5 + 1;
-            $scope.calc();
-        }
-        if ($scope.siteStats.numActive - $scope.purchaseWS.total >= 3) {
-            $scope.purchaseCount.ws3 = $scope.purchaseCount.ws3 + 1;
-            $scope.calc();
-        }
-        if ($scope.siteStats.numActive - $scope.purchaseWS.total >= 1) {
-            $scope.purchaseCount.ws1 = $scope.purchaseCount.ws1 + 1;
-            $scope.calc();
-        }
-    }
-    $scope.calc();
-    $scope.incr = function(name) {
-        $scope.purchaseCount[name] = $scope.purchaseCount[name] + 1;
-        $scope.calc();
-    }
-    $scope.decr = function(name) {
-        if ($scope.purchaseCost[name]>0) {
-            $scope.purchaseCount[name] = $scope.purchaseCount[name] - 1;
+    function positive(a,b) {
+        if (a>0) {
+            return a;
         }
         else {
-            $scope.purchaseCount[name] = 0;
+            return null;
         }
-        $scope.calc();
     }
+
+    $scope.calc = function() {
+        $scope.comp = {
+            editUserCount: 1,
+            numActive: 1,
+        };
+        $scope.actual = {
+            editUserCount: $scope.siteStats.editUserCount,
+            numActive: $scope.siteStats.numActive,
+            observerCount: $scope.siteStats.numActive,
+            documentLimit: $scope.siteStats.sizeDocuments/1000000,
+            numFrozen: $scope.siteStats.numFrozen
+        };
+        
+        //while ($scope.actual.documentLimit > 500 * $scope.actual.editUserCount) {
+        //    $scope.actual.editUserCount++;
+        //}
+        while ($scope.siteStats.numActive > 20 * $scope.actual.editUserCount) {
+            $scope.actual.editUserCount++;
+        }
+        while ($scope.siteStats.numFrozen > 4 * $scope.actual.numActive) {
+            $scope.actual.numActive++;
+        }
+        
+        $scope.included = {
+            editUserCount: $scope.comp.editUserCount,
+            numActive: $scope.comp.numActive,
+            observerCount: 20 * $scope.actual.editUserCount,
+            documentLimit: 500 * $scope.actual.editUserCount,
+            numFrozen: 4 * $scope.actual.numActive
+        };
+        $scope.overflow = {
+            editUserCount: positive(
+                    $scope.actual.editUserCount - $scope.included.editUserCount),
+            numActive: positive(
+                    $scope.actual.numActive - $scope.included.numActive),
+            observerCount: positive(
+                    $scope.actual.observerCount - $scope.included.observerCount),
+            documentLimit: positive(
+                    $scope.actual.documentLimit - $scope.included.documentLimit),
+            numFrozen: positive(
+                    $scope.actual.numFrozen - $scope.included.numFrozen)
+        };
+        $scope.costs = {
+            editUserCount: $scope.overflow.editUserCount,
+            numActive: 2 * $scope.overflow.numActive,
+            observerCount: $scope.overflow.observerCount,
+            documentLimit: $scope.overflow.documentLimit/1000,
+            numFrozen: $scope.overflow.numFrozen
+        };
+        
+        $scope.costs.total = $scope.costs.editUserCount + $scope.costs.numActive + $scope.costs.observerCount + $scope.costs.documentLimit + $scope.costs.numFrozen;
+    }
+    $scope.calc();
+
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -161,37 +161,11 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.setSiteInfo = function(info) {
         $scope.siteInfo = info;
-        if ($scope.siteInfo.editUserLimit < 10) {
-            $scope.siteInfo.editUserLimit = 10;
-        }
-        if ($scope.siteInfo.workspaceLimit < 3) {
-            $scope.siteInfo.workspaceLimit = 3;
-        }
         $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
         $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
         $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
             
-        $scope.limitCharge = $scope.siteInfo.frozenLimit * $scope.chargeFrozen
-            + $scope.siteInfo.workspaceLimit * $scope.chargeActive
-            + $scope.siteInfo.viewUserLimit * $scope.chargeReader
-            + ($scope.siteInfo.editUserLimit-1) * $scope.chargeCreator
-            + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
-        let charge = 16;
-        $scope.siteStats.includeDocs = 5000;
-        if ($scope.siteStats.editUserCount > 10) {
-            charge = charge + ($scope.siteStats.editUserCount-10);
-            $scope.siteStats.includeDocs = $scope.siteStats.editUserCount*500;
-        }
-        if ($scope.siteStats.numActive > 3) {
-            charge = charge + ($scope.siteStats.numActive-3)*2;
-        }
-        let docMB = $scope.siteStats.sizeDocuments/1000000;
-        console.log("DOC GB", docMB);
-        if (docMB > $scope.siteStats.includeDocs) {
-            charge = charge + (docMB-$scope.siteStats.includeDocs)/1000;
-        console.log("DOC charge", (docMB-$scope.siteStats.includeDocs)/1000);
-        }
-        $scope.currentCharge = charge;
+        $scope.calc();
     }
     $scope.setSiteInfo($scope.siteInfo);
     
@@ -265,6 +239,9 @@ p {
 }
 .headerRow {
     background-color: lightskyblue;
+}
+.lastLine {
+    border-top: 5px solid gray;
 }
 </style>
 
@@ -354,129 +331,81 @@ p {
         
         <div style="height:100px"></div>
         <h2>Payment Plan</h2>
-        
-        <table class="spaceyTable">
-          <tr class="headerRow">
-            <td>Item</td>
-            <td class="numberColumn">Count</td>
-            <td></td>
-            <td class="numberColumn">Users</td>
-            <td class="numberColumn">Workspaces</td>
-            <td class="numberColumn">Cost</td>
-          </tr>
-          <tr>
-            <td>Basic 10 users 3 workspaces @ $16</td>
-            <td class="numberColumn">1</td>
-            <td></td>
-            <td class="numberColumn">10</td>
-            <td class="numberColumn">3</td>
-            <td class="numberColumn">$ {{16|number}}</td>
-          </tr>
-          <tr>
-            <td>User 10 pack @ $8</td>
-            <td class="numberColumn">{{purchaseCount.user10}}</td>
-            <td>
-                <button ng-click="incr('user10')">+</button>
-                <button ng-click="decr('user10')">-</button>
-            </td>
-            <td class="numberColumn">{{purchaseUsers.user10|number}}</td>
-            <td class="numberColumn">{{purchaseWS.user10|number}}</td>
-            <td class="numberColumn">$ {{purchaseCost.user10|number}}</td>
-          </tr>
-          <tr>
-            <td>User 5 pack @ $5</td>
-            <td class="numberColumn">{{purchaseCount.user5}}</td>
-            <td>
-                <button ng-click="incr('user5')">+</button>
-                <button ng-click="decr('user5')">-</button>
-            </td>
-            <td class="numberColumn">{{purchaseUsers.user5|number}}</td>
-            <td class="numberColumn">{{purchaseWS.user5|number}}</td>
-            <td class="numberColumn">$ {{purchaseCost.user5|number}}</td>
-          </tr>
-          <tr>
-            <td>Workspace 3 Pack @ $6</td>
-            <td class="numberColumn">{{purchaseCount.ws3}}</td>
-            <td>
-                <button ng-click="incr('ws3')">+</button>
-                <button ng-click="decr('ws3')">-</button>
-            </td>
-            <td class="numberColumn">{{purchaseUsers.ws3|number}}</td>
-            <td class="numberColumn">{{purchaseWS.ws3|number}}</td>
-            <td class="numberColumn">$ {{purchaseCost.ws3|number}}</td>
-          </tr>
-          <tr>
-            <td>Workspace Individual @ $4</td>
-            <td class="numberColumn">{{purchaseCount.ws1}}</td>
-            <td>
-                <button ng-click="incr('ws1')">+</button>
-                <button ng-click="decr('ws1')">-</button>
-            </td>
-            <td class="numberColumn">{{purchaseUsers.ws1|number}}</td>
-            <td class="numberColumn">{{purchaseWS.ws1|number}}</td>
-            <td class="numberColumn">$ {{purchaseCost.ws1|number}}</td>
-          </tr>
-          <tr>
-            <td>Totals</td>
-            <td class="numberColumn">0</td>
-            <td></td>
-            <td class="numberColumn">{{purchaseUsers.total|number}}</td>
-            <td class="numberColumn">{{purchaseWS.total|number}}</td>
-            <td class="numberColumn">$ {{purchaseCost.total|number}}</td>
-          </tr>
-        </table>
-        
-        <br/>
-        <br/>
+       
         
         <table class="spaceyTable">
             <tr class="headerRow">
                 <td></td>
+                <td class="numberColumn">Your Limit</td>
+                <td>Set</td>
                 <td class="numberColumn">Current Usage</td>
-                <td class="numberColumn">Included</td>
+                <td class="numberColumn">Gratis</td>
                 <td class="numberColumn">Extra</td>
                 <td class="numberColumn">Cost</td>
             </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
                 <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Active Users:</td>
-                <td class="numberColumn">{{siteStats.editUserCount}}</td>
-                <td class="numberColumn">{{purchaseUsers.total|number}}</td>
-                <td class="numberColumn"></td>
+                <td class="numberColumn">{{siteInfo.editUserLimit|number}}</td>
+                <td>
+                    <button ng-click="changePeople(1)">+</button>
+                    <button ng-click="changePeople(-1)">-</button>
+                </td>
+                <td class="numberColumn">{{actual.editUserCount}}</td>
+                <td class="numberColumn">{{comp.editUserCount}}</td>
+                <td class="numberColumn">{{overflow.editUserCount}}</td>
+                <td class="numberColumn">$ {{costs.editUserCount|number: '0'}}</td>
             </tr>
             <tr>
                 <td >Active Workspaces:</td>
-                <td class="numberColumn">{{siteStats.numActive}}</td>
-                <td class="numberColumn">{{purchaseWS.total|number}}</td>
-                <td class="numberColumn"></td>
+                <td class="numberColumn">{{siteInfo.workspaceLimit|number}}</td>
+                <td>
+                    <button ng-click="changeWS(1)">+</button>
+                    <button ng-click="changeWS(-1)">-</button>
+                </td>
+                <td class="numberColumn">{{actual.numActive}}</td>
+                <td class="numberColumn">{{comp.numActive}}</td>
+                <td class="numberColumn">{{overflow.numActive}}</td>
+                <td class="numberColumn">$ {{costs.numActive|number: '0'}}</td>
             </tr>
             <tr>
                 <td>Documents:</td>
-                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{ siteStats.sizeDocuments/1000000|number: '0'}} MB
+                <td></td>
+                <td></td>
+                <td class="numberColumn">
+                    {{ actual.documentLimit|number: '0'}} MB
                 </td>
-                <td class="numberColumn">{{500 * purchaseUsers.total|number}} MB</td>
-                <td class="numberColumn" ng-show="extraDocCount>0">
-                    {{extraDocCount|number: '0'}} MB
+                <td class="numberColumn">{{included.documentLimit|number}} MB</td>
+                <td class="numberColumn" ng-show="overflow.documentLimit>0">
+                    {{overflow.documentLimit|number: '0'}} MB
                 </td>
-                <td class="numberColumn" ng-show="extraDocCount>0">$ {{extraDocCount/1000|number: '0'}}</td>
+                <td class="numberColumn" ng-show="costs.documentLimit>0">$ {{costs.documentLimit|number: '0'}}</td>
             </tr>
             <tr>
                 <td>Observers:</td>
-                <td class="numberColumn">
-                    {{siteStats.readUserCount}}
-                </td>
-                <td class="numberColumn">All</td>
-                <td class="numberColumn"></td>
-                <td class="numberColumn"></td>
+                <td></td>
+                <td></td>
+                <td class="numberColumn">{{actual.observerCount}}</td>
+                <td class="numberColumn">{{included.observerCount}}</td>
+                <td class="numberColumn">{{overflow.observerCount}}</td>
+                <td class="numberColumn" ng-show="costs.observerCount>0">$ {{costs.observerCount|number: '0'}}</td>
             </tr>
             <tr>
                 <td>Frozen Workspaces:</td>
-                <td class="numberColumn">
-                    {{siteStats.numFrozen}}
-                </td>
-                <td class="numberColumn">All</td>
-                <td class="numberColumn""></td>
+                <td></td>
+                <td></td>
+                <td class="numberColumn">{{actual.numFrozen}}</td>
+                <td class="numberColumn">{{included.numFrozen}}</td>
+                <td class="numberColumn">{{overflow.numFrozen}}</td>
+                <td class="numberColumn" ng-show="costs.numFrozen>0">$ {{costs.numFrozen|number: '0'}}</td>
+            </tr>
+            <tr>
+                <td class="lastLine">Total per Month:</td>
+                <td></td>
+                <td></td>
                 <td class="numberColumn"></td>
+                <td class="numberColumn"></td>
+                <td class="numberColumn"></td>
+                <td class="numberColumn lastLine">$ {{costs.total|number: '0'}}</td>
             </tr>
         </table>
         

@@ -29,12 +29,12 @@ import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -591,7 +591,7 @@ public class NGBook extends ContainerCommon {
         }
         File newFolder = new File(rootFolder, workspaceKey);
         if (newFolder.exists()) {
-            throw new JSONException("Can not create workspace, that name that already exists: {0}", newFolder);
+            throw WeaverException.newBasic("Can not create workspace, that name that already exists: %s", newFolder);
         }
 
         File cogFolder = new File(newFolder, ".cog");
@@ -1232,12 +1232,14 @@ public class NGBook extends ContainerCommon {
     }
     public void assertSiteOwner(UserRef user, String descript) throws Exception {
         if (!isSiteOwner(user)) {
-            throw new JSONException("User {0} is not an owner of the site. {1}", user.getUniversalId(), descript);
+            throw WeaverException.newBasic("User %s is not an owner of the site. %s", 
+                    user.getUniversalId(), descript);
         }
     }
     public void assertSiteExecutive(UserRef user, String descript) throws Exception {
         if (!isSiteOwner(user)) {
-            throw new JSONException("User {0} is not an executive of the site. {1}", user.getUniversalId(), descript);
+            throw WeaverException.newBasic("User %s is not an executive of the site. %s", 
+                    user.getUniversalId(), descript);
         }
     }
 

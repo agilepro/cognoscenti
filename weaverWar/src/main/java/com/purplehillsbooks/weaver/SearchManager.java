@@ -43,6 +43,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.StreamHelper;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 
 public class SearchManager {
@@ -155,6 +156,7 @@ public class SearchManager {
         return line;
     }    
     
+    @SuppressWarnings("resource")
     private synchronized void initializeIndex() throws Exception {
         analyzer = new StandardAnalyzer();
 
@@ -163,9 +165,10 @@ public class SearchManager {
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
 
         Directory dirStore = getStore();
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
+            
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
             if (!ngpi.isWorkspace()) {
                 //we only index workspaces
@@ -213,7 +216,15 @@ public class SearchManager {
             
             System.out.println("SearchManager - Updating workspace "+ngpi.wsSiteKey+"/"+ngpi.containerKey);
             
-            IndexWriter iWriter = new IndexWriter(dirStore, config);
+            IndexWriter iWriter = null;
+
+            try {
+                // exploring the reasons that IndexWriter construction might fail
+                iWriter = new IndexWriter(dirStore, config);
+            }
+            catch (Exception e) {
+                throw WeaverException.newWrap("Unable to initialize the IndexWriter", e);
+            }
             
 
             try {

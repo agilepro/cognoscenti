@@ -21,11 +21,12 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
+
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -152,20 +153,20 @@ public class SiteRequest {
     
     public void validateValues() throws Exception {
         if (getSiteName().length() < 4) {
-            throw new JSONException("New site must have a name with 4 or more letters");
+            throw WeaverException.newBasic("New site must have a name with 4 or more letters");
         }
         String siteId = getSiteId();
         if (siteId == null) {
-            throw new JSONException("SiteId parameter can not be null in createNewSiteRequest");
+            throw WeaverException.newBasic("SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 12) {
-            throw new JSONException("SiteId must be four to twelve charcters/numbers long.  Received ({0})", siteId);
+            throw WeaverException.newBasic("SiteId must be four to twelve charcters/numbers long.  Received (%s)", siteId);
         }
 
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})",
+                throw WeaverException.newBasic("AccountId must have only letters and numbers - no spaces or punctuation.  Received (%s)",
                         siteId);
             }
         }
@@ -174,7 +175,7 @@ public class SiteRequest {
     public void assertSiteNotExist(Cognoscenti cog) throws Exception {
         NGContainer site = cog.getSiteById(getSiteId());
         if (site != null) {
-            throw new JSONException("Sorry, there already exists a site with that ID ({0}).  Please try again with a different ID.",
+            throw WeaverException.newBasic("Sorry, there already exists a site with that ID (%s).  Please try again with a different ID.",
                     getSiteId());
         }        
     }

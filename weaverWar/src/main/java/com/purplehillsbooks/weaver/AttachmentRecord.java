@@ -28,9 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.capture.HtmlToWikiConverter2;
 import com.purplehillsbooks.weaver.capture.WebFile;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
@@ -38,7 +36,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class AttachmentRecord extends CommentContainer {

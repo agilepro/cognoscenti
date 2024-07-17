@@ -26,13 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -437,12 +437,12 @@ public class DOMFace
             if (retval == null) {
                 // this should absolutely never happen, but putting this check
                 // here to make absolutely sure.
-                throw new JSONException("Constructor did not work");
+                throw WeaverException.newBasic("Constructor did not work");
             }
             return retval;
         }
         catch (Exception e) {
-            throw new JSONException("Unable to construct XML object for {0}", e, childClass.getName());
+            throw WeaverException.newBasic("Unable to construct XML object for %s", e, childClass.getName());
         }
     }
 
@@ -727,10 +727,12 @@ public class DOMFace
      * then an exception will be thrown.
      */
     public void updateFromJSON(JSONObject foo) throws Exception {
-        throw new JSONException("UpdateFromJSON method needs to be implemented on the class {0}", this.getClass().getName());
+        throw WeaverException.newBasic("UpdateFromJSON method needs to be implemented on the class %s", 
+            this.getClass().getName());
     }
     public JSONObject getJSON() throws Exception {
-        throw new JSONException("getJSON method needs to be implemented on the class {0}", this.getClass().getName());
+        throw WeaverException.newBasic("getJSON method needs to be implemented on the class %s", 
+            this.getClass().getName());
     }
 
     // --------------------------------------------------------------------------
@@ -961,7 +963,7 @@ public class DOMFace
             }
         }
         catch (Exception e) {
-            throw new JSONException("Unable to update collection named {0}", e, memberName);
+            throw WeaverException.newBasic("Unable to update collection named %s", e, memberName);
         }
     }
 
