@@ -369,7 +369,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
                 <div class="folderLine bg-secondary-subtle p-3" style="cursor:pointer">
                     <span class="fs-5 fw-bold" ng-click="trimFolderPath(0)">
-                <img src="<%=ar.retPath%>assets/iconFolder.gif">
+                <img src="<%=ar.retPath%>assets/iconFolder.gif" style="130%">
                 <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Workspace
                     </span>
                 </div>
@@ -405,8 +405,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <tr ng-repeat="rec in getUnmarked()" ng-dblclick="openDocDialog(rec)">
             <td>
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
-                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsFolders" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="docFolderList">
                             <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
                             <li ng-show="rec.attType=='FILE'">
                                 <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a> </li>

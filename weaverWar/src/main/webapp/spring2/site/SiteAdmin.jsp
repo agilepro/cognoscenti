@@ -35,84 +35,6 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
     
-    $scope.changePeople = function(amt) {
-        $scope.siteInfo.editUserLimit = $scope.siteInfo.editUserLimit + amt;
-        if ($scope.siteInfo.editUserLimit < 1) {
-            $scope.siteInfo.editUserLimit = 1
-        }
-        $scope.saveSiteInfo();
-    }
-    $scope.changeWS = function(amt) {
-        $scope.siteInfo.workspaceLimit = $scope.siteInfo.workspaceLimit + amt;
-        if ($scope.siteInfo.workspaceLimit < 1) {
-            $scope.siteInfo.workspaceLimit = 1
-        }
-        $scope.saveSiteInfo();
-    }
-    
-    function positive(a,b) {
-        if (a>0) {
-            return a;
-        }
-        else {
-            return null;
-        }
-    }
-
-    $scope.calc = function() {
-        $scope.comp = {
-            editUserCount: 1,
-            numActive: 1,
-        };
-        $scope.actual = {
-            editUserCount: $scope.siteStats.editUserCount,
-            numActive: $scope.siteStats.numActive,
-            observerCount: $scope.siteStats.numActive,
-            documentLimit: $scope.siteStats.sizeDocuments/1000000,
-            numFrozen: $scope.siteStats.numFrozen
-        };
-        
-        //while ($scope.actual.documentLimit > 500 * $scope.actual.editUserCount) {
-        //    $scope.actual.editUserCount++;
-        //}
-        while ($scope.siteStats.numActive > 20 * $scope.actual.editUserCount) {
-            $scope.actual.editUserCount++;
-        }
-        while ($scope.siteStats.numFrozen > 4 * $scope.actual.numActive) {
-            $scope.actual.numActive++;
-        }
-        
-        $scope.included = {
-            editUserCount: $scope.comp.editUserCount,
-            numActive: $scope.comp.numActive,
-            observerCount: 20 * $scope.actual.editUserCount,
-            documentLimit: 500 * $scope.actual.editUserCount,
-            numFrozen: 4 * $scope.actual.numActive
-        };
-        $scope.overflow = {
-            editUserCount: positive(
-                    $scope.actual.editUserCount - $scope.included.editUserCount),
-            numActive: positive(
-                    $scope.actual.numActive - $scope.included.numActive),
-            observerCount: positive(
-                    $scope.actual.observerCount - $scope.included.observerCount),
-            documentLimit: positive(
-                    $scope.actual.documentLimit - $scope.included.documentLimit),
-            numFrozen: positive(
-                    $scope.actual.numFrozen - $scope.included.numFrozen)
-        };
-        $scope.costs = {
-            editUserCount: $scope.overflow.editUserCount,
-            numActive: 2 * $scope.overflow.numActive,
-            observerCount: $scope.overflow.observerCount,
-            documentLimit: $scope.overflow.documentLimit/1000,
-            numFrozen: $scope.overflow.numFrozen
-        };
-        
-        $scope.costs.total = $scope.costs.editUserCount + $scope.costs.numActive + $scope.costs.observerCount + $scope.costs.documentLimit + $scope.costs.numFrozen;
-    }
-    $scope.calc();
-
     $scope.chargeCreator = 3;
     $scope.chargeReader = 0;
     $scope.chargeActive = 0;
@@ -159,11 +81,21 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.setSiteInfo = function(info) {
         $scope.siteInfo = info;
+        $scope.siteInfo.workspaceLimit = $scope.siteInfo.editUserLimit;
         $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
         $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
         $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
             
-        $scope.calc();
+        $scope.limitCharge = $scope.siteInfo.frozenLimit * $scope.chargeFrozen
+            + $scope.siteInfo.workspaceLimit * $scope.chargeActive
+            + $scope.siteInfo.viewUserLimit * $scope.chargeReader
+            + ($scope.siteInfo.editUserLimit-1) * $scope.chargeCreator
+            + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
+        $scope.currentCharge = $scope.siteStats.numFrozen * $scope.chargeFrozen
+            + $scope.siteStats.numActive * $scope.chargeActive
+            + $scope.siteStats.readUserCount * $scope.chargeReader
+            + ($scope.siteStats.editUserCount-1) * $scope.chargeCreator
+            + $scope.siteStats.sizeDocuments * $scope.chargeDocument / 1000000;
     }
     $scope.setSiteInfo($scope.siteInfo);
     
@@ -208,187 +140,210 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" 
-              href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem" 
-              href="SiteUsers.htm">User List</a></li>
-          <li role="presentation"><a role="menuitem" 
-              href="SiteStats.htm">Site Statistics</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteLedger.htm">Site Charges</a></li>
-          <li role="presentation"><a role="menuitem" 
-              href="TemplateEdit.htm">Template Edit</a></li>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteAdmin.htm">Site Admin</a></span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteUsers.htm">User List</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteStats.htm">Site Statistics</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="SiteLedger.htm">Site Charges</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="TemplateEdit.htm">Template Edit</a></span>
           <% if (ar.isSuperAdmin()) { %>
-          <li role="presentation" style="background-color:yellow"><a role="menuitem"
-              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
           <% } %>
-        </ul>
-      </span>
-    </div>
+            </div>
 
 
-    <div class="generalContent">
-         <table class="spaceyTable">
-            <tr ng-dblclick="toggleEditor('NewName')">
-                <td class="labelColumn" ng-click="toggleEditor('NewName')">New Name:</td>
-                <td class="form-inline dataColumn" ng-show="isEditing =='NewName'">
-                    <input type="text" class="form-control" ng-model="newName">
-                    <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Change Name</button>
-                </td>
-                <td class="form-inline dataColumn" ng-hide="isEditing =='NewName'">
-                    <b>{{newName}}</b>
-                </td>
-                <td ng-hide="isEditing =='NewName'" class="helpColumn"></td>
-                <td ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
-                    If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
-                </td>
-            </tr>
-            <tr ng-dblclick="toggleEditor('SiteDescription')">
-                <td class="labelColumn" ng-click="toggleEditor('SiteDescription')">Site Description:</td>
-                <td class=" dataColumn" ng-hide="isEditing =='SiteDescription'">
-                   {{siteInfo.description}}
-                </td>
-                <td class=" dataColumn" ng-show="isEditing =='SiteDescription'">
-                    <textarea  class="form-control markDownEditor" rows="4" ng-model="siteInfo.description"
-                    title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='SiteDescription'" class="helpColumn"></td>
-                <td ng-show="isEditing =='SiteDescription'" class="helpColumn guideVocal">
-                    The description of the site appears in lists of sites to help others know what the 
-                    purpose of the site is.
-                </td>
-            </tr>
-            <tr ng-dblclick="toggleEditor('SiteMessage')">
-                <td class="labelColumn" ng-click="toggleEditor('SiteMessage')">Site Message:</td>
-                <td class=" dataColumn" ng-hide="isEditing =='SiteMessage'">
-                    {{siteInfo.siteMsg}}
-                </td>
-                <td class=" dataColumn" ng-show="isEditing =='SiteMessage'">
-                    <textarea  class="form-control" rows="2" ng-model="siteInfo.siteMsg"
-                    title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='SiteMessage'" class="helpColumn"></td>
-                <td ng-show="isEditing =='SiteMessage'" class="helpColumn guideVocal">
-                    Set a message and it will show on every page of every workspace in the site.</td>
-            </tr>
-            <tr ng-dblclick="toggleEditor('LabelColors')">
-                <td class="labelColumn" ng-click="toggleEditor('LabelColors')">Label Colors:</td>
-                <td class=" dataColumn" ng-hide="isEditing =='LabelColors'">
-                    <textarea disabled class="form-control" rows="2" ng-model="colorList"
-                    title="A comma separated list of standard color names."></textarea>
-                </td>
-                <td class=" dataColumn" ng-show="isEditing =='LabelColors'">
-                    <textarea  class="form-control" rows="2" ng-model="colorList"
-                    title="A comma separated list of standard color names."></textarea>
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='LabelColors'" class="helpColumn"></td>
-                <td ng-show="isEditing =='LabelColors'" class="helpColumn guideVocal">
-                    Use web standard color names to create the set of colors that you can set on labels.
-                </td>
-            </tr>
-        </table>
+            <div class="d-flex col-9"><div class="contentColumn">
+<div class="container-fluid">
+                <div class="generalContent">
+                    <table class="spaceyTable">
+                       <tr ng-dblclick="toggleEditor('NewName')">
+                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</td>
+                           <td class="form-inline dataColumn" ng-show="isEditing =='NewName'">
+                               <input type="text" class="form-control mb-2" ng-model="newName">
+                               <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Change Name</button>
+                           </td>
+                           <td class="form-inline dataColumn" ng-hide="isEditing =='NewName'">
+                               <b>{{newName}}</b>
+                           </td>
+                           <td ng-hide="isEditing =='NewName'" class="helpColumn"></td>
+                           <td ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
+                               If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
+                           </td>
+                       </tr>
+                       <tr ng-dblclick="toggleEditor('SiteDescription')">
+                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</td>
+                           <td class=" dataColumn" ng-hide="isEditing =='SiteDescription'">
+                              {{siteInfo.description}}
+                           </td>
+                           <td class="dataColumn" ng-show="isEditing =='SiteDescription'">
+                               <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
+                               title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
+                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                           </td>
+                           <td ng-hide="isEditing =='SiteDescription'" class="helpColumn"></td>
+                           <td ng-show="isEditing =='SiteDescription'" class="helpColumn guideVocal">
+                               The description of the site appears in lists of sites to help others know what the 
+                               purpose of the site is.
+                           </td>
+                       </tr>
+                       <tr ng-dblclick="toggleEditor('SiteMessage')">
+                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('SiteMessage')">Site Message:</td>
+                           <td class=" dataColumn" ng-hide="isEditing =='SiteMessage'">
+                               {{siteInfo.siteMsg}}
+                           </td>
+                           <td class=" dataColumn" ng-show="isEditing =='SiteMessage'">
+                               <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
+                               title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
+                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                           </td>
+                           <td ng-hide="isEditing =='SiteMessage'" class="helpColumn"></td>
+                           <td ng-show="isEditing =='SiteMessage'" class="helpColumn guideVocal">
+                               Set a message and it will show on every page of every workspace in the site.</td>
+                       </tr>
+                       <tr ng-dblclick="toggleEditor('LabelColors')">
+                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('LabelColors')">Label Colors:</td>
+                           <td class=" dataColumn" ng-hide="isEditing =='LabelColors'">
+                               <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
+                               title="A comma separated list of standard color names."></textarea>
+                           </td>
+                           <td class=" dataColumn" ng-show="isEditing =='LabelColors'">
+                               <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
+                               title="A comma separated list of standard color names."></textarea>
+                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                           </td>
+                           <td ng-hide="isEditing =='LabelColors'" class="helpColumn"></td>
+                           <td ng-show="isEditing =='LabelColors'" class="helpColumn guideVocal">
+                               Use web standard color names to create the set of colors that you can set on labels.
+                           </td>
+                       </tr>
+                   </table>
         
         <div style="height:100px"></div>
-        <h2>Payment Plan</h2>
-       
+        <h2>Your Budget</h2>
         
         <table class="spaceyTable">
-            <tr class="headerRow">
+            <tr>
                 <td></td>
-                <td class="numberColumn">Your Limit</td>
-                <td>Set</td>
                 <td class="numberColumn">Current Usage</td>
-                <td class="numberColumn">Gratis</td>
-                <td class="numberColumn">Extra</td>
-                <td class="numberColumn">Cost</td>
+                <td class="numberColumn">Your Limits</td>
+                <td class="helpColumn"></td>
             </tr>
             <tr ng-dblclick="toggleEditor('CreatorLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Active Users:</td>
-                <td class="numberColumn">{{siteInfo.editUserLimit|number}}</td>
-                <td>
-                    <button ng-click="changePeople(1)">+</button>
-                    <button ng-click="changePeople(-1)">-</button>
-                </td>
-                <td class="numberColumn">{{actual.editUserCount}}</td>
-                <td class="numberColumn">{{comp.editUserCount}}</td>
-                <td class="numberColumn">{{overflow.editUserCount}}</td>
-                <td class="numberColumn">$ {{costs.editUserCount|number: '0'}}</td>
-            </tr>
-            <tr>
-                <td >Active Workspaces:</td>
-                <td class="numberColumn">{{siteInfo.workspaceLimit|number}}</td>
-                <td>
-                    <button ng-click="changeWS(1)">+</button>
-                    <button ng-click="changeWS(-1)">-</button>
-                </td>
-                <td class="numberColumn">{{actual.numActive}}</td>
-                <td class="numberColumn">{{comp.numActive}}</td>
-                <td class="numberColumn">{{overflow.numActive}}</td>
-                <td class="numberColumn">$ {{costs.numActive|number: '0'}}</td>
-            </tr>
-            <tr>
-                <td>Documents:</td>
-                <td></td>
-                <td></td>
+                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</td>
                 <td class="numberColumn">
-                    {{ actual.documentLimit|number: '0'}} MB
+                    {{siteStats.editUserCount}}
                 </td>
-                <td class="numberColumn">{{included.documentLimit|number}} MB</td>
-                <td class="numberColumn" ng-show="overflow.documentLimit>0">
-                    {{overflow.documentLimit|number: '0'}} MB
+                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                    {{siteInfo.editUserLimit}}
                 </td>
-                <td class="numberColumn" ng-show="costs.documentLimit>0">$ {{costs.documentLimit|number: '0'}}</td>
+                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'">
+                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                    <input type="text" ng-model="siteInfo.editUserLimit"  style="width:50px">
+                </td>
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
+                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.
+                </td>
             </tr>
             <tr>
                 <td>Observers:</td>
-                <td></td>
-                <td></td>
-                <td class="numberColumn">{{actual.observerCount}}</td>
-                <td class="numberColumn">{{included.observerCount}}</td>
-                <td class="numberColumn">{{overflow.observerCount}}</td>
-                <td class="numberColumn" ng-show="costs.observerCount>0">$ {{costs.observerCount|number: '0'}}</td>
+                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                    {{siteStats.readUserCount}}
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                    {{siteInfo.viewUserLimit}}
+                </td>
+                <td ng-show="isEditing =='ReaderLimit'" colspan="2" >
+                    <input type="text" ng-model="siteInfo.viewUserLimit">
+                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 4 additional guest observer users.
+                </td>
+            </tr>
+            <tr>
+                <td >Active Workspaces:</td>
+                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                    {{siteStats.numActive}}
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                    {{siteInfo.workspaceLimit}}
+                </td>
+                <td ng-show="isEditing =='WorkspaceLimit'" colspan="2">
+                    <input type="text" ng-model="siteInfo.workspaceLimit">
+                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 1 active workspace.
+                </td>
             </tr>
             <tr>
                 <td>Frozen Workspaces:</td>
-                <td></td>
-                <td></td>
-                <td class="numberColumn">{{actual.numFrozen}}</td>
-                <td class="numberColumn">{{included.numFrozen}}</td>
-                <td class="numberColumn">{{overflow.numFrozen}}</td>
-                <td class="numberColumn" ng-show="costs.numFrozen>0">$ {{costs.numFrozen|number: '0'}}</td>
+                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                    {{siteStats.numFrozen}}
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                    {{siteInfo.frozenLimit}}
+                </td>
+                <td ng-show="isEditing =='FrozenLimit'" colspan="2">
+                    <input type="text" ng-model="siteInfo.frozenLimit">
+                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 2 additional frozen (archived) workspaces.
+                </td>
             </tr>
             <tr>
-                <td class="lastLine">Total per Month:</td>
-                <td></td>
-                <td></td>
-                <td class="numberColumn"></td>
-                <td class="numberColumn"></td>
-                <td class="numberColumn"></td>
-                <td class="numberColumn lastLine">$ {{costs.total|number: '0'}}</td>
+                <td>Documents:</td>
+                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
+                </td>
+                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                    {{siteInfo.fileSpaceLimit|number}} MB
+                </td>
+                <td ng-show="isEditing =='DocumentLimit'" colspan="2">
+                    <input type="text" ng-model="siteInfo.fileSpaceLimit">
+                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </td>
+                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
+                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    For each purchased update user, you can have 100 MB of documents.
+                </td>
+            </tr>
+            <tr >
+                <td >Charges / Month:</td>
+                <td class="numberColumn">
+                    $ {{currentCharge | number: '2'}}
+                </td>
+                <td class="numberColumn">
+                    $ {{limitCharge | number: '2'}}
+                </td>
+                <td class="helpColumn"></td>
+                    
+                </td>
             </tr>
         </table>
         
-
-<div style="margin:100px"></div>
-
-<div class="guideVocal">
-<p>Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p>
-<button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
-</div>
-
-<div class="guideVocal">
-<p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time.
-In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
-<button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
-</div>
+        <p><button ng-click="recalcStats()" class="btn btn-primary btn-raised">Recalculate Current Usage</button>
+        <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
+        
+        <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
+        
+        <p>Weaver will help you stay under the limits, by preventing addition of new resources over the limits that you set.  You can change the limits at any time.  If you raise the limit you can immediately add resources.  The limit does not automatically reduce your resource usage.  If you lower the limit, you must remove the excess resources yourself.  Again, Weaver will only charge you for the resources you actually use.</p>
+        
+        
         
         
         <div style="height:300px"></div>

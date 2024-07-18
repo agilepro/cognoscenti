@@ -54,8 +54,8 @@
         }
     %>  
             
-                <li class="nav-item dropdown pb-2">
-                    <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown"<%
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown p-1" role="button" data-bs-toggle="dropdown"<%
                         if (jo.has("href")) {
                             %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
                         }
@@ -79,7 +79,7 @@
                         JSONArray options = getOptions(jo, wrappedJSP);
                         if (options.length()>0) {
                         %>
-                        <ul class="dropdown-menu bg-weaverbody">
+                        <ul class="dropdown-menu bg-weaverbody ms-0">
 
                         <% for (JSONObject jo2 : options.getJSONObjectList()) { %>
                             <li>
