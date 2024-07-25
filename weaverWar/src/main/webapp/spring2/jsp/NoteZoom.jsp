@@ -1310,7 +1310,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <tr>
     <td></td>
     <td>
-    <div ng-show="canComment && !isEditing">
+    <div ng-show="canComment">
         <div style="margin:20px;">
             <button ng-click="openCommentCreator(null,1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
