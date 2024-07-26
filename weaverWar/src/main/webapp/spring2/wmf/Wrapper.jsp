@@ -48,11 +48,12 @@
     <script src="<%=ar.retPath%>bits/moment.js"></script>
     <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
     
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+        <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
     <link href="<%=ar.baseURL%>bits/WeaverMobileFirstStyle.css" rel="stylesheet">
-
+    <!-- Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
 <script>
 
 

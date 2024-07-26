@@ -205,8 +205,7 @@
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
-
+    
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
@@ -219,12 +218,12 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design -->
+    <!-- Bootstrap Material Design 
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-
+-->
     <!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
@@ -239,8 +238,9 @@
     <script>  moment().format(); </script>
 
     <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
-
+        <!-- Bootstrap 5.0-->
+        <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+        <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
  
     <title><% ar.writeHtml(title); %></title>
 
@@ -251,7 +251,7 @@ $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
     /* INIT Bootstrap Material Design */
-    $.material.init();
+   // $.material.init();
 });
 
 //Must initialize the app with all the right packages here, before the 

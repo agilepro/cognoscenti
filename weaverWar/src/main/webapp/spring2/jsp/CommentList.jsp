@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
 %><%
@@ -81,7 +81,7 @@
     }
 
 </style>
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../new_assets/jscript/AllPeople.js"></script>
 
 
 <script type="text/javascript">
@@ -249,7 +249,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       <table style="max-width:800px">
         <tr ng-repeat="cmt in getComments()">
-          <%@ include file="/spring/jsp/CommentView.jsp"%>          
+          <%@ include file="/spring2/jsp/CommentView.jsp"%>          
         </tr>
       </table>
         
@@ -261,6 +261,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>

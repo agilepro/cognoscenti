@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring/anon/Error.jsp"
-%><%@ include file="/spring/anon/include.jsp"
+<%@page errorPage="/spring2/anon/Error.jsp"
+%><%@ include file="/spring2/anon/include.jsp"
 %><%
     String title = "sss";
     NGWorkspace ngw =null;
@@ -80,15 +80,16 @@
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
-    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+<!-- INCLUDE the ANGULAR JS library -->
+<script src="<%=ar.baseURL%>jscript/angular_1.8.js"></script>
+<script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
+<script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
+<script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
+<script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
+<script src="<%=ar.baseURL%>jscript/slap.js"></script>
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
@@ -103,28 +104,31 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- Bootstrap Material Design -->
+    <!-- Bootstrap Material Design 
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
+    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
+    -->
     <!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
       <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
-
+    
     <!-- Date and Time Picker -->
+    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
     <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
     <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
     <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
+    <!-- Weaver specific tweaks 
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
-
+-->
  
     <title><% ar.writeHtml(title); %></title>
 
@@ -135,7 +139,7 @@ $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
     /* INIT Bootstrap Material Design */
-    $.material.init();
+   // $.material.init();
 });
 
 //Must initialize the app with all the right packages here, before the 

@@ -1,6 +1,6 @@
-<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page isErrorPage="true"
-%><%@include file="/spring/jsp/include.jsp"
+%><%@include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLogDetails"
 %><%
@@ -29,15 +29,16 @@
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <!--
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
+    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">-->
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
 
     <!-- INCLUDE web fonts -->
@@ -47,7 +48,9 @@
 
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
     <!-- Weaver specific tweaks -->
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+        <!-- Bootstrap 5.0-->
+        <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+        <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
 
 <script type="text/javascript">
 
@@ -151,7 +154,7 @@ td {
                 Throwable t = display_exception;
                 while (t!=null) {
                     count++;
-                    ar.write("\n<div> ");
+                    ar.write("<div> ");
                     String msg = t.toString();
                     if (msg.startsWith("java.lang.Exception: ")) {
                         msg = msg.substring(21);

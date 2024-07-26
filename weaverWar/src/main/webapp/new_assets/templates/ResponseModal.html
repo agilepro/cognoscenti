@@ -1,15 +1,8 @@
 <html>
 <body>
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
-    {{responseUser}} - Response to {{commentTypeName()}}
-    </span>
-
-  </div>
-</div>
-
+    <div class="modal-header bg-primary-subtle text-primary">
+        <h5 class="modal-title" id="responseModalLabel">Response to Proposal</h5></div>
 <div class="modal-body">
     <div class="leafContent">
         <div ng-bind-html="displayText" style="max-height:200px;overflow: auto"></div>
@@ -19,12 +12,12 @@
              class="leafContent" style="min-height:200px;" ></div>
     </div>
 </div>
-<div class="modal-footer">
-    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="saveAndExit()" ng-show="unsaved==0">
+<div class="modal-footer d-flex">
+    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-show="unsaved==0">
         Exit</button>
-    <button class="btn btn-warning btn-raised pull-left" type="button" ng-click="saveAndExit()" ng-hide="unsaved==0">
+    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-hide="unsaved==0">
         Save / Exit</button>
-    <button ng-click="saveComment()" class="btn pull-left" 
+    <button ng-click="saveComment()" class="btn btn-outline-secondary" 
             ng-disabled="((!unsaved) && (saveDisabled))" 
             ng-show="autosaveEnabled">
         <i class="fa fa-floppy-o" aria-hidden="true"></i>
@@ -36,3 +29,4 @@
 </div>
 </body>
 </html>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>

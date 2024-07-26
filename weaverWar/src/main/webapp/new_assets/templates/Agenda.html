@@ -1,7 +1,7 @@
 
 
   <div class="modal-header mt-2 bg-primary-subtle text-primary"><h4 class="modal-title" id="agendaItemLabel">Agenda Item Settings</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    
   </div>
   <div class="modal-body">
     <div class="container-fluid">
@@ -21,16 +21,7 @@
           <div class="col-auto">
             <label for="labels">Planned Duration: (minutes)</label>
             <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"/>
-        </div>
-        &nbsp;
-          <div class="form-group row g-3">
-            <div class="col-auto">
-              <label for="labels">Actual Duration: (minutes)</label>
-              <input ng-model="agendaItem.previousElapsed"  class="form-control" style="width:100px;" ng-hide="agendaItem.timerRunning"/>
-              <span class="form-control" style="width:100px;color:lightgray" ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
-              </span>
-            </div>
-          </div>
+        </div>          
         </div>
             </div>
             <div class="col-6">
@@ -48,9 +39,23 @@
             <input type="checkbox"  ng-model="agendaItem.proposed" class="form-check-input"/>
             Proposed Item
               </div>
+              <div class="form-group row g-3">
+                <div class="col-auto">
+                  <label for="labels">Actual Duration: (minutes)</label>
+                  <input ng-model="agendaItem.previousElapsed"  class="form-control" style="width:100px;" ng-hide="agendaItem.timerRunning"/>
+                  <span class="form-control" style="width:100px;color:lightgray" ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
               <div class="form-group">
             <label for="labels">Description:</label>
-            <textarea ng-model="agendaItem.descriptionHtml" class="form-control min-vh-50" placeholder="Enter description" ng-ui-tinymce="tinymceOptions"></textarea>
+            
+            
+            <textarea class="form-control min-vh-50" placeholder="Enter description" ui-tinymce="tinymceOptions" ng-model="agendaItem.descriptionHtml" ></textarea>
               </div>
             </div>
           </div>

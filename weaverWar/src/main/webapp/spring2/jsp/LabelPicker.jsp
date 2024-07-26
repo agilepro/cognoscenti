@@ -58,7 +58,7 @@ function initializeLabelPicker($scope, $http, $modal) {
         
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '../../../templates/EditLabels.html',
+            templateUrl: '../../new_assets/templates/EditLabels.html',
             controller: 'EditLabelsCtrl',
             size: 'lg',
             resolve: {

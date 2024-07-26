@@ -412,9 +412,18 @@ a {
     }
 }
 .btn-wide {
-    width: auto;
+    width: fit-content;
+    flex-grow: 5;
     padding: 5px;
     display: inline-block;
+    min-width: max-content;
+    align-items: center;
+    display: inline-block;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
 
 }
 .accordion-button:not(.collapsed) { 
@@ -425,7 +434,7 @@ a {
 }
 .accordion-header {
     color:$primary;
-    background-color: $primary-40;
+    background-color: $primary-30;
 }
 .accordion-button {
     color:$primary;
@@ -486,7 +495,49 @@ a {
     position: relative;
     border-radius: 8px;
     box-shadow: #cccccc 2px 2px 5px;
+    &:hover {
+        background-color: $secondary-50;
+        color: $primary;
+        cursor: pointer;
+    }
 }
+
+.btn-startTime {
+    background-color: $green;
+    color: $primary-10;
+    border: $darkgreen, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    min-width: 150px;
+    &:hover {
+        background-color: $green-100;
+        color: $green;
+        cursor: pointer;
+    }
+}
+
+.btn-endTime {
+    background-color: $red;
+    color: $primary-10;
+    border: $dark, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    min-width: 150px;
+    &:hover {
+        background-color: $red-100;
+        color: $red;
+        cursor: pointer;
+    }
+}
+
 .button {
     .btn {
         background-color: inherit;
@@ -550,6 +601,8 @@ a {
 }
 .spaceyTable tr td {
     padding:5px;
+    border:none;
+    
 }
 .spacydiv {
     padding:5px;
@@ -657,7 +710,8 @@ a {
 }
 .modal-header {
     border-bottom: $secondary solid 1px;
-    padding: 0rem
+    padding: 0;
+    
 }
 
 .modal-content {
@@ -669,8 +723,8 @@ a {
     color: $primary;
     background-clip: padding-box;
     border: $secondary solid 1px;
-    padding: 5px;
-    margin: 5px;
+    padding: 0px;
+    margin: 0px;
     border-radius: 0.3rem;
     opacity: 1;
 }

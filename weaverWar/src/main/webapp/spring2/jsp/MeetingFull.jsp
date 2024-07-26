@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
@@ -190,7 +190,7 @@
 }
 </style>
 
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../new_assets/jscript/AllPeople.js"></script>
 
 <script>
 var embeddedData = {};
@@ -214,7 +214,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
 
 
 </script>
-<script src="../../../spring/jsp/MeetingHtml.js"></script>
+<script src="../../../spring2/jsp/MeetingHtml.js"></script>
 
 
 <style>
@@ -399,12 +399,12 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
 
 
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/MeetingNotes.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachTopicCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AgendaCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/MeetingNotes.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>

@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SharePortRecord"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.CommentContainer"
@@ -6,7 +6,7 @@
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
 %><%@page import="com.purplehillsbooks.weaver.EmailContext"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 /*
 Required parameters:

@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
@@ -768,7 +768,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/AttachAction.html<%=templateCacheDefeater%>',
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
@@ -805,7 +805,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         var modalInstance = $modal.open({
           animation: false,
-          templateUrl: "<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>",
+          templateUrl: "<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>",
           controller: 'ActionItemCtrl',
           size: 'lg',
           backdrop: "static",
@@ -885,7 +885,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/Feedback.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/Feedback.html<%=templateCacheDefeater%>',
             controller: 'FeedbackCtrl',
             size: 'lg',
             resolve: {
@@ -1037,7 +1037,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 });
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../new_assets/jscript/AllPeople.js"></script>
 
 <div ng-cloak style="max-width:1000px">
 
@@ -1070,8 +1070,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
     </div>
     <div class="d-flex col-9"><div class="contentColumn">
+
+
+    <div  class="h1" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
+        <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
+        {{noteInfo.subject}}
+    </div>
     <div class="well" ng-show="addressMode" ng-cloak>
-      <h2>Email Notification To (Subscribers):</h2>
+      <h2 class="h4 text-secondary">Email Notification To (Subscribers):</h2>
       <div>
           <tags-input ng-model="subscriberBuffer" placeholder="Enter users to send notification email to"
                       display-property="name" key-property="uid"
@@ -1081,32 +1087,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>
-      <span class="dropdown">
-          <button class="btn btn-primary btn-raised fs-6" type="button" ng-click="postIt(false)"
-                  title="Post this topic but don't send any email">
-          Post Without Email </button>
-      </span>
-      <span class="dropdown">
-          <button class="btn btn-sm btn-primary btn-raised fs-6" type="button" ng-click="postIt(true)"
-                  title="Post this topic and send the email to selected users">
-          Post &amp; Send Email </button>
-      </span>
-      <span class="dropdown">
-          <button class="btn btn-sm btn-danger btn-raised fs-6" type="button" ng-click="addressMode = false"
+      <div class="d-flex">
+        <span class="me-auto">
+          <button class="btn btn-primary btn-raised btn-wide fs-6 btn-danger" type="button" ng-click="addressMode = false"
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
       </span>
+      <span>
+          <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(false)"
+                  title="Post this topic but don't send any email">
+          Post Without Email </button>
+      </span>
+      <span>
+          <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(true)"
+                  title="Post this topic and send the email to selected users">
+          Post &amp; Send Email </button>
+      </span>
+</div>
 
     </div>
-
-    <div  class="h1" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
-        <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
-        {{noteInfo.subject}}
-    </div>
-
     <div class="bordereddiv" ng-hide="isEditing" >
         <div class="leafContent" ng-dblclick="startEdit()">
-            <div  ng-bind-html="htmlEditing"></div>
+            <div ng-bind-html="htmlEditing"></div>
         </div>
     </div>
 <%if (isLoggedIn) { %>
@@ -1300,7 +1302,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <table style="max-width:800px">
   <tr ng-repeat="cmt in getComments()">
 
-     <%@ include file="/spring/jsp/CommentView.jsp"%>
+     <%@ include file="/spring2/jsp/CommentView.jsp"%>
 
   </tr>
 
@@ -1335,12 +1337,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </div>
 
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/Feedback.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/Feedback.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
 
 <%out.flush();%>

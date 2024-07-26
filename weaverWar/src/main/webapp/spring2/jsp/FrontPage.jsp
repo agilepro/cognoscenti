@@ -429,121 +429,108 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 });
 </script>
-<style>
-.clipping {
-    overflow: hidden;
-    text-overflow: clip; 
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-a {
-    color:black;
-}
-.spacytable tr td {
-    padding:2px;
-}
-</style>
+
+
 <!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-
+<div class="container-fluid">
+    <div class="row">
 <!-- COLUMN 1 -->
-      <div class="col-md-4 col-sm-12">
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Recent Updates</div>
-              <div style="float:right" title="Access the detailed history of events in this workspace">
-                  <a href="History.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <div ng-repeat="hist in recentChanges" class="clipping">
-              <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+    <div class="col-md-4 col-sm-12">
+        <div class="card m-3">
+            <div class="card-header">
+                <div class="d-flex" title="Access the detailed history of events in this workspace"><h2 class="h5 card-title">Recent Updates</h2>
+                    <div class="ms-auto">
+                        <a href="History.htm">
+                            <i class="fa fa-list"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Planned Meetings</div>
-              <div style="float:right" title="Go to a list of all meetings in the workspace">
-                  <a href="MeetingList.htm">
-                      <i class="fa fa-gavel"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <div ng-repeat="meet in myMeetings"  class="clipping">
-              <a href="MeetingHtml.htm?id={{meet.id}}">{{meet.name}}, {{meet.startTime|date: "MMM dd, HH:mm"}}</a>
+            <div class="card-body">
+                <div ng-repeat="hist in recentChanges" class="clipping">
+                <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+                </div>
             </div>
-          </div>
         </div>
-
-
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Your Action Items</div>
-              <div style="float:right" title="Access the list of all action items">
-                  <a href="GoalList.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <div ng-repeat="act in myActions"  class="clipping">
-              <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
+        <div class="card m-3">
+            <div class="card-header">
+                <div class="d-flex" title="Go to a list of all meetings in the workspace"><h2 class="h5 card-title">Upcoming Meetings</h2>
+                    <div class="ms-auto">
+                        <a href="MeetingList.htm">
+                            <i class="fa fa-gavel"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Recent History</div>
-              <div style="float:right" title="Access the detailed history of events in this workspace">
-                  <a href="History.htm">
-                      <i class="fa fa-list"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body clipping">
-            <div ng-repeat="hist in topHistory"  class="clipping">
-              {{hist.time|cdate}} -
-             <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
-
-             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
-             was {{hist.event}}.
-             <br/>
-             <i>{{hist.comments}}</i>
+            <div class="card-body">
+                <div ng-repeat="meet in myMeetings"  class="clipping">
+                <a href="MeetingHtml.htm?id={{meet.id}}">{{meet.name}}, {{meet.startTime|date: "MMM dd, HH:mm"}}</a>
+                </div>
             </div>
-          </div>
         </div>
+        <div class="card m-3">
+            <div class="card-header">
+                <div class="d-flex" title="Go to a list of all action items in the workspace"><h2 class="h5 card-title" >Upcoming Action Items</h2>
+                    <div class="ms-auto">
+                        <a href="GoalList.htm">
+                            <i class="fa fa-list"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div ng-repeat="act in myActions"  class="clipping">
+                    <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="accordion m-3">
+            <div class="accordion-item">
+                <h2 class="h5 accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" title="Access the detailed history of events in this workspace" aria-expanded="false" aria-controls="collapseOne">
+                        Recent Changes &nbsp; &nbsp; <a href="CommentList.htm">
+                            <i class="fa fa-comments"></i>
+                        </a></button>
+                </h2>
+                        
+            </div>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div ng-repeat="hist in topHistory"  class="clipping">
+                {{hist.time|cdate}} -
+                        <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
-
-      </div>
+                {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+                was {{hist.event}}.
+                <br/>
+                <i>{{hist.comments}}</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 <!-- COLUMN 2 -->
-      <div class="col-md-4 col-sm-12">
-           <svg height="{{maxLength}}px" width="350px">
-               <g ng-show="parent.key">
-                   <ellipse cx="179" cy="69" rx="70" ry="35"
+    <div class="col-md-3 col-sm-12">
+        <svg height="{{maxLength}}px" max-width="350px">
+            <g ng-show="parent.key">
+                <ellipse cx="179" cy="69" rx="70" ry="35"
                         style="fill:gray;stroke:gray" ></ellipse>
-                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
-                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
-                   <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)"
-                        style="fill:{{parent.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
-                   <foreignObject  x="105" y="50" width="140" height="70">
-                      <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
-                           ng-click="ellipse(parent)">{{parent.name}}</div>
-                   </foreignObject>
-               </g>
-               <g ng-hide="parent.key">
-                   <ellipse cx="179" cy="69" rx="19" ry="18"
+                <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)" style="fill:{{parent.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
+                <foreignObject  x="105" y="50" width="140" height="70">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;" ng-click="ellipse(parent)">{{parent.name}}</div>
+                </foreignObject>
+            </g>
+            <g ng-hide="parent.key">
+                <ellipse cx="179" cy="69" rx="19" ry="18"
                         style="fill:gray;stroke:gray" ></ellipse>
-                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <ellipse cx="175" cy="65" rx="19" ry="18"  ng-click="topLevel(thisCircle)"
                         style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
@@ -570,151 +557,168 @@ a {
                            ng-click="ellipse(child)">{{child.name}}</div>
                    </foreignObject>
                </g>
-           </svg>
-       </div>
+        </svg>
+    </div>
 
 
 <!-- COLUMN 3 -->
-      <div class="col-md-4 col-sm-12">
-
-        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Vision of Workspace</div>
-              <div style="float:right" title="Edit vision in this workspace">
-                  <a href="AdminSettings.htm">
-                      <i class="fa fa-info-circle"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body" >
-              <a href="AdminSettings.htm">
-              <div ng-bind-html="visionHtml"></div>
-              </a>
-          </div>
-        </div>
-        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Mission of Workspace</div>
-              <div style="float:right" title="Edit mission in this workspace">
-                  <a href="AdminSettings.htm">
-                      <i class="fa fa-info-circle"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body" >
-              <a href="AdminSettings.htm">
-              <div ng-bind-html="missionHtml"></div>
-              </a>
-          </div>
-        </div>
-        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Aim of Workspace</div>
-              <div style="float:right" title="Edit aim in this workspace">
-                  <a href="AdminSettings.htm">
-                      <i class="fa fa-info-circle"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body" >
-              <a href="AdminSettings.htm">
-              <div ng-bind-html="purposeHtml"></div>
-              </a>
-          </div>
-        </div>
-        <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Domain of Workspace</div>
-              <div style="float:right" title="Edit domain in this workspace">
-                  <a href="AdminSettings.htm">
-                      <i class="fa fa-info-circle"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body" >
-              <a href="AdminSettings.htm">
-              <div ng-bind-html="domainHtml"></div>
-              </a>
-          </div>
-        </div>
-        
-        
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Your Roles</div>
-              <div style="float:right" title="View and manage the roles in this workspace">
-                  <a href="RoleManagement.htm">
-                      <i class="fa fa-users"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <div ng-repeat="role in yourRoles">
-              <a href="RoleManagement.htm">
-                  <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
-                  <span ng-hide="role.player"><i class="fa fa-circle-o"></i></span>
-                  {{role.name}}
-                  </a>
+    <div class="col-md-4 col-sm-12">
+        <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingVision">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVision" aria-expanded="false" aria-controls="collapseVision">Vision of Workspace &nbsp;&nbsp;
+                        <div title="Edit vision in this workspace">
+                            <a href="AdminSettings.htm">
+                                <i class="fa fa-info-circle"></i></a></div>
+                    </button>
+                </h2>
+                <div id="collapseVision" class="accordion-collapse collapse" aria-labelledby="headingVision" data-bs-parent="#accordion">
+                    <div class="accordion-body">
+                        <a href="AdminSettings.htm">
+                        <div ng-bind-html="visionHtml">
+                        </div>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div>
+        </div>
+        <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingMission">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMission" aria-expanded="false" aria-controls="collapseMission">Mission of Workspace &nbsp;&nbsp;
+                        <div title="Edit mission in this workspace">
+                            <a href="AdminSettings.htm">
+                            <i class="fa fa-info-circle"></i></a>
+                        </div>
+                    </button>
+                </h2>
+                <div id="collapseMission" class="accordion-collapse collapse" aria-labelledby="headingMission" data-bs-parent="#accordion" >
+                    <div class="accordion-body">
+                        <a href="AdminSettings.htm">
+                            <div ng-bind-html="missionHtml">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingAim">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAim" aria-expanded="false" aria-controls="collapseAim">Aim of Workspace &nbsp;&nbsp;
+                        <div title="Edit aim in this workspace">
+                            <a href="AdminSettings.htm">
+                            <i class="fa fa-info-circle"></i></a>
+                        </div>
+                    </button>
+                </h2>
+                <div id="collapseAim" class="accordion-collapse collapse" aria-labelledby="headingAim" data-bs-parent="#accordion" >
+                    <div class="accordion-body">
+                        <a href="AdminSettings.htm">
+                            <div ng-bind-html="aimHtml">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingDomain">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDomain" aria-expanded="false" aria-controls="collapseDomain">Domain of Workspace&nbsp;&nbsp;
+                            <div title="Edit domain in this workspace">
+                                <a href="AdminSettings.htm">
+                                <i class="fa fa-info-circle"></i></a>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapseDomain" class="accordion-collapse collapse" aria-labelledby="headingDomain" data-bs-parent="#accordion" >
+                        <div class="accordion-body">
+                            <a href="AdminSettings.htm">
+                                <div ng-bind-html="domainHtml">
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="card m-3">
+            <div class="card-header">
+                <h2 class="h5 card-title" title="View and manage the roles in this workspace">Your Roles
+                <span style="float:right" >
+                    <a href="RoleManagement.htm">
+                        <i class="fa fa-users"></i>
+                    </a>
+                </span></h2>
+            </div>
+            <div class="card-body">
+                <div ng-repeat="role in yourRoles">
+                <a href="RoleManagement.htm">
+                    <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
+                    <span ng-hide="role.player"><i class="fa fa-circle-o"></i></span>
+                    {{role.name}}
+                </a>
+                </div>
+                <div class="my-2 ms-auto">
                 <span ng-show="isWatching">
                     You <span class="fa fa-eye"></span> watch this workspace
                 </span>
+                </div>
             </div>
-          </div>
         </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">
-              <div style="float:left">Members</div>
-              <div style="float:right" title="View and manage the roles in this workspace">
-                  <a href="RoleManagement.htm">
-                      <i class="fa fa-users"></i></a></div>
-              <div style="clear:both"></div>
-          </div>
-          <div class="panel-body">
-            <table class="spacytable">
-            <tr ng-repeat="person in otherMembers">
-              <td>
-                  <span class="dropdown">
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
-                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
-                    </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
-                          {{person.name}}<br/>{{person.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(person)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="openInviteSender(person)">
-                          <span class="fa fa-envelope-o"></span> Send Invitation</a></li>
-                    </ul>
-                  </span>
-              </td>
-              <td> {{person.name}} </td>
-            </tr>
-            </table>
-          </div>
-        </div>
-
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">Parent Circle</div>
-          <div class="panel-body">
-            <div >
-              <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/FrontPage.htm">{{parent.name}}</a>
+        <div class="card m-3">
+            <div class="card-header">
+                <h2 class="h5 card-title" title="View and manage the roles in this workspace">Members
+                    <div style="float:right" >
+                        <a href="RoleManagement.htm">
+                        <i class="fa fa-users"></i></a>
+                    </div>
+                </h2>
             </div>
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading headingfont">Children Circles</div>
-          <div class="panel-body">
-            <div ng-repeat="child in children">
-              <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/FrontPage.htm">{{child.name}}</a>
+            <div class="card-body">
+                <div class="spacytable">
+                    <div class="row" ng-repeat="person in otherMembers">
+                        <ul class="navbar-btn">
+                            <li class="nav-item dropdown" id="members" data-toggle="dropdown">
+                                <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">&nbsp; &nbsp;{{person.name}} 
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="members">
+                                    <li style="background-color:lightgrey">
+                                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">{{person.name}}<br/>{{person.uid}}</a></li>
+                                <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(person)">
+                                    <span class="fa fa-user"></span> Visit Profile</a>
+                                </li>
+                                <li role="presentation" style="cursor:pointer"><a  class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openInviteSender(person)">
+                                    <span class="fa fa-envelope-o"></span> Send Invitation</a>
+                                </li>
+                            </ul>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-
-      </div>
-
+        <div class="accordion m-3">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParent" aria-expanded="false" aria-controls="collapseParent">Parent Circle</button></h2>
+                <div id="collapseParent" class="accordion-collapse collapse" aria-labelledby="headingParent" data-bs-parent="#accordionExample">
+                    <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/FrontPage.htm">{{parent.name}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="accordion m-3">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChildren" aria-expanded="false" aria-controls="collapseFour">Children Circles</button></h2>
+                <div id="collapseChildren" class="accordion-collapse collapse" aria-labelledby="headingChildren" data-bs-parent="#accordionExample">
+                    <div ng-repeat="child in children">
+                        <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/FrontPage.htm">{{child.name}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
+
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>

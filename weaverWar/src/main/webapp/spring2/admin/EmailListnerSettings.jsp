@@ -1,8 +1,8 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.Set"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     Cognoscenti cog = Cognoscenti.getInstance(request);

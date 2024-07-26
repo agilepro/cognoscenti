@@ -6,45 +6,45 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
     $scope.response = {};
     $scope.lastSave = new Date().getTime();
     getComment();
-    
+
     function reportError(data) {
         console.log("ERROR in ResponseModel Dialog: ", data);
     }
     function getComment() {
-        var getURL = "info/comment?cid="+$scope.cmtId;
+        var getURL = "info/comment?cid=" + $scope.cmtId;
         $http.get(getURL)
-        .success( function(data) {
-            setComment(data);
-        })
-        .error( function(data, status, headers, config) {
-            reportError(data);
-        });
+            .success(function (data) {
+                setComment(data);
+            })
+            .error(function (data, status, headers, config) {
+                reportError(data);
+            });
     }
     function saveComment(isExit) {
-        var postURL = "info/comment?cid="+$scope.cmtId;
-        var updateRec = {time:$scope.cmtId, responses:[]};
-        var responseObj = {user: $scope.responseUser, body: $scope.responseBody};
+        var postURL = "info/comment?cid=" + $scope.cmtId;
+        var updateRec = { time: $scope.cmtId, responses: [] };
+        var responseObj = { user: $scope.responseUser, body: $scope.responseBody };
         if ($scope.response.choice) {
             responseObj.choice = $scope.response.choice;
         }
         updateRec.responses.push(responseObj);
         var postdata = angular.toJson(updateRec);
-        console.log("saving new comment: ",updateRec);
+        console.log("saving new comment: ", updateRec);
         $scope.lastSave = new Date().getTime();
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            setComment(data);
-            if (isExit) {
-                if ($scope.promiseAutosave) {
-                    $interval.cancel($scope.promiseAutosave);
-                    $scope.promiseAutosave = null;
+        $http.post(postURL, postdata)
+            .success(function (data) {
+                setComment(data);
+                if (isExit) {
+                    if ($scope.promiseAutosave) {
+                        $interval.cancel($scope.promiseAutosave);
+                        $scope.promiseAutosave = null;
+                    }
+                    $modalInstance.close();
                 }
-                $modalInstance.close();
-            }
-        })
-        .error( function(data, status, headers, config) {
-            reportError(data);
-        });
+            })
+            .error(function (data, status, headers, config) {
+                reportError(data);
+            });
     }
     function setComment(newComment) {
         $scope.dataReceived = new Date().getTime();
@@ -58,27 +58,27 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             $scope.choices = ["Save Response"];
         }
         var thisResponse = "";
-        newComment.responses.forEach( function(item) {
+        newComment.responses.forEach(function (item) {
             if ($scope.responseUser == item.user) {
                 thisResponse = item.body;
             }
         });
-        
+
         if (thisResponse != $scope.responseBody) {
             //only set it if different so that cursor does not move
             $scope.responseBody = thisResponse;
             $scope.responseHtml = convertMarkdownToHtml(thisResponse);
         }
-        
+
         $scope.oldResponseBody = $scope.responseBody;
         $scope.unsaved = 0;
     }
-        
+
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
-	$scope.tinymceOptions.init_instance_callback = function(editor) {
+    $scope.tinymceOptions.init_instance_callback = function (editor) {
         $scope.initialContent = editor.getContent();
-	    editor.on('Change', tinymceChangeTrigger);
+        editor.on('Change', tinymceChangeTrigger);
         editor.on('KeyUp', tinymceChangeTrigger);
         editor.on('Paste', tinymceChangeTrigger);
         editor.on('Remove', tinymceChangeTrigger);
@@ -93,49 +93,49 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         saveComment(true);
     };
 
-    $scope.commentTypeName = function() {
-        if ($scope.cmt.commentType==2) {
+    $scope.commentTypeName = function () {
+        if ($scope.cmt.commentType == 2) {
             return "Proposal";
         }
-        if ($scope.cmt.commentType==3) {
+        if ($scope.cmt.commentType == 3) {
             return "Round";
         }
         return "Comment";
     }
-    
+
     //this fires every keystroke to maintain change flag
     function tinymceChangeTrigger(e, editor) {
         $scope.lastKeyTimestamp = new Date().getTime();
         $scope.secondsTillSave = 5;
         $scope.responseBody = HTML2Markdown($scope.responseHtml);
-        if ($scope.responseBody != $scope.oldResponseBody ) {
-            $scope.unsaved = 1;
-        }
-        else {
-            $scope.unsaved = 0;
-        }
-    }
-    
-    
-    /** AUTOSAVE
-     * this part of the controller enables an autosave every 30 seconds
-     */
-    // TODO Make autosave interval configureable
-    // TODO Add autosave enable/disable to configuration
-	
-	// check for updateComment() in parent scope to disable autosave
-	$scope.autosaveEnabled = true;
-    $scope.lastKeyTimestamp = new Date().getTime();
-	
-    $scope.autosave = function() {
         if ($scope.responseBody != $scope.oldResponseBody) {
             $scope.unsaved = 1;
         }
         else {
             $scope.unsaved = 0;
         }
-        var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp)/1000);
-        var secondsSinceLastSave = Math.floor((new Date().getTime() - $scope.lastSave)/1000);
+    }
+
+
+    /** AUTOSAVE
+     * this part of the controller enables an autosave every 30 seconds
+     */
+    // TODO Make autosave interval configureable
+    // TODO Add autosave enable/disable to configuration
+
+    // check for updateComment() in parent scope to disable autosave
+    $scope.autosaveEnabled = true;
+    $scope.lastKeyTimestamp = new Date().getTime();
+
+    $scope.autosave = function () {
+        if ($scope.responseBody != $scope.oldResponseBody) {
+            $scope.unsaved = 1;
+        }
+        else {
+            $scope.unsaved = 0;
+        }
+        var secondsSinceKeypress = Math.floor((new Date().getTime() - $scope.lastKeyTimestamp) / 1000);
+        var secondsSinceLastSave = Math.floor((new Date().getTime() - $scope.lastSave) / 1000);
         $scope.secondsTillSave = 5 - secondsSinceKeypress;
         if (secondsSinceKeypress > 1200) {
             //it has been 1200 seconds (20 minutes) since any save or keystroke
@@ -152,12 +152,12 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             saveComment();
             return;
         }
-        var secondsSinceLastRefresh = Math.floor((new Date().getTime() - $scope.dataReceived)/1000);
+        var secondsSinceLastRefresh = Math.floor((new Date().getTime() - $scope.dataReceived) / 1000);
         if (secondsSinceLastRefresh > 60) {
             getComment();
         }
     }
-	if ($scope.autosaveEnabled) {
+    if ($scope.autosaveEnabled) {
         if ($scope.promiseAutosave) {
             console.log("ATTEMPT TO DOUBLE START THE TIMER");
         }
@@ -166,6 +166,6 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             $scope.promiseAutosave = $interval($scope.autosave, 1000);
         }
     }
-        
+
 
 });

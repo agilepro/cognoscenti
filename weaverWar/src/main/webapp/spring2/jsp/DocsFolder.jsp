@@ -368,8 +368,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <div class=" bg-secondary-subtle p-3" id="allthefolders" >
 
                 <div class="folderLine bg-secondary-subtle p-3" style="cursor:pointer">
-                    <span class="fs-5 fw-bold" ng-click="trimFolderPath(0)">
-                <img src="<%=ar.retPath%>assets/iconFolder.gif" style="130%">
+                    <span class="fs-5 fw-bold align-baseline" ng-click="trimFolderPath(0)">
+                <img src="<%=ar.retPath%>assets/iconFolder.gif" style="scale: 150%" >&nbsp;
                 <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Workspace
                     </span>
                 </div>

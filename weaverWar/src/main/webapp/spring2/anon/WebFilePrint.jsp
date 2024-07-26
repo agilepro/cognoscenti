@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.capture.WebFile"
 %><%
     String attachmentId = ar.reqParam("aid");

@@ -1,9 +1,9 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SharePortRecord"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.SiteReqFile"
 %><%@page import="com.purplehillsbooks.weaver.SiteRequest"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
 

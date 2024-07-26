@@ -1,50 +1,44 @@
 
 <div class="modal-header mt-2 bg-primary-subtle text-primary">
     <h5 class="modal-title" id="attachActionLabel">Create New Action Item</h5>
-    <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
 </div>
 <div class="modal-body">
     <div class="container-fluid">
         <div class="card col-md-12 align-top">
             <div class="card-body" >
-
-            <table class="spaceyTable">
-               <tr>
-                    <td class="gridTableColummHeader">Synopsis:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
+                <div class="spaceyTable">
+               <div class="row">
+                    <span class="col-2 gridTableColummHeader">Synopsis:</span>
+                    <span class="col-10">
                         <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                    </td>
-               </tr>
-                <tr>
-                    <td class="gridTableColummHeader">Assignee:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
+                    </span>
+               </div>
+                <div class="row">
+                    <span class="col-2 gridTableColummHeader">Assignee:</span>
+                    <span class="col-10">
                       <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id"
                                   display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
                           <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                       </tags-input>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="gridTableColummHeader">Description:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <textarea type="text" ng-model="newGoal.description" class="form-control markDownEditor"
-                            style="width:450px;height:100px" placeholder="Details"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="gridTableColummHeader">Due Date:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
+                    </span>
+                </div>
+                <div class="row">
+                    <span class="col-2 gridTableColummHeader">Description:</span>
+                    <span class="col-10">
+                        <textarea type="text" ng-model="newGoal.description" class="mb-1 form-control markDownEditor"
+                        placeholder="Details"></textarea>
+                    </span>
+                </div>
+                <div class="row">
+                    <span class="col-2 gridTableColummHeader">Due Date:</span>
+                    <span class="col-10">
                         <span datetime-picker ng-model="newGoal.dueDate"  
                             class="form-control" style="max-width:300px; min-height:30px">
                             {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                         </span> 
-                    </td>
-                </tr>
-            </table>
+                    </span>
+                </div>
+            </div>
         </div>
    </div>
     </div>
