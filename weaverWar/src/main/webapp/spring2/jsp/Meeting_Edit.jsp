@@ -9,7 +9,7 @@
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
       </div>
       <div class="row">
-        <div class="col-7">
+        <div class="col-md-7">
           <div ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
             <h4 ng-click="openAgendaControlled(item,'Description')" class="h6 mb-auto">Description: </h4>
             <div class="p pt-4 flex-grow-1" ng-bind-html="item.descriptionHtml"></div>
@@ -18,10 +18,10 @@
             </span>
           </div>
         </div>
-        <div class="col-5">
+        <div class="col-md-5">
           <div class="timers" >
             <div class="row g-1 justify-content-between">
-              <span class="col-5">
+              <span class="col-md-5">
                 <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                 </div>
@@ -35,18 +35,19 @@
               
               </span>
               
-              <span class="col-7">
+              <span class="col-md-7">
 
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
                   <div ng-hide="item.presenterList && item.presenterList.length>0">
                   </div>
                   <div class="border-0 border shadow py-1 m-2 bg-weaverbody rounded">
-                  <div type="button" class="btn btn-wide btn-raised btn-primary text-weaverbody px-4 mx-4 my-2">
+                  <div type="button" class="btn btn-wide btn-raised btn-primary text-weaverbody px-md-4 mx-md-4 my-2 mx-sm-2">
                     <span ng-click="openAgenda(item)"></span> 
                     Edit Agenda Item
                   </div>                  
                   <div ng-repeat="presenter in item.presenterList">
-                    <ul class="navbar-btn" ><span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)">Presenter:</span>
+                    <ul class="navbar-btn" >
+                      <span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)">Presenter:</span>
                       <li class="nav-item dropdown" id="presenter" data-toggle="dropdown"> 
                         <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" style="width:32px;height:32px" title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; {{presenter.name}}
                         <ul class="dropdown-menu" role="menu" aria-labelledby="presenter">
@@ -142,7 +143,7 @@
   <div class="container">
     <div class="row justify-content-center">
     <!--Action Items-->
-    <div class="col-4">
+    <div class="col-md-4">
       <div ng-hide="item.isSpacer">
         <div class="accordion accordionAssets" 
         id="accordionActionItems">
@@ -201,7 +202,7 @@
     </div><!--END Action Items-->
 
     <!--Documents/Attachment-->
-    <div class="col-4">
+    <div class="col-md-4">
       <div ng-hide="item.isSpacer">
         <div class="accordion accordionAssets" id="accordionAttachments">
         <div class="accordion-item" >
@@ -244,7 +245,7 @@
     </div><!--END Documents/Attachment-->
 
     <!--Forum-->
-      <div class="col-4">
+      <div class="col-md-4">
       <div ng-hide="item.isSpacer">
         <div class="accordion accordionAssets" 
       id="accordionForum">
@@ -349,11 +350,11 @@
   <div>&nbsp;</div>
   <hr/>
   <!--Create Comment/Proposal/Round Row-->
-  <div class="row row-cols-3">
+  <div class="row row-md-cols-3">
 
 
 
-      <div class="d-flex col-12 mb-3">
+      <div class="d-flex col-sm-12 mb-3">
           <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
               Create New <i class="fa fa-comments-o"></i> Comment</button>
           <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
