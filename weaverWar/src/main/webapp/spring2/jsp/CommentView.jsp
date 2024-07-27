@@ -409,7 +409,7 @@ function setUpCommentMethods($scope, $http, $modal) {
                         <a class="dropdown-item" role="menuitem" tabindex="-1" style="text-decoration: none;text-align:center">{{cmt.userName}}<br/>{{cmt.user}}</a></li>
                     <li role="presentation" style="cursor:pointer">
                         <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToCommentor(cmt)">
-                    <span class="fa fa-user"></span> Visit Profile</a></li>
+                    <span class="fa fa-user"></span> Visit Profile </a></li>
                 </ul>
                 </li>
             </ul>
@@ -417,16 +417,16 @@ function setUpCommentMethods($scope, $http, $modal) {
         <div class="col-11 mt-3">
             <div class="comment-outer {{stateClass(cmt)}}">
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2">
-            <li class="dropdown nav-item" id="commentList" data-toggle="dropdown">
-                <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
-                    <i class="fa fa-comments-o" style="font-size:130%"></i></span>
-                <span ng-show="cmt.commentType==2" title="{{cmtStateName(cmt)}} Proposal">
-                    <i class="fa fa-star-o" style="font-size:130%"></i></span>
-                <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
-                    <i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
-                    <i class="fa fa-file-code-o" style="font-size:130%"></i></span> 
-                <span ng-show="cmt.commentType!=6"></span>
+                    <li class="dropdown nav-item" id="commentList" data-toggle="dropdown">
+                        <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
+                        <i class="fa fa-comments-o" style="font-size:130%"></i></span>
+                        <span ng-show="cmt.commentType==2" title="{{cmtStateName(cmt)}} Proposal">
+                        <i class="fa fa-star-o" style="font-size:130%"></i></span>
+                        <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
+                        <i class="fa fa-question-circle" style="font-size:130%"></i></span>
+                        <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
+                        <i class="fa fa-file-code-o" style="font-size:130%"></i></span> 
+                        <span ng-show="cmt.commentType!=6"></span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="commentList">
                     <li>
                         <a class="dropdown-item" role="menuitem" ng-click="openCommentEditor(null,cmt)">Edit {{commentTypeName(cmt)}}</a></li>
@@ -462,6 +462,7 @@ function setUpCommentMethods($scope, $http, $modal) {
                 </span>
                 </span>
                 <span ng-show="cmt.includeInMinutes" style="color:gray" ng-click="openCommentEditor(null,cmt)"> [+minutes] </span>
+
                 <span ng-show="cmt.commentType==6" style="color:green">
                     <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
                 

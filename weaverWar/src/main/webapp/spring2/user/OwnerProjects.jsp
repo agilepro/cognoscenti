@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@include file="/spring2/jsp/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllPagesForAdmin(uProf);
@@ -67,28 +67,26 @@ app.controller('myCtrl', function($scope, $http) {
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
+<div class="container-fluid mx-3">
+    <div class="row d-flex">
+        <div class="well">Filter <input ng-model="filter"></div>
 
-    <div>Filter <input ng-model="filter"></div>
-    <div style="height:30px;"></div>
-
-    <table class="table" width="100%">
-        <tr class="gridTableHeader">
+    <table class="gridTable2 mx-2" width="80%">
+        <tr class="my-2 gridTableHeader">
             <td width="50px"></td>
-            <td width="200px">Workspace</td>
-            <td width="100px">Changed</td>
+            <td width="200px"><h2 class="text-secondary fs-5">Workspace</h2></td>
+            <td width="100px"><h2 class="text-secondary fs-5">Changed</h2></td>
         </tr>
         <tr ng-repeat="rec in getRows()">
             <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Front Page</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Modify Roles</a></li>
+                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
+                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
+                            <li><a class="dropdown-item" role="menuitem" tabindex="0" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Front Page</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Modify Roles</a></li>
+                        </ul>
+                    </li>
                 </ul>
-              </div>
             </td>
             <td class="repositoryName">
                 <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">

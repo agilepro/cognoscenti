@@ -21,4 +21,4 @@ function initializeLabelPicker($scope, $http, $modal) {
 }
 </script>
 
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

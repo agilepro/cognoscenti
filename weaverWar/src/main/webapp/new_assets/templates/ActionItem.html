@@ -1,7 +1,8 @@
 
-  <div class="modal-header mt-2 bg-primary-subtle text-primary">
+ 
+  <div class="modal-header bg-primary-subtle text-primary">
     <h5 class="modal-title" id="attachDocumentLabel">Action Item</h5>
-    <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
+
   </div>
 
 <div class="modal-body">
@@ -10,56 +11,59 @@
     <div class="card col-6 align-top">
         <div class="card-body" >
           <div class="form-group">
-            <label for="synopsis">Synopsis:</label>
+            <label for="synopsis" class="h6">Synopsis:</label>
             <input ng-model="goal.synopsis" class="form-control" placeholder="Enter synopsis"/>
           </div>
           <div class="form-group">
-            <label for="assignee">Assignee:</label>
+            <label for="assignee" class="h6">Assignee:</label>
             <tags-input ng-model="goal.assignTo" placeholder="Enter user name or id"
                         display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
                 <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
             </tags-input>
           </div>
           <div class="form-group">
-            <label for="description">Description:</label>
+            <label for="description" class="h6">Description:</label>
             <textarea ng-model="goal.description" class="form-control markDownEditor" placeholder="Enter description"></textarea>
           </div>
           <div class="form-group">
-            <label for="status">Task Area:</label>
+            <label for="status" class="h6">Task Area:</label>
             <select ng-model="goal.taskArea" class="form-control" 
-                ng-options="foo.id as foo.name for foo in taskAreaList">
+                ng-options="foo.id as foo.name for foo in taskAreaList" >
             </select>
           </div>
         </div>
-      </div><!--left side-->
-      <div class="card col-6">
+      </div><!--END left side-->
+      <div class="card col-6 align-top">
+        <div class="card-body" >
+          <div class="form-group">
+            <label for="labels" class="h6">Labels:</label>
+            <span class="nav-item dropdown d-inline">
+              <button class="btn-tiny btn-comment p-2">
+                <i class="fa fa-plus"></i></button>         
+                  <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
+                style="width:320px;left:-130px">
+                  <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                      {{rolex.name}}</button>
+              </li>
+              <div class="dropdown-divider" style="float:clear"></div>               
+              <li role="presentation" style="float:right">
+                <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+                    Add/Remove Labels</button>
+              </li>
+            </ul>
+          </span>
+ 
+       <span class="dropdown" ng-repeat="role in allLabels">
+         <button class="dropdown labelButton" ng-click="toggleLabel(role)"
+            style="background-color:{{role.color}};"
+            ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+       </span>
+          </div>
+
         <div class="form-group">
-            <label for="labels">Labels:</label>
-            <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="labelButton" ng-click="toggleLabel(role)"
-                   style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown">
-                <ul class="btn-tiny" 
-                  type="button" 
-                  id="menu1" 
-                  data-toggle="dropdown"
-                  title="Add Label">
-                  <li class="nav-item dropdown">
-                    <a class="dropdown p-4"><i class="fa fa-plus"></i></a>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="selectLabel" >
-                        <li role="presentation" ng-repeat="rolex in allLabels" >
-                          <a class="dropdown-item p-1 btn-flex btn-sm" tabindex="-1" ng-click="toggleLabel(rolex)"  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                         {{rolex.name}}</a>
-                        </li>             
-                      </ul>
-                  </li>
-                </ul>
-            </span>
-        </div>
-        <div class="form-group">
-            <label for="startdate">Start Date:</label>
+            <label for="startdate" class="h6">Start Date:</label>
             <span datetime-picker ng-model="goal.startdate" 
                 class="form-control" style="max-width:300px">
                 <span ng-show="goal.startdate>1000000" datetime-picker ng-model="goal.startdate" > 
@@ -67,9 +71,10 @@
                 <span ng-show="goal.startdate<=1000000" datetime-picker ng-model="goal.startdate" > 
                     not set </span>
             </span> 
-        </div><!--start date set-->
+        </div>
+        <!--start date set-->
         <div class="form-group">
-            <label for="duedate">Due Date:</label>
+            <label for="duedate" class="h6">Due Date:</label>
             <span datetime-picker ng-model="goal.duedate" 
                 class="form-control" style="max-width:300px">
                 <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > 
@@ -79,7 +84,7 @@
             </span> 
         </div><!--due date set-->
         <div class="form-group">
-            <label for="enddate">End Date:</label>
+            <label for="enddate" class="h6">End Date:</label>
             <span datetime-picker ng-model="goal.enddate" 
                 class="form-control" style="max-width:300px" ng-show="goal.state==5">
                 <span ng-show="goal.enddate>1000000" ng-model="goal.enddate" datetime-picker> 
@@ -87,13 +92,13 @@
                 <span ng-show="goal.enddate<=1000000" ng-model="goal.enddate" datetime-picker> 
                     not set </span>
             </span> 
-            <span class="dropdown-toggle form-control" 
+            <span class="dropdown form-control" 
                   ng-show="goal.state!=5">
                 set end date after action item completed
             </span>
         </div><!--end date set-->
         <div class="form-group">
-          <label for="synopsis">State: </label>
+          <label for="synopsis" class="h6">State: </label>
           <span style="padding:10px;"><img ng-src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
           
           <ul class="dropdown btn btn-flex btn-outline-primary mt-2">
@@ -101,7 +106,7 @@
               Change <span class="caret"></span>
               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                 <li role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                    <a class="dropdown-item btn-comment" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
                         Mark <img src="../../../assets/goalstate/small1.gif"> Unstarted
                     </a>
                 </li>
@@ -126,11 +131,12 @@
                     </a>
                 </li>
               </ul>
+              </li>
           </ul>
       </div>
       <div class="" ng-show="goal.state==3 && goal.waitUntil<nowTime">
           <table><tr><td>
-            <button ng-click="setWaitUntil()" class="btn btn-default btn-raised" 
+            <button ng-click="setWaitUntil()" class="btn-comment" 
                   ng-show="goal.waitUntil<nowTime">Pause Task</button>
           </td><td style="padding:5px">
             until 
@@ -141,27 +147,28 @@
             </span> 
           </td></tr></table>
       </div>        
-      <div class="" ng-show="goal.waitUntil>=nowTime">
+      <div class="btn-comment" ng-show="goal.waitUntil>=nowTime">
           <table><tr><td>
             Paused until  
             {{goal.waitUntil|date:"dd-MMM-yyyy"}} 
           </td>
           <td style="padding:5px">
-            <button ng-click="cancelWaitUntil()" class="btn btn-default btn-raised" >Cancel</button>
+            <button ng-click="cancelWaitUntil()" class="btn btn-danger btn-raised ms-3" >Cancel</button>
           </td></tr></table>
       </div>
-      </div><!--right side-->
+      </div><!--END right side-->
     </div>
-    <h3 class="h4">
+    <h3 class="h5">Synopsis:&nbsp;
       {{goal.synopsis}}
     </h3>
     <div class="row col-12">
       <div class="card col-6 align-top">
+        <div class="card-body">
         <div class="form-group" 
              title="status is a freeform text statement about your current progress on action item">
-            <label for="synopsis">Status:</label>
+            <label for="synopsis" class="h6">Status:</label>
             <textarea ng-model="goal.status" class="form-control"     
-                placeholder="Enter text describing the current status"></textarea>            
+                placeholder="Enter text describing the current status" ></textarea>            
         </div>
         <div class="form-group">
             <div style="padding:10px;">
@@ -180,23 +187,24 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="synopsis" class="my-2">Due Date:</label>
-            <div>
-                <span datetime-picker ng-model="goal.duedate" 
-                    class="form-control" style="max-width:300px;display:inline">
+          <label for="synopsis" class="my-2 h6">Due Date:</label>
+          <span datetime-picker ng-model="goal.duedate" 
+                    class="form-control d-inline border-0">
                     <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
                     <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
                 </span> 
                 <span style="padding:10px">
                    <a href="ActionItem{{goal.id}}Due.ics">add to calendar</a>
-                </span>
-            </div>
+          </span>
         </div>
       </div>
-      <div class="card col-6">
+    </div>
+
+      <div class="card col-6 align-top">
+        <div class="card-body">
         <div class="form-group">
-            <label for="synopsis">Checklist:</label>
-              <textarea class="form-control" ng-model="goal.checklist" style="min-height:200px"></textarea>
+            <label for="synopsis" class="h6">Checklist:</label>
+              <textarea class="form-control" ng-model="goal.checklist" style="min-height:100px"></textarea>
         </div>
       </div>
     </div>

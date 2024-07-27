@@ -1,33 +1,31 @@
-      <span class="dropdown" ng-repeat="role in allLabels">
-        <button class="dropdown-toggle labelButton" ng-click="toggleLabel(role)"
-           style="background-color:{{role.color}};"
-           ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-      </span>
-      <span>
-         <span class="dropdown">
-           <button class="btn btn-sm btn-primary btn-raised labelButton" 
+        <span class="nav-item dropdown d-inline">
+           <button class="btn-tiny btn-comment p-2" 
                type="button" 
                id="menu1" 
                data-toggle="dropdown"
                title="Add Filter"
-               style="padding:5px 10px">
+            >
                <i class="fa fa-plus"></i></button>         
-           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+           <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="menu1" 
                style="width:320px;left:-130px">
              <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                 <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                      {{rolex.name}}</button>
              </li>
              <div class="dropdown-divider" style="float:clear"></div>               
              <li role="presentation" style="float:right">
-               <button role="menuitem" ng-click="openEditLabelsModal()" class="dropdown-item btn btn-sm btn-primary btn-raised">
+               <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6">
                    Add/Remove Labels</button>
              </li>
            </ul>
          </span>
-      </span>
 
+      <span class="dropdown" ng-repeat="role in allLabels">
+        <button class="dropdown-toggle labelButton" ng-click="toggleLabel(role)"
+           style="background-color:{{role.color}};"
+           ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+      </span>
 
 <script>
 function initializeLabelPicker($scope, $http, $modal) {
@@ -78,4 +76,4 @@ function initializeLabelPicker($scope, $http, $modal) {
 }
 </script>
 
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

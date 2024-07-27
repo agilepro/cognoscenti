@@ -207,7 +207,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr>
             <td class="firstColumn">Labels:</td>
             <td>
-                <%@ include file="/spring/jsp/LabelPicker.jsp"%>
+                <%@ include file="/spring2/jsp/LabelPicker.jsp"%>
             </td>
         </tr>
         <tr>

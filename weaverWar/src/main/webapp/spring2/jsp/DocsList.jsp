@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%
@@ -328,7 +328,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
                     <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="0" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
                             <li ng-show="rec.attType=='FILE'">
                                 <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
                             <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>

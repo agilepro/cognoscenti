@@ -730,7 +730,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -1069,13 +1069,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               title="Access the new mobile UI in development"
               href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
     </div>
-    <div class="d-flex col-9"><div class="contentColumn">
+<div class="d-flex col-9"><div class="contentColumn">
 
 
-    <div  class="h1" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
+    <h2 class="h3" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
-    </div>
+    </h2>
     <div class="well" ng-show="addressMode" ng-cloak>
       <h2 class="h4 text-secondary">Email Notification To (Subscribers):</h2>
       <div>
@@ -1128,47 +1128,43 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 <% } %>
 
-<table class="table">
+<div class="col-12">
 
-<col style="width:150px">
-<tr>
-    <td>Last modified:</td><td>{{noteInfo.modTime|cdate}}</td>
-</tr>
-<tr>
-    <td>Labels:</td>
-    <td>
-        
-        <%@ include file="/spring/jsp/LabelPicker.jsp"%>
-
-    </td>
-</tr>
-<tr>
-    <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
-    <td ng-dblclick="openAttachDocument()">
+    <div class="row d-flex">   
+        <span class="col-2 h6">Labels:</span>
+        <span class="col-5">
+        <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+        </span>
+        <span class="col-2 h6">Last modified:</span>
+        <span class="col-3">{{noteInfo.modTime|cdate}}</span>
+    </div>
+<hr>
+    <div class="row ">
+    <span class="labelColumn col-2 ms-3" ng-click="openAttachDocument()">Attachments:</span>
+    <span class="col-9" ng-dblclick="openAttachDocument()">
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
-          <span ng-show="doc.attType=='FILE'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+            <span ng-show="doc.attType=='FILE'">
+                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
               &nbsp;
-              <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
-          </span>
-          <span  ng-show="doc.attType=='URL'">
-              <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+            </span>
+            <span  ng-show="doc.attType=='URL'">
+                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
               &nbsp;
-              <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
-          </span>
+                <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+            </span>
           &nbsp;
-          <span ng-click="sendDocByEmail(doc.id)"><span class="fa fa-envelope-o"></span></span>&nbsp;
+            <span ng-click="sendDocByEmail(doc.id)"><span class="fa fa-envelope-o"></span></span>&nbsp;
           &nbsp; {{doc.name}}
         </div>
         <div ng-hide="attachedDocs && attachedDocs.length>0" class="doubleClickHint">
             Double-click to add / remove attachments
         </div>
-    </td>
-</tr>
-
-<tr>
-    <td class="labelColumn" ng-click="openAttachAction()">Action Items:</td>
-    <td>
+    </span>
+    </div>
+    <div class="row ">
+    <span class="col-2 labelColumn ms-3" ng-click="openAttachAction()">Action Items:</span>
+    <span class="col-9">
           <table class="table">
           <tr ng-repeat="goal in getActions()">
               <td>
@@ -1179,24 +1175,26 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 {{goal.synopsis}}
               </td>
               <td>
-                <div ng-repeat="person in goal.assignTo">
+                <span ng-repeat="person in goal.assignTo">
                   <span class="dropdown" >
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" 
+                    <ul class="navbar-btn p-0 list-inline">
+                        <li class="nav-item dropdown" id="user" data-toggle="dropdown">
+                            <img class="img-circle" 
                          ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{person.name}} - {{person.uid}}">
-                    </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                                <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                          tabindex="0" style="text-decoration: none;text-align:left">
                           {{person.name}}<br/>{{person.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0"
                           ng-click="navigateToUser(person)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
                     </ul>
-                  </span>
-                </div>
+                </li>
+            </ul>
+        </span>
+    </span>
               </td>
               <td ng-dblclick="openModalActionItem(goal)">
                 <div>{{goal.status}}</div>
@@ -1211,124 +1209,87 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               </td>
           </tr>
           </table>
-    </td>
-</tr>
-<tr ng-hide="editMeetingPart=='subscribers'">
-    <td class="labelColumn" ng-click="startSubscriberEdit()">Subscribers:</td>
-    <td ng-dblclick="editMeetingPart='subscribers'">
-        <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}"    
-          style="text-align:center">
-          <span class="dropdown" >
-            <span id="menu1" data-toggle="dropdown">
-              <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
+    </span>
+    </div>
+    <div class="row" ng-hide="editMeetingPart=='subscribers'">
+    <div class="col-2 labelColumn ms-3" ng-click="startSubscriberEdit()">Subscribers:</div>
+    <div class="col-9" ng-click="editMeetingPart='subscribers'">
+        <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
+            <ul class="navbar-btn p-0 list-inline">
+                <li class="nav-item dropdown" id="users" data-toggle="dropdown">
+                    <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
-                 title="{{player.name}} - {{player.uid}}"
-                 class="img-circle" />
-            </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                  tabindex="-1" style="text-decoration: none;text-align:center">
-                  {{player.name}}<br/>{{player.uid}}</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="navigateToUser(player)">
-                  <span class="fa fa-user"></span> Visit Profile</a></li>
+                 title="{{player.name}} - {{player.uid}}" class="img-circle" />
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="users">
+                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{player.name}}<br/>{{player.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(player)">
+                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                </li>
             </ul>
-          </span>
         </span>
-        <div ng-repeat="outcast in nonMembers"  style="padding:5px">
-          <span class="dropdown">
-            <span id="menu1" data-toggle="dropdown">
-              <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" 
-                 style="width:32px;height:32px" 
-                 title="{{outcast.name}} - {{outcast.uid}}"
-                 class="img-circle" />
-            </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                  tabindex="-1" style="text-decoration: none;text-align:center">
-                  {{outcast.name}}<br/>{{outcast.uid}}</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="navigateToUser(outcast)">
-                  <span class="fa fa-user"></span> Visit Profile</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="addMember(outcast)">
-                  <span class="fa fa-user"></span> Add to Members</a></li>
-            </ul>
-          </span>
+        <span ng-repeat="outcast in nonMembers">
+            <ul class="navbar-btn p-0 list-inline">
+                <li class="nav-item dropdown" id="outcast" data-toggle="dropdown">
+                    <img src="<%=ar.retPath%>icon/{{outcast.key}}" title="{{outcast.name}} - {{outcast.uid}}" class="img-circle" />
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
+                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
+                        <span class="fa fa-user"></span> Add to Members</a></li>
+                    </ul>
+                </li>
           {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
+            </ul>
+        </span>
+    </div>
+    </div>
+</div>
+<div class="well" ng-show="editMeetingPart=='subscribers'">
+        <h3 class="h4">Adjust Subscribers:</h3>
+        <div>
+            <tags-input ng-model="subscriberBuffer" placeholder="Enter users to update about changes" display-property="name" key-property="uid" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()"  on-tag-removed="updatePlayers()"> 
+                <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+            </tags-input>
         </div>
-    </td>
-</tr>
+        <div>
+            <span class="d-grid justify-content-end">
+                <button class="btn btn-primary btn-raised fs-6"  type="button"  ng-click="saveSubscriberEdit()" title="Save this list of subscribers"> Save </button>
+            </span>
+        </div>
+</div>
 
-</table>
-      <div class="well" ng-show="editMeetingPart=='subscribers'">
-          <h2>Adjust Subscribers:</h2>
-          <div>
-              <tags-input ng-model="subscriberBuffer" 
-                          placeholder="Enter users to update about changes"
-                          display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-              </tags-input>
-          </div>
-          <div>
-          <span class="dropdown">
-              <button class="btn btn-default btn-primary btn-raised" type="button" 
-                      ng-click="saveSubscriberEdit()"
-                      title="Save this list of subscribers">
-              Save </button>
-          </span>
-          </div>
-      </div>
-
-<tr class="dropdown ms-auto" ng-show="noteInfo.draft">
-
+<div class="row d-flex">
     <span class="nav-item dropdown" ng-hide="noteInfo.draft">
-        <button class="btn btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-        <ul class="dropdown-menu me-auto" role="menu" aria-labelledby="menu1">
-          <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item" role="menuitem"
-              ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+        <button class="btn btn-primary btn-raised dropdown-toggle" type="button" id="phases" data-toggle="dropdown">{{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item" role="menuitem" ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
         </ul>
-    </span>    
-    <span class="ms-5">
-        <button class="btn btn-primary btn-raised" ng-click="startSend()"
-            title="Post this topic to take it out of Draft mode and allow others to see it">
-    Post Topic </button>
-</span>
-</tr>
-<table style="max-width:800px">
-  <tr ng-repeat="cmt in getComments()">
+    </span> 
+    <span class="dropdown" ng-show="noteInfo.draft">   
+        <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this topic to take it out of Draft mode and allow others to see it">Post Topic </button>
+    </span>
+</div>
 
-     <%@ include file="/spring2/jsp/CommentView.jsp"%>
-
-  </tr>
-
-
-    <tr><td style="height:20px;"></td></tr>
-
-    <tr>
-    <td></td>
-    <td>
-    <div ng-show="canComment">
-        <div style="margin:20px;">
-            <button ng-click="openCommentCreator(null,1)" class="btn btn-default btn-raised">
+<div ng-show="canComment">
+        <div class="d-flex col-sm-12 mb-3">
+            <button ng-click="openCommentCreator(null,1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator(null,2)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(null,2)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator(null,3)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(null,3)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
                 Create New <i class="fa  fa-question-circle"></i> Round</button>
         </div>
-    </div>
-    <div ng-hide="canComment">
-        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
-    </div>
-    </td>
-    </tr>
+        <div ng-repeat="cmt in getComments()">
 
-</table>
+            <%@ include file="/spring2/jsp/CommentView.jsp"%>
+       
+         </div>
+</div>
+<div ng-hide="canComment">
+        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
+</div>
+
 
 
 

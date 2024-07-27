@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%
@@ -270,7 +270,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/CreateTopicModal.html<%=templateCacheDefeater%>',
             controller: 'CreateTopicModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -347,7 +347,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </span>
 
         <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
-              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
+              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="15" alt="" />
               Send Email</a>
         </span>
         <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" >
@@ -467,9 +467,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                             </span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                               <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                                  tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                                  tabindex="0" ng-click="" style="text-decoration: none;text-align:center">
                                   {{person.name}}<br/>{{person.uid}}</a></li>
-                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="0"
                                   ng-click="navigateToUser(person)">
                                   <span class="fa fa-user"></span> Visit Profile</a></li>
                             </ul>
@@ -503,4 +503,4 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 <div style="height:200px"></div>
 
-<script src="<%=ar.retPath%>templates/CreateTopicModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/CreateTopicModal.js"></script>

@@ -707,7 +707,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 });
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../.new_assets/jscript/AllPeople.js"></script>
 
 <div>
 
@@ -813,7 +813,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <td>Labels:</td>
     <td>
         
-        <%@ include file="/spring/ltd/LabelPicker.jsp"%>
+        <%@ include file="/spring2/ltd/LabelPicker.jsp"%>
 
     </td>
 </tr>

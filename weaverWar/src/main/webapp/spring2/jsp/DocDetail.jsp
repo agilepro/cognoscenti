@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentVersion"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
@@ -352,77 +352,85 @@ function copyTheLink() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div style="clear:both"></div>
 
-<div class="col col-lg-6 col-sm-12">
-  <div class="well">
-    <div><b>{{docInfo.name}}</b>
-        <span ng-show="docInfo.deleted" style="color:red">
+<div class="col-12">
+    <div class="container-fluid row">
+        <div class="col-md-6 col-sm-12">
+        <div class="well">
+            <div class="row col-12">
+                <h2 class="h5 me-2"><b>{{docInfo.name}}</b></h2>
+            </div>
+            <div class="row col-12">
+                <span ng-show="docInfo.deleted" style="color:red">
                 <i class="fa fa-trash"></i> (DELETED)
-        </span>
-    </div>
-    <div><div ng-bind-html="docInfo.html"></div></div>
-    <div>
-        {{docInfo.modifiedtime|cdate}} &nbsp;
-        <span class="dropdown">
-            <span id="menu1" data-toggle="dropdown">
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg"
-                 style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
-            </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" style="background-color:lightgrey"><a role="menuitem"
-                  tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                </span>
+                <span ng-bind-html="docInfo.html"></span>
+            </div>
+            <div class="row col-12">
+            <span class="col-4">{{docInfo.modifiedtime|cdate}}</span> &nbsp;
+                <span class="col-4 dropdown">
+                    <ul class="navbar-btn p-0">
+                    <li class="nav-item dropdown" id="user" data-toggle="dropdown">
+                        <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                            <li role="presentation" style="background-color:lightgrey">
+                                <a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">
                   {{creator.name}}<br/>{{creator.uid}}</a></li>
-              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                  ng-click="navigateToCreator(creator)">
-                  <span class="fa fa-user"></span> Visit Profile</a></li>
-            </ul>
-        </span> &nbsp;
-        <span ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
-      </div>
-  </div>
-  <div ng-show="canAccess">
-      <div ng-show="docInfo.attType=='FILE'">
-          <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
-             <img src="<%=ar.retPath%>download.gif"></a>
-      </div>
-      <div ng-show="docInfo.attType=='URL'">
-        <div ng-show="hasURL">
-          <a href="<%ar.write(permaLink); %>" target="_blank"><img
-             src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
-          <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
-             <button class="btn btn-primary btn-raised">Web File</button></a>
+                            <li role="presentation" style="cursor:pointer">
+                                <a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToCreator(creator)">
+                                <span class="fa fa-user"></span> Visit Profile</a></li>
+                        </ul>
+                    </li>
+                    </ul>
+                </span>
+            
+                <span class="col-4" ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
+            </div>
         </div>
-        <div ng-hide="hasURL">
-            <button class="btn btn-danger btn-raised">
+    
+        <div ng-show="canAccess">
+            <div ng-show="docInfo.attType=='FILE'">
+                <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
+                <img src="<%=ar.retPath%>download.gif"></a>
+            </div>
+            <div ng-show="docInfo.attType=='URL'">
+                <div ng-show="hasURL">
+                    <a href="<%ar.write(permaLink); %>" target="_blank">
+                    <img src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
+                    <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
+                    <button class="btn btn-primary btn-raised">Web File</button>
+                    </a>
+                </div>
+                <div ng-hide="hasURL">
+                    <button class="btn btn-danger btn-raised">
             Error - this web attachment has no URL</button>
-            <div style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+                    <div style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+                </div>
+            </div>
         </div>
-      </div>
-  </div>
-  <hr/>
-  <div ng-hide="canAccess">
+        <hr/>
+        <div ng-hide="canAccess">
       <p>You are not able to access this document.</p>
-  </div>
+        </div>
 
-  <div ng-show="docInfo.deleted">
+        <div ng-show="docInfo.deleted">
       This document has been put into the <i class="fa fa-trash"></i> trash and will
       be deleted soon.
-  </div>
-  <div ng-hide="canUpdate">
+        </div>
+        <div ng-hide="canUpdate">
       You are an observer of this site.
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
-  </div>
-  <div ng-show="canUpdate">
-    <button class="btn btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
+        </div>
+        <div ng-show="canUpdate">
+    <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
     <p>Edit the document details, like name and description.  The name and description tell
     others what the purpose of the document is, and ultimately whether they
-    want to access the document or not.<p>
-  </div>
-  <div ng-show="isMember">
-    <button class="btn btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
-    <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.<p>
+    want to access the document or not.</p>
+        </div>
+        <div ng-show="isMember">
+    <button class="btn btn-comment btn-secondary btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
+    <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
     <div ng-show="makeLink">
       <div class="roomy">
         <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()">
@@ -437,16 +445,18 @@ function copyTheLink() {
         <button onClick="copyTheLink()" class="btn btn-sm btn-primary btn-raised">Copy to Clipboard</button>
       </div>
     </div>
-  </div>
-  <div ng-show="isMember">
-    <button class="btn btn-default btn-raised" ng-click="composeEmail()">Send by email</button>
-    <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.<p>
-  </div>
-  <div>
+        </div>
+        <div ng-show="isMember">
+    <button class="btn btn-comment btn-secondary btn-raised" ng-click="composeEmail()">Send by email</button>
+    <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
+        </div>
+        <div>
     <a href="DocView.wmf?docId={{docId}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
-  </div>
-</div>
-<div class="col col-lg-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
+        </div>
+
+        </div>
+
+        <div class="col-md-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
     <h2>Sharing</h2>
     <p>Documents can be shared directly from Weaver,
     internally to current members and externally to anyone in the world.</p>
@@ -464,14 +474,14 @@ function copyTheLink() {
     <p>Also, with a link, if the document is still changing,
     all recipients will always have access to the latest version at the time they download.
     They never receive an out-of-date copy.</p>
-</div>
+        </div>
 
-
-<div class="col col-lg-6 col-sm-12">
-    <div class="panel panel-default" ng-show="linkedTopics.length>0 && isMember">
-      <div class="panel-heading headingfont">Attached To:
-      </div>
-      <div class="panel-body clipping">
+    <div class="container-fluid row">
+        <div class="col-md-6 col-sm-12">
+            <div class="panel panel-default" ng-show="linkedTopics.length>0 && isMember">
+                <div class="panel-heading headingfont">Attached To:
+                </div>
+                <div class="panel-body clipping">
           <div ng-repeat="topic in linkedTopics"
                class="panelClickable"
                ng-click="navigateToTopic(topic)">
@@ -487,64 +497,56 @@ function copyTheLink() {
                ng-click="navigateToMeeting(meet)">
             <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
           </div>
-      </div>
-    </div>
-</div>
-
-<div style="clear:both"></div>
-
-
-
-<div ng-show="canAccess" class="col col-lg-6 col-sm-12">
-    <h3>Comments:</h3>
-    <table style="max-width:800px">
-      <tr ng-repeat="cmt in docInfo.comments">
-         <%@ include file="/spring/jsp/CommentView.jsp"%>
-      </tr>
-    </table>
-    <div ng-hide="isCreatingComment" style="margin:20px;">
-      <button ng-click="openCommentCreator(null, 1)" class="btn btn-default btn-raised">
-        Create New <i class="fa fa-comments-o"></i> Comment</button>
-    </div>
-</div>
-<div ng-show="canAccess" class="col col-lg-6 col-sm-12">
-    <h3>History</h3>
-    <table>
-
-        <tr ng-repeat="hist in history"  >
-            <td class="projectStreamIcons" style="padding:10px;">
-              <span class="dropdown" >
-                <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle"
-                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg"
-                     style="width:32px;height:32px"
-                     title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                </div>
+            </div>
+            <div ng-show="canAccess" class="mt-2">
+            <h3>Comments:</h3>
+            <div class="container">
+                <span ng-repeat="cmt in docInfo.comments">
+            <%@ include file="/spring2/jsp/CommentView.jsp" %>
                 </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem"
-                      tabindex="-1" style="text-decoration: none;text-align:center">
+            </div>
+            <div ng-hide="isCreatingComment" style="margin:20px;">
+                <button ng-click="openCommentCreator(null, 1)" class="btn btn-comment btn-raised">
+                Create New <i class="fa fa-comments-o"></i> Comment</button>
+            </div>
+            </div>
+        </div>
+        <div ng-show="canAccess" class="col-md-6 col-sm-12">
+            <h3>History</h3>
+
+        <div class="row" ng-repeat="hist in history"  >
+            <span class="projectStreamIcons">
+                <span class="col-2 dropdown" >
+                    <ul class="navbar-btn p-0 list-inline">
+                        <li class="nav-item dropdown" id="user2" data-toggle="dropdown">
+                            <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" style="width:32px;height:32px" title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                                <li role="presentation" style="background-color:lightgrey">
+                                  <a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">
                       {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
-                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                      ng-click="navigateToCreator(hist.responsible)">
+                      <li role="presentation" style="cursor:pointer">
+                        <a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToCreator(hist.responsible)">
                       <span class="fa fa-user"></span> Visit Profile</a></li>
-                </ul>
-              </span>
-            </td>
-            <td class="projectStreamText" style="padding:10px;">
+                            </ul>
+                        </li>
+                    </ul>
+                </span>
+                <span class="col-10 justify-content-start projectStreamText">
                 {{hist.time|cdate}} - {{hist.responsible.name}}
                 <br/>
                 {{hist.ctxType}} "<b>{{hist.ctxName}}</b>"
                 was {{hist.event}}.
                 <br/>
                 <i>{{hist.comments}}</i>
+                </span>
+            </span>
+        </div>
+    </div>
+    </div>
 
-            </td>
-        </tr>
-    </table>
-</div>
-
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DocumentDetail2.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>

@@ -376,6 +376,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
+    
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngp.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
@@ -425,7 +426,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         
     };
-
+    $scope.projectMode = function() {
+        if ($scope.workspaceConfig.deleted) {
+            return "deletedMode";
+        }
+        if ($scope.workspaceConfig.frozen) {
+            return "freezedMode";
+        }
+        return "normalMode";
+    }
 
 });
 </script>
@@ -515,8 +524,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <!-- COLUMN 2 -->
-    <div class="col-md-3 col-sm-12">
-        <svg height="{{maxLength}}px" max-width="350px">
+    <div class="col-md-4 col-sm-12">
+        <svg height="{{maxLength}}px" width="{{maxWidth}}px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
             <g ng-show="parent.key">
                 <ellipse cx="179" cy="69" rx="70" ry="35"
                         style="fill:gray;stroke:gray" ></ellipse>
@@ -558,6 +567,59 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    </foreignObject>
                </g>
         </svg>
+<!--Workspace State-->
+        <div class="row m-2">
+            <span ng-click="setEdit('frozen')" class="col-1 bold fixed-width-sm labelColumn mt-2">Workspace State:</span>
+            <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
+                <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
+                <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
+                <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
+            </span>
+            <span class="col-8" ng-show="isEditing=='frozen'">
+                <div ng-hide="workspaceConfig.frozen">
+                <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen', true)"
+                    class="btn btn-primary btn-raised">
+                    Freeze Workspace</button><br/>
+                    Use this <b>Freeze</b> to change an active workspace into a frozen workspace where nothing can be changed.  Frozen workspaces do not count toward your quota of workspace in the site.
+                </div>
+                <div ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
+                <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen', true)"
+                    class="btn btn-primary btn-raised">
+                    Unfreeze Workspace</button><br/>
+                    Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
+                    You are only allowed a certain number of active workspaces in a site depending upon 
+                    your playment plan.  
+                    <br/>
+                    If you already have the maximum number of active workspaces, you will not be able to 
+                    unfreeze this workspace, until you freeze or delete another active one.
+                </div>
+                <div ng-hide="workspaceConfig.deleted">
+                <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted', true)"
+                    class="btn btn-primary btn-raised" >
+                    Delete Workspace</button><br/>
+                    Use <b>Delete</b> option to delete a workspace.  
+                    The workspace will actually remain around until the 
+                    <b>Garbage Collect</b> operation is run at the site level.
+                    After garbage collection the workspace will be permanently gone,
+                    and no information can be retrieved.
+                </div>
+                <div ng-show="workspaceConfig.deleted">
+                <button ng-click="undeleteWorkspace()"
+                    class="btn btn-primary btn-raised" >
+                    Undelete Workspace</button><br/>
+                    If you didn't really want to delete the workspace, 
+                    use this <b>Undelete</b> to cancel the delete, 
+                    and return the workspace to a frozen state.
+                </div>
+                <div>
+                    <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
+                    Cancel</button><br/>
+                    Use <b>Cancel</b> to close this option without changing the workspace state.
+                </div>
+            </span>
+            
+        </div><!--END Workspace-->
+
     </div>
 
 

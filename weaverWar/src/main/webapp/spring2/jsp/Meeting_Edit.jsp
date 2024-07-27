@@ -22,7 +22,7 @@
           <div class="timers" >
             <div class="row g-1 justify-content-between">
               <span class="col-md-5">
-                <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'"><i class="fa fa-clock-o fa-2x"></i><br>
+                <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                 </div>
                           <span ng-hide="item.timerRunning">
@@ -272,73 +272,7 @@
   </div>
   </div>
 <!-- ForumModal -->
-            <div class="modal fade" id="attachForum" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="attachForumLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="attachForumLabel">Link to Forum Discussions</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-6">
-              <div class="card my-2 border-1"> 
-                <div class="d-flex card-header" title="Existing Topics-Filter">
-                Existing Topics - Filter &nbsp;<input type="text" ng-model="realDocumentFilter">
-                </div>
-                <div class="card-body">
-                  <div class="docTable">
-                    <div ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
-                    title="Click to link to this topic">
-                      <span> {{doc.subject}} </span>
-                      <span>
-                        <button ng-hide="itemHasDoc(doc)"
-                            class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
-                        <button ng-show="itemHasDoc(doc)"
-                            class="btn">&nbsp; &nbsp;</button>
-                      </span>
-                    </div>
-                    <div ng-show="filterDocs().length==0">
-                      <span class="instruction">No topics to choose from.<br/><br/>Filter: {{realDocumentFilter}}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="card my-2 border-1">
-                <div class="d-flex card-header" title="Selected Topics"> 
-                Selected Topics
-                </div>
-                <div class="car-body">
-                  <div class="docTable">
-                    <div ng-repeat="topic in fullTopics" ng-click="removeTopicFromItem(topic)" 
-                    title="Click to unlink the discussion topic"  style="cursor:pointer">
-                    <span> {{topic.subject}} </span>
-                    <span>
-                        <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
-                    </span>
-                    </div>
-                    <div ng-show="fullTopics.length==0">
-                    <span class="instruction">No topic linked..<br/><br/>
-                    <span ng-show="filterDocs().length>0">Click on an topic on the left, to set it here on the right.  Since only one can be linked it will replace whatever was linked before.</span></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger me-auto" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Attach Forum Discussions</button>
-      </div>
-    </div>
-    </div>
-  </div>
-            </div>
+
 <div>&nbsp;</div>
           </div><!--END accordion body-->
         </div>

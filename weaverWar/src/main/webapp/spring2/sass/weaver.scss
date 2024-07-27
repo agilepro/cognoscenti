@@ -319,11 +319,24 @@ a {
     box-shadow: #cccccc 2px 2px 5px;
     margin: 0px 10px 10px 0px;
     border-radius: 3px;
-    border: 1px solid $secondary-700 !important;
+    border: 1px solid $primary-700;
     background-color: #f5f5f5;
-    color: $tertiary;
-    font-size: 1.1rem !important;
+    color: $primary;
+    font-size: .95rem !important;
     font-weight: 600 !important;
+}
+
+.labelButtonAdd {
+    padding: 1px 4px;
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    margin: 0px 10px 10px 0px;
+    border-radius: 3px;
+    border: 1px solid $primary;
+    background-color: $secondary-10;
+    color: $primary;
+    font-size: .95rem !important;
+    font-weight: 500 !important;
 }
 
 .labelColumn {
@@ -464,6 +477,18 @@ a {
         background-color: $primary-200 !important;
     }
 }
+
+.well {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
 .well .btn-raised {
     margin: 5px;
     font-size: 1.2rem;
@@ -554,6 +579,18 @@ a {
     
 }
 
+.label-dropdown-menu {
+    max-width: 380px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+}
+.label-dropdown-item {
+    flex: 1 1 auto;
+    white-space: normal;
+    width: calc(50% - 1rem);
+}
+
 .comment-state-complete {
     background-color: $secondary-20;
 }
@@ -633,6 +670,9 @@ a {
 
 .timers {
     border: $secondary solid 1px;
+    width: 415px;
+    min-width: 415px;
+    max-width: 415px;
     border-radius: 3px;
     background-color: $primary-10;
     padding: 5px;

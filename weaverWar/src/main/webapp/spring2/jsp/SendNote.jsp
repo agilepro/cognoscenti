@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
@@ -518,7 +518,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -545,90 +545,77 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<style>
-.spaceBefore {
-    margin-top:20px;
-}
-.labelColumn:hover {
-    color:black;
-}
-</style>
-
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="" ng-click="saveEmail()" >Save Changes</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="" ng-click="sendEmail()" >Send Email</a></li>
-        </ul>
-      </span>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="saveEmail"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="" ng-click="saveEmail()" >Save Changes</a></span>
+              
+              <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
+                <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="15" alt="" />
+                Send Email</a>
+          </span>
     </div>
-
+    <div class="d-flex col-9"><div class="contentColumn">
     <div ng-show="emailInfo.state==1">
       <form class="form-horizontal">
         <fieldset>
-          <div class="form-group">
-            <label class="col-md-2 control-label">Roles</label>
+        <div class="form-group d-flex">
+            <label class="col-md-2 control-label h5">Roles </label>
             <div class="col-md-10">
-              <div class="form-inline">
-                <button class="btn btn-default btn-sm btn-raised" ng-click="showAddressingOptions=!showAddressingOptions">
-                    <i class="fa fa-plus"></i>Click here to see addressing options</button>
+              <div class="form-inline d-flex flex-wrap">
+                <button class="btn-comment btn-wide btn-raised btn-sm" ng-click="showAddressingOptions=!showAddressingOptions">
+                    <i class="fa fa-plus"></i>&nbsp;Click here to see addressing options</button>
               </div>
             </div>
-          </div>
-          <div class="form-group" ng-show="showAddressingOptions">
-            <label class="col-md-2 control-label">Roles</label>
-            <div class="col-md-10 well">
-              <div class="col-md-5">
-                <h3>Roles</h3>
-                <div ng-repeat="role in allRoles" >
-                  <button class="btn btn-default btn-sm btn-raised" ng-click="addPlayers(role)">
-                    Add {{role.name}}</button>
+            <div class="row d-flex m-3" ng-show="showAddressingOptions">
+                <label class="col-md-2 control-label h5 my-2">Roles</label>
+                <div class="col-md-10 well d-flex flex-wrap">
+                    <div ng-repeat="role in allRoles" > <button class="btn-comment mx-2 h6" ng-click="addPlayers(role)">
+                    <span class="h6"> Add {{role.name}}</span></button>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-5">
-                <div ng-show="meeting.participants">
-                    <h3>Meeting Participants</h3>
-                    <div>
-                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingInvitees()" 
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div ng-show="meeting.participants">
+                <span class="h6">Meeting Participants</span>
+                <div>
+                        <button class="btn-comment mx-2 h6" ng-click="addMeetingInvitees()" 
                       title="Add all the people invited to the meeting">
                       Add Meeting Invitees</button>
-                    </div>
-                    <div>
-                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingAttendees()" 
-                      title="Add all the people who attended the meeting">
-                      Add Meeting Attendees</button>
-                    </div>
-                    <div>
-                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingNoShows()" 
-                      title="Add all the people invited but did not show up">
-                      Add Meeting No-shows</button>
-                    </div>
-                </div>
-                <div ng-show="emailInfo.noteInfo.subscribers">
-                    <h3>Topic Subscribers</h3>
-                    <button class="btn btn-default btn-sm btn-raised" ng-click="addTopicSubscribers()" 
-                      title="Add all the people invited to the meeting">
-                      Add All Subscribers</button>
                 </div>
                 <div>
-                    <h3>Clear</h3>
-                    <button class="btn btn-default btn-sm btn-raised" ng-click="emailInfo.alsoTo = []" 
-                      title="Add all the people invited to the meeting">
-                      Clear Addressees</button>
+                        <button class="btn-comment mx-2 h6" ng-click="addMeetingAttendees()" 
+                      title="Add all the people who attended the meeting">
+                      Add Meeting Attendees</button>
                 </div>
-              </div>
+                <div>
+                    <button class="btn-comment mx-2 h6" ng-click="addMeetingNoShows()" 
+                      title="Add all the people invited but did not show up">
+                      Add Meeting No-shows</button>
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="alsoalsoTo">Send To</label>
+            <div ng-show="emailInfo.noteInfo.subscribers">
+                <h6>Topic Subscribers</h6>
+                <button class="btn-comment mx-2 h6" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">
+                Add All Subscribers</button>
+            </div>
+        </div>
+        <div class="form-group d-flex">
+            <label class="col-md-2 control-label h5">Clear:</label>
+            <div class="col-md-10">
+                <div class="form-inline d-flex flex-wrap">
+                    <button class="btn-comment my-2 h6" ng-click="emailInfo.alsoTo = []" title="Add all the people invited to the meeting">Clear Addressees</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group d-flex">
+            <label class="col-md-2 control-label h6" for="alsoalsoTo">Send To:</label>
             <div class="col-md-10">
               <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" 
                       key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
@@ -639,14 +626,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
               </tags-input>
             </div>
           </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="subject">Subject</label>
+          <div class="form-group d-flex">
+            <label class="col-md-2 control-label h6 mt-3" for="subject">Subject:</label>
             <div class="col-md-10">
               <input id="subject" ng-model="emailInfo.subject" class="form-control"/>
             </div>
           </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="intro">Introduction</label>
+          <div class="form-group d-flex">
+            <label class="col-md-2 control-label h6 mt-3" for="intro">Introduction:</label>
             <div class="col-md-10">
               <textarea id="intro" ng-model="emailInfo.intro" class="form-control markDownEditor" 
                   style="height:200px"
@@ -656,8 +643,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div>
           <br/>
-          <div class="form-group" ng-dblclick="openAttachDocument()">
-            <label class="col-md-2 control-label labelColumn" ng-click="openAttachDocument()">Attachments</label>
+          <div class="row d-flex ms-2" ng-click="openAttachDocument()">
+            <label class="col-md-2 btn-comment btn-wide btn-sm p-1" ng-click="openAttachDocument()">Attachments</label>
             <div class="col-md-10">
                 <div ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
                   <div ng-repeat="fullDoc in [getFullDoc(docid)]">
@@ -673,61 +660,56 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                   </div>
                 </div>
                 <div ng-hide="emailInfo.docList && emailInfo.docList.length>0" class="doubleClickHint">
-                    Double-click to add / remove attachments
+                    Click to add / remove attachments
                 </div>
             </div>
           </div>
-          <div class="form-group" style="width:100%"
+          <div class="row d-flex m-3" style="width:100%"
                ng-click="emailInfo.attachFiles=!emailInfo.attachFiles" >
-            <label class="col-md-2 control-label">Type:</label>
+            <label class="col-md-2 control-label h6">Type:</label>
             <div class="col-md-10">
-              <div style="padding:10px;">
                 <input type="checkbox" ng-model="emailInfo.attachFiles"/>  
                 Include attachment data directly in the email (unsafe)
               </div>
-            </div>
-          </div>
-          
-          <div class="form-group form-inline" ng-show="emailInfo.meetingInfo.name">
+            </div>          
+          <div class="row d-flex m-3" ng-show="emailInfo.meetingInfo.name">
             <hr/>
-            <label class="col-md-2 control-label">Meeting</label>
+            <label class="col-md-2 control-label h6">Meeting:</label>
             <div class="col-md-10">
-              <span class="btn btn-sm btn-default btn-raised">{{emailInfo.meetingInfo.name}}</span>
+              <span class="btn-sm btn-comment">{{emailInfo.meetingInfo.name}}</span>
               Layout: 
               <select class="form-control"  ng-model="emailInfo.meetingLayout" ng-options="n for n in allLayoutNames"></select>
             </div>
           </div>
 
-          <div class="form-group" ng-show="emailInfo.noteInfo.subject">
+          <div class="row d-flex m-3" ng-show="emailInfo.noteInfo.subject">
             <hr/>          
-            <label class="col-md-2 control-label">Discussion Topic</label>
+            <label class="col-md-2 control-label h6">Discussion Topic</label>
             <div class="col-md-10">
                 <div class="togglebutton">
-                  <span class="btn btn-sm btn-default btn-raised">{{emailInfo.noteInfo.subject}}</span>
+                  <span class="btn-sm btn-comment">{{emailInfo.noteInfo.subject}}</span>
                   <label>
                     <input type="checkbox" ng-model="emailInfo.includeBody"> Include text in email? &nbsp;
                   </label>
                 </div>
             </div>
           </div>
-          <div class="form-group">
+          <div class="row d-flex m-3">
             <hr/>
-            <label class="col-md-2 control-label">Action Items:</label>
-            <div class="col-md-10">
-                <div class="form-inline">
-                    <span class="form-control" ng-click="emailInfo.tasksOption='None'">
+            <label class="col-md-2 control-label h6">Action Items:</label>
+            <div class="col-md-10 d-flex ">
+                    <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='None'">
                         <input type="radio" ng-model="emailInfo.tasksOption" value="None"> None &nbsp 
                     </span>
-                    <span class="form-control" ng-click="emailInfo.tasksOption='Assignee'">
+                    <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='Assignee'">
                         <input type="radio" ng-model="emailInfo.tasksOption" value="Assignee"> Only to Assignee &nbsp 
                     </span>
-                    <span class="form-control" ng-click="emailInfo.tasksOption='All'">
+                    <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='All'">
                         <input type="radio" ng-model="emailInfo.tasksOption" value="All"> All Action Items to Everyone
                     </span>
                 </div>
             </div>
-          </div>
-          <hr/>
+          
           <!-- Form Control Schedule Time Begin -->
           <!--div class="form-group" >
             <label class="col-md-2 control-label" for="scheduledTime">When?</label>
@@ -747,14 +729,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div-->
           <!-- status -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Status</label>
+          <div class="row d-flex m-3">
+            <hr/>
+            <label class="col-md-2 control-label h6">Status:</label>
             <div class="col-md-10">
                {{explainState()}}
             </div>
           </div>
-          <div class="form-group" ng-show="suppressEmail">
-            <label class="col-md-2 control-label">Suppression</label>
+          <div class="row d-flex m-3" ng-show="suppressEmail">
+            <label class="col-md-2 control-label h6">Suppression:</label>
             <div class="col-md-10">
               <div class="form-inline" style="color:red;weight:700">
                 Note: suppressEmail enabled.
@@ -764,25 +747,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div>
         <!-- Form Control BUTTONS -->
-        <div class="row">
+        <div class="row d-inline m-3">
           <div class="col-md-12 form-group text-right">
-            <button ng-click="deleteEmail()" class="btn btn-warning btn-raised" 
+            <button ng-click="deleteEmail()" class="btn btn-danger btn-raised" 
                     ng-hide="emailInfo.id=='~new~'">Delete</button>
-            <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save &amp; Preview</button>
-            <button ng-click="sendEmail()" class="btn btn-primary btn-raised" ng-show="suppressEmail">Simulate Sending</button>
+            <button ng-click="saveEmail()" class="btn btn-secondary btn-raised">Save &amp; Preview</button>
+            <button ng-click="sendEmail()" class="btn btn-secondary btn-raised" ng-show="suppressEmail">Simulate Sending</button>
             <button ng-click="sendEmail()" class="btn btn-primary btn-raised" ng-hide="suppressEmail">Send Now</button>
           </div>
         </div>
       </fieldset>
       </form>
     </div>
+<hr/>
+<div class="container well">
+    <div class="form-group d-flex">
+        <label class="col-md-2 h6">
+        For Recipient: </label>
+        <div class="col-md-9">
+        <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
+    </div>
+    </div>
+    <div>
+        <button ng-click="getRenderedEmail()" class="mt-3 btn btn-primary btn-raised">Preview Email</button>
+    </div>
+        
 
-
-
-  <div class="form-inline">
-     For Recipient <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
-     <button ng-click="getRenderedEmail()" class="btn btn-primary btn-raised">Preview Email</button>
-  </div>
   <div class="instruction">This is what the email will look like:<br/><br/></div>
   
   <div class="well" style="padding:50px">
@@ -794,4 +784,4 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
   <div style="height:200px"></div>
 </div>
   
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
