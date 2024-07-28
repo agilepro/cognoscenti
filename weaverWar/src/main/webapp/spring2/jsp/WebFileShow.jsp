@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
-%><%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.capture.CapturePage"
 %><%@page import="com.purplehillsbooks.streams.NullWriter"
 %><%@page import="com.purplehillsbooks.weaver.capture.WebFile"
@@ -103,31 +103,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 });
 </script>
-<style>
-.cleanedWebStyle {
-}
-.cleanTitleBox{
-    border:2px gray solid;
-    border-radius:5px;
-    margin:0px;
-    padding:8px
-}
-.segmentBox{
-    border:2px gray solid;
-    border-radius:15px;
-    margin:0px;
-    padding:8px;
-    max-width: 600px;
-}
-.hiddenBox{
-    border:2px red solid;
-    border-radius:15px;
-    margin:0px;
-    padding:8px;
-    max-width: 600px;
-}
 
-</style>
 
 <div ng-cloak>
 

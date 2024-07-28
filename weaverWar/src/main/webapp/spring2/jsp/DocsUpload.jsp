@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@ include file="functions.jsp"
 %><%
@@ -21,39 +21,7 @@
 
 %>
 
-<style>
-.lvl-over {
-    background-color: yellow;
-}
-.nicenice {
-    border: 2px dashed #bbb;
-    border-radius: 5px;
-    padding: 25px;
-    text-align: center;
-    font: 20pt bold Georgia,Tahoma,sans-serif;
-    color: #bbb;
-    margin-bottom: 20px;
-    width:500px;
-}
-div[dropzone] {
-    border: 2px dashed #bbb;
-    border-radius: 5px;
-    padding: 25px;
-    text-align: center;
-    font: 20pt bold;
-    color: #bbb;
-    margin-bottom: 20px;
-}
-.spacey {
-    width:100%;
-}
-.spacey tr td {
-    padding:3px;
-}
-.firstcol {
-    width:130px;
-}
-</style>
+
 
 
 
@@ -184,44 +152,40 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsUpload.htm" >Clear</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsList.htm" >List Document</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+      
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="clearDocs"><a class="nav-link" href="DocsUpload.htm" >Clear</a></span>
+        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="docsList"><a class="nav-link" href="DocsList.htm" >List Document</a></span>
+        </div>
 
-    <table class="spacey">
-        <tr>
-            <td class="firstColumn">Drop Here:</td>
-            <td>
-                <div id="holder" class="nicenice">Drop Files Here</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstColumn">Labels:</td>
-            <td>
-                <%@ include file="/spring2/jsp/LabelPicker.jsp"%>
-            </td>
-        </tr>
-        <tr>
-            <td class="gridTableColummHeader"></td>
-            <td>
-                <div ng-repeat="fp in fileProgress" class="well">
-                  <div >
-                      <div style="float:left;"><b>{{fp.file.name}}</b></div>
+        <div class="d-flex col-9">
+            <div class="contentColumn">
+                <div class="form-group d-flex">
+                    <label class="col-md-2 control-label h6">Drop Here:</label>
+                    <div class="col-md-10">
+                        <div id="holder" class="nicenice">Drop Files Here</div>
+                    </div>
+                </div>
+                <div class="form-group d-flex">
+                    <label class="col-md-2 control-label h6">Labels:</label>
+                    <div class="col-md-10">
+                        <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+                    </div>
+                </div>
+                <div class="form-group d-flex">
+            <span class="gridTableColummHeader"></span>
+                <div ng-repeat="fp in fileProgress" class="well col-10">
+                    <div class="row d-flex">
+                      <span class="col-6"><b>{{fp.file.name}}</b></span>
 
-                      <div style="float:right;">{{fp.status}}</div>
-                      <div style="clear:both;"></div>
+                      <span class="col-4 h6">{{fp.status}}</span>
                   </div>
-                  <div ng-hide="fp.done">
-                     Description:<br/>
+                  <div class="form-group d-flex">
+                      <div class="col-8">
+                  <div class="h6 my-2" ng-hide="fp.done">
+                     Description:<br/><br/>
                      <textarea ng-model="fp.description" class="form-control"></textarea>
                   </div>
                   <div style="padding:5px;">
@@ -287,4 +251,4 @@ holder.ondrop = function (e) {
 </script>
 
 
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

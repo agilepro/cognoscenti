@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%
 
@@ -163,50 +163,39 @@ function parseList(inText) {
 
 <% } else { %>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="RoleManagement.htm">Manage Roles</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="RoleInvite.htm">Invite Users</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="MultiInvite.htm">Multi-Person Invite</a></li>
-        </ul>
-      </span>
-    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="fixed-width border-end border-1 border-secondary">
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="0" href="RoleManagement.htm">Manage Roles</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="0" href="RoleInvite.htm">Invite Users</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="0" href="MultiInvite.htm">Multi-Person Invite</a></span>
+            </div>
 
-    <style>
-    .spacey tr td{
-        padding: 8px;
-    }
-    .spacey {
-        width: 100%;
-        max-width: 800px;
-    }
-    </style>
-    
-    <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
+            <div class="d-flex col-9">
+                <div class="contentColumn">
+                    <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
 
-  <div class="well" style="max-width:500px;margin-bottom:50px" ng-hide="isFrozen">
-      <div ng-show="addressing">
-    
-        <div class="form-group">
-            <label>Email Addresses</label>
-            <textarea class="form-control" ng-model="emailList" style="height:150px;"
-             placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea>
+                    <div class="well col-12 m-2" ng-hide="isFrozen">
+                        <div ng-show="addressing">
+                            <div class="row d-flex my-3">
+                                <span class="col-2">
+                                <label class="h6">Email Addresses</label></span>
+                                <span class="col-10"><textarea class="form-control" ng-model="emailList" 
+             placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea></span>
         </div>
-        <div class="form-group">
-            <label>Message</label>
-            <textarea class="form-control" style="height:200px" ng-model="message"
-            placeholder="Enter a message to send to all invited people"></textarea>
+        <div class="row d-flex my-3">
+            <span class="col-2">
+            <label class="h6">Message</label></span>
+            <span class="col-10"><textarea class="form-control" style="height:200px" ng-model="message"
+            placeholder="Enter a message to send to all invited people"></textarea></span>
         </div>
-        <div class="form-group">
-            <label>Role</label>
+        <div class="row d-flex my-3">
+            <span class="col-2">
+            <label class="h6">Role</label></span>
+            <span class="col-10">
             <select class="form-control" ng-model="newRole"
                     ng-options="r for r in allRoles"></select>
+            </span>
         </div>
         <div>
             <button ng-click="blastIt()" class="btn btn-sm btn-primary btn-raised" 
@@ -225,7 +214,7 @@ function parseList(inText) {
  
 <% } %> 
 
-   <h2>Previously Invited</h2>
+   <h2 class="h4">Previously Invited</h2>
 
     <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
   
@@ -245,5 +234,5 @@ function parseList(inText) {
 
     
 </div>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
 

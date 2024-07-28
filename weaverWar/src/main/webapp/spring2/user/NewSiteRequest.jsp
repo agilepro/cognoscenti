@@ -1,9 +1,9 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SharePortRecord"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.SiteReqFile"
 %><%@page import="com.purplehillsbooks.weaver.SiteRequest"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
 
@@ -263,10 +263,10 @@ function validateEmail(email) {
 
     <p> Pick a short clear name that would be useful to people that don't already know
     about the group using the site.  You can change the name at any time.
-    Just a few words, maybe 20 to 50 letters total.</p>
+    Just a few words, maybe 20 to 50 characters total.</p>
 
     <div class="form-group">
-        <label>
+        <label class="h6">
             Site Name
         </label>
         <input type="text" class="form-control" ng-model="newSite.siteName"/>
@@ -284,11 +284,11 @@ function validateEmail(email) {
     <p><b>Step 3: </b> Please provide a key for the URL.</p>
 
     <p>This will be part of your web address.
-    Please specify a short key with only 4 to 8 letters or numbers.
+    Please specify a short key with only 4 to 8 characters.
     You are allowed to use simple letters and numbers or a hyphen.</p>
 
     <div class="form-group">
-        <label>
+        <label class="h6">
             Site URL Key
         </label>
         <input type="text" class="form-control" ng-model="newSite.siteId"/>
@@ -304,15 +304,11 @@ function validateEmail(email) {
 
     <p><b>Step 4: </b> Describe the purpose of the site.</p>
 
-    <p>Describe in a sentence or two the <b>purpose</b> of the workspace in a way that
-        people who are not (yet) part of the workspace will understand,
-        and to help them know whether they should or should not be
-        part of that workspace. <br/>
-        This description will be available to the public if the workspace
-        ever appears in a public list of workspaces.</p>
+    <p>Describe in a sentence or two the <b>purpose</b> of the site in a way that people who are not (yet) part of it will understand, and to help them know whether they should or should not be a member. <br/>
+        This description will be available to the public if the site ever appears in a public list of sites.</p>
 
     <div class="form-group">
-        <label>
+        <label class="h6">
             Site Purpose
         </label>
         <textarea class="form-control" ng-model="newSite.purpose"></textarea>
@@ -320,7 +316,9 @@ function validateEmail(email) {
 
     <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
     <button class="btn btn-primary btn-raised" style="float:right"
-            ng-click="next()"  ng-show="newSite.purpose.length>15">Next</button>
+            ng-click="next()"  ng-show="newSite.purpose.length>10">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="alert('enter 9 or more letters into the description')" style="float:right"
+            ng-show="newSite.purpose.length<=9">Next</button>
 
   </div>
 
@@ -338,7 +336,7 @@ function validateEmail(email) {
     </p>
 
     <div class="form-group">
-        <label>
+        <label class="h6">
             Pre-approval Code
         </label>
         <input type="text" class="form-control" ng-model="newSite.preapprove"/>
@@ -360,8 +358,8 @@ function validateEmail(email) {
     </p>
 
     <div class="form-group">
-        <label>
-            Your response
+        <label class="h6">
+            Your Response
         </label>
         <input type="text" class="form-control" ng-model="newSite.capcha"/>
     </div>
@@ -370,6 +368,7 @@ function validateEmail(email) {
     <button class="btn btn-primary btn-raised" style="float:right"
             ng-click="next()"
             ng-show="newSite.capcha==='307'">Next</button>
+ 
 
   </div>
 

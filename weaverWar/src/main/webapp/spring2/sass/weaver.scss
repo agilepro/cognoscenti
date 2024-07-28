@@ -432,6 +432,8 @@ a {
     min-width: max-content;
     align-items: center;
     display: inline-block;
+    border: #4d2f5e 1px solid;
+    border-radius: 10px;
     &:hover {
         background-color: $secondary-20;
         color: $primary;
@@ -506,7 +508,8 @@ a {
 
 .doubleClickHint {
     background-color:transparent;
-    color:$secondary-400;
+    color:$primary-70;
+    font-style: italic;
     padding:4px;
     max-width:400px
 }
@@ -607,7 +610,16 @@ a {
         border: $secondary-60 solid 1px;
         background-color: white;
     }
-
+.nicenice {
+        border: 2px dashed #bbb;
+        border-radius: 5px;
+        padding: 25px;
+        text-align: center;
+        font: 20pt bold Georgia,Tahoma,sans-serif;
+        color: #bbb;
+        margin-bottom: 20px;
+        width:500px;
+    }
 
 //from MeetingHtml.jsp
 
@@ -776,7 +788,11 @@ a {
 .nav-item {
     list-style-type: none;
 }
+.text-red-emphasis {
+    color: #b10303 !important;
+    font-style: italic;
 
+}
 
 $vertical-align-classes: (
         property: vertical-align,

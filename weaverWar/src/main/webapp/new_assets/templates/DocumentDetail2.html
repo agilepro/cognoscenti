@@ -1,34 +1,31 @@
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="editMode='details'"  
-          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
-      Document Settings
-    </span>
-    <span ng-click="editMode='mgmt'"  
-          ng-class="editMode=='mgmt'?'qqTabSelected':'qqTabUnselected'">
-      Management
-    </span>
-  </div>
-</div>
-<div class="modal-body" style="min-height:300px">
+<html>
+<body>
+
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
+  <h5 class="modal-title" id="docDetailsModalLabel">
+      Document Settings </h5></div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="card col-md-12 align-top">
+            <div class="card-body" >
   <div ng-show="editMode=='details'">
-    <div>
+    <div class="row">
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
-            <label for="synopsis">Name:</label>
+            <label for="synopsis"class="h6">Name:</label>
             <input ng-model="docInfo.name" class="form-control"     
                 placeholder="Enter name of the document"/>           
         </div>
         <div class="form-group">
-            <label for="synopsis">Description:</label>
+            <label for="synopsis" class="h6">Description:</label>
             <textarea ng-model="docInfo.description" class="form-control"  style="height:100px"  
                 placeholder="Enter description of the document"></textarea>          
         </div>
       </div>
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
-            <label for="synopsis">Type:</label> &nbsp;
+            <label for="synopsis" class="h6">Type:</label> &nbsp;
             <span ng-show="docInfo.attType=='FILE'">File, &nbsp;  
                 <span ng-hide="docInfo.deleted">{{docInfo.size|number}} bytes</span>
                 <span ng-show="docInfo.deleted" style="color:red">Deleted</span>
@@ -40,91 +37,85 @@
                 placeholder="Enter url of the link"/>           
         </div>
         <div class="form-group">
-            <label for="labels">Labels:</label>
-            <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="labelButton" ng-click="toggleLabel(role)"
-                   style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised labelButton" 
-                   type="button" 
-                   id="menu1" 
-                   data-toggle="dropdown"
-                   title="Add Label"
-                   style="padding:5px 10px">
-                   <i class="fa fa-plus"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-               style="width:320px;left:-130px">
-                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                         {{rolex.name}}</button>
-                 </li>
-                 <div class="dropdown-divider" style="float:clear"></div>               
-                 <li role="presentation" style="float:right">
-                   <button role="menuitem" ng-click="openEditLabelsModal()" class="dropdown-item btn btn-sm btn-primary btn-raised">
-                       Add/Remove Labels</button>
-                 </li>
-               </ul>
-            </span>
+          <label for="labels" class="h6">Labels:</label>
+          <span class="nav-item dropdown d-inline">
+            <button class="btn-tiny btn-comment p-2">
+              <i class="fa fa-plus"></i></button>         
+                <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
+              style="width:320px;left:-130px">
+                <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                    {{rolex.name}}</button>
+            </li>
+            <div class="dropdown-divider" style="float:clear"></div>               
+            <li role="presentation" style="float:right">
+              <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+                  Add/Remove Labels</button>
+            </li>
+          </ul>
+        </span>
+
+     <span class="dropdown" ng-repeat="role in allLabels">
+       <button class="dropdown labelButton" ng-click="toggleLabel(role)"
+          style="background-color:{{role.color}};"
+          ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+     </span>
         </div>
         <div class="form-group">
-            <label for="synopsis">Who:</label> &nbsp;
+            <label for="synopsis" class="h6">Who:</label> &nbsp;
             {{docInfo.modifieduser}}
         </div>
         <div class="form-group">
-            <label for="synopsis">When:</label> &nbsp;
+            <label for="synopsis" class="h6">When:</label> &nbsp;
             {{docInfo.modifiedtime|cdate}}
         </div>
         <div class="form-group">
-            <label for="synopsis">Public Access Link:</label> &nbsp;
+            <label for="synopsis" class="h6">Public Access Link:</label> &nbsp;
             <a href="{{wsUrl}}DocDetail.htm?aid={{docInfo.id}}&{{docInfo.magicNumber}}">{{docInfo.name}}</a>
         </div>
       </div>
-    </div>
-    <div style="clear:both"></div>
-  </div>
-  <div ng-show="editMode=='mgmt'">
-      <div class="col-sm-12 col-md-6">
+    <div class="col-12 row d-flex">
         <label for="labels">Versions:</label>
-        <table class="table">
-          <tr>
-            <th>#</th>
-            <th> </th>
-            <th>Date</th>
-            <th style="text-align:right">Size</th>
-          </tr>
-          <tr ng-repeat="ver in docInfo.versions">
-            <td>{{ver.num}}</td>
-            <td><a href="{{ver.link}}"><span class="fa fa-download"></span></a></td>
-            <td>{{ver.date|cdate}}</td>
-            <td style="text-align:right">{{ver.size|number}}</td>
-          </tr>
-        </table>
+        <div class="table">
+          <div class="row d-flex">
+            <span class="col-1 h6">#</span>
+            <span class="col-2"> </span>
+            <span class="col-3 h6">Date</span>
+            <span class="col-3 h6 ms-auto" >Size</span>
+          </div>
+          <div class="col-12 row d-flex" ng-repeat="ver in docInfo.versions">
+            <span class="col-1">{{ver.num}}</span>
+            <span class="col-2"><a href="{{ver.link}}"><span class="fa fa-download"></span></a></span>
+            <span class="col-3">{{ver.date|cdate}}</span>
+            <span class="col-3 ms-auto" >{{ver.size|number}}</span>
+          </div>
+        </div>
       </div>
-      <div class="col-sm-12 col-md-6">
+      <div class="row d-flex">
+      <div class="col-12">
         <div class="form-group">
-            <label for="synopsis">Purge Date:</label>
+            <label for="synopsis" class="h6 my-2">Purge Date:</label>
             {{docInfo.purgeDate|cdate}}       
         </div>
-        <div>
-            <button class="btn btn-primary btn-raised" ng-click="setPurge(0)">
+        <div class="row d-flex justify-content-between">
+            <button class="ms-0 me-2 my-1 col-2 btn-secondary btn-wide btn-raised" ng-click="setPurge(0)">
                 Keep Indefinitely</button>
-            <button class="btn btn-primary btn-raised" ng-click="setPurge(30)">
+            <button class="my-1 mx-2 col-2 btn-comment btn-wide btn-raised" ng-click="setPurge(30)">
                 Delete in 1 Month</button>
-            <button class="btn btn-primary btn-raised" ng-click="setPurge(120)">
+            <button class="my-1 mx-2 col-3 btn-comment btn-wide btn-raised" ng-click="setPurge(120)">
                 Delete in 4 Months</button>
-            <button class="btn btn-primary btn-raised" ng-click="setPurge(360)">
+            <button class="my-1 ms-2 me-0 col-2 btn-comment btn-wide btn-raised" ng-click="setPurge(360)">
                 Delete in 1 Year</button>
         </div>
       </div>
   </div>
-</div>
-<div class="modal-footer">
-    <button class="btn btn-primary btn-raised"
-        type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-warning btn-raised pull-left"
+</div></div>
+<div class="modal-footer d-flex">
+        <button class="btn btn-danger btn-raised me-auto"
         type="button" ng-click="cancel()">Close</button>
+        <button class="btn btn-primary btn-raised"
+        type="button" ng-click="ok()">Save</button>
+
 </div>
 

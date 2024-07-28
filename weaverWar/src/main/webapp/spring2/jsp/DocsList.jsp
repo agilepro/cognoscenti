@@ -272,10 +272,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               Show Folders</a>
             </span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="addDocument"><a class="nav-link"  href="DocsAdd.htm">
-              <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
+              <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
           </span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm">
-              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
+              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
           </span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="SharePorts"><a class="nav-link"  href="SharePorts.htm">
               Share Ports</a>

@@ -347,7 +347,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </span>
 
         <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
-              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="15" alt="" />
+              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" />
               Send Email</a>
         </span>
         <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" >

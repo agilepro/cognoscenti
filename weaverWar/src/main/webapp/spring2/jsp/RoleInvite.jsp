@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%
 
@@ -157,79 +157,59 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% } else { %>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="RoleManagement.htm">Manage Roles</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="RoleInvite.htm">Invite Users</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="MultiInvite.htm">Multi-Person Invite</a></li>
-        </ul>
-      </span>
-    </div>
-
-    <style>
-    .spacey tr th{
-        padding: 8px;
-    }
-    .spacey tr td{
-        padding: 8px;
-        border-top: solid lightgrey 1px
-    }
-    .spacey tr:hover {
-        background-color:lightgrey;
-    }
-    .spacey {
-        width: 100%;
-        max-width: 800px;
-    }
-    </style>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="fixed-width border-end border-1 border-secondary">
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="RoleManagement.htm">Manage Roles</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="RoleInvite.htm">Invite Users</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="MultiInvite.htm">Multi-Person Invite</a></span>
+            </div>
 
 
-    
-  <div class="well" style="max-width:500px;margin-bottom:50px" ng-hide="isFrozen">
-      <div ng-show="addressing">
-        <div>
-        <p><i>Add people to the project by entering their email address and name.</i></p>
-        </div>
-        <div class="form-group">
-            <label>Email Address</label>
-            <input class="form-control" ng-model="newEmail"/>
-        </div>
-        <div class="form-group">
-            <label>Full Name</label>
-            <input class="form-control" ng-model="newName"/>
-        </div>
-        <div class="form-group">
-            <label>Role</label>
-            <select class="form-control" ng-model="newRole"
-                    ng-options="r for r in allRoles"></select>
-        </div>
-        <div class="form-group">
-            <label>Message</label>
-            <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
-        </div>
-        <div>
-            <button ng-click="inviteOne()" class="btn btn-sm btn-primary btn-raised"/>Invite</button>
-            <button ng-click="addressing=false" class="btn btn-sm btn-raised"/>Close</button>
-        </div>
-      </div>
-      <div ng-hide="addressing">
-        <button ng-click="addressing=true" class="btn btn-sm btn-primary btn-raised"/>Open to Invite Another</button>
-      </div>
-  </div>  
-  <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
-     You can't invite anyone because this workspace is frozen or deleted.
-  </div>  
+
+
+            <div class="d-flex col-9">
+                <div class="contentColumn">
+                    <div class="well col-10 m-2" ng-hide="isFrozen">
+                        <div ng-show="addressing">
+                            <div><p><i>Add people to the project by entering their email address and name.</i></p></div>
+                        <div class="form-group">
+                            <label class="h6">Email Address</label>
+                            <input class="form-control" ng-model="newEmail"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="h6">Full Name</label>
+                            <input class="form-control" ng-model="newName"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="h6">Role</label>
+                            <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="h6">Message</label>
+                            <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
+                        </div>
+                        <div class="d-flex my-3">
+                            <button ng-click="addressing=false" class="btn btn-danger btn-wide btn-sm h6 me-auto">Close</button>
+                            <button ng-click="inviteOne()" class="btn-comment btn-wide btn-sm h6">Invite</button>
+                            
+                    </div>
+                </div>
+                <div ng-hide="addressing">
+                    <button ng-click="addressing=true" class="btn btn-sm btn-primary btn-wide btn-raised">Open to Invite Another</button>
+                </div>
+            </div>  
+            <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
+                You can't invite anyone because this workspace is frozen or deleted.
+            </div>  
 <% } %> 
   
-  <h2>Previously Invited</h2>
+  <h2 class="h4">Previously Invited</h2>
 
-    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
+    <div><button class="btn btn-sm btn-secondary btn-raised h6" ng-click="refresh()">Refresh List</button></div>
 
   
     <table class="table">
@@ -248,5 +228,5 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 </div>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
 

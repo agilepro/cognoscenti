@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("You need to Login to Upload a file.");
@@ -106,72 +106,47 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-
-<style>
-.spacey {
-    width:100%;
-}
-.spacey tr td {
-    padding:3px;
-}
-.firstcol {
-    width:130px;
-}
-</style>
-    
-    <table class="spacey" >
-        <tr>
-            <td class="firstcol" >Type:</td>
-            <td>
-                <img src="<%=ar.retPath%>assets/images/iconUrl.png"> URL</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">
-                URL:
-            </td>
-            <td>
+<div class="container-fluid mx-3">
+    <div class="contentColumn" >
+        <div class="row form-group d-flex my-2">
+            <span class="col-1 h6" >Type:</span>
+            <span class="col-10" >
+                <img src="<%=ar.retPath%>assets/images/iconUrl.png" > URL</span>
+        </div>
+        <div class="row form-group d-flex my-2">
+            <span class="col-1 h6" >URL:</span>
+            <span class="col-10" >
                 <input type="text" ng-model="newLink.url" ng-blur="suggestName()" class="form-control" />
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">
-                
-            </td>
-            <td>
-                <a href="CleanAtt.htm?path={{newLink.url}}" target="_blank">
-                    <button class="btn btn-prinary btn-raised">View as a Text Only page</button></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">
-                Name:
-            </td>
-            <td>
+            </span>
+        </div>
+        <div class="col-11 d-grid d-flex my-2 justify-content-end">
+            <a href="CleanAtt.htm?path={{newLink.url}}" target="_blank">
+            <button class="btn btn-comment btn-secondary btn-wide me-2">View as a Text Only page</button></a>
+        </div>
+        <div class="row form-group d-flex my-2">
+            <span class="col-1 h6" >Name:</span>
+            <span class="col-10" >
                 <input type="text" ng-model="newLink.name" class="form-control" />
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">
-                Description:
-            </td>
-            <td>
+            </span>
+        </div>
+        <div class="row form-group d-flex my-2">
+            <span class="col-1 h6" >Description:</span>
+            <span class="col-10" >
                 <textarea ng-model="newLink.description"  rows="4" class="form-control"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Labels: </td>
-            <td>
-                <%@ include file="/spring2/jsp/LabelPicker.jsp"%>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <button class="btn btn-primary btn-raised" ng-click="createLink()">Attach Web URL</button>
-            </td>
-        </tr>
-    </table>
+            </span>
+        </div>
+        <div class="row form-group d-flex my-2">
+            <span class="col-1 h6" >Labels:</span>
+            <span class="col-10" >
+                <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+            </span>
+        </div>
+        <div class="col-11 d-grid d-flex my-2 justify-content-end">
+            <button class="btn btn-primary btn-raised btn-default me-2" ng-click="createLink()">Attach Web URL</button>
+        </div>
+    </div>
+</div>
+
 
 </div>
 
