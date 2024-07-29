@@ -1,30 +1,16 @@
-<html>
-<body>
-<style>
-    .spaceyTable {
-        width:100%;
-    }
-    .spaceyTable tr td {
-        padding:10px;
-    }
-    .visibleBox {
-        border: 1px solid darkgray;
-        box-shadow: 1px 1px 1px 0 lightgray inset;
-    }
-</style>
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="editMode='main'" 
-          ng-class="editMode=='main'?'qqTabSelected':'qqTabUnselected'">
-        <span ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
-        <span ng-show="isNew">Create Role</span>
-    </span>
+
+    <div class="modal-item"></div>
+    <div class="modal-header bg-primary-subtle text-primary">
+      <h5 class="modal-title" id="attachDocumentLabel">Create Role</h5>
+  
+    </div>
+
     <span ng-click="editMode='expert'" ng-hide="isNew"
           ng-class="editMode=='expert'?'qqTabSelected':'qqTabUnselected'">
         <span>Advanced</span>
     </span>
-  </div>
-</div>
+
+
 <div class="modal-body" style="max-height:600px; overflow: auto">
     <table ng-hide="isNew || editMode=='expert'" class="spaceyTable">
         <tr>
@@ -76,7 +62,7 @@
              </td>
         </tr>
         <tr>
-             <td >Responsibities:</td>
+             <td >Responsibilities:</td>
              <td colspan="2">
                  <div ng-repeat="resp in roleInfo.responsibilities">
                       <div ng-bind-html="resp.text|wiki"></div> </div>
@@ -118,7 +104,7 @@
     <table class="spaceyTable" ng-show="isNew">
         <tr><td style="height:10px" colspan="3"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Name:</td>
+            <td class="gridTableColummHeader h6">Name:</td>
             <td>
                <input class="form-control" style="max-width:400px" ng-model="roleInfo.name">
             </td>
@@ -132,7 +118,7 @@
             </td>
         </tr>
         <tr>
-            <td >Copy From:</td>
+            <td class="h6" >Copy From:</td>
             <td>
                <select class="form-control" style="max-width:400px" ng-model="roleToCopy"
                        ng-options="role.name for role in allRoles">
@@ -144,8 +130,7 @@
  
 </div>
 <div class="modal-footer">
-    <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Exit</button>
+    <button class="me-auto btn btn-danger" type="button" ng-click="cancel()">Cancel</button>
     <button ng-click="createAndClose()" class="btn btn-primary btn-raised" ng-show="isNew">Create Role</button>
 </div>
-</body>
-</html>
+

@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%
 
@@ -120,7 +120,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/Responsibility.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/Responsibility.html<%=templateCacheDefeater%>',
             controller: 'Responsibility',
             size: 'lg',
             backdrop: "static",
@@ -170,37 +170,37 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    
+<div class="container-fluid">    
     <div class="row">
         <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <label for="synopsis">Description:</label>
-                <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span>
-                <textarea ng-model="role.description" class="form-control markDownEditor" placeholder="Enter description"></textarea>
+            <div class="form-group d-flex col-11 m-2">
+                <label for="synopsis" class="col-md-3 control-label h6">Description: <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span></label>
+                
+                <textarea ng-model="role.description" class=" form-control markDownEditor" placeholder="Enter description"></textarea>
             </div>
-            <div class="guideVocal" ng-show="descHelp" ng-click="descHelp=false">
+            <div class="guideVocal m-4" ng-show="descHelp" ng-click="descHelp=false">
                 The description is something for everyone to see to give a basic understanding of 
                 what the role are expected to do.  The first place that people will go
                 when they want to know more about a role is the description.  You should try to be
                 succinct and explain in 3 sentences or less.
             </div>
-            <div class="form-group">
-                <label for="synopsis">Eligibility:</label>
-                <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span>
+            <div class="form-group d-flex col-11 m-2 g-2">
+                <label for="synopsis" class="col-md-3 control-label h6">Eligibility: <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span></label>
+                
                 <textarea ng-model="role.requirements" class="form-control markDownEditor" placeholder="Enter requirements"></textarea>
             </div>
-            <div class="guideVocal" ng-show="eligHelp" ng-click="eligHelp=false">
+            <div class="guideVocal m-4" ng-show="eligHelp" ng-click="eligHelp=false">
                 The eligibility is a little more detail about what qualities one would expected
                 of a role player.  Perhaps there are some skills required.  In some cases there
                 are eligibility requirements, like having participated in the group for a period
                 of time before they can be considered for the roles.
             </div>
-            <div class="form-group">
-                <label for="synopsis">Can Update:</label>
-                <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span>
-                <input type="checkbox" ng-model="role.canUpdateWorkspace" class="form-control" placeholder="Enter requirements"/>
+            <div class="form-group d-flex col-11 m-2 g-2">
+                <label for="updateCheck" class="col-md-3 control-label h6">Can Update: <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
+                
+                <input type="checkbox" id="updateCheck" ng-model="role.canUpdateWorkspace" class="checkbox-lg "/>
             </div>
-            <div class="guideVocal" ng-show="updateHelp" ng-click="updateHelp=false">
+            <div class="guideVocal m-4" ng-show="updateHelp" ng-click="updateHelp=false">
                 This checkbox confers the ability for the players of this role to be able to 
                 update the workspace.  
                 A person in any role will be able to see the workspace. 
@@ -211,45 +211,50 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 the administrator at the site level can set which users are allowed to have
                 update and which users are observers, and that takes precidence.
             </div>
-            <div style="margin-bottom:40px">
+            <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
 <% if (canUpdate) { %>
-                <button ng-click="updateRole(role)" class="btn btn-default btn-raised">Save</button>
+                <button ng-click="updateRole(role)" class="btn btn-comment btn-secondary btn-raised  h6">Save</button>
 <% } %>
+
             </div>
-            <div class="form-group">
-                <label for="synopsis">Responsibilities:</label>
-                <table class="table">
-                <tr ng-repeat="aresp in role.responsibilities" >
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+<hr>            <div class="form-group d-flex col-11 m-2">
+                <label for="synopsis" class="col-md-4 control-label h6">Responsibilities: <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span></label>
+                <div class="form-group col-10 m-2">
+                <div class="row  align-middle" ng-repeat="aresp in role.responsibilities" >
+                    <span class="actions col-1 m-0">
+                        <button type="button" name="edit" class="col-1 btn btn-tiny btn-comment" 
                                 ng-click="openResponsibilityModal(aresp)">
-                            <span class="fa fa-edit"></span>
+                            <span class="fa fa-edit fa-md"></span>
                         </button>
-                    </td>
-                    <td ng-click="openResponsibilityModal(aresp)">
+                    </span>
+                    <span class="col-7 h6" ng-click="openResponsibilityModal(aresp)">
                         <div ng-bind-html="aresp.text|wiki"></div>
-                    </td>
-                    <td class="actions">
-                        <button type="button" name="delete" class='btn btn-warning' 
+                    </span>
+                    <span class="actions col-1">
+                        <button type="button" name="delete" class=" btn btn-danger btn-tiny btn-comment ms-auto" 
                                 ng-click="deleteResponsibility(aresp)">
-                            <span class="fa fa-trash"></span>
+                            <span class="fa fa-trash fa-md"></span>
                         </button>
-                    </td>
-                </tr>
-                </table>
-                <div ng-show="role.responsibilities.length==0" class="guideVocal">
-                There are no responsibilities listed for this role.
+                    </span>
+                </div><div ng-show="role.responsibilities.length==0" class="col-8 guideVocal h6"><i>
+                There are no responsibilities listed for this role.</i>
                 </div>
+                </div>
+                
+                
             </div>
-            <div>
-<% if (canUpdate) { %>
-                <button ng-click="openResponsibilityModal()" class="btn btn-primary btn-raised">
+            
+            <% if (canUpdate) { %>
+                <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
+                <button ng-click="openResponsibilityModal()" class="btn btn-secondary btn-flex btn-wide btn-raised">
                     Create Responsibility
-                </button>
+                </button></div>
 <% } %>
-                <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span>
+            <div>
+
+                
             </div>
-            <div class="guideVocal" ng-show="respHelp" ng-click="respHelp=false">
+            <div class="guideVocal m-4" ng-show="respHelp" ng-click="respHelp=false">
                 You can list a set of responsibilities that the player of this role
                 normally takes care of.  These should be descriptive of the role.
                 List as many as possible as long as the list is helpful in guiding
@@ -259,52 +264,52 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         
         <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <label for="synopsis">Terms of Office:</label>
-                <table class="table">
-                <tr>
-                    <td></td>
-                    <td>Start</td>
-                    <td>End</td>
-                    <td>State</td>
-                </tr>
-                <tr ng-repeat="aterm in role.terms" >
-                    <td class="actions" title="Edit this term to sent time span and to make it the current term. Nominations and elections of members to the term of the role">
-                        <button type="button" name="edit" class="btn btn-primary" 
+            <div class="form-group d-flex col-12 m-2">
+                <label for="synopsis" class="row control-label h6">Terms of Office: <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span></label>
+            </div>
+            <div class="row form-group col-12 d-flex  m-2">
+                <span class="col-1"></span>
+                <span class="col-2">Start</span>
+                <span class="col-2">End</span>
+                <span class="col-4">State</span>
+                <span class="col-1"></span>
+            </div>
+            <div class="row form-group col-12 d-flex m-2" ng-repeat="aterm in role.terms" >
+                    <span class="actions col-1" title="Edit this term to sent time span and to make it the current term. Nominations and elections of members to the term of the role">
+                        <button type="button" name="edit" class=" btn btn-tiny btn-comment" 
                                 ng-click="goNominate(aterm)">
-                            <span class="fa fa-edit"></span>
+                            <span class="fa fa-edit fa-md"></span>
                         </button>
-                    </td>
-                    <td ng-click="goNominate(aterm)" ng-style="termColor(aterm)" 
+                    </span>
+                    <span class="col-2" ng-click="goNominate(aterm)" ng-style="termColor(aterm)" 
                         title="Date that the term is proposed to start - click to edit">
-                        {{aterm.termStart |  date}}</td>
-                    <td ng-click="goNominate(aterm)"
+                        {{aterm.termStart |  date}}</span>
+                    <span class="col-2" ng-click="goNominate(aterm)"
                         title="click to edit">
-                        {{aterm.termEnd |  date}}</td>
-                    <td ng-click="goNominate(aterm)"
+                        {{aterm.termEnd |  date}}</span>
+                    <span class="col-4" ng-click="goNominate(aterm)"
                         title="click to edit">
-                        {{aterm.state}}</td>
-                    <td class="actions">
-                        <button type="button" name="delete" class='btn btn-warning' 
+                        {{aterm.state}}</span>
+                    <span class="actions col-1">
+                        <button type="button" name="delete" class=" btn btn-danger btn-tiny btn-comment ms-auto" 
                                 ng-click="deleteTerm(aterm)"
                                 title="Click here to delete this term">
                             <span class="fa fa-trash"></span>
                         </button>
-                    </td>
-                </tr>
-                </table>
-                <div ng-show="role.terms.length==0" class="guideVocal">
-                    There are no designated terms for this role.  Create one!<br/>
-                </div>
+                    </span>
             </div>
-            <div>
+            <div ng-show="role.terms.length==0" class="guideVocal">
+                    There are no designated terms for this role.  Create one!<br/>
+            </div>              
+    <div class="row form-group col-12 d-flex m-2">
 <% if (canUpdate) { %>
-                <button ng-click="createTerm()" class="btn btn-primary btn-raised">
+    <div class="form-group d-flex col-11 m-2 justify-content-end">
+                <button ng-click="createTerm()" class="btn btn-secondary btn-flex btn-wide btn-raised">
                     <span class="fa fa-plus"></span> Create Term</button>
-                <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
+                </div>
 <% } %>
             </div>
-            <div class="guideVocal" ng-show="termHelp || role.terms.length==0" ng-click="termHelp=false">
+            <div class="guideVocal m-4" ng-show="termHelp || role.terms.length==0" ng-click="termHelp=false">
                 You can create a 'term of office' for this role, those are particular time periods for which 
                 people will hold the role.  <br/>
                 <br/>
@@ -324,5 +329,5 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </div>
 
-<script src="<%=ar.retPath%>templates/Responsibility.js"></script>
-<script src="<%=ar.retPath%>templates/TermModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/Responsibility.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/TermModal.js"></script>

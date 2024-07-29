@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%
 
@@ -231,7 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/NominationModal.html?<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/NominationModal.html?<%=templateCacheDefeater%>',
             controller: 'NominationModal',
             size: 'lg',
             backdrop: "static",
@@ -277,147 +277,148 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
+<div class="container-fluid">
+    <div class="row col-md-12 d-flex m-3">
+      <span class="nav-item dropdown col-3">
         <button class="btn btn-default btn-raised dropdown-toggle" 
-                type="button" id="menu1" data-toggle="dropdown" ng-style="stateStyle()">
+                type="button" id="nominatePhase" data-toggle="dropdown" ng-style="stateStyle()">
             {{term.state}}: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+        <ul class="dropdown-menu" role="menu" aria-labelledby="nominationPhase">
+          <li role="presentation"><a class="dropdown-item h6" role="menuitem" tabindex="-1"
               ng-click="updateState('Initial Check')">State &#10132; Initial Check</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+          <li role="presentation"><a class="dropdown-item h6" role="menuitem" tabindex="-1"
               ng-click="updateState('Nominating')">State &#10132; Nominating</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+          <li role="presentation"><a class="dropdown-item h6" role="menuitem" tabindex="-1"
               ng-click="updateState('Changing')">State &#10132; Changing</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+          <li role="presentation"><a class="dropdown-item h6" role="menuitem" tabindex="-1"
               ng-click="updateState('Proposing')">State &#10132; Proposing</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
+          <li role="presentation"><a class="dropdown-item h6" role="menuitem" tabindex="-1"
               ng-click="updateState('Completed')">State &#10132; Completed</a></li>
         </ul>
       </span>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-12 col-sm-12">
-            <div class="form-group">
+        <div class="col-9">
+            <div class="form-group h5">
                 <label for="status">Term:</label>
                 <span>
                     {{term.termStart|date:"dd-MMM-yyyy"}}  . . .   {{term.termEnd|date:"dd-MMM-yyyy"}}
                 </span> 
             </div>
         </div>
-       
     </div>
-    <div ng-show="term.state=='Initial Check'">
-        <div class="guideVocal">
+    <div class="row col-md-12 d-flex m-3">
+        <div ng-show="term.state=='Initial Check'">
+            <div class="guideVocal h6">
             <b>Step 1:</b> Check that the dates for this term is correct.   
-            If you modify the dates, press save before continuing.<br/>
-            <button class="btn btn-primary" ng-click="updateState('Nominating')">
-                Next <i class="fa fa-forward"></i></button>
+            If you modify the dates, press save before continuing.</div>
+            <div class="d-flex">
+            <button class="btn btn-primary btn-raised my-3 " ng-click="updateState('Nominating')">
+                Next &nbsp;<i class="fa fa-forward"></i></button>
+            </div>
         </div>
-        <div >
-            <div class="form-group">
-                <label for="status">Term Start:</label>
-                <span datetime-picker ng-model="term.termStart"  
-                    class="form-control" style="max-width:300px">
+        <div class="row col-md-12 d-flex my-3 gx-5">
+            <span class="form-group col-1">
+                <label for="status" class="h6 justify-content-end">Term Start:</label>
+            </span>
+            <span datetime-picker ng-model="term.termStart"  
+                    class="form-control col-3" style="max-width:300px">
                     {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                </span> 
-            </div>
-        </div>
-        
-        <div >
-            <div class="form-group">
-                <label for="status">Term End:</label>
-                <span datetime-picker ng-model="term.termEnd"  
-                    class="form-control" style="max-width:300px">
+            </span> 
+
+            <span class="form-group col-1">
+                <label for="status" class="h6">Term End:</label>
+            </span>
+
+            <span datetime-picker ng-model="term.termEnd"  
+                    class="form-control col-3" style="max-width:300px">
                     {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                </span> 
-            </div>
+            </span> 
         </div>
+
         <div class="form-group" title="The duration is the number of days between the start and end dates.">
-            <label for="status">Duration:</label>
-            <span >
-                {{ getDays(term) }} Days
+            <label for="status" class="h5">Duration:</label>
+            <span class="h5"><em>
+                {{ getDays(term) }} Days</em>
             </span>
         </div>
-        <button class="btn btn-primary btn-raised" ng-click="save()"
+        <div class="col-10 m-2">
+            <div class="my-3 form-group d-flex">
+                <button class="btn btn-primary btn-raised my-3 ms-auto" ng-click="save()"
                 ng-hide="term.termEnd==origTerm.termEnd && term.termStart==origTerm.termStart">Save</button>
-    </div>
-    <div ng-show="term.state=='Nominating'">
-        <div class="guideVocal">
-            <b>Step 2:</b> Enter the email address of the person you want to nominate and give a good reason for why they are good for this role.
-            Other people can access this page and make nominations as well.
-            You will only see your own nomination at this stage.<br/>
-            <button class="btn btn-primary" ng-click="updateState('Initial Check')">
-                <i class="fa fa-backward"></i>Back </button>
-            <button class="btn btn-primary" ng-click="updateState('Changing')">
-                Next <i class="fa fa-forward"></i></button>
-        </div>
-       <div class="col-12">
+            </div>
+            <div ng-show="term.state=='Nominating'">
+            <div class="guideVocal h6">
+                <b>Step 2:</b> Enter the email address of the person you want to nominate and give a good reason for why they are good for this role. Other people can access this page and make nominations as well. You will only see your own nomination at this stage.<br/>
+                    <div class="my-3 form-group d-flex"><button class="btn btn-primary ms-auto me-3" ng-click="updateState('Initial Check')">
+                <i class="fa fa-backward"></i> &nbsp;Back </button>
+                <button class="btn btn-primary" ng-click="updateState('Changing')">
+                Next &nbsp;<i class="fa fa-forward"></i></button></div>
+            </div>
+            <div class=" col-10 m-2">
         
-            <div class="form-group" ng-show="showNominations()">
-                <label for="synopsis">Nominations:</label>
-                <table class="table">
-                <tr>
-                    <td></td>
-                    <td><label>Nominator</label></td>
-                    <td><label>Nominee</label></td>
-                    <td><label>Reason</label></td>
-                    <td></td>
-                </tr>
-                <tr ng-show="missingNomination()">
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+            <div class="row form-group" ng-show="showNominations()">
+                <label for="synopsis" class="h5">Nominations:</label>
+            </div>
+            <div class="row form-group col-12 d-flex m-2">
+                <span class="col-1"></span>
+                <span class="col-4">Nominator</span>
+                <span class="col-2">Nominee</span>
+                <span class="col-4">Reason</span>
+                <span class="col-1"></span>
+            </div>
+                <div class="row form-group col-12 d-flex m-2" ng-show="missingNomination()">
+                    <span class="actions col-1">
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="openNominationModal()">
-                            <span class="fa fa-edit"></span>
+                            <span class="fa fa-edit fa-md"></span>
                         </button>
-                    </td>
-                    <td ng-click="openNominationModal()">{{thisUser}}</td>
-                    <td ng-click="openNominationModal()" colspan="2"> 
-                        <i>Click here to make a nomination</i></td>
-                    <td><button type="button" name="edit" class="btn btn-primary" 
+                    </span>
+                    <span class="col-4" ng-click="openNominationModal()">{{thisUser}}</span>
+                    <span class="col-2" ng-click="openNominationModal()" colspan="2"> 
+                        <i>Click here to make a nomination</i></span>
+                    <span class="col-3" ><button type="button" name="edit" class="btn btn-primary" 
                                 ng-click="deleteNomination(nom)">
                             <span class="fa fa-trash"></span>
-                        </button></td>
-                </tr>
-                <tr ng-repeat="nom in getNominations()" ng-show="nom.owner==thisUser">
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+                        </button></span>
+                </div>
+                <div class="row form-group col-12 d-flex m-2" ng-repeat="nom in getNominations()" ng-show="nom.owner==thisUser">
+                    <span class="actions col-1">
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="openNominationModal(nom)">
                             <span class="fa fa-edit"></span>
                         </button>
-                    </td>
-                    <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
-                    <td ng-click="openNominationModal(nom)">{{nom.nominee}}</td>
-                    <td ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</td>
-                    <td class="actions"><button type="button" name="edit" class="btn btn-primary" 
+                    </span>
+                    <span class="col-4" ng-click="openNominationModal(nom)">{{nom.owner}}</span>
+                    <span class="col-2" ng-click="openNominationModal(nom)">{{nom.nominee}}</span>
+                    <span class="col-4"  ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</span>
+                    <span class="actions col-1">
+                        <button type="button" name="delete" class=" btn btn-danger btn-tiny btn-comment ms-auto" 
                                 ng-click="deleteNomination(nom)">
                             <span class="fa fa-trash"></span>
-                        </button></td>
-                </tr>
-                <tr ng-repeat="nom in getNominations()" ng-hide="nom.owner==thisUser">
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+                        </button></span>
+                </div>
+                <div class="row form-group col-12 d-flex m-2" ng-repeat="nom in getNominations()" ng-hide="nom.owner==thisUser">
+                    <span class="actions col-1">
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="openNominationModal(nom)">
                             <span class="fa fa-edit"></span>
                         </button>
-                    </td>
-                    <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
-                    <td ng-click="openNominationModal(nom)"><i style="color:lightgray">hidden</i></td>
-                    <td ng-click="openNominationModal(nom)" style="max-width:400px;color:lightgray">
-                       <i>hidden</i></td>
-                    <td class="actions"><button type="button" name="edit" class="btn btn-primary" 
+                    </span>
+                    <span class="col-4" ng-click="openNominationModal(nom)">{{nom.owner}}</span>
+                    <span class="col-2" ng-click="openNominationModal(nom)"><i style="color:lightgray">hidden</i></span>
+                    <span class="col-4" ng-click="openNominationModal(nom)" style="max-width:400px;color:lightgray">
+                       <i>hidden</i></span>
+                       <span class="actions col-1">
+                        <button type="button" name="delete" class=" btn btn-danger btn-tiny btn-comment ms-auto" 
                                 ng-click="deleteNomination(nom)">
                             <span class="fa fa-trash"></span>
-                        </button></td>
-                </tr>
-                <tr >
-                    <td class="actions"></td>
-                    <td ng-click="openNominationModal()"><button class="btn btn-sm btn-primary btn-raised">Add Nomination</button></td>
-                    <td ng-click="openNominationModal()" colspan="2"> </td>
-                </tr>
-                </table>
+                        </button></span>
+                    </div >
+                    <div class="row form-group col-12 d-flex m-2">
+                        <span class="actions col-3"></span>
+                    <span ng-click="openNominationModal()"><button class="btn btn-primary btn-raised">Add Nomination</button></span>
+                    <span ng-click="openNominationModal()" class="col-2"> </span>
+                    </div>
+                </div>
                 <div ng-show="term.nominations.length==0" class="guideVocal">
                 There are no nominations for this term at this time.
                 </div>
@@ -425,49 +426,55 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <hr/>
         </div>        
     </div>
-    <div ng-show="term.state=='Changing'">
-        <div class="guideVocal">
-            <b>Step 3:</b> Review all of the nominations made so far.  
-            People can change their nominations if they want to.<br/>
-            <button class="btn btn-primary" ng-click="updateState('Nominating')">
-                <i class="fa fa-backward"></i>Back </button>
-            <button class="btn btn-primary" ng-click="updateState('Proposing')">
-                Next <i class="fa fa-forward"></i></button>
+    <div class="col-10 m-2">
+        <div class="my-3 form-group d-flex">
+            <div ng-show="term.state=='Changing'">
+                <div class="guideVocal h6">
+                    <b>Step 3:</b> Review all of the nominations made so far. People can change their nominations if they want to.<br/>
+                </div>
+
+                <div class="my-3 form-group d-flex"><button class="btn btn-primary ms-auto me-3" ng-click="updateState('Nominating')">
+                    <i class="fa fa-backward"></i> &nbsp;Back </button>
+                    <button class="btn btn-primary" ng-click="updateState('Proposing')">Next &nbsp;<i class="fa fa-forward"></i></button>
+                </div>
+            </div>
         </div>
-        <div class="col-12">
-        
-            <div class="form-group" ng-show="showNominations()">
-                <label for="synopsis">Nominations:</label>
-                <table class="table">
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td><label>Nominee</label></td>
-                    <td><label>Reason</label></td>
-                </tr>
-                <tr ng-repeat="nom in getNominations()" >
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+    </div>
+    <div class="col-10 m-2">
+        <div class="row form-group col-12 d-flex m-2"  ng-show="showNominations()">
+            <span class="actions col-1">
+                <label for="synopsis" class="h5">Nominations:</label></span>
+
+                <div class="row form-group col-12 d-flex m-2">
+                    <span class="col-1"></span>
+                    <span class="col-4"></span>
+                    <span class="col-2">Nominee</span>
+                    <span class="col-4">Reason</span>
+                    <span class="col-1"></span>
+                </div>
+
+                <div class="row form-group col-12 d-flex m-2" ng-repeat="nom in getNominations()" >
+                    <span class="actions col-1">
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="openNominationModal(nom)">
                             <span class="fa fa-edit"></span>
-                        </button>
-                    </td>
-                    <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
-                    <td ng-click="openNominationModal(nom)">{{nom.nominee}}</td>
-                    <td ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</td>
-                </tr>
-                <tr ng-show="missingNomination()">
-                    <td class="actions">
-                        <button type="button" name="edit" class="btn btn-primary" 
+                        </button></span>
+                        <span class="col-4"  ng-click="openNominationModal(nom)">{{nom.owner}}</span>
+                        <span class="col-2"  ng-click="openNominationModal(nom)">{{nom.nominee}}</span>
+                        <span class="col-4"  ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</span>
+                    </div>
+                <div class="row form-group col-12 d-flex m-2" ng-show="missingNomination()">
+                    <span class="actions col-1">
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="openNominationModal()">
                             <span class="fa fa-edit"></span>
                         </button>
-                    </td>
-                    <td ng-click="openNominationModal()">{{thisUser}}</td>
-                    <td ng-click="openNominationModal()" colspan="2"> 
-                        <i>Click here to make a nomination</i></td>
-                </tr>
-                </table>
+                    </span>
+                    <span class="col-4" ng-click="openNominationModal()">{{thisUser}}</span>
+                    <span class="col-2" ng-click="openNominationModal()"> 
+                        <i>Click here to make a nomination</i></span>
+                </div>
+            </div>
                 <div ng-show="term.nominations.length==0" class="guideVocal">
                 There are no nominations for this term at this time.
                 </div>
@@ -475,72 +482,84 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <hr/>
         </div>
     </div>
-    <div ng-show="term.state=='Proposing'">
-        <div class="guideVocal">
-            <b>Step 4:</b> Given the nominations, the leader makes a proposal for role player,
-                 and each participant can express consent or object to that.<br/>
-            <button class="btn btn-primary" ng-click="updateState('Changing')">
-                <i class="fa fa-backward"></i>Back </button>
-            <button class="btn btn-primary" ng-click="updateState('Completed')">
-                Next <i class="fa fa-forward"></i></button>
-        </div>
-        <div style="max-width:600px">
-            <div class="form-group">
-                <label for="status">Players (Proposed)</label>
+    <div class="col-10 m-2">
+        <div class="my-3 form-group d-flex">
+            <div ng-show="term.state=='Proposing'">
+                <div class="guideVocal h6">
+                    <b>Step 4:</b> Given the nominations, the leader makes a proposal for role player, and each participant can express consent or object to that.<br/>
+                </div>
+                <div class="my-3 form-group d-flex"><button class="btn btn-primary ms-auto me-3" ng-click="updateState('Changing')">
+                    <i class="fa fa-backward"></i> &nbsp;Back </button>
+                    <button class="btn btn-primary" ng-click="updateState('Completed')">Next &nbsp;<i class="fa fa-forward"></i></button>
+                </div>
+                <div class="row form-group col-12 d-flex m-2">
+                    <span class="actions col-2">
+                <label for="status" class="h6">Players (Proposed):</label></span>
+                <span class="col-10">
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
                         display-property="name" key-property="uid" 
                         replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                         on-tag-added="updatePlayers()" 
                         on-tag-removed="updatePlayers()">
                     <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                </tags-input>
+                </tags-input></span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                   <li role="presentation"><a class="dropdown-item" role="menuitem" title="{{add}}"
                       ng-click="">Remove Label:<br/>{{role.name}}</a></li>
                 </ul>
             </div>
-            <div class="form-group" ng-show="isProposing()">
-                <label for="status"><br/>Your Response:</label>
-                <textarea ng-model="comment" class="form-control"></textarea>
+            <div class="row form-group col-12 d-flex m-2" ng-show="isProposing()"><span class="col-2">
+                <label for="status" class="h6"><br/>Your Response:</label></span>
+                <span class="col-10">
+                <textarea ng-model="comment" class="form-control"></textarea></span>
             </div>
-            <div class="form-group" ng-show="isProposing()">
-                <button ng-click="consent()" class="btn btn-primary btn-raised">Consent</button>
-                <button ng-click="object()" class="btn btn-primary btn-raised">Object</button>
+            <div class="col-12 m-2">
+                <div class="my-3 form-group d-flex" ng-show="isProposing()">
+                <button ng-click="consent()" class="btn btn-primary ms-auto me-3">Consent</button>
+                <button ng-click="object()" class="btn btn-primary ">Object</button>
             </div>
-            <div class="form-group">
-                <label for="status"><br/>All Responses So Far:</label>
-                <table class="table">
-                    <tr>
-                        <td><label>Member</label></td>
-                        <td><label>Choice</label></td>
-                        <td><label>Comment</label></td>
-                    </tr>
-                    <tr ng-repeat="resp in term.responses" ng-click="setComment(resp.comment)">
-                        <td>{{resp.owner}}</td>
-                        <td>{{resp.choice}}</td>
-                        <td>{{resp.comment}}</td>
-                    </tr>
-                </table>
+            <div class="row form-group col-12 d-flex m-2">
+                <label for="status" class="h5"><br/>All Responses So Far:</label>
+                <div class="col-10 m-2">
+                    <div class="row form-group col-12 d-flex m-2">
+                        <span class="col-1"></span>
+                        <span class="col-4">Member</span>
+                        <span class="col-2">Choice</span>
+                        <span class="col-4">Comment</span>
+                        <span class="col-1"></span>
+                    </div>
+
+                    <div class="row form-group col-12 d-flex m-2" ng-repeat="resp in term.responses" ng-click="setComment(resp.comment)">
+                        <span class="col-1"></span>
+                        <span class="col-4">{{resp.owner}}</span>
+                        <span class="col-2">{{resp.choice}}</span>
+                        <span class="col-4">{{resp.comment}}</span>
+                        <span class="col-1"></span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div ng-show="term.state=='Completed'">
-        <div class="guideVocal">
-            <b>Step 5:</b> Celebrate!  You are done.   The selected person(s) will be automatically
-                placed in the role during the dates specified by the term.<br/>
-            <button class="btn btn-primary" ng-click="updateState('Proposing')">
-                <i class="fa fa-backward"></i>Back </button>
-        </div>
-        <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <label for="status">Players </label>
+    </><!-- What is below this line???-->
+    <div class="col-10 m-2">
+        <div class="my-3 form-group d-flex">
+            <div ng-show="term.state=='Completed'">
+                <div class="guideVocal h6">
+                    <b>Step 5:</b> Celebrate!  You are done.   The selected person(s) will be automatically placed in the role during the dates specified by the term.<br/></div>
+                    <div class="my-3 form-group d-flex">
+                        <button class="btn btn-primary ms-auto me-3"  ng-click="updateState('Proposing')">
+                            <i class="fa fa-backward"></i>Back </button>
+                    </div>
+                    <div class="row form-group col-12 d-flex m-2">
+                        <span class="actions col-2">
+                        <label for="status" class="h5">Players </label></span>
+                        <span class="col-10">
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
                         display-property="name" key-property="uid" 
                         replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                         on-tag-added="updatePlayers()" 
                         on-tag-removed="updatePlayers()">
                     <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                </tags-input>
+                </tags-input>   </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"
                       ng-click="">Remove Label:<br/>{{role.name}}</a></li>
@@ -575,4 +594,4 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
 </div>
 
-<script src="<%=ar.retPath%>templates/NominationModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/NominationModal.js"></script>

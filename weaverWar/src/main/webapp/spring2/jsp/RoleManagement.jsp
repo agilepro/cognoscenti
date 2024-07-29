@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%
 
@@ -223,7 +223,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -257,7 +257,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/RoleModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/RoleModal.html<%=templateCacheDefeater%>',
             controller: 'RoleModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -348,16 +348,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="row">
             <div class="col-md-auto fixed-width border-end border-1 border-secondary">
 
-      <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleManagement.htm">
+      <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="manageRoles"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleManagement.htm">
               <span class="fa fa-group"></span> &nbsp;Manage Roles</a></span>
 
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
 
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite</a></span>
           <hr/>
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewRole"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
               <span class="fa fa-plus-square"></span> &nbsp;Create New Role</a></span>
     </div>
 <% } %>
@@ -493,6 +493,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div style="height:150px"></div>
 
 </div>
-<script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/RoleModalCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
 

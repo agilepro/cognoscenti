@@ -173,7 +173,7 @@ function parseList(inText) {
 
             <div class="d-flex col-9">
                 <div class="contentColumn">
-                    <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
+                    <span class="h6"><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></span>
 
                     <div class="well col-12 m-2" ng-hide="isFrozen">
                         <div ng-show="addressing">
@@ -185,22 +185,24 @@ function parseList(inText) {
         </div>
         <div class="row d-flex my-3">
             <span class="col-2">
-            <label class="h6">Message</label></span>
-            <span class="col-10"><textarea class="form-control" style="height:200px" ng-model="message"
-            placeholder="Enter a message to send to all invited people"></textarea></span>
-        </div>
-        <div class="row d-flex my-3">
-            <span class="col-2">
             <label class="h6">Role</label></span>
             <span class="col-10">
             <select class="form-control" ng-model="newRole"
                     ng-options="r for r in allRoles"></select>
             </span>
         </div>
-        <div>
-            <button ng-click="blastIt()" class="btn btn-sm btn-primary btn-raised" 
-                    ng-show="emailList"/>Send Invitations</button>
-            <button ng-click="addressing=false" class="btn btn-sm btn-raised"/>Close</button>
+        <div class="row d-flex my-3">
+            <span class="col-2">
+            <label class="h6">Message</label></span>
+            <span class="col-10"><textarea class="form-control" style="height:200px" ng-model="message"
+            placeholder="Enter a message to send to all invited people"></textarea></span>
+        </div>
+        
+        <div class="d-flex my-3">
+            <button ng-click="addressing=false" class="btn btn-danger btn-wide btn-flex me-auto">Close</button>
+            <button ng-click="blastIt()" class="btn-comment btn-flex btn-wide" 
+                    ng-show="emailList">Send Invitations</button>
+            
         </div>
     </div>
     <div  ng-hide="addressing">
@@ -214,9 +216,9 @@ function parseList(inText) {
  
 <% } %> 
 
-   <h2 class="h4">Previously Invited</h2>
+   <h2 class="h4 m-3">Previously Invited</h2>
 
-    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
+    <div><button class="btn btn-flex btn-secondary btn-raised m-3" ng-click="refresh()">Refresh List</button></div>
   
     <table class="table">
     <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>

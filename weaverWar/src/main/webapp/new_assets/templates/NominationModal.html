@@ -1,30 +1,37 @@
 
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
+<div class="modal-item"></div>
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h5 class="modal-title" id="attachDocumentLabel">
     Nominate Someone for a Role Term
-    </span>
+    </h5>
   </div>
-</div>
+
 
 <div class="modal-body">
-  <div class="col-sm-12 col-md-6">
-    <div class="form-group">
-        <label for="status">Nominator: (you)</label>
-        <input class="form-control" ng-model="nom.owner"/>
+  <div class="col-sm-12">
+    <div class="row form-group my-2">
+      <span class=" col-3">
+      <label for="status" class="h6">Nominator: (you)</label></span>
+      <span class="col-9">
+      <input class="form-control" ng-model="nom.owner"/>
+      </span>
     </div>
-    <div class="form-group">
-        <label for="status">Nominee:</label>
-        <input class="form-control" ng-model="nom.nominee"/>
+    <div class="row form-group my-2">
+      <span class=" col-3">
+        <label for="status" class="h6">Nominee:</label></span>
+        <span class="col-9">
+        <input class="form-control" ng-model="nom.nominee"/></span>
     </div>
-    <div class="form-group">
-        <label for="status">Reason:</label>
-        <textarea class="form-control" ng-model="nom.comment"></textarea>
+    <div class="row form-group my-2">
+        <span class=" col-3">
+        <label for="status" class="h6">Reason:</label></span>
+        <span class="col-9">
+        <textarea class="form-control" ng-model="nom.comment"></textarea></span>
     </div>
   </div>
-  <div class="col-sm-12 col-md-6">
-    <div class="guideVocal" >
+  <div class="col-sm-12">
+    <div class="guideVocal h6" >
        Choose someone who you think would be a good fit for the role of 
        {{parentScope.role.name}}.
        <br/>
@@ -33,10 +40,10 @@
        fit for the responsibilities involved.
     </div>
   </div>
-  <div style="clear:both"></div>
+
 </div>
 
-<div class="modal-footer">
-    <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
+<div class="modal-footer d-flex">
+    <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto">Cancel</button>
     <button ng-click="saveAndClose()" class="btn btn-primary btn-raised">Save</button>
 </div>

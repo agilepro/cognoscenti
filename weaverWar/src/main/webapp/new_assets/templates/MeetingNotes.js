@@ -70,10 +70,10 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
     $scope.editMode = "edit";
     $scope.agendaWiki = "";
     $scope.agendaHtml = "";
-    
+
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
-    
+
     $scope.ok = function () {
         $interval.cancel($scope.promiseAutosave);
         $scope.saveMinutes();
@@ -85,20 +85,20 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
         $modalInstance.dismiss('cancel');
     };
 
-    $scope.loadPersonList = function(query) {
+    $scope.loadPersonList = function (query) {
         return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
 
-    $scope.setMinutesData = function(data) {
+    $scope.setMinutesData = function (data) {
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         $scope.visitors = data.visitors;
-        data.minutes.forEach( function(newItem) {
+        data.minutes.forEach(function (newItem) {
             if (newItem.id == $scope.agendaId) {
                 updateItemData($scope.agendaData, newItem);
             }
         });
     }
-    
+
     function updateItemData(oldItem, newItem) {
         if (!newItem) {
             //strange, no information about the agenda item being edited
@@ -125,12 +125,12 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
                 $scope.agendaWiki = newItem.new;
                 $scope.agendaHtml = convertMarkdownToHtml(newItem.new);
             }
-        } 
+        }
         else if (newItem.new != oldItem.new) {
             //unfortunately, there are edits from someone else to 
             //merge in causing some loss from of current typing.
             if ($scope.autoMerge) {
-                console.log("merging new version from server.",newItem,oldItem);
+                console.log("merging new version from server.", newItem, oldItem);
                 oldItem.new = Textmerger.get().merge(oldItem.lastSave, oldItem.new, newItem.new);
                 oldItem.old = newItem.new;
                 if (newItem.new != $scope.agendaWiki) {
@@ -156,32 +156,32 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
         oldItem.timerStart = newItem.timerStart;
         oldItem.timerElapsed = newItem.timerElapsed;
         oldItem.duration = newItem.duration;
-        oldItem.title = newItem.title;   
+        oldItem.title = newItem.title;
     }
-    $scope.handleDeferred = function() {
+    $scope.handleDeferred = function () {
         $scope.isUpdating = false;
         if ($scope.deferredUpdate) {
             $scope.deferredUpdate = false;
             $scope.autosave();
         }
     }
-    $scope.getMeetingNotes = function() {
+    $scope.getMeetingNotes = function () {
         console.log("GETTING notes");
         $scope.isUpdating = true;
-        var postURL = "getMeetingNotes.json?id="+$scope.meetId;
+        var postURL = "getMeetingNotes.json?id=" + $scope.meetId;
         $http.get(postURL)
-        .success( function(data) {
-            $scope.setMinutesData(data);
-            $scope.handleDeferred();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-            $scope.handleDeferred();
-        });
-        
+            .success(function (data) {
+                $scope.setMinutesData(data);
+                $scope.handleDeferred();
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+                $scope.handleDeferred();
+            });
+
     }
     $scope.getMeetingNotes();
-    $scope.saveMinutes = function(min) {
+    $scope.saveMinutes = function (min) {
         if ($scope.isUpdating) {
             console.log("update was deferred because we are already updating");
             $scope.deferredUpdate = true;
@@ -189,7 +189,7 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
         }
         $scope.autosave();
     }
-    $scope.autosave = function() {
+    $scope.autosave = function () {
         console.log("AUTOSAVE");
         if ($scope.showError) {
             console.log("Autosave is turned off when there is an error.")
@@ -200,41 +200,41 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
             return;
         }
         $scope.isUpdating = true;
-        var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
-        var postRecord = {minutes:[]};
+        var postURL = "updateMeetingNotes.json?id=" + $scope.meetId;
+        var postRecord = { minutes: [] };
         $scope.agendaWiki = HTML2Markdown($scope.agendaHtml, {});
         $scope.agendaData.new = $scope.agendaWiki;
         if ($scope.agendaData.new != $scope.agendaData.old) {
-            postRecord.minutes.push( JSON.parse( JSON.stringify( $scope.agendaData )));
+            postRecord.minutes.push(JSON.parse(JSON.stringify($scope.agendaData)));
         }
         $scope.agendaData.lastSave = $scope.agendaData.new;
-        
+
         var postData = JSON.stringify(postRecord);
         $http.post(postURL, postData)
-        .success( function(data) {
-            $scope.setMinutesData(data);
-            $scope.handleDeferred();
-            if ($scope.readyToLeave) {
-                $modalInstance.close();
-            }
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-            $scope.handleDeferred();
-        });
+            .success(function (data) {
+                $scope.setMinutesData(data);
+                $scope.handleDeferred();
+                if ($scope.readyToLeave) {
+                    $modalInstance.close();
+                }
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+                $scope.handleDeferred();
+            });
     }
-	$scope.promiseAutosave = $interval($scope.autosave, 3000);
+    $scope.promiseAutosave = $interval($scope.autosave, 3000);
 
-    $scope.mergeNewData = function() {
+    $scope.mergeNewData = function () {
         $scope.isEditing = false;
         $scope.autosave();
     }
-    $scope.bodyStyle = function() {
+    $scope.bodyStyle = function () {
         if ($scope.agendaData && $scope.agendaData.needsMerge) {
-            return {"background-color":"orange","min-height":"400px"};
+            return { "background-color": "orange", "min-height": "400px" };
         }
         else {
-            return {"background-color":"white","min-height":"400px"};
+            return { "background-color": "white", "min-height": "400px" };
         }
     }
 

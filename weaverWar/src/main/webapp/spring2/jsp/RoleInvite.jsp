@@ -173,28 +173,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
             <div class="d-flex col-9">
                 <div class="contentColumn">
-                    <div class="well col-10 m-2" ng-hide="isFrozen">
+                    <span class="h6"><i>Add people to the project by entering their email address and name.</i></span>
+                    
+                    <div class="well col-12 m-2" ng-hide="isFrozen">
                         <div ng-show="addressing">
-                            <div><p><i>Add people to the project by entering their email address and name.</i></p></div>
-                        <div class="form-group">
-                            <label class="h6">Email Address</label>
-                            <input class="form-control" ng-model="newEmail"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="h6">Full Name</label>
-                            <input class="form-control" ng-model="newName"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="h6">Role</label>
-                            <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select>
-                        </div>
-                        <div class="form-group">
-                            <label class="h6">Message</label>
-                            <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
+                            <div class="row d-flex my-3">
+                                <span class="col-2">
+                                    <label class="h6">Email Address</label>
+                                </span>
+                                <span class="col-10"><input class="form-control" ng-model="newEmail"/>
+                                </span>
+                            </div>
+                            <div class="row d-flex my-3">
+                                <span class="col-2">
+                                <label class="h6">Full Name</label></span>
+                                <span class="col-10"><input class="form-control" ng-model="newName"/>
+                                </span>
+                            </div>
+                            <div class="row d-flex my-3">
+                                <span class="col-2">
+                                    <label class="h6">Role</label></span>
+                                <span class="col-10">
+                                    <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select></span>
+                            </div>
+                            <div class="row d-flex my-3">
+                                <span class="col-2">
+                                    <label class="h6">Message</label></span>
+                                <span class="col-10">
+                                    <textarea class="form-control" style="height:200px" ng-model="message"></textarea></span>
                         </div>
                         <div class="d-flex my-3">
-                            <button ng-click="addressing=false" class="btn btn-danger btn-wide btn-sm h6 me-auto">Close</button>
-                            <button ng-click="inviteOne()" class="btn-comment btn-wide btn-sm h6">Invite</button>
+                            <button ng-click="addressing=false" class="btn btn-danger btn-wide btn-flex h6 me-auto">Close</button>
+                            <button ng-click="inviteOne()" class="btn-comment btn-wide btn-flex h6">Send Invitation</button>
                             
                     </div>
                 </div>
@@ -207,9 +217,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>  
 <% } %> 
   
-  <h2 class="h4">Previously Invited</h2>
+  <h2 class="h4 m-3">Previously Invited</h2>
 
-    <div><button class="btn btn-sm btn-secondary btn-raised h6" ng-click="refresh()">Refresh List</button></div>
+    <div><button class="btn btn-flex btn-secondary btn-raised m-3" ng-click="refresh()">Refresh List</button></div>
 
   
     <table class="table">
