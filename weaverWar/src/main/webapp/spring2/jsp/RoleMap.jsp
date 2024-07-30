@@ -394,7 +394,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td></td>
             
             <td ng-repeat="user in allUsers" class="userColumn">
-                <img class="img-circle" 
+                <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{user.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{user.name}} - {{user.uid}}">

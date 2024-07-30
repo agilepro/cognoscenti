@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("Must be logged in to edit roles");
@@ -199,7 +199,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/RoleModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/RoleModal.html<%=templateCacheDefeater%>',
             controller: 'RoleModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -276,85 +276,65 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="SiteRoles.htm">
-              <span class="fa fa-group"></span> Manage Roles</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
-              <span class="fa fa-plus-square"></span> Create New Role</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row d-flex">
+        <div class="col-md-3 fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
+                <a class="nav-link" role="menuitem" tabindex="-1" href="SiteRoles.htm">
+                    <span class="fa fa-group"></span> Manage Roles
+                </a>
+            </span>
+            <span role="presentation" class="divider"></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
+                <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+                    <span class="fa fa-plus-square"></span> Create New Role
+                </a>
+            </span>
+        </div>
 
-    <style>
-    .spacey tr td{
-        padding: 8px;
-    }
-    .spacey tr:hover {
-        background-color:lightgrey;
-    }
-    .spacey {
-        width: 100%;
-    }
-    </style>
-    
-    <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
-    <table class="spacey table">
-        <tr ng-repeat="role in allRoles">
-            <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn"
-                        type="button" id="menu4" data-toggle="dropdown">
-                    <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu4">
-                  <li role="presentation"><a role="menuitem" 
-                      ng-click="openRoleModal(role)">
-                      <span class="fa fa-edit"></span> Edit All Players </a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a role="menuitem" 
-                      ng-click="deleteRole(role)">
-                      <span class="fa fa-times"></span> Delete Role</a></li>
+
+        <div class="d-flex col-9">
+            <div class="contentColumn">
+                <div class="container-fluid">
+                    <div class="generalContent">
+                        <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
+        <div class="row d-flex" ng-repeat="role in allRoles">
+            <span class="col-1 nav-item dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button" id="roleMembers" data-toggle="dropdown">
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item"  ng-click="openRoleModal(role)">
+                        <span class="fa fa-edit"></span> Edit All Players </a>
+                    </li>
+                    <li><a class="dropdown-item" role="menuitem" ng-click="deleteRole(role)">
+                        <span class="fa fa-times"></span> Delete Role</a>
+                    </li>
                 </ul>
-              </div>
-            </td>
-            <td ng-dblclick="openRoleModal(role)">
-                <div style="color:black;background-color:{{role.color}};padding:5px">
-                    {{role.name}}</div>
-            </td>
-            <td style="width:200px">
+            </span>
+            <span class="col-2" ng-dblclick="openRoleModal(role)">
+                <div class="h6" style="color:black;background-color:{{role.color}};padding:5px">{{role.name}}</div>
+            </span>
+            <span class="col-3 p-0">
                 <span ng-repeat="player in role.players">
-                  <span class="dropdown" >
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
-                         style="width:32px;height:32px" 
-                         title="{{player.name}} - {{player.uid}}">
+                    <span class="dropdown" >
+                        <ul id="navbar-btn list-inline">
+                            <li class="nav-item dropdown d-inline" id="user" data-toggle="dropdown">
+                                <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" title="{{player.name}} - {{player.uid}}">
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                                    <li role="presentation" style="background-color:lightgrey; float:left;"><a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">{{player.name}}<br/>{{player.uid}}</a></li>
+                                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(player)"><span class="fa fa-user"></span> Visit Profile</a></li>
+                                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="openInviteSender(player)"><span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
+                                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="openRoleModal(role)">
+                                        <span class="fa fa-edit"></span> Edit All Players </a></li>
+                                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="removePlayer(role, player)"><span class="fa fa-times"></span> Remove from Role </a></li>
+                                </ul>
+                            </li>
+                        </ul>
                     </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
-                          {{player.name}}<br/>{{player.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(player)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="openInviteSender(player)">
-                          <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="openRoleModal(role)">
-                          <span class="fa fa-edit"></span> Edit All Players </a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="removePlayer(role, player)">
-                          <span class="fa fa-times"></span> Remove from Role </a></li>
-                    </ul>
-                  </span>
                 </span>
-            </td>
-            <td  ng-dblclick="openRoleModal(role)">
+            </span>
+
+            <span class="col-5" ng-dblclick="openRoleModal(role)">
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     {{role.description}}
@@ -366,15 +346,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <b>Eligibility:</b><br/>
                     {{role.requirements}}
                 </div>
-            </td>
-        </tr>
-    </table>
+            </span>
+        </div>
+    </div>
+</div>
 
-    <button class="btn btn-primary btn-raised" ng-click="openRoleModal(null)" style="float:right;">
-        <span class="fa fa-plus"></span> Create Role</button>
-        
-    <div style="height:150px"></div>
 
 </div>
-<script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/RoleModalCtrl.js"></script>
 

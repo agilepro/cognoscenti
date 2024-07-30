@@ -52,7 +52,7 @@
           <td  title="Name of the participant">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle" 
+                <img class="rounded-5" 
                      ng-src="<%=ar.retPath%>icon/{{pers.key}}.jpg" 
                      style="width:32px;height:32px" 
                      title="{{pers.name}} - {{pers.uid}}">

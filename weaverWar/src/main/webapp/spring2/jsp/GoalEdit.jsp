@@ -633,7 +633,7 @@ function addvalue() {
                 <div ng-repeat="player in goalInfo.assignTo"  style="height:40px">
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" 
+                    <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
@@ -855,7 +855,7 @@ function updateVal(){
                     </tr>
                     <tr ng-repeat="rec in allHist">
                         <td class="projectStreamIcons"  style="padding:10px;">
-                            <img class="img-circle" src="<%=ar.retPath%>icon/{{rec.responsible.key}}.jpg"
+                            <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.responsible.key}}.jpg"
                                  alt="" width="50" height="50" /></td>
                         <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                             {{rec.time|cdate}} -

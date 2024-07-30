@@ -158,7 +158,7 @@ app.filter('encode', function() {
       <tr ng-repeat="value in findUsers()" 
           ng-click="visitUser(value.info.uid)">
         <td>
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
+            <img class="rounded-5" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
                  style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
         </td>
         <td>{{value.info.name}}</td>

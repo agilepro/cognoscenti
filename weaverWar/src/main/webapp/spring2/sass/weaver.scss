@@ -424,6 +424,49 @@ a {
         cursor: pointer;
     }
 }
+
+.btn-tiny {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    border: $primary 1px solid;
+    border-radius: 10px;
+    position: unset;
+    
+    font-size: .9rem;
+    font-weight: 500;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.fixed-width-xs {
+    width: 30px !important;
+    
+}
+.specCaretBtn {
+    width: 25px;
+    height: 25px;
+    padding: 0px !important;
+    background-image: none;
+    border: 2px solid $primary;
+    border-radius: 4px;
+    color: $primary;
+    background-color: #fff;
+    border-color: #ccc;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.specCaretBtn span {
+    margin: 0px;
+    padding: 0px;
+}
+
 .btn-wide {
     width: fit-content;
     flex-grow: 5;
@@ -620,7 +663,11 @@ a {
         margin-bottom: 20px;
         width:500px;
     }
-
+.decisionDate {
+    font-weight: bold;
+    color: #4d2f5e;
+    font-style: italic;
+}
 //from MeetingHtml.jsp
 
 .blankTitle {

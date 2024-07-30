@@ -297,7 +297,7 @@ function copyTheLink() {
     <div>
         {{docInfo.modifiedtime|cdate}} &nbsp;
         <span class="dropdown">
-            <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.uid}}.jpg" 
+            <img class="rounded-5" src="<%=ar.retPath%>icon/{{creator.uid}}.jpg" 
                  style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}"/>
         </span> &nbsp;
         <span ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>

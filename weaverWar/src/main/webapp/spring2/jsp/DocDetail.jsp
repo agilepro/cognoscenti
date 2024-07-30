@@ -371,7 +371,7 @@ function copyTheLink() {
                 <span class="col-4 dropdown">
                     <ul class="navbar-btn p-0">
                     <li class="nav-item dropdown" id="user" data-toggle="dropdown">
-                        <img class="img-circle" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
+                        <img class="rounded-5" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
                         <ul class="dropdown-menu" role="menu" aria-labelledby="user">
                             <li role="presentation" style="background-color:lightgrey">
                                 <a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">
@@ -520,7 +520,7 @@ function copyTheLink() {
                 <span class="col-2 dropdown" >
                     <ul class="navbar-btn p-0 list-inline">
                         <li class="nav-item dropdown" id="user2" data-toggle="dropdown">
-                            <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" style="width:32px;height:32px" title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+                            <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{hist.responsible.uid}}.jpg" style="width:32px;height:32px" title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
                             <ul class="dropdown-menu" role="menu" aria-labelledby="user">
                                 <li role="presentation" style="background-color:lightgrey">
                                   <a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">

@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             <td class="projectStreamIcons" style="padding-bottom:20px;">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
-                  <img class="img-circle pe-2" 
+                  <img class="rounded-5 pe-2" 
                      ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg" 
                      style="width:50px;height:50px" 
                      title="{{hist.responsible.name}} - {{hist.responsible.uid}}">

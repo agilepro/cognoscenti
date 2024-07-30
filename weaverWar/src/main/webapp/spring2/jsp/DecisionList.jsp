@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="java.util.Date"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
@@ -221,7 +221,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: "<%=ar.retPath%>templates/DecisionModal.html?t="+new Date().getTime(),
+            templateUrl: "<%=ar.retPath%>new_assets/templates/DecisionModal.html?t="+new Date().getTime(),
             controller: 'DecisionModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -251,9 +251,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return {"color":"red","font-weight": "bold"};
         }
         else if (daysLeft<14) {
-            return {"color":"orange","font-weight": "bold"};
+            return {"color":"#aa70b1","font-weight": "bold"};
         }
-        return {"color":"lightgrey"};
+        return {"color":"#bf94c5","font-style": "italic"};
     }
     
     $scope.advanceDate = function(decision) {
@@ -334,20 +334,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
              style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
                 <td style="padding:3px;vertical-align:top;margin:5px;">
 <% if (canUpdate) { %>
-                  <div class="dropdown" style="padding:4px">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation"><a role="menuitem" tabindex="-1"
-                          ng-click="openDecisionEditor(rec)" 
-                          title="Open the decision edit box.">
-                          Edit Decision</a></li>
-                      <li role="presentation"><a role="menuitem" tabindex="-1"
-                          ng-click="advanceDate(rec)" translate
-                          title="Sets the review date to be one year later than currently set">
-                          Advance Review Date 1 Year</a></li>
-                    </ul>
-                  </div>
+    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+        <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item"  role="menuitem" tabindex="-1" ng-click="openDecisionEditor(rec)" title="Open the decision edit box.">Edit Decision</a></li>
+                <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="advanceDate(rec)" translate title="Sets the review date to be one year later than currently set">Advance Review Date 1 Year</a></li>
+            </ul>
+        </li>
+    </ul>
 <% } %>
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;" id="DEC{{rec.num}}">
@@ -355,7 +349,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;">
                   <div class="leafContent" style="padding:0px">
-                    <div id="{{rec.id}}_1" style="max-width:800px;width:100%;color:#88F;margin:2px;vertical-align:bottom;">
+                    <div id="{{rec.id}}_1" class="decisionDate">
                         <div class="taskOverview">
                             <i>{{rec.timestamp|cdate}}</i>
                             <span ng-repeat="label in getGoalLabels(rec)">
@@ -397,11 +391,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </div>
 
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DecisionModal.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
 
 
 

@@ -742,7 +742,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <div class="row" ng-repeat="person in otherMembers">
                         <ul class="navbar-btn">
                             <li class="nav-item dropdown" id="members" data-toggle="dropdown">
-                                <img class="img-circle" src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">&nbsp; &nbsp;{{person.name}} 
+                                <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">&nbsp; &nbsp;{{person.name}} 
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="members">
                                     <li style="background-color:lightgrey">
                                         <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">{{person.name}}<br/>{{person.uid}}</a></li>

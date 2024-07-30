@@ -66,7 +66,7 @@
           style="text-align:center">
           <span class="dropdown" >
             <span id="menu1" data-toggle="dropdown">
-            <img class="img-circle" 
+            <img class="rounded-5" 
                  ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}">

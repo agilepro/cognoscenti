@@ -1117,14 +1117,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <div style="height:15px"></div>
         <div ui-tinymce="tinymceOptions" ng-model="htmlEditing"></div>
         <div style="height:15px"></div>
-        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)" 
+        <button class="btn btn-primary btn-raised my-3" ng-click="mergeUpdateDoc(false)" 
                 ng-show="changesToSave">Save & Close</button>
-        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)"
+        <button class="btn btn-primary btn-raised my-3" ng-click="mergeUpdateDoc(false)"
                 ng-hide="changesToSave">Close Editor</button>
         <button ng-show="changesToMerge" class="btn btn-warning btn-raised" 
             ng-click="mergeFromOthers()">Merge Edits from other Users</button>
-        <span ng-hide="changesToSave">{{saveNotice}}</span>
-        <span ng-show="changesToSave">Changes will be saved in {{secondsTillSave}} seconds.</span>
+        <span ng-hide="changesToSave" class="h6">{{saveNotice}}</span>
+        <span ng-show="changesToSave" class="h6">Changes will be saved in {{secondsTillSave}} seconds.</span>
     </div>
 <% } %>
 
@@ -1144,12 +1144,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <span class="col-9" ng-dblclick="openAttachDocument()">
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
             <span ng-show="doc.attType=='FILE'">
-                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png"></span>
               &nbsp;
                 <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
             </span>
             <span  ng-show="doc.attType=='URL'">
-                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconUrl.png"></span>
               &nbsp;
                 <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
             </span>
@@ -1179,7 +1179,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                   <span class="dropdown" >
                     <ul class="navbar-btn p-0 list-inline">
                         <li class="nav-item dropdown" id="user" data-toggle="dropdown">
-                            <img class="img-circle" 
+                            <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{person.name}} - {{person.uid}}">
@@ -1215,27 +1215,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <div class="col-2 labelColumn ms-3" ng-click="startSubscriberEdit()">Subscribers:</div>
     <div class="col-9" ng-click="editMeetingPart='subscribers'">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
-            <ul class="navbar-btn p-0 list-inline">
-                <li class="nav-item dropdown" id="users" data-toggle="dropdown">
+            <ul class="nav-item dropdown d-inline">
+                <li class="nav-item dropdown d-inline m-3" id="users" data-toggle="dropdown">
                     <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
-                 title="{{player.name}} - {{player.uid}}" class="img-circle" />
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="users">
-                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{player.name}}<br/>{{player.uid}}</a></li>
-                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(player)">
+                 title="{{player.name}} - {{player.uid}}" class="rounded-5" />
+                    <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="users">
+                        <li role="presentation" style="float:left"><a class="dropdown-item" role="menuitem"  tabindex="0" style="text-decoration: none;text-align:center"> {{player.name}}<br/>{{player.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(player)">
                             <span class="fa fa-user"></span> Visit Profile</a></li>
                     </ul>
                 </li>
             </ul>
         </span>
         <span ng-repeat="outcast in nonMembers">
-            <ul class="navbar-btn p-0 list-inline">
-                <li class="nav-item dropdown" id="outcast" data-toggle="dropdown">
-                    <img src="<%=ar.retPath%>icon/{{outcast.key}}" title="{{outcast.name}} - {{outcast.uid}}" class="img-circle" />
+            <ul class="nav-item dropdown d-inline">
+                <li class="nav-item dropdown d-inline" id="outcast" data-toggle="dropdown">
+                    <img src="<%=ar.retPath%>icon/{{outcast.key}}" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" />
                     <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
-                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
-                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
-                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
+                        <li role="presentation" style="float: left;"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
+                        <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                        <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
                         <span class="fa fa-user"></span> Add to Members</a></li>
                     </ul>
                 </li>
@@ -1262,7 +1262,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <div class="row d-flex">
     <span class="nav-item dropdown" ng-hide="noteInfo.draft">
         <button class="btn btn-primary btn-raised dropdown-toggle" type="button" id="phases" data-toggle="dropdown">{{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+        <ul class="dropdown-menu" role="menu" aria-labelledby="phases">
             <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item" role="menuitem" ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
         </ul>
     </span> 

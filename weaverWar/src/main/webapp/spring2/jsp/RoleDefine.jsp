@@ -174,7 +174,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="row">
         <div class="col-md-6 col-sm-12">
             <div class="form-group d-flex col-11 m-2">
-                <label for="synopsis" class="col-md-3 control-label h6">Description: <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span></label>
+                <label for="synopsis" class="col-md-3 control-label h5">Description: <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span></label>
                 
                 <textarea ng-model="role.description" class=" form-control markDownEditor" placeholder="Enter description"></textarea>
             </div>
@@ -185,7 +185,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 succinct and explain in 3 sentences or less.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2">
-                <label for="synopsis" class="col-md-3 control-label h6">Eligibility: <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span></label>
+                <label for="synopsis" class="col-md-3 control-label h5">Eligibility: <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span></label>
                 
                 <textarea ng-model="role.requirements" class="form-control markDownEditor" placeholder="Enter requirements"></textarea>
             </div>
@@ -196,7 +196,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 of time before they can be considered for the roles.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2">
-                <label for="updateCheck" class="col-md-3 control-label h6">Can Update: <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
+                <label for="updateCheck" class="col-md-3 control-label h5">Can Update: <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
                 
                 <input type="checkbox" id="updateCheck" ng-model="role.canUpdateWorkspace" class="checkbox-lg "/>
             </div>
@@ -218,7 +218,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
             </div>
 <hr>            <div class="form-group d-flex col-11 m-2">
-                <label for="synopsis" class="col-md-4 control-label h6">Responsibilities: <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span></label>
+                <label for="synopsis" class="col-md-4 control-label h5">Responsibilities: <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span></label>
                 <div class="form-group col-10 m-2">
                 <div class="row  align-middle" ng-repeat="aresp in role.responsibilities" >
                     <span class="actions col-1 m-0">
@@ -264,14 +264,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         
         <div class="col-md-6 col-sm-12">
-            <div class="form-group d-flex col-12 m-2">
-                <label for="synopsis" class="row control-label h6">Terms of Office: <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span></label>
+            <div class="form-group col-12 m-2">
+                <label for="synopsis" class="col-10 control-label h5">Terms of Office: <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span></label>
             </div>
-            <div class="row form-group col-12 d-flex  m-2">
+            <div class="row form-group col-12 d-flex m-2">
                 <span class="col-1"></span>
-                <span class="col-2">Start</span>
-                <span class="col-2">End</span>
-                <span class="col-4">State</span>
+                <span class="col-2 h6">Start</span>
+                <span class="col-2 h6">End</span>
+                <span class="col-4 h6">State</span>
                 <span class="col-1"></span>
             </div>
             <div class="row form-group col-12 d-flex m-2" ng-repeat="aterm in role.terms" >
@@ -298,8 +298,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         </button>
                     </span>
             </div>
-            <div ng-show="role.terms.length==0" class="guideVocal">
-                    There are no designated terms for this role.  Create one!<br/>
+            <div ng-show="role.terms.length==0" class="guideVocal h6"><em>
+                    There are no designated terms for this role.  Create one!</em><br/>
             </div>              
     <div class="row form-group col-12 d-flex m-2">
 <% if (canUpdate) { %>

@@ -1,106 +1,110 @@
 
-    <div class="modal-item"></div>
-    <div class="modal-header bg-primary-subtle text-primary">
-      <h5 class="modal-title" id="attachDocumentLabel">Create Role</h5>
-  
-    </div>
-
-    <span ng-click="editMode='expert'" ng-hide="isNew"
-          ng-class="editMode=='expert'?'qqTabSelected':'qqTabUnselected'">
-        <span>Advanced</span>
+<div class="modal-item"></div>
+<div class="modal-header bg-primary-subtle text-primary">
+    <span ng-click="editMode='main'" ng-class="editMode=='main'?">
+        <span class="modal-title h5" id="EditRole" ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
+        <span class="modal-title h5" id="creatNew" ng-show="isNew">Create Role</span>
     </span>
 
+</div>
 
-<div class="modal-body" style="max-height:600px; overflow: auto">
-    <table ng-hide="isNew || editMode=='expert'" class="spaceyTable">
-        <tr>
-            <td ><label>Color:</label></td>
-            <td>
-                <table><tr><td>
-                <div style="position:relative">
-                <button class="btn btn-default btn-raised dropdown dropdown-toggle" type="button"
-                        id="menu3"
-                    data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
-                {{roleInfo.color}} <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu3">
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="row col-12">
+        <div ng-hide="isNew || editMode=='expert'" >
+            
+            <div class="row d-flex">
+                <div class="form-group d-flex col-12 m-2">
+                    <label class="col-4 control-label h6">Color:</label>
+                    <span class="nav-item dropdown d-inline col-4" style="position:relative">
+                        <button class="btn btn-wide btn-raised dropdown dropdown-toggle" type="button"
+                        id="menu3" data-toggle="dropdown" style="background-color:{{roleInfo.color}};">{{roleInfo.color}} <span class="caret"></span></button>
+                        <ul class="dropdown-menu p-2 col-4" role="menu" aria-labelledby="menu3" style="width:320px;height:max-content;">
                     <li role="presentation" ng-repeat="color in colors">
-                        <a role="menuitem" style="background-color:{{color}};"
+                        <a  class="m-1 p-1" role="menuitem" style="background-color:{{color}};float:left;"
                         ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
-                </ul>
+                        </ul>
+                    </span>
+                    <span class="col-md-3 control-label h6">Access: {{accessType()}}</span>
                 </div>
-                </td><td>Access: {{accessType()}}</td>
-                </tr></table>
-            </td>
-            <td style="width:30px;"></td>
-        </tr>
-        <tr>
-            <td ><label>Players:</label></td>
-            <td colspan="2">
-              <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
-                          display-property="name" key-property="uid" 
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-              </tags-input>
-            </td>
-        </tr>
-        <tr>
-             <td class="gridTableColummHeader">Description:</td>
-             <td colspan="2">
-                 <div ng-bind-html="roleInfo.description|wiki"></div>
-             </td>
-        </tr>
-        <tr>
-             <td >Term:</td>
-             <td colspan="2">
-                 <span ng-show="currentTerm">
-                      {{currentTerm.termStart | date}} to {{currentTerm.termEnd | date}}.
-                      Nomination status is {{currentTerm.state}}</span>
-                 <span ng-hide="currentTerm">
-                     <i>No current term has been set for this role.  Role players are perpetual.</i></span>
-             </td>
-        </tr>
-        <tr>
-             <td >Responsibilities:</td>
-             <td colspan="2">
-                 <div ng-repeat="resp in roleInfo.responsibilities">
-                      <div ng-bind-html="resp.text|wiki"></div> </div>
-                 <div ng-show="roleInfo.responsibilities.length==0">
-                     <i>No responsibilities have been set for this role.</i></div>
-             </td>
-        </tr>
-    </table>
-    <table ng-hide="isNew || editMode=='main'" class="spaceyTable">
-        <tr>
-            <td ><label>Email:</label></td>
-            <td>
-                <div ng-repeat="player in roleInfo.players">
-                    {{player.uid}}
+                <div class="form-group d-flex col-12 m-2">
+                    <label class="col-4 control-label h6">Players:</label>
+                    <span class="col-8">
+                        <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id" display-property="name"  key-property="uid"  replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()" on-tag-removed="updatePlayers()">
+                        <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                        </tags-input>
+                    </span>
                 </div>
-            </td>
-            <td >
-                <div ng-repeat="player in roleInfo.players">
-                    {{player.name}}
+                <div class="form-group d-flex col-12 m-2">
+                    <span class="col-4 h6 gridTableColummHeader">Description:</span>
+                    <span class="col-8">
+                        <div ng-bind-html="roleInfo.description|wiki"></div>
+                    </span>
                 </div>
-            </td>
-        </tr>
-        <tr>
-             <td >Linked to:</td>
-             <td ng-show="roleInfo.linkedRole">
-                 {{roleInfo.linkedRole}}
-             </td>
-             <td ng-show="roleInfo.linkedRole">
-                 <button ng-click="unLink()" class="btn button-default btn-raised">Unlink</button>
-             </td>
-             <td ng-hide="roleInfo.linkedRole">
-                 <input ng-model="newLinkName" class="form-control" style="width:200px">
-             </td>
-             <td ng-hide="roleInfo.linkedRole">
-                 <button ng-click="makeLink()" class="btn button-default btn-raised">Make Link</button>
-             </td>
-        </tr>
-    </table>
+                <div class="form-group d-flex col-12 m-2">
+                    <span class="col-4 h6" >Term:</span>
+                    <span class="col-8">
+                        <span ng-show="currentTerm">
+                        {{currentTerm.termStart | date}} to {{currentTerm.termEnd | date}}.
+                        Nomination status is {{currentTerm.state}}</span>
+                        <span ng-hide="currentTerm">
+                            <i>No current term has been set for this role.  Role players are perpetual.</i>
+                        </span>
+                    </span>
+                </div>
+                <div class="form-group d-flex col-12 m-2">
+                    <span class="col-4 h6" >Responsibilities:</span>
+                    <span class="col-8">
+                        <div ng-repeat="resp in roleInfo.responsibilities">
+                            <div ng-bind-html="resp.text|wiki"></div> 
+                        </div>
+                        <div ng-show="roleInfo.responsibilities.length==0">
+                            <i>No responsibilities have been set for this role.</i>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <div class="card d-flex" >
+                <div class="card-body">
+                    <span class="h5">Advanced</span>
+                </div>
+                <div class="form-group d-flex col-12 m-2">
+                    <span class="col-2 h6" >    <label>Email:</label></span>
+                    <span class="col-6">
+                        <div ng-repeat="player in roleInfo.players">
+                        {{player.uid}}
+                        </div>
+                    </span>
+                    <span class="col-4 h6"  >
+                        <div ng-repeat="player in roleInfo.players">
+                        {{player.name}}
+                        </div>
+                    </span>
+                </div>
+                <div class="form-group d-flex col-12 m-2">
+                    <span class="col-2 h6" >Linked to:</span>
+                    <span class="col-8" ng-show="roleInfo.linkedRole">
+                    {{roleInfo.linkedRole}}
+                    </span>
+                    
+                    <span class="col-6" ng-hide="roleInfo.linkedRole">
+                        <input ng-model="newLinkName" class="form-control">
+                    </span>
+                    <span class="col" ng-hide="roleInfo.linkedRole">
+                        <button ng-click="makeLink()" class="btn btn-raised btn-comment btn-secondary ms-1" >Make Link</button>
+                    </span>
+                    <span class="col" ng-show="roleInfo.linkedRole">
+                        <button ng-click="unLink()" class="btn btn-raised btn-sm btn-secondary ms-0">Unlink</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="isNew || editMode=='main'">
+            <div class="row d-flex">
+                <div class="form-group d-flex col-12 m-2" >
+                    
+                    
     <table class="spaceyTable" ng-show="isNew">
         <tr><td style="height:10px" colspan="3"></td></tr>
         <tr>
@@ -114,7 +118,7 @@
             <td style="max-width:500px">
                <span class="instruction">First create the role, then add member to it.  
                   Role names can not be changed.  Copy a role to change its name.
-                  The name should be short and should use only letters and numbers.</scan>
+                  The name should be short and should use only letters and numbers.</span>
             </td>
         </tr>
         <tr>
@@ -130,7 +134,7 @@
  
 </div>
 <div class="modal-footer">
-    <button class="me-auto btn btn-danger" type="button" ng-click="cancel()">Cancel</button>
+    <button class="me-auto btn btn-secondary" type="button" ng-click="cancel()">Exit</button><span class="h6" ng-hide="isNew">Clicking Exit will save your changes</span>
     <button ng-click="createAndClose()" class="btn btn-primary btn-raised" ng-show="isNew">Create Role</button>
 </div>
 

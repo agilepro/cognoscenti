@@ -193,7 +193,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         <tr class="gridTableHeader">
             <th width="200px">Meeting</th>
             <th width="200px">Date ({{browserZone}})</th>
-            <th ng-repeat="user in foundUsers" class="centerCell"><img class="img-circle" 
+            <th ng-repeat="user in foundUsers" class="centerCell"><img class="rounded-5" 
                 src="<%=ar.retPath%>icon/{{user.key}}.jpg" 
                 style="width:32px;height:32px" 
                 title="{{user.name}} - {{user.uid}}"></th>

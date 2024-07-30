@@ -406,7 +406,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <span ng-repeat="player in role.players">
                   <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" 
+                    <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
@@ -435,7 +435,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <div ng-repeat="player in role.players"  style="height:40px">
                   <span class="dropdown" >
                     <span id="playerRole" data-toggle="dropdown">
-                    <img class="img-circle" 
+                    <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">

@@ -254,9 +254,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <div>
                 <img src="<%ar.writeHtml(photoSrc);%>" width="100" height="100" alt="user photo" />
                 &nbsp; &nbsp;
-                <img src="<%ar.writeHtml(photoSrc);%>" class="img-circle" style="width:50px;height:50px" alt="user photo" />
+                <img src="<%ar.writeHtml(photoSrc);%>" class="rounded-5" style="width:50px;height:50px" alt="user photo" />
                 &nbsp; &nbsp;
-                <img src="<%ar.writeHtml(photoSrc);%>" class="img-circle" style="width:32px;height:32px" alt="user photo" />
+                <img src="<%ar.writeHtml(photoSrc);%>" class="rounded-5" style="width:32px;height:32px" alt="user photo" />
               </div>
               <div ng-show="editField=='icon'">
                 <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >

@@ -49,7 +49,7 @@
                     <ul class="navbar-btn" >
                       <span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)">Presenter:</span>
                       <li class="nav-item dropdown" id="presenter" data-toggle="dropdown"> 
-                        <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" style="width:32px;height:32px" title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; {{presenter.name}}
+                        <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" style="width:32px;height:32px" title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; {{presenter.name}}
                         <ul class="dropdown-menu" role="menu" aria-labelledby="presenter">
                           <li style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" tabindex="-1" >{{presenter.name}}<br/>{{presenter.uid}}</a>
                         </li>
@@ -162,7 +162,7 @@
                 <span class="ms-auto" ng-repeat="person in goal.assignTo">
                   <span class="dropdown" >
                     <span id="menuMbrs" data-toggle="dropdown">
-                      <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                      <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menuMbrs">
                       <li role="presentation" class="bg-secondary-10"><a role="menuitem" tabindex="-1">{{person.name}}<br/>{{person.uid}}</a></li>

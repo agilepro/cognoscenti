@@ -363,7 +363,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td>
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
-                <img class="img-circle" 
+                <img class="rounded-5" 
                      ng-src="<%=ar.retPath%>icon/{{rec.user.uid}}.jpg" 
                      style="width:32px;height:32px" 
                      title="{{rec.user.name}} - {{rec.user.uid}}">
