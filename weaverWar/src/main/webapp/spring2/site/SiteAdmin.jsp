@@ -6,130 +6,215 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><% 
 
-    ar.assertLoggedIn("");
-    Cognoscenti cog = ar.getCogInstance();
-    String siteId = ar.reqParam("siteId");
-    NGBook  site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    JSONObject siteInfo = site.getConfigJSON();
+ar.assertLoggedIn("");
+Cognoscenti cog = ar.getCogInstance();
+String siteId = ar.reqParam("siteId");
+NGBook  site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+JSONObject siteInfo = site.getConfigJSON();
 
-    WorkspaceStats wStats = site.getRecentStats();
+WorkspaceStats wStats = site.getRecentStats();
 
- 
+
 %> 
 
 <script type="text/javascript">
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Site Administration");
-    $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
-    $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
-    $scope.newName = $scope.siteInfo.names[0];
-    $scope.colorList = $scope.siteInfo.labelColors.join(",");
+window.setMainPageTitle("Site Administration");
+$scope.siteInfo = <%siteInfo.write(out,2,4);%>;
+$scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
+$scope.newName = $scope.siteInfo.names[0];
+$scope.colorList = $scope.siteInfo.labelColors.join(",");
 
-    $scope.showError = false;
-    $scope.errorMsg = "";
-    $scope.errorTrace = "";
-    $scope.showTrace = false;
-    $scope.reportError = function(serverErr) {
-        errorPanelHandler($scope, serverErr);
+
+$scope.changePeople = function(amt) {
+    $scope.siteInfo.editUserLimit = $scope.siteInfo.editUserLimit + amt;
+    if ($scope.siteInfo.editUserLimit < 1) {
+        $scope.siteInfo.editUserLimit = 1
+    }
+    $scope.saveSiteInfo();
+}
+$scope.changeWS = function(amt) {
+    $scope.siteInfo.workspaceLimit = $scope.siteInfo.workspaceLimit + amt;
+    if ($scope.siteInfo.workspaceLimit < 1) {
+        $scope.siteInfo.workspaceLimit = 1
+    }
+    $scope.saveSiteInfo();
+}
+
+function positive(a,b) {
+    if (a>0) {
+        return a;
+    }
+    else {
+        return null;
+    }
+}
+
+$scope.calc = function() {
+    $scope.comp = {
+        editUserCount: 1,
+        numActive: 1,
+    };
+    $scope.actual = {
+        editUserCount: $scope.siteStats.editUserCount,
+        numActive: $scope.siteStats.numActive,
+        observerCount: $scope.siteStats.numActive,
+        documentLimit: $scope.siteStats.sizeDocuments/1000000,
+        numFrozen: $scope.siteStats.numFrozen
     };
     
-    $scope.chargeCreator = 3;
-    $scope.chargeReader = 0;
-    $scope.chargeActive = 0;
-    $scope.chargeFrozen = 0;
-    $scope.chargeDocument = 0;
-    $scope.chargeEmail = 0;
-    
-    $scope.removeName = function(oldName) {
-        $scope.siteInfo.names = $scope.siteInfo.names.filter( function(item) {
-            return (item!=oldName);
-        });
+    //while ($scope.actual.documentLimit > 500 * $scope.actual.editUserCount) {
+    //    $scope.actual.editUserCount++;
+    //}
+    while ($scope.siteStats.numActive > 20 * $scope.actual.editUserCount) {
+        $scope.actual.editUserCount++;
     }
-    $scope.addName = function(newName) {
-        $scope.removeName(newName);
-        $scope.siteInfo.names.splice(0, 0, newName);
+    while ($scope.siteStats.numFrozen > 4 * $scope.actual.numActive) {
+        $scope.actual.numActive++;
     }
     
-    $scope.saveSiteInfo = function() {
-        if ($scope.siteInfo.names.length===0) {
-            alert("Site must have at least one name at all times.  Please add a name.");
-            return;
-        }
-        var rawList = $scope.colorList.split(",");
-        if (rawList.length>2) {
-            var newList = [];
-            rawList.forEach( function(item) {
-                newList.push(item.trim());
-            });
-            $scope.siteInfo.labelColors = newList;
-        }
-        var postURL = "updateSiteInfo.json";
-        var postdata = angular.toJson($scope.siteInfo);
-        $scope.showError=false;
-        $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.setSiteInfo(data);
-            $scope.isEditing = '';
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-            $scope.isEditing = '';
-        });
+    $scope.included = {
+        editUserCount: $scope.comp.editUserCount,
+        numActive: $scope.comp.numActive,
+        observerCount: 20 * $scope.actual.editUserCount,
+        documentLimit: 500 * $scope.actual.editUserCount,
+        numFrozen: 4 * $scope.actual.numActive
+    };
+    $scope.overflow = {
+        editUserCount: positive(
+                $scope.actual.editUserCount - $scope.included.editUserCount),
+        numActive: positive(
+                $scope.actual.numActive - $scope.included.numActive),
+        observerCount: positive(
+                $scope.actual.observerCount - $scope.included.observerCount),
+        documentLimit: positive(
+                $scope.actual.documentLimit - $scope.included.documentLimit),
+        numFrozen: positive(
+                $scope.actual.numFrozen - $scope.included.numFrozen)
+    };
+    $scope.costs = {
+        editUserCount: $scope.overflow.editUserCount,
+        numActive: 2 * $scope.overflow.numActive,
+        observerCount: $scope.overflow.observerCount,
+        documentLimit: $scope.overflow.documentLimit/1000,
+        numFrozen: $scope.overflow.numFrozen
     };
     
-    $scope.setSiteInfo = function(info) {
-        $scope.siteInfo = info;
-        $scope.siteInfo.workspaceLimit = $scope.siteInfo.editUserLimit;
-        $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
-        $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
-        $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
-            
-        $scope.limitCharge = $scope.siteInfo.frozenLimit * $scope.chargeFrozen
-            + $scope.siteInfo.workspaceLimit * $scope.chargeActive
-            + $scope.siteInfo.viewUserLimit * $scope.chargeReader
-            + ($scope.siteInfo.editUserLimit-1) * $scope.chargeCreator
-            + $scope.siteInfo.fileSpaceLimit * $scope.chargeDocument;
-        $scope.currentCharge = $scope.siteStats.numFrozen * $scope.chargeFrozen
-            + $scope.siteStats.numActive * $scope.chargeActive
-            + $scope.siteStats.readUserCount * $scope.chargeReader
-            + ($scope.siteStats.editUserCount-1) * $scope.chargeCreator
-            + $scope.siteStats.sizeDocuments * $scope.chargeDocument / 1000000;
+    $scope.costs.total = $scope.costs.editUserCount + $scope.costs.numActive + $scope.costs.observerCount + $scope.costs.documentLimit + $scope.costs.numFrozen;
+}
+$scope.calc();
+
+
+$scope.showError = false;
+$scope.errorMsg = "";
+$scope.errorTrace = "";
+$scope.showTrace = false;
+$scope.reportError = function(serverErr) {
+    errorPanelHandler($scope, serverErr);
+};
+
+$scope.chargeCreator = 3;
+$scope.chargeReader = 0;
+$scope.chargeActive = 0;
+$scope.chargeFrozen = 0;
+$scope.chargeDocument = 0;
+$scope.chargeEmail = 0;
+
+$scope.removeName = function(oldName) {
+    $scope.siteInfo.names = $scope.siteInfo.names.filter( function(item) {
+        return (item!=oldName);
+    });
+}
+$scope.addName = function(newName) {
+    $scope.removeName(newName);
+    $scope.siteInfo.names.splice(0, 0, newName);
+}
+
+$scope.saveSiteInfo = function() {
+    if ($scope.siteInfo.names.length===0) {
+        alert("Site must have at least one name at all times.  Please add a name.");
+        return;
     }
-    $scope.setSiteInfo($scope.siteInfo);
-    
-    $scope.toggleEditor = function(editorName) {
-        if ($scope.isEditing == editorName) {
-            $scope.isEditing = "";
-        }
-        else {
-            $scope.isEditing = editorName;
-        }
-    }
-    $scope.recalcStats = function() {
-        console.log("recalcStats");
-        var getURL = "SiteStatistics.json?recalc=yes";
-        $scope.showError=false;
-        $http.get(getURL)
-        .success( function(data) {
-            $scope.setSiteInfo(data.stats);
-            window.location.reload(false);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
+    var rawList = $scope.colorList.split(",");
+    if (rawList.length>2) {
+        var newList = [];
+        rawList.forEach( function(item) {
+            newList.push(item.trim());
         });
-    };
-    
-    // auto refresh if stats are empty
-    if ($scope.siteStats.editUserCount < 1) {
-        console.log("Automatically recalculating statistics");
-        $scope.recalcStats();
+        $scope.siteInfo.labelColors = newList;
     }
+    var postURL = "updateSiteInfo.json";
+    var postdata = angular.toJson($scope.siteInfo);
+    $scope.showError=false;
+    $http.post(postURL, postdata)
+    .success( function(data) {
+        $scope.setSiteInfo(data);
+        $scope.isEditing = '';
+    })
+    .error( function(data, status, headers, config) {
+        $scope.reportError(data);
+        $scope.isEditing = '';
+    });
+};
+
+$scope.setSiteInfo = function(info) {
+    $scope.siteInfo = info;
+    $scope.siteInfo.viewUserLimit = $scope.siteInfo.editUserLimit * 4;
+    $scope.siteInfo.fileSpaceLimit = $scope.siteInfo.editUserLimit * 100;
+    $scope.siteInfo.frozenLimit =  $scope.siteInfo.editUserLimit * 2;
+        
+    $scope.calc();
+}
+$scope.setSiteInfo($scope.siteInfo);
+
+$scope.toggleEditor = function(editorName) {
+    if ($scope.isEditing == editorName) {
+        $scope.isEditing = "";
+    }
+    else {
+        $scope.isEditing = editorName;
+    }
+}
+$scope.recalcStats = function() {
+    console.log("recalcStats");
+    var getURL = "SiteStatistics.json?recalc=yes";
+    $scope.showError=false;
+    $http.get(getURL)
+    .success( function(data) {
+        $scope.setSiteInfo(data.stats);
+        window.location.reload(false);
+    })
+    .error( function(data, status, headers, config) {
+        $scope.reportError(data);
+    });
+};
+
+// auto refresh if stats are empty
+if ($scope.siteStats.editUserCount < 1) {
+    console.log("Automatically recalculating statistics");
+    $scope.recalcStats();
+}
+
+$scope.garbageCollect = function() {
+    if (!confirm("Do you really want to delete the workspaces marked for deletion?")) {
+        return;
+    }
+    var postURL = "GarbageCollect.json";
+    $http.get(postURL)
+    .success( function(data) {
+        console.log("Garbage Results", data);
+        alert("Success.  REFRESHING the page");
+        window.location.reload();
+    })
+    .error( function(data, status, headers, config) {
+        $scope.reportError(data);
+    });
+}
 
 
 });
-
 </script>
 
 
@@ -168,7 +253,7 @@ app.controller('myCtrl', function($scope, $http) {
                            <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
                            <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
                                <input type="text" class="form-control mb-2" ng-model="newName">
-                               <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Change Name</button>
+                               <button ng-click="addName(newName)" class="btn btn-sm btn-primary  btn-raised">Change Name</button>
                            </span>
                            <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
                                <b>{{newName}}</b>
@@ -186,7 +271,7 @@ app.controller('myCtrl', function($scope, $http) {
                            <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
                                <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
                                title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                               <button ng-click="saveSiteInfo()" class="justify-content-end btn btn-primary btn-raised">Save</button>
+                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
                            </span>
                            <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
                            <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
@@ -202,7 +287,7 @@ app.controller('myCtrl', function($scope, $http) {
                            <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
                                <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
                                title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
                            </span>
                            <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
                            <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
@@ -214,10 +299,10 @@ app.controller('myCtrl', function($scope, $http) {
                                <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
                                title="A comma separated list of standard color names."></textarea>
                            </span>
-                           <span class="col-6 dataColumn" ng-show="isEditing =='LabelColors'">
+                           <span class="col-6 dataColumn mb-2" ng-show="isEditing =='LabelColors'">
                                <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
                                title="A comma separated list of standard color names."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised ">Save</button>
                            </span>
                            <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
                            <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
@@ -229,120 +314,137 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         
         <div style="height:100px"></div>
-        <span class="h5">Your Budget</span>
+        <span class="h5">Payment Plan</span>
         
         <div class="spaceyTable">
             <div class="row">
-                <span class="col-2"></span>
-                <span class="col-2 numberColumn">Current Usage</span>
-                <span class="col-2 numberColumn">Your Limits</span>
-                <span class="col-4 helpColumn"></span>
+                <span class="col-2 "></span>
+                <span class="col-1 numberColumn h6">Your Limit</span>
+                <span class="col-1 h6" >Set</span>
+                <span class="col-1 numberColumn h6">Current Usage</span>
+                <span class="col-1 numberColumn h6">Gratis</span>
+                <span class="col-1 numberColumn h6">Extra</span>
+                <span class="col-1 numberColumn h6">Cost</span>
             </div>
             <div class="row" ng-click="toggleEditor('CreatorLimit')">
-                <span class="col-2 labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</span>
-                <span class="col-2 numberColumn">
-                    {{siteStats.editUserCount}}
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Active Users:</span>
+                <span class="col-1 numberColumn">
+                    {{siteStats.editUserLimit|number}}
                 </span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='CreatorLimit'">
-                    {{siteInfo.editUserLimit}}
+                <span class="col-1 numberColumn">
+                    <button class="specCaretBtn" ng-click="changePeople(1)">+</button>
+                    <button class="specCaretBtn" ng-click="changePeople(-1)">-</button>
                 </span>
-                <span class="col-4 dataColumn" ng-show="isEditing =='CreatorLimit'">
-                    <input type="text" ng-model="siteInfo.editUserLimit"  style="width:50px">
-                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                <span class="col-1 numberColumn">
+                    {{actual.editUserCount}}
                 </span>
-                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
-                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    <p>A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
-                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.</p>
+                <span class="col-1 numberColumn">
+                    {{comp.editUserCount}}
                 </span>
-            </div>
-            <div class="row" >
-                <span class="col-2 labelColumn" ng-click="toggleEditor('ReaderLimit')">Observers:</span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='ReaderLimit'">
-                    {{siteStats.readUserCount}}
+                <span class="col-1 numberColumn">
+                    {{overflow.editUserCount}}
                 </span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='ReaderLimit'">
-                    {{siteInfo.viewUserLimit}}
-                </span>
-                <span class="col-4" ng-show="isEditing =='ReaderLimit'" >
-                    <input type="text" ng-model="siteInfo.viewUserLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
-                </span>
-                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
-                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 4 additional guest observer users.
+                <span class="col-1 numberColumn">
+                    $ {{costs.editUserCount|number: '0'}}
                 </span>
             </div>
-            <div class="row" >
-                <span class="col-2 labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspaces:</span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
-                    {{siteStats.numActive}}
+
+            <div class="row">
+                <span class="col-2 h6">Active Workspaces:</span>
+                <span class="col-1 numberColumn">
+                    {{siteInfo.workspaceLimit|number}}
                 </span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
-                    {{siteInfo.workspaceLimit}}
+                <span class="col-1 numberColumn">
+                    <button class="specCaretBtn" ng-click="changeWS(1)">+</button>
+                    <button class="specCaretBtn" ng-click="changeWS(-1)">-</button>
                 </span>
-                <span class="col-4" ng-show="isEditing =='WorkspaceLimit'">
-                    <input type="text" ng-model="siteInfo.workspaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                <span class="col-1 numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                    {{actual.numActive}}
                 </span>
-                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
-                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 1 active workspace.
+                <span class="col-1 numberColumn" ng-show="isEditing =='CreatorLimit'">
+                    {{comp.numActive}}
                 </span>
-            </div>
-            <div class="row" >
-                <span class="col-2 labelColumn" ng-click="toggleEditor('FrozenLimit')"> Frozen Workspaces:</span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='FrozenLimit'">
-                    {{siteStats.numFrozen}}
+                <span class="col-1 numberColumn" ng-show="isEditing =='CreatorLimit'">
+                    {{overflow.numActive}}
                 </span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='FrozenLimit'">
-                    {{siteInfo.frozenLimit}}
-                </span>
-                <span class="col-4" ng-show="isEditing =='FrozenLimit'" colspan="2">
-                    <input type="text" ng-model="siteInfo.frozenLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
-                </span>
-                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
-                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 2 additional frozen (archived) workspaces.
+                <span class="col-1 numberColumn">
+                    $ {{costs.numActive|number: '0'}}
                 </span>
             </div>
-            <div class="row" >
-                <span class="col-2 labelColumn" ng-click="toggleEditor('DocumentLimit')">Documents:</span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
-                </span>
-                <span class="col-2 numberColumn" ng-hide="isEditing =='DocumentLimit'">
-                    {{siteInfo.fileSpaceLimit|number}} MB
-                </span>
-                <span class="col-2" ng-show="isEditing =='DocumentLimit'" colspan="2">
-                    <input type="text" ng-model="siteInfo.fileSpaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
-                </span>
-                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
-                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    For each purchased update user, you can have 100 MB of documents.
-                </span>
-            </div>
-            <div class="row" >
-                <span class="col-2 labelColumn" style="cursor: text;">Charges / Month:</span>
-                <span class="col-2 numberColumn">
-                    $ {{currentCharge | number: '2'}}
-                </span>
-                <span class="col-2 numberColumn">
-                    $ {{limitCharge | number: '2'}}
-                </span>
-                <span class="col-4 helpColumn"></span>
+            <div class="row">
+                <span class="col-2 h6">Documents:</span>
+                <span class="col-1 numberColumn">
                     
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn" >
+                    {{ actual.documentLimit|number: '0'}} MB
+                </span>
+                <span class="col-1 numberColumn">
+                    {{included.documentLimit|number}} MB
+                </span>
+                <span class="col-1 numberColumn" ng-show="overflow.documentLimit>0">
+                    {{overflow.documentLimit|number: '0'}} MB
+                </span>
+                <span class="col-1 numberColumn" ng-show="costs.documentLimit>0">
+                    $ {{costs.documentLimit|number: '0'}}
+                </span>
             </div>
-        </div>
+
+            <div class="row">
+                <span class="col-2 h6">Frozen Workspaces:</span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn" >
+                    {{actual.numFrozen}}
+                </span>
+                <span class="col-1 numberColumn">
+                    {{included.numFrozen}}
+                </span>
+                <span class="col-1 numberColumn">
+                    {{overflow.numFrozen}}
+                </span>
+                <span class="col-1 numberColumn" ng-show="costs.numFrozen>0">
+                    $ {{costs.numFrozen|number: '0'}}
+                </span>
+            </div>
+<hr>
+            <div class="row">
+                <span class="col-2 h6">Total per Month:</span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn" >
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn h6" >
+                    $ {{costs.total|number: '0'}}
+                </span>
+            </div>
+
+<hr>
+           
         
-        <div class="row col-10 justify-content-end my-3"><button ng-click="recalcStats()" class="col-2 btn btn-primary btn-wide">Recalculate Current Usage</button></div>
-        <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
+        <div class="row col-10 justify-content-end my-3 well">
+        <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p><button ng-click="recalcStats()" class="col-2 btn btn-primary btn-wide">Recalculate Current Usage</button></div>
         
-        <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
-        
-        <p>Weaver will help you stay under the limits, by preventing addition of new resources over the limits that you set.  You can change the limits at any time.  If you raise the limit you can immediately add resources.  The limit does not automatically reduce your resource usage.  If you lower the limit, you must remove the excess resources yourself.  Again, Weaver will only charge you for the resources you actually use.</p>
+        <div class="row col-10 justify-content-end my-3 well">
+            <p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time. In order to actually cause the files to be deleted use the Garbage Collect function. This will actually free up space on the server, and reduce the amount of resources you are using.</p><button  class="col-2 btn btn-primary btn-wide" ng-click="garbageCollect()">Garbage Collect</button></div>
         
         
         
