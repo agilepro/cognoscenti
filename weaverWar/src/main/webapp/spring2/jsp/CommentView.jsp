@@ -403,7 +403,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         <div class="col-1 m-0">                   .
             <ul class="navbar-btn p-0" ng-show="cmt.commentType!=4">
                 <li class="nav-item dropdown" id="userCommentor" data-toggle="dropdown">
-                    <img class="img-circle" ng-src="<%=ar.retPath%>icon/{{cmt.userKey}}.jpg" style="width:50px;height:50px" title="{{cmt.userName}} - {{cmt.user}}">
+                    <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{cmt.userKey}}.jpg" style="width:50px;height:50px" title="{{cmt.userName}} - {{cmt.user}}">
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li role="presentation" style="background-color:lightgrey">
                         <a class="dropdown-item" role="menuitem" tabindex="-1" style="text-decoration: none;text-align:center">{{cmt.userName}}<br/>{{cmt.user}}</a></li>
@@ -484,7 +484,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     </div>
     <div ng-repeat="doc in cmt.docDetails">
         <span ng-show="doc.attType=='FILE'">
-            <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png">
+            <span class="rounded-5 ms-3" ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png">
             </span>&nbsp;
             <span ng-click="downloadDocument(doc)">
                 <span class="fa fa-download"></span>

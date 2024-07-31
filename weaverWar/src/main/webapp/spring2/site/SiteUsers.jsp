@@ -1,7 +1,7 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("");
@@ -121,72 +121,63 @@ app.filter('encode', function() {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-
-<style>
-.table tr {
-    cursor:pointer;
-}
-.table tr:hover{
-    background-color:#F7E0FF;;
-}
-</style>
-
-<div ng-hide="addUserPanel">
-  This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, 
-  and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.
-  <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
-    <b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit acess to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.
-  </div>
-  <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
-    <b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>
-    Any user who has never logged in to the site directly is considered an observer.   You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.
-    <hr/>
-    To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.
-  </div>
-</div>
-    <div>
-    <table class="table">
-      <tr>
-         <th></th>
-         <th>Name <input type="text" ng-model="filter"/></th>
-         <th>Primary Email</th>
-         <th>Access</th>
-         <th>Last Login</th>
-         <th>Objects</th>
-         <th>Workspaces</th>
-      </tr>
-      <tr ng-repeat="value in findUsers()" 
-          ng-click="visitUser(value.info.uid)">
-        <td>
-            <img class="rounded-5" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
-                 style="width:32px;height:32px" title="{{value.info.name}} - {{value.info.uid}}">
-        </td>
-        <td>{{value.info.name}}</td>
-        <td>{{value.info.uid}}</td>
-        <td>
-            <span ng-show="value.readOnly" style="color:grey">Observer</span>
-            <span ng-show="!value.readOnly && value.lastAccess < 100000" style="color:lightblue">No Login</span>
-            <span ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
-        </td>
-        <td><span ng-show="value.info.lastLogin>0">{{value.info.lastLogin|cdate}}</span></td>
-        <td>{{value.count}}</td>
-        <td>{{value.wscount}}</td>
-      </tr>
-    </table>
+    <div class="container-fluid well mx-3">
+        <div class="row col-12 d-flex">
+            <div ng-hide="addUserPanel">
+            <p class="h6 guideVocal">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.</p>
+            <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
+                <p ><b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.</p>
+            </div>
+            <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
+                <p ><b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an observer. You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.
+                    <hr/>
+                To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.</p>
+            </div>
+            </div>
+        </div>        
+    <div class="table">
+        <div class="row col-12 my-3">
+         <span class="col-1"></span>
+         <span class="col-3 h6">Name <input type="text" ng-model="filter" style="height: 25px;"/></span>
+         <span class="col-3 h6">Primary Email</span>
+         <span class="col-1 h6">Access</span>
+         <span class="col-2 h6">Last Login</span>
+         <span class="col-1 h6">Objects</span>
+         <span class="col-1 h6">Workspaces</span>
+        </div>
+        <div class="row col-12 my-3" ng-repeat="value in findUsers()" 
+          ng-click="visitUser(value.info.uid)"><hr>
+        <span class="col-1">
+            <img class="rounded-5 p-0" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
+                 style="width:32px;height:32px;cursor: pointer;" title="{{value.info.name}} - {{value.info.uid}}">
+        </span>
+        <span class="col-3">{{value.info.name}}</span>
+        <span class="col-3">{{value.info.uid}}</span>
+        <span class="col-1">
+            <span ng-show="value.readOnly">Observer</span>
+            <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
+            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
+        </span>
+        <span class="col-2"><span ng-show="value.aUser.lastLogin>0">{{value.info.lastLogin|cdate}}</span></span>
+        <span class="col-1">{{value.count}}</span>
+        <span class="col-1">{{value.wscount}}</span>
+        
     </div>
-
-<div style="margin:100px"></div>
-
-<div class="guideVocal">
-<p>Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p>
-<button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
+    </div>
 </div>
+<div class="container-fluid d-flex">
+    <div class="row d-flex col-12 my-3">
+        <span class="col-md-6 col-sm-12 my-3">
+            <p class="guideVocal h6">Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resources that your site is using.</p>
+                <button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
+        </span>
 
-<div class="guideVocal">
-<p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time.
-In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
-<button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
-</div>
+        <span class="col-md-6 col-sm-12 my-3">
+            <p class="guideVocal h6">In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time. <br>In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
+                <button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
+        </span>
+
+    </div>
     
     
 </div>

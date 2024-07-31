@@ -204,54 +204,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    
+<div class="container-fluid">
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <input type="checkbox" ng-model="filterDraft"> Draft &nbsp;
         <input type="checkbox" ng-model="filterOpen"> Open &nbsp;
         <input type="checkbox" ng-model="filterClosed"> Closed &nbsp;
     </div>
-     
-     
-    <style>
-    .regularTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:#F8EEEE;
-    }
-    .draftTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:yellow;
-    }
-    .trashTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:pink;
-    }
-    .infoRow {
-        min-height:35px;
-        padding:5px;
-    }
-    .infoRow td {
-        padding:5px 10px;
-    }
-
-    </style>
-
     <div style="height:20px;"></div>
-
-      <table style="max-width:800px">
-        <tr ng-repeat="cmt in getComments()">
-          <%@ include file="/spring2/jsp/CommentView.jsp"%>          
-        </tr>
-      </table>
+      <div class="table col-8">
+        <div class="row my-3 ms-3" ng-repeat="cmt in getComments()">
+          <%@ include file="/spring2/jsp/CommentView.jsp" %>          
+        </div>
+    </div>
         
     
        

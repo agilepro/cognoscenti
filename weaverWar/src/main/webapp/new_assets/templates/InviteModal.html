@@ -1,14 +1,14 @@
 <html>
 <body>
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
-    Invite User: {{message.userId}}
-    </span>
+<div class="modal-item">
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h5 class="modal-title">
+    Invite User: {{message.userId}}</h5>
   </div>
-</div>
-<div class="modal-body" ng-show="dialogMode==1">
+  <div class="modal-body" ng-show="dialogMode==1">
+    <div class="container-fluid">
+      <div class="row col-12">
     <textarea ng-model="message.msg" class="form-control visibleBox" style="height:200px"></textarea>
 </div>
 <div class="modal-body" ng-show="dialogMode==2">
@@ -21,10 +21,10 @@
     <br/>
     . . . Successfully sent email to {{message.userId}}.
 </div>
-<div class="modal-footer">
-      <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left" ng-show="dialogMode==1">Don't Send Invite</button>
+<div class="modal-footer d-flex">
+      <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto" ng-show="dialogMode==1">Don't Send Invite</button>
       <button ng-click="ok()"     class="btn btn-primary btn-raised" ng-show="dialogMode==1">Send Invitation</button>
       <button ng-click="done()"   class="btn btn-primary btn-raised" ng-show="dialogMode>1">Close Window</button>
-</div>
+</div></div>
 </body>
 </html>

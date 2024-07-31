@@ -1,34 +1,39 @@
 <html>
 <body>
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
-    Create New Discussion Topic
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h5 class="modal-title" id="attachDocumentLabel">
+    Create New Discussion Topic</h5>
+  </div>
+
+<div class="modal-body fluid-container">
+    <div class="row my-2 form-group col-12 d-flex" title="The subject should describe the topic in a few words">
+      <span class="col-2 my-2">
+  	    <label class="h6">Subject</label>
+      </span>
+      <span class="col-7 my-2">
+  		  <input ng-model="topic.subject" class="col-10 form-control" placeholder="A few words here to describe the topic to others">
+      </span>
+    </div>
+
+  <div class="row my-2 form-group col-12 d-flex">
+    <span class="col-2 my-2">
+      <label class="h6 col-1 my-2">Briefly describe the Topic</label>
+    </span>
+    <span class="col-10 my-2">
+      <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="col-7 leafContent" style="max-height:200px;height:200px">
+      </div>
     </span>
   </div>
-</div>
-<div class="modal-body fluid-container">
-    <div class="row">
-      <div class="form-group col-md-8" 
-             title="The subject should descripbe the topic in a few words">
-  	    <label>Subject</label>
-  		  <input ng-model="topic.subject" class="form-control"
-             placeholder="A few words here to describe the topic to others">
-      </div>
-	</div>
-    <label>Briefly describe the Topic</label>
-    <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="leafContent" style="max-height:200px;height:200px">
-    </div>
-</div>
-<div class="modal-footer">
-      <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
-    <span class="instruction" style="margin-right:30px">
-        Note: only describe the topic briefly.  Don't start discussing it here.</span>
-    <span>
-      <button ng-click="ok()" class="btn btn-primary btn-raised">
+  <span class="instruction h6">
+    <em><b>Note:</b> only describe the topic briefly.  Don't start discussing it here.</em>
+  </span>
+  <div class="modal-footer d-flex" >
+    <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto">Cancel</button>
+    
+    <button ng-click="ok()" class="btn btn-primary btn-raised">
             Create {{topic.phase}}</button>
-    </span>
+  </div>
 </div>
 </body>
 </html>

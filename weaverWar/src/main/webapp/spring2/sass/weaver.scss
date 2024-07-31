@@ -482,8 +482,21 @@ a {
         color: $primary;
         cursor: pointer;
     }
-
 }
+
+.btn-outline-primary {
+    color: $primary;
+    border-color: $primary;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+
 .accordion-button:not(.collapsed) { 
     color:$primary !important; 
     font-size: 1.2rem;
@@ -697,7 +710,8 @@ a {
 }
 .spaceyTable tr td {
     padding:5px;
-    border:none;
+    margin: 5px;
+    border: none;
     
 }
 .spacydiv {

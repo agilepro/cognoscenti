@@ -1,8 +1,8 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="java.util.TimeZone"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("");
@@ -247,7 +247,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -324,192 +324,156 @@ app.filter('encode', function() {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteUsers.htm">User List</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteStats.htm">Site Statistics</a></li>
-        </ul>
-      </span>
+<div class="container-fluid">
+    <div class="row">
+      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="SiteAdmin.htm">Site Admin</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="SiteUsers.htm">User List</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+            href="SiteStats.htm">Site Statistics</a></span>
+        </div>
+        <div class="d-flex col-9">
+		    <div class="contentColumn">
+		        <div class="container-fluid">
+                    <div class="generalContent">
+    <div class="table" ng-hide="hasProfile">
+        <div class="row col-10 d-flex my-2 align-items-baseline" >
+            <span class="h6 col-2">Universal ID</span>
+            <span class="col-8">{{userInfo.uid}}</span>
+        </div>
+        <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2">Permission</span>
+        <span class="col-8">
+            <span class="h6"><em>User can not update without a profile</em></span>
+        </span>
     </div>
-
-<style>
-.paddedCell {
-    padding:8px;
-}
-.labelColumn {
-    width:150px;
-}
-.labelColumn:hover {
-    background-color:#ECB6F9;
-    cursor:pointer;
-    width:150px;
-}
-.workspacerow {
-    background-color:#F7E0FF;
-    cursor:pointer;
-    font-weight: bold;
-}
-
-.workspaceButton {
-    border-radius: 6px;
-    background-color: lightgray;
-    padding: 0px;
-}
-.workspaceButton:hover {
-    background-color: lightskyblue; 
-}
-</style>
-
-    <table class="table" ng-hide="hasProfile">
-      <tr>
-        <td class="labelColumn">Universal ID</td>
-        <td>{{userInfo.uid}}</td>
-      </tr>
-      <tr>
-        <td class="labelColumn">Permission</td>
-        <td>
-            <span>User can not update without a profile</span>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn">Profile</td>
+      <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <td class="h6">Profile</td>
         <td ng-hide="hasProfile">
            <p>This user does not have a user profile yet.</p>
            <button class="btn btn-primary btn-raised" ng-click="createUserProfile()">Create Profile</button>
         </td>
-      </tr>
-    </table>
-    
-    
-    
-    <table class="table" ng-show="hasProfile">
-      <tr>
-        <td class="labelColumn">Internal Key</td>
-        <td><a href="../../{{userInfo.key}}/UserSettings.htm">{{userInfo.key}}</a></td>
-      </tr>
-      <tr>
-        <td class="labelColumn">Permission</td>
-        <td>
+    </div>
+    </div>
+
+    <div class="table" ng-show="hasProfile">
+        <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2">Internal Key</span>
+        <span class="col-8"><a href="../../{{userInfo.key}}/UserSettings.htm">{{userInfo.key}}</a></span>
+    </div>
+    <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2">Permission</span>
+        <span class="col-8">
             <div ng-hide="userMapEntry.readOnly">
               <div>Allowed to update in this site.</div>
               <div ng-show="userMapEntry.lastAccess < 1000000">
                 This user has never logged in, and will be counted as observer until they do.</div>
-              <div>
-                <button class="btn btn-sm">
-                Make Creator</button>
-                <button ng-click="changeAccess(true)" class="btn btn-sm btn-primary btn-raised">
+              <div class="my-2">
+                <span class="fs-6">
+                <b><em>Creator &nbsp;</em></b></span>
+                <button ng-click="changeAccess(true)" class="btn btn-sm btn-comment btn-secondary btn-raised">
                 Make Observer</button>
               </div>
             </div>
             <div ng-show="userMapEntry.readOnly">
-              <div>Observer, can not update the site</div>
-              <div><button ng-click="changeAccess(false)" class="btn btn-sm btn-primary btn-raised">
+              <div>Observer, cannot update the site</div>
+              <div class="my-2">
+                <span class="fs-6">
+                <b><em>Observer &nbsp;</em></b></span>
+                <button ng-click="changeAccess(false)" class="btn btn-sm btn-comment btn-secondary btn-raised">
                 Make Creator</button>
-                <button class="btn btn-sm">
-                Make Observer</button>
+                
               </div>
             </div>
-            <div> Site Creator Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Observers: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn">Universal ID</td>
-        <td>{{userInfo.uid}}</td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showNamePanel=!showNamePanel">Name</td>
-        <td ng-hide="showNamePanel" ng-dblclick="showNamePanel=true">{{userDetails.name}}</td>
-        <td ng-show="showNamePanel">
+            <div class="fs-6 fw-medium"> Site Creator Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Observers: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
+        </span>
+    </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2">Universal ID</span>
+        <span class="col-8">{{userInfo.uid}}</span>
+      </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline"  style="cursor:pointer">
+        <span class="h6 col-2" ng-click="showNamePanel=!showNamePanel">Name</span>
+        <span class="col-4" ng-hide="showNamePanel" ng-click="showNamePanel=true">{{userDetails.name}}</span>
+        <span class="col-4" ng-show="showNamePanel">
            <input type="text" ng-model="userDetails.name" class="form-control"/>
-           <button class="btn btn-primary btn-raised" 
-                   ng-click="updateUserProfile(['name']);showNamePanel=false">
-                   Set User Name</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showDescPanel=!showDescPanel">Description</td>
-        <td ng-hide="showDescPanel" ng-dblclick="showDescPanel=true">{{userDetails.description}}</td>
-        <td ng-show="showDescPanel">
+           <button class=" my-2 py-1 btn btn-sm btn-comment btn-secondary btn-raised"  ng-click="updateUserProfile(['name']);showNamePanel=false"> Set User Name</button>
+        </span>
+    </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" style="cursor:pointer">
+        <span class="h6 col-2" ng-click="showDescPanel=!showDescPanel">Description</span>
+        <span class="col-4" ng-hide="showDescPanel" ng-click="showDescPanel=true">{{userDetails.description}}</span>
+        <span class="col-4" ng-show="showDescPanel">
            <textarea ng-model="userDetails.description" class="form-control"></textarea>
-           <button class="btn btn-primary btn-raised" 
+           <button class="py-1 btn btn-sm btn-comment btn-secondary btn-raised" 
                    ng-click="updateUserProfile(['description']);showDescPanel=false">
                    Set User Description</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn">EMail</td>
-        <td>
+        </span>
+    </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2 align-baseline">EMail</span>
+        <span class="col-4">
           <div ng-repeat="id in userDetails.ids">{{id}}</div>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showAddEmailPanel=!showAddEmailPanel"></td>
-        <td ng-hide="showAddEmailPanel">
-           <button class="btn btn-primary btn-raised" ng-click="showAddEmailPanel=true">Add Email</button>
-        </td>
-        <td ng-show="showAddEmailPanel">
+        </span>
+        <span class="h6 col-2" ng-click="showAddEmailPanel=!showAddEmailPanel"></span>
+        <span class="col-4" ng-hide="showAddEmailPanel">
+           <button class="py-1 btn btn-sm btn-comment btn-secondary btn-raised" ng-click="showAddEmailPanel=true">Add Email</button>
+        </span>
+        <span class="col-4" ng-show="showAddEmailPanel">
            <input type="text" ng-model="newEmail" class="form-control"/>
-           <button class="btn btn-primary btn-raised" ng-click="addEmail()">Add New Primary Email</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showImagePanel=!showImagePanel">Image</td>
-        <td ng-hide="showImagePanel"  ng-dblclick="showImagePanel=true">
-            <img src="../../../icon/{{userDetails.image}}"/>
-        </td>
-        <td ng-show="showImagePanel">{{userDetails.image}}<br/>
-            <img src="../../../icon/{{userDetails.image}}"/>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showTimeZonePanel=!showTimeZonePanel">Time Zone</td>
-        <td ng-hide="showTimeZonePanel" ng-dblclick="showTimeZonePanel=true">{{userDetails.timeZone}}</td>
-        <td ng-show="showTimeZonePanel">
+           <button class="py-1 my-2 btn btn-sm btn-wide btn-comment btn-secondary btn-raised" ng-click="addEmail()">Add New Primary Email</button>
+        </span>
+    </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" style="cursor: pointer;">
+        <span class="h6 col-2" ng-click="showImagePanel=!showImagePanel">Image</span>
+        <span class="col-4" ng-hide="showImagePanel"  ng-click="showImagePanel=true">
+            <img class="rounded-5" src="../../../icon/{{userDetails.image}}"/>
+        </span>
+        <span class="col-4 " ng-show="showImagePanel">{{userDetails.image}}<br/>
+            <img class="rounded-5" src="../../../icon/{{userDetails.image}}"/>
+        </span>
+    </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" style="cursor: pointer;">
+        <span class="h6 col-2" ng-click="showTimeZonePanel=!showTimeZonePanel">Time Zone</span>
+        <span class="col-6" ng-hide="showTimeZonePanel" ng-click="showTimeZonePanel=true">{{userDetails.timeZone}}</span>
+        <span class="col-6" ng-show="showTimeZonePanel">
           <div class="well">
-            <div class="form-inline">
-                Currently set to: <b>{{userDetails.timeZone}}</b>
+            <div class="form-inline"><span class="text-secondary">
+                Currently set to: <b>{{userDetails.timeZone}}</b></span>
             </div>
-            <div class="form-inline">
-                Filter: <input ng-model="tzFilter" class="form-control" style="width:200px"/>
-                Enter a few letters of the time zone you need.
+            <div class="form-inline"><span class="text-secondary"> 
+                <em><b>Filter:</b> Enter a few letters of the time zone you need.</em></span>
+                <input ng-model="tzFilter" class="form-control " style="width:300px"/>
             </div>
             <div ng-repeat="item in filteredTimeZones()">
-                <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-default btn-raised">Select</button> 
+                <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn-sm btn-comment py-0 px-1 m-2">Select</button> 
             </div>
           </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn">Last Access</td>
-        <td ng-hide="userDetails.lastLogin>100000">Has never logged in.</td>
-        <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|cdate}} as '{{userDetails.lastLoginId}}'</td>
-      </tr>
-      <tr ng-dblclick="showUserDisabledPanel=!showUserDisabledPanel">
-        <td class="labelColumn" ng-click="showUserDisabledPanel=!showUserDisabledPanel">Disabled</td>
-        <td>
+        </span>
+    </div>
+    <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2">Last Access</span>
+        <span class="col-4" ng-hide="userDetails.lastLogin>100000">Has never logged in.</span>
+        <span class="col-4" ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|cdate}} as '{{userDetails.lastLoginId}}'</span>
+      </div>
+      <div class="row col-10 d-flex my-2 align-items-baseline" >
+        <span class="h6 col-2" style="cursor: pointer;" ng-click="showUserDisabledPanel=!showUserDisabledPanel">Disabled</span>
+        <span class="col-6"  >
           <div ng-hide="userInfo.disabled">User is NOT Disabled</div>
           <div ng-show="userInfo.disabled" style="background-color:yellow">User is Disabled</div>
           <div ng-show="showUserDisabledPanel"><i>Users can not be enabled or disabled at the site level.  Only the global administrator can enable and disable a user's global access.   Instead, at the site level, consider simply removing them from each/any workspace, or the entire site (bottom).</i></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="labelColumn" ng-click="showInvitePanel=!showInvitePanel"></td>
-        <td>
-           <button class="btn btn-primary btn-raised" ng-click="openInviteSender()">
+        </span>
+        <span class="h6 col-2" ng-click="showInvitePanel=!showInvitePanel"></span>
+        <span class="col-2" >
+           <button class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised" ng-click="openInviteSender()">
                Send invitation Email</button>
-        </td>
-      </tr>
-    </table>
+        </span>
+      </div>
+    </div>
     
-    <h3>Assign to Roles - <input type="checkbox" ng-model="showAllWorkspaces" ng-click="filterItems()"> Show All Workspaces</h3>
+    <div class="h5">Assign to Roles - </div>
+    <div class="h6 ms-3"><input type="checkbox" ng-model="showAllWorkspaces" ng-click="filterItems()"> Show All Workspaces</div>
     
     <table class="table">
       <tbody ng-repeat="(key,ws) in wsMapFiltered">
@@ -523,54 +487,53 @@ app.filter('encode', function() {
           <td></td>
           <td>{{role}}</td>
           <td ><div ng-show="avail">
-              <button ng-click="manageUserRoles(key,role,false)" class="btn btn-sm btn-raised workspaceButton">
+              <button ng-click="manageUserRoles(key,role,false)" class="py-1 btn btn-sm btn-wide btn-comment btn-outline-secondary btn-raised">
               Remove</button>
           </div></td>
           <td><div ng-hide="avail">
-              <button ng-click="manageUserRoles(key,role,true)" class="btn btn-sm btn-raised workspaceButton">
+              <button ng-click="manageUserRoles(key,role,true)" class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised">
               Add</button>
           </div></td>
         </tr>        
       </tbody>
     </table>
     
-    <h3>Remove</h3>    
+    <span class="h5">Remove</span>    
     
 
     <div ng-hide="showRemovePanel">
-        <button class="btn btn-raised" ng-click="showRemovePanel=true">Completely Remove This User</button>
+        <button class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised m-3" ng-click="showRemovePanel=true">Completely Remove This User</button>
     </div>
     <div class="well" ng-show="showRemovePanel" style="max-width:600px">
-        <h3>Eliminate all References to this User</h3>
+        <span class="h5">Eliminate all References to this User</span>
         <p><i>Existing objects owned or managed by this user need to be transferred to another user
               specified by email in the box below.  All workspaces will be searched,
               and all ownership/rights/permissions will be transferred to the designated new user.
               This is the only way to truly eliminate a user id from the site.
         </i></p>
-        <table >
-          <tr>
-            <td class="paddedCell">Replace With:</td>
-            <td class="paddedCell">
+        <div  >
+          <div class="row form-group d-flex col-12 m-2">
+            <span class="col-3 paddedCell h6">Replace With:&nbsp;</span>
+            <span class="col-6 paddedCell">
             <input ng-model="destUser" class="form-control" placeholder="Enter an email address">
-            </td>
-          </tr>
-          <tr>
-            <td class="paddedCell"></td>
-            <td class="paddedCell">
+            </span>
+          </div>
+          <div class="row form-group d-flex col-12 m-2">
+            <span class="col-12 paddedCell h6">
                 <input type="checkbox" ng-model="replaceConfirm">
-                Check here to confirm, there is no way to UNDO this change
-            </td>
-          </tr>
-          <tr>
-            <td class="paddedCell"></td>
-            <td class="paddedCell">
-                <button ng-click="replaceUsers()" class="btn btn-danger btn-raised">
-                Transfer All Responsibilities</button>
-                <button class="btn btn-raised" ng-click="showRemovePanel=false">
+                <b><i>Check here to confirm, there is no way to UNDO this change</i></b>
+            </span>
+        </div>
+        <div class="row form-group d-flex col-12 m-2">
+            <span class="d-flex">
+                <button class="py-1 btn btn-sm btn-wide btn-comment btn-danger" ng-click="showRemovePanel=false">
                 Cancel</button>
-            </td>
-          </tr>
-        </table>
+                <button ng-click="replaceUsers()" class="py-1 btn btn-sm btn-wide btn-comment btn-danger ms-auto">
+                Transfer All Responsibilities</button>
+                
+            </span>
+        </div>
+        </div>
     </div>
 
     <div style="height:400px"></div>
@@ -579,4 +542,4 @@ app.filter('encode', function() {
 </div>
 
 
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>

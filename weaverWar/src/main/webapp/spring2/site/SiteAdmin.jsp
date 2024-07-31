@@ -163,180 +163,181 @@ app.controller('myCtrl', function($scope, $http) {
             <div class="d-flex col-9"><div class="contentColumn">
 <div class="container-fluid">
                 <div class="generalContent">
-                    <table class="spaceyTable">
-                       <tr ng-dblclick="toggleEditor('NewName')">
-                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</td>
-                           <td class="form-inline dataColumn" ng-show="isEditing =='NewName'">
+                    <div class="spaceyTable">
+                       <div class="row" ng-dblclick="toggleEditor('NewName')">
+                           <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
+                           <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
                                <input type="text" class="form-control mb-2" ng-model="newName">
                                <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Change Name</button>
-                           </td>
-                           <td class="form-inline dataColumn" ng-hide="isEditing =='NewName'">
+                           </span>
+                           <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
                                <b>{{newName}}</b>
-                           </td>
-                           <td ng-hide="isEditing =='NewName'" class="helpColumn"></td>
-                           <td ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
+                           </span>
+                           <span class="col-2 helpColumn" ng-hide="isEditing =='NewName'"></span>
+                           <span ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
                                If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
-                           </td>
-                       </tr>
-                       <tr ng-dblclick="toggleEditor('SiteDescription')">
-                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</td>
-                           <td class=" dataColumn" ng-hide="isEditing =='SiteDescription'">
+                           </span>
+                       </div>
+                       <div class="row"  >
+                           <span class="col-2 labelColumn" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</span>
+                           <span class="col-6 dataColumn" ng-hide="isEditing =='SiteDescription'">
                               {{siteInfo.description}}
-                           </td>
-                           <td class="dataColumn" ng-show="isEditing =='SiteDescription'">
+                           </span>
+                           <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
                                <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
                                title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                           </td>
-                           <td ng-hide="isEditing =='SiteDescription'" class="helpColumn"></td>
-                           <td ng-show="isEditing =='SiteDescription'" class="helpColumn guideVocal">
+                               <button ng-click="saveSiteInfo()" class="justify-content-end btn btn-primary btn-raised">Save</button>
+                           </span>
+                           <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
+                           <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
                                The description of the site appears in lists of sites to help others know what the 
                                purpose of the site is.
-                           </td>
-                       </tr>
-                       <tr ng-dblclick="toggleEditor('SiteMessage')">
-                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('SiteMessage')">Site Message:</td>
-                           <td class=" dataColumn" ng-hide="isEditing =='SiteMessage'">
+                           </span>
+                       </div>
+                       <div class="row" >
+                           <span class="col-2 labelColumn" ng-click="toggleEditor('SiteMessage')">Site Message:</span>
+                           <span class="col-6 dataColumn" ng-hide="isEditing =='SiteMessage'">
                                {{siteInfo.siteMsg}}
-                           </td>
-                           <td class=" dataColumn" ng-show="isEditing =='SiteMessage'">
+                           </span>
+                           <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
                                <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
                                title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
                                <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                           </td>
-                           <td ng-hide="isEditing =='SiteMessage'" class="helpColumn"></td>
-                           <td ng-show="isEditing =='SiteMessage'" class="helpColumn guideVocal">
-                               Set a message and it will show on every page of every workspace in the site.</td>
-                       </tr>
-                       <tr ng-dblclick="toggleEditor('LabelColors')">
-                           <td class="btn btn-comment btn-wide labelColumn px-2 me-5" ng-click="toggleEditor('LabelColors')">Label Colors:</td>
-                           <td class=" dataColumn" ng-hide="isEditing =='LabelColors'">
+                           </span>
+                           <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
+                           <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
+                               Set a message and it will show on every page of every workspace in the site.</div>
+                       </div>
+                       <div class="row" ng-dblclick="toggleEditor('LabelColors')">
+                           <span class="col-2 labelColumn" ng-click="toggleEditor('LabelColors')">Label Colors:</span>
+                           <span class="col-6 dataColumn" ng-hide="isEditing =='LabelColors'">
                                <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
                                title="A comma separated list of standard color names."></textarea>
-                           </td>
-                           <td class=" dataColumn" ng-show="isEditing =='LabelColors'">
+                           </span>
+                           <span class="col-6 dataColumn" ng-show="isEditing =='LabelColors'">
                                <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
                                title="A comma separated list of standard color names."></textarea>
                                <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                           </td>
-                           <td ng-hide="isEditing =='LabelColors'" class="helpColumn"></td>
-                           <td ng-show="isEditing =='LabelColors'" class="helpColumn guideVocal">
+                           </span>
+                           <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
+                           <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
                                Use web standard color names to create the set of colors that you can set on labels.
-                           </td>
-                       </tr>
-                   </table>
+                           </span>
+                       </div>
+
+
+        </div>
         
         <div style="height:100px"></div>
-        <h2>Your Budget</h2>
+        <span class="h5">Your Budget</span>
         
-        <table class="spaceyTable">
-            <tr>
-                <td></td>
-                <td class="numberColumn">Current Usage</td>
-                <td class="numberColumn">Your Limits</td>
-                <td class="helpColumn"></td>
-            </tr>
-            <tr ng-dblclick="toggleEditor('CreatorLimit')">
-                <td class="labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</td>
-                <td class="numberColumn">
+        <div class="spaceyTable">
+            <div class="row">
+                <span class="col-2"></span>
+                <span class="col-2 numberColumn">Current Usage</span>
+                <span class="col-2 numberColumn">Your Limits</span>
+                <span class="col-4 helpColumn"></span>
+            </div>
+            <div class="row" ng-click="toggleEditor('CreatorLimit')">
+                <span class="col-2 labelColumn" ng-click="toggleEditor('CreatorLimit')">Purchased Users:</span>
+                <span class="col-2 numberColumn">
                     {{siteStats.editUserCount}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                </span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='CreatorLimit'">
                     {{siteInfo.editUserLimit}}
-                </td>
-                <td class="dataColumn" ng-show="isEditing =='CreatorLimit'">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
+                </span>
+                <span class="col-4 dataColumn" ng-show="isEditing =='CreatorLimit'">
                     <input type="text" ng-model="siteInfo.editUserLimit"  style="width:50px">
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
-                    A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
-                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.
-                </td>
-            </tr>
-            <tr>
-                <td>Observers:</td>
-                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                </span>
+                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
+                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    <p>A site owner can set a limit to the number of purchased (Update) users that the site is allowed to have.  This allows the site owner to control costs by preventing more update users from being added to the site.
+                    The charge is $ {{chargeCreator|number}} per creator user.  The first user (the founder) is free.  We only charge for actual users that you have beyond the founder.</p>
+                </span>
+            </div>
+            <div class="row" >
+                <span class="col-2 labelColumn" ng-click="toggleEditor('ReaderLimit')">Observers:</span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='ReaderLimit'">
                     {{siteStats.readUserCount}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='ReaderLimit'">
+                </span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='ReaderLimit'">
                     {{siteInfo.viewUserLimit}}
-                </td>
-                <td ng-show="isEditing =='ReaderLimit'" colspan="2" >
+                </span>
+                <span class="col-4" ng-show="isEditing =='ReaderLimit'" >
                     <input type="text" ng-model="siteInfo.viewUserLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                </span>
+                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
+                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
                     For each purchased update user, you can have 4 additional guest observer users.
-                </td>
-            </tr>
-            <tr>
-                <td >Active Workspaces:</td>
-                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                </span>
+            </div>
+            <div class="row" >
+                <span class="col-2 labelColumn" ng-click="toggleEditor('WorkspaceLimit')">Active Workspaces:</span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
                     {{siteStats.numActive}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
+                </span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='WorkspaceLimit'">
                     {{siteInfo.workspaceLimit}}
-                </td>
-                <td ng-show="isEditing =='WorkspaceLimit'" colspan="2">
+                </span>
+                <span class="col-4" ng-show="isEditing =='WorkspaceLimit'">
                     <input type="text" ng-model="siteInfo.workspaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                </span>
+                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
+                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
                     For each purchased update user, you can have 1 active workspace.
-                </td>
-            </tr>
-            <tr>
-                <td>Frozen Workspaces:</td>
-                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                </span>
+            </div>
+            <div class="row" >
+                <span class="col-2 labelColumn" ng-click="toggleEditor('FrozenLimit')"> Frozen Workspaces:</span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='FrozenLimit'">
                     {{siteStats.numFrozen}}
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='FrozenLimit'">
+                </span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='FrozenLimit'">
                     {{siteInfo.frozenLimit}}
-                </td>
-                <td ng-show="isEditing =='FrozenLimit'" colspan="2">
+                </span>
+                <span class="col-4" ng-show="isEditing =='FrozenLimit'" colspan="2">
                     <input type="text" ng-model="siteInfo.frozenLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                </span>
+                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
+                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
                     For each purchased update user, you can have 2 additional frozen (archived) workspaces.
-                </td>
-            </tr>
-            <tr>
-                <td>Documents:</td>
-                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                </span>
+            </div>
+            <div class="row" >
+                <span class="col-2 labelColumn" ng-click="toggleEditor('DocumentLimit')">Documents:</span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='DocumentLimit'">
                     {{ (siteStats.sizeDocuments/1000000)|number: '0'}} MB
-                </td>
-                <td class="numberColumn" ng-hide="isEditing =='DocumentLimit'">
+                </span>
+                <span class="col-2 numberColumn" ng-hide="isEditing =='DocumentLimit'">
                     {{siteInfo.fileSpaceLimit|number}} MB
-                </td>
-                <td ng-show="isEditing =='DocumentLimit'" colspan="2">
+                </span>
+                <span class="col-2" ng-show="isEditing =='DocumentLimit'" colspan="2">
                     <input type="text" ng-model="siteInfo.fileSpaceLimit">
-                    <button ng-click="saveSiteInfo()" class="btn btn-primary btn-raised">Save</button>
-                </td>
-                <td ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></td>
-                <td ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
+                    <button ng-click="saveSiteInfo()" class="btn btn-secondary btn-sm btn-wide">Save</button>
+                </span>
+                <span ng-hide="isEditing =='CreatorLimit'" class="helpColumn"></span>
+                <span ng-show="isEditing =='CreatorLimit'" class="helpColumn guideVocal">
                     For each purchased update user, you can have 100 MB of documents.
-                </td>
-            </tr>
-            <tr >
-                <td >Charges / Month:</td>
-                <td class="numberColumn">
+                </span>
+            </div>
+            <div class="row" >
+                <span class="col-2 labelColumn" style="cursor: text;">Charges / Month:</span>
+                <span class="col-2 numberColumn">
                     $ {{currentCharge | number: '2'}}
-                </td>
-                <td class="numberColumn">
+                </span>
+                <span class="col-2 numberColumn">
                     $ {{limitCharge | number: '2'}}
-                </td>
-                <td class="helpColumn"></td>
+                </span>
+                <span class="col-4 helpColumn"></span>
                     
-                </td>
-            </tr>
-        </table>
+            </div>
+        </div>
         
-        <p><button ng-click="recalcStats()" class="btn btn-primary btn-raised">Recalculate Current Usage</button>
+        <div class="row col-10 justify-content-end my-3"><button ng-click="recalcStats()" class="col-2 btn btn-primary btn-wide">Recalculate Current Usage</button></div>
         <p>Weaver only charges for the resources that you actually use.  The charge on the limit you set is the most you you will be changed in a given month where that limit is set.  If you keep your resource usage under the limit you will keep your charges under that amount.  Create your own balance of resources as you need.</p>
         
         <p>As part of our effort to support small organizations, Circle Weaver will then donate an amount to your cause, subtracting up to $6 from the total to produce the amount due.  If this brings the amount to less than zero, then you owe nothing.   If you keep the resources low enough, you can use Weaver for free.   Forever.  </p>
@@ -350,7 +351,7 @@ app.controller('myCtrl', function($scope, $http) {
         <hr/>
         
         <% if (ar.isSuperAdmin()) { %>
-        <h3>Super Admin Only</h3>
+        <div class="h5">Super Admin Only</div>
         <table class="spaceyTable">
             <tr ng-dblclick="toggleEditor('Flags')">
                 <td class="labelColumn"  ng-click="toggleEditor('Flags')">Flags:</td>

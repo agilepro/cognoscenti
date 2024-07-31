@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 /*
 Required parameters:
@@ -132,47 +132,51 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
     <div class="container-fluid m-2">
         <div class="row">
-            <div class="d-flex col-12">
-<span class="btn">
-        <a class="btn-comment btn-secondary" href="History.htm?start=<%=start-size%>" title="Back 50 records">
-          <i class="fa  fa-arrow-circle-left"></i></a>
-        <%=start%> - <%=endRecord%> 
-        <a class="btn-comment btn-secondary" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
-          <i class="fa  fa-arrow-circle-right"></i></a>
-</span>
-    <table>
-
-        <tr ng-repeat="hist in getHistory()"  >
-            <td class="projectStreamIcons" style="padding-bottom:20px;">
-              <span class="dropdown" >
-                <span id="menu1" data-toggle="dropdown">
-                  <img class="rounded-5 pe-2" 
-                     ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg" 
-                     style="width:50px;height:50px" 
-                     title="{{hist.responsible.name}} - {{hist.responsible.uid}}">
+            <span class="fixed-width border-end border-1 border-secondary">
+                <span class="d-flex">
+                    <a class="btn-comment btn-secondary mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
+                    <i class="fa  fa-arrow-circle-left"></i></a>
+                    <%=start%> - <%=endRecord%> 
+                    <a class="btn-comment btn-secondary mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
+                    <i class="fa  fa-arrow-circle-right"></i></a>
                 </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                      tabindex="-1" style="text-decoration: none;text-align:center">
-                      {{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
-                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                      ng-click="navigateToUser(hist.responsible)">
-                      <span class="fa fa-user"></span> Visit Profile</a></li>
-                </ul>
-              </span>
-            </td>
-            <td class="projectStreamText" style="padding-bottom:10px;">
-                {{hist.time|cdate}} -
-                <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+            </span>
+            <div class="d-flex col-9">
+                <div class="contentColumn">
+                    <div class="container-fluid">
+                        <div class="generalContent">
+                            <span ng-repeat="hist in getHistory()" class="row d-flex my-2" >
+                                <span class=" col-1 dropdown projectStreamIcons" >
+                        <ul class="navbar-btn p-0">
+                            <li class="nav-item dropdown" id="user" data-toggle="dropdown" >
+                                <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg"  title="{{hist.responsible.name}} - {{hist.responsible.uid}}" style="width: 32px; height: 32px; vertical-align: middle">
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                                    <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:center">{{hist.responsible.name}}<br/>{{hist.responsible.uid}}</a></li>
+                                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(hist.responsible)">
+                                        <span class="fa fa-user"></span> Visit Profile</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                                </span>
+                                <span class="col-8">
+                                    <span class="projectStreamText">{{hist.time|cdate}} -
+                                        <a href="<%=ar.retPath%>{{hist.respUrl}}">
+                                            <span class="red">{{hist.respName}}</span>
+                                        </a><br/>
+                                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>" was {{hist.event}}.
                 <br/>
-                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
-                was {{hist.event}}.
-                <br/>
-                <i>{{hist.comments}}</i>
+                                    <i>{{hist.comments}}</i>
+                                    <hr>
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            </td>
-        </tr>
-
-    </table>
+    </div>
 
 </div>
