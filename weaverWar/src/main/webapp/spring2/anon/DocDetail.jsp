@@ -255,32 +255,6 @@ function copyTheLink() {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<style>
-.spacey {
-    width:100%;
-}
-.spacey tr td {
-    padding:5px;
-}
-.firstcol {
-    width:180px;
-}
-.roomy {
-    padding:5px;
-}
-.clipping {
-    overflow: hidden;
-    text-overflow: clip; 
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-.panelClickable {
-    margin:4px;
-    overflow: hidden;
-    cursor: pointer;
-}
-</style>
-
 
 <div ng-cloak>
 

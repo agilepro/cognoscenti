@@ -43,7 +43,7 @@
             <td>
                 <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
-                     title="Navigate to the discussion topic that holds the minutes for the previous meeting">
+                     title="Navigate to the discussion that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
             </td>

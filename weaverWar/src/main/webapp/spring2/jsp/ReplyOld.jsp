@@ -220,7 +220,7 @@ function reloadIfLoggedIn() {
 <div ng-app="myApp" ng-controller="myCtrl" style="max-width:800px">
     <div class="page-name">
         <h1 id="mainPageTitle"
-            title="This is the title of the discussion topic and comment thread">
+            title="This is the title of the discussion and comment thread">
             Topic: {{originalSubject}} 
         </h1>
     </div>
@@ -233,7 +233,7 @@ function reloadIfLoggedIn() {
     
     <div class="page-name">
         <h1 id="mainPageTitle"
-            title="This is the title of the discussion topic and comment thread">
+            title="This is the title of the discussion and comment thread">
             Comments
         </h1>
     </div>
@@ -319,11 +319,11 @@ function reloadIfLoggedIn() {
             <td>
                 <button ng-click="changeSubscription(false)" ng-show="isSubscriber"
                         class="btn btn-default btn-raised"
-                        title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
+                        title="Click to remove yourself from the list and stop getting notifications from this discussion">
                         Unsubscribe</button>
                 <button ng-click="changeSubscription(true)" ng-hide="isSubscriber"
                         class="btn btn-default btn-raised"
-                        title="Click to remove add youself to the list and start getting notifications from this discussion topic">
+                        title="Click to remove add youself to the list and start getting notifications from this discussion">
                         Subscribe</button>
                 <span style="color:lightgray">&nbsp; Controls future email messages</span>
             </td>

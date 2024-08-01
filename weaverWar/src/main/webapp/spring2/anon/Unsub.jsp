@@ -143,7 +143,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         <div class="page-name">
             <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
-                title="This is the title of the discussion topic that all these topics are attached to">
+                title="This is the title of the discussion  that all these discussions are attached to">
                 {{topicInfo.subject}} <i class="fa fa-caret-square-o-down"></i>
             </h1>
         </div>
@@ -170,15 +170,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <span style="color:lightgray" ng-show="isSubscriber" >
                     <button ng-click="changeSubscription(false)" 
                         class="btn btn-primary btn-raised" 
-                        title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
+                        title="Click to remove yourself from the list and stop getting notifications from this discussion ">
                         Unsubscribe</button>
-                    &nbsp; Unsubscribe if you no longer want to receive email notification about new comments on this discussion topic.</span>
+                    &nbsp; Unsubscribe if you no longer want to receive email notification about new comments on this discussion.</span>
                 <span style="color:lightgray" ng-hide="isSubscriber" >
                     <button ng-click="changeSubscription(true)" 
                         class="btn btn-primary btn-raised" 
-                        title="Click to remove add youself to the list and start getting notifications from this discussion topic">
+                        title="Click to remove add youself to the list and start getting notifications from this discussion ">
                         Subscribe</button>
-                    &nbsp; Subscribe to be notified of new comments on this topic.</span>
+                    &nbsp; Subscribe to be notified of new comments on this discussion.</span>
             </td>
         </tr>
         <tr>

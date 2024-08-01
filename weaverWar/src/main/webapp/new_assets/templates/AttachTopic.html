@@ -14,7 +14,7 @@
         <div class="card-body">
           <div class="row col-12 align-top">
             <div ng-repeat="doc in filterDocs()" ng-click="addTopicToItem(doc)" style="cursor:pointer"
-                title="Click to link to this topic">
+                title="Click to link to this discussion">
                 <span class="col-4" limit-to="10">{{doc.subject}} </span>
                 <span class="col-2">
                     <button ng-hide="itemHasDoc(doc)"
@@ -23,27 +23,27 @@
                 </span>
             </div>
             <div ng-show="filterDocs().length==0">
-                <span class="instruction">No topics to choose from.<br/><br/>Filter: {{realDocumentFilter}}</span>
+                <span class="instruction">No discussions to choose from.<br/><br/>Filter: {{realDocumentFilter}}</span>
             </div>
           </div>
         </div>
       </div>
       <div class="card col-md-6 align-top">
         <div class="card-header border-1 vh-65"> 
-            Selected Topics
+            Selected Discussions
         </div>
         <div class="card-body">
           <div class="row-col-12 align-top">
             <div ng-repeat="topic in fullTopics" ng-click="removeTopicFromItem(topic)" 
-                title="Click to unlink the discussion topic"  style="cursor:pointer">
+                title="Click to unlink the discussion"  style="cursor:pointer">
                 <span class="col-4"> {{topic.subject}} </span>
                 <span class="col-1">
                     <button class="btn btn-tiny border-0"><i class="fa fa-close"></i> </button>
                 </span>
             </div>
             <div ng-show="fullTopics.length==0">
-                <td class="instruction">No topic linked..<br/><br/>
-                <span ng-show="filterDocs().length>0">Click on an topic on the left, to set it here on the right.  Since only one can be linked it will replace whatever was linked before.</span></td>
+                <td class="instruction">No discussion linked..<br/><br/>
+                <span ng-show="filterDocs().length>0">Click on a discussion on the left, to set it here on the right.  Since only one can be linked it will replace whatever was linked before.</span></td>
             </div>
           </div>
         </div>

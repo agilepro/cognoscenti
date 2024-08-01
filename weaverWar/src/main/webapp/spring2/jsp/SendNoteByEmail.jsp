@@ -207,7 +207,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader">Content:</td>
                         <td style="width:20px;"></td>
-                        <td><input id="includeBodyCheckBox" type="checkbox" name="includeBody"> Include topic '<%ar.writeHtml(noteSubject);%>' into email</td>
+                        <td><input id="includeBodyCheckBox" type="checkbox" name="includeBody"> Include discussion '<%ar.writeHtml(noteSubject);%>' into email</td>
                     </tr>
                     <% } %>
                     <tr>

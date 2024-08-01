@@ -485,9 +485,9 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             return {};
         }
         if (item.duration - item.timerTotal < 0) {
-            return { "background-color": "orangered", "color": "black" };
+            return { "background-color": "#ffb57d", "color": "black" };
         }
-        return { "background-color": "lightgreen", "color": "black" };
+        return { "background-color": "#90b990", "color": "black" };
     }
 
     $scope.itemTabStyleComplete = function (item) {
@@ -504,17 +504,17 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         };
         if (!item.timerRunning) {
             if (item.proposed) {
-                style["background-color"] = "#f0c85a";
+                style["background-color"] = "#f8e6b4";
             }
             else if (item.isSpacer) {
                 style["background-color"] = "#bbbbbb";
             }
         }
         else if (item.duration - item.timerTotal < 0) {
-            style["background-color"] = "orangered";
+            style["background-color"] = "#ffb57d";
         }
         else {
-            style["background-color"] = "lightgreen";
+            style["background-color"] = "#90b990";
         }
         /*
         if ($scope.selectedItem && item.position==$scope.selectedItem.position) {
@@ -2018,17 +2018,17 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.labelButtonClass = function (state, item) {
         if ("Items" == $scope.displayMode && item) {
             if (item.id == $scope.selectedItem.id) {
-                return "btn btn-success btn-raised labelButton";
+                return "btn btn-outline-secondary btn-success labelButton";
             }
             else {
-                return "btn btn-default btn-raised labelButton";
+                return "btn btn-outline-secondary labelButton";
             }
         }
         if (state == $scope.displayMode) {
-            return "btn btn-success btn-raised labelButton";
+            return "btn btn-success labelButton";
         }
         else {
-            return "btn btn-default btn-raised labelButton";
+            return "btn btn-outline-secondary labelButton";
         }
     }
     $scope.setSelectedItem = function (item) {

@@ -74,7 +74,7 @@ td {
     <div>
         <div class="page-name">
             <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
-                title="This is the title of the discussion topic that all these topics are attached to">
+                title="This is the title of the discussion that all these discussions are attached to">
                 Feedback Form
             </h1>
         </div>

@@ -792,14 +792,14 @@ function addvalue() {
             </td>
         </tr>        
         <tr>
-            <td class="fs-5 fw-bold" title="On the discussion topic page, you can link action items, and those topics will appear here">Linked Topics:</td>
-            <td title="On the discussion topic page, you can link action items, and those topics will appear here">
+            <td class="fs-5 fw-bold" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</td>
+            <td title="On the discussion page, you can link action items, and those discussions will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
                 </span>
                 <span ng-show="!linkedTopics || linkedTopics.length==0" style="color:lightgray">
-                    No discussion topics have links to this action item.
+                    No discussions have links to this action item.
                 </span>
             </td>
         </tr>

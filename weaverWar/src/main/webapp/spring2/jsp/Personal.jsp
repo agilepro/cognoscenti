@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         "isWatching": {
             "title": "Watch workspace",
             "type": "boolean",
-            "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion topic) will automatically add the workspace to your watched list."
+            "help": "When you watch a workspace it means simply that that workspace name will appear in the list of \"Watched Workspaces\" on your personal home page.\n\nYou can add and remove workspaces from the list at any time with immediate effect. Performing some operations in the workspace (such as creating a discussion) will automatically add the workspace to your watched list."
         },  
         "isNotify": {
             "title": "Digest",
@@ -143,7 +143,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         "isMute": {
             "title": "Mute Emails",
             "type": "boolean",
-            "help": "Normally all members will receive an email when a new topic is created. This option allows you to disable that so that you will not receive any email when a new discussion topic is created."
+            "help": "Normally all members will receive an email when a new discussion is created. This option allows you to disable that so that you will not receive any email when a new discussion is created."
         }
     };
     $scope.propertyOrder = [

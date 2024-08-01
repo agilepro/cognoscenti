@@ -89,9 +89,9 @@ app.controller('myCtrl', function($scope, $http) {
                 <span class="col-2 my-3 ms-3 h5 text-secondary">Topics</span><hr>
             </div>
             
-            <div class="row" ng-repeat="rec in siteList">
-                <span class="col-2 my-3 ms-3 text-secondary">
-                    <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/SiteWorkspaces.htm" title="navigate to the site">{{rec.siteName}}</a>
+            <div class="row " ng-repeat="rec in siteList">
+                <span class="col-2 my-3 ms-3 text-secondary ">
+                    <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/SiteWorkspaces.htm" title="navigate to the site" class="bg-transparent">{{rec.siteName}}</a>
                 </span>
                 <span class="col-5 my-3 ms-3 text-secondary">{{rec.siteDesc}}</span>
                 <span class="col-2 my-3 ms-3 text-secondary">{{rec.numWorkspaces}}</span>

@@ -481,7 +481,7 @@ function reloadIfLoggedIn() {
     
     <div class="page-name">
         <h1 id="mainPageTitle"
-            title="This is the title of the discussion topic and comment thread">
+            title="This is the title of the discussion and comment thread">
             Comments
         </h1>
     </div>
@@ -606,9 +606,9 @@ function reloadIfLoggedIn() {
                  class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
             <div>
                 <button class="btn btn-default btn-raised" ng-click="saveIt()"
-                        title="Send the comment into the discussion topic">Save Draft</button>
+                        title="Send the comment into the discussion">Save Draft</button>
                 <button class="btn btn-primary btn-raised" ng-click="sendIt()"
-                        title="Send the comment into the discussion topic">Send</button>
+                        title="Send the comment into the discussion">Send</button>
             </div>
         </div>
     </div>
@@ -654,29 +654,29 @@ function reloadIfLoggedIn() {
             <td>Your Subscription</td>
             <td>
               <div ng-show="isSubscriber">
-                <div>You are currently subscribed to this discussion topic
+                <div>You are currently subscribed to this discussion
                 <b>{{topicSubject}}</b>.</div>
                 <button ng-click="changeSubscription(false)" 
                         class="btn btn-default btn-raised"
-                        title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
+                        title="Click to remove yourself from the list and stop getting notifications from this discussion">
                         Unsubscribe</button>
                 <div>
                     If you unsubscribe, then you will stop receiving any email
                     when a new comment is added to the discussion.  Unsubscribe if
-                    you no longer want to see comments on this topic.
+                    you no longer want to see comments on this discussion.
                 </div>
               </div>
               <div ng-hide="isSubscriber">
-                <div>You are NOT subscribed to this discussion topic
+                <div>You are NOT subscribed to this discussion
                 <b>{{topicSubject}}</b>.</div>
                 <button ng-click="changeSubscription(true)" 
                         class="btn btn-default btn-raised"
-                        title="Click to remove add youself to the list and start getting notifications from this discussion topic">
+                        title="Click to remove add yourself to the list and start getting notifications from this discussion">
                         Subscribe</button>
                 <div>
                     If you subscribe, you will receive email
                     every time a new comment is added to the discussion.  
-                    Subscribe if you want to see comments on this topic.
+                    Subscribe if you want to see comments on this discussion.
                 </div>
               </div>
             </td>

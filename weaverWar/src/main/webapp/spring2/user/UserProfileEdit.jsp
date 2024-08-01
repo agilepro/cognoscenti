@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.UserManager"
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
 %><%@page import="java.util.TimeZone"
@@ -128,51 +128,56 @@ myApp.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-
-
-    <table class="spacey table">
-        <tr>
-            <td class="firstcol"></td>
-            <td colspan="2">
-                <button class="btn btn-warning btn-raised" ng-click="exit()">Return to Profile</button>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Time Zone:</td>
-            <td>
-                <div>
-                    <button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Time Zone</button>
-                </div>
+<div class="container-fluid">
+    <div class="row">
+            <span class="col-2 m-3" style="cursor: pointer;">
+                <button class="btn btn-secondary btn-raised btn-comment btn-wide py-1" ng-click="exit()">Return to Profile</button>
+            </span>
+        </div>
+        <div class=" m-3">
+        <div class="row-cols-3 d-flex  m-3">
+            <span class="col-2 h5">Time Zone:</span>
+            <span class="col-4 p-0 m-0">
+                
                 <div class="form-inline">
                     Currently set to: <b>{{profile.timeZone}}</b>
                 </div>
-                <div class="form-inline">
-                    Filter: <input ng-model="tzFilter" class="form-control" style="width:200px"/>
+            </span>
+            <span class="col-2 align-top"><div>
+                <button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Time Zone</button>
+            </div></span>
+            </div>
+            <div class="row-cols-2 d-flex m-3 well">
+                <span class="col-6 form-inline"><span class="h6 ">
+                    Filter:</span> <input ng-model="tzFilter" class="form-control mb-3" style="width:200px"/><span class="h5">
                     Enter a few letters of the time zone you need.
-                </div>
-                <div ng-repeat="item in filteredTimeZones()">
-                    <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-default btn-raised">Select</button> 
-                </div>
-            </td>
-        </tr>
-    </table>
+                </span></span>
+                <span class="d-block col-6">
+                    <div class="my-2 border-1 border-bottom border-secondary border-opacity-50" ng-repeat="item in filteredTimeZones()">
+                    <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-primary btn-raised py-1">Select</button> 
+                    </div>
+                </span>
+            </div>
+
+            
+    </div>
     <hr/>
 
     <% if (isSuperAdmin) { %>
-    <div class="well">
-    <h1>Admin Only Functions</h1>
-        <table class="spacey">
-            <tr>
-                <td class="firstcol">New Email:</td>
-                <td><input type="text" class="form-control" ng-model="newEmail" /></td>
-            </tr>
-            <tr>
-                <td class="firstcol"></td>
-                <td>
+    <div class="container-fluid mx-4">
+    <span class="h5">Admin Only Functions</span>
+        <div class="container-fluid">
+            <div class="row-cols-3 d-flex  m-3">
+                <span class="col-2">New Email:</span>
+                <span class="col-4"><input type="text" class="form-control" ng-model="newEmail" /></span>
+            </div>
+            <div class="row-cols-3 d-flex  m-3">
+                <span ></span>
+                <span>
                     <button class="btn btn-primary btn-raised" ng-click="addEmail()">Add Email</button>
-                </td>
-            </tr>
-        </table>
+                </span>
+            </div>
+        </div>
     </div>
     <% } %>
 </div>

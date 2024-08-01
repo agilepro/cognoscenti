@@ -201,7 +201,7 @@
           ],
           "href": "PDFExport.htm",
           "name": "Create PDF",
-          "title": "Create a PDF of a topic or topics"
+          "title": "Create a PDF of a discussion or discussions"
         },
         {
           "use": [
@@ -523,7 +523,7 @@
           ],
           "href": "NotesList.htm",
           "name": "Forum List",
-          "title": "List of forum topics"
+          "title": "List of discussions in the workspace"
         },
         {
           "use": [
@@ -532,7 +532,7 @@
           ],
           "ng-click": "openTopicCreator()",
           "name": "Create",
-          "title": "Create a new discussion topic"
+          "title": "Create a new discussion"
         },
         {
           "use": [
@@ -541,7 +541,7 @@
           ],
           "href": "SendNote.htm?noteId={{topicId}}",
           "name": "Send Email",
-          "title": "Send an email about this discussion topic"
+          "title": "Send an email about this discussion"
         },
         {
           "use": [
@@ -550,7 +550,7 @@
           ],
           "href": "PDFExport.htm",
           "name": "Create PDF",
-          "title": "Create a PDF of a topic or topics"
+          "title": "Create a PDF of a discussion or discussions"
         },
         {
           "use": [
@@ -559,7 +559,7 @@
           ],
           "href": "searchAllNotes.htm",
           "name": "Search",
-          "title": "Search through all the topics",
+          "title": "Search through all the discussions in the workspace",
           "readOnly": true
         }
       ],

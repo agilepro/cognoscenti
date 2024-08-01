@@ -137,7 +137,7 @@ function reloadIfLoggedIn() {
 
     <div class="page-name">
         <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
-            title="This is the title of the discussion topic that all these topics are attached to">
+            title="This is the title of the discussion that all these discussions are attached to">
             Meeting: {{meeting.name}} <i class="fa fa-caret-square-o-down"></i>
         </h1>
     </div>

@@ -36,105 +36,78 @@
 
 
 
-<nav class="navbar navbar-default appbar">
-<div class="container-fluid">
-
-  <!-- Subnavi Collapse Button -->
-  <button type="button" class="navbar-toggle visible-xs" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-  </button>
-
-<style>
-.tighten li a {
-    padding: 0px 5px !important;
-    background-color: white;
-}
-.tighten li {
-    background-color: white;
-}
-.tighten {
-    padding: 5px !important;
-    border: 5px #F0D7F7 solid !important;
-    max-width:300px;
-    background-color: white !important;
-}
-.sublist {
-    padding: 0px 5px !important;
-    background-color: white;
-    border: 5px #F0D7F7 solid;
-    color: black;
-    overflow: hidden;
-    text-overflow: clip;
-    white-space: nowrap;
-}
-.sublist ul li {
-    padding: 2px;
-}
-.sublist ul li a {
-    color: black;
-}
-</style>
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary py-0">
+  <div class="container-fluid">
 
   <!-- Logo Brand -->
-  <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
-    <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-    <span class="weaver-logo">Weaver</span>
+  <a class="navbar-brand pb-2" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
+    <span class="fw-semibold fs-1 text-weaverbody">
+      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>bits/header-icon.png">
+    Weaver</span>
   </a>
+ <!-- Search Bar -->
+ <i class="fa fa-search text-weaverbody mx-3" aria-hidden="true"></i>
+ <form class="d-flex">
+   <input
+     class="form-control me-2 text-weaverbody"
+     type="search"
+     placeholder="Search"
+     aria-label="Search"
+   />
+ </form>
+ <!-- end Search Bar -->
 
   <!-- Drop Down Workspaces -->
-  <ul class="nav navbar-nav appbar-nav">
-      <li class="visible-xs">
-        <a class="dropdown-toggle"
-          data-target=".search"
-          data-toggle="collapse"
-          title="Search"
-          id="toggle-search">
-          <i class="fa fa-search" aria-hidden="true"></i>
-        </a>
-      </li>  
+  <div class="collapse navbar-collapse" id="topbar-nav">
+  <ul class="navbar-nav ms-auto">
       
 <%if(ar.isSuperAdmin()){ %>
       <li style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/EmailListnerSettings.htm'">
           <img src="<%=ar.retPath%>/bits/adminicon.png" style="max-height:50px;max-width:50px">
           </li>
+  </ul>
 <% } %>      
       
 <% if (loggedUser!=null) { %>      
-      <li class="dropdown">
-          <a class="dropdown-toggle"
-            data-target="#"
-            data-toggle="dropdown"
+      <!-- Drop Down Add -->
+      <li class="nav-item dropdown">
+        <a 
+        href="#" 
+        class="nav-link dropdown-toggle text-weaverbody"
+        id="navbarAddDropdown"
+        role="button"
+            data-bs-toggle="dropdown"
             aria-expanded="false"
-            title="Workspaces">
+            >
               <i class="fa fa-plus" aria-hidden="true"></i>
               <span class="dropdown-toggle-label" translate>Add</span>
-              <div class="ripple-container"></div>
-          </a>
-          <ul class="dropdown-menu pull-right tighten">
-            <li><a href="AddSomething.htm?start=meeting">Meeting</a></li>
-            <li><a href="NotesList.htm?start=create">Discussion Topic</a></li>
-            <li><a href="DocsAdd.htm">Document</a></li>
-            <li><a href="GoalStatus.htm?start=create">Action Item</a></li>
-            <li><a href="DecisionList.htm?start=create">Decision</a></li>
-            <li><a href="SendNote.htm">Email</a></li>
-            <li><a href="AddSomething.htm">Something Else</a></li>
-          </ul>
-      
+        </a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="AddSomething.htm?start=meeting">Meeting</a></li>
+            <li><a class="dropdown-item" href="NotesList.htm?start=create">Discussion</a></li>
+            <li><a class="dropdown-item" href="DocsAdd.htm">Document</a></li>
+            <li><a class="dropdown-item" href="GoalStatus.htm?start=create">Action Item</a></li>
+            <li><a class="dropdown-item" href="DecisionList.htm?start=create">Decision</a></li>
+            <li><a class="dropdown-item" href="SendNote.htm">Email</a></li>
+            <li><a class="dropdown-item" href="AddSomething.htm">Something Else</a></li>
+        </ul>
       </li>
-      <li class="dropdown">
-            <a class="dropdown-toggle"
-            data-target="#"
-            data-toggle="dropdown"
-            aria-expanded="false"
-            title="Workspaces">
-              <i class="fa fa-circle-o" aria-hidden="true"></i>
-              <span class="dropdown-toggle-label" translate>Workspaces</span>
-              <div class="ripple-container"></div>
-            </a>
-            <ul class="dropdown-menu pull-right tighten">
+      <!-- Drop Down Workspace -->
+      <li class="nav-item dropdown">
+        <a 
+        href="#" 
+        class="nav-link dropdown-toggle text-weaverbody"
+        id="navbarWorkspaceDropdown"
+        role="button"
+        data-bs-toggle="dropdown-toggle-label ng-scope"
+        aria-expanded="false"
+        >
+            <i class="fa fa-circle-o" aria-hidden="true"></i>
+            <span class="dropdown-toggle-label" translate>Workspaces</span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarWorkspacesDropdown"
+        >
+<span class="dropdown-item">
 <%
 
    List<RUElement> recent = ar.getSession().recentlyVisited;
@@ -151,13 +124,14 @@
    }
 
 %>
-            <li class="divider"></li>
-            <li><a href="<%=userRelPath%>WatchedProjects.htm">Watched Workspaces</a></li>
-            <li><a href="<%=userRelPath%>OwnerProjects.htm">Administered</a></li>
-            <li><a href="<%=userRelPath%>ParticipantProjects.htm">Participant</a></li>
-            <li><a href="<%=userRelPath%>AllProjects.htm">All</a></li>
-          </ul>
-        </li>
+</span>
+<li><hr class="dropdown-divider"></li>
+<li><a class="dropdown-item" href="<%=userRelPath%>WatchedProjects.htm">Watched Workspaces</a></li>
+<li><a class="dropdown-item" href="<%=userRelPath%>OwnerProjects.htm">Administered</a></li>
+<li><a class="dropdown-item" href="<%=userRelPath%>ParticipantProjects.htm">Participant</a></li>
+<li><a class="dropdown-item" href="<%=userRelPath%>AllProjects.htm">All</a></li>
+</ul>
+</li>
 
 
         
@@ -173,10 +147,10 @@
     
 <% } else { %>    
         <!-- Drop Down User -->
-        <li>
-          <a class="dropdown-toggle"
-          data-target="#"
-          data-toggle="dropdown"
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-weaverbody"
+          href="#" role="button"
+          data-bs-toggle="dropdown"
           aria-expanded="false"
           title="User: <% ar.writeHtml(userName); %>">
             <i class="fa fa-user" aria-hidden="true"></i>
@@ -184,23 +158,26 @@
               <% ar.writeHtml(userName); %>
             </span>
           </a>
-          <ul class="dropdown-menu pull-right tighten">
-            <li><a href="<%=userRelPath%>UserHome.htm">Home</a></li>
-            <li><a href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
-            <li><a href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
-            <li><a href="<%=userRelPath%>EmailUser.htm">Email Sent</a></li>
-            <li><a href="<%=userRelPath%>NotificationSettings.htm">Withdraw</a></li>
-            <li><a href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
+          <ul class="dropdown-menu bg-weaverbody text-weaverdark">
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserHome.htm">Home</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>EmailUser.htm">Email Sent</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>NotificationSettings.htm">Withdraw</a></li>
+            <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
-            <li class="divider"></li>
-            <li><a href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>
+            <li class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>../su/EmailListnerSettings.htm">Administration</a></li>
 <%} %>
-            <li class="divider"></li>
-            <li><a onclick='logOutPage();'>Log Out</a></li>
+          <li class="dropdown-divider"></li>
+          <li><a class="dropdown-item" onclick='logOutPage();'>Log Out</a></li>
 <% } %> 
-          </ul>
-        </li>
-      </ul>
+        </ul>
+      </li>
+</ul>
+</div>
+</div>
+</nav>
       <!-- END App Bar -->
       <!-- BEGIN Input Search -->
       <div class="search navbar-left collapse">
@@ -211,7 +188,6 @@
         </form>
       </div>
       <!-- END Input Search -->
-    </div>
-</nav>
+    
 <!-- END AppBar.jsp -->
 <% out.flush(); %>

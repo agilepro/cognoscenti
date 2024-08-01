@@ -176,7 +176,7 @@ table tr td {
                 
                 <p><button type="button" class="btn btn-primary btn-raised"
                     onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
-                    You can either copy or move documents, topics, action items, or meetings from another workspace to this one.</p> 
+                    You can either copy or move documents, discussions, action items, or meetings from another workspace to this one.</p> 
                                 
             </div>
             <div ng-hide="showSection=='docs'">

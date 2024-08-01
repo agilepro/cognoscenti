@@ -114,7 +114,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <br/>
         As you visit workspaces, go to the "Workspace Settings &gt; Personal" page, and sign up
         to receive notifications.   Then, when things in the workspace change,
-        such as documents added, or topics edited, you will see those changes here,
+        such as documents added, or discussions edited, you will see those changes here,
         and will be automatically notified of the changes by email.<br/>
         <br/>
         Later, you can turn off notifications at any time.

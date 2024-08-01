@@ -220,7 +220,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.toggleNoteDel = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this topic because you are an observer");
+            alert("You are not able to update this discussion because you are an observer");
             return;
         }        newRec = {};
         newRec.id = rec.id;
@@ -231,7 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.updateNote = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this topic because you are an observer");
+            alert("You are not able to update this discussion because you are an observer");
             return;
         }
         var postURL = "updateNote.json?nid="+rec.id;
@@ -260,11 +260,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openTopicCreator = function() {
         
         if (!$scope.canUpdate) {
-            alert("You are not able to create a topic because you are an observer");
+            alert("You are not able to create a discussion because you are an observer");
             return;
         }
         if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\nNew discussion topics can not be created in a frozen workspace.");
+            alert("Sorry, this workspace is frozen by the administrator\nNew discussion can not be created in a frozen workspace.");
             return;
         }
 
@@ -323,7 +323,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if ("Trash" == note.discussionPhase) {
-            alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
+            alert("This discussion has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
         window.location = "SendNote.htm?noteId="+note.id;
@@ -357,7 +357,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               Search All Topics </a>
         </span>
       </div>
-      <div class="d-flex col-9"><div class="contentColumn">
+      <div class="d-flex col-9">
+        <div class="contentColumn">
      
         <div class="well">Filter <input ng-model="filter"> &nbsp;
             <span class="dropdown" ng-repeat="role in allLabelFilters()">
@@ -414,7 +415,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
                     <span ng-repeat="label in getNoteLabels(rec)">
                       <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)"
-                              title="click to filter/unfilter all topics by this label">
+                              title="click to filter/unfilter all discussions by this label">
                       {{label.name}}
                       </button>
                     </span>
@@ -423,7 +424,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
                      title="close the info"></a>
                   <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
-                     title="info of this topic"></a>
+                     title="info of this discussion"></a>
                    <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
                 </div>
                 <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
@@ -488,14 +489,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         
     <div class="instruction" ng-show="!initialFetchDone" style="margin-top:80px">
-    Fetching topics . . .
+    Fetching discussions . . .
     </div>
     <div class="guideVocal" ng-show="notes.length==0 && initialFetchDone" style="margin-top:80px">
-    You have no discussion topics in this workspace yet.
+    You have no discussions in this workspace yet.
     You can add them using a option from the pull-down in the upper right of this page.
     </div>
     <div class="guideVocal" ng-show="notes.length>0 && initialFetchDone && lastDisplayedSetSize==0" style="margin-top:80px">
-    None of the {{notes.length}} topics match the filter conditions you have chosen.
+    None of the {{notes.length}} discussions match the filter conditions you have chosen.
     </div>
     
     

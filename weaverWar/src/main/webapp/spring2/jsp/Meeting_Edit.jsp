@@ -207,7 +207,7 @@
         <div class="accordion accordionAssets" id="accordionAttachments">
         <div class="accordion-item" >
           <div class="h6 accordion-header" id="headingAttachments">
-          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttachments" aria-expanded="false" aria-labelledby="collapseAttachments" aria-controls="collapseAttachments"><i class="fa fa-paperclip"></i> &nbsp; Attachments:</div>
+          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttachments" aria-expanded="false" aria-labelledby="collapseAttachments" aria-controls="collapseAttachments"><i class="fa fa-paperclip"></i> &nbsp; Files:</div>
           </div>
           <div id="collapseAttachments" class="accordion-collapse collapse" aria-labelledby="headingAttachments" data-bs-parent="#accordionAttachments">
             <div class="accordion-body">
@@ -224,12 +224,12 @@
                   {{fullDoc.name}}
                 </div>
               </div>
-              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">Double-click to add / remove attachments
+              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">Double-click to add / remove files
               </div>
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid">
       <div class="row justify-content-center"> 
-        <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachDocument(item)">  Attach/Upload Assets</span>
+        <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
         </div>
 
       </div>
@@ -244,14 +244,14 @@
       </div>
     </div><!--END Documents/Attachment-->
 
-    <!--Forum-->
+    <!--Discussion-->
       <div class="col-md-4">
       <div ng-hide="item.isSpacer">
         <div class="accordion accordionAssets" 
       id="accordionForum">
       <div class="accordion-item">
         <div class="h6 accordion-header" id="headingForum">
-          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForum" aria-expanded="false" aria-labelledby="headingForum" aria-controls="collapseForum"><i class="fa fa-lightbulb-o"></i>&nbsp;Forum:
+          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForum" aria-expanded="false" aria-labelledby="headingForum" aria-controls="collapseForum"><i class="fa fa-lightbulb-o"></i>&nbsp;Discussions:
           </div>
         </div>
         <div id="collapseForum" class="accordion-collapse collapse" data-bs-parent="#accordionForum">
@@ -262,12 +262,12 @@
             <span ng-click="navigateToTopic(topic.universalid)" ><i class="fa fa-lightbulb-o fs-5" ></i>&nbsp;
             {{topic.subject}}</span></div>
             <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
-              Double-click to set or unset linked topic
+              Double-click to set or unset linked discussion
           </div>
 <!-- Button trigger modal -->
 <div class="container-fluid">
   <div class="row py-3 ">      
-    <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachTopics(item)"> Attach/Remove Discussion Forums 
+    <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
     </span>
   </div>
   </div>

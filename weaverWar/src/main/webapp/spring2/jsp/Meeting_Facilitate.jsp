@@ -1,14 +1,14 @@
     <div ng-cloak>
 
         <div class="well" ng-show="meeting.state < 2">
-            <h2>Meeting is not in running state</h2>
+            <h2 class="h5">Meeting is not in running state</h2>
             <button ng-click="changeMeetingState(2)" class="btn btn-primary btn-raised">Start Meeting</button>
         </div>
         <div class="panel panel-default" ng-repeat="sim in actionItemSims">
-            <div class="panel-heading" >{{sim.item.number}}. {{sim.item.subject}}
-                <span style="font-size:70%" ng-hide="sim.item.needMerge">
+            <div class="h6 panel-heading" >{{sim.item.number}}. {{sim.item.subject}}
+                <span ng-hide="sim.item.needMerge">
                     <span ng-hide="sim.item.timerRunning" style="padding:5px">
-                        <button ng-click="agendaStartButton(sim.item)"><i class="fa fa-clock-o"></i> Start</button>
+                        <button class="btn btn-comment btn-success btn-sm" ng-click="agendaStartButton(sim.item)"><i class="fa fa-clock-o"></i> Start</button>
                         Elapsed: {{sim.item.timerTotal| minutes}}
                         Remaining: {{sim.item.duration - item.timerTotal| minutes}}
                     </span>
@@ -16,10 +16,10 @@
                         <span>Running</span>
                         Elapsed: {{sim.item.timerTotal| minutes}}
                         Remaining: {{sim.item.duration - sim.item.timerTotal| minutes}}
-                        <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+                        <button class="btn btn-comment btn-danger btn-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                     </span>
                 </span>
-                <span style="font-size:70%" ng-show="sim.needMerge">
+                <span ng-show="sim.needMerge">
                     <button ng-click="closeEditor()" style="background-color:red;color:white">
                         <i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
                 </span>
@@ -36,15 +36,15 @@
             </div>
             <div class="panel-body" ng-hide="sim.isEditing" ng-dblclick="openNotesDialog(sim.itemRef)">
                 <div ng-bind-html="sim.vHtml"></div>
-                <div ng-hide="sim.vHtml" style="color:#bbb">Double click to start editing</div>
+                <div ng-hide="sim.vHtml" class="ms-5 guideVocal opacity-75"><i>Double click to start editing</i></div>
                 <div>&nbsp;</div>
             </div>
 
         </div>
         
-        <div>
+        <div class="h6">
             Meeting Duration: {{timerTotal|minutes}}  
-            <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+            <button class="btn btn-secondary btn-comment btn-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
         </div>
 
         

@@ -176,11 +176,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.startEdit = function() {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\nTopics can not be edited in a frozen workspace.");
+            alert("Sorry, this workspace is frozen by the administrator\nDiscussions can not be edited in a frozen workspace.");
             return;
         }
         if ($scope.isEditing) {
@@ -211,7 +211,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.mergeUpdateDoc = function(changeEditing) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         if (!changeEditing) {
@@ -239,7 +239,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.saveEdits = function(fields) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
@@ -718,7 +718,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     $scope.openAttachDocument = function () {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -757,7 +757,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.openAttachAction = function (item) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -796,7 +796,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     $scope.openModalActionItem = function (goal, start) {
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -1011,7 +1011,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         if ("Trash" == $scope.noteInfo.discussionPhase) {
-            alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
+            alert("This discussion has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
         window.location = "SendNote.htm?noteId="+$scope.topicId;
@@ -1095,12 +1095,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       </span>
       <span>
           <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(false)"
-                  title="Post this topic but don't send any email">
+                  title="Post this discussion but don't send any email">
           Post Without Email </button>
       </span>
       <span>
           <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(true)"
-                  title="Post this topic and send the email to selected users">
+                  title="Post this discussion and send the email to selected users">
           Post &amp; Send Email </button>
       </span>
 </div>
@@ -1267,7 +1267,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </ul>
     </span> 
     <span class="dropdown" ng-show="noteInfo.draft">   
-        <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this topic to take it out of Draft mode and allow others to see it">Post Topic </button>
+        <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
     </span>
 </div>
 
@@ -1282,7 +1282,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
         <div ng-repeat="cmt in getComments()">
 
-            <%@ include file="/spring2/jsp/CommentView.jsp"%>
+            <%@ include file="/spring2/jsp/CommentView.jsp" %>
        
          </div>
 </div>

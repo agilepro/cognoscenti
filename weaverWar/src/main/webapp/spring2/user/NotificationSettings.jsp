@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
@@ -97,22 +97,14 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-
-<div class="guideVocal" ng-hide="hideNote" ng-click="hideNote=true">
-Please note: when you withdraw from a <b>'Members'</b> role of a workspace,
-you will stop receiving email when meetings are called, when topics
-are create, and when comments are made.
-ALSO, you will no longer have any access to the workspace.
-Withdrawing from a Members role means you are effectively leaving
-the group that runs the workspace.
+<div class="d-flex col-9">
+    <div class="contentColumn">
+        <div class="container-fluid">
+            <div class="generalContent">
+<div class="well ms-2 col-8" ng-hide="hideNote" ng-click="hideNote=true">
+    <span class="guideVocal">Please note: when you withdraw from a <b>'Members'</b> role of a workspace, you will stop receiving email when meetings are called, when discussions are create, and when comments are made. ALSO, you will no longer have any access to the workspace. Withdrawing from a Members role means you are effectively leaving the group that runs the workspace.</span>
 </div>
-
-<style>
-.padded { padding:10px }
-.bottomline { border-bottom: 1px solid lightgray; background-color: yellow }
-</style>
-
-
+<div class="row-cols-3 d-flex m-2 border-bottom border-1 border-secondary border-opacity-25">
     <div class="col-xs-12 col-sm-6 col-md-3 padded">
         <b>Workspace</b>
     </div>
@@ -122,20 +114,21 @@ the group that runs the workspace.
     <div class="col-xs-12 col-md-6 padded">
         <b>Description</b>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 bottomline"></div>
-
-  <div ng-repeat="prjrole in partProjects">
+</div>
+<div class="row-cols-3 d-flex m-2 border-bottom border-1 border-secondary border-opacity-25" ng-repeat="prjrole in partProjects">
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
             <b>{{prjrole.fullName}}</b><br/>
             Updated: {{prjrole.updated|cdate}}
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
             <b>{{prjrole.role}}</b> <br/>
-            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">Withdraw</button>
+            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-wide ">Withdraw</button>
         </div>
         <div class="col-xs-12 col-md-6 padded">
             {{prjrole.desc}}
         </div>
-     <div class="col-xs-12 col-sm-12 col-md-12 bottomline">
-     </div>
-  </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>

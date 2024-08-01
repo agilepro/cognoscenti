@@ -315,7 +315,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     <div class="guideVocal">
         <p>
        If you would like some guidance in how to create a workspace, and how sites and workspaces work,
-       please check the tutorial on the topic of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
+       please check the tutorial on the discussion of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
        for a complete walk through on how to do this.
        </p>
        <p>

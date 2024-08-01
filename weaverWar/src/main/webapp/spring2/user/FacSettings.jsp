@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@include file="include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%
@@ -84,7 +84,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: "<%=ar.retPath%>templates/EmailModal.html<%=templateCacheDefeater%>",
+            templateUrl: "<%=ar.retPath%>new_assets/templates/EmailModal.html<%=templateCacheDefeater%>",
             controller: 'EmailModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -143,69 +143,51 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 </script>
 
-<style>
-.spacey {
-    width:100%;
-}
-.spacey tr td {
-    padding:3px;
-}
-.firstcol {
-    width:130px;
-}
-.thinnerGuide {
-    margin:2px;
-    width:400px;
-}
-</style>
-
-
 <div class="userPageContents">
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
     
-
-    <table class="spacey table">
-        <tr>
-            <td class="firstcol">Facilitator:</td>
-            <td>
+<div class="container-fluid">
+    <div class="row-cols-2 d-flex">
+            <span class="col-2 labelColumn ps-2" style="cursor: text;">Facilitator:</span>
+            <span class="col-1 p-0 m-0" >
                 <div>
                   <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
                 </div>
-            </td>
-            <td ng-hide="helpFacilitator">
-                <button class="btn" ng-click="helpFacilitator=!helpFacilitator">?</button>
-            </td>
-            <td ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+            </span>
+            <span class="col-5 p-0 m-0" ng-hide="helpFacilitator">
+                <button class="btn" ng-click="helpFacilitator=!helpFacilitator"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+            </span>
+            <span class="col-5 p-0 m-0"  ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
               <div class="guideVocal thinnerGuide">
                 This indicates that you are a facilitator, and would like to be contacted
                 by people looking for a facilitator.
               </div>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol" ng-click="showIntroEditor=true">Intro:</td>
-            <td ng-hide="showIntroEditor">
+            </span>
+        </div>
+        <div class="row-cols-3 d-flex " >
+            <span class="col-2 labelColumn ps-2" ng-click="showIntroEditor=true">Intro:</span>
+            <span class="col-3 p-2 m-0" ng-hide="showIntroEditor">
                 <div ng-bind-html="userCache.facilitator.intro|wiki"></div>
-            </td>
-            <td ng-show="showIntroEditor">
-                <div>
+            </span>
+            <span class="col-3 p-2 m-0" ng-show="showIntroEditor">
+                <div class="mce-tinymce" ng-model="userCache.facilitator.intro">
                   make an editor appear here.   
                   <button class="btn btn-primary btn-raised" 
                           ng-click="showIntroEditor=false">Save</button>
                 </div>
-            </td>
-            <td ng-hide="helpFacilitator">
-                <button class="btn" ng-click="helpFacilitator=!helpFacilitator">?</button>
-            </td>
-            <td ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+            </span>
+            <span class="col-5 p-2 m-0" ng-hide="helpFacilitator">
+                <button class="btn" ng-click="helpFacilitator=!helpFacilitator"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+            </span>
+            <span class="col-5 p-2 m-0" ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
               <div class="guideVocal thinnerGuide">
                 This is a long description with everything that you want prospective clients to know about you.
               </div>
-            </td>
-        </tr>
-    </table>
+            </span>
+        </div>
+    </div>
 
 </div>
 
-<script src="<%=ar.retPath%>templates/EmailModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/EmailModal.js"></script>

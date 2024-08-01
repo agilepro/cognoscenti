@@ -113,7 +113,7 @@ td {
     <div>
         <div class="page-name">
             <h1 id="mainPageTitle"
-                title="This is the title of the discussion topic that all these topics are attached to">
+                title="This is the title of the discussion that all these discussions are attached to">
                 Sorry, Weaver can't Handle that Request
             </h1>
         </div>

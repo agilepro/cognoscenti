@@ -282,6 +282,7 @@ a {
     padding:5px;
 }
 .votingButton {
+    max-width: fit-content;
     padding:2px;
     margin:0px;
     font-size: 130%;
@@ -549,8 +550,8 @@ a {
 
 .well .btn-raised {
     margin: 5px;
-    font-size: 1.2rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .description-container {
@@ -765,7 +766,17 @@ a {
 
     }
 }
+.btn-success {
+        color: #fff !important;
+        background-color: #034603 !important;
+        border-color        : #034603 !important;
+        box-shadow           : inset 0 3px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075); 
 
+    &:hover {
+        background-color: $primary-10;
+        color: $primary;
+    }
+}
         .nav-link {
             border: $secondary solid 1px;
             border-radius: 3px;

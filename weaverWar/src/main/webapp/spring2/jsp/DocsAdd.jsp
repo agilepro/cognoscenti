@@ -102,7 +102,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
         </td>
         <td class="py-1">
-            <p>You can either copy or move documents, topics, action items, or meetings from another workspace to this one.
+            <p>You can either copy or move documents, discussions, action items, or meetings from another workspace to this one.
             </p>
         </td>
     </tr>
