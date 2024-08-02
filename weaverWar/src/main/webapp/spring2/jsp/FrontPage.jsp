@@ -249,6 +249,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.purposeHtml = processHtml($scope.workspaceConfig.purpose);
         $scope.visionHtml  = processHtml($scope.workspaceConfig.vision);
         $scope.missionHtml = processHtml($scope.workspaceConfig.mission);
+        $scope.aimHtml  = processHtml($scope.workspaceConfig.aim);
         $scope.domainHtml  = processHtml($scope.workspaceConfig.domain);
     }
     generateTheHtmlValues();

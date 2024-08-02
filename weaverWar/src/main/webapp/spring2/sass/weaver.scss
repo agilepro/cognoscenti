@@ -392,6 +392,12 @@ a {
     color:#39134C;
     font-size: 1.2rem;
     font-weight: 700;
+    border-radius: 10px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
 }
 .btn-flex {
     width: auto;
@@ -405,6 +411,22 @@ a {
     text-align: center;
     vertical-align: middle;
     flex-grow: 1;
+    border: #4d2f5e 1px solid;
+    border-radius: 10px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.btn-wide {
+    width: fit-content;
+    flex-grow: 5;
+    padding: 5px;
+    display: inline-block;
+    min-width: max-content;
+    text-align: center;
+    display: inline-block;
     border: #4d2f5e 1px solid;
     border-radius: 10px;
     &:hover {
@@ -469,22 +491,7 @@ a {
     padding: 0px;
 }
 
-.btn-wide {
-    width: fit-content;
-    flex-grow: 5;
-    padding: 5px;
-    display: inline-block;
-    min-width: max-content;
-    align-items: center;
-    display: inline-block;
-    border: #4d2f5e 1px solid;
-    border-radius: 10px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
+
 
 .btn-outline-primary {
     color: $primary;
