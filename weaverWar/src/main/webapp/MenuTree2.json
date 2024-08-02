@@ -65,6 +65,15 @@
       "icon": "Workspaces.png"
     },
     {
+      "href": "RoleRequest.htm",
+      "name": "Role Requests",
+      "title": "Check on who has requested a position in a role",
+      "opts": [],
+      "useOpts": [],
+      "readOnly": true,
+      "icon": "RoleRequest.png"
+    },
+    {
       "href": "SiteUsers.htm",
       "name": "Users",
       "title": "Add, remove, and configure users.",
@@ -89,22 +98,6 @@
       "useOpts": [],
       "readOnly": true,
       "icon": "SiteMap.png"
-    },
-    {
-      "href": "SiteStats.htm",
-      "name": "Site Statistics",
-      "title": "View content statistics for the site.",
-      "opts": [],
-      "useOpts": [],
-      "icon": "Site-Stats.png"
-    },
-    {
-      "href": "SiteLedger.htm",
-      "name": "Site Charges",
-      "title": "View the monthly summary of charges for the site.",
-      "opts": [],
-      "useOpts": [],
-      "icon": "Site-Ledger.png"
     }
   ],
   "workMode": [

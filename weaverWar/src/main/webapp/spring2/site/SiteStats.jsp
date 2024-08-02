@@ -1,9 +1,9 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.util.NameCounter"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("");
@@ -99,190 +99,176 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 });
 
 </script>
-<style>
-.spaceyTable {
-    min-width:800px;
-    max-width:1000px;
-}
-.spaceyTable tr td {
-    padding:8px;
-    border-bottom: 1px solid #ddd;
-}
-.spaceyTable tr:hover {
-    background-color: #f5f5f5;
-}
-.centeredCell {
-    text-align:center;
-}
-</style>
+
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteUsers.htm">User List</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteStats.htm">Site Statistics</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteLedger.htm">Site Charges</a></li>
-          <li role="presentation"><a role="menuitem"
-              ng-click="recalcStats()">Recalculate</a></li>
+<div class="container-fluid">
+   <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+             href="SiteAdmin.htm">Site Admin</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+             href="SiteUsers.htm">User List</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+             href="SiteStats.htm">Site Statistics</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+             href="SiteLedger.htm">Site Charges</a></span>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              ng-click="recalcStats()">Recalculate</a></span>
           <% if (ar.isSuperAdmin()) { %>
-          <li role="presentation" style="background-color:yellow"><a role="menuitem"
-              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></li>
+          <span class="btn btn-warning btn-comment btn-raised m-3 pb-2 pt-0" type="button" ><a class="nav-link" role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
           <% } %>
-        </ul>
-      </span>
-    </div>
+          </div>
+    		<div class="d-flex col-9">
+            <div class="contentColumn">
+               <div class="container-fluid">
+                      <div class="generalContent">
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4"></span>
+           <span class="col-2 h6">Entire Site</span>
+           <span class="col-2 h6">Site Limit</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Last Change:</span>
+           <span class="col-2">{{siteInfo.changed|cdate}}</span>
+           <span class="col-2"></span>
+           </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Full Users:</span>
+           <span class="col-2">{{siteStats.editUserCount}}</span>
+           <span class="col-2">{{siteInfo.editUserLimit}}</span>
+           </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Observers:</span>
+           <span class="col-2">{{siteStats.readUserCount}}</span>
+           <span class="col-2">{{siteInfo.viewUserLimit}}</span>
+           </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Emails / Month:</span>
+           <span class="col-2"></span>
+           <span class="col-2">{{siteInfo.emailLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Size of Documents:</span>
+           <span class="col-2">{{siteStats.sizeDocuments|number}}</span>
+           <span class="col-2">{{siteInfo.fileSpaceLimit*1000000|number}}</span>
+           </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Active Workspaces:</span>
+           <span class="col-2">{{siteStats.numActive}}</span>
+           <span class="col-2">{{siteInfo.workspaceLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Frozen Workspaces:</span>
+           <span class="col-2">{{siteStats.numFrozen}}</span>
+           <span class="col-2">{{siteInfo.frozenLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Workspaces:</span>
+           <span class="col-2">{{stats.numWorkspaces}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Users:</span>
+           <span class="col-2">{{stats.numUsers}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Discussions:</span>
+           <span class="col-2">{{stats.numTopics}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Meetings:</span>
+           <span class="col-2">{{stats.numMeetings}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Decisions:</span>
+           <span class="col-2">{{stats.numDecisions}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Comments:</span>
+           <span class="col-2">{{stats.numComments}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Proposals:</span>
+           <span class="col-2">{{stats.numProposals}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Files:</span>
+           <span class="col-2">{{stats.numDocs}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Last WS Change:</span>
+           <span class="col-2">{{stats.recentChange|cdate}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-2">
+           <span class="col-4 h6">Size of Old Versions:</span>
+           <span class="col-2">{{stats.sizeArchives|number}} bytes</span>
+           <span class="col-2"></span>
+        </div>
 
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+         <span class="col-2"></span>
+         <span class="col-6 h6">Entire Site</span>
+         <span class="col-2 h6">Site Limit</span>
+      </div>
 
-    <div class="generalContent">
-        <table class="spaceyTable">
-        <tr>
-           <td class="centeredCell"></td>
-           <td class="centeredCell">Entire Site</td>
-           <td class="centeredCell">Site Limit</td>
-        </tr>
-        <tr>
-           <td>Last Change:</td>
-           <td class="centeredCell">{{siteInfo.changed|cdate}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Full Users:</td>
-           <td class="centeredCell">{{siteStats.editUserCount}}</td>
-           <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
-        </tr>
-        <tr>
-           <td>Observers:</td>
-           <td class="centeredCell">{{siteStats.readUserCount}}</td>
-           <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>
-        </tr>
-        <tr>
-           <td>Emails / Month:</td>
-           <td class="centeredCell"></td>
-           <td class="centeredCell">{{siteInfo.emailLimit}}</td>
-        </tr>
-        <tr>
-           <td>Size of Documents:</td>
-           <td class="centeredCell">{{siteStats.sizeDocuments|number}}</td>
-           <td class="centeredCell">{{siteInfo.fileSpaceLimit*1000000|number}}</td>
-        </tr>
-        <tr>
-           <td>Active Workspaces:</td>
-           <td class="centeredCell">{{siteStats.numActive}}</td>
-           <td class="centeredCell">{{siteInfo.workspaceLimit}}</td>
-        </tr>
-        <tr>
-           <td>Frozen Workspaces:</td>
-           <td class="centeredCell">{{siteStats.numFrozen}}</td>
-           <td class="centeredCell">{{siteInfo.frozenLimit}}</td>
-        </tr>
-        <tr>
-           <td>Number of Workspaces:</td>
-           <td class="centeredCell">{{stats.numWorkspaces}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Users:</td>
-           <td class="centeredCell">{{stats.numUsers}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Topics:</td>
-           <td class="centeredCell">{{stats.numTopics}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Meetings:</td>
-           <td class="centeredCell">{{stats.numMeetings}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Decisions:</td>
-           <td class="centeredCell">{{stats.numDecisions}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Comments:</td>
-           <td class="centeredCell">{{stats.numComments}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Proposals:</td>
-           <td class="centeredCell">{{stats.numProposals}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Documents:</td>
-           <td class="centeredCell">{{stats.numDocs}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Last WS Change:</td>
-           <td class="centeredCell">{{stats.recentChange|cdate}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Size of Old Versions:</td>
-           <td class="centeredCell">{{stats.sizeArchives|number}} bytes</td>
-           <td class="centeredCell"></td>
-        </tr>
-      </table>
-      <table class="spaceyTable">
-        <tr ng-repeat="(key, value) in stats.topicsPerUser">
-           <td>Topics:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.docsPerUser">
-           <td>Documents:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.commentsPerUser">
-           <td>Comments:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.meetingsPerUser">
-           <td>Meetings:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.proposalsPerUser">
-           <td>Proposals:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</td>
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.responsesPerUser">
-           <td>Responses:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.unrespondedPerUser">
-           <td>Unresponded:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.anythingPerUser">
-           <td>All Users:</td>
-           <td class="centeredCell"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr ng-repeat="(key, value) in stats.historyPerType">
-           <td>History:</td>
-           <td class="centeredCell">{{key}}:
-           <td class="centeredCell">{{value}}</td>
-        </tr>
-        </table>
+         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.topicsPerUser">
+            <span class="col-2 h6">Discussions:</span>
+            <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+            <span class="col-2">{{value}}</span>
+         </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.docsPerUser">
+           <span class="col-2 h6">Files:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.commentsPerUser">
+           <span class="col-2 h6">Comments:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.meetingsPerUser">
+           <span class="col-2 h6">Meetings:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.proposalsPerUser">
+           <span class="col-2 h6">Proposals:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.responsesPerUser">
+           <span class="col-2 h6">Responses:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.unrespondedPerUser">
+           <span class="col-2 h6">Unresponded:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-2">{{value}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.anythingPerUser">
+           <span class="col-2 h6">All Users:</span>
+           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.historyPerType">
+           <span class="col-2 h6">History:</span>
+           <span class="col-6">{{key}}:</span>
+           <span>{{value}}</span>
+        </div>
+      </div>
     </div>
 </div>
 

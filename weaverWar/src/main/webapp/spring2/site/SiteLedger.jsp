@@ -1,9 +1,9 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.util.NameCounter"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("");
@@ -81,26 +81,31 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteUsers.htm">User List</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteStats.htm">Site Statistics</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="SiteLedger.htm">Site Charges</a></li>
-          <li role="presentation"><a role="menuitem"
-              ng-click="recalcStats()">Recalculate</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteAdmin.htm">Site Admin</a></span>
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteUsers.htm">User List</a></span>
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="SiteStats.htm">Site Statistics</a></span>
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="SiteLedger.htm">Site Ledger</a></span>
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              ng-click="recalcStats()">Recalculate</a></span>
+              <% if (ar.isSuperAdmin()) { %>
+                <span class="btn btn-warning btn-comment btn-raised m-3 pb-2 pt-0" type="button" ><a class="nav-link" role="menuitem"
+                    href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
+                <% } %>
+            </div>
 
-    <h2>Monthly Summary</h2>
+            <div class="d-flex col-9">
+                <div class="contentColumn">
+                    <div class="container-fluid">
+                        <div class="generalContent">
+
+    <div class="h5">Monthly Summary</div>
     <table class="table">
     <tr>
         <td>Year / Month</td>

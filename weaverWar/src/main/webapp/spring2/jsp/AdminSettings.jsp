@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailGenerator"
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
@@ -328,40 +328,7 @@ app.filter('escape', function() {
 });
 </script>
 
-<!--
-<style>
-.spaceyTable {
-    min-width:400px;
-    max-width:800px;
-}
-.spaceyTable tr td {
-    padding:8px;
-    border-bottom: 1px solid #ddd;
-}
-.spaceyTable tr:hover {
-    background-color: #f5f5f5;
-}
-editBoxStyle {
-    background-color: red;
-    width:400px;
-    height:150px;
-}
-.clicker {
-    background-color: #DDD;
-    color:white;
-    padding:8px;
-}
-.clicker:after {
-    content: "Double-click to Set Value"
-}
-label {
-    color: black;
-}
-.labelColumn:hover {
-    background-color:#ECB6F9;
-    cursor: pointer;
-}
-</style>-->
+
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -398,21 +365,21 @@ label {
 <% } %>
 
 
-            <div class="table m-2">
-                <div class="row m-2" >
-                    <span ng-click="setEdit('name')" class="col-1 fixed-width-sm bold labelColumn">Workspace Name:</span>
-                    <span class="col-8" ng-hide="isEditing=='name'" ng-dblclick="setEdit('name')">
+            <div class="container m-2">
+                <div class="row my-2 border-bottom border-1" >
+                    <span ng-click="setEdit('name')" class="col-2 fixed-width-sm bold labelColumn">Workspace Name:</span>
+                    <span class="col-8 mt-2" ng-hide="isEditing=='name'" ng-click="setEdit('name')">
                         <h2 class="h5 bold text-weaverlight">{{workspaceConfig.allNames[0]}}</h2>
                     </span>
-                    <span class="col-8 form-inline form-group" ng-show="isEditing=='name'">
+                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='name'">
                         <input type="text" class="form-control" style="width:350px" ng-model="newName"/>
                         <button class="m-2 btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Change Name</button>
                         <button class="m-2 btn btn-danger btn-raised" ng-click="setEdit('')">Cancel</button>
                     </span>
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span ng-click="setEdit('vision')" class="col-1 fixed-width-sm bold labelColumn mt-2">Vision:</span>
-                    <span class="col-8" ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
+                    <span class="col-8 mt-2" ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
                         <div ng-bind-html="visionHtml"></div>
                         <div ng-hide="visionHtml" class="clicker"></div>
                         <span ng-click="toggleFrontPage('showVisionOnFrontPage')" class="labelCheck">
@@ -423,7 +390,7 @@ label {
                         </span>
                         </span>
                         </span>
-                        <span class="col-8 form-inline form-group" ng-show="isEditing=='vision'">
+                        <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='vision'">
                             <textarea class="form-control  markDownEditor"  placeholder="Enter a vision statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.vision" rows="14" cols="80">
                             </textarea>
                             <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised">Save</button>
@@ -431,9 +398,9 @@ label {
                         </span>
                         
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span class="col-1 bold fixed-width-sm labelColumn mt-2" ng-click="setEdit('mission')">Mission:</span>
-                    <span class="col-8" ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
+                    <span class="col-8 mt-2" ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
                         <div ng-bind-html="missionHtml"></div>
                         <div ng-hide="missionHtml" class="clicker"></div>
                         <span ng-click="toggleFrontPage('showMissionOnFrontPage')" class="labelCheck">
@@ -443,15 +410,15 @@ label {
                                 <i class="fa fa-circle-o"></i> Don't show mission on Front Page</span>
                         </span>
                     </span>
-                    <span class="col-8 form-inline form-group" ng-show="isEditing=='mission'">
+                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a mission statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea> 
                         <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">Save</button> 
                         <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">Cancel</button>
                     </span>
                 </div>
-                <div class="row m-2" >
+                <div class="row my-2 border-bottom border-1" >
                     <span class="col-1 bold fixed-width-sm labelColumn mt-2" ng-click="setEdit('purpose')" >Aim:</span>
-                    <span class="col-8" ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
+                    <span class="col-8 mt-2" ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
                         <div ng-bind-html="purposeHtml"></div>
                         <div ng-hide="purposeHtml" class="clicker"></div>
                         <span ng-click="toggleFrontPage('showAimOnFrontPage')" class="labelCheck">
@@ -461,15 +428,15 @@ label {
                             <i class="fa fa-circle-o"></i> Don't show aim on Front Page</span>
                         </span>
                     </span>
-                    <span class="col-8 form-inline form-group" ng-show="isEditing=='purpose'">
+                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
                         <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">Save</button>
                         <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">Cancel</button>
                     </span>
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span class="col-1 bold fixed-width-sm labelColumn mt-2" ng-click="setEdit('domain')" >Domain:</span>
-                    <span class="col-8" ng-hide="isEditing=='domain'" ng-dblclick="setEdit('domain')">
+                    <span class="col-8 mt-2" ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
                         <div ng-bind-html="domainHtml"></div>
                         <div ng-hide="domainHtml" class="clicker"></div>
                         <span ng-click="toggleFrontPage('showDomainOnFrontPage')" class="labelCheck">
@@ -479,14 +446,14 @@ label {
                             <i class="fa fa-circle-o"></i> Don't show domain on Front Page</span>
                         </span>
                     </span>
-                    <span class="col-8 form-inline form-group" ng-show="isEditing=='domain'">
+                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='domain'">
                         <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a domain statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
                         <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised">Save</button>
                         <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">
                         Cancel</button>
                     </span>
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span ng-click="setEdit('frozen')" class="col-1 bold fixed-width-sm labelColumn mt-2">Workspace State:</span>
                     <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
                         <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
@@ -537,34 +504,37 @@ label {
                     </span>
                     
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span ng-click="setEdit('parentKey');backupParent=parentWorkspace" class="col-1 bold fixed-width-sm labelColumn mt-2">Parent Circle:</span>
-                    <span class="col-8" ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
+                    <span class="col-8 mt-2" ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
                         <div>{{parentWorkspace.name}}</div>
                         <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </span>
-                    <span class="col-8" ng-show="isEditing=='parentKey'">
-                        <table>
-                            <tr>
-                            <td>Filter: </td>
-                            <td><input ng-model="parentFilter" class="form-control">{{parentFilter}}</td>
-                            </tr>
-                        </table>
-                        <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="btn btn-sm btn-raised">
-                            {{ws.name}}</button>
-
-                        <button ng-click="deleteParentKey()" 
-                                class="btn btn-primary btn-raised">
-                            Remove Parent</button>
-                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
-                                class="btn btn-warning btn-raised">
+                    <span class="col-10 mt-2" ng-show="isEditing=='parentKey'">
+                            <div class="row my-2">
+                                <span>Filter: </span>
+                                <span class="my-2"><input ng-model="parentFilter" class="form-control">{{parentFilter}}</span>
+                            </div>
+                            <div class="row " >
+                                <span class="col-12 d-block">
+                                    <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="m-2 py-0 btn-sm btn-comment btn-wide">
+                            {{ws.name}}</button></span>
+                        </div>
+                        <div class="row " >
+                            <span class="col-12 d-flex">
+                            <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
+                                class="btn btn-danger btn-raised btn-sm btn-wide">
                             Cancel</button>
+                            <button ng-click="deleteParentKey()" 
+                                class="btn btn-primary btn-sm btn-wide btn-raised ms-auto">
+                            Remove Parent</button></span>
+                        </div>
                     </span>
                     
                 </div>
-                <div class="row m-2">
+                <div class="row my-2 border-bottom border-1">
                     <span class="col-1 bold fixed-width-sm labelColumn" span ng-click="toggleBool('suppressEmail')">Email</span>
-                    <span class="col-8">
+                    <span class="col-8 mt-2">
                         <span class="text-secondary" ng-show="workspaceConfig.suppressEmail">
                             <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>
                         <span class="text-secondary" ng-hide="workspaceConfig.suppressEmail">

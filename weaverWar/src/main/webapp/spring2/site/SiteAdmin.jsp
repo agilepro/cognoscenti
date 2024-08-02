@@ -229,10 +229,10 @@ $scope.garbageCollect = function() {
     <div class="row">
       <div class="col-md-auto fixed-width border-end border-1 border-secondary">
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteAdmin.htm">Site Admin</a></span>
+              href="LabelList.htm">Site Labels</a></span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteUsers.htm">User List</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">New Workspace</a></span>
+            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="SiteStats.htm">Site Statistics</a></span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               href="SiteLedger.htm">Site Charges</a></span>

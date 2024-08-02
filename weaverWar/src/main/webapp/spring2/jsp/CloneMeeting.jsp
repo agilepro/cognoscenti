@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@ include file="functions.jsp"
 %><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%@page import="java.util.Calendar"
@@ -41,18 +41,6 @@
     meetingInfo.put("startTime", proposedStartTime);
     boolean userReadOnly = ar.isReadOnly(); 
 %>
-<style>
-  .full button span {
-    background-color: limegreen;
-    border-radius: 32px;
-    color: black;
-  }
-  .partially button span {
-    background-color: orange;
-    border-radius: 32px;
-    color: black;
-  }
-</style>
 
 <script type="text/javascript">
 
@@ -292,9 +280,10 @@ function GetFirstHundredNoHtml(input) {
           </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
-              <h3>Cloning Agenda Items</h3>
+              <span class="h4">Cloning Agenda Items</span>
               <div class="form-group">
               <table class="table table-striped table-hover" width="100%">
+                
                   <tr>
                       <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
                       <th width="200px">Agenda Item</th>
@@ -321,9 +310,9 @@ function GetFirstHundredNoHtml(input) {
           </div>
         </div>
           <!-- Form Control BUTTONS Begin -->
-          <div class="form-group text-right">
-            <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()"><%=pageTitle%></button>
+          <div class="form-group d-flex">
+            <button type="button" class="btn btn-danger btn-raised" onclick="history.back();">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-raised ms-auto me-5"  ng-click="createMeeting()"><%=pageTitle%></button>
           </div>
         </form>
       </div>

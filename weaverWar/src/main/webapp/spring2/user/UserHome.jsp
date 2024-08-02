@@ -259,7 +259,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                       <i class="ms-5 fa fa-list"></i></a></div>
           <div class="card-body">
                <div ng-repeat="item in siteList | limitTo: 10" class="clipping">
-                   <a href="<%=ar.retPath%>t/{{item.key}}/$/SiteWorkspaces.htm">
+                   <a href="<%=ar.retPath%>t/{{item.key}}/$/SiteAdmin.htm">
                    {{item.names[0]}}
                    </a>
                </div>

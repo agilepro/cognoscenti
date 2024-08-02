@@ -7,141 +7,145 @@
               </h2>
               <div id="collapseMtgSettings" class="accordion-collapse collapse" aria-labelledby="mtgSettings" data-bs-parent="#accordionSettings">
                 <div class="accordion-body">
-
-        <table class="table">
-          <tr>
-            <td ng-click="editMeetingPart='name'" class="labelColumn">Name:</td>
-            <td ng-hide="'name'==editMeetingPart" ng-dblclick="editMeetingPart='name'">
+                  
+        <div class="container-fluid">
+          <div class="row d-flex">
+            <span ng-click="editMeetingPart='name'" class="col-2 labelColumn">Name:</span>
+            <span class="col-8" ng-hide="'name'==editMeetingPart" ng-click="editMeetingPart='name'">
               <b>{{meeting.name}}</b>
-            </td>
-            <td ng-show="'name'==editMeetingPart">
-                <div class="well form-horizontal form-group" style="max-width:400px">
+            </span>
+            <span class="col-8" ng-show="'name'==editMeetingPart">
+                <div class="well form-horizontal form-group">
                     <input ng-model="meeting.name"  class="form-control">
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:<br/>(incl. purpose, goals, location, conference link)</td>
-            <td ng-dblclick="editMeetingDesc=true">
-              <div ng-bind-html="meeting.descriptionHtml"></div>
+            </span>
+          </div>
+          <div class="row">
+            <div ng-hide="editMeetingDesc"></div>
+            <span ng-click="editMeetingDesc=true" class="labelColumn col-2">Description:</span>
+            <span ng-click="editMeetingDesc=true" class="col-8">
+              <div ng-bind-html="meeting.descriptionHtml"></div><span class="mt-0"><i class="pull-right">(include purpose, goals, location, conference link)</i></span>
               <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
                   Double-click to edit description
               </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='duration'" class="labelColumn">Total Duration:</td>
-            <td ng-hide="'duration'==editMeetingPart" ng-dblclick="editMeetingPart='duration'">
+            </span>
+            <div ng-show="editMeetingDesc" style="width:100%">
+              <div class="well leafContent">
+                  <div ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
+                       class="leafContent" style="min-height:200px;" ></div>
+                       <div class="d-flex">
+                  <button ng-click="revertAllEdits()" class="btn btn-danger btn-raised">Cancel</button>
+                  <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised ms-auto">Save</button></div>
+                  
+              </div>
+          </div>
+          </div>
+          <div class="row">
+            <span ng-click="editMeetingPart='duration'" class="col-2 labelColumn">Total Duration:</span>
+            <span class="col-8 mt-2" ng-hide="'duration'==editMeetingPart" ng-dblclick="editMeetingPart='duration'">
               {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
               ending at: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}})
-            </td>
-            <td ng-show="'duration'==editMeetingPart" >
+            </span>
+            <span class="col-8 mt-2" ng-show="'duration'==editMeetingPart" >
                 <div class="well form-inline form-group" style="max-width:400px">
                     <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
                     Minutes ({{meeting.totalDuration}} currently allocated)<br/>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Called By:</td>
-            <td>
+            </span>
+          </div>
+          <div class="row">
+            <span class="col-2 labelColumn" style="cursor: text;">Called By:</span>
+            <span class="col-8 mt-2">
               {{meeting.owner}}
-            </td>
-          </tr>
-          <tr ng-show="previousMeeting.id">
-            <td>Previous Meeting:</td>
-            <td>
+            </span>
+          </div>
+          <div class="row" >
+            <span class="col-2 labelColumn" style="cursor: text;">Previous Meeting: <span ng-show="previousMeeting.id"></span></span>
+            <span class="col-8 mt-2" >
               <a href="MeetingHtml.htm?id={{previousMeeting.id}}">
-                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
-                <span>&nbsp; ({{browserZone}})</span>
-            </td>
-          </tr>
-          <tr ng-show="previousMeeting.minutesId">
-            <td>Previous Minutes:</td>
-            <td>
-                <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> &nbsp; ({{browserZone}})</span>
+            
+            
+          </div>
+          <div class="row" >
+            <span class="col-2 labelColumn" style="cursor: text;">Previous Minutes:<span ng-show="previousMeeting.minutesId"></span></span>
+            <span class="col-8" >
+                <span class="btn btn-sm btn-comment btn-outline-secondary"  style="margin:4px;"
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
                      title="Navigate to the discussion that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
-            </td>
-          </tr>
-          <tr ng-show="false">
-            <td ng-click="editMeetingPart='reminderTime'" class="labelColumn">Reminder:</td>
-            <td ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
+            </span>
+          </div>
+          <div class="row" >
+            <span ng-click="editMeetingPart='reminderTime'" class="labelColumn col-2">Reminder:<span ng-show="false"></span></span>
+            <span class="col-8 mt-2" ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
                 <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
-            </td>
-            <td ng-show="'reminderTime'==editMeetingPart">
+            </span>
+            <span class="col-8 mt-2" ng-show="'reminderTime'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:600px">
-                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
-                    <select ng-model="timeFactor" class="form-control" ng-change="">
+                    <input ng-model="factoredTime" style="width:60px;"  class="form-control my-2" >
+                    <select ng-model="timeFactor" class="form-control my-2" ng-change="">
                         <option>Minutes</option>
                         <option>Days</option>
                         </select>
                     before the meeting, ({{meeting.reminderTime}} minutes)<br/>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                    <button class="btn btn-primary btn-sm btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
-            </td>
-          </tr>
-          <tr>
-              <td></td>
-              <td><button ng-click="expertMode = !expertMode" class="btn btn-default btn-raised">Expert Mode</button></td>
-          </tr>
-          <tr ng-show="expertMode">
-            <td ng-click="editMeetingPart='notifyLayout'" class="labelColumn">Agenda Layout:</td>
-            <td ng-hide="'notifyLayout'==editMeetingPart" ng-dblclick="editMeetingPart='notifyLayout'">
+            </span>
+          </div>
+          <div class="row" >
+              <span class="col-2 ms-5 my-3"><button ng-click="expertMode = !expertMode" class="btn btn-secondary btn-sm  btn-raised">Expert Mode</button></span>
+              
+          </div>
+          <div class="row" ng-show="expertMode">
+            <span ng-click="editMeetingPart='notifyLayout'" class="labelColumn col-2">Agenda Layout:</span>
+            <span class="col-8" ng-hide="'notifyLayout'==editMeetingPart" ng-dblclick="editMeetingPart='notifyLayout'">
               {{meeting.notifyLayout}} 
-            </td>
-            <td ng-show="'notifyLayout'==editMeetingPart">
+            </span>
+            <span class="col-8" ng-show="'notifyLayout'==editMeetingPart">
               <div class="well form-inline form-group" style="max-width:400px">
                 <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
                 <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
               </div>
-            </td>
-          </tr>
-          <tr ng-show="expertMode">
-            <td ng-click="editMeetingPart='defaultLayout'" class="labelColumn">Minutes Layout:</td>
-            <td ng-hide="'defaultLayout'==editMeetingPart" ng-dblclick="editMeetingPart='defaultLayout'">
+            </span>
+          </div>
+          <div class="row" ng-show="expertMode">
+            <span ng-click="editMeetingPart='defaultLayout'" class="col-2 labelColumn">Minutes Layout:</span>
+            <span class="col-8" ng-hide="'defaultLayout'==editMeetingPart" ng-dblclick="editMeetingPart='defaultLayout'">
               {{meeting.defaultLayout}} 
-            </td>
-            <td ng-show="'defaultLayout'==editMeetingPart">
+            </span>
+            <span class="col-8" ng-show="'defaultLayout'==editMeetingPart">
               <div class="well form-inline form-group" style="max-width:400px">
                 <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
                 <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
               </div>
-            </td>
-          </tr>
-          <tr ng-show="expertMode">
-            <td ng-click="editMeetingPart='targetRole'" class="labelColumn">Target Role:</td>
-            <td ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
-              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
+            </span>
+          </div>
+          <div class="row" ng-show="expertMode">
+            <span ng-click="editMeetingPart='targetRole'" class="col-2 labelColumn">Target Role:</span>
+            <span class="col-8" ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
+              <a href="RoleManagement.htm" target="_blank">{{meeting.targetRole}}</a>
               <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!
               </span>
-            </td>
-            <td ng-show="'targetRole'==editMeetingPart">
+            </span>
+            <span class="col-8" ng-show="'targetRole'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:400px">
                     <select class="form-control" ng-model="meeting.targetRole" 
                             ng-options="value for value in allRoles" ng-change="checkRole()"></select>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
-            </td>
-          </tr>
-        </table>
+            </span>
+          </div>
+        </div>
       </div>
 
-    <div ng-show="editMeetingDesc" style="width:100%">
-        <div class="well leafContent">
-            <div ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
-                 class="leafContent" style="min-height:200px;" ></div>
-            <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
-            <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
-        </div>
-    </div>
+
 </div>
 </div>
           </div>

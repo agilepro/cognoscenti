@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
@@ -13,7 +13,7 @@ Optional Parameter:
 
     1. isAccessThroughEmail : This parameter is used to check if request is generated from mail.
 
-    NOTE: this page is accessible to people who are not logged in.  Thsi can happen if the link has a mnrolerequest token
+    NOTE: this page is accessible to people who are not logged in.  This can happen if the link has a mnrolerequest token
     value that matches a saved token value.  This allows people who are not logged in, to go ahead and approve the
     request anyway.  The controller determines who has access to this page, so be careful not to required users
     to be logged in, nor to assume that anyone is logged in.
@@ -152,7 +152,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td>{{rec.modified|cdate}}</td>
             <td><a href="<%=ar.retPath%>v/{{rec.requestKey}}/UserSettings.htm">{{rec.requestName}}</a></td>
             <td>{{rec.description}}</td>
-            <td>{{rec.state}} <img src="<%=ar.retPath%>assets/iconWarning.png" ng-hide="rec.completed"></td>
+            <td>{{rec.state}} <img src="<%=ar.retPath%>new_assets/assets/iconWarning.png" ng-hide="rec.completed"></td>
         </tr>
     </table>
 
