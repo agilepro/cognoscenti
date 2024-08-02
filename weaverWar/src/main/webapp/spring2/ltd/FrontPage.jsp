@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 /*
 Required parameters:
@@ -33,6 +33,15 @@ Required parameters:
     thisCircle.put("name", ngw.getFullName());
     thisCircle.put("key",  ngw.getKey());
     thisCircle.put("site", ngw.getSiteKey());
+    if (ngpi.isDeleted()) {
+        thisCircle.put("color", "#FFE3DB");
+    }
+    else if (ngpi.isFrozen()) {
+        thisCircle.put("color", "#E2EFFF");
+    }
+    else {
+        thisCircle.put("color", "#F0D7F7");
+    }
 
     JSONObject parent = new JSONObject();
     NGPageIndex parentIndex = cog.getParentWorkspace(ngpi);
@@ -40,11 +49,21 @@ Required parameters:
         parent.put("name", "");
         parent.put("site", "");
         parent.put("key",  "");
+        parent.put("color", "#F0D7F7");
     }
     else {
         parent.put("name", parentIndex.containerName);
         parent.put("key",  parentIndex.containerKey);
         parent.put("site", parentIndex.wsSiteKey);
+        if (parentIndex.isDeleted()) {
+            parent.put("color", "#FFE3DB");
+        }
+        else if (parentIndex.isFrozen()) {
+            parent.put("color", "#E2EFFF");
+        }
+        else {
+            parent.put("color", "white");
+        }
     }
 
     JSONArray children = new JSONArray();
@@ -56,6 +75,15 @@ Required parameters:
         jo.put("name", child.containerName);
         jo.put("key",  child.containerKey);
         jo.put("site", child.wsSiteKey);
+        if (child.isDeleted()) {
+            jo.put("color", "#FFE3DB");
+        }
+        else if (child.isFrozen()) {
+            jo.put("color", "#E2EFFF");
+        }
+        else {
+            jo.put("color", "white");
+        }
         children.put(jo);
     }
 
@@ -270,7 +298,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -333,50 +361,40 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 });
 </script>
-<style>
-.clipping {
-    overflow: hidden;
-    text-overflow: clip; 
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-a {
-    color:black;
-}
-.spacytable tr td {
-    padding:2px;
-}
-</style>
+
 <!-- MAIN CONTENT SECTION START -->
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-
+<div class="container-fluid">
+    <div class="row d-flex">
 <!-- COLUMN 1 -->
-<div class="col-md-4 col-sm-12">
-        
+    <div class="col-md-4 col-sm-12">
+        <div class="card m-3">
+            <div class="card-header">
+                <div class="d-flex" title="Limited Access to this workspace"><h2 class="h5 card-title">Access</h2>
+                    <div class="ms-auto"></div>
+                </div>
+            </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Access</div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body">
-        You do not play any role in this workspace.
-        <br/>
-        You do have some guest access to some things.
-      </div>
-    </div>
+            <div class="card-body">
+                You do not play any role in this workspace.
+                <br/>
+                You do have some guest access to some things.
+            </div>
+        </div>
 
 <%
     if (ltdTopics.size()>0) {
 %>
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Discussion Topics you Subscribe to</div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body">
+<div class="card m-3">
+    <div class="card-header">
+        <div class="d-flex" title="Discussions you can contribute to"><h2 class="h5 card-title">Discussions</h2>
+            <br/><p> you Subscribe to</p>
+            <div class="ms-auto"></div>
+        </div>
+    </div>
+    <div class="card-body">
 
 <%
     for (TopicRecord topicRec : ltdTopics) {
@@ -399,30 +417,34 @@ a {
 <%
     if (ltdMeetings.size()>0) {
 %>
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Meetings you are Participant in</div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body">
+<div class="card m-3">
+    <div class="card-header">
+        <div class="d-flex" title="Meetings you have access to"><h2 class="h5 card-title">Meetings you are Participant in</h2>
+            <div class="ms-auto"></div>
+        </div>
+    </div>
+    <div class="card-body">
 
 <%
     for (MeetingRecord meet : ltdMeetings) {
 %>
-            <div class="clipping">
-              <i class="fa fa-gavel"></i> <a href="MeetingHtml.htm?id=<%=meet.getId()%>"><%=meet.getName()%>, {{<%=meet.getStartTime()%>|date: "MMM dd, HH:mm"}}</a>
-            </div>
+        <div class="clipping">
+            <i class="fa fa-gavel"></i> <a href="MeetingHtml.htm?id=<%=meet.getId()%>"><%=meet.getName()%>, {{<%=meet.getStartTime()%>|date: "MMM dd, HH:mm"}}</a>
+        </div>
 <%
         }
 %>
-      </div>
     </div>
+</div>
 <%
     }
 %>
 
-
-
+<div class="card m-3">
+    <div class="card-header">
+        <div class="d-flex"><h2 class="h5 card-title">Request Membership</h2></div>
+    </div>
+        <div class="card-body">
         <div ng-hide="enterMode || alternateEmailMode" class="warningBox">
             <div ng-show="isRequested">
                  You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/>
@@ -431,7 +453,7 @@ a {
             <div ng-hide="isRequested">
                 If you think you should be a member then please:  
             </div>
-            <button class="btn btn-primary btn-raised" ng-click="takeStep()">Request Membership</button>
+            <button class="my-2 btn btn-primary btn-wide btn-sm btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
         </div>
         <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
             <div>Enter a reason to join the workspace:</div>
@@ -439,31 +461,29 @@ a {
             <button class="btn btn-primary btn-raised" ng-click="roleChange()">Request Membership</button>
             <button class="btn btn-warning btn-raised" ng-click="enterMode=false">Cancel</button>
         </div>
-
-
-
 </div>
+    </div>
+
+    </div>
 
 
 <!-- COLUMN 2 -->
-  <div class="col-md-4 col-sm-12">
-       <svg height="{{maxLength}}px" width="350px">
-           <g ng-show="parent.key">
-               <ellipse cx="179" cy="69" rx="70" ry="35"
+<div class="col-md-4 col-sm-12">
+    <svg height="{{maxLength}}px" width="{{maxWidth}}px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
+        <g ng-show="parent.key">
+            <ellipse cx="179" cy="69" rx="70" ry="35"
                     style="fill:gray;stroke:gray" ></ellipse>
-               <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
-               <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
-               <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)"
-                    style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
-               <foreignObject  x="105" y="50" width="140" height="70">
-                  <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
-                       ng-click="ellipse(parent)">{{parent.name}}</div>
-               </foreignObject>
-           </g>
-           <g ng-hide="parent.key">
-               <ellipse cx="179" cy="69" rx="19" ry="18"
+            <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+            <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
+            <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)" style="fill:{{parent.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
+            <foreignObject  x="105" y="50" width="140" height="70">
+                <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;" ng-click="ellipse(parent)">{{parent.name}}</div>
+            </foreignObject>
+        </g>
+        <g ng-hide="parent.key">
+            <ellipse cx="179" cy="69" rx="19" ry="18"
                     style="fill:gray;stroke:gray" ></ellipse>
-               <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+            <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
                <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                <ellipse cx="175" cy="65" rx="19" ry="18"  ng-click="topLevel(thisCircle)"
                     style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
@@ -477,90 +497,179 @@ a {
                <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
            </g>
            <ellipse cx="175" cy="175" rx="80" ry="40" ng-click="ellipse(thisCircle)"
-                style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
+                style="fill:{{thisCircle.color}};stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
             <foreignObject  x="95" y="160" width="160" height="80">
                <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                        ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>
             </foreignObject>
            <g ng-repeat="child in children">
                <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
-                   rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
+                   rx="60" ry="30" style="fill:{{child.color}};stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
                <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
                    <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                        ng-click="ellipse(child)">{{child.name}}</div>
                </foreignObject>
            </g>
-       </svg>
-   </div>
+    </svg>
+<!--Workspace State-->
+    <div class="row m-2">
+        <span ng-click="setEdit('frozen')" class="col-1 bold fixed-width-sm labelColumn mt-2">Workspace State:</span>
+        <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
+            <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
+            <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
+            <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
+        </span>
+        <span class="col-8" ng-show="isEditing=='frozen'">
+            <div ng-hide="workspaceConfig.frozen">
+            <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen', true)"
+                class="btn btn-primary btn-raised">
+                Freeze Workspace</button><br/>
+                Use this <b>Freeze</b> to change an active workspace into a frozen workspace where nothing can be changed.  Frozen workspaces do not count toward your quota of workspace in the site.
+            </div>
+            <div ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
+            <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen', true)"
+                class="btn btn-primary btn-raised">
+                Unfreeze Workspace</button><br/>
+                Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
+                You are only allowed a certain number of active workspaces in a site depending upon 
+                your playment plan.  
+                <br/>
+                If you already have the maximum number of active workspaces, you will not be able to 
+                unfreeze this workspace, until you freeze or delete another active one.
+            </div>
+            <div ng-hide="workspaceConfig.deleted">
+            <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted', true)"
+                class="btn btn-primary btn-raised" >
+                Delete Workspace</button><br/>
+                Use <b>Delete</b> option to delete a workspace.  
+                The workspace will actually remain around until the 
+                <b>Garbage Collect</b> operation is run at the site level.
+                After garbage collection the workspace will be permanently gone,
+                and no information can be retrieved.
+            </div>
+            <div ng-show="workspaceConfig.deleted">
+            <button ng-click="undeleteWorkspace()"
+                class="btn btn-primary btn-raised" >
+                Undelete Workspace</button><br/>
+                If you didn't really want to delete the workspace, 
+                use this <b>Undelete</b> to cancel the delete, 
+                and return the workspace to a frozen state.
+            </div>
+            <div>
+                <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
+                Cancel</button><br/>
+                Use <b>Cancel</b> to close this option without changing the workspace state.
+            </div>
+        </span>
+        
+    </div><!--END Workspace-->
 
+</div>
 
 <!-- COLUMN 3 -->
-  <div class="col-md-4 col-sm-12">
-
-    <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Vision of Workspace</div>
-          <div style="float:right" title="Edit vision in this workspace">
-              <i class="fa fa-info-circle"></i></div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body" >
-          <div ng-bind-html="visionHtml"></div>
-      </div>
-    </div>
-    <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Mission of Workspace</div>
-          <div style="float:right" title="Edit mission in this workspace">
-              <i class="fa fa-info-circle"></i></div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body" >
-          <div ng-bind-html="missionHtml"></div>
-      </div>
-    </div>
-    <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Aim of Workspace</div>
-          <div style="float:right" title="Edit aim in this workspace">
-              <i class="fa fa-info-circle"></i></div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body" >
-          <div ng-bind-html="purposeHtml"></div>
-      </div>
-    </div>
-    <div class="panel panel-default" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Domain of Workspace</div>
-          <div style="float:right" title="Edit domain in this workspace">
-              <i class="fa fa-info-circle"></i></div>
-          <div style="clear:both"></div>
-      </div>
-      <div class="panel-body" >
-          <div ng-bind-html="domainHtml"></div>
-      </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">Parent Circle</div>
-      <div class="panel-body">
-        <div >
-          <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/FrontPage.htm">{{parent.name}}</a>
+<div class="col-md-4 col-sm-12">
+    <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingVision">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVision" aria-expanded="false" aria-controls="collapseVision">Vision of Workspace &nbsp;&nbsp;
+                    <div title="Edit vision in this workspace">
+                        <a href="AdminSettings.htm">
+                            <i class="fa fa-info-circle"></i></a></div>
+                </button>
+            </h2>
+            <div id="collapseVision" class="accordion-collapse collapse" aria-labelledby="headingVision" data-bs-parent="#accordion">
+                <div class="accordion-body">
+                    <a href="AdminSettings.htm">
+                    <div ng-bind-html="visionHtml">
+                    </div>
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+    <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingMission">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMission" aria-expanded="false" aria-controls="collapseMission">Mission of Workspace &nbsp;&nbsp;
+                    <div title="Edit mission in this workspace">
+                        <a href="AdminSettings.htm">
+                        <i class="fa fa-info-circle"></i></a>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapseMission" class="accordion-collapse collapse" aria-labelledby="headingMission" data-bs-parent="#accordion" >
+                <div class="accordion-body">
+                    <a href="AdminSettings.htm">
+                        <div ng-bind-html="missionHtml">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAim">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAim" aria-expanded="false" aria-controls="collapseAim">Aim of Workspace &nbsp;&nbsp;
+                    <div title="Edit aim in this workspace">
+                        <a href="AdminSettings.htm">
+                        <i class="fa fa-info-circle"></i></a>
+                    </div>
+                </button>
+            </h2>
+            <div id="collapseAim" class="accordion-collapse collapse" aria-labelledby="headingAim" data-bs-parent="#accordion" >
+                <div class="accordion-body">
+                    <a href="AdminSettings.htm">
+                        <div ng-bind-html="aimHtml">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingDomain">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDomain" aria-expanded="false" aria-controls="collapseDomain">Domain of Workspace&nbsp;&nbsp;
+                        <div title="Edit domain in this workspace">
+                            <a href="AdminSettings.htm">
+                            <i class="fa fa-info-circle"></i></a>
+                        </div>
+                    </button>
+                </h2>
+                <div id="collapseDomain" class="accordion-collapse collapse" aria-labelledby="headingDomain" data-bs-parent="#accordion" >
+                    <div class="accordion-body">
+                        <a href="AdminSettings.htm">
+                            <div ng-bind-html="domainHtml">
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">Children Circles</div>
-      <div class="panel-body">
-        <div ng-repeat="child in children">
-          <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/FrontPage.htm">{{child.name}}</a>
+    <div class="accordion m-3">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseParent" aria-expanded="false" aria-controls="collapseParent">Parent Circle</button></h2>
+            <div id="collapseParent" class="accordion-collapse collapse" aria-labelledby="headingParent" data-bs-parent="#accordionExample">
+                <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/FrontPage.htm">{{parent.name}}</a>
+            </div>
         </div>
-      </div>
+    </div>
+    <div class="accordion m-3">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChildren" aria-expanded="false" aria-controls="collapseFour">Children Circles</button></h2>
+            <div id="collapseChildren" class="accordion-collapse collapse" aria-labelledby="headingChildren" data-bs-parent="#accordionExample">
+                <div ng-repeat="child in children">
+                    <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/FrontPage.htm">{{child.name}}</a>
+                </div>
+            </div>
+        </div>
     </div>
 
   </div>
-
+    </div>
 </div>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>

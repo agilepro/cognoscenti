@@ -72,27 +72,7 @@ Required parameter:
 
 %>
 
-<style>
-.ta-editor {
-    min-height: 150px;
-    max-height: 600px;
-    width:600px;
-    height: auto;
-    overflow: auto;
-    font-family: inherit;
-    font-size: 100%;
-    margin:20px 0;
-}
-.labelColumn:hover {
-    background-color:#ECB6F9;
-}
-.bordereddiv {
-    margin:15px;
-    border: 2px skyblue solid;
-    border-radius:15px;
-    padding:20px;
-}
-</style>
+
 
 <script type="text/javascript">
 document.title="<% ar.writeJS(note.getSubject());%>";
@@ -1104,8 +1084,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           Post &amp; Send Email </button>
       </span>
 </div>
-
     </div>
+    
     <div class="bordereddiv" ng-hide="isEditing" >
         <div class="leafContent" ng-dblclick="startEdit()">
             <div ng-bind-html="htmlEditing"></div>

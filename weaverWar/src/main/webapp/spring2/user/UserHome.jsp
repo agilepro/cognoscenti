@@ -199,9 +199,9 @@ myApp.controller('myCtrl', function($scope, $http) {
         </div>
 
         <div class="card my-3">
-            <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of Forums to complete and post">
-                <h3 class="h5 mb-0"><span translate>Draft Forums</span></h3><a href="userDraftTopics.htm">
-                <i class="text-secondary fa fa-lightbulb-o ms-5"></i></a>
+            <div class="d-flex align-items-center justify-content-between card-header" title="Access the list of Discussions to complete and post">
+                <h3 class="h5 mb-0"><span translate>Draft Discussions</span></h3><a href="userDraftTopics.htm">
+                <i class="fa fa-lightbulb-o ms-5"></i></a>
           </div>
           <div class="card-body">
                <div ng-repeat="item in userCache.draftTopics | limitTo: 10" class="clipping">

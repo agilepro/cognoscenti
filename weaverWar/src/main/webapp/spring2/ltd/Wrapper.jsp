@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
@@ -187,60 +187,60 @@
 
     %>
 
-<!-- BEGIN Wrapper.jsp Layout wrapping (<%=wrappedJSP%>) -->
-<html>
+<!-- BEGIN Wrapper.jsp Layout wrapping (jsp/<%=wrappedJSP%>) -->
+<html lang="en">
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
-    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
     
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
-    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
-    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
-    <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <script src='<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce.min.js'></script>
+    <script src='<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce-ng.js'></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/textAngular-sanitize.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
 
-    <!-- Bootstrap Material Design 
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
--->
-    <!-- INCLUDE web fonts -->
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+    <script src="<%=ar.baseURL%>new_assets/jscript/common.js"></script>
+    <link href="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.css" rel="stylesheet">
+
+    <!-- INCLUDE web fonts for icons -->
+    <link href="<%=ar.retPath%>new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+    <link href="<%=ar.retPath%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+        
 
     <!-- Date and Time Picker -->
-    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
-    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
-    <script src="<%=ar.retPath%>bits/moment.js"></script>
-    <script>  moment().format(); </script>
 
-    <!-- Weaver specific tweaks -->
-        <!-- Bootstrap 5.0-->
-        <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
-        <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
+    <script>  moment().format(); </script>
+    
+    <!-- Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
+    
+
  
     <title><% ar.writeHtml(title); %></title>
 
@@ -298,29 +298,33 @@ myApp.filter('encode', function() {
 <!-- End AppBar -->
 
 
-<div class="container-fluid">
-  <div class="row">
+<div class="container-fluid px-0" ng-cloak>
+    <div class="row">
 
     <!-- Begin SideBar  -->
-    <div class="col-sm-2 col-lg-1">
+    <div class="d-flex">
       <%@ include file="SideBar.jsp" %>
-    </div>
+    
     <!-- End SideBar -->
 
     <!-- Begin mainContent -->
-    <div class="col-sm-10 col-lg-11 main-content">
+    <div class="col-10 col-lg-11 main-content">
 
       <!-- BEGIN Title and Breadcrump -->
-      <ol class="title">
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb px-3">
       <% if(!ar.isLoggedIn()) { %>
           <!-- user is not logged in, don't display any breadcrumbs -->
       <% } else if(isUserHeader) { %>
-        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
-            User: <% ar.writeHtml(pageUserName); %></a></div></li>
+
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/UserSettings.htm">
+            User: <% ar.writeHtml(pageUserName); %></a></li>
       <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
-            Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
+
+      <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
+            Site: '<%ar.writeHtml(mainSiteName);%>'</a></li>
       <% } else { %>
+
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a>
@@ -330,8 +334,9 @@ myApp.filter('encode', function() {
                 </span>
             </li>
       <% } %>
-        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
+        
       </ol>
+      </nav>
       <script>
       function setMainPageTitle(str) {
           document.getElementById("mainPageTitle").innerHTML = str;
@@ -342,6 +347,8 @@ myApp.filter('encode', function() {
 
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
+
+
       <script>
 
 
@@ -389,7 +396,7 @@ myApp.filter('encode', function() {
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       console.log("WELCOME INIT:", knowWeAreLoggedIn);
       </script>
-
+<h1 class="px-3 page-name" id="mainPageTitle"></h1>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
@@ -398,7 +405,7 @@ myApp.filter('encode', function() {
 </div>
 <!-- End mainContent -->
 
-</div>
+
 <!-- End body wrapper -->
 
 <script>
@@ -416,8 +423,16 @@ window.setInterval(function() {
 
 </script>
 
-<script src="<%=ar.baseURL%>jscript/translation.js"></script>
-
+<script src="<%=ar.baseURL%>new_assets/jscript/translation.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/LearningEditModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/SimultaneousEdit.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DecisionModal.js"></script>
 </body>
 </html>
 

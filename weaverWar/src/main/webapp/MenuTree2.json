@@ -7,7 +7,7 @@
       "opts": [],
       "useOpts": [],
       "readOnly": true,
-      "icon": "FrontPage.png"
+      "icon": "UserHome.png"
     },
     {
       "href": "WatchedProjects.htm",
@@ -16,7 +16,7 @@
       "opts": [],
       "useOpts": [],
       "readOnly": true,
-      "icon": "Workspaces-UserHome.png"
+      "icon": "UserWatch.png"
     },
     {
       "href": "ParticipantProjects.htm",
@@ -25,37 +25,28 @@
       "opts": [],
       "useOpts": [],
       "readOnly": true,
-      "icon": "Workspaces-UserHome.png"
+      "icon": "UserAccess.png"
     },
     {
       "href": "OwnerProjects.htm",
+      "name": "Workspaces you Manage",
+      "title": "Access the list of workspaces you manage",
+      "opts": [],
+      "useOpts": [],
+      "readOnly": true,
+      "icon": "UserWSAdmin.png"
+    },
+    {
+      "href": "userSites.htm",
       "name": "Sites you Manage",
       "title": "Access the list of sites you manage",
       "opts": [],
       "useOpts": [],
       "readOnly": true,
-      "icon": "Site-Users.png"
+      "icon": "UserSiteAdmin.png"
     }
   ],
   "siteMode": [
-    {
-      "href": "FrontTop.htm",
-      "name": "Site Map",
-      "title": "Graphical map of all workspaces in the site.",
-      "opts": [],
-      "useOpts": [],
-      "readOnly": true,
-      "icon": "SiteMap.png"
-    },
-    {
-      "href": "SiteWorkspaces.htm",
-      "name": "Workspaces in Site",
-      "title": "Lists all the workspaces that are in this site.",
-      "opts": [],
-      "useOpts": [],
-      "readOnly": true,
-      "icon": "Workspaces.png"
-    },
     {
       "href": "SiteAdmin.htm",
       "name": "Site Admin",
@@ -65,20 +56,13 @@
       "icon": "SiteAdmin.png"
     },
     {
-      "href": "SiteStats.htm",
-      "name": "Site Statistics",
-      "title": "View content statistics for the site.",
+      "href": "SiteWorkspaces.htm",
+      "name": "Workspaces in Site",
+      "title": "Lists all the workspaces that are in this site.",
       "opts": [],
       "useOpts": [],
-      "icon": "Site-Stats.png"
-    },
-    {
-      "href": "SiteLedger.htm",
-      "name": "Site Charges",
-      "title": "View the monthly summary of charges for the site.",
-      "opts": [],
-      "useOpts": [],
-      "icon": "Site-Ledger.png"
+      "readOnly": true,
+      "icon": "Workspaces.png"
     },
     {
       "href": "SiteUsers.htm",
@@ -96,6 +80,31 @@
       "opts": [],
       "useOpts": [],
       "icon": "Site-Roles.png"
+    },
+    {
+      "href": "FrontTop.htm",
+      "name": "Site Map",
+      "title": "Graphical map of all workspaces in the site.",
+      "opts": [],
+      "useOpts": [],
+      "readOnly": true,
+      "icon": "SiteMap.png"
+    },
+    {
+      "href": "SiteStats.htm",
+      "name": "Site Statistics",
+      "title": "View content statistics for the site.",
+      "opts": [],
+      "useOpts": [],
+      "icon": "Site-Stats.png"
+    },
+    {
+      "href": "SiteLedger.htm",
+      "name": "Site Charges",
+      "title": "View the monthly summary of charges for the site.",
+      "opts": [],
+      "useOpts": [],
+      "icon": "Site-Ledger.png"
     }
   ],
   "workMode": [
@@ -522,7 +531,7 @@
             "NoteZoom.jsp"
           ],
           "href": "NotesList.htm",
-          "name": "Forum List",
+          "name": "Discussion List",
           "title": "List of discussions in the workspace"
         },
         {

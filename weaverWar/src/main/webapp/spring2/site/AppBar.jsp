@@ -41,46 +41,12 @@
           </button>
 
           <!-- end toggle button for mobile nav -->
-<!--
-<style>
-.tighten li a {
-    padding: 0px 5px !important;
-    background-color: white;
-}
-.tighten li {
-    background-color: white;
-}
-.tighten {
-    padding: 5px !important;
-    border: 5px #F0D7F7 solid !important;
-    max-width:300px;
-    background-color: white !important;
-}
-.sublist {
-    padding: 0px 5px !important;
-    background-color: white;
-    border: 5px #F0D7F7 solid;
-    color: black;
-    overflow: hidden;
-    text-overflow: clip;
-    white-space: nowrap;
-}
-.sublist ul li {
-    padding: 2px;
-}
-.sublist ul li a {
-    color: black;
-}
-.sidebar {
-    background-color: black;
-}
-</style>
- #F0D7F7;  #F2EBF4 -->
+
 
   <!-- Logo Brand -->
   <a class="navbar-brand py-2" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <span class="fw-semibold fs-1 vertical-align-middle">
-      <img class="d-inline-flex m-2" alt="Weaver Logo" src="<%=ar.retPath%>bits/header-icon.png">
+      <img class="d-inline-flex m-2" alt="Weaver Logo" src="<%=ar.retPath%>new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
 

@@ -42,7 +42,7 @@
   <!-- Logo Brand -->
   <a class="navbar-brand pb-2" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <span class="fw-semibold fs-1 text-weaverbody">
-      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>bits/header-icon.png">
+      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
                 <!-- Search Bar -->
@@ -121,7 +121,7 @@
         </a>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="AddSomething.htm?start=meeting">Meeting</a></li>
-            <li><a class="dropdown-item" href="NotesList.htm?start=create">Discussion Topic</a></li>
+            <li><a class="dropdown-item" href="NotesList.htm?start=create">Discussion</a></li>
             <li><a class="dropdown-item" href="DocsAdd.htm">Document</a></li>
             <li><a class="dropdown-item" href="GoalStatus.htm?start=create">Action Item</a></li>
             <li><a class="dropdown-item" href="DecisionList.htm?start=create">Decision</a></li>

@@ -98,10 +98,10 @@
     
     %> 
     <li class="my-5 text-weaverbody">  <% if (userIsReadOnly) { %>
-        <img src="<%=ar.retPath%>assets/ReadIndicator.png" title="You have observer access to this workspace" 
+        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
         class="accessIndicator"/>
     <% } else { %>
-        <img src="<%=ar.retPath%>assets/Site-Writable.png" title="You have full edit access to this workspace" 
+        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
     class="accessIndicator"/>
     <% } %></li>
     

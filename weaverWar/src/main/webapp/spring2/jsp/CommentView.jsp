@@ -309,7 +309,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     $scope.createDecision = function(newDecision) {
         /*
         if (!$scope.canUpdate) {
-            alert("Unable to update topic because you are an observer");
+            alert("Unable to update discussion because you are an observer");
             return;
         }
         */
@@ -479,12 +479,12 @@ function setUpCommentMethods($scope, $http, $modal) {
     <div class="leafContent comment-inner px-2" ng-hide="cmt.meet || cmt.commentType==6" ng-dblclick="openCommentEditor(null,cmt)">
         <div ng-bind-html="cmt.html2"></div>
     </div>
-    <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
+    <div ng-show="cmt.meet" class="btn btn-sm btn-secondary btn-raised btn-wide "  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
     </div>
     <div ng-repeat="doc in cmt.docDetails">
         <span ng-show="doc.attType=='FILE'">
-            <span class="rounded-5 ms-3" ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png">
+            <span class="rounded-5" ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png">
             </span>&nbsp;
             <span ng-click="downloadDocument(doc)">
                 <span class="fa fa-download"></span>

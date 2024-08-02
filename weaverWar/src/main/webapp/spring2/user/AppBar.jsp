@@ -23,7 +23,7 @@
   <!-- Logo Brand -->
   <a class="navbar-brand pb-2" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <span class="fw-semibold fs-1 text-weaverbody">
-      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>bits/header-icon.png">
+      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
 

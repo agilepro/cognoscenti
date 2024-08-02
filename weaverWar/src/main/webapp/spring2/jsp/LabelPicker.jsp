@@ -1,5 +1,5 @@
         <span class="nav-item dropdown d-inline">
-           <button class="btn-tiny btn-comment p-2" 
+           <button class="specCaretBtn dropdown" 
                type="button" 
                id="menu1" 
                data-toggle="dropdown"

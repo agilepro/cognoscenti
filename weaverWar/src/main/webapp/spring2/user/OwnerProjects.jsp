@@ -100,15 +100,17 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
-    <div class="guideVocal" ng-show="noneFound">
+    <div class="col-6 guideVocal" ng-show="noneFound">
         User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
        <br/>
        When a user create projects, they will be listed here.<br/>
        <br/>
        In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
        <br/>
-       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'">Settings &gt; Sites</button>
-       to view your sites, or request a new site from the system administrator.
+       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'"><img src="<%=ar.retPath%>new_assets/assets/navicon/UserSiteAdmin.png" style="max-height:25px;max-width:25px"></button>
+       to view your sites, or request a new site from the system administrator here: <form name="createAccountForm" method="GET" action="NewSiteRequest.htm">
+        <input type="submit" class="btn btn-sm btn-comment btn-wide btn-primary my-3"  Value="Request New Site">
+    </form>
        If approved you will be the owner of that new site,
        and can create new projects within it.
     </div>

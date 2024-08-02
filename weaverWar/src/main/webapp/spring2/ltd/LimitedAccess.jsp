@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
@@ -32,14 +32,6 @@
 
 %>
 <!-- *************************** ltd / LimitedAccess.jsp.jsp *************************** -->
-<style>
-.bigger {
-    font-size: 18px;
-    margin:20px;
-    min-width:  50px;
-    vertical-align: text-top;
-}
-</style>
 
 <script type="text/javascript">
 
@@ -89,18 +81,16 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <%@include file="ErrorPanel.jsp"%>
 
 
-<div style="max-width:600px">
-
-    <div class="bigger">
+<div class="container-fluid">
+    <div class="row col-7 ms-4 d-flex">
+        <span class="h5">
     You are logged in as <%=user.getName()%> ( <%=user.getUniversalId()%> ).
-    </div>
-    
-    <div class="bigger">
+            <br/><br/>
     You have only limited access to the workspace <b><%=ngw.getFullName()%></b>.
     You have access to items listed below, if any.
-    </div>
+    </span>
     
-    <table class="bigger">
+    
 <%
     for (TopicRecord topicRec : ngw.getAllDiscussionTopics()) {
         NGRole subscribers = topicRec.getSubscriberRole();
@@ -108,13 +98,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             continue;
         }
 %>
-    <tr>
-      <td class="bigger"><i class="fa  fa-arrow-circle-right"></i> </td>
-        
-      <td class="bigger"><a href="noteZoom<%=topicRec.getId()%>.htm">
+
+        <span class="h5 my-3" >
+            <span ><i class="fa fa-arrow-circle-right"></i> <a href="noteZoom<%=topicRec.getId()%>.htm">
         <%ar.writeHtml( topicRec.getSubject() );%>
-        </a></td>
-    </tr>
+        </a></span>
+        </span>
+        
+    
 <%
     }
 %>
@@ -128,29 +119,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         
         if ("doc".equals(resourceType)) {
 %>
-    <tr>
-      <td class="bigger"><i class="fa  fa-bullseye"></i> </td>
-      <td class="bigger"><a href="DocDetail.htm?aid=<%=actualId%>">
+    <span ><i class="fa  fa-bullseye"></i> <a href="DocDetail.htm?aid=<%=actualId%>">
         Document <%ar.writeHtml( accessId );%>
-        </a></td>
-    </tr>
+        </a></span>
+
+</div>
 <%
         }
     }
 %>
-    </table>
 
 
 
-        <div ng-hide="enterMode || alternateEmailMode" class="warningBox">
+
+        <div ng-hide="enterMode || alternateEmailMode" class="well col-6">
             <div ng-show="isRequested">
                  You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/>
                  The status of that request is: <b>{{requestState}}</b>.
             </div>
-            <div ng-hide="isRequested">
+            <div class="h6 my-3 " ng-hide="isRequested">
                 If you think you should be a member then please:  
             </div>
-            <button class="btn btn-primary btn-raised" ng-click="takeStep()">Request Membership</button>
+            <button class="btn btn-primary btn-comment btn-wide btn-sm btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
         </div>
         <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
             <div>Enter a reason to join the workspace:</div>

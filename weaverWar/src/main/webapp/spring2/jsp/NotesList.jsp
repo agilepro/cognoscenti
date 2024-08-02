@@ -421,68 +421,68 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </span>
                   </span>
                   &nbsp;
-                  <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
+                  <a class="text-primary fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
                      title="close the info"></a>
-                  <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
+                  <a class="text-secondary fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
                      title="info of this discussion"></a>
                    <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
                 </div>
                 <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
-                    <table>
-                    <tr class="infoRow">
-                      <td>Last Update by:</td> 
-                      <td>
-                        <span class="dropdown">
+                    <div>
+                    <div class="infoRow">
+                      <span class="h6">Last Update by:</span> 
+                      <span>
+                        <span class="nav-item dropdown">
                             <span id="menu_1" data-toggle="dropdown">
                             <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.modUser.key}}.jpg" 
                                  style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
                             </span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                              <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
                                   tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
                                   {{rec.modUser.name}}<br/>{{rec.modUser.uid}}</a></li>
-                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                              <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                                   ng-click="navigateToUser(rec.modUser)">
                                   <span class="fa fa-user"></span> Visit Profile</a></li>
                             </ul>
                         </span>
                         {{rec.modUser.name}}
-                      </td>
-                    </tr>
-                    <tr class="infoRow">
-                      <td>Last Modified:</td>
+                      </span>
+                    </div>
+                    <div class="infoRow">
+                      <span class="h6">Last Modified:</span>
                       <td>{{rec.modTime|date:"MMM dd, yyyy 'at' HH:mm:ss"}}</td>
-                    </tr>
-                    <tr class="infoRow">
-                      <td>Discussion Phase:</td>
-                      <td>{{rec.discussionPhase}}</td>
-                    </tr>
-                    <tr class="infoRow">
-                      <td>Subscribers:</td>
-                      <td>
+                    </div>
+                    <div class="infoRow">
+                      <span class="h6">Discussion Phase:</span>
+                      <span>{{rec.discussionPhase}}</span>
+                    </div>
+                    <div class="infoRow">
+                      <span class="h6">Subscribers:</span>
+                      <span>
                         <span ng-repeat="person in rec.subscribers">
-                          <span class="dropdown">
+                          <span class="nav-item dropdown">
                             <span id="menu_2" data-toggle="dropdown">
                             <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                                  style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                             </span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                              <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
                                   tabindex="0" ng-click="" style="text-decoration: none;text-align:center">
                                   {{person.name}}<br/>{{person.uid}}</a></li>
-                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="0"
+                              <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0"
                                   ng-click="navigateToUser(person)">
                                   <span class="fa fa-user"></span> Visit Profile</a></li>
                             </ul>
                           </span>
                         </span>
-                      </td>
-                    </tr>
-                    <tr class="infoRow">
-                      <td>Responses:</td>
-                      <td>Needed: {{rec.responsesNeeded}},  Made: {{rec.responsesMade}}</td>
-                    </tr>
-                    </table>
+                      </span>
+                    </div>
+                    <div class="infoRow">
+                      <span class="h6">Responses:</span>
+                      <span>Needed: {{rec.responsesNeeded}},  Made: {{rec.responsesMade}}</span>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>

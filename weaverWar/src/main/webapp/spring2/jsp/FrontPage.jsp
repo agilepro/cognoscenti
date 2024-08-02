@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 /*
 Required parameters:
@@ -391,7 +391,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -783,4 +783,4 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 </div>
 
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
