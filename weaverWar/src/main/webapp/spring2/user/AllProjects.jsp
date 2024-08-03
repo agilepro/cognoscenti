@@ -74,23 +74,23 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="well">Filter <input ng-model="filter"></div>
 
     <div class="container-fluid">
-        <div class="row d-flex flex-col-4">
-            <span class="col"></span>
-            <span class="col">Workspace</span>
-            <span class="col">Changed</td>
+        <div class="row d-flex border-bottom border-1">
+            <span class="col-1 m-3"></span>
+            <span class="col-4 h6">Workspace</span>
+            <span class="col-3 h6">Changed</span>
             </div>
-        <div class="row d-flex flex-col-4" ng-repeat="rec in getRows()">
-            <span class="col">
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+        <div class="row d-flex border-bottom border-1" ng-repeat="rec in getRows()">
+            <span class="col-1 m-3">
+              <div class="nav-item dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button"  id="menu" 
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
+                      <a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
                 </ul>
               </div>
             </span>
-            <span class="repositoryName">
+            <span class="col-4 my-3 repositoryName">
                 <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
                    {{rec.name}}
                    <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                    <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
             </span>
-            <span>{{rec.changed|cdate}}</span>
+            <span class="col-3 my-3">{{rec.changed|cdate}}</span>
         </div>
     </div>
 <div class="container-fluid well"></div>

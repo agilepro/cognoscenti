@@ -316,38 +316,6 @@ function copyTheLink() {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<style>
-.spacey {
-    width:100%;
-}
-.spacey tr td {
-    padding:5px;
-}
-.firstcol {
-    width:180px;
-}
-.roomy {
-    padding:5px;
-}
-.centered {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-.clipping {
-    overflow: hidden;
-    text-overflow: clip;
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-.panelClickable {
-    margin:4px;
-    overflow: hidden;
-    cursor: pointer;
-}
-</style>
-
-
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
@@ -398,13 +366,13 @@ function copyTheLink() {
                     <a href="<%ar.write(permaLink); %>" target="_blank">
                     <img src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
                     <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
-                    <button class="btn btn-primary btn-raised">Web File</button>
+                    <button class="btn btn-primary btn-raised pull-right">Web File</button>
                     </a>
                 </div>
                 <div ng-hide="hasURL">
-                    <button class="btn btn-danger btn-raised">
+                    <button class="btn btn-danger btn-raised btn-wide btn-sm">
             Error - this web attachment has no URL</button>
-                    <div style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+                    <div class="alert" style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
                 </div>
             </div>
         </div>
@@ -422,101 +390,119 @@ function copyTheLink() {
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
         </div>
-        <div ng-show="canUpdate">
-    <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
-    <p>Edit the document details, like name and description.  The name and description tell
-    others what the purpose of the document is, and ultimately whether they
-    want to access the document or not.</p>
+        <div class="row d-flex border-top border-1 pt-3" ng-show="canUpdate">
+            <span class="col-3">
+                <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
+            </span>
+            <span class="col-8 me-3">
+                <p>Edit the document details, like name and description.  The name and description tell others what the purpose of the document is, and ultimately whether they want to access the document or not.</p>
+            </span>
         </div>
-        <div ng-show="isMember">
-    <button class="btn btn-comment btn-secondary btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
-    <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
-    <div ng-show="makeLink">
-      <div class="roomy">
-        <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()">
-        <b>Private</b> - document can be accessed only by workspace members.
-      </div>
-      <div class="roomy">
-        <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()">
-        <b>Public</b> - document can be accessed by anyone on the Internet.
-      </div>
-      <div class="roomy">
-        <input type="text" ng-model="generatedLink" id="generatedLink"/>
-        <button onClick="copyTheLink()" class="btn btn-sm btn-primary btn-raised">Copy to Clipboard</button>
-      </div>
-    </div>
+        <div class="row d-flex border-top border-1 pt-3"  ng-show="isMember">
+            <span class="col-3">
+                <button class="btn btn-comment btn-secondary btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
+            </span>
+            <span class="col-8 me-3">
+                <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
+            <span  ng-show="makeLink">
+                <div class="col-8 my-2">
+                    <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()"> <b>Private</b> - document can be accessed only by workspace members.
+                </div>
+                <div class="col-8 my-2">
+                    <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()">
+                    <b>Public</b> - document can be accessed by anyone on the Internet.
+                </div>
+                <div class="col-8 my-2">
+                    <input type="text" ng-model="generatedLink" id="generatedLink"/>
+                    <button onClick="copyTheLink()" class="btn btn-sm btn-primary btn-raised">Copy to Clipboard</button>
+                </div>
+            </span>
+            </span>
         </div>
-        <div ng-show="isMember">
-    <button class="btn btn-comment btn-secondary btn-raised" ng-click="composeEmail()">Send by email</button>
-    <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
+        <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
+            <span class="col-3">
+                <button class="btn btn-comment btn-secondary btn-raised" ng-click="composeEmail()">Send by email</button></span>
+            <span class="col-8 me-3">
+                <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
+            </span>
         </div>
         <div>
-    <a href="DocView.wmf?docId={{docId}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
+    <a href="DocView.wmf?docId={{docId}}" class="btn btn-default btn-raised btn-wide btn-secondary"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
         </div>
-
-        </div>
-
-        <div class="col-md-6 col-sm-12" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
-    <h2>Sharing</h2>
-    <p>Documents can be shared directly from Weaver,
-    internally to current members and externally to anyone in the world.</p>
-    <div class="centered"><img src="../../../bits/safety-icon.png"/></div>
-    <p>Sending a link to download directly from Weaver is <i>safer</i> than sending the document as an
-    attachment to email, because the download is through a secure HTTPS channel.
-    Unlike emailing an attachment nobody else can intercept, see, or manipulate the contents of the file.
-    The recipient will always get exactly the contents that were uploaded to Weaver.</p>
-    <div class="centered"><img src="../../../bits/fast-email.png"/></div>
-    <p>A link is smaller and more efficient than an attachment,
-    so it can be sent to anyone without cluttering their inbox.
-    This is great espectially important for very large files.
-    Sending a link to 100 MB or GB files avoids problems with size limits on email.</p>
-    <div class="centered"><img src="../../../bits/clock-change.png"/></div>
-    <p>Also, with a link, if the document is still changing,
-    all recipients will always have access to the latest version at the time they download.
-    They never receive an out-of-date copy.</p>
-        </div>
-
-    <div class="container-fluid row">
-        <div class="col-md-6 col-sm-12">
-            <div class="panel panel-default" ng-show="linkedTopics.length>0 && isMember">
-                <div class="panel-heading headingfont">Attached To:
-                </div>
-                <div class="panel-body clipping">
-          <div ng-repeat="topic in linkedTopics"
-               class="panelClickable"
-               ng-click="navigateToTopic(topic)">
-            <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
-          </div>
-          <div ng-repeat="act in linkedGoals"
-               class="panelClickable"
-               ng-click="navigateToActionItem(act)">
-            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
-          </div>
-          <div ng-repeat="meet in linkedMeetings"
-               class="panelClickable"
-               ng-click="navigateToMeeting(meet)">
-            <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
-          </div>
-                </div>
-            </div>
-            <div ng-show="canAccess" class="mt-2">
-            <h3>Comments:</h3>
+        <hr>
+        <div ng-show="canAccess" class="well mt-2">
+            <span class="h5">Comments:</span>
             <div class="container">
                 <span ng-repeat="cmt in docInfo.comments">
             <%@ include file="/spring2/jsp/CommentView.jsp" %>
                 </span>
             </div>
-            <div ng-hide="isCreatingComment" style="margin:20px;">
-                <button ng-click="openCommentCreator(null, 1)" class="btn btn-comment btn-raised">
+            <div ng-hide="isCreatingComment" >
+                <button ng-click="openCommentCreator(null, 1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
             </div>
-            </div>
         </div>
-        <div ng-show="canAccess" class="col-md-6 col-sm-12">
-            <h3>History</h3>
+        </div>
 
-        <div class="row" ng-repeat="hist in history"  >
-            <span class="projectStreamIcons">
+<div class="col-md-6 col-sm-12 px-3" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
+    <div class="well">
+        <span class="h5">Sharing</span>
+                    <p>Documents can be shared directly from Weaver,internally to current members and externally to anyone in the world.</p>
+
+        <div class="d-flex border-top border-1 pt-3">
+        <div class="me-3"><img src="../../../bits/safety-icon.png"/></div>
+        <p>Sending a link to download directly from Weaver is <i>safer</i> than sending the document as an
+    attachment to email, because the download is through a secure HTTPS channel.
+    Unlike emailing an attachment nobody else can intercept, see, or manipulate the contents of the file.
+    The recipient will always get exactly the contents that were uploaded to Weaver.</p>
+        </div>
+
+        <div class="d-flex border-top border-1 pt-3">
+    <div class="me-3"><img src="../../../bits/fast-email.png"/></div>
+    <p>A link is smaller and more efficient than an attachment,
+    so it can be sent to anyone without cluttering their inbox.
+    This is especially important for very large files.
+        Sending a link to 100 MB or GB files avoids problems with size limits on email.</p> </div>
+
+        <div class="d-flex border-top border-1 pt-3">
+    <div class="me-3"><img src="../../../bits/clock-change.png"/></div>
+
+    <p>Also, with a link, if the document is still changing,
+    all recipients will always have access to the latest version at the time they download.
+    They never receive an out-of-date copy.</p>
+        </div>
+    </div>
+    
+
+    <div class="card" ng-show="linkedTopics.length>0 && isMember">
+                <div class="card-heading headingfont">Attached To:
+                </div>
+                <div class="card-body clipping">
+                    <div ng-repeat="topic in linkedTopics"
+                    class="panelClickable"
+                    ng-click="navigateToTopic(topic)">
+                    <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                </div>
+                <div ng-repeat="act in linkedGoals"
+                    class="panelClickable"
+                    ng-click="navigateToActionItem(act)">
+                    <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
+                </div>
+                <div ng-repeat="meet in linkedMeetings"
+                    class="panelClickable"
+                    ng-click="navigateToMeeting(meet)">
+                    <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                </div>
+            </div>
+    </div>
+        
+    
+    <div class="well mt-2" ng-show="canAccess">
+        <span class="h5">History</span>
+
+            
+        <span ng-repeat="hist in history"  >
+            <span class=" projectStreamIcons">
                 <span class="col-2 dropdown" >
                     <ul class="navbar-btn p-0 list-inline">
                         <li class="nav-item dropdown" id="user2" data-toggle="dropdown">
@@ -532,7 +518,7 @@ function copyTheLink() {
                         </li>
                     </ul>
                 </span>
-                <span class="col-10 justify-content-start projectStreamText">
+                <span class="col-5 projectStreamText">
                 {{hist.time|cdate}} - {{hist.responsible.name}}
                 <br/>
                 {{hist.ctxType}} "<b>{{hist.ctxName}}</b>"
@@ -541,9 +527,12 @@ function copyTheLink() {
                 <i>{{hist.comments}}</i>
                 </span>
             </span>
+        </span>
+    </div>
+</div>
         </div>
-    </div>
-    </div>
+</div>
+
 
 <script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/DocumentDetail2.js"></script>

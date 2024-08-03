@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailGenerator"
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
@@ -136,7 +136,7 @@ tagsInputWorkspacePicker  ={
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Workspace Administration");
+    window.setMainPageTitle("Workspace Statistics");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
     $scope.workspaceInfo = <%ngpi.getJSON4List().write(out,2,4);%>;
@@ -335,164 +335,160 @@ app.filter('escape', function() {
 });
 </script>
 
-
-<style>
-.spaceyTable {
-    min-width:800px;
-    max-width:1000px;
-}
-.spaceyTable tr td {
-    padding:8px;
-    border-bottom: 1px solid #ddd;
-}
-.spaceyTable tr:hover {
-    background-color: #f5f5f5;
-}
-editBoxStyle {
-    background-color: red;
-    width:400px;
-    height:150px;
-}
-.clicker {
-    background-color: #DDD;
-    color:white;
-    padding:8px;
-}
-.clicker:after {
-    content: "Double-click to Set Value"
-}
-.centeredCell {
-    text-align:center;
-}
-</style>
-
 <!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="LabelList.htm">
+                Labels &amp; Folders</a>
+                  </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="RoleRequest.htm">
+          Role Requests</a>
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailCreated.htm">
+          Email Prepared</a>
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
+          Email Sent</a>
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="AdminStats.htm">
+                Workspace Statistics</a>
+                  </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
+          href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
+          Create Child Workspace</a>
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
+          href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
+          Create Sibling Workspace</a>
+            </span>
 
-<h1>Statistics</h1>
+</div>
+<div class="d-flex col-9">
+    <div class="contentColumn">
+        <div class="container-fluid">
+            <div class="generalContent">
+<div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4"></span>
+           <span class="col-2 h6">This Workspace</span>
+           <span class="col-2 h6">Entire Site</span>
+           <span class="col-2 h6">Site Limit</span>
+</div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Last Change:</span>
+           <span class="col-2">{{workspaceInfo.changed|cdate}}</span>
+           <span class="col-2">{{siteInfo.changed|cdate}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Users:</span>
+           <span class="col-2">{{stats.editUserCount}}</span>
+           <span class="col-2">{{siteStats.editUserCount}}</span>
+           <span class="col-2">{{siteInfo.editUserLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Observers:</span>
+           <span class="col-2">{{stats.readUserCount}}</span>
+           <span class="col-2">{{siteStats.readUserCount}}</span>
+           <span class="col-2">{{siteInfo.viewUserLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Emails / Month:</span>
+           <span class="col-2"></span>
+           <span class="col-2"></span>
+           <span class="col-2">{{siteInfo.emailLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Size of Documents:</span>
+           <span class="col-2">{{stats.sizeDocuments|number}}</span>
+           <span class="col-2">{{siteStats.sizeDocuments|number}}</span>
+           <span class="col-2">{{siteInfo.fileSpaceLimit*1000000|number}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Topics:</span>
+           <span class="col-2">{{stats.numTopics}}</span>
+           <span class="col-2">{{siteStats.numTopics}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Meetings:</span>
+           <span class="col-2">{{stats.numMeetings}}</span>
+           <span class="col-2">{{siteStats.numMeetings}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Decisions:</span>
+           <span class="col-2">{{stats.numDecisions}}</span>
+           <span class="col-2">{{siteStats.numDecisions}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Comments:</span>
+           <span class="col-2">{{stats.numComments}}</span>
+           <span class="col-2">{{siteStats.numComments}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Proposals:</span>
+           <span class="col-2">{{stats.numProposals}}</span>
+           <span class="col-2">{{siteStats.numProposals}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Documents:</span>
+           <span class="col-2">{{stats.numDocs}}</span>
+           <span class="col-2">{{siteStats.numDocs}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Number of Old Versions:</span>
+           <span class="col-2">{{stats.sizeArchives|number}}</span>
+           <span class="col-2">{{siteStats.sizeArchives|number}}</span>
+           <span class="col-2"></span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Active Workspaces:</span>
+           <span class="col-2 ">{{stats.numActive}}</span>
+           <span class="col-2 ">{{siteStats.numActive}}</span>
+           <span class="col-2 ">{{siteInfo.workspaceLimit}}</span>
+        </div>
+        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+           <span class="col-4 h6">Frozen Workspaces:</span>
+           <span class="col-2 ">{{stats.numFrozen}}</span>
+           <span class="col-2 ">{{siteStats.numFrozen}}</span>
+           <span class="col-2 ">{{siteInfo.frozenLimit}}</span>
+        </div>
+    </div>
+<hr>
+<div class="my-2 h5">User Counts</div>
+<div class="row-cols-3 d-flex my-2 border-bottom border-1">
 
-        <table class="spaceyTable">
-        <tr>
-           <td class="centeredCell"></td>
-           <td class="centeredCell">This Workspace</td>
-           <td class="centeredCell">Entire Site</td>
-           <td class="centeredCell">Site Limit</td>
-        </tr>
-        <tr>
-           <td>Last Change:</td>
-           <td class="centeredCell">{{workspaceInfo.changed|cdate}}</td>
-           <td class="centeredCell">{{siteInfo.changed|cdate}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Users:</td>
-           <td class="centeredCell">{{stats.editUserCount}}</td>
-           <td class="centeredCell">{{siteStats.editUserCount}}</td>
-           <td class="centeredCell">{{siteInfo.editUserLimit}}</td>
-        </tr>
-        <tr>
-           <td>Observers:</td>
-           <td class="centeredCell">{{stats.readUserCount}}</td>
-           <td class="centeredCell">{{siteStats.readUserCount}}</td>
-           <td class="centeredCell">{{siteInfo.viewUserLimit}}</td>
-        </tr>
-        <tr>
-           <td>Emails / Month:</td>
-           <td class="centeredCell"></td>
-           <td class="centeredCell"></td>
-           <td class="centeredCell">{{siteInfo.emailLimit}}</td>
-        </tr>
-        <tr>
-           <td>Size of Documents:</td>
-           <td class="centeredCell">{{stats.sizeDocuments|number}}</td>
-           <td class="centeredCell">{{siteStats.sizeDocuments|number}}</td>
-           <td class="centeredCell">{{siteInfo.fileSpaceLimit*1000000|number}}</td>
-        </tr>
-        <tr>
-           <td>Number of Topics:</td>
-           <td class="centeredCell">{{stats.numTopics}}</td>
-           <td class="centeredCell">{{siteStats.numTopics}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Meetings:</td>
-           <td class="centeredCell">{{stats.numMeetings}}</td>
-           <td class="centeredCell">{{siteStats.numMeetings}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Decisions:</td>
-           <td class="centeredCell">{{stats.numDecisions}}</td>
-           <td class="centeredCell">{{siteStats.numDecisions}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Comments:</td>
-           <td class="centeredCell">{{stats.numComments}}</td>
-           <td class="centeredCell">{{siteStats.numComments}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Proposals:</td>
-           <td class="centeredCell">{{stats.numProposals}}</td>
-           <td class="centeredCell">{{siteStats.numProposals}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Documents:</td>
-           <td class="centeredCell">{{stats.numDocs}}</td>
-           <td class="centeredCell">{{siteStats.numDocs}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Number of Old Versions:</td>
-           <td class="centeredCell">{{stats.sizeArchives|number}}</td>
-           <td class="centeredCell">{{siteStats.sizeArchives|number}}</td>
-           <td class="centeredCell"></td>
-        </tr>
-        <tr>
-           <td>Active Workspaces:</td>
-           <td class="centeredCell">{{stats.numActive}}</td>
-           <td class="centeredCell">{{siteStats.numActive}}</td>
-           <td class="centeredCell">{{siteInfo.workspaceLimit}}</td>
-        </tr>
-        <tr>
-           <td>Frozen Workspaces:</td>
-           <td class="centeredCell">{{stats.numFrozen}}</td>
-           <td class="centeredCell">{{siteStats.numFrozen}}</td>
-           <td class="centeredCell">{{siteInfo.frozenLimit}}</td>
-        </tr>
-    </table>
+<span class="col-3 h6">Filter: <input ng-model="userFilter"></span>
+<span class="col-1 text-center h6">Comments</span>
+<span class="col-1 text-center h6" >Docs</span>
+<span class="col-1 text-center h6">Meetings</span>
+<span class="col-1 text-center h6">Proposals</span>
+<span class="col-1 text-center h6">Responses</span>
+<span class="col-1 text-center h6">Unresponded</span>
+<span class="col-1 h6 text-left ms-4 ps-3">Access</span>
+</div>
 
-<h1>User Counts</h1>
-<table class="table">
+<div class="row-cols-3 d-flex border-bottom border-1" ng-repeat="(user,val) in getUserStats()">
+<span class="col-3 h6 py-2" >{{user}}</span>
+<span class="col-1 text-center py-2"  style="background-color:#f0e9f1;">{{stats.commentsPerUser[user]}}</span>
+<span class="col-1 text-center py-2">{{stats.docsPerUser[user]}}</span>
+<span class="col-1 text-center py-2" style="background-color:#f0e9f1;">{{stats.meetingsPerUser[user]}}</span>
+<span class="col-1 text-center py-2">{{stats.proposalsPerUser[user]}}</span>
+<span class="col-1 text-center py-2" style="background-color:#f0e9f1;">{{stats.responsesPerUser[user]}}</span>
+<span class="col-1 text-center py-2">{{stats.unrespondedPerUser[user]}}</span>
+<span class="col-1 text-left ms-4 ps-3" style="background-color:#f0e9f1;">{{stats.access[user]}}</span>
+</div>
 
-<tr style="background-color:#EEF">
-<td>Filter: <input ng-model="userFilter"></td>
-<td class="centeredCell">Comments</td>
-<td class="centeredCell">Docs</td>
-<td class="centeredCell">Meetings</td>
-<td class="centeredCell">Proposals</td>
-<td class="centeredCell">Responses</td>
-<td class="centeredCell">Unresponded</td>
-<td class="centeredCell">Access</td>
-</tr>
-
-<tr ng-repeat="(user,val) in getUserStats()">
-<td>{{user}}</td>
-<td class="centeredCell">{{stats.commentsPerUser[user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats.docsPerUser[user]}}</td>
-<td class="centeredCell">{{stats.meetingsPerUser[user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats.proposalsPerUser[user]}}</td>
-<td class="centeredCell">{{stats.responsesPerUser[user]}}</td>
-<td style="text-align:center;background-color:#fefefe;">{{stats.unrespondedPerUser[user]}}</td>
-<td class="centeredCell">{{stats.access[user]}}</td>
-</tr>
-
-</table>
-
+</div>
+<br><br><br><br>
 
 </div>
 

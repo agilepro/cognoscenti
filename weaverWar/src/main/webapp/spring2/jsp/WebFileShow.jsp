@@ -109,42 +109,50 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="cleanedWebStyle">
-        <h2>{{attName}}</h2>
-        <button class="btn btn-default btn-raised" ng-click="openOriginal()">Open Original</button>
-        <button class="btn btn-default btn-raised" ng-click="sharable()">Sharable View</button>
-        <input type="checkbox" ng-model="showHidden"/> Show Hidden
-        <table class="tableSS">
-            <tr ng-repeat="art in articleSections" >
-                <td style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="segmentBox"></div></td>
-                <td  style="max-width: 100px">§{{art.originPos}}
+<div class="container-fluid">
+    <div class="row">
+      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
+        
+        <button class="btn btn-secondary btn-comment btn-raised m-3 p-2" ng-click="openOriginal()">Open Original</button>
+        <button class="btn btn-secondary btn-comment btn-raised m-3 p-2" ng-click="sharable()">Sharable View</button>
+        <span class="h6 ms-3">Show Hidden</span>
+        <input type="checkbox" ng-model="showHidden"/> 
+        <div><br/></div>
+        <div><br/></div>
+        </div>
+        <div class="d-flex col-9">
+			<div class="contentColumn">
+				<div class="container-fluid">
+                	<div class="generalContent">
+                        <div class="h3 text-secondary">{{attName}}</div>
+            <div class="row" ng-repeat="art in articleSections" >
+                <span style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="segmentBox"></div></span>
+                <span  style="max-width: 100px">§{{art.originPos}}
                     <br/><button ng-click="setGroup(art, 'hidden')">hide</button>
                     <br/><button ng-click="setGroup(art, 'links')">put in links</button>
                     <br/><button ng-click="edit(art)">edit</button>
-                </td>
-            </tr>
-            <hr/>
-            <hr/>
-            <tr ng-repeat="art in linkSections" >
-                <td style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="segmentBox"></div></td>
-                <td  style="max-width: 100px">§{{art.originPos}}
+                </span>
+            </div>
+            <div class="row"  ng-repeat="art in linkSections" >
+                <span style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="segmentBox"></div></span>
+                <span  style="max-width: 100px">§{{art.originPos}}
                     <br/><button ng-click="setGroup(art, 'hidden')">hide</button>
                     <br/><button ng-click="setGroup(art, 'article')">put in articles</button>
-                </td>
-            </tr>
-            <tr ng-repeat="art in hiddenSections" ng-show="showHidden">
-                <td style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="hiddenBox"></div></td>
-                <td  style="max-width: 100px">§{{art.originPos}}
+                </span>
+            </div>
+            <div class="row"  ng-repeat="art in hiddenSections" ng-show="showHidden">
+                <span style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="hiddenBox"></div></span>
+                <span  style="max-width: 100px">§{{art.originPos}}
                     <br/><button ng-click="setGroup(art, 'article')">put in articles</button>
                     <br/><button ng-click="setGroup(art, 'links')">put in links</button>
-                </td>
-            </tr>
-        </table>
+                </span>
+            </div>
+        </div>
 
         <div ng-hide="isAvailable">
            <div class="guideVocal">
                <p>There does not seem to be a downloaded copy yet.</p>
-               <p>Use <button class="btn btn-default btn-raised" ng-click="download()">Download Copy from Web</button> to see it.</p>
+               <p>Use <button class="btn-comment btn-raised mx-2 my-md-3 my-sm-3" ng-click="download()">Download Copy from Web</button> to see it.</p>
                <p>During download it will be converted to a text-only Web File, for the purpose of making it easier to read.
                   Converting to text is not exact, because web pages are not always composed in the order that they are
                   displayed on the screen.  We will search through all the various parts of the web page, and try to identify

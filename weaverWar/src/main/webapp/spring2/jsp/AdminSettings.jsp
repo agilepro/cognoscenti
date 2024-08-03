@@ -351,6 +351,9 @@ app.filter('escape', function() {
                 <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
               Email Sent</a>
                 </span>
+                <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="AdminStats.htm">
+                    Workspace Statistics</a>
+                      </span>
                 <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
               href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
               Create Child Workspace</a>

@@ -1140,8 +1140,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <div ng-hide="attachedDocs && attachedDocs.length>0" class="doubleClickHint">
             Double-click to add / remove attachments
         </div>
+        
     </span>
-    </div>
+    </div><hr>
     <div class="row ">
     <span class="col-2 labelColumn ms-3" ng-click="openAttachAction()">Action Items:</span>
     <span class="col-9">
@@ -1191,6 +1192,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           </table>
     </span>
     </div>
+    <hr>
     <div class="row" ng-hide="editMeetingPart=='subscribers'">
     <div class="col-2 labelColumn ms-3" ng-click="startSubscriberEdit()">Subscribers:</div>
     <div class="col-9" ng-click="editMeetingPart='subscribers'">
@@ -1224,6 +1226,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </span>
     </div>
     </div>
+    <hr>
+
 </div>
 <div class="well" ng-show="editMeetingPart=='subscribers'">
         <h3 class="h4">Adjust Subscribers:</h3>
@@ -1239,18 +1243,18 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
 </div>
 
-<div class="row d-flex">
-    <span class="nav-item dropdown" ng-hide="noteInfo.draft">
-        <button class="btn btn-primary btn-raised dropdown-toggle" type="button" id="phases" data-toggle="dropdown">{{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="phases">
-            <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item" role="menuitem" ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+<div class="row d-flex ps-5 my-3">
+    <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
+        <button class=" btn btn-primary btn-raised dropdown-toggle" type="button" id="phases" data-toggle="dropdown">{{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+        <ul class="dropdown-menu " role="menu" aria-labelledby="phases">
+            <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item " role="menuitem" ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
         </ul>
     </span> 
     <span class="dropdown" ng-show="noteInfo.draft">   
         <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
     </span>
 </div>
-
+<hr>
 <div ng-show="canComment">
         <div class="d-flex col-sm-12 mb-3">
             <button ng-click="openCommentCreator(null,1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
