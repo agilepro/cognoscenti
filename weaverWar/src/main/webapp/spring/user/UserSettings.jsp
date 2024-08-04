@@ -442,6 +442,7 @@ if (ar.isLoggedIn()) { %>
             <td></td>
             <td></td>
         </tr>
+    <% } %>
         <tr>
             <td class="firstcol">UI Mode:</td>
             <td>
@@ -456,7 +457,6 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
-    <% } %>
 
 <% } %>
         <tr>

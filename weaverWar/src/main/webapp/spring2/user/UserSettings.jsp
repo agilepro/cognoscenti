@@ -408,13 +408,14 @@ if (ar.isLoggedIn()) { %>
             </span>
         </div>
 <%if (viewingSelf){ %>
-
+    <%if (ar.isSuperAdmin()){ %>
         <div class="row-cols-2 d-flex " >
             <span class="col-2 labelColumn ps-2" >Super Admin</span>
             <span class="col-5 p-2 m-0" style="background-color:rgb(216, 216, 125)">
                 You are a Super Admin
             </span>
         </div>
+    <% } %>
         <div class="row-cols-3 d-flex ">
             <span class="col-2 labelColumn ps-2">UI Mode:</span>
             <span class="col-5 p-2 m-0">You are currently viewing the NEW user interface<br/>
