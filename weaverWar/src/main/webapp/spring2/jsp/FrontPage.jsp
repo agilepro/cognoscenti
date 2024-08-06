@@ -391,7 +391,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "FrontPage.htm")%>";
         
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',

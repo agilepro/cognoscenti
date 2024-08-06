@@ -57,11 +57,11 @@
     <hr/>
     <h3 class="h5">Availability for Proposed Times</h3>
 
-    <div class="table">
+    <div class="container-fluid">
     <div class="row d-flex my-2 border-bottom border-1 border-secondary border-opacity-50">
       <span class="col-1"></span>
       <span class="col-2 h6">Date and Time<br/>{{browserZone}}</span>
-      <span class="col-1" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
+      <span class="col-1 my-5" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
           style="text-align:center">
           <span class="nav-item dropdown" >
             <span id="menu1" data-toggle="dropdown">
@@ -70,7 +70,7 @@
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}">
             </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="margin-top: -75px;">
               <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
                   tabindex="-1" style="text-decoration: none;text-align:center">
                   {{player.name}}<br/>{{player.uid}}</a></li>
@@ -102,9 +102,9 @@
           <span ng-show="time.proposedTime == meeting.startTime" class="text-primary fa fa-check"></span>
           </div>
       </span>
-      <span class="col-1 text-center0" ng-repeat="resp in timeSlotResponders">
-         <span class="nav-item col-1 dropdown">select
-            <button class=" btn votingButton" type="button"  d="menu" 
+      <span class="col-1 text-center mb-5"  ng-repeat="resp in timeSlotResponders">
+         <span class="nav-item col-1 dropdown "  >select
+            <button class=" btn votingButton"  type="button"  d="menu" 
                 data-toggle="dropdown"> 
                 <span class="dropdown-item" ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
                     <span class="fa fa-minus-circle"></span>
@@ -120,7 +120,7 @@
                     <span class="fa fa-plus-circle"></span></span>
                 &nbsp;
             </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu" style="margin-top: -40px;">
               <li role="presentation">
                   <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 5)">
                   <i class="fa fa-plus-circle" style="color:green"></i>

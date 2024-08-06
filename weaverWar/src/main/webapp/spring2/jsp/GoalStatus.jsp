@@ -487,7 +487,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         var modalInstance = $modal.open({
-          animation: false,
+            animation: true,
           templateUrl: '<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
           size: 'lg',
@@ -620,8 +620,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html<%=templateCacheDefeater%>',
+            animation: true,
+            templateUrl: '<%=ar.retPath%>new_assets/templates/TaskAreaModal.html<%=templateCacheDefeater%>',
             controller: 'TaskAreaCtrl',
             size: 'lg',
             backdrop: "static",
@@ -982,7 +982,7 @@ function addvalue() {
 
 
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
-<script src="<%=ar.baseURL%>templates/EditLabelsCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/TaskAreaModal.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>
 

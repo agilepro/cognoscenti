@@ -225,8 +225,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "FrontPage.htm")%>";
 
         var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
+            animation: true,
+            templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -259,8 +259,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             isNew = true;
         }
         var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/RoleModal.html<%=templateCacheDefeater%>',
+            animation: true,
+            templateUrl: '<%=ar.retPath%>new_assets/templates/RoleModal.html<%=templateCacheDefeater%>',
             controller: 'RoleModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -450,6 +450,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div style="height:150px"></div>
 
 </div>
-<script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/RoleModalCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
 

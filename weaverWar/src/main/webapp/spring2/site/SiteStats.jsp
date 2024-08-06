@@ -114,7 +114,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
              href="SiteStats.htm">Site Statistics</a></span>
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-             href="SiteLedger.htm">Site Charges</a></span>
+             href="SiteLedger.htm">Site Ledger</a></span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               ng-click="recalcStats()">Recalculate</a></span>
           <% if (ar.isSuperAdmin()) { %>

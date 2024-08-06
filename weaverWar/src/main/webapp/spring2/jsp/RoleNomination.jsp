@@ -222,7 +222,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.openNominationModal = function (nom) {
         if (!$scope.showNominations()) {
-            return;  //avoid nominiations when completed
+            return;  //avoid nominations when completed
         }
         var isNew = false;
         if (!nom) {   
@@ -230,7 +230,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             isNew = true;
         }
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/NominationModal.html?<%=templateCacheDefeater%>',
             controller: 'NominationModal',
             size: 'lg',

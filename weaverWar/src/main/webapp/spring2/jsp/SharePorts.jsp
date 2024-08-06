@@ -74,8 +74,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
 
         var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/SharePortModal.html<%=templateCacheDefeater%>',
+          animation: true,
+            templateUrl: '<%=ar.retPath%>new_assets/templates/SharePortModal.html<%=templateCacheDefeater%>',
             controller: 'SharePortCtrl',
             size: 'lg',
             backdrop: "static",

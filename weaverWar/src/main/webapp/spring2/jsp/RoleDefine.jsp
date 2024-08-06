@@ -119,7 +119,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             isNew = true;
         }
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/Responsibility.html<%=templateCacheDefeater%>',
             controller: 'Responsibility',
             size: 'lg',

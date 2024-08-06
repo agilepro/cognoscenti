@@ -71,9 +71,9 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-    <div class="well">Filter <input ng-model="filter"></div>
+    <div class="col-8 well ms-5">Filter <input ng-model="filter"></div>
 
-    <div class="container-fluid">
+    <div class="container-fluid col-8 ms-5">
         <div class="row d-flex border-bottom border-1">
             <span class="col-1 m-3"></span>
             <span class="col-4 h6">Workspace</span>
@@ -82,9 +82,9 @@ app.controller('myCtrl', function($scope, $http) {
         <div class="row d-flex border-bottom border-1" ng-repeat="rec in getRows()">
             <span class="col-1 m-3">
               <div class="nav-item dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  id="menu" 
+                <button class="dropdown-toggle specCaretBtn" type="button"  id="AllProjects" 
                     data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <ul class="dropdown-menu" role="menu" aria-labelledby="AllProjects">
                   <li role="presentation">
                       <a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
                 </ul>
@@ -101,8 +101,8 @@ app.controller('myCtrl', function($scope, $http) {
             <span class="col-3 my-3">{{rec.changed|cdate}}</span>
         </div>
     </div>
-<div class="container-fluid well"></div>
-    <div class="guideVocal" ng-show="noneFound">
+<div class="container-fluid col-8 well ms-5 mt-4"></div>
+    <div class=" col-6 guideVocal" ng-show="noneFound">
         User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
        <br/>
        When a user create projects, they will be listed here.<br/>

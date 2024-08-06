@@ -67,43 +67,47 @@ app.controller('myCtrl', function($scope, $http) {
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
-<div class="container-fluid mx-3">
-    <div class="row d-flex">
-        <div class="well">Filter <input ng-model="filter"></div>
+<div class="col-8 well ms-5">Filter <input ng-model="filter"></div>
 
-    <table class="gridTable2 mx-2" width="80%">
-        <tr class="my-2 gridTableHeader">
-            <td width="50px"></td>
-            <td width="200px"><h2 class="text-secondary fs-5">Workspace</h2></td>
-            <td width="100px"><h2 class="text-secondary fs-5">Changed</h2></td>
-        </tr>
-        <tr ng-repeat="rec in getRows()">
-            <td>
-                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
-                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
-                            <li><a class="dropdown-item" role="menuitem" tabindex="0" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Front Page</a></li>
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Modify Roles</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </td>
-            <td class="repositoryName">
-                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
-                   {{rec.name}}
-                       <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
-                       <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
-                       <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
-                </a>
-            </td>
-            <td>{{rec.changed|cdate}}</td>
-        </tr>
-    </table>
+    <div class="container-fluid col-8 ms-5">
+        <div class="row d-flex border-bottom border-1">
+            <span class="col-1 m-3"></span>
+            <span class="col-4 h6">Workspace</span>
+            <span class="col-3 h6">Changed</span>
+            </div>
 
-    <div class="col-6 guideVocal" ng-show="noneFound">
-        User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
+
+            <div class="row d-flex border-bottom border-1" ng-repeat="rec in getRows()">
+                <span class="col-1 m-3">
+                    <div class="nav-item dropdown">
+                        <button class="specCaretBtn dropdown-toggle " type="button"  id="OwnProjects" 
+                    data-toggle="dropdown"> 
+                        <span class="caret"></span>         
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="OwnProjects">
+                            <li role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Front Page</a></li>
+                            <li role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/RoleManagement.htm">Modify Roles</a></li>
+                            </ul>
+                        </div>
+                </span>
+                <span class="col-4 my-3 repositoryName">
+                        <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
+                           {{rec.name}}
+                           <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
+                           <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
+                           <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
+                        </a>
+                </span>
+                <span class="col-3 my-3">{{rec.changed|cdate}}</span>
+            </div>
+            </div>
+        <div class="container-fluid well col-8 ms-5 mt-4">
+    <div class="guideVocal" ng-show="noneFound">
+        User <% uProf.writeLink(ar); %> has not created any workspaces, and does not have any access to sites to create one in.<br/>
        <br/>
-       When a user create projects, they will be listed here.<br/>
+       When a user creates workspaces, they will be listed here.<br/>
        <br/>
        In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
        <br/>
@@ -114,5 +118,7 @@ app.controller('myCtrl', function($scope, $http) {
        If approved you will be the owner of that new site,
        and can create new projects within it.
     </div>
+
+</div>
 
 </div>

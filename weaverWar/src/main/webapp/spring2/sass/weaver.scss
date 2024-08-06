@@ -474,16 +474,19 @@ a {
     width: 25px;
     height: 25px;
     padding: 0px !important;
+    margin-left: 0px !important;
     background-image: none;
-    border: 2px solid $primary;
-    border-radius: 4px;
-    color: $primary;
+    border: 1px solid $secondary;
+    border-radius: 8px;
+    color: $secondary;
     background-color: #fff;
-    border-color: #ccc;
     &:hover {
         background-color: $secondary-20;
         color: $primary;
         cursor: pointer;
+    }
+    .dropdown-toggle::after {
+        margin-left: 0px !important;
     }
 }
 .specCaretBtn span {

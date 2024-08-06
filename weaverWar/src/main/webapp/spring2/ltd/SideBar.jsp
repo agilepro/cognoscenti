@@ -55,7 +55,7 @@
       <li class="nav-item dropdown"><a class="nav-link dropdown p-1" href="https://s06.circleweaver.com/TutorialList.html" title="Lots of videos on YouTube to help you learn how to use Weaver." target="_blank">Training <i class="fa fa-external-link"></i></a></li>
       
       <li class="nav-item dropdown">
-        <img src="<%=ar.retPath%>assets/LimitIndicator.png" title="You have limited access to some parts of this workspace" 
+        <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have limited access to some parts of this workspace" 
              class="accessIndicator"/>
       </li>
     

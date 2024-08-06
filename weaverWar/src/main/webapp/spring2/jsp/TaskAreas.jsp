@@ -97,8 +97,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         }
 
         var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html<%=templateCacheDefeater%>',
+            animation: true,
+            templateUrl: '<%=ar.retPath%>new_assets/templates/TaskAreaModal.html<%=templateCacheDefeater%>',
             controller: 'TaskAreaCtrl',
             size: 'lg',
             backdrop: "static",
@@ -200,6 +200,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 
 </div>
 
-<script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
+<script src="<%=ar.retPath%>New_assets/templates/TaskAreaModal.js"></script>
 
 

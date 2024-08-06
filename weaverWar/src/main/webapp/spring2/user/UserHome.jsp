@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
@@ -136,7 +136,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                       </a></div>
           <div class="card-body">
             <div ng-repeat="item in openActionItems | limitTo: 10" class="clipping">
-                <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
+                <img src="<%=ar.retPath%>new_assets/assets/goalstate/small{{item.state}}.gif">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm">
                  {{item.synopsis}}</a>
             </div>

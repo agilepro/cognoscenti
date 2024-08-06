@@ -1366,7 +1366,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             start = 'status';
         }
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: embeddedData.retPath + "new_assets/templates/ActionItem.html" + templateCacheDefeater,
             controller: 'ActionItemCtrl',
             size: 'lg',

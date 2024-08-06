@@ -100,9 +100,9 @@ function setUpCommentMethods($scope, $http, $modal) {
             alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
             return;
         }
-
+        
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/ResponseModal.html<%=templateCacheDefeater%>',
             controller: 'ModalResponseCtrl',
             size: 'lg',
@@ -517,7 +517,7 @@ function setUpCommentMethods($scope, $http, $modal) {
                 <i class="fa fa-edit"></i></a>
             </span>
           </td>
-          <td style="padding:5px;" ng-dblclick="openResponseEditor(cmt, resp.user)">
+          <td style="padding:5px;" ng-click="openResponseEditor(cmt, resp.user)">
             <div class="leafContent comment-inner px-2" ng-bind-html="getResponseHtml(resp)"></div>
           </td>
           <td ng-click="removeResponse(cmt,resp)" ng-show="cmt.state==12" >
@@ -550,8 +550,7 @@ function setUpCommentMethods($scope, $http, $modal) {
       <div class="d-flex mt-2">
         <button class="btn btn-sm btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
                 ng-show="cmt.state<=12">Delete</button>
-        <button class="btn btn-sm btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)"
-                 ng-show="cmt.state<=12">Edit</button>
+        <button class="btn btn-sm btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
         <button class="btn btn-wide btn-sm btn-primary btn-raised ms-auto" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
         <button class="btn btn-sm btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"

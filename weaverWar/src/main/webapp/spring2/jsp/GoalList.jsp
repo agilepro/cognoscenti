@@ -354,7 +354,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.openModalActionItem = function (goal, startMode) {
 
         var modalInstance = $modal.open({
-          animation: false,
+          animation: true,
           templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
           size: 'lg',

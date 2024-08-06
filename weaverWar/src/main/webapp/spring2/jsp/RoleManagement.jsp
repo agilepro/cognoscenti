@@ -222,7 +222,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "FrontPage.htm")%>";
 
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
@@ -256,7 +256,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             isNew = true;
         }
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/RoleModal.html<%=templateCacheDefeater%>',
             controller: 'RoleModalCtrl',
             size: 'lg',

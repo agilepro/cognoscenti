@@ -269,7 +269,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
 
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/CreateTopicModal.html<%=templateCacheDefeater%>',
             controller: 'CreateTopicModalCtrl',
             size: 'lg',

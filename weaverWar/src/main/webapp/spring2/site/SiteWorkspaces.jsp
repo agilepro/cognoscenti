@@ -122,51 +122,50 @@ app.controller('myCtrl', function($scope, $http) {
 
 <div class="container-fluid">
     <div class="row">
-      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               href="SiteCreateWorkspace.htm" >Create New Workspace</a></span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               ng-click="garbageCollect()">Garbage Collect</a></span>
-    </div>
+        </div>
 
-    <div class="d-flex col-9"><div class="contentColumn">
-    <div class="well">Filter <input ng-model="filter"></div>
-    <div style="height:10px;"></div>
-
-    <table class="table" width="100%">
-        <tr >
-            <td width="50px"></td>
-            <td width="200px">Workspace</td>
-            <td width="100px">Changed</td>
-            <td width="100px">Parent</td>
-        </tr>
-        <tr ng-repeat="rec in getRows()">
-            <td>
-                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
-                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="SiteWorkspaces" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+    <div class="d-flex col-9">
+        <div class="contentColumn">
+                <div class="col-12 well ms-3">Filter <input ng-model="filter"></div>
+        <div class="row d-flex border-bottom border-1 ms-3">
+            <span class="col-1 m-3"></span>
+            <span class="col-4 h6">Workspace</span>
+            <span class="col-2 h6">Changed</span>
+            <span class="col-4 h6">Parent</span>
+        </div>
+        <div class="row d-flex border-bottom border-1 ms-3" ng-repeat="rec in getRows()">
+            <span class="col-1 m-3">
+                <div class="nav-item dropdown">
+                    <button class="specCaretBtn dropdown-toggle " type="button"  id="SiteWorkspaces" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret "></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="siteWorkspaces">
                     <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">Access Workspace</a></li>
                     <li><a class="dropdown-item" role="menuitem"
                       href="SiteCreateWorkspace.htm?parent={{rec.pageKey}}" >Create Child Workspace</a></li>
                 </ul>
-            </li>
-                </ul>
-            <td class="repositoryName">
+            </div>
+        </span>
+        <span class="col-4 my-3 repositoryName">
                 <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/FrontPage.htm">
                    {{rec.name}}
                    <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
                    <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
                    <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
-            </td>
-            <td>{{rec.changed|cdate}}</td>
-            <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a>
-            </td>
-            </td>
-        </tr>
-    </table>
+            </span>
+            <span class="col-2">{{rec.changed|cdate}}</span>
+            <span class="col-4"><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a>
+            </span>
+        </div>
+    </div>
+</div>
     
-    <div>
+<div class="container-fluid col-10 ms-3 my-4">
+    <div class="guideVocal">
         Site can have {{siteInfo.workspaceLimit}} active workspaces.
     </div>
 

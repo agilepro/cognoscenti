@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%
@@ -115,51 +115,47 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="EmailCreated.htm">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
               Email Prepared</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="EmailSent.htm">
+            </span>
+            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
               Email Sent</a>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="SendNote.htm">
+            </span>
+          <hr/>
+          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm">
               Create Email</a>
-          </li>
-        </ul>
-      </span>
+          </span>
     </div>
 
-        <div>
-            Filter: <input ng-model="filter">
-            <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
-            <button ng-click="fetchEmailRecords(-20)" class="btn btn-default btn-raised">Previous</button>
-            <button ng-click="fetchEmailRecords(20)" class="btn btn-default btn-raised">Next</button>
+
+    <div class="d-flex col-9"><div class="contentColumn">
+        <div class="col-12 well ms-3">Filter <input ng-model="filter">
+<button ng-click="fetchEmailRecords(0)" class="btn btn-secondary btn-sm btn-wide btn-raised">Refresh</button>
+            <button ng-click="fetchEmailRecords(-20)" class="btn btn-secondary btn-sm btn-wide btn-raised">Previous</button>
+            <button ng-click="fetchEmailRecords(20)" class="btn btn-secondary btn-sm btn-wide  btn-raised">Next</button>
             <span style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
         </div>
-        <div style="height:20px;"></div>
-        <table class="table" width="100%">
-            <tr>
-                <td width="15px">#</td>
-                <td width="100px">From</td>
-                <td width="300px">Subject</td>
-                <td width="100px">Recipient</td>
-                <td width="50px">Status</td>
-                <td width="100px">Send Date</td>
-            </tr>
-            <tr ng-repeat="rec in emailList">
-                <td>{{offset+$index+1}}</td>
-                <td>{{namePart(rec.From)}}</td>
-                <td><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
-                <td>{{rec.Addressee}}</td>
-                <td>{{rec.Status}}</td>
-                <td>{{bestDate(rec) |cdate}}</td>
-            </tr>
-        </table>
+        <div class="container-fluid col-12 ms-3">
+            <div class="row d-flex border-bottom border-1 py-2">
+                <div class="col-1 me-0 h6">#</div>
+                <div class="col-2 ms-0 h6">From</div>
+                <div class="col-4 h6">Subject</div>
+                <div class="col-2 h6">Recipient</div>
+                <div class="col-1 ms-2 h6">Status</div>
+                <div class="col-1 h6 px-0">Send Date</div>
+            </div>
+            <div class="row d-flex border-bottom border-1 py-2" ng-repeat="rec in emailList">
+                <div class="col-1 me-0">{{offset+$index+1}}</div>
+                <div class="col-2 ms-0">{{namePart(rec.From)}}</div>
+                <div class="col-4"><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></div>
+                <div class="col-2">{{rec.Addressee}}</div>
+                <div class="col-1 ms-2">{{rec.Status}}</div>
+                <div class="col-1 px-0">{{bestDate(rec) |cdate}}</div>
+            </div>
+        </div>
 
 </div>
 

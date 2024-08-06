@@ -400,7 +400,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         };
 
         var decisionModalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: "<%=ar.retPath%>templates/DecisionModal.html"+templateCacheDefeater,
             controller: 'DecisionModalCtrl',
             size: 'lg',
