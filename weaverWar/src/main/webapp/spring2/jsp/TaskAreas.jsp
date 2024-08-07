@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="java.util.Date"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
@@ -131,9 +131,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
-          ng-click="isCreating=true" role="menuitem" tabindex="-1"
-              ng-click="openTaskAreaEditor({id:'~new~'})">Create New Task Area</a></span>
+        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><span class="nav-link" 
+          ng-click="isCreating=true; openTaskAreaModal({id:'~new~'})" role="menuitem" tabindex="-1" >Create New Task Area</span></span>
           <hr>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="GoalList.htm">Action Items View</a></span>
@@ -142,7 +141,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link">Manage Task Areas</a></span>
     </div>
 
-    <div class="d-flex col-9"><div class="contentColumn">
+    <div class="d-flex col-9">
+        <div class="contentColumn">
 
 
   <div class="guideVocal" ng-hide="loaded">
@@ -150,29 +150,27 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
   </div>
 
   <div ng-show="loaded">
-
-
-    <table class="table">
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Assignee</th>
-        <th title="Red-Yellow-Green assessment of status">R-Y-G</th>
-        <th>Status</th>
-      </tr>
-      <tr ng-repeat="ta in allTaskAreas">
-        <td style="cursor:pointer" style="max-width:40px"
+    <div class="container-fluid col-12 ms-5">
+        <div class="row d-flex border-bottom border-1">
+            <span class="col-1"></span>
+            <span class="col-3 h6">Name</span>
+            <span class="col-2 h6">Assignee</span>
+            <span class="col-2 h6" title="Red-Yellow-Green assessment of status">R-Y-G</span>
+            <span class="col-2 h6">Status</span>
+        </div>
+      <div class="row d-flex border-bottom border-1"  ng-repeat="ta in allTaskAreas">
+        <span class="col-1" style="cursor:pointer" 
             title="Edit this task area">
-          <span ng-click="openTaskAreaEditor(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
+          <span ng-click="openTaskAreaModal(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, true)" ><span class="fa fa-arrow-down"></span></span> &nbsp;
-        </td>
-        <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.name}}</td>
-        <td title="Click on person name to see their profile information">
+      </span>
+        <span class="col-3" ng-dblclick="openTaskAreaModal(ta)" >{{ta.name}}</span>
+        <span class="col-2" title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">
-                <a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass.key}}">{{ass.name}}</div>
-        </td>
-        <td style="width:150px" title="Red-Yellow-Green assessment of status">
+                <a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass.key}}">{{ass.name}}</a></div>
+                </span>
+        <span class="col-2" title="Red-Yellow-Green assessment of status">
           <span>
             <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="ta.prospects=='bad'"
                  title="Red: In trouble" ng-click="setProspects(ta, 'bad')" class="stoplight">
@@ -187,10 +185,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
             <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="ta.prospects=='good'"
                  title="Green: Good shape" class="stoplight">
           </span>
-        </td>
-        <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.status}}</td>
-      </tr>
-    </table>
+        </span>
+        <span class="col-2" ng-dblclick="openTaskAreaModal(ta)" >{{ta.status}}</span>
+    </div>
+</div>
     
     <div class="guideVocal" ng-hide="allTaskAreas.length > 0">
       No records to show . . .
@@ -200,6 +198,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 
 </div>
 
-<script src="<%=ar.retPath%>New_assets/templates/TaskAreaModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/TaskAreaModal.js"></script>
 
 

@@ -26,7 +26,7 @@
 {% if ($meeting.isScheduled) %} 
 <p><b>Date / Time: </b> {$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</p>
 <ul><li>
-<a href="{$workspaceUrl}MeetingAvail.htm?id={$meeting.id}&msgId={$msgId}"><button>Please Confirm Attendance</button></a>
+<a href="{$workspaceUrl}MeetingAvail.htm?id={$meeting.id}&msgId={$msgId}"><button style="border:1px solid secondary; border-radius:5px">Please Confirm Attendance</button></a>
 </li></ul>
 {% else %}
 <div style="color:red">

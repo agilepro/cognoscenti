@@ -114,22 +114,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<style>
-.btn-sm {
-    margin:0;
-}
-.spacey {
-}
-.spacey tr td {
-    padding:8px;
-}
-</style>
+
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-auto fixed-width border-end border-1 border-secondary">
                     <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
-                        <a class="nav-link">Add and Remove Labels &amp; Folders</a>
+                        <a class="nav-link">Create or Delete Labels</a>
                     </span>
                     
     </div>

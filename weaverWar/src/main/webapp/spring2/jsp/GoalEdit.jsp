@@ -489,7 +489,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
@@ -523,7 +523,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         var modalInstance = $modal.open({
-          animation: false,
+          animation: true,
           templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
           size: 'lg',
@@ -591,107 +591,90 @@ function addvalue() {
             </span>
         </div>
 
-    
-<style>
-.spaceyTable {
-    width:100%;
-}
-.spaceyTable tr td{
-    padding:10px;
-}
-.gridTableColummHeader {
-    max-width:150px;
-}
-</style>    
-<div class="d-flex col-9"><div class="contentColumn">
-    <table ng-hide="editGoalInfo" class="spaceyTable">
-        <tr class="clickable" ng-click="startEdit('assignee')" 
-            title="Click here to update the status of this action item">
-            <td >
-                <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
-            </td>
-            <td>
-                {{stateName[goalInfo.state]}} Action Item
-            </td>
-        </tr>
-        <tr class="clickable" ng-click="startEdit('details')" 
-            title="Click here to update the description of this action item">
-            <td class="fs-5 fw-bold">Summary:</td>
-            <td>
-                <div><b>{{goalInfo.synopsis}}</b></div>
-                <div ng-bind-html="goalInfo.description|wiki"></div>
-                <span ng-repeat="label in getGoalLabels(goalInfo)">
-                  <button class="labelButton" style="background-color:{{label.color}};">
-                    {{label.name}}
-                  </button>
-                </span>
-            </td>
-        </tr>
-        <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed." class="clickable">
-            <td class="fs-5 fw-bold" ng-click="startEdit('assignee')" >Assigned To:</td>
-            <td>
-                <div ng-repeat="player in goalInfo.assignTo"  style="height:40px">
-                  <span class="dropdown" >
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="rounded-5" 
-                         ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
-                         style="width:32px;height:32px" 
-                         title="{{player.name}} - {{player.uid}}">
+   
+<div class="d-flex col-9">
+    <div class="contentColumn">
+        <div class="container-fluid col-12" ng-hide="editGoalInfo">
+        <div class="row d-flex">
+            <span class="col-6">
+                <div class="row col-12 my-2" ng-click="startEdit('assignee')" 
+                title="Click here to update the status of this action item">
+                    <span class="col-2">
+                        <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif"/>
                     </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
-                          {{player.name}}<br/>{{player.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(player)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                    </ul>
-                  </span>
-                  <span>{{player.name}}</span>
+                    <span class="col-10 fs-5 fw-bold">
+                        {{stateName[goalInfo.state]}} Action Item
+                    </span>
                 </div>
-                
-            </td>
-        </tr>
-        <tr ng-show="selectedPersonShow">
-            <td ></td>
-            <td class="well"> 
-               for <b>{{selectedPerson.name}}</b>:
-               <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
-                   Visit Profile</button>
-               <button ng-click="openInviteSender(selectedPerson)" class="btn btn-info">
-                   Invite</button>
-               <button ng-click="selectedPersonShow=false" class="btn btn-info">
-                   Hide</button>
-            </td>
-        </tr>
-        <tr class="clickable" ng-click="startEdit('status')" 
-            title="Click here to update the status of this action item">
-            <td class="fs-5 fw-bold">Status:</td>
-            <td>
-                {{goalInfo.status}}
-                <span ng-hide="goalInfo.status" class="instruction"
-                      style="border:1px solid gray;padding:5px 20px">
-                    Click here to record status</span>
-            </td>
-        </tr>
-        <tr class="clickable"  
-            title="Manage the check list of items to do for this action">
-            <td class="fs-5 fw-bold" ng-click="startEdit('status')" >Checklist:</td>
-            <td>
-                <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
-                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
-                    &nbsp; {{ci.name}}
+                <div class="row col-12 my-2">
+                    <span class="col-2 clickable" ng-click="startEdit('details')" title="Click here to update the description of this action item">
+                        <span class="h6">Synopsis:</span>
+                    </span>
+                    <span class="col-10">
+                        <div><b>{{goalInfo.synopsis}}</b></div>
+                        <div ng-bind-html="goalInfo.description|wiki"></div>
+                        <span ng-repeat="label in getGoalLabels(goalInfo)">
+                            <button class="labelButton" style="background-color:{{label.color}};"> {{label.name}}
+                            </button>
+                        </span>
+                    </span>
                 </div>
-                <span ng-hide="checkitems.length>0" class="instruction" ng-click="startEdit('assignee')"
-                      style="border:1px solid gray;padding:5px 20px">
-                    Click here to create a checklist</span>
-            </td>
-        </tr>
-        <tr title="Red-Yellow-Green is a high-level status saying how things are going generally">
-            <td class="fs-5 fw-bold">R-Y-G:</td>
-            <td>
-                <span>
+                <div class="row col-12 my-2" title="The action item can be assigned to any number of people who will receive reminders until it is completed." >
+                    <span class="col-2 clickable h6" ng-click="startEdit('assignee')" >Assigned To:
+
+                    </span>
+                    <span class="col-10">
+                        <div ng-repeat="player in goalInfo.assignTo"  style="height:40px">
+                            <ul class="navbar-btn p-0 list-inline">
+                                <li class="nav-item dropdown" id="user" data-toggle="dropdown">
+                            <img class="rounded-5" 
+                                 ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
+                                 style="width:32px;height:32px" 
+                                 title="{{player.name}} - {{player.uid}}">
+                                 <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                                    <li role="presentation" style="background-color:lightgrey">
+                                      <a class="dropdown-item" role="menuitem" tabindex="0" style="text-decoration: none;text-align:left">
+                                          {{person.name}}<br/>{{person.uid}}
+                                      </a>
+                                    </li>
+                                    <li role="presentation" style="cursor:pointer">
+                                      <a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(person)">
+                                        <span class="fa fa-user"></span> 
+                                            Visit Profile
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </li>
+                              </ul>
+                        </div>
+                    </span>
+                </div>
+
+                <div class="row col-12 my-2"  
+                title="Manage the check list of items to do for this action">
+                    <span class="col-2 clickable h6" ng-click="startEdit('status')" >Checklist:</span>
+                    <span class="col-10">
+                          
+                        <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
+                            <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                            <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                        &nbsp; {{ci.name}}
+                        </div>
+                        <span ng-hide="checkitems.length>0" class="instruction" >
+                        Click here to create a checklist</span>
+                    </span>
+                </div>
+                <div class="row col-12 my-2">
+                    <div class="form-group" title="status is a freeform text statement about your current progress on action item">
+                        <label for="synopsis" class="clickable h6 col-2" ng-click="startEdit()">Status:</label>
+                        <textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  
+                        <span class="col-10" ng-show="goalInfo.status" >{{goalInfo.status}}
+                        </span>          
+                    </div>
+                </div>
+                <div class="row col-12 my-2" title="Red-Yellow-Green is a high-level status saying how things are going generally">
+                    <span class="col-2 h6">R-Y-G:</span>
+                    <span class="col-10">
                     <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
                          title="In trouble" ng-click="changeRYG('bad')">
                     <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
@@ -704,68 +687,84 @@ function addvalue() {
                          title="Good shape" ng-click="changeRYG('good')">
                     <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
                          title="Good shape">
-                </span>
-            </td>
-        </tr>
-        <tr class="clickable" ng-click="startEdit('details')" 
-            ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0"
-            title="Click here to update the dates of this action item">
-            <td ></td>
-            <td >
-                <span ng-show="goalInfo.duedate>0">   
-                    <b>Due:</b>   
-                    {{goalInfo.duedate|cdate}}   &nbsp; &nbsp; </span>
-                <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
-                    <b>Start:</b> 
-                    {{goalInfo.startdate|cdate}} &nbsp; &nbsp; </span>
-                <span ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
-                    <b>End:</b>   
-                    {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span>
-            </td>
-        </tr>
-        <tr><td></td>
-            <td><span class="row g-4">
-                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
-                    Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
-                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
-                    Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
-                <button class="col-2 btn btn-sm btn-outline-secondary btn-raised mx-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
-                    Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
-                <span class="col-3">
-                    <ul class="dropdown mx-0 my-1">
-                        <li class="nav-item dropdown btn btn-outline-secondary btn-raised" type="button" id="changeStatus" data-toggle="dropdown">
-                    Select State <span class="caret"></span>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a class="dropdown-item " role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small1.gif"> Unstarted
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
-                              Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
-                          </a>
-                      </li>
+                    </span>
+                </div>
+
+            </span><!--end of first column-->
+            <span class="col-6">
+
+                <div class="row col-12 my-2">
+
+                    <span class="col-3 clickable fw-bold" ng-click="startEdit('details')" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item">Timeframe:</span>
+                    <span class="col-9" >
+                        <span ng-show="goalInfo.duedate>0">   
+                            <b>Due:</b>   
+                            {{goalInfo.duedate|cdate}}   &nbsp; &nbsp; </span>
+                        <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
+                            <b>Start:</b> 
+                            {{goalInfo.startdate|cdate}} &nbsp; &nbsp; </span>
+                        <span ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
+                            <b>End:</b>   
+                            {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span>
+                    </span>
+                </div>
+                <div class="row col-12 my-2">
+                    <span class="col-3">
+                        <ul class="dropdown mx-0 my-1">
+                            <li class="nav-item dropdown btn btn-comment btn-wide btn-sm btn-secondary" type="button" id="changeStatus" data-toggle="dropdown">
+                        Select State <span class="caret"></span>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                          <li role="presentation">
+                              <a class="dropdown-item " role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small1.gif"> Unstarted
+                              </a>
+                          </li>
+                          <li role="presentation">
+                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
+                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered
+                              </a>
+                          </li>
+                          <li role="presentation">
+                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
+                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
+                              </a>
+                          </li>
+                          <li role="presentation">
+                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
+                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
+                              </a>
+                          </li>
+                          <li role="presentation">
+                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
+                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
+                              </a>
+                          </li>
+                            </ul>
+                            </li>
                         </ul>
-                        </li>
-                    </ul>
-                </span>
-            </span>
+                    </span>
+
+                </div>
+                <div class="row col-12 my-2">
+                    <span class="row-cols-3">
+                        <button class="col-2 btn-comment btn-raised btn-wide mx-2 my-md-3 my-sm-3" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                        Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
+                        <button class="col-2 btn-comment btn-raised btn-wide mx-2 my-md-3 my-sm-3" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                        Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
+                        <button class="col-2 btn-comment btn-raised btn-wide mx-2 my-md-3 my-sm-3" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                        Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
+                    </span>
+                </div>
+
+
+                
+
+            </span><!--end of second column-->
+        </div>
+       
+            
+
+          
         </td>
 
         <tr class="clickable" >
