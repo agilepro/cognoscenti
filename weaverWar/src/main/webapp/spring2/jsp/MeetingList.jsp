@@ -174,18 +174,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 </div>
 
-    <table class="table table-striped table-hover" width="100%">
-        <tr class="gridTableHeader">
-            <th scope="col" width="50px">Actions</th>
-            <th scope="col" width="50px">Agenda</th>
-            <th scope="col" width="200px">Meeting</th>
-            <th scope="col" width="200px">Date ({{browserZone}})</th>
-            <th scope="col" width="50px">Minutes</th>
-            <th scope="col" width="80px">State</th>
-            <th scope="col" width="80px">Duration</th>
-        </tr>
-        <tr ng-repeat="rec in meetings">
-            <td class="actions col-1">
+    <div class="container-fluid col-12 ms-4">
+        <div class="row my-2 border-1 border-bottom gridTableHeader">
+            <span class="col-1 h6" >Actions</span>
+            <span class="col-1 h6" >Agenda</span>
+            <span class="col-3 h6" >Meeting</span>
+            <span class="col-2 h6" >Date ({{browserZone}})</span>
+            <span class="col-1 h6" >Minutes</span>
+            <span class="col-1 h6" >State</span>
+            <span class="col-1 text-center h6" >Duration</span>
+        </div>
+        <div class="row my-2 py-2 border-1 border-bottom" ng-repeat="rec in meetings">
+            <span class="actions col-1">
               <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
                 <button type="button" name="clone" class="btn-sm btn-comment">
                     <span class="fa fa-clone"></span>
@@ -196,38 +196,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <span class="fa fa-trash"></span>
                 </button>
               </a>
-            </td>
-            <td class="actions"><a title="Meeting Agenda" 
+            </span>
+            <span class="actions col-1"><a title="Meeting Agenda" 
                  href="MeetingHtml.htm?id={{rec.id}}&mode=Agenda">
-                <button type="button" name="edit" class="btn btn-raised btn-secondary"> 
-                    <span class="fa  fa-file-o"></span>
+                <button type="button" name="edit" class="btn-sm btn-comment"> 
+                    <span class="fa fa-file-o"></span>
                 </button>
               </a>
-            </td>
-            <td><b><a title="Meeting User Interface" 
+            </span>
+            <span class="col-3"><b><a title="Meeting User Interface" 
                  href="MeetingHtml.htm?id={{rec.id}}">
                 {{rec.name}}</a></b>
-            </td>
-            <td>
+            </span>
+            <span class="col-2">
                 <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
                 <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
-            </td>
-            <td class="actions">
+            </span>
+            <span class="col-1 actions">
               <a role="menuitem" tabindex="-1" title="Meeting Minutes" 
                  href="MeetingHtml.htm?id={{rec.id}}&mode=Minutes">
-                <button type="button" name="edit" class='btn btn-primary'>
+                <button type="button" name="edit" class="btn-sm btn-comment">
                     <span class="fa fa-file-text-o"></span>
                 </button>
               </a>
-            </td>
-            <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
-            <td>{{rec.duration}}</td>
-        </tr>
-    </table>
+            </span>
+            <span class="col-1 p-2" style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</span>
+            <span class="col-1 text-center">{{rec.duration}}</span>
+        </div>
+    </div>
 <% if (userCanUpdate) { %>
-    <div class="row">
-        <div class="d-flex col-12 m-2">
-            <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
+    <div class="row ms-4">
+        <div class="d-flex col-2 m-2">
+            <button class="btn btn-primary btn-raised btn-wide" ng-click="createMeeting()"><i class="fa fa-plus"></i> &nbsp; Create New Meeting</button>
         </div>
     </div>
 <% } %>

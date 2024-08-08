@@ -497,8 +497,16 @@ a {
     margin: 0px;
     padding: 0px;
 }
-
-
+.clickable:hover {
+    cursor:pointer;
+    background-color:#DDEEFF;
+}
+.clickable {
+    cursor:pointer;
+}
+.custom-modal-window-top {
+    margin-top: 100px;
+}
 
 .btn-outline-primary {
     color: $primary;

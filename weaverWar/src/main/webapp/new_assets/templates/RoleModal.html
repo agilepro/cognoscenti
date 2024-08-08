@@ -105,32 +105,30 @@
                 <div class="form-group d-flex col-12 m-2" >
                     
                     
-    <table class="spaceyTable" ng-show="isNew">
-        <tr><td style="height:10px" colspan="3"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader h6">Name:</td>
-            <td>
+    <div class="container-fluid" ng-show="isNew">
+        <div class="row d-flex my-3">
+            <span class="col-2 gridTableColummHeader h6">Name:</span>
+            <span class="col-10">
                <input class="form-control" style="max-width:400px" ng-model="roleInfo.name">
-            </td>
-        </tr>
-        <tr>
-            <td ></td>
-            <td style="max-width:500px">
+            </span>
+        </div>
+        <div class="row d-flex my-3">
+            <span class="col-12">
                <span class="instruction">First create the role, then add member to it.  
                   Role names can not be changed.  Copy a role to change its name.
                   The name should be short and should use only letters and numbers.</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="h6" >Copy From:</td>
-            <td>
+            </span>
+        </div>
+        <div class="row d-flex my-3">
+            <span class="col-2 h6" >Copy From:</span>
+            <span class="col-10">
                <select class="form-control" style="max-width:400px" ng-model="roleToCopy"
                        ng-options="role.name for role in allRoles">
                    <option value="">-- choose to copy --</option>
                </select>
-            </td>
-        </tr>
-    </table>
+            </span>
+        </div>
+    </div>
  
 </div>
 <div class="modal-footer">

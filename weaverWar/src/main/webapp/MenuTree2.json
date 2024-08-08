@@ -692,6 +692,7 @@
           "use": [
             "GoalStatus.jsp",
             "GoalList.jsp",
+            "GoalEdit.jsp",
             "TaskAreas.jsp"
           ],
           "href": "GoalList.htm",
@@ -703,9 +704,10 @@
           "use": [
             "GoalStatus.jsp",
             "GoalList.jsp",
+            "GoalEdit.jsp",
             "TaskAreas.jsp"
           ],
-          "ng-click": "openActionItem(item)",
+          "href": "GoalEdit.htm",
           "name": "Create",
           "title": "Create a new action item"
         },
@@ -713,6 +715,7 @@
           "use": [
             "GoalStatus.jsp",
             "GoalList.jsp",
+            "GoalEdit.jsp",
             "TaskAreas.jsp"
           ],
           "href": "GoalStatus.htm",
@@ -724,6 +727,7 @@
           "use": [
             "GoalStatus.jsp",
             "GoalList.jsp",
+            "GoalEdit.jsp",
             "TaskAreas.jsp"
           ],
           "href": "TaskAreas.htm",
@@ -734,6 +738,7 @@
       "useOpts": [
         "GoalStatus.jsp",
         "GoalList.jsp",
+        "GoalEdit.jsp",
         "TaskAreas.jsp"
       ],
       "readOnly": true,

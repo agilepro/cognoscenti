@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
 %><%
@@ -111,7 +111,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-        <div>
+        <div class="well ms-4">
             Filter: <input ng-model="filter">
             <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
             <button ng-click="fetchEmailRecords(-20)" class="btn btn-default btn-raised">Previous</button>
@@ -119,24 +119,24 @@ app.controller('myCtrl', function($scope, $http) {
             <span style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
         </div>
         <div style="height:20px;"></div>
-        <table class="table" width="100%">
-            <tr>
-                <td width="15px">#</td>
-                <td width="100px">From</td>
-                <td width="300px">Subject</td>
-                <td width="50px">Site/Workspace</td>
-                <td width="50px">Status</td>
-                <td width="100px">Send Date</td>
-            </tr>
-            <tr ng-repeat="rec in emailList">
-                <td>{{offset+$index+1}}</td>
-                <td>{{namePart(rec.From)}}</td>
-                <td><a href="EmailMsgU.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
-                <td>{{rec.Site}}/{{rec.Workspace}}</td>
-                <td>{{rec.Status}}</td>
-                <td>{{bestDate(rec) |cdate}}</td>
-            </tr>
-        </table>
+        <div class="container-fluid ms-4 col-12 my-2">
+            <div class="row border-1 border-bottom">
+                <span class="col-1 h6">#</span>
+                <span class="col-2 h6">From</span>
+                <span class="col-4 h6">Subject</span>
+                <span class="col-3 h6">Site/Workspace</span>
+                <span class="col-1 h6">Status</span>
+                <span class="col-1 h6">Send Date</span>
+            </div>
+            <div class="row border-1 border-bottom my-2 py-1" ng-repeat="rec in emailList">
+                <span class="col-1">{{offset+$index+1}}</span>
+                <span class="col-2">{{namePart(rec.From)}}</span>
+                <span class="col-4"><a href="EmailMsgU.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></span>
+                <span class="col-3">{{rec.Site}}/{{rec.Workspace}}</span>
+                <span class="col-1">{{rec.Status}}</span>
+                <span class="col-1">{{bestDate(rec) |cdate}}</span>
+            </div>
+        </div>
 
 </div>
 

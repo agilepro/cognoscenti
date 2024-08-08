@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="java.util.Date"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
@@ -357,7 +357,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           animation: true,
           templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
-          size: 'lg',
+          size: 'xl',
           backdrop: "static",
           resolve: {
             goal: function () {

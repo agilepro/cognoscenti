@@ -202,11 +202,6 @@ function GetFirstHundredNoHtml(input) {
 
 </script>
 
-<style>
-.spaceyTable tr td {
-    padding:8px;
-}
-</style>
 
 <div ng-cloak>
 
@@ -238,22 +233,21 @@ function GetFirstHundredNoHtml(input) {
 
 <% } else { %>
   
-  <div class="container">
-    <div class="col-md-11">
-      <div class="well">
-        <form class="horizontal-form">
-          <fieldset>
+    <div class="container-fluid col-md-10 ms-4">
+        <div class="row shadow-lg p-3">
+            <form class="horizontal-form">
+                <fieldset>
             <!-- Form Control NAME Begin -->
-            <div class="form-group">
-              <label class="col-md-2 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Name</label>
+            <div class="form-group d-flex my-3">
+              <label class="h6 col-1 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Name</label>
               <div class="col-md-10">
                 <input type="text" class="form-control" ng-model="meeting.name"
                        title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
               </div>
             </div>
             <!-- Form Control DATE Begin -->
-            <div class="form-group form-inline">
-                <label class="col-md-2 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
+            <div class="form-group d-flex my-3">
+                <label class="col-1 h6 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
                   Date &amp; Time
                 </label>
                 <div class="col-md-10" 
@@ -265,11 +259,10 @@ function GetFirstHundredNoHtml(input) {
                   <span style="padding:10px">{{browserZone}}</span>
                   <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
                 </div>
-                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
             </div>
             <!-- Form Control DESCRIPTION Begin -->
-            <div class="form-group">
-                <label class="col-md-2 control-label">
+            <div class="form-group d-flex my-3">
+                <label class="col-1 h6 control-label">
                   Description
                 </label>
                 <div class="col-md-10">
@@ -280,44 +273,46 @@ function GetFirstHundredNoHtml(input) {
           </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
-              <span class="h4">Cloning Agenda Items</span>
-              <div class="form-group">
-              <table class="table table-striped table-hover" width="100%">
-                
-                  <tr>
-                      <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
-                      <th width="200px">Agenda Item</th>
-                      <th width="200px">Description</th>
-                      <th width="50px" title="Expected duration of the agenda item in minutes">Duration</th>
-                  </tr>
-                  <tr ng-repeat="rec in sortItems()">
-                      <td class="actions">
+              <div class="container-fluid col-11 ms-5">
+                <div class="h4 my-4">Cloning Agenda Items</div>
+              <div class="form-group ms-5">
+                <div class="row d-flex my-4 border-1 border-bottom py-2">
+                      <span class="col-1 h6" title="Check this to include a copy of this agenda item in the new meeting">Clone</span>
+                      <span class=" col-4 h6">Agenda Item</span>
+                      <span class="col-5 h6">Description</span>
+                      <span class="col-2 h6" title="Expected duration of the agenda item in minutes">Duration</span>
+                </div>
+                <div class="row d-flex my-4 border-1 border-bottom py-2"  ng-repeat="rec in sortItems()">
+                      <span class="col-1 actions">
                         <div class="checkbox">
                           <label title="Check this to include a copy of this agenda item in the new meeting">
                             <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
                           </label>
                         </div>
-                      </td>
-                      <td><b>{{rec.subject}}
+                      </span>
+                      <span class="col-4"><b>{{rec.subject}}
                               <span ng-show="rec.topics.length()>0">(Linked Topic)</span>
                           </b>
-                          </td>
-                      <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
-                      <td title="Expected duration of the agenda item in minutes">
-                          <input class="form-control" style="width:80px" ng-model="rec.duration"></td>
-                  </tr>
-              </table>
+                          </span>
+                      <span class="col-5" style="line-height: 1.3;">{{trimDesc(rec)}}</span>
+                      <span class="col-2" title="Expected duration of the agenda item in minutes">
+                          <input class="form-control" style="width:80px" ng-model="rec.duration"></span>
+                      </div>
+                    </div>
           </div>
         </div>
+            </form>
           <!-- Form Control BUTTONS Begin -->
-          <div class="form-group d-flex">
-            <button type="button" class="btn btn-danger btn-raised" onclick="history.back();">Cancel</button>
+          <div class="mx-5 row col-10">
+            <span class="col-md-2 me-auto">
+            <button type="button" class="btn btn-danger btn-raised" onclick="history.back();">Cancel</button></span>
+            <span class="col-md-2 ms-auto ">
             <button type="submit" class="btn btn-primary btn-raised ms-auto me-5"  ng-click="createMeeting()"><%=pageTitle%></button>
-          </div>
-        </form>
+            </span>
       </div>
     </div>
   </div>
+</div>
   
 <% } %> 
   

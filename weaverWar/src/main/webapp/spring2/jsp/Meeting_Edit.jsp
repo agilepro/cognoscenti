@@ -61,14 +61,15 @@
                     </li>
                     </ul>
                       </div>
-                  </div>
-                  <span class="h6 ms-1"  ng-show="meeting.state>=2">
-                    elapsed duration: {{meeting.timerTotal|minutes}}
-                  </span>
-                  <br>
+                  </div> 
                   <span class="h6 ms-1 fst-italic"  ng-show="meeting.state>=2">
-                    time remaining: {{item.duration - item.timerTotal| minutes}}
+                    item time remaining: {{item.duration - item.timerTotal| minutes}}
+                  </span> <br> <br>
+                  <span class="h6 ms-1 push-right"  ng-show="meeting.state>=2">
+                    elapsed duration: {{meeting.timerTotal|minutes}}  (meeting) 
                   </span>
+                 
+                 
                   <!-- button to select timer
                   <ul type="button" class="btn btn-raised btn-primary text-weaverbody mx-2 mb-3" >
                     <li class="nav-item dropdown">

@@ -33,30 +33,44 @@
         JSONObject firstItem = new JSONObject();
         firstItem.put("selected", true);
         firstItem.put("subject", "Check In");
-        firstItem.put("description", "Go around the circle and get the status from everyone");
+        firstItem.put("description", "Go around the circle and get the status from everyone.");
         firstItem.put("duration", 10);
         newAgenda.put(firstItem);
         
         JSONObject secItem = new JSONObject();
         secItem.put("selected", true);
         secItem.put("subject", "Admin");
-        secItem.put("description", "Admin:\n* Announcements\n* Accept agenda\n* Review / approve last meeting minutes\n* When is the next meeeting");
+        secItem.put("description", "Admin:\n* Announcements\n* Accept agenda\n* Review/approve last meeting minutes\n* Next meeting time");
         secItem.put("duration", 10);
         newAgenda.put(secItem);
         
         JSONObject thirdItem = new JSONObject();
         thirdItem.put("selected", true);
-        thirdItem.put("subject", "Content");
-        thirdItem.put("description", "(( Ahead of the meeting, put here (in one or more agenda items) the actual meeting agenda discussions ))");
+        thirdItem.put("subject", "Reports");
+        thirdItem.put("description", "Ahead of the meeting, include any report(s) to be given during the meeting.");
         thirdItem.put("duration", 10);
         newAgenda.put(thirdItem);
-        
+
         JSONObject fourthItem = new JSONObject();
         fourthItem.put("selected", true);
-        fourthItem.put("subject", "Closing");
-        fourthItem.put("description", "Evaluation of meeting and possible discussions for next meeting.");
+        fourthItem.put("subject", "Explorations");
+        fourthItem.put("description", "Ahead of the meeting, include any exploration(s) to be discussed during the meeting.");
         fourthItem.put("duration", 10);
         newAgenda.put(fourthItem);
+
+        JSONObject fifthItem = new JSONObject();
+        fifthItem.put("selected", true);
+        fifthItem.put("subject", "Decisions");
+        fifthItem.put("description", "Ahead of the meeting, include any decision(s) to be made during the meeting.");
+        fifthItem.put("duration", 10);
+        newAgenda.put(fifthItem);
+        
+        JSONObject sixthItem = new JSONObject();
+        sixthItem.put("selected", true);
+        sixthItem.put("subject", "Closing");
+        sixthItem.put("description", "Evaluation of meeting and possible discussions for next meeting.");
+        sixthItem.put("duration", 10);
+        newAgenda.put(sixthItem);
         
         meetingInfo.put("agenda", newAgenda);
     }
@@ -71,18 +85,7 @@
     meetingInfo.put("startTime", proposedStartTime);
     boolean userReadOnly = ar.isReadOnly(); 
 %>
-<style>
-  .full button span {
-    background-color: limegreen;
-    border-radius: 32px;
-    color: black;
-  }
-  .partially button span {
-    background-color: orange;
-    border-radius: 32px;
-    color: black;
-  }
-</style>
+
 
 <script type="text/javascript">
 
@@ -244,11 +247,6 @@ function GetFirstHundredNoHtml(input) {
 
 </script>
 
-<style>
-.spaceyTable tr td {
-    padding:8px;
-}
-</style>
 
 <div ng-cloak>
 
@@ -280,21 +278,21 @@ function GetFirstHundredNoHtml(input) {
 
 <% } else { %>
 
-<div class="container-fluid col-md-11">
-    <div class="row shadow-lg">
+<div class="container-fluid col-md-10 ms-4">
+    <div class="row shadow-lg p-3">
         <form class="horizontal-form">
             <fieldset>
             <!-- Form Control NAME Begin -->
-                <div class="form-group">
-                    <label class="col-md-2 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Meeting Name</label>
+                <div class="form-group d-flex my-3">
+                    <label class="h6 col-1 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Meeting Name</label>
                     <div class="col-md-10">
-                    <input type="text" class="form-control" ng-model="meeting.name"
-                    title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
+                        <input type="text" class="form-control" ng-model="meeting.name" title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
+                    </div>
                 </div>
-                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
+
             <!-- Form Control DATE Begin -->
-            <div class="form-group form-inline">
-                <label class="col-md-2 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
+            <div class="form-group d-flex my-3">
+                <label class="col-1 h6 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
                     Date &amp; Time
                 </label>
                 <div class="col-md-10" title="Date and time for the beginning of the meeting in YOUR time zone">
@@ -304,59 +302,57 @@ function GetFirstHundredNoHtml(input) {
                     <span style="padding:10px">{{browserZone}}</span>
                     <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
                 </div>
-                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
+                
             </div>
             <!-- Form Control DESCRIPTION Begin -->
-                <div class="form-group">
-                    <label class="col-md-2 control-label">
+                <div class="form-group d-flex my-3">
+                    <label class="col-1 h6 control-label">
                         Description
                     </label>
                     <div class="col-md-10">
                         <textarea ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml" class="leafContent form-control" style="min-height:200px;"></textarea>
                     </div>
                 </div>
+            </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
-              <h3>Agenda Items</h3>
-              <div class="form-group">
-              <table class="table table-striped table-hover" width="100%">
-                  <tr>
-                      <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
-                      <th width="200px">Agenda Item</th>
-                      <th width="200px">Description</th>
-                      <th width="50px" title="Expected duration of the agenda item in minutes">Duration</th>
-                  </tr>
-                  <tr ng-repeat="rec in sortItems()">
-                      <td class="actions">
+              <div class="container-fluid col-11 ms-5">
+                <div class="h4 my-4">Agenda Items</div>
+                <div class="form-group ms-5">
+              
+                  <div class="row d-flex my-4 border-1 border-bottom py-2">
+                      <span class="col-1 h6" title="Check this to include a copy of this agenda item in the new meeting">Clone</span>
+                      <span class=" col-2 h6">Agenda Item</span>
+                      <span class="col-5 h6">Description</span>
+                      <span class="col-2 h6" title="Expected duration of the agenda item in minutes">Duration</span>
+                  </div>
+                  <div class="row d-flex my-4 border-1 border-bottom py-2" ng-repeat="rec in sortItems()">
+                      <span class="col-1 actions">
                         <div class="checkbox">
                           <label title="Check this to include a copy of this agenda item in the new meeting">
                             <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
                           </label>
                         </div>
-                      </td>
-                      <td><b>{{rec.subject}}
+                      </span>
+                      <span class="col-2"><b>{{rec.subject}}
                               <span ng-show="rec.topics.length()>0">(Linked Topic)</span>
                           </b>
-                          </td>
-                      <td style="line-height: 1.3;"><div ng-bind-html="trimDesc(rec)|wiki"></div></td>
-                      <td title="Expected duration of the agenda item in minutes">
-                          <input class="form-control" style="width:80px" ng-model="rec.duration"></td>
-                  </tr>
-              </table>
+                          </span>
+                      <span class="col-5" style="line-height: 1.3;"><div ng-bind-html="trimDesc(rec)|wiki"></div></span>
+                      <span class="col-2" title="Expected duration of the agenda item in minutes">
+                          <input class="form-control" style="width:80px" ng-model="rec.duration"></span>
+                      </div>
+              </div>
           </div>
         </div>
           <!-- Form Control BUTTONS Begin -->
 
-
-
-            </fieldset>
         </form>
-                  <div class="row">
+                  <div class="mx-5 row col-10">
                     <span class="col-md-2 me-auto">
             <button class="btn btn-danger btn-raised " type="button"  onclick="history.back();">Cancel</button></span>
-            <span class="col-md-2 ms-auto"><button class="btn btn-primary btn-raised ms-start" type="submit" ng-click="createMeeting()"><%=pageTitle%></button></span>
-            <br/>
-            <div>&nbsp;</div>
+            <span class="col-md-2 ms-auto "><button class="btn btn-primary btn-raised ms-start" type="submit" ng-click="createMeeting()"><%=pageTitle%></button></span>
+
           </div>
       </div>
     </div>
