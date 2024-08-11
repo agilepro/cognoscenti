@@ -30,6 +30,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
@@ -43,7 +45,9 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
@@ -67,6 +71,9 @@ public class NGWorkspace extends NGPage {
     private File        jsonFilePath;
     private JSONObject  workspaceJSON;
 
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    static private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
@@ -967,6 +974,13 @@ public class NGWorkspace extends NGPage {
         }
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
         JSONObject newInvite = new JSONObject();
+        String emailId = ale.getEmail();
+
+        // this might not actually be an email address so check and skip otherwise
+        Matcher matcher = pattern.matcher(emailId.trim());
+        if (!matcher.matches()) {
+            throw new SimpleException("This email id (%s) does not look like an email address", emailId);
+        }
         newInvite.put("email", ale.getEmail());
         invites.put(newInvite);
         return new RoleInvitation(newInvite);

@@ -287,7 +287,8 @@ public class EmailGenerator extends DOMFace {
             //don't send anything if the user does not have an email address
             return;
         }
-        UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
+        UserManager.getStaticUserManager();
+        UserProfile originalSender = UserManager.lookupUserByAnyId(getOwner());
         if (originalSender==null) {
             System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
             return;
@@ -385,7 +386,8 @@ public class EmailGenerator extends DOMFace {
             mail.setCommentContainer(noteRec.getGlobalContainerKey(ngw));
         }
         MemFile bodyChunk = new MemFile();
-        UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
+        UserManager.getStaticUserManager();
+        UserProfile originalSender = UserManager.lookupUserByAnyId(getOwner());
 
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngw);
 
@@ -465,7 +467,8 @@ public class EmailGenerator extends DOMFace {
         //Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        UserProfile ownerProfile = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
+        UserManager.getStaticUserManager();
+        UserProfile ownerProfile = UserManager.lookupUserByAnyId(getOwner());
         if (ownerProfile!=null) {
             data.put("sender",  ownerProfile.getJSON());
         }

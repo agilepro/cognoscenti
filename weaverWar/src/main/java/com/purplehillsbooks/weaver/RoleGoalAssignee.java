@@ -34,7 +34,7 @@ import com.purplehillsbooks.json.JSONObject;
  * simply reads and write information to/from the GoalRecord itself without
  * caching anything.
  */
-public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
+public class RoleGoalAssignee extends RoleSpecialBase {
     private GoalRecord goal;
 
     RoleGoalAssignee(GoalRecord newTask) {

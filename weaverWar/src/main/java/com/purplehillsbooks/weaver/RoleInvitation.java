@@ -27,7 +27,7 @@ import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.JSONWrapper;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
-
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class RoleInvitation extends JSONWrapper {
@@ -50,6 +50,9 @@ public class RoleInvitation extends JSONWrapper {
     }
     public String getStatus() throws Exception {
         return kernel.optString("status", STATUS_NEW);
+    }
+    public void setStatus(String value) throws Exception {
+        kernel.put("status", value);
     }
     public String getRole() throws Exception {
         return kernel.getString("role");
@@ -173,7 +176,14 @@ public class RoleInvitation extends JSONWrapper {
         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if ("New".equals(ri.getStatus())) {
                 System.out.println("ROLE INVITATION: "+SectionUtil.currentTimestampString()+" to "+ri.getEmail()+" sending.");
-                ri.sendEmail(ar);
+                try {
+                    ri.sendEmail(ar);
+                }
+                catch (Exception e) {
+                    ri.setStatus(STATUS_FAILED);
+                    JSONException.traceException(e, "Weaver role invitation failed, giving up " + ri.getEmail());
+                    return;
+                }
             }
         }
 
