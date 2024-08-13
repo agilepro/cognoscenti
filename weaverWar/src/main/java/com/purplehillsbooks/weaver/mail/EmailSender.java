@@ -296,12 +296,23 @@ public class EmailSender extends TimerTask {
         JSONArray allUnsentMail = db.queryRecords(query);
         boolean allSentOK = true;
 
+        long cutoffTime = System.currentTimeMillis()-3600000;
+
         for (JSONObject msgObj : allUnsentMail.getJSONObjectList()) {
             MailInst inst = new MailInst(msgObj);
 
             //check that the query worked.
             if (!MailInst.READY_TO_GO.equals(inst.getStatus())) {
                 System.out.println("MAIL DB ERROR: query for 'Ready' email, but got '"+inst.getStatus()+"' instead.");
+                continue;
+            }
+
+            // if this is older than an hour . . . ignore it.
+            if (inst.getCreateDate() < cutoffTime) {
+                System.out.println(String.format("EmailSender: message (%d) SKIPPED because it is more than 1 hour old (%s): %s", 
+                        inst.getCreateDate(), inst.getAddressee(), inst.getSubject()));
+                inst.setStatus(MailInst.SKIPPED);
+                updateEmailInDB(inst);
                 continue;
             }
 
