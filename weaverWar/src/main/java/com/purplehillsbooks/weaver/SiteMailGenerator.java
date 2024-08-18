@@ -163,7 +163,7 @@ public class SiteMailGenerator extends DOMFace {
         mailMsg.setWorkspaceKey("$");
         mailMsg.setSubject(subject);
         mailMsg.setBodyText(entireBody);
-        
+
         sender.createEmailRecordInDB(mailMsg, new AddressListEntry(from), ooa.getEmail());
         System.out.println("SiteMail was sent to ("+ooa.getEmail()+") "+subject);
     }

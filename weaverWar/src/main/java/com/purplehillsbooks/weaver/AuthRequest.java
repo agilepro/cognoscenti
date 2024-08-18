@@ -446,7 +446,8 @@ public class AuthRequest
             licenseid = lid;
         }
         if (userid!=null) {
-            user = UserManager.getStaticUserManager().lookupUserByAnyId(userid);
+            UserManager.getStaticUserManager();
+            user = UserManager.lookupUserByAnyId(userid);
         }
     }
 

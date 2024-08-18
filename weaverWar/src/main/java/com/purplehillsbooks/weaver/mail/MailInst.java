@@ -28,10 +28,12 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.MemFile;
 
 /**
@@ -171,7 +173,7 @@ public class MailInst extends JSONWrapper {
         //This is an attempt to keep them from ever being used in this class.
         //Can probable remove after 2018 is over
         if (val.indexOf(AddressListEntry.LAQUO)>=0) {
-            throw new Exception("MailInst.setFromAddress requires a straight SMTP email address and should not have LAQUO in it");
+            throw WeaverException.newBasic("MailInst.setFromAddress requires a straight SMTP email address and should not have LAQUO in it");
         }
         kernel.put("From", val);
     }
@@ -414,7 +416,7 @@ public class MailInst extends JSONWrapper {
             try {
                 addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
             } catch (Exception ex) {
-                throw new JSONException("Error while attempting to send email to ({0})", ex, addressee);
+                throw WeaverException.newBasic("Error while attempting to send email to (%s)", ex, addressee);
             }
 
             message.addRecipients(Message.RecipientType.TO, addressTo);

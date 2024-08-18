@@ -128,7 +128,8 @@ public class ResponseRecord extends DOMFace
             return;  //ignore users without email addresses
         }
 
-        UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
+        UserManager.getStaticUserManager();
+        UserProfile toProfile = UserManager.lookupUserByAnyId(ooa.getEmail());
         if (toProfile!=null) {
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }

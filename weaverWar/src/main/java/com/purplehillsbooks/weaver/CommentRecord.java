@@ -468,7 +468,8 @@ public class CommentRecord extends DOMFace {
 
             for (OptOutAddr ooa : sendTo) {
                 if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
-                    UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
+                    UserManager.getStaticUserManager();
+                    UserProfile toProfile = UserManager.lookupUserByAnyId(ooa.getEmail());
                     if (toProfile!=null) {
                         ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                     }

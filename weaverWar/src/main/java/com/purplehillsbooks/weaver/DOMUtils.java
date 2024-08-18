@@ -20,13 +20,10 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

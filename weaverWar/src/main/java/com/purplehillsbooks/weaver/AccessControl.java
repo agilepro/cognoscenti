@@ -267,7 +267,7 @@ public class AccessControl {
         }
         Cognoscenti cog = ar.getCogInstance();
         UserManager userManager = cog.getUserManager();
-        UserProfile licensedUser = userManager.lookupUserByAnyId(emailId);
+        UserProfile licensedUser = UserManager.lookupUserByAnyId(emailId);
         if (licensedUser == null) {
             licensedUser = userManager.createUserWithId(emailId);
         }

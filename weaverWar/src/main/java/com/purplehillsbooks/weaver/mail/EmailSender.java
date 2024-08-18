@@ -47,6 +47,7 @@ import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.SimpleException;
 
 /**
  * Support class for sending email messages based on an email configuration
@@ -236,9 +237,7 @@ public class EmailSender extends TimerTask {
                 lastEmailProcessTime = startTime;
                 //System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
-                System.out.println("=================== EXCEPTION IN SENDMAIL =====================");
-                e.printStackTrace();
-                System.out.println("=================== --------------------L =====================");
+                SimpleException.traceException(e, "Weaver EmailSender Run Method");
                 if (WeaverException.contains(e, "InterruptedException")) {
                     throw WeaverException.newWrap("Got InterruptedException at the root level of EmailSender.", e);
                 }
@@ -265,7 +264,7 @@ public class EmailSender extends TimerTask {
             }
         }
         catch (Throwable t) {
-            JSONException.traceException(t, "EMAIL SENDER CRASH!");
+            JSONException.traceException(t, "Weaver EmailSender Run CRASH");
         }
     }
 
@@ -297,12 +296,23 @@ public class EmailSender extends TimerTask {
         JSONArray allUnsentMail = db.queryRecords(query);
         boolean allSentOK = true;
 
+        long cutoffTime = System.currentTimeMillis()-3600000;
+
         for (JSONObject msgObj : allUnsentMail.getJSONObjectList()) {
             MailInst inst = new MailInst(msgObj);
 
             //check that the query worked.
             if (!MailInst.READY_TO_GO.equals(inst.getStatus())) {
                 System.out.println("MAIL DB ERROR: query for 'Ready' email, but got '"+inst.getStatus()+"' instead.");
+                continue;
+            }
+
+            // if this is older than an hour . . . ignore it.
+            if (inst.getCreateDate() < cutoffTime) {
+                System.out.println(String.format("EmailSender: message (%d) SKIPPED because it is more than 1 hour old (%s): %s", 
+                        inst.getCreateDate(), inst.getAddressee(), inst.getSubject()));
+                inst.setStatus(MailInst.SKIPPED);
+                updateEmailInDB(inst);
                 continue;
             }
 
