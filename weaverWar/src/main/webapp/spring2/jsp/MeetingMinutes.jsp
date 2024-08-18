@@ -486,21 +486,7 @@ app.filter('minutes', function() {
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
 
-<style>
-.tighten li a {
-    padding: 0px 5px !important;
-    background-color: white;
-}
-.tighten li {
-    background-color: white;
-}
-.tighten {
-    padding: 5px !important;
-    border: 5px #F0D7F7 solid !important;
-    max-width:300px;
-    background-color: white !important;
-}
-</style>
+
 
 <div>
   <div class="bodyWrapper"  style="margin:50px">

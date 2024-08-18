@@ -286,7 +286,7 @@ function GetFirstHundredNoHtml(input) {
                       <span class="col-1 actions">
                         <div class="checkbox">
                           <label title="Check this to include a copy of this agenda item in the new meeting">
-                            <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
+                            <input type="checkbox" ng-model="rec.selected" ng-init="rec.selected=true"><span class="checkbox-material"></span>
                           </label>
                         </div>
                       </span>

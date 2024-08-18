@@ -850,6 +850,19 @@ a {
     margin: 2em;
 }
 
+.modal {
+    position: fixed;
+    top: 1rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: none;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+}
+
 .modal-backdrop {
     &:fade   {
         opacity: 0.5;

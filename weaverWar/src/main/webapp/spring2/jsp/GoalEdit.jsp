@@ -527,7 +527,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
           size: 'xl',
-          windowTopClass: 'custom-modal-window-top',
           backdrop: "static",
           resolve: {
             goal: function () {

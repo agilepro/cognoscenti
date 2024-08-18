@@ -220,11 +220,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: "<%=ar.retPath%>new_assets/templates/DecisionModal.html?t="+new Date().getTime(),
             controller: 'DecisionModalCtrl',
             size: 'lg',
-            backdrop: "static",
             resolve: {
                 decision: function () {
                     return JSON.parse(JSON.stringify(decision));

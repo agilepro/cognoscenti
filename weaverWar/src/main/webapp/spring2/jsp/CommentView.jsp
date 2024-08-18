@@ -369,7 +369,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         $scope.tuneNewDecision(newDecision, cmt);
 
         var decisionModalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/DecisionModal.html<%=templateCacheDefeater%>',
             controller: 'DecisionModalCtrl',
             size: 'lg',

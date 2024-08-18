@@ -265,7 +265,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <div ng-hide="helpIcon">
                 <button class="btn"><i class="fa fa-question-circle-o fa-md" aria-hidden="true"></i></button>
               </div>
-              <div class="guideVocal thinnerGuide" ng-show="helpIcon">
+              <div class="well guideVocal thinnerGuide" ng-show="helpIcon">
                 The icon is an image of you that is used in lists of users.
                 By default you will be given a letter of the alphabet.
                 In Update Settings you can upload an image of yourself.
@@ -287,7 +287,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <div ng-hide="helpDescription">
                 <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
               </div>
-              <div class="guideVocal thinnerGuide" ng-show="helpDescription">
+              <div class="well guideVocal thinnerGuide" ng-show="helpDescription">
                 Describe yourself for others to get to know you.
                 <hr/>
                 Click in the leftmost column to change the description.
@@ -328,7 +328,7 @@ if (ar.isLoggedIn()) { %>
                 <div ng-hide="helpEmail">
                 <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
                 </div>
-                <div class="guideVocal thinnerGuide" ng-show="helpEmail">
+                <div class="well guideVocal thinnerGuide" ng-show="helpEmail">
                     <div>You can associate as many email addresses as you want. Email is only sent to the first email in the list, known as the preferred email address.  The other addresses are used only to identify artifacts you created when logged in as that email address.</div><br/>
                     <div>If you need to change the email address that you log in as, just ADD the new address here, but LEAVE the old one in the list. If you used to work in Weaver with an old email address, the history items will be tagged with that old address, so you need to leave that old address in this list so they are associated with you.</div>
                 </div>
@@ -343,7 +343,7 @@ if (ar.isLoggedIn()) { %>
             <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
         </span>
         <span class="col-5 p-0 m-0" ng-show="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
-            <div class="guideVocal thinnerGuide">The time zone setting is used when sending email so that you see the right date and time appropriate to your normal location.  <br/>All dates and times displayed in the browser will be in the timezone of that browser computer.  For email, however, we don't know what the timezone of the place where the email will be delivered, so you need to set it here.
+            <div class="well guideVocal thinnerGuide">The time zone setting is used when sending email so that you see the right date and time appropriate to your normal location.  <br/>All dates and times displayed in the browser will be in the timezone of that browser computer.  For email, however, we don't know what the timezone of the place where the email will be delivered, so you need to set it here.
             </div>
         </span>
     </div>
@@ -381,12 +381,15 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
                 </div>
             
-                <div class="guideVocal thinnerGuide" ng-show="helpNotifyPeriod" >
+                <div class="well guideVocal thinnerGuide" ng-show="helpNotifyPeriod" >
                 If you sign up for change notifications for a workspace, this setting will determine whether you get an email every day, every week, or every month.
                 </div>
             </span>
             
         </div>
+<%if (viewingSelf){ %>
+    <%if (ar.isSuperAdmin()){ %>
+
         <div class="row-cols-3 d-flex " >
             <span class="col-2 labelColumn ps-2" style="cursor: text;" >Facilitator</span>
             <span class="col-5 ps-1 m-0">
@@ -401,17 +404,16 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
             </span>
             <span class="col-5 ps-0 m-0" ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
-              <div class="guideVocal thinnerGuide">
+              <div class="well guideVocal thinnerGuide">
                 This indicates that you are a facilitator, and would like to be contacted
                 by people looking for a facilitator.
               </div>
             </span>
         </div>
-<%if (viewingSelf){ %>
-    <%if (ar.isSuperAdmin()){ %>
+
         <div class="row-cols-2 d-flex " >
             <span class="col-2 labelColumn ps-2" >Super Admin</span>
-            <span class="col-5 p-2 m-0" style="background-color:rgb(216, 216, 125)">
+            <span class="col-5 p-2 m-0" style="background-color:rgb(255, 255, 134)">
                 You are a Super Admin
             </span>
         </div>
@@ -424,7 +426,7 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
             </span>
             <span class="col-5 p-2 m-0" ng-show="helpUI" ng-click="helpUI=!helpUI">
-              <div class="guideVocal thinnerGuide">
+              <div class="well guideVocal thinnerGuide">
                 Click this to switch to the OLDER tried and true UI
               </div>
             </span>
@@ -439,7 +441,7 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
             </span>
             <span class="col-5 p-2 m-0" ng-show="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
-              <div class="guideVocal thinnerGuide">
+              <div class="well guideVocal thinnerGuide">
                 This just lets you know when you last logged in as a security measure to be aware if maybe someone else is logging in as you, and to let others know the last time you were active in the system.
               </div>
             </span>
@@ -451,7 +453,7 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
             </span>
             <span class="col-5 p-2 m-0" ng-show="helpKey" ng-click="helpKey=!helpKey">
-              <div class="guideVocal thinnerGuide">
+              <div class="well guideVocal thinnerGuide">
                 This is the internal unique identifier of this user.
                 You can not change this, this is permanent in order 
                 to tie everything you do together even if you change 
