@@ -22,20 +22,22 @@
           </div>
           <div>
           <span class="dropdown d-flex">
-              <button class="btn btn-comment btn-danger p-1 me-3" type="button" 
+                <button class="btn btn-comment btn-danger p-1 me-3" type="button" 
                       ng-click="editMeetingPart=''"
                       title="Ignore what has been put here and close box">
-              Cancel </button>
-              <button class="btn btn-comment btn-primary p-1 mx-2" 
+              Cancel 
+                </button>
+                <button class="col-2 btn btn-comment btn-wide btn-secondary py-1 px-3 " ng-click="appendRolePlayers()" 
+                      ng-hide="roleEqualsParticipants" 
+                      title="Look at the workspace role, and suggest anyone not already a participant">
+                  Show Everyone from {{meeting.targetRole}}
+              </button>
+              <button class="btn btn-comment btn-primary p-1 ms-auto" 
                       ng-click="addParticipants()"
                       title="Add these people to the list of participants">
               <span class="fa fa-plus"></span> Add </button>
               
-              <button class="col-2 btn btn-comment btn-wide btn-secondary py-1 px-3 ms-auto" ng-click="appendRolePlayers()" 
-                      ng-hide="roleEqualsParticipants" 
-                      title="Look at the workspace role, and suggest anyone not already a participant">
-                  Add Everyone from {{meeting.targetRole}}
-              </button>
+
           </span>
           </div>
       </div>

@@ -38,7 +38,7 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
+app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     setUpLearningMethods($scope, $modal, $http);
     window.setMainPageTitle("Task Areas & Work Groupings");
     $scope.siteId = "<%ar.writeJS(siteId);%>";
@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/TaskAreaModal.html<%=templateCacheDefeater%>',
-            controller: 'TaskAreaCtrl',
+            controller: 'TaskAreaModal',
             size: 'lg',
             backdrop: "static",
             resolve: {
@@ -131,11 +131,14 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><span class="nav-link" 
-          ng-click="isCreating=true; openTaskAreaModal({id:'~new~'})" role="menuitem" tabindex="-1" >Create New Task Area</span></span>
+        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
+            <a class="nav-link" ng-click="openTaskAreaModal({id:'~new~'})" >Create New Task Area</a>
+        </span>
           <hr>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="GoalList.htm">Action Items View</a></span>
+        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
+            <a class="nav-link" role="menuitem" tabindex="-1"
+              href="GoalList.htm">Action Items View</a>
+        </span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="GoalStatus.htm">Status List View</a></span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link">Manage Task Areas</a></span>

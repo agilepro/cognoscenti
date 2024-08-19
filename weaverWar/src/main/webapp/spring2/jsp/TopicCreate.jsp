@@ -19,7 +19,7 @@
     String pageTitle = "Clone Meeting";
     long proposedStartTime = 0;
     if (meetId == null) {
-        pageTitle = "Create Meeting";
+        pageTitle = "Create New Discussion";
         meetingInfo = new JSONObject();
         //make it for top of next hour
         Calendar cal = Calendar.getInstance();

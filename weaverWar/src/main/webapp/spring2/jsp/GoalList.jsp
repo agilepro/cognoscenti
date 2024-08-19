@@ -541,20 +541,20 @@ function addvalue() {
                       ng-click="swapItems(rec, 1)">Move Down</a></li>
                       <li ng-show="rec.state<2">
                       <li class="dropdown-item" role="menuitem" tabindex="-1"  ng-click="makeState(rec, 2)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
+                          <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif" alt="accepted"  />
                           Start & Offer
                       </li>
                   </li>
 
                   <li ng-show="rec.state==2">
                       <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
+                          <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif" alt="accepted"  />
                           Mark Accepted
                       </a>
                   </li>
                   <li ng-show="rec.state!=5">
                       <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
+                          <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif" alt="completed"  />
                           Mark Completed
                       </a>
                   </li>
@@ -564,7 +564,7 @@ function addvalue() {
             </span>
             
                 <span class="col-1 ms-3 fw-bold" style="cursor: pointer;"> 
-                    <a href="task{{rec.id}}.htm"><img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+                    <a href="task{{rec.id}}.htm"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/small{{rec.state}}.gif" /></a>
                 </span>
                 <span class="col-4 ms-3 fw-bold" style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}                    
                 </span>
@@ -594,19 +594,19 @@ function addvalue() {
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span ng-show="rec.state<2">
                             <a title="Start & Offer the Activity" ng-click="makeState(rec, 2)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
+                                <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif" alt="accepted"  />
                                 <b>Start/Offer</b></a>
                             </span>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span ng-show="rec.state==2">
                             <a title="Accept the activity" ng-click="makeState(rec, 3)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
+                                <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif" alt="accepted"  />
                                 <b>Mark Accepted</b></a>
                             </span>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span ng-show="rec.state!=5">
                             <a title="Complete this activity" ng-click="makeState(rec, 5)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
+                                <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif" alt="completed"  />
                                 <b>Mark Completed</b></a>
                             </span>
                     </div>
@@ -629,6 +629,6 @@ function addvalue() {
     
 </div>
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
 
 
