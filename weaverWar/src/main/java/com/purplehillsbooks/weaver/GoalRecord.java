@@ -665,18 +665,6 @@ public class GoalRecord extends BaseRecord {
     public String getRemoteUpdateURL() {
         return getScalar("remoteUpdateURL");
     }
-    
-    /*
-     * RemoteProjectURL is the URL to get information about the
-     * project that this action item is defined in
-     *
-    public void setRemoteProjectURL(String url) {
-        setScalar("remoteProjectURL", url);
-    }
-    public String getRemoteProjectURL() {
-        return getScalar("remoteProjectURL");
-    }
-    */
 
     /**
      * RemoteProjectName is the name of the
@@ -1034,7 +1022,8 @@ public class GoalRecord extends BaseRecord {
             OptOutAddr.appendUsers(players, sendTo);
 
             for (OptOutAddr ooa : sendTo) {
-                UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
+                UserManager.getStaticUserManager();
+                UserProfile toProfile = UserManager.lookupUserByAnyId(ooa.getEmail());
                 if (toProfile!=null) {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }

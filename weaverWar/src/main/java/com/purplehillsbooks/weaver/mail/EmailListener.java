@@ -55,6 +55,7 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
+import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONException;
@@ -500,7 +501,8 @@ public class EmailListener extends TimerTask{
                 return;
             }
 
-            UserProfile hintedUser = cog.getUserManager().lookupUserByAnyId(userEmail);
+            cog.getUserManager();
+            UserProfile hintedUser = UserManager.lookupUserByAnyId(userEmail);
             if (hintedUser == null) {
                 return;
             }
