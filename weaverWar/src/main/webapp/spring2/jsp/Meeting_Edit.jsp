@@ -83,9 +83,12 @@
                     </li> 
                   </ul>-->
                 </div>
+
               </span>
+                              
             </div>
-        </div>
+          </div>
+          <div class="col-md-7 ms-auto me-3"><a class="btn-wide btn-comment btn-raised mx-2 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a></div>
       </div>
     
       <hr/>

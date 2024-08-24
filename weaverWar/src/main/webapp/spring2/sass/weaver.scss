@@ -521,6 +521,58 @@ a {
     }
 }
 
+.learningBox {
+    width: 1000px;
+    #background-color: #DBEEF9;
+    background-color: white;
+    border: 2px solid #360a47;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    .btn {
+        min-width: 160px;
+        max-width: fit-content;
+    }
+}
+.learningTitle {
+    font-size: 30px;
+    margin: 0px;
+    font-weight: 300;
+    color: skyblue;
+}
+.learningInfo {
+    width:600px;
+    margin: 20px;
+    float: left;
+}
+.learningVideo {
+    margin: 20px;
+    float: right;
+}
+.learningButton {
+    margin: 20px;
+
+}
+.learningBtn {
+    min-width: 160px;
+    max-width: fit-content;
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: 400;
+    position: relative;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+
+}
+}
 .accordion-button:not(.collapsed) { 
     color:$primary !important; 
     font-size: 1.2rem;
@@ -604,11 +656,47 @@ a {
     border-radius: 8px;
     box-shadow: #cccccc 2px 2px 5px;
     &:hover {
-        background-color: $secondary-50;
+        background-color: $primary-30;
         color: $primary;
         cursor: pointer;
     }
 }
+
+a.btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    text-decoration: none;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-responsive {
+      padding:2px 4px;
+      font-size:80%;
+      line-height: 1;
+      height:fit-content;
+
+    }
+  }
+  
+  @media (min-width: 769px) and (max-width: 992px) {
+    .btn-responsive {
+      padding:4px 9px;
+      font-size:90%;
+      line-height: 1.2;
+    }
+  }
 
 .btn-startTime {
     background-color: $green;
@@ -662,6 +750,11 @@ a {
     
 }
 
+foreignObject {
+    font-size: .9rem;
+    text-overflow: ellipsis;
+}
+
 .label-dropdown-menu {
     max-width: 380px;
     display: flex;
@@ -680,13 +773,13 @@ a {
 .comment-outer {
     border: $secondary-60 solid 1px;
     background-color: $secondary-10;
-    border-radius: 5px;
+    border-radius: 8px;
     margin-top: 5px;  
     cursor: pointer;
 }
 .comment-inner {
         padding: 2px;
-        border-radius: 5px;
+        border-radius: 8px;
         border: $secondary-60 solid 1px;
         background-color: white;
     }

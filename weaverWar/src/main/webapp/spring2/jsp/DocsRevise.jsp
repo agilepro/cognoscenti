@@ -1,5 +1,5 @@
-<%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
+%><%@ include file="/spring2/jsp/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentVersion"
 %><%@ include file="functions.jsp"
@@ -50,30 +50,7 @@
 
 %>
 
-<style>
-.lvl-over {
-    background-color: yellow;
-}
-.nicenice {
-    border: 2px dashed #bbb;
-    border-radius: 5px;
-    padding: 25px;
-    text-align: center;
-    font: 20pt bold Georgia,Tahoma,sans-serif;
-    color: #bbb;
-    margin-bottom: 20px;
-    width:500px;
-}
-div[dropzone] {
-    border: 2px dashed #bbb;
-    border-radius: 5px;
-    padding: 25px;
-    text-align: center;
-    font: 20pt bold;
-    color: #bbb;
-    margin-bottom: 20px;
-}
-</style>
+
 
 
 
@@ -193,24 +170,24 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsList.htm" >List Documents</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="DocDetail.htm?aid={{docId}}">Access Document</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsRevise.htm?aid={{docId}}" >Versions</a></li>
-        </ul>
-      </span>
-    </div>
-    
+<div class="container-fluid">
+    <div class="row">
+      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" href="DocsList.htm" >List Documents</a></span>
+                <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+              href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
+              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+        </div>
 
-    <div id="TheNewDocument" class="well" ng-show="canUpdate">
-        <div>
+    
+    
+        <div class="d-flex col-9">
+        <div class="contentColumn">
+            <div class="container-fluid">
+                <div class="generalContent">
+                    <div id="TheNewDocument" class="well" ng-show="canUpdate">
+                        <div>
             <table>
                 <tr>
                     <td></td>
@@ -255,15 +232,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </td>
                 </tr>
             </table>
-        </div>
-    </div>
+                        </div>
+                    </div>
 
-    <div ng-show="canUpdate">
-        <button ng-click="openDocDialog(attachInfo)" class="btn btn-default btn-raised">
-            Document Settings</button>
-    </div>
-
-    <table class="table">
+                    <div ng-show="canUpdate">
+                        <button ng-click="openDocDialog(attachInfo)" class="btn-comment btn-raised">Document Settings</button>
+                    </div>
+                    <table class="table">
         <thead>
             <tr>
                 <td>Version</td>
@@ -285,10 +260,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <td>{{ver.size | number}}</td>
             </tr>
         </tbody>
-    </table>
+                    </table>
     
-    <h3>History</h3>
-    <table>
+                    <h3>History</h3>
+                    <table>
 
         <tr ng-repeat="hist in history"  >
             <td class="projectStreamIcons" style="padding:10px;">
@@ -321,7 +296,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </td>
         </tr>
 
-    </table>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>
 <script>
 var holder = document.getElementById('holder');

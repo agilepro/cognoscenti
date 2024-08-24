@@ -7,23 +7,23 @@
 
 <div class="modal-body">
   <div class="container-fluid">
-    <div class="row col-12">
+    <div class="row col-lg-12">
       <h3 class="h5">Synopsis:&nbsp;
             {{goal.synopsis}}
           </h3>
-      <div class="card col-6 align-top">
+      <div class="card col-lg-6 col-md-5 align-top">
         <div class="card-body" >
           
           <!--synopsis start-->
           <div class="form-group d-flex">
-            <label for="synopsis" class="col-2 mt-3 h6">Synopsis:</label>
-            <input ng-model="goal.synopsis" class="col-10 my-3 form-control" style="max-width:400px" placeholder="Enter synopsis"/>
+            <label for="synopsis" class="col-md-2 mt-3 h6 me-1">Synopsis: &nbsp;</label>
+            <input ng-model="goal.synopsis" class="col-md-9 my-3 form-control" style="max-width:400px" placeholder="Enter synopsis"/>
           </div>
           <!--synopsis end-->
           <!--Assignee start-->
           <div class="form-group d-flex">
-            <label for="assignee" class="col-2 h6 mt-3">Assignee:</label>
-            <tags-input class="col-10 my-3" ng-model="goal.assignTo" placeholder="Enter user name or id"
+            <label for="assignee" class="col-md-2 h6 mt-3 me-1">Assignee:</label>
+            <tags-input class="col-md-9 my-3" ng-model="goal.assignTo" placeholder="Enter user name or id"
                         display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
                 <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
             </tags-input>
@@ -31,29 +31,29 @@
           <!--Assignee end-->
           <!--Description start-->
           <div class="form-group d-flex">
-            <label for="description" class="col-3 h6 mt-3">Description:</label>
-            <textarea ng-model="goal.description" class="col-9 form-control my-3 markDownEditor" style="max-width:360px" placeholder="Enter description"></textarea>
+            <label for="description" class="col-md-3 h6 mt-3 me-1">Description:</label>
+            <textarea ng-model="goal.description" class="col-md-8 form-control my-3 markDownEditor" style="max-width:360px" placeholder="Enter description"></textarea>
           </div>
           <!--Description end-->
 
         <!--Checklist start-->
         <div class="form-group d-flex">
-          <label for="checklist" class="h6 col-2 mt-3">Checklist:</label>
-            <textarea class="col-10 my-3 form-control" ng-model="goal.checklist" style="min-height:100px; max-width: 400px;"></textarea>
+          <label for="checklist" class="h6 col-md-3 mt-3 me-1">Checklist:</label>
+            <textarea class="col-md-7 my-3 form-control" ng-model="goal.checklist" style="min-height:100px; max-width: 350px;"></textarea>
         </div>
       <!--Checklist end-->
 
           <!--Task Area start-->
           <div class="form-group d-flex">
-            <label for="status" class="col-2 mt-3 h6">Task Area:</label>
-            <select ng-model="goal.taskArea" class="col-10 my-3 form-control" style="max-width: 400px;"
+            <label for="status" class="col-md-2 mt-3 h6 me-1">Task Area:</label>
+            <select ng-model="goal.taskArea" class="col-md-9 my-3 form-control" style="max-width: 400px;"
                 ng-options="foo.id as foo.name for foo in taskAreaList" >
             </select>
           </div>
           <!--Task Area end-->
         </div><!--End of Card-->
       </div><!--END left side-->
-      <div class="card col-6 align-top">
+      <div class="card col-md-6 align-top">
         <div class="card-body" >
           <!--Labels start-->
           <div class="form-group">
@@ -85,11 +85,11 @@
           <!--Labels end-->
 
         <!-- timeframe start-->
-         <div class="well"><h6>Timeframe:</h6>
+         <div class="well"><h6><b>Timeframe:</b></h6>
         <div class="form-group d-flex">
-            <label for="startdate" class="h6 col-3 mt-3">Start Date:</label>
+            <label for="startdate" class="h6 col-md-3 mt-3">Start Date:</label>
             <span datetime-picker ng-model="goal.startdate" 
-                class="col-9 mt-3 form-control" style="max-width:300px">
+                class="col-md-8 mt-3 form-control" style="max-width:300px">
                 <span ng-show="goal.startdate>1000000" datetime-picker ng-model="goal.startdate" > 
                     {{goal.startdate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
                 <span ng-show="goal.startdate<=1000000" datetime-picker ng-model="goal.startdate" > 
@@ -98,9 +98,9 @@
         </div><!--start date set-->
         
         <div class="form-group d-flex">
-            <label for="duedate" class="h6 col-3 mt-3">Due Date:</label>
+            <label for="duedate" class="h6 col-md-3 mt-3">Due Date:</label>
             <span datetime-picker ng-model="goal.duedate" 
-                class=" col-9 my-3 form-control" style="max-width:300px">
+                class=" col-md-8 my-3 form-control" style="max-width:300px">
                 <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > 
                     {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
                 <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > 
@@ -109,9 +109,9 @@
         </div><!--due date set-->
         
         <div class="form-group d-flex">
-            <label for="enddate" class="col-3 h6">End Date:</label>
+            <label for="enddate" class="col-md-3 h6">End Date:</label>
             <span datetime-picker ng-model="goal.enddate" 
-                class=" col-9 my-3 form-control" style="max-width:300px" ng-show="goal.state==5">
+                class=" col-md-8 my-3 form-control" style="max-width:300px" ng-show="goal.state==5">
                 <span ng-show="goal.enddate>1000000" ng-model="goal.enddate" datetime-picker> 
                     {{goal.enddate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
                 <span ng-show="goal.enddate<=1000000" ng-model="goal.enddate" datetime-picker> 
@@ -190,8 +190,8 @@
           <!--status start-->
           <div class="form-group d-flex" 
           title="status is a freeform text statement about your current progress on action item">
-         <label for="status" class="col-2 mt-3 h6">Status:</label>
-         <textarea ng-model="goal.status" class="col-10 my-3 form-control" style="max-width:400px;"    
+         <label for="status" class="col-md-2 mt-3 h6 me-sm-1">Status:</label>
+         <textarea ng-model="goal.status" class="col-md-8 my-3 form-control" style="max-width:400px;"    
              placeholder="Enter text describing the current status" ></textarea>            
           </div>
           <div class="form-group d-flex">

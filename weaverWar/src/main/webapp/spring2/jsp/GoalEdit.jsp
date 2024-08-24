@@ -306,7 +306,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.constructCheckItems();
         $scope.refreshHistory();
     }
-    
+    $scope.saveAndClose = function () {
+        $scope.goal.assignTo = cleanUserList($scope.goal.assignTo);
+        $scope.goal.modifiedtime = new Date().getTime();
+        $scope.goal.modifieduser = SLAP.loginInfo.userId;
+
+        var postURL = "updateGoal.json?gid=" + $scope.goalId;
+        var postdata = angular.toJson($scope.goal);
+        $scope.showError = false;
+        $http.post(postURL, postdata)
+            .success(function (data) {
+                $scope.goal = data;
+                $modalInstance.close($scope.goal);
+            })
+            .error(function (data, status, headers, config) {
+                reportError(data);
+            });
+    };
     
     $scope.saveAccomplishment = function() {
         if (!$scope.canUpdate) {
@@ -855,7 +871,11 @@ Add/Remove Labels</button>
             </span>
         </div>
 <!--Linked Meetings End-->
+<div class="modal-footer">
+    <button class="btn btn-danger btn-raised me-auto" ng-click="cancel()">Cancel</button>
+    <button class="btn btn-primary btn-raised me-5" ng-click="ok()">Save</button>
 
+</div>
 
         </div>
        

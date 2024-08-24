@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
@@ -155,47 +155,36 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-<style>
-.spacey {
-}
-.spacey tr td {
-    padding:10px;
-}
-.btn {
-    margin:0px;
-}
-.guideVocal {
-    margin:0px;
-}
-</style>
+
 
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <table class="table">
-        <col width="150px">
-        <col width="50px">
-        <col width="400px">
-        <tr ng-repeat="key in propertyOrder">
-            <td><b>{{metadata[key].title}}:</b></td>
-            <td>
-                <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
-                <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
-            </td>
-            <td ng-hide="exposed[key]">
-                <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
-            </td>
-            <td ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
-              <div class="guideVocal">
-              {{metadata[key].help}}
-              </div>
-            </td>
-        </tr>
-        
-    </table>
-
-  <div class="well">
+    <div class="container-fluid ms-4">
+        <div class="row d-flex col-12">
+            <div class="col-6">
+                <div >
+                    <div class="row" ng-repeat="key in propertyOrder">
+                        <span class="col-lg-3" >
+                        <b>{{metadata[key].title}}:</b></span>
+                        <span class="col-1">
+                            <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
+                            <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
+                        </span>
+                        <span class="col-3" ng-hide="exposed[key]">
+                        <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
+                        </span>
+                        <span class="col mt-5" ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
+                        <div class="guideVocal">
+                        {{metadata[key].help}}
+                        </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="well col-6">
     
     <div>User = <%=uProf.getName()%></div>
     <div>Key = <%=uProf.getKey()%></div>
@@ -212,7 +201,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div>Site Read Only = <%=site.userReadOnly(uProf.getUniversalId())%></div>
     <div>Site Read Only = <%=siteUsers.isReadOnly(uProf)%></div>
     
-  </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div style="height:100px"></div>
 

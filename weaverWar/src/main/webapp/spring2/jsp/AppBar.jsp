@@ -46,15 +46,15 @@
     Weaver</span>
   </a>
                 <!-- Search Bar -->
-          <i class="fa fa-search text-weaverbody mx-3" aria-hidden="true"></i>
-          <form class="d-flex">
-            <input
-              class="form-control me-2 text-weaverbody"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-          </form>
+          <div class="row search">
+          <form class="d-flex" role="search" action="searchAllNotes.htm">
+            <div class="form-group specialweaver is-empty">
+              <input type="text" class="form-control me-2 text-weaverbody" name="s" placeholder=" &#xF002; Search" style="font-family:Arial, FontAwesome">
+            </div>
+            </form>
+          </div>
+
+          
           <!-- end Search Bar -->
                 
           <!-- toggle button for mobile nav -->
@@ -217,16 +217,7 @@
   </nav>
     
       <!-- END App Bar -->
-      <!-- BEGIN Input Search -->
-      <div class="search navbar-left collapse">
-        <form class="navbar-form" role="search" action="searchAllNotes.htm">
-          <div class="form-group specialweaver is-empty">
-            <input type="text" class="form-control specialweaver" name="s" placeholder="Search">
-          </div>
-        </form>
-      </div>
 
-      <!-- END Input Search -->
     
 
 <!-- END AppBar.jsp -->

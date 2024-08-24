@@ -495,15 +495,6 @@
           "name": "Attendance",
           "title": "A list of who attended which meetings",
           "readOnly": true
-        },
-        {
-          "use": [
-            "MeetingHtml.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "SendNote.htm?meet={{meetId}}",
-          "name": "Send Email",
-          "title": "Send email about this particular meeting"
         }
       ],
       "useOpts": [
@@ -535,15 +526,6 @@
           "ng-click": "openTopicCreator()",
           "name": "Create",
           "title": "Create a new discussion"
-        },
-        {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
-          "href": "SendNote.htm?noteId={{topicId}}",
-          "name": "Send Email",
-          "title": "Send an email about this discussion"
         },
         {
           "use": [
@@ -629,47 +611,6 @@
           "href": "SharePorts.htm",
           "name": "Share Ports",
           "title": "Display share ports"
-        },
-        {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocDetail.htm?aid={{docId}}",
-          "name": "Access",
-          "title": "Upload or link documents to this workspace",
-          "readOnly": true
-        },
-        {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "DocsRevise.htm?aid={{docId}}",
-          "name": "Document Versions",
-          "title": "List versions of this document",
-          "readOnly": true
-        },
-        {
-          "use": [
-            "DocsList.jsp",
-            "DocsFolder.jsp",
-            "SharePorts.jsp",
-            "DocDetail.jsp",
-            "DocsRevise.jsp",
-            "DocsAdd.jsp"
-          ],
-          "href": "SendNote.htm?att={{docId}}",
-          "name": "Send Email",
-          "title": "Send email with this document attached"
         }
       ],
       "useOpts": [

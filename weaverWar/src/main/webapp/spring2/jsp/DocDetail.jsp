@@ -321,7 +321,7 @@ function copyTheLink() {
 <%@include file="ErrorPanel.jsp"%>
 
 
-<div class="col-12">
+<div class="col-12 mx-4">
     <div class="container-fluid row">
         <div class="col-md-6 col-sm-12">
         <div class="well">
@@ -333,10 +333,10 @@ function copyTheLink() {
                 <i class="fa fa-trash"></i> (DELETED)
                 </span>
                 <span ng-bind-html="docInfo.html"></span>
-            </div>
-            <div class="row col-12">
-            <span class="col-4">{{docInfo.modifiedtime|cdate}}</span> &nbsp;
-                <span class="col-4 dropdown">
+                </div>
+                <div class="row d-flex col-12">
+                <span class="col-3">{{docInfo.modifiedtime|cdate}}</span> &nbsp;
+                <span class="col-3 dropdown">
                     <ul class="navbar-btn p-0">
                     <li class="nav-item dropdown" id="user" data-toggle="dropdown">
                         <img class="rounded-5" src="<%=ar.retPath%>icon/{{creator.key}}.jpg" style="width:32px;height:32px" title="{{creator.name}} - {{creator.uid}}">
@@ -352,30 +352,39 @@ function copyTheLink() {
                     </ul>
                 </span>
             
-                <span class="col-4" ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
+                <span class="col-3" ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
+                <span class="col-3 float-end">
+                    <span ><a class="btn btn-secondary btn-comment btn-raised nav-link" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+                </span>
             </div>
+                
         </div>
-    
-        <div ng-show="canAccess">
-            <div ng-show="docInfo.attType=='FILE'">
-                <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
-                <img src="<%=ar.retPath%>download.gif"></a>
-            </div>
-            <div ng-show="docInfo.attType=='URL'">
-                <div ng-show="hasURL">
-                    <a href="<%ar.write(permaLink); %>" target="_blank">
-                    <img src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
-                    <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
-                    <button class="btn btn-primary btn-raised pull-right">Web File</button>
-                    </a>
+            <div class="row d-flex">
+
+                <span class="col-5 ms-auto mb-0">
+                <div ng-show="canAccess">
+                <div ng-show="docInfo.attType=='FILE'">
+                    <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
+                    <img src="<%=ar.retPath%>download.gif"></a>
                 </div>
-                <div ng-hide="hasURL">
-                    <button class="btn btn-danger btn-raised btn-wide btn-sm">
-            Error - this web attachment has no URL</button>
-                    <div class="alert" style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+                <div ng-show="docInfo.attType=='URL'">
+                    <div ng-show="hasURL">
+                        <a href="<%ar.write(permaLink); %>" target="_blank">
+                        <img src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
+                        <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
+                        <button class="btn btn-primary btn-raised pull-right">Web File</button>
+                        </a>
+                    </div>
+                    <div ng-hide="hasURL">
+                        <button class="btn btn-danger btn-raised btn-wide btn-sm">Error - this web attachment has no URL</button>
+                        <div class="alert" style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
+                    </div>
                 </div>
+                </div>
+                </span>
+            
+
             </div>
-        </div>
         <hr/>
         <div ng-hide="canAccess">
       <p>You are not able to access this document.</p>

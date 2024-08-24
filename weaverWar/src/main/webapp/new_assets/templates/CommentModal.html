@@ -28,9 +28,29 @@
             </div>
             <div class="row my-1">
               <div class="form-group col-6">
-              <button class="btn btn-sm btn-primary my-2 h6 px-3" ng-click="openAttachDocument()" role="button"
-              title="Attach a document">Attachments: 
-              <i class="fa fa-plus"></i>&nbsp;/&nbsp;<i class="fa  fa-minus"></i> </button>              
+                <span class="btn btn-sm btn-primary my-2 h6 px-3" ng-click="openAttachDocument()">Attachments:<i class="fa fa-plus"></i>&nbsp;/&nbsp;<i class="fa  fa-minus"></i></span>
+                <span class="col-9" ng-click="openAttachDocument()">
+              
+              
+                  
+              <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
+                <span ng-show="doc.attType=='FILE'">
+                    <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png"></span>
+                  &nbsp;
+                    <span ng-click="downloadDocument(doc)"><span class="fa fa-download"></span></span>
+                </span>
+                <span  ng-show="doc.attType=='URL'">
+                    <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>new_assets/assets/images/iconUrl.png"></span>
+                  &nbsp;
+                    <span ng-click="navigateToLink(doc)"><span class="fa fa-external-link"></span></span>
+                </span>
+              &nbsp;
+                <span ng-click="sendDocByEmail(doc.id)"><span class="fa fa-envelope-o"></span></span>&nbsp;
+              &nbsp; {{doc.name}}
+            </div>
+          
+            
+            
               </div>
               <span class="col-6 my-2 h6">Exclude Yourself:&nbsp;&nbsp;
               <input type="checkbox" ng-model="cmt.excludeSelf"/> 

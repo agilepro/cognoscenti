@@ -715,7 +715,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </a>
                 </span></h2>
             </div>
-            <div class="card-body">
+            <div class="card-body row d-flex">
+                <span class="col-lg-6 col-md-12">
                 <div ng-repeat="role in yourRoles">
                 <a href="RoleManagement.htm">
                     <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
@@ -723,11 +724,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     {{role.name}}
                 </a>
                 </div>
-                <div class="my-2 ms-auto">
+                </span>
+                <span class="col-md-4" >
+                <div class="my-2">
                 <span ng-show="isWatching">
                     You <span class="fa fa-eye"></span> watch this workspace
                 </span>
                 </div>
+
+                <a class="btn btn-comment btn-raised mx-2 my-md-1 py-0" title="See your own settings that are unique to this workspace" href="Personal.htm">Workspace Email <i fa class="fa fa-envelope-o"></i> Settings</a></span>
             </div>
         </div>
         <div class="card m-3">

@@ -64,11 +64,6 @@ app.controller('myCtrl', function($scope, $http) {
         Reset all Learning Path Flags</button>
 </div>
 
-<style>
-.padded { padding:10px }
-.bottomline { border-bottom: 1px solid lightgray; background-color: yellow }
-</style>
-
 
     <div class="col-xs-12 col-sm-6 col-md-3 padded">
         <b>JSP</b>

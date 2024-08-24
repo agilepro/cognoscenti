@@ -45,17 +45,17 @@
       <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
- <!-- Search Bar -->
- <i class="fa fa-search text-weaverbody mx-3" aria-hidden="true"></i>
- <form class="d-flex">
-   <input
-     class="form-control me-2 text-weaverbody"
-     type="search"
-     placeholder="Search"
-     aria-label="Search"
-   />
- </form>
- <!-- end Search Bar -->
+                <!-- Search Bar -->
+                <div class="row search">
+                  <form class="d-flex" role="search" action="searchAllNotes.htm">
+                    <div class="form-group specialweaver is-empty">
+                      <input type="text" class="form-control me-2 text-weaverbody" name="s" placeholder=" &#xF002; Search" style="font-family:Arial, FontAwesome">
+                    </div>
+                    </form>
+                  </div>
+        
+                  
+                  <!-- end Search Bar -->
 
   <!-- Drop Down Workspaces -->
   <div class="collapse navbar-collapse" id="topbar-nav">

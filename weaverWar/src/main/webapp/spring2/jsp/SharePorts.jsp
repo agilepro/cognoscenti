@@ -118,26 +118,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="openSharePortEditor(newSharePort)">Create New Share Port</a></li>
-        </ul>
-      </span>
-    </div>
-
-
-  <div class="guideVocal" ng-hide="loaded">
+<div class="container-fluid">
+  <div class="row">
+        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              ng-click="openSharePortEditor(newSharePort)">Create New Share Port</a></span>
+        </div>
+        </div>
+        <div class="d-flex col-9">
+          <div class="contentColumn">
+            <div class="container-fluid">
+              <div class="generalContent">
+                <div class="guideVocal" ng-hide="loaded">
     Fetching the data from the server . . .
-  </div>
+                </div>
 
-  <div ng-show="loaded">
+                <div ng-show="loaded">
 
 
-    <table class="table">
+                <table class="table">
       <col width="50px">
       <col width="50px">
       <tr>
@@ -164,15 +163,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           </span>        
         </td>
       </tr>
-    </table>
+                </table>
     
-    <div class="guideVocal" ng-hide="allShares.length > 0">
+                <div class="guideVocal" ng-hide="allShares.length > 0">
       No records to show . . .
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
-  </div>
-
-
-
 </div>
 
 <script src="<%=ar.retPath%>templates/SharePortModal.js"></script>
