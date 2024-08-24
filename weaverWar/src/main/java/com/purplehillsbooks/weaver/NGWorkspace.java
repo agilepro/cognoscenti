@@ -200,9 +200,12 @@ public class NGWorkspace extends NGPage {
 
 
     public TopicRecord getNoteOrFail(String noteId) throws Exception {
+        if (noteId == null || noteId.length()==0) {
+            throw WeaverException.newBasic("Unable to find a discussion topic because no ID has been specified: %s",  getFullName());
+        }
         TopicRecord ret =  getDiscussionTopic(noteId);
         if (ret==null) {
-            throw WeaverException.newBasic("Unable to find a discussin topic (id=%s) %s",  noteId, getFullName());
+            throw WeaverException.newBasic("Unable to find a discussion topic (id=%s) %s",  noteId, getFullName());
         }
         return ret;
     }

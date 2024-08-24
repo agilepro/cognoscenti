@@ -730,10 +730,13 @@ public class ProjectDocsController extends BaseController {
             meet.findAgendaItem(agendaId);
             specialAccess  = AccessControl.canAccessMeeting(ar, ngw, meet);
         }
-        else {
+        else if (topicId!=null) {
             TopicRecord note = ngw.getNoteOrFail(topicId);
             //normally the permission comes from a license in the URL for anonymous access
             specialAccess  = AccessControl.canAccessTopic(ar, ngw, note);
+        }
+        else {
+            throw WeaverException.newBasic("specialReplyOld called without noteID or topicId");
         }
         ar.setParam("topicId", topicId);
         ar.setParam("meetId", meetId);
