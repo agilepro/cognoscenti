@@ -1,13 +1,10 @@
 
-          <div class="accordion" id="accordionSettings">
-            <div class="accordion-item collapsed">
-              <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgSettings">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgSettings" aria-expanded="true" aria-controls="collapseMtgSettings"> Settings 
-                </button>
-              </h2>
-              <div id="collapseMtgSettings" class="accordion-collapse collapse" aria-labelledby="mtgSettings" data-bs-parent="#accordionSettings">
-                <div class="accordion-body">
-                  
+<div class="card" id="cardstartTime">
+  <div class="card-header">
+    <span class="h5 card-title"> Settings 
+    </span>
+  </div>
+  <div class="card-body">
         <div class="container-fluid">
           <div class="row d-flex">
             <span ng-click="editMeetingPart='name'" class="col-2 labelColumn">Name:</span>
@@ -143,9 +140,7 @@
             </span>
           </div>
         </div>
-      </div>
+  </div>
 
 
 </div>
-</div>
-          </div>

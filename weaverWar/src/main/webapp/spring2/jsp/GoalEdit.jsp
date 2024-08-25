@@ -306,23 +306,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.constructCheckItems();
         $scope.refreshHistory();
     }
-    $scope.saveAndClose = function () {
-        $scope.goal.assignTo = cleanUserList($scope.goal.assignTo);
-        $scope.goal.modifiedtime = new Date().getTime();
-        $scope.goal.modifieduser = SLAP.loginInfo.userId;
-
-        var postURL = "updateGoal.json?gid=" + $scope.goalId;
-        var postdata = angular.toJson($scope.goal);
-        $scope.showError = false;
-        $http.post(postURL, postdata)
-            .success(function (data) {
-                $scope.goal = data;
-                $modalInstance.close($scope.goal);
-            })
-            .error(function (data, status, headers, config) {
-                reportError(data);
-            });
-    };
+    
     
     $scope.saveAccomplishment = function() {
         if (!$scope.canUpdate) {
@@ -666,7 +650,7 @@ function addvalue() {
 
 
                     <!--checklist Start-->
-                <div class="row col-12 my-2 py-2 border-bottom border-1"  
+                <div class="row col-12 my-2 py-2 border-bottom border-1 clickable"  
                 title="Manage the check list of items to do for this action">
                     <span class="col-2 clickable h6" ng-click="startEdit('status')" >Checklist:</span>
                     <span class="col-10">
@@ -676,14 +660,14 @@ function addvalue() {
                             <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
                         &nbsp; {{ci.name}}
                         </div>
-                        <span ng-hide="checkitems.length>0" class="instruction" >
-                        Click here to create a checklist</span>
+                        <span ng-hide="checkitems.length>0" class="instruction" ng-click="startEdit('status')"><em>
+                        Click here to create a checklist</em></span>
                     </span>
                 </div>
                     <!--checklist End-->
 
                     <!--Attachments Start-->
-                <div class="row col-12 my-2 py-2 border-bottom border-1" >
+                <div class="row col-12 my-2 py-2 border-bottom border-1 clickable " >
             <span class="col-3 h6 pt-1 my-0" ng-click="openAttachDocument()">Attachments:</span>
             <span class="col-9 py-0 my-0" ng-click="openAttachDocument()">
                 <div ng-repeat="doc in fullDocList" style="vertical-align: top">
@@ -701,7 +685,7 @@ function addvalue() {
                   <span ng-click="sendDocByEmail(doc)"><span class="fa fa-envelope-o"></span></span>&nbsp;
                   &nbsp; {{doc.name}}
                 </div>
-                <div ng-hide="fullDocList && fullDocList.length>0" class="doubleClickHint">
+                <div ng-hide="fullDocList && fullDocList.length>0" class="clickable doubleClickHint">
                     Click to add / remove attachments
                 </div>
             </span>
@@ -709,7 +693,7 @@ function addvalue() {
                     <!--Attachments End-->
 
 <!--Linked Topics Start-->
-        <div class="row col-12 my-2 py-2 border-bottom border-1">
+        <div class="row col-12 my-2 py-2 border-bottom border-1 clickable ">
             <span class="col-3 h6" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</span>
             <span class="col-9" title="On the discussion page, you can link action items, and those discussions will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
@@ -728,42 +712,40 @@ function addvalue() {
             <span class="col-6">
 
                 <!--Labels Start-->
-                    <div class="row col-12 my-2 py-2 border-bottom border-1">
-    <span class="col-2">
-        <label for="labels" class="h6">Labels:</label>
-    </span>
-    <span class="col-10">
-        <span class="nav-item dropdown d-inline">
-<button class="specCaretBtn dropdown">
-<i class="fa fa-plus"></i></button>         
-<ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
-style="width:320px;left:-130px;top:15px">
-<li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-<button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
-ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-{{rolex.name}}</button>
-</li>
-<div class="dropdown-divider" style="float:clear"></div>               
-<li role="presentation" style="float:right">
-<button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
-Add/Remove Labels</button>
-</li>
-</ul>
-        </span>
-        <span class="dropdown" ng-repeat="role in allLabels">
-            <button class="dropdown labelButton" ng-click="toggleLabel(role)"
-               style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-          </span>
-    </span>
-                    </div>
+                <div class="form-group">
+                    <label for="labels" class="h6">Labels:</label>
+                    <!--<span class="nav-item dropdown d-inline">
+                      
+                      <button class="specCaretBtn dropdown">
+                        <i class="fa fa-plus"></i></button>         
+                          <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
+                        style="width:320px;left:-130px;top:15px">
+                          <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                          <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                          ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                              {{rolex.name}}</button>
+                      </li>
+                      <div class="dropdown-divider" style="float:clear"></div>               
+                      <li role="presentation" style="float:right">
+                        <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+                            Add/Remove Labels</button>
+                      </li>
+                    </ul>
+                  </span>-->
+         
+               <span class="dropdown" ng-repeat="role in allLabels">
+                 <button class="dropdown labelButton" ng-click="toggleLabel(role)"
+                    style="background-color:{{role.color}};"
+                    ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+               </span>
+                  </div>
                 <!--Labels End-->
 
             <!--Timeframe Start-->
                 <div class="row col-12 my-2 py-2 border-bottom border-1">
 
                     <span class="col-3 clickable h6" ng-click="startEdit('details')" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item">Timeframe:</span>
-                    <span class="col-9" >
+                    <span class="col-9 clickable" >
                         <span ng-show="goalInfo.duedate>0">   
                             <h6>Due:</h6>   
                             {{goalInfo.duedate|cdate}}   &nbsp; &nbsp; </span>
@@ -827,7 +809,7 @@ Add/Remove Labels</button>
                 <div class="row col-12 my-2 py-2 ">
                     <div class="form-group" title="status is a freeform text statement about your current progress on action item">
                         <label for="synopsis" class="clickable h6 col-2" ng-click="startEdit()">Status:</label>
-                        <textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  
+                        <!--<textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  --><span ng-click="startEdit('status')"><i class="clickable" > click here to edit status</i></span>
                         <span class="col-10" ng-show="goalInfo.status" >{{goalInfo.status}}
                         </span>          
                     </div>
@@ -871,11 +853,7 @@ Add/Remove Labels</button>
             </span>
         </div>
 <!--Linked Meetings End-->
-<div class="modal-footer">
-    <button class="btn btn-danger btn-raised me-auto" ng-click="cancel()">Cancel</button>
-    <button class="btn btn-primary btn-raised me-5" ng-click="ok()">Save</button>
 
-</div>
 
         </div>
        

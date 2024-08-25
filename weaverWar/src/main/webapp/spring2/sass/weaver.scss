@@ -753,6 +753,13 @@ a.btn-comment {
 foreignObject {
     font-size: .9rem;
     text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: wrap;
+}
+.text-ellipsis {
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .label-dropdown-menu {

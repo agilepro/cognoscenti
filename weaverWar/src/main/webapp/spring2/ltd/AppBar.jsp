@@ -49,7 +49,7 @@
                 <div class="row search">
                   <form class="d-flex" role="search" action="searchAllNotes.htm">
                     <div class="form-group specialweaver is-empty">
-                      <input type="text" class="form-control me-2 text-weaverbody" name="s" placeholder=" &#xF002; Search" style="font-family:Arial, FontAwesome">
+                      <input type="text" class="form-control me-2" name="s" placeholder=" &#xF002; Search" style="font-family:Arial, FontAwesome">
                     </div>
                     </form>
                   </div>

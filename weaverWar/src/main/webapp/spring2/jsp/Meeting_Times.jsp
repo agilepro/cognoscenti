@@ -1,12 +1,8 @@
-<div class="accordion" id="accordionstartTime">
-  <div class="accordion-item collapsed">
-    <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgstartTime">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgstartTime" aria-expanded="true" aria-controls="collapseMtgstartTime"> Scheduled Start Time 
-      </button>
-    </h2>
-    <div id="collapseMtgstartTime" class="accordion-collapse collapse" aria-labelledby="mtgstartTime" data-bs-parent="#accordionstartTime">
-      <div class="accordion-body">
-    <div class="well">
+<div class="card" id="cardstartTime">
+  <div class="card-header">
+    <span class="h5 card-title">Start Time</span>
+  </div>
+    <div class="card-body">
       <button class="btn btn-sm btn-primary" ng-hide="'startTime'==editMeetingPart" 
           ng-click="editMeetingPart='startTime'">Edit</button>
     
@@ -40,28 +36,31 @@
        </tr>
       </table>
       <div ng-show="'startTime'==editMeetingPart">
-        <div class="well" style="max-width:500px">
+        <div class="well col-6" style="max-width:1000px">
             <span datetime-picker ng-model="meeting.startTime"
                   class="form-control">
               {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
             </span>
             <span>&nbsp; ({{browserZone}})</span><br/>
-            <button class="btn btn-primary btn-raised" 
-                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button>
-            <button class="btn btn-primary btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
-            <button class="btn btn-warning btn-raised" ng-click="editMeetingPart=null">Cancel</button>
+            <div class="row d-flex">
+            <button class="btn btn-sm btn-danger btn-raised col-3" ng-click="editMeetingPart=null">Cancel</button>
+            <button class="btn btn-wide btn-secondary btn-raised col-3" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+            
+            <button class="btn btn-primary btn-raised col-3 ms-auto" 
+                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button></div>
         </div>
       </div>
-    </div>
-
-    <hr/>
+      <hr/>
     <h3 class="h5">Availability for Proposed Times</h3>
+    
+
+    
 
     <div class="container-fluid">
     <div class="row d-flex my-2 border-bottom border-1 border-secondary border-opacity-50">
-      <span class="col-1"></span>
-      <span class="col-2 h6">Date and Time<br/>{{browserZone}}</span>
-      <span class="col-1 my-5" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
+      <span class="col-2 h6">Date and Time</span>
+      <span class="col-2 h6">{{browserZone}}</span>
+      <span class="col-1 mb-1 mt-0" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
           style="text-align:center">
           <span class="nav-item dropdown" >
             <span id="menu1" data-toggle="dropdown">
@@ -82,7 +81,7 @@
       </span>
     </div>
     <div class="row d-flex my-2" ng-repeat="time in meeting.timeSlots" ng-style="timeRowStyle(time)">
-      <span class="col-1">
+      <span class="col-2">
         <span class="nav-item dropdown">
             <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                 data-toggle="dropdown"> <span class="caret"></span> </button>
@@ -152,20 +151,19 @@
     
     <div ng-hide="showTimeAdder">
         <button ng-click="showTimeAdder=true" 
-                class="btn btn-sm btn-wide btn-primary" ">Add Proposed Time</button>
+                class="btn btn-sm btn-wide btn-primary">Add Proposed Time</button>
     </div>
 
-    <div ng-show="showTimeAdder" class="well">
+    <div ng-show="showTimeAdder" class="well px-2 py-3">
         Choose a time: <span datetime-picker ng-model="newProposedTime" class="form-control" style="display:inline">
           {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}  
-        </span> 
-        and then <button ng-click="createTime('timeSlots', newProposedTime)" 
+        </span> &nbsp; <span class="h6"> ({{browserZone}}) &nbsp;</span>
+         and then <button ng-click="createTime('timeSlots', newProposedTime)" 
                  class="btn btn-primary btn-raised">Add It</button>
-        &nbsp; ({{browserZone}}) &nbsp;
+        &nbsp;
         or <button ng-click="showTimeAdder=false" 
-                 class="btn btn-warning btn-raised">Cancel</button>
+                 class="btn btn-danger btn-raised">Cancel</button>
     </div>
       </div>
     </div>
-</div>
-</div>
+

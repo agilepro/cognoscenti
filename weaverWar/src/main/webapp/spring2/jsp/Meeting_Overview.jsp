@@ -1,12 +1,9 @@
-<div class="accordion" id="accordionOverview"> 
-    <div class="accordion-item collapsed">
-      <h2 class="accordion-header" onclick="toggleAccordion(event)" id="mtgOverview">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMtgOverview" aria-expanded="false" aria-controls="collapseMtgOverview"> Overview 
-        </button>
-      </h2>
-      <div id="collapseMtgOverview" class="accordion-collapse collapse" aria-labelledby="mtgOverview" data-bs-parent="#accordionOverview">
-        <div class="accordion-body">
-          <div class="well" ng-cloak>
+<div class="card" id="cardstartTime">
+  <div class="card-header">
+    <span class="h5 card-title"> Overview 
+    </span>
+    </div>
+        <div class="card-body well" ng-cloak>
             <table>
         <tr>
         <td>
@@ -222,6 +219,4 @@
       </table>
     </div>
     </div>
-  </div>
-    </div>
-</div>
+

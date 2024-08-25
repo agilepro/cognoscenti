@@ -237,7 +237,11 @@ embeddedData.canUpdate = <%=canUpdate%>;
                     <span class="btn btn-setup btn-flex">
                     <button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button></span>
                     <span class="btn btn-setup btn-flex">
+                        <button ng-click="changeMeetingMode('Overview')"  ng-class="labelButtonClass('Overview')" >Overview</button></span>
+                    <span class="btn btn-setup btn-flex">
                     <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')" >Participants</button></span>
+                    <span class="btn btn-setup btn-flex">
+                    <button ng-click="changeMeetingMode('Time')" ng-class="labelButtonClass('Time')" >Start Time</button></span>
                     <span class="btn btn-setup btn-flex">
                     <button ng-click="changeMeetingMode('Facilitate')" ng-class="labelButtonClass('Facilitate')" >Note Taker</button></span>
                 </div>
@@ -330,35 +334,36 @@ embeddedData.canUpdate = <%=canUpdate%>;
            
 
 
-    <div class="d-flex col-9"><div class="contentColumn">
+    <div class="d-flex col-9">
+        <div class="contentColumn">
 
-<!-- ============================================================================================== -->
-
-<div ng-show="displayMode=='Agenda'">Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+            <div ng-show="displayMode=='Agenda'">Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
     (available to anonymous users)
                         <div ng-bind-html="htmlAgenda"></div>
-                </div>
-<div ng-show="displayMode=='Minutes'">Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+            </div>
+            <div ng-show="displayMode=='Minutes'">Public link to these minutes:  '
+    <a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
     (available to anonymous users)
-                        <div ng-bind-html="htmlMinutes"> </div>
-                </div>
-
-
-                <div ng-show="displayMode=='General'">
-                    <%@ include file="Meeting_Settings.jsp"%>
-                    <%@ include file="Meeting_Overview.jsp"%>
-                    <%@ include file="Meeting_Times.jsp"%>
-                </div>
-
-                <div ng-show="displayMode=='Attendance'">
+    <div ng-bind-html="htmlMinutes"> </div>
+            </div>
+            <div ng-show="displayMode=='General'">
+                <%@ include file="Meeting_Settings.jsp"%>                
+            </div>
+            <div ng-show="displayMode=='Overview'">
+                <%@ include file="Meeting_Overview.jsp"%>
+            </div>
+            <div ng-show="displayMode=='Attendance'">
                     <%@ include file="Meeting_Participants.jsp"%>
-                </div>
-                <div ng-show="displayMode=='Facilitate'">
+            </div>
+            <div ng-show="displayMode=='Facilitate'">
                     <%@ include file="Meeting_Facilitate.jsp"%>
-                </div>
-                <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
+            </div>
+            <div ng-show="displayMode=='Time'">
+                <%@ include file="Meeting_Times.jsp"%>
+            </div>                
+            <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
                         <%@ include file="Meeting_Edit.jsp"%>
-                </div>
+            </div>
 
 
 
@@ -389,7 +394,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
     <br/>
 
         </div>
-        </div>
+
     </div>
 
 <script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>

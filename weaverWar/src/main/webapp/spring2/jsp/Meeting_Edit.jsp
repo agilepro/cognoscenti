@@ -97,10 +97,10 @@
     <!-- Column 1 -->
       <div class="col-md-6 col-sm-12">
       <!--Current Meeting Minutes - top of first column-->
-      <div class="card my-2">
+      <div class="card my-2" ng-click="openNotesDialog(item)">
         <div class="d-flex card-header" title="Current Meeting Minutes">
           <span ng-hide="item.isSpacer">
-            <h4 class="h6" ng-click="openNotesDialog(item)">Current Meeting Minutes</h4>
+            <h4 class="h6" >Current Meeting Minutes</h4>
           </span>
           
         </div><!--END Current Meeting Minutes card header-->
