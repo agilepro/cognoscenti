@@ -479,15 +479,6 @@
         },
         {
           "use": [
-            "MeetingHtml.jsp",
-            "MeetingAttendees.jsp"
-          ],
-          "href": "CloneMeeting.htm?id={{meetId}}",
-          "name": "Clone",
-          "title": "Clone this particular meeting"
-        },
-        {
-          "use": [
             "MeetingList.jsp",
             "MeetingAttendees.jsp"
           ],

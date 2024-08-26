@@ -294,17 +294,23 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <!--Agenda and Minutes buttons  -->
                 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
                 <div class="my-3 d-flex justify-content-start">
-                <div class="smallButton mx-3">
+                    <div class="smallButton mx-3">
                     <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
-                </div>
-                <div class="smallButton mx-3">
+                    </div>
+                    <div class="smallButton mx-3">
                     <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
                     </button>
+                    </div>
                 </div>
-
-                </div>
+                
 <!--Preparation Status Row-->
+<hr/>
+<div class="d-flex justify-content-center m-2">
+    <span>
+        <a class="btn btn-secondary btn-raised" href="CloneMeeting.htm?id={{meetId}}">Clone <i class="fa fa-clone"></i> Meeting</a>
+    </span>
+</div>
     <div class="d-flex col-12 mt-5">
         <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
         <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
@@ -330,8 +336,9 @@ embeddedData.canUpdate = <%=canUpdate%>;
         </span>
         
     </div>
-        </div><!--END Preparation Status Row-->
-           
+        </div>
+        <!--END Preparation Status Row-->
+
 
 
     <div class="d-flex col-9">

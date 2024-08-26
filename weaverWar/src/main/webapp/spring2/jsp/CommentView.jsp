@@ -537,13 +537,13 @@ function setUpCommentMethods($scope, $http, $modal) {
           </td>
           <td style="padding:5px;">
             <div class="leafContent comment-inner px-2">
-              <span style="color:grey">No response provided</span></div>
+              <span ng-click="openResponseEditor(cmt,'<%ar.writeJS(currentUser);%>')" style="cursor:pointer;color:grey">No response provided</span></div>
           </td>
         </tr>
       </table>
       <div class="leafContent comment-inner px-2" 
            ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
-           ng-dblclick="openCommentEditor(null, cmt)"
+           ng-click="openCommentEditor(null, cmt)"
            title="closing outcome of the round/proposal">
         <div ng-bind-html="getOutcomeHtml(cmt)"></div>
       </div>
@@ -575,7 +575,7 @@ function setUpCommentMethods($scope, $http, $modal) {
           #{{cmt.decision}}</a>
       </div>
     </div>
-  </td>
+  
    
    
 

@@ -141,7 +141,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         </span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="GoalStatus.htm">Status List View</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link">Manage Task Areas</a></span>
+
     </div>
 
     <div class="d-flex col-9">
@@ -164,7 +164,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
       <div class="row d-flex border-bottom border-1"  ng-repeat="ta in allTaskAreas">
         <span class="col-1" style="cursor:pointer" 
             title="Edit this task area">
-          <span ng-click="openTaskAreaModal(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
+          <span ng-click="openTaskAreaModal()" ><span class="fa fa-edit"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, true)" ><span class="fa fa-arrow-down"></span></span> &nbsp;
       </span>

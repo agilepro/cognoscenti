@@ -403,6 +403,41 @@ a {
         cursor: pointer;
     }
 }
+a.btn-primary .btn-primary  {
+    width: 160px;
+    position: unset;
+    border-color:#39134C;
+    background-color:#39134C;
+    text-decoration: none;
+    color:#f5f5f5;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 10px;
+    &:hover {
+        background-color: $primary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+a.btn-secondary .btn-secondary  {
+    width: 160px;
+    position: unset;
+    border-color:#672978;
+    background-color:#672978;
+    text-decoration: none;
+    color:#f5f5f5;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 10px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+    
+}
+
+
 .btn-flex {
     width: auto;
     min-width: 75px;

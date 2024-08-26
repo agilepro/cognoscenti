@@ -176,8 +176,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" href="DocsList.htm" >List Documents</a></span>
                 <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+              <div ng-show="canUpdate">
+                <span class="btn btn-comment btn-secondary btn-raised m-3" ng-click="openDocDialog(docInfo)">Document Settings</span>
+            </div>
         </div>
 
     
@@ -235,9 +236,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </div>
                     </div>
 
-                    <div ng-show="canUpdate">
-                        <button ng-click="openDocDialog(attachInfo)" class="btn-comment btn-raised">Document Settings</button>
-                    </div>
+
                     <table class="table">
         <thead>
             <tr>

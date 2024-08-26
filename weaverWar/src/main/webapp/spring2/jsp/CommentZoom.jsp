@@ -48,13 +48,6 @@
 
 %>
 
-<style>
-    .meeting-icon {
-       cursor:pointer;
-       color:LightSteelBlue;
-    }
-
-</style>
 <script src="../../new_assets/jscript/AllPeople.js"></script>
 
 
@@ -189,77 +182,52 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
      
      
-    <style>
-    .regularTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:#F8EEEE;
-    }
-    .draftTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:yellow;
-    }
-    .trashTopic {
-        border: 1px solid lightgrey;
-        border-radius:10px;
-        margin-top:20px;
-        padding:5px;
-        background-color:pink;
-    }
-    .infoRow {
-        min-height:35px;
-        padding:5px;
-    }
-    .infoRow td {
-        padding:5px 10px;
-    }
-
-    </style>
+   
 
     <div style="height:20px;"></div>
-    
-      <table class="table" style="max-width:800px" ng-show="commentExists">
-        <tr>
-          <td>{{containerTypeName}} Key</td>
-          <td>{{comment.containerType}}:{{comment.containerID}}</td>
-        </tr>
-        <tr>
-          <td>{{containerTypeName}} Name</td>
-          <td><a href="{{containerLink(comment)}}">{{comment.containerName}}</a></td>
-        </tr>
-        <tr ng-show="comment.replyTo">
-          <td>Reply To</td>
-          <td><a href="CommentZoom.htm?cid={{comment.replyTo}}">{{comment.replyTo|cdate}}</a></td>
-        </tr>
-        <tr ng-repeat="reply in comment.replies">
-          <td>Reply</td>
-          <td><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><a href="CmtView.wmf?cmtId={{cid}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a></td>
-        </tr>
-      </table>
-      <table class="table" ng-hide="commentExists">
-        <tr>
-          <td>Status</td>
-          <td>A comment/round/proposal with id {{cid}} not found.  Probably it has been deleted.</td>
-        </tr>
-      </table>
-      <table ng-show="commentExists" style="max-width:800px">
-        <tr ng-repeat="cmt in getComments()">
-          <%@ include file="/spring2/jsp/CommentView.jsp"%>          
-        </tr>
-      </table>
-</div>
+    <div class="container mx-md-3">
+      <div style="max-width:800px" ng-show="commentExists">
+        <div class="row d-flex my-2 py-3 border-1 border-bottom border-top">
+          <span class="col-3 ">{{containerTypeName}} Key</span>
+          <span class="col-6">{{comment.containerType}}:{{comment.containerID}}</span>
+        </div>
+        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom ">
+          <span class="col-3">{{containerTypeName}} Name</span>
+          <span class="col-6"><a href="{{containerLink(comment)}}">{{comment.containerName}}</a></span>
+        </div>
+        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom" ng-show="comment.replyTo">
+          <span class="col-3">Reply To</span>
+          <span class="col-6"><a href="CommentZoom.htm?cid={{comment.replyTo}}">{{comment.replyTo|cdate}}</a></span>
+        </div>
+        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom" ng-repeat="reply in comment.replies">
+          <span class="col-3">Reply</span>
+          <span class="col-6"><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></span>
+        </div>
+        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom ">
+          <span class="col-3"></span>
+          <span class="col-6"><a href="CmtView.wmf?cmtId={{cid}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
+        </div>
+      </div>
+      <div class="well" ng-hide="commentExists">
+        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom ">
+          <span class="col-3">Status</span>
+          <span class="col-6">A comment/round/proposal with id {{cid}} not found.  Probably it has been deleted.</span>
+        </div>
+      </div>
+      <div ng-show="commentExists" style="max-width:800px">
+        <div class="row d-flex" ng-repeat="cmt in getComments()">
+          <%@ include file="CommentView.jsp"%>          
+        </div>
+      </div>
 
+
+</div>
 <div style="height:200px;"></div>
 
 <script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
 <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/CommentModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ResponseModal.js"></script>  
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/DecisionModal.js"></script>

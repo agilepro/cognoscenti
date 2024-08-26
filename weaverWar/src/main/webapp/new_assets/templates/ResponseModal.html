@@ -1,8 +1,8 @@
 <html>
 <body>
 
-    <div class="modal-header bg-primary-subtle text-primary">
-        <h5 class="modal-title" id="responseModalLabel">Response to Proposal</h5></div>
+    <div class="modal-header bg-primary-subtle text-primary ">
+        <h5 class="modal-title pt-3" id="responseModalLabel">Response to Proposal</h5></div>
 <div class="modal-body">
     <div class="leafContent">
         <div ng-bind-html="displayText" style="max-height:200px;overflow: auto"></div>
@@ -24,7 +24,7 @@
         <span ng-show="unsaved==0">All Saved.</span>
         <span ng-hide="unsaved==0">Autosave in {{secondsTillSave}} seconds.</span>
     </button>
-    <button ng-repeat="choice in choices" class="btn btn-primary btn-raised"
+    <button ng-repeat="choice in choices" class="btn btn-comment btn-secondary btn-raised"
         type="button" ng-click="saveAndExit(choice)">{{choice}}</button>
 </div>
 </body>

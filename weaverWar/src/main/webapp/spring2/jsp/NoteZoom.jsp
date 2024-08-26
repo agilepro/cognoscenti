@@ -1045,9 +1045,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              
+              <!--experimental mobile UI not finished-->
+             <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Access the new mobile UI in development"
-              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
+              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>-->
     </div>
 <div class="d-flex col-9"><div class="contentColumn">
 

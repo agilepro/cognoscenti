@@ -353,9 +353,7 @@ function copyTheLink() {
                 </span>
             
                 <span class="col-3" ng-show="docInfo.size>0">{{docInfo.size|number}} bytes</span>
-                <span class="col-3 float-end">
-                    <span ><a class="btn btn-secondary btn-comment btn-raised nav-link" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
-                </span>
+                
             </div>
                 
         </div>
@@ -401,7 +399,7 @@ function copyTheLink() {
         </div>
         <div class="row d-flex border-top border-1 pt-3" ng-show="canUpdate">
             <span class="col-3">
-                <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Change Details</button>
+                <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Document Settings</button>
             </span>
             <span class="col-8 me-3">
                 <p>Edit the document details, like name and description.  The name and description tell others what the purpose of the document is, and ultimately whether they want to access the document or not.</p>
@@ -435,9 +433,17 @@ function copyTheLink() {
                 <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
             </span>
         </div>
-        <div>
-    <a href="DocView.wmf?docId={{docId}}" class="btn btn-default btn-raised btn-wide btn-secondary"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
+        <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
+            <span class="col-3">
+                <a class="btn btn-secondary btn-raised" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+            <span class="col-8 me-3">
+                <p>View the history of changes to this document.</p>
+            </span>
         </div>
+        <!--experimental mobile UI not ready in new UI-->
+        <!--<div>
+            <a href="DocView.wmf?docId={{docId}}" class="btn btn-default btn-raised btn-wide btn-secondary"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
+        </div>-->
         <hr>
         <div ng-show="canAccess" class="well mt-2">
             <span class="h5">Comments:</span>
