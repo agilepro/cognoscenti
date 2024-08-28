@@ -87,27 +87,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 });
 </script>
-<style>
-.clipping {
-    overflow: hidden;
-    text-overflow: clip; 
-    border-bottom:1px solid #EEEEEE;
-    white-space: nowrap
-}
-a {
-    color:black;
-}
-.spacytable tr td {
-    padding:2px;
-}
-</style>
+
 <!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
   <div style="margin:25px">
-    <h2>{{siteInfo.names[0]}} - {{workspaceConfig.allNames[0]}}</h1>
+    <h2>{{siteInfo.names[0]}} - {{workspaceConfig.allNames[0]}}</h2>
     
     <p>This is a Weaver workspace where people come to agrement.</p>
     
@@ -194,4 +181,4 @@ a {
 
 </div>
 
-<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>

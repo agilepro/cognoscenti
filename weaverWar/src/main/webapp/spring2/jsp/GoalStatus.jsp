@@ -490,7 +490,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             animation: true,
           templateUrl: '<%=ar.retPath%>new_assets/templates/ActionItem.html<%=templateCacheDefeater%>',
           controller: 'ActionItemCtrl',
-          size: 'lg',
+          size: 'xl',
           backdrop: "static",
           resolve: {
             goal: function () {
@@ -623,7 +623,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             animation: true,
             templateUrl: '<%=ar.retPath%>new_assets/templates/TaskAreaModal.html<%=templateCacheDefeater%>',
             controller: 'TaskAreaCtrl',
-            size: 'lg',
+            size: 'xl',
             backdrop: "static",
             resolve: {
                 id: function () {
