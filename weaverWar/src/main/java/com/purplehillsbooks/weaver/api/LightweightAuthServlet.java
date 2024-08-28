@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.APIClient;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
@@ -182,7 +183,7 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
                     aStat.setName(response.getString("userName"));
 
                     //remember for the user that they logged in at this time
-                    UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
+                    UserProfile up = UserManager.lookupUserByAnyId(userId);
 
                     //This could be the first time a user accesses, so create profile
                     if (up==null) {
@@ -204,7 +205,7 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
                 w.flush();
             }
             else {
-                throw new JSONException("Lightweight Auth Servlet can not handle address: {0}", pathInfo);
+                throw WeaverException.newBasic("Lightweight Auth Servlet can not handle address: %s", pathInfo);
             }
         }
         catch (Exception e) {

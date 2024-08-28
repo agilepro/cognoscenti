@@ -442,7 +442,7 @@ public class DOMFace
             return retval;
         }
         catch (Exception e) {
-            throw WeaverException.newBasic("Unable to construct XML object for %s", e, childClass.getName());
+            throw WeaverException.newWrap("Unable to construct XML object for %s", e, childClass.getName());
         }
     }
 
@@ -963,7 +963,7 @@ public class DOMFace
             }
         }
         catch (Exception e) {
-            throw WeaverException.newBasic("Unable to update collection named %s", e, memberName);
+            throw WeaverException.newWrap("Unable to update collection named %s", e, memberName);
         }
     }
 

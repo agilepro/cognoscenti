@@ -416,7 +416,7 @@ public class MailInst extends JSONWrapper {
             try {
                 addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
             } catch (Exception ex) {
-                throw WeaverException.newBasic("Error while attempting to send email to (%s)", ex, addressee);
+                throw WeaverException.newWrap("Error while attempting to send email to (%s)", ex, addressee);
             }
 
             message.addRecipients(Message.RecipientType.TO, addressTo);

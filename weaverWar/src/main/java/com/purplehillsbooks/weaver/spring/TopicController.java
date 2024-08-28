@@ -30,6 +30,8 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,7 +74,7 @@ public class TopicController extends BaseController {
            showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
        }
        catch(Exception ex) {
-           throw new JSONException("Failed to open topic page {0} in the workspace {1} in site {2}.", ex, topicId, pageId, siteId);
+           throw WeaverException.newWrap("Failed to open topic page %s in the workspace %s in site %s.", ex, topicId, pageId, siteId);
        }
    }
 
@@ -147,7 +149,7 @@ public class TopicController extends BaseController {
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new JSONException("Unable to get discussion topic {0} contents from site/workspace: {1}/{2}", ex, topicId, siteId, pageId);
+            Exception ee = WeaverException.newWrap("Unable to get discussion topic (%s) contents from site/workspace: %s/%s", ex, topicId, siteId, pageId);
             streamException(ee, ar);
         }
     }

@@ -29,7 +29,7 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserProfile;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -90,7 +90,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
         finally {
@@ -118,7 +118,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
             root.write(ar.w, 2, 0);
             ar.flush();
         } catch (Exception e) {
-            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
+            Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -131,7 +131,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-             throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
+             throw WeaverException.newBasic("Can not do a PUT to that resource URL: %s", ar.getCompleteURL());
         }
         catch (Exception e) {
             streamException(e, ar);
@@ -146,7 +146,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-            throw new JSONException("Can not do a POST to that resource URL: {0}", ar.getCompleteURL());
+            throw WeaverException.newBasic("Can not do a POST to that resource URL: %s", ar.getCompleteURL());
         }
         catch (Exception e) {
             streamException(e, ar);

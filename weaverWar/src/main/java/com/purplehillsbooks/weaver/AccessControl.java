@@ -259,7 +259,7 @@ public class AccessControl {
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
         
         if (ar.isLoggedIn()) {
-            throw new Exception("PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
+            throw WeaverException.newBasic("PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
         }
         String emailId = ar.defParam("emailId", null);
         if (emailId==null) {
@@ -272,12 +272,12 @@ public class AccessControl {
             licensedUser = userManager.createUserWithId(emailId);
         }
         if (licensedUser == null) {
-            throw new Exception("For some reason the user manager did not create the profile.");
+            throw WeaverException.newBasic("For some reason the user manager did not create the profile.");
         }
         ar.setPossibleUser(licensedUser);
         UserProfile up = ar.getPossibleUser();
         if (up==null) {
-            throw new Exception("something wrong, user profile is null after setUserForOneRequest ");
+            throw WeaverException.newBasic("something wrong, user profile is null after setUserForOneRequest ");
         }
         
         return true;

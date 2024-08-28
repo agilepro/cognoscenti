@@ -24,6 +24,7 @@ import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -459,7 +460,7 @@ public class DailyDigest {
                 clone.write("</table>");
             }
             catch (Exception e) {
-                throw new JSONException("Error while processing container: {0}", e, ngpi.containerName);
+                throw WeaverException.newBasic("Error while processing container: %s", e, ngpi.containerName);
             }
             finally {
                 NGPageIndex.clearLocksHeldByThisThread();

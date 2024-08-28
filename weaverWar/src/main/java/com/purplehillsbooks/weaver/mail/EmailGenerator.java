@@ -52,6 +52,7 @@ import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * People create this, and this creates emails, sent possibly in
@@ -223,7 +224,7 @@ public class EmailGenerator extends DOMFace {
     public void scheduleEmail(AuthRequest ar) throws Exception {
         long aboutFifteenMinutesAgo = ar.nowTime - 15 * 60000;
         if (getScheduleTime()<aboutFifteenMinutesAgo) {
-            throw new JSONException("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: {0}",
+            throw WeaverException.newBasic("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: %s",
                 SectionUtil.getNicePrintDate(getScheduleTime()));
         }
         setState(EG_STATE_SCHEDULED);

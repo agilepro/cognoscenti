@@ -27,7 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -106,26 +106,7 @@ public class AddressListEntry implements UserRef
             throw new ProgramLogicError("AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "+addr);
         }
         rawAddress = UserManager.getCorrectedEmail(addr);
-        user = UserManager.lookupUserByAnyId(addr);
-        
-        // now let construct a user profile if one does not exist
-        if (user==null) {
-            /*
-            int atPos = addr.indexOf("@");
-            if (atPos < 0) {
-                throw new RuntimeException("Attempt to create a user with a KEY value that does not already exist: "+ addr);
-            }
-            try {
-                user = UserManager.getStaticUserManager().createUserWithId(addr);
-                UserManager.getStaticUserManager().saveUserProfiles();
-            }
-            catch (Exception e) {
-                // this is highly improper, but I am trying to patch up the situation that 
-                // some users don't have keys.  Can't change signature to throws.
-                throw new RuntimeException("AddressListEntry Failure: can't create a profile for user: "+addr, e);
-            }
-            */
-        }
+        user = UserManager.getStaticUserManager().findUserByAnyIdOrFail(addr);
     }
 
     /**
@@ -491,13 +472,13 @@ public class AddressListEntry implements UserRef
         int braketEnd   = eAddress.lastIndexOf(RAQUO);
         if (braketStart >= 0 && braketEnd >= 0) {
             if (braketStart < 0) {
-                throw new Exception("Got an address with only an end raquo char -- the address should have both start and end, or none");
+                throw WeaverException.newBasic("Got an address with only an end raquo char -- the address should have both start and end, or none");
             }
             if (braketEnd < 0) {
-                throw new Exception("Got an address with only a start laquo char -- the address should have both start and end, or none");
+                throw WeaverException.newBasic("Got an address with only a start laquo char -- the address should have both start and end, or none");
             }
             if (braketEnd <= braketStart) {
-                throw new Exception("Got an address with laquo and raquo in the wrong order");
+                throw WeaverException.newBasic("Got an address with laquo and raquo in the wrong order");
             }
             eAddress =  eAddress.substring(0, braketStart) + '<' + eAddress.substring(braketStart+1, braketEnd) + '>';
         }
@@ -638,7 +619,7 @@ public class AddressListEntry implements UserRef
         if (jObj.has("uid")) {
             return new AddressListEntry(jObj.getString("uid"));
         }
-        throw new Exception("Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
+        throw WeaverException.newBasic("Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
     }
 
     public static JSONArray getJSONArrayFromIds(List<String> idList) throws Exception {

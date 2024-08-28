@@ -30,7 +30,7 @@ import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONException;
 
 public class ResourceDecoder {
@@ -93,30 +93,18 @@ public class ResourceDecoder {
         curPos = slashPos+1;
         slashPos = path.indexOf("/", curPos);
         if (slashPos<=curPos) {
-            throw new JSONException("Can't find a workspace ID in the URL.");
+            throw WeaverException.newBasic("Can't find a workspace ID in the URL.");
         }
         projId = path.substring(curPos, slashPos);
 
         if ("$".equals(projId)) {
             throw new Exception("ResourceDecoder Access to SITE is not supported");
-            /*
-            isSite = true;
-            if (licenseId==null) {
-                throw new JSONException("Can not access the site '{0}' without any license.", site.getKey());
-            }
-            lic = site.getLicense(licenseId);
-            if (lic==null) {
-                throw new JSONException("Can not find the license '{0}' on site '{1}'", licenseId, site.getKey());
-            }
-            setUserFromLicense(ar);
-            return;
-            */
         }
         workspace = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,projId).getWorkspace();
         ar.setPageAccessLevels(workspace);
         lic = workspace.getLicense(licenseId);
         if (lic==null) {
-            throw new JSONException("Can not find the license '{0}' on workspace '{1}'", licenseId, projId);
+            throw WeaverException.newBasic("Can not find the license '%s' on workspace '%s'", licenseId, projId);
         }
         licenseOwner = new AddressListEntry(lic.getCreator());
         setUserFromLicense(ar);
@@ -181,11 +169,11 @@ public class ResourceDecoder {
             String userId = lic.getCreator();
             UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
             if (up==null) {
-                throw new JSONException("This license '{0}' is no longer valid because the creator of the license can not be found.", licenseId);
+                throw WeaverException.newBasic("This license '%s' is no longer valid because the creator of the license can not be found.", licenseId);
             }
             //check that user is still valid
             if (up.getDisabled()) {
-                throw new JSONException("This license '{0}' is no longer valid because the creator of the license is no longer enabled.", licenseId);
+                throw WeaverException.newBasic("This license '%s' is no longer valid because the creator of the license is no longer enabled.", licenseId);
             }
             //check that user is in the role of this license
             //as long as this does not throw exception, everything is ok
@@ -235,8 +223,8 @@ public class ResourceDecoder {
             //if the license owner is not a member, then the license owner must be
             //a member of the specified role.
             if (!ownerIsMemberofWorkspace() && !specifiedRole.isExpandedPlayer(licenseOwner, workspace)) {
-                throw new JSONException("The license ({0}) is invalid because the user who created license is no longer a "
-                        +"member of the role ({0})", licenseId, restrictRole);
+                throw WeaverException.newBasic("The license (%s) is invalid because the user who created license is no longer a "
+                        +"member of the role (%s)", licenseId, restrictRole);
             }
             licensedRoles.add(specifiedRole);
         }

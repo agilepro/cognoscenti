@@ -45,6 +45,7 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WorkspaceStats;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 
 import org.springframework.stereotype.Controller;
@@ -561,7 +562,7 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         }
         catch(Exception ex){
-            Exception ee = new JSONException("Unable to generate site statistics for {0}", ex, siteId);
+            Exception ee = WeaverException.newWrap("Unable to generate site statistics for %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -582,7 +583,7 @@ public class SiteController extends BaseController {
             sendJson(ar, userMap.getJson());
         }
         catch(Exception ex){
-            Exception ee = new JSONException("Unable to get user map for site {0}", ex, siteId);
+            Exception ee = WeaverException.newWrap("Unable to get user map for site %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -607,7 +608,7 @@ public class SiteController extends BaseController {
             sendJson(ar, userMap.getJson());
         }
         catch(Exception ex){
-            Exception ee = new JSONException("Unable to update user map for site {0}", ex, siteId);
+            Exception ee = WeaverException.newWrap("Unable to update user map for site %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -628,7 +629,7 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         }
         catch(Exception ex){
-            Exception ee = new JSONException("Unable to garbage collect for site '{0}'", ex, siteId);
+            Exception ee = WeaverException.newWrap("Unable to garbage collect for site '%s'", ex, siteId);
             streamException(ee, ar);
         }
     }

@@ -57,6 +57,7 @@ import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONException;
 
@@ -222,16 +223,16 @@ public class EmailListener extends TimerTask{
     public Session getSession()throws Exception {
         try {
             if(emailProperties == null){
-                throw new JSONException("Email Configuration not initialized from: {0}", emailPropFile.getAbsolutePath());
+                throw WeaverException.newBasic("Email Configuration not initialized from: %s", emailPropFile.getAbsolutePath());
             }
 
             String user = emailProperties.getProperty("mail.pop3.user");
             if (user==null || user.length()==0) {
-                throw new JSONException("In order to read email, there must be a setting for 'mail.pop3.user' in {0}.",emailPropFile.getAbsolutePath());
+                throw WeaverException.newBasic("In order to read email, there must be a setting for 'mail.pop3.user' in %s.",emailPropFile.getAbsolutePath());
             }
             String pwd = emailProperties.getProperty("mail.pop3.password");
             if (pwd==null || pwd.length()==0) {
-                throw new JSONException("In order to read email, there must be a setting for 'mail.pop3.password' in {0}.",emailPropFile.getAbsolutePath());
+                throw WeaverException.newBasic("In order to read email, there must be a setting for 'mail.pop3.password' in %s.",emailPropFile.getAbsolutePath());
             }
 
             return Session.getInstance(emailProperties, new EmailAuthenticator(user, pwd));
@@ -520,7 +521,7 @@ public class EmailListener extends TimerTask{
 
         }catch (Exception e) {
             //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
-            throw new JSONException("Unable to process email message subject={0}", e, msg.getSubject());
+            throw WeaverException.newWrap("Unable to process email message subject=%s", e, msg.getSubject());
         }
         finally {
             NGPageIndex.clearLocksHeldByThisThread();
@@ -539,7 +540,7 @@ public class EmailListener extends TimerTask{
     private Properties setEmailProperties(File emailPropFile) throws Exception {
 
         if (!emailPropFile.exists()) {
-            throw new JSONException("Email configuration not initialized: {0}", emailPropFile.getAbsolutePath());
+            throw WeaverException.newBasic("Email configuration not initialized: %s", emailPropFile.getAbsolutePath());
         }
 
         emailProperties = new Properties();

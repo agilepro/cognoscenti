@@ -395,7 +395,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             int count = 0;
             while (!tempFile.exists()) {
                 if (count++ > 20) {
-                    throw new JSONException("Operation '{1}' failed because the temporary file does not exist: {0}", tempFile, op);
+                    throw WeaverException.newBasic("Operation '%s' failed because the temporary file does not exist: %s", op, tempFile);
                 }
                 System.out.println("WAITING "+count+" FOR TEMPFILE: "+tempFile.toString());
                 Thread.sleep(300);
@@ -403,7 +403,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             }
             while (tempFile.length()<size) {
                 if (count++ > 20) {
-                    throw new JSONException("Operation '{0}' failed because file size is {1}, should be {2}", 
+                    throw WeaverException.newBasic("Operation '%s' failed because file size is %s, should be %s", 
                             op, Long.toString(tempFile.length()), Long.toString(size));
                 }
                 System.out.println("WAITING "+count+" FOR ("+tempFile.toString()
@@ -420,14 +420,13 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
                 att = resDec.workspace.findAttachmentByUidOrNull(newUid);
                 if (!resDec.canAccessAttachment(att)) {
                     tempFile.delete();
-                    throw new JSONException("The license ("+resDec.licenseId
-                            +") does not have right to access document ("+newUid+").");
+                    throw WeaverException.newBasic("The license (%s) does not have right to access document (%s).", resDec.licenseId, newUid);
                 }
             }
             else {
                 if (!ar.canUpdateWorkspace()) {
                     tempFile.delete();
-                    throw new JSONException("The license ({0}) does not have right to create new documents.", resDec.licenseId);
+                    throw WeaverException.newBasic("The license (%s) does not have right to create new documents.", resDec.licenseId);
                 }
                 String newName = newDocObj.getString("name");
                 att = ngw.findAttachmentByName(newName);
@@ -487,13 +486,13 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             return responseOK;
         }
 
-        throw new JSONException("API does not understand operation: {0}",op);
+        throw WeaverException.newBasic("API does not understand operation: %s",op);
     }
 
     @Override
     public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
-        streamException(new JSONException("not implemented yet"), ar);
+        streamException(WeaverException.newBasic("not implemented yet"), ar);
     }
 
     @Override
@@ -530,14 +529,14 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
         String licenseId = resDec.licenseId;
         if (site==null) {
             //this is probably unnecessary, having hit an exception earlier, but just begin sure
-            throw new JSONException("Something is wrong, can not find a site object.");
+            throw WeaverException.newBasic("Something is wrong, can not find a site object.");
         }
         if (false==true) {
             if (licenseId == null || licenseId.length()==0 || resDec.lic==null) {
-                throw new JSONException("All operations on the site need to be licensed, but did not get a license id in that URL.");
+                throw WeaverException.newBasic("All operations on the site need to be licensed, but did not get a license id in that URL.");
             }
             if (!site.isValidLicense(resDec.lic, ar.nowTime)) {
-                throw new JSONException("The license ({0}) has expired.   To exchange information, you will need to get an updated license", resDec.licenseId);
+                throw WeaverException.newBasic("The license (%s) has expired.   To exchange information, you will need to get an updated license", resDec.licenseId);
             }
         }
         JSONObject root = new JSONObject();
@@ -560,7 +559,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
     private void streamDocument(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         AttachmentRecord att = resDec.workspace.findAttachmentByIDOrFail(resDec.docId);
         if (!resDec.canAccessAttachment(att)) {
-            throw new JSONException("Specified license ({0}) is not able to access document ({1})", resDec.licenseId, resDec.docId);
+            throw WeaverException.newBasic("Specified license (%s) is not able to access document (%s)", resDec.licenseId, resDec.docId);
         }
 
         ar.resp.setContentType(MimeTypes.getMimeType(att.getNiceName()));
@@ -591,14 +590,14 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
                 System.out.println("WAITING "+count+" FOR PUT FILE: "+tempFile.toString());
                 Thread.sleep(200);
             }
-            throw new JSONException("PUT temp file failed.  Can't see it in file system: {0}", tempFile);
+            throw WeaverException.newBasic("PUT temp file failed.  Can't see it in file system: %s", tempFile);
         }
     }
 
     private JSONObject getLicenseInfo(License lic) throws Exception {
         JSONObject licenseInfo = new JSONObject();
         if (lic == null) {
-            throw new JSONException("Program Logic Error: null license passed to getLicenseInfo");
+            throw WeaverException.newBasic("Program Logic Error: null license passed to getLicenseInfo");
         }
         licenseInfo.put("id", lic.getId());
         licenseInfo.put("timeout", lic.getTimeout());

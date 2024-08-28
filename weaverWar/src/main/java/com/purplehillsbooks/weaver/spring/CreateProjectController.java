@@ -32,6 +32,8 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,7 +106,7 @@ public class CreateProjectController extends BaseController {
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new JSONException("Unable to create workspace in Site: {0}", ex, siteId);
+            Exception ee = WeaverException.newWrap("Unable to create workspace in Site: %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -168,7 +170,7 @@ public class CreateProjectController extends BaseController {
     private static NGWorkspace createWorkspace(AuthRequest ar, NGBook site, String workspaceName) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         if (!site.primaryOrSecondaryPermission(uProf)) {
-            throw new JSONException("User does not have permission to create a workspace in site '{0}'", site.getFullName());
+            throw WeaverException.newBasic("User does not have permission to create a workspace in site '%s'", site.getFullName());
         }
 
         String pageKey = makeGoodSearchableName(workspaceName);

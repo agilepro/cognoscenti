@@ -26,6 +26,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +50,7 @@ public class MobileFirstController extends BaseController {
 
             streamJSPMobileFirst(ar, pageName+".jsp");
         }catch(Exception ex){
-            throw new JSONException("Unable to serve up a mobile first page named {0}", ex, pageName);
+            throw WeaverException.newWrap("Unable to serve up a mobile first page named %s", ex, pageName);
         }
     }
 

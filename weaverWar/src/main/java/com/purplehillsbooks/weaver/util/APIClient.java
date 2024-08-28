@@ -12,6 +12,7 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class APIClient {
     
@@ -127,11 +128,11 @@ public class APIClient {
             
             //we got an error code that we really can not handle, so just report 
             //it here and give up
-            throw new JSONException("Received response code {0} unable to handle response.", Integer.toString(returnCode)); 
+            throw WeaverException.newBasic("Received response code %s unable to handle response.", Integer.toString(returnCode)); 
            
         }
         catch (Exception e) {
-            throw new JSONException("Unable to call the server site located at {0}", e, url) ;
+            throw WeaverException.newWrap("Unable to call the server site located at %s", e, url) ;
         }
     }
     

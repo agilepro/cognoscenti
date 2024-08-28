@@ -305,7 +305,7 @@ public class ProjectDocsController extends BaseController {
             registerWorkspaceRequired(ar, siteId, pageId);
             showJSPMembers(ar, siteId, pageId, "reminders.jsp");
         }catch(Exception ex){
-            throw new JSONException("Failed to open reminder page of workspace {0} in site {1}", ex, pageId, siteId);
+            throw WeaverException.newWrap("Failed to open reminder page of workspace %s in site %s", ex, pageId, siteId);
         }
     }
 
@@ -323,7 +323,7 @@ public class ProjectDocsController extends BaseController {
             AttachmentRecord attachment = ngw.findAttachmentByIDOrFail(did);
             boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngw, attachment);
             if (!canAccessDoc) {
-                throw new JSONException("Unable for user {1} to access document {0}", did, ar.getBestUserId());
+                throw WeaverException.newBasic("Unable for user %s to access document %s", did, ar.getBestUserId());
             }
 
             JSONObject repo = attachment.getJSON4Doc(ar, ngw);
@@ -860,7 +860,7 @@ public class ProjectDocsController extends BaseController {
             sendJson(ar, repo);
         }
         catch (Exception ex) {
-            Exception ee = WeaverException.newBasic("Unable to update the comment in SaveReply", ex);
+            Exception ee = WeaverException.newWrap("Unable to update the comment in SaveReply", ex);
             streamException(ee, ar);
         }
     }

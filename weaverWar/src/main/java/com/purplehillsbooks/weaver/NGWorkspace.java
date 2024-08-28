@@ -409,7 +409,7 @@ public class NGWorkspace extends NGPage {
             return newWorkspace;
         }
         catch (Exception e) {
-            throw WeaverException.newBasic("Unable to read the workspace file (%s)", e, theFile.getAbsolutePath());
+            throw WeaverException.newWrap("Unable to read the workspace file (%s)", e, theFile.getAbsolutePath());
         }
     }
 
@@ -833,7 +833,7 @@ public class NGWorkspace extends NGPage {
             return count;
         }
         catch (Exception e) {
-            throw WeaverException.newBasic("Unable to replace user (%s) in workspace: %s", e, sourceUser, this.getKey());
+            throw WeaverException.newWrap("Unable to replace user (%s) in workspace: %s", e, sourceUser, this.getKey());
         }
     }
 

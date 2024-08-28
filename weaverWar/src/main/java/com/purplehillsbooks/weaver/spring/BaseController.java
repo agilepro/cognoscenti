@@ -39,6 +39,8 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ServletExit;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -391,7 +393,7 @@ public class BaseController {
             }
         }
         catch(Exception ex){
-            throw new JSONException("Unable to prepare jsp/depending view of {0} for workspace: {1}/{2}", ex, jspName, ngw.getKey(), ngw.getSiteKey());
+            throw WeaverException.newWrap("Unable to prepare jsp/depending view of %s for workspace: %s/%s", ex, jspName, ngw.getKey(), ngw.getSiteKey());
         }
     }
     public static void showJSPDependingSite(AuthRequest ar, String jspName) throws Exception {
@@ -407,7 +409,7 @@ public class BaseController {
             }
         }
         catch(Exception ex){
-            throw new JSONException("Unable to prepare site/depending view of {0}", ex, jspName);
+            throw WeaverException.newWrap("Unable to prepare site/depending view of %s", ex, jspName);
         }
     }
     public static void showJSPDependingUser(AuthRequest ar, String jspName) throws Exception {
@@ -420,7 +422,7 @@ public class BaseController {
             }
         }
         catch(Exception ex){
-            throw new JSONException("Unable to prepare user/depending view of {0}", ex, jspName);
+            throw WeaverException.newWrap("Unable to prepare user/depending view of %s", ex, jspName);
         }
     }
 

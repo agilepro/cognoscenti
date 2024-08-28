@@ -32,6 +32,7 @@ import com.purplehillsbooks.weaver.HistoricActions;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -132,7 +133,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "UserList.jsp");
          }catch(Exception ex){
-             throw new JSONException("Unable to show all users {0}", ex, ar.getBestUserId());
+             throw WeaverException.newWrap("Unable to show all users %s", ex, ar.getBestUserId());
          }
      }
 
@@ -143,7 +144,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "SiteRequests.jsp");
          }catch(Exception ex){
-             throw new JSONException("Unable to show requested sites for {0}", ex, ar.getBestUserId());
+             throw WeaverException.newWrap("Unable to show requested sites for %s", ex, ar.getBestUserId());
          }
      }
 
@@ -154,7 +155,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "ListSites.jsp");
          }catch(Exception ex){
-             throw new JSONException("Unable to list sites for administrator {0}", ex, ar.getBestUserId());
+             throw WeaverException.newWrap("Unable to list sites for administrator %s", ex, ar.getBestUserId());
          }
      }
 
@@ -165,7 +166,7 @@ public class SuperAdminController extends BaseController {
          try{
              streamAdminJSP(ar, "EstimateCosts.jsp");
          }catch(Exception ex){
-             throw new JSONException("Unable to estimate costs for administrator {0}", ex, ar.getBestUserId());
+             throw WeaverException.newWrap("Unable to estimate costs for administrator %s", ex, ar.getBestUserId());
          }
      }
 
@@ -369,7 +370,7 @@ public class SuperAdminController extends BaseController {
 
              streamAdminJSP(ar, "SiteMerge.jsp");
          }catch(Exception ex){
-             throw new JSONException("Unable to perform SiteMerge with site {0}", ex, siteId);
+             throw WeaverException.newWrap("Unable to perform SiteMerge with site %s", ex, siteId);
          }
      }
 
