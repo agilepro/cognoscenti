@@ -380,7 +380,7 @@ public class UserManager
     public synchronized List<AddressListEntry> getAllUsers() {
         ArrayList<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (UserProfile up : allUsers) {
-            res.add(new AddressListEntry(up));
+            res.add(up.getAddressListEntry());
         }
         return res;
     }
@@ -422,7 +422,7 @@ public class UserManager
     public List<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
         ArrayList<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
-            AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
+            AddressListEntry ale = AddressListEntry.findOrCreate(superAdmin.getPreferredEmail());
             if (ale.isWellFormed()) {
                 sendTo.add(new OptOutSuperAdmin(ale));
             }
@@ -468,7 +468,7 @@ public class UserManager
 
         List<String> st = UtilityMethods.splitString(userIdList, ',');
         for (String listItem : st)  {
-            AddressListEntry ale = new AddressListEntry(listItem);
+            AddressListEntry ale = AddressListEntry.findOrCreate(listItem);
             ret.add(ale);
         }
         return ret;

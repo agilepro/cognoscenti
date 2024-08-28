@@ -83,7 +83,7 @@ public class UploadFileController extends BaseController {
                 //of record for this request to be that user.   Allows the rest of the request
                 //to act as if the request is logged in under the name of the record creator.
                 if (!ar.isLoggedIn()) {
-                    ar.setPossibleUser(userManager.findUserByAnyIdOrFail(reminderRecord.getModifiedBy()));
+                    ar.setPossibleUser(UserManager.lookupUserByAnyId(reminderRecord.getModifiedBy()));
                 }
             }
             if(!requestFromReminder ||  !canAccessToReminder){

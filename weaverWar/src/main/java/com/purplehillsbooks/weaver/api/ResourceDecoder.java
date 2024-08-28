@@ -106,7 +106,7 @@ public class ResourceDecoder {
         if (lic==null) {
             throw WeaverException.newBasic("Can not find the license '%s' on workspace '%s'", licenseId, projId);
         }
-        licenseOwner = new AddressListEntry(lic.getCreator());
+        licenseOwner = AddressListEntry.findOrCreate(lic.getCreator());
         setUserFromLicense(ar);
 
         curPos = slashPos+1;

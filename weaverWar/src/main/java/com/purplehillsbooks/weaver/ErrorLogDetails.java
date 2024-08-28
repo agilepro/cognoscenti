@@ -98,7 +98,7 @@ public class ErrorLogDetails extends DOMFace {
 
     public void sendFeedbackEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
-        AddressListEntry from = new AddressListEntry(ar.getBestUserId());
+        AddressListEntry from = AddressListEntry.findOrCreate(ar.getBestUserId());
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
             JSONObject jo = new JSONObject();
             jo.put("req", this.getJSON());

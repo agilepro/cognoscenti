@@ -751,7 +751,7 @@ public abstract class NGPage extends ContainerCommon {
         if (lr instanceof LicenseForUser) {
             //check all the action items, the license will be valid if the person
             //is still assigned to a action items, and the license is a LicenseForUser
-            AddressListEntry ale = new AddressListEntry(lr.getCreator());
+            AddressListEntry ale = AddressListEntry.findOrCreate(lr.getCreator());
             for (GoalRecord goal : this.getAllGoals()) {
                 if (!goal.isPassive() && goal.isAssignee(ale)) {
                     //passive action items from other workspace should only effect those other workspaces,

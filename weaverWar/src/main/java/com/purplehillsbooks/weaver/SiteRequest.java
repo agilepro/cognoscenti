@@ -110,7 +110,7 @@ public class SiteRequest {
 
     public void sendSiteRequestEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
-        AddressListEntry from = new AddressListEntry(ar.getBestUserId());
+        AddressListEntry from = AddressListEntry.findOrCreate(ar.getBestUserId());
         MailInst msg = MailInst.genericEmail("$", "$", "Site Approval for " + ar.getBestUserId(), "");
         File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {

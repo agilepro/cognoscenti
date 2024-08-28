@@ -820,7 +820,7 @@ public class NGBook extends ContainerCommon {
 
         //check to see if the user who created it, is still in the
         //role or in the member's role
-        AddressListEntry ale = new AddressListEntry(lr.getCreator());
+        AddressListEntry ale = AddressListEntry.findOrCreate(lr.getCreator());
         if (!ngr.isExpandedPlayer(ale,  this) && !primaryOrSecondaryPermission(ale)) {
             return false;
         }
@@ -1118,7 +1118,7 @@ public class NGBook extends ContainerCommon {
         Set<String> alreadyUsed = new HashSet<String>();
         for (String id : userids) {
             if (!id.isEmpty()) {
-                AddressListEntry ale = new AddressListEntry(id);
+                AddressListEntry ale = AddressListEntry.findOrCreate(id);
                 String correctId = ale.getUniversalId();
                 //eliminate duplicates due to synonymous email ids
                 if (!alreadyUsed.contains(correctId)) {
@@ -1169,7 +1169,7 @@ public class NGBook extends ContainerCommon {
             throw new Exception("userReadOnly requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
-        AddressListEntry ale = new AddressListEntry(userId);
+        AddressListEntry ale = AddressListEntry.findOrCreate(userId);
         return siteUsers.isReadOnly(ale.getUserProfile());
     }
     public boolean userReadOnly(UserProfile uProf) throws Exception {

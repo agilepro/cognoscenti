@@ -33,7 +33,6 @@ import com.purplehillsbooks.weaver.util.MimeTypes;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.MemFile;
 
 /**
@@ -156,7 +155,7 @@ public class MailInst extends JSONWrapper {
      */
     public void setAddressee(String val) throws Exception {
         kernel.put("Addressee", val);
-        UserProfile user = UserManager.getStaticUserManager().lookupUserByAnyId(val);
+        UserProfile user = UserManager.lookupUserByAnyId(val);
         if (user!=null) {
             kernel.put("UserKey", user.getKey());
         }

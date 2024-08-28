@@ -38,6 +38,9 @@ public class WeaverException extends JSONException {
     public static WeaverException newWrap(String msg, Exception cause, Object... params) {
         return new WeaverException(String.format(msg, params), cause);
     }
+    public static WeaverException newProgramLogicError(String msg, Object... params) {
+        return newBasic(msg, params);
+    }
 
 
     public static boolean contains(Throwable e, String searchToken) {

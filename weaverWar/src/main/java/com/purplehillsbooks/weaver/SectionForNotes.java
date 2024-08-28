@@ -92,7 +92,7 @@ public class SectionForNotes extends SectionWiki {
                             TopicRecord.class, "id", IdGenerator.generateKey());
             newNote.setOwner(cr.getOwner());
             newNote.setLastEdited(cr.getLastEdited());
-            newNote.setModUser(new AddressListEntry(cr.getOwner()));
+            newNote.setModUser(AddressListEntry.findOrCreate(cr.getOwner()));
             newNote.setEffectiveDate(cr.getEffectiveDate());
             newNote.setSubject(cr.getSubject());
             newNote.setWiki(cr.getWiki());

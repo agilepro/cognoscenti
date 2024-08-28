@@ -55,7 +55,7 @@ public class LicenseForUser implements License
             return (LicenseForUser)other;
         }
 
-        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(other.getCreator());
+        UserProfile up = UserManager.lookupUserByAnyId(other.getCreator());
         if (up==null) {
             throw new Exception("Attempt to use a user license for a user that does not exist");
         }

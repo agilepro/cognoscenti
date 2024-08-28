@@ -78,7 +78,7 @@ public class RoleTerm extends DOMFace {
         ArrayList<AddressListEntry> playerList = new ArrayList<AddressListEntry>();
         List<String> players = getVector("players");
         for (String player : players) {
-            AddressListEntry ale = new AddressListEntry(player);
+            AddressListEntry ale = AddressListEntry.findOrCreate(player);
             if (ale.isWellFormed()) {
                 playerList.add(ale);
             }
@@ -136,7 +136,7 @@ public class RoleTerm extends DOMFace {
         JSONArray playerArray = new JSONArray();
         List<String> players = getVector("players");
         for (String player : players) {
-            AddressListEntry ale = new AddressListEntry(player);
+            AddressListEntry ale = AddressListEntry.findOrCreate(player);
             if (ale.isWellFormed()) {
                 playerArray.put(ale.getJSON());
             }

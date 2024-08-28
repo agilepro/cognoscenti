@@ -231,7 +231,7 @@ public class AgendaItem extends CommentContainer {
     public List<AddressListEntry> getPresenters()  throws Exception {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (String email : getVector("presenters")) {
-            res.add(new AddressListEntry(email));
+            res.add(AddressListEntry.findOrCreate(email));
         }
         return res;
     }
@@ -258,12 +258,12 @@ public class AgendaItem extends CommentContainer {
      * 4. If the user cancels edit, be sure to clear the lock.
      *
      */
-    public AddressListEntry getLockUser() {
+    public AddressListEntry getLockUser() throws Exception {
         String user = getScalar("editUser");
         if (user==null || user.length()==0) {
             return null;
         }
-        return new AddressListEntry(user);
+        return AddressListEntry.findOrCreate(user);
     }
 
     public void startTimer() {

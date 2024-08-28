@@ -481,7 +481,7 @@ public class MeetingRecord extends DOMFace {
 
 
     public JSONObject getWillAttend(String userKey) throws Exception {
-        AddressListEntry ale = new AddressListEntry(userKey);
+        AddressListEntry ale = AddressListEntry.findOrCreate(userKey);
         DOMFace foundOne = null;
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
@@ -497,7 +497,7 @@ public class MeetingRecord extends DOMFace {
         return res;
     }
     public void setWillAttend(String userKey, JSONObject attendValues) throws Exception {
-        AddressListEntry ale = new AddressListEntry(userKey);
+        AddressListEntry ale = AddressListEntry.findOrCreate(userKey);
         DOMFace foundOne = null;
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
@@ -517,7 +517,7 @@ public class MeetingRecord extends DOMFace {
 
 
     public boolean removeFromRollCall(String sourceUser) throws Exception {
-        AddressListEntry ale = new AddressListEntry(sourceUser);
+        AddressListEntry ale = AddressListEntry.findOrCreate(sourceUser);
         DOMFace foundOne = null;
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             if (ale.hasAnyId(onePerson.getAttribute("uid"))) {
@@ -601,7 +601,7 @@ public class MeetingRecord extends DOMFace {
 
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
-            AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
+            AddressListEntry ale = AddressListEntry.findOrCreate(onePerson.getAttribute("uid"));
             JSONObject sub = new JSONObject();
             //user id
             sub.put("uid", ale.getUniversalId());
@@ -691,18 +691,18 @@ public class MeetingRecord extends DOMFace {
         //now work out the people map to consolidate all details of a person in one map
         JSONObject peopleMap = new JSONObject();
         for (String id : this.getVector("participants")) {
-            AddressListEntry ale = new AddressListEntry(id);
+            AddressListEntry ale = AddressListEntry.findOrCreate(id);
             peopleMap.requireJSONObject(ale.getKey());
         }
         for (String id : this.getVector("attended")) {
-            AddressListEntry ale = new AddressListEntry(id);
+            AddressListEntry ale = AddressListEntry.findOrCreate(id);
             if (peopleMap.has(ale.getKey())) {
                 JSONObject personRecord = peopleMap.getJSONObject(ale.getKey());
                 personRecord.put("attended", true);
             }
         }
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
-            AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
+            AddressListEntry ale = AddressListEntry.findOrCreate(onePerson.getAttribute("uid"));
             if (peopleMap.has(ale.getKey())) {
                 JSONObject personRecord = peopleMap.getJSONObject(ale.getKey());
 
@@ -714,7 +714,7 @@ public class MeetingRecord extends DOMFace {
             }
         }
         for (String key : peopleMap.keySet()) {
-            AddressListEntry ale = new AddressListEntry(key);
+            AddressListEntry ale = AddressListEntry.findOrCreate(key);
             JSONObject personRecord = peopleMap.requireJSONObject(key);
             personRecord.put("uid", ale.getUniversalId());
             personRecord.put("name", ale.getName());
@@ -856,7 +856,7 @@ public class MeetingRecord extends DOMFace {
     }
 
     public void removeUserFromVector(String memberName, String value) {
-        AddressListEntry ale = new AddressListEntry(value);
+        AddressListEntry ale = AddressListEntry.findOrCreate(value);
         if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to addVectorValue.");
@@ -874,7 +874,7 @@ public class MeetingRecord extends DOMFace {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to addVectorValue.");
         }
-        AddressListEntry newUser = new AddressListEntry(value);
+        AddressListEntry newUser = AddressListEntry.findOrCreate(value);
         List<Element> children = getNamedChildrenVector(memberName);
         for (Element child : children) {
             String childVal = DOMUtils.textValueOf(child, false);
@@ -994,7 +994,7 @@ public class MeetingRecord extends DOMFace {
 
 
     public Calendar getOwnerCalendar() throws Exception {
-        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
+        UserProfile up = UserManager.lookupUserByAnyId(getOwner());
         if (up!=null) {
             return up.getCalendar();
         }
@@ -1102,7 +1102,7 @@ public class MeetingRecord extends DOMFace {
                     if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
                             cType == CommentRecord.COMMENT_TYPE_REQUEST) {
                         for (ResponseRecord rr : cr.getResponses()) {
-                            AddressListEntry ale = new AddressListEntry(rr.getUserId());
+                            AddressListEntry ale = AddressListEntry.findOrCreate(rr.getUserId());
                             sb.append("\n\n");
                             sb.append(ale.getName());
                             if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL) {
@@ -1422,7 +1422,7 @@ public class MeetingRecord extends DOMFace {
     }
 
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
-        AddressListEntry ale = new AddressListEntry(getOwner());
+        AddressListEntry ale = AddressListEntry.findOrCreate(getOwner());
         w.write("BEGIN:VCALENDAR\n");
         w.write("VERSION:2.0\n");
         w.write("PRODID:-//example/Weaver//NONSGML v1.0//EN\n");

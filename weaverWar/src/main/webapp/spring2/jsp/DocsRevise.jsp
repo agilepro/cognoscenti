@@ -30,7 +30,7 @@
     JSONArray allHistory = new JSONArray();
     for (HistoryRecord hist : histRecs) {
         JSONObject jo = hist.getJSON(ngp, ar);
-        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        AddressListEntry ale = AddressListEntry.findOrCreate(hist.getResponsible());
         jo.put("responsible", ale.getJSON() );
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";

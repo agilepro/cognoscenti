@@ -34,7 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AccessControl;
@@ -244,7 +243,7 @@ public class EmailGenerator extends DOMFace {
         }
 
         //didn't find them, then act as if they were directly added
-        return new OptOutDirectAddress(new AddressListEntry(userId));
+        return new OptOutDirectAddress(AddressListEntry.findOrCreate(userId));
     }
 
 
@@ -349,7 +348,7 @@ public class EmailGenerator extends DOMFace {
         mailMsg.setBodyText(entireBody);
         mailMsg.setAttachmentFiles(attachments);
         
-        sender.createEmailRecordInDB(mailMsg, new AddressListEntry(getOwner()), ooa.getEmail());
+        sender.createEmailRecordInDB(mailMsg, AddressListEntry.findOrCreate(getOwner()), ooa.getEmail());
     }
 
 
@@ -603,7 +602,7 @@ public class EmailGenerator extends DOMFace {
     }
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        AddressListEntry ownerAle = new AddressListEntry(getOwner());
+        AddressListEntry ownerAle = AddressListEntry.findOrCreate(getOwner());
         JSONObject obj = new JSONObject();
         obj.put("id", getId());
         obj.put("from", getOwner());

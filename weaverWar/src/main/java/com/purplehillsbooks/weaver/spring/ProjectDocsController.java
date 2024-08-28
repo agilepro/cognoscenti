@@ -64,7 +64,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -791,7 +790,7 @@ public class ProjectDocsController extends BaseController {
             if (!ar.isLoggedIn()) {
                 String emailId = input.optString("emailId", null);
                 UserManager userMgr = UserManager.getStaticUserManager();
-                UserProfile possUser = userMgr.lookupUserByAnyId(emailId);
+                UserProfile possUser = UserManager.lookupUserByAnyId(emailId);
                 if (possUser == null) {
                     //what to do here?  User has created or updated a comment on an email address
                     //that does not have a user profile.   Create one.
@@ -1230,7 +1229,7 @@ public class ProjectDocsController extends BaseController {
         try{
             ar.assertLoggedIn("WebFiles are available only when logged in.");
             Cognoscenti cog = ar.getCogInstance();
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngw = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             AttachmentRecord att = ngw.findAttachmentByIDOrFail(aid);
             WebFile wf = att.getWebFile();

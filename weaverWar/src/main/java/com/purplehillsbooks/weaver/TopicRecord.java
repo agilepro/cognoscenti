@@ -171,7 +171,7 @@ public class TopicRecord extends CommentContainer {
 
     public AddressListEntry getModUser() {
          String userId = getScalar("modifiedby");
-         return new AddressListEntry(userId);
+         return AddressListEntry.findOrCreate(userId);
     }
     public void setModUser(UserRef newModifier) {
         setScalar("modifiedby", newModifier.getUniversalId());
@@ -756,7 +756,7 @@ public class TopicRecord extends CommentContainer {
           OptOutAddr.appendUsers(getSubscriberRole().getExpandedPlayers(ngw), sendTo);
 
           UserRef creator = getModUser();
-          UserProfile creatorProfile = ar.getCogInstance().getUserManager().lookupUserByAnyId(creator.getUniversalId());
+          UserProfile creatorProfile = UserManager.lookupUserByAnyId(creator.getUniversalId());
           if (creatorProfile==null) {
               System.out.println("DATA PROBLEM: discussion topic came from a person without a profile ("+getModUser().getUniversalId()+") ignoring");
               setEmailSent(true);

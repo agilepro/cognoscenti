@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -92,7 +91,7 @@ public class CreateProjectController extends BaseController {
                     for (int i=0; i<members.length(); i++) {
                         JSONObject memberObj = members.getJSONObject(i);
                         String memberAddress = memberObj.getString("uid");
-                        memberRole.addPlayerIfNotPresent(new AddressListEntry(memberAddress));
+                        memberRole.addPlayerIfNotPresent(AddressListEntry.findOrCreate(memberAddress));
                     }
                 }
             }

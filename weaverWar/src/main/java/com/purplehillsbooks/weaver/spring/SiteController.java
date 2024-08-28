@@ -53,7 +53,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.StreamHelper;
@@ -371,7 +370,7 @@ public class SiteController extends BaseController {
             String userID = incoming.getString("uid");
 
             UserManager um = UserManager.getStaticUserManager();
-            UserProfile user = um.lookupUserByAnyId(userID);
+            UserProfile user = UserManager.lookupUserByAnyId(userID);
 
             if (user==null) {
             	user = um.createUserWithId(userID);

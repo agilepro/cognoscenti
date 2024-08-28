@@ -51,7 +51,7 @@ Required parameters:
     }
     
     
-    AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
+    AddressListEntry ale = AddressListEntry.findOrCreate(attachment.getModifiedBy());
 
     JSONArray linkedMeetings = new JSONArray();
     for (MeetingRecord meet : attachment.getLinkedMeetings(ngp)) {

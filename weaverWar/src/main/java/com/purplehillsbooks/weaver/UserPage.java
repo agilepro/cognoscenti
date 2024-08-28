@@ -69,7 +69,7 @@ public class UserPage extends ContainerCommon
             {
                 //this is the primary role
                 principal = createRole("Principal", "The owner of this profile");
-                principal.addPlayer(new AddressListEntry(user));
+                principal.addPlayer(user.getAddressListEntry());
             }
             NGRole coll = getRole("Colleagues");
             if (coll==null)
@@ -249,7 +249,7 @@ public class UserPage extends ContainerCommon
         // I can't tell if this does anything important or not.
         for (UserProfile userProfile : UserManager.getStaticUserManager().getAllUserProfiles()) {
             if(!CustomRole.isPlayerOfAddressList(userProfile, existingContacts)){
-                resultList.add(new AddressListEntry(userProfile));
+                resultList.add(userProfile.getAddressListEntry());
             }
         }
 

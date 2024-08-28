@@ -26,10 +26,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
 * An entry in the address list.  Holds the email address
@@ -98,7 +98,7 @@ public class AddressListEntry implements UserRef
      * could be an email address or an OpenID style uid.
      * It will search and try to find the user.
      */
-    public AddressListEntry(String addr) {
+    private AddressListEntry(String addr) {
         if (addr==null) {
             throw new ProgramLogicError("AddressListEntry: attempt to construct an instance with a null value");
         }
@@ -106,7 +106,38 @@ public class AddressListEntry implements UserRef
             throw new ProgramLogicError("AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "+addr);
         }
         rawAddress = UserManager.getCorrectedEmail(addr);
-        user = UserManager.getStaticUserManager().findUserByAnyIdOrFail(addr);
+        user = UserManager.lookupUserByAnyId(addr);
+    }
+
+    public static AddressListEntry findByAnyId(String addr) {
+        if (addr==null) {
+            throw new ProgramLogicError("AddressListEntry: attempt to construct an instance with a null value");
+        }
+        if (addr.indexOf(LAQUO)>=0 || addr.indexOf('<')>=0) {
+            throw new ProgramLogicError("AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "+addr);
+        }
+        addr = UserManager.getCorrectedEmail(addr);
+        UserProfile user = UserManager.lookupUserByAnyId(addr);
+        if (user == null) {
+            return null;
+        }
+        return new AddressListEntry(user);
+    }
+
+    public static AddressListEntry findByAnyIdOrFail(String addr) throws Exception {
+        AddressListEntry ale = findByAnyId(addr);
+        if (ale != null) {
+            return ale;
+        }
+        throw WeaverException.newBasic("Unable to find a user with id (%s)", addr);
+    }
+
+    public static AddressListEntry findOrCreate(String addr) {
+        AddressListEntry ale = findByAnyId(addr);
+        if (ale == null) {
+            ale = new AddressListEntry(addr);
+        }
+        return ale;
     }
 
     /**
@@ -122,6 +153,7 @@ public class AddressListEntry implements UserRef
 
             //check to see if we have seen this email address before
             //and if so we will be using the previously recorded name
+            // really should ELIMINATE MicroProfileRecord
             MicroProfileRecord record = MicroProfileMgr.findMicroProfileById(uid);
 
             //if not, then put the name we have at this point into the
@@ -145,8 +177,7 @@ public class AddressListEntry implements UserRef
     * Pass the name of a role in, and get an AddressListEntry
     * that represents a reference to a role in return.
     */
-    public static AddressListEntry newRoleRef(String roleName)
-    {
+    public static AddressListEntry newRoleRef(String roleName) {
         AddressListEntry retval = new AddressListEntry(roleName);
         retval.setRoleRef(true);
         return retval;

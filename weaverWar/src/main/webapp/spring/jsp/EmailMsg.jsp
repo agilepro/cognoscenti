@@ -17,8 +17,8 @@
     NGBook ngb = ngw.getSite();
 
     MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
-    AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
-    AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+    AddressListEntry fromAle = AddressListEntry.findOrCreate(emailMsg.getFromAddress());
+    AddressListEntry toAle = AddressListEntry.findOrCreate(emailMsg.getAddressee());
     String containerKey = emailMsg.getCommentContainer();
     String containerUrl = null;
     String aboutName = null;

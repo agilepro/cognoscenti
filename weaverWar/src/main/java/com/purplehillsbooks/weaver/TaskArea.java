@@ -57,7 +57,7 @@ public class TaskArea extends JSONWrapper {
             JSONObject oneAss = assignees.getJSONObject(i);
             String oneName = oneAss.getString("uid");
             if (sourceUser.equalsIgnoreCase(oneName)) {
-                AddressListEntry ale = new AddressListEntry(destUser);
+                AddressListEntry ale = AddressListEntry.findOrCreate(destUser);
                 newOnes.put(ale.getJSON());
             }
             else {

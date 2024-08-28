@@ -42,6 +42,7 @@ import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
@@ -569,7 +570,7 @@ public class MeetingControler extends BaseController {
       private void addVisitors(AuthRequest ar, JSONObject repo, String siteId, String pageId) throws Exception {
           JSONArray visitors = new JSONArray();
           for (String userKey : ar.whoIsVisiting(siteId, pageId)) {
-              AddressListEntry ale = new AddressListEntry(userKey);
+              AddressListEntry ale = AddressListEntry.findOrCreate(userKey);
               visitors.put(ale.getJSON());
           }
           repo.put("visitors", visitors);
@@ -982,7 +983,7 @@ public class MeetingControler extends BaseController {
                   JSONArray users = timeZoneRequest.getJSONArray("users");
                   for (int i=0; i<users.length(); i++) {
                       String oneUser = users.getString(i);
-                      UserProfile up = ar.getCogInstance().getUserManager().lookupUserByAnyId(oneUser);
+                    UserProfile up = UserManager.lookupUserByAnyId(oneUser);
                       if (up!=null) {
                           String tx = up.getTimeZone();
                           if (tx!=null && tx.length()>0) {

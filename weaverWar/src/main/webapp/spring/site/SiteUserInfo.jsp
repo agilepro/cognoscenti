@@ -12,7 +12,7 @@
     NGBook  site = cog.getSiteByIdOrFail(siteId);
     
     
-    AddressListEntry ale = new AddressListEntry(userKey);
+    AddressListEntry ale = AddressListEntry.findOrCreate(userKey);
     UserProfile user = UserManager.getStaticUserManager().lookupUserByAnyId(userKey);
     JSONObject userDetails = new JSONObject();
     if (user!=null) {

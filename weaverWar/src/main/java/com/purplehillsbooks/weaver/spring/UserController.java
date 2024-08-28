@@ -565,7 +565,7 @@ public class UserController extends BaseController {
                 GoalRecord taskRecord = null;
                 for (String taskId : tasksToBeUnassigned) {
                     taskRecord = ngw.getGoalOrFail(taskId);
-                    taskRecord.getAssigneeRole().removePlayer(new AddressListEntry(up.getPreferredEmail()));
+                    taskRecord.getAssigneeRole().removePlayer(AddressListEntry.findOrCreate(up.getPreferredEmail()));
                     taskRecord.setModifiedDate(ar.nowTime);
                     taskRecord.setModifiedBy(ar.getBestUserId());
                     HistoryRecord.createHistoryRecord(ngw, taskRecord.getId(),
@@ -669,7 +669,7 @@ public class UserController extends BaseController {
                            HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
+            UserProfile searchedFor = UserManager.lookupUserByAnyId(userKey);
             ar.req.setAttribute("userKey",  userKey);
             if (searchedFor==null) {
                 if (userKey.indexOf("@")<0) {
@@ -705,7 +705,7 @@ public class UserController extends BaseController {
                 return;
             }
             ar.req.setAttribute("userKey",  userKey);
-            UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
+            UserProfile searchedFor = UserManager.lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
                 response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/PersonShow.htm");
@@ -742,7 +742,7 @@ public class UserController extends BaseController {
             String token = uCache.genEmailAddressAttempt(newEmail);
 
             File templateFile = cog.getConfig().getFileFromRoot("email/ConfirmEmail.chtml");
-            OptOutAddr ooa = new OptOutAddr(new AddressListEntry(newEmail));
+            OptOutAddr ooa = new OptOutAddr(AddressListEntry.findOrCreate(newEmail));
             String confirmAddress = "v/" + userKey + "/confirmEmailAddress.htm?token=" + token;
 
             JSONObject mailData = user.getJSON();
@@ -802,7 +802,7 @@ public class UserController extends BaseController {
             UserProfile fromUser = ar.getUserProfile();
             postObject.put("from", fromUser.getJSON());
 
-            AddressListEntry toUser = new AddressListEntry(destinationUser.getPreferredEmail());
+            AddressListEntry toUser = AddressListEntry.findOrCreate(destinationUser.getPreferredEmail());
             OptOutAddr ooa = new OptOutAddr(toUser);
             postObject.put("to", toUser.getJSON());
 

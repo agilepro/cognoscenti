@@ -331,7 +331,7 @@ public class GoalRecord extends BaseRecord {
             if (needsComma) {
                 ar.write(", ");
             }
-            AddressListEntry ale = new AddressListEntry(assignee);
+            AddressListEntry ale = AddressListEntry.findOrCreate(assignee);
             ale.writeLink(ar);
             needsComma = true;
         }
@@ -1002,7 +1002,7 @@ public class GoalRecord extends BaseRecord {
                 creatorProfile = ownerList.get(0).getUserProfile();
             }
             else {
-                AddressListEntry commenter = new AddressListEntry(creator);
+                AddressListEntry commenter = AddressListEntry.findOrCreate(creator);
                 creatorProfile = commenter.getUserProfile();
             }
 
@@ -1015,7 +1015,7 @@ public class GoalRecord extends BaseRecord {
                 }
             }
             if (!found) {
-                players.add(new AddressListEntry(creator));
+                players.add(AddressListEntry.findOrCreate(creator));
             }
 
             List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
@@ -1114,7 +1114,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
-        UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
+        UserProfile creatorUser = UserManager.lookupUserByAnyId(getCreator());
         w.write("BEGIN:VCALENDAR\n");
         w.write("VERSION:2.0\n");
         w.write("PRODID:-//example/Weaver//NONSGML v1.0//EN\n");

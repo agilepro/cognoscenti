@@ -61,7 +61,7 @@ public class MeetingNotesCache {
             //now add the participants if any
             MeetingRecord meet = ngw.findMeeting(this.meetingId);
             for (String part : meet.getParticipants()) {
-                AddressListEntry.addIfNotPresent(targetPlayers, new AddressListEntry(part));
+                AddressListEntry.addIfNotPresent(targetPlayers, AddressListEntry.findOrCreate(part));
             }
             
             //now add any presenters if not already here

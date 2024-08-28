@@ -42,8 +42,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -261,10 +259,10 @@ public class SuperAdminController extends BaseController {
 
              String toAddress = requestInfo.getString("to");
              String from = requestInfo.getString("from");
-             AddressListEntry fromAddress = new AddressListEntry(from);
+             AddressListEntry fromAddress = AddressListEntry.findOrCreate(from);
              String body = requestInfo.getString("body");
              String subject = requestInfo.getString("subject");
-             OptOutAddr ooa = new OptOutAddr(new AddressListEntry(toAddress));
+             OptOutAddr ooa = new OptOutAddr(AddressListEntry.findOrCreate(toAddress));
              
              MailInst msg = MailInst.genericEmail("$", "$", subject, body);
              EmailSender.generalMailToOne(msg, fromAddress, ooa);

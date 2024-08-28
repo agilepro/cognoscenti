@@ -99,7 +99,7 @@ public class SiteMailGenerator extends DOMFace {
         }
 
         //didn't find them, then act as if they were directly added
-        return new OptOutDirectAddress(new AddressListEntry(userId));
+        return new OptOutDirectAddress(AddressListEntry.findOrCreate(userId));
     }
 
 
@@ -164,7 +164,7 @@ public class SiteMailGenerator extends DOMFace {
         mailMsg.setSubject(subject);
         mailMsg.setBodyText(entireBody);
 
-        sender.createEmailRecordInDB(mailMsg, new AddressListEntry(from), ooa.getEmail());
+        sender.createEmailRecordInDB(mailMsg, AddressListEntry.findOrCreate(from), ooa.getEmail());
         System.out.println("SiteMail was sent to ("+ooa.getEmail()+") "+subject);
     }
 

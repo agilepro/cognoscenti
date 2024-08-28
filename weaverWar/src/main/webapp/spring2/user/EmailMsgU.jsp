@@ -19,8 +19,8 @@
     String aboutType = null;
     if (pageId != null && pageId.length()>1 ) {
         NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(emailMsg.getSiteKey(), emailMsg.getWorkspaceKey()).getWorkspace();
-        AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
-        AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+        AddressListEntry fromAle = AddressListEntry.findOrCreate(emailMsg.getFromAddress());
+        AddressListEntry toAle = AddressListEntry.findOrCreate(emailMsg.getAddressee());
         String containerKey = emailMsg.getCommentContainer();
         
         if (containerKey != null && containerKey.length()>0) {

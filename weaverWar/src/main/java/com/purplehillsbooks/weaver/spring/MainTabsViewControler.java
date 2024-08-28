@@ -290,7 +290,7 @@ public class MainTabsViewControler extends BaseController {
             if ("Remove Me".equals(cmd)) {
                 String role = ar.reqParam("role");
                 NGRole specRole = ngw.getRoleOrFail(role);
-                specRole.removePlayer(new AddressListEntry(email));
+                specRole.removePlayer(AddressListEntry.findOrCreate(email));
                 ngw.getSite().flushUserCache();
             }
             else {

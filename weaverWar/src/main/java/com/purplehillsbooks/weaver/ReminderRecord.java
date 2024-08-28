@@ -274,7 +274,7 @@ public class ReminderRecord extends DOMFace
 
     public void writeReminderEmailBody(AuthRequest ar, NGWorkspace ngw) throws Exception {
         String userName = getModifiedBy();
-        AddressListEntry ale = new AddressListEntry(userName);
+        AddressListEntry ale = AddressListEntry.findOrCreate(userName);
 
         ar.write("<table>");
         ar.write("<p>From: ");
@@ -318,7 +318,7 @@ public class ReminderRecord extends DOMFace
     }
 
     public JSONObject getReminderEmailData(AuthRequest ar, NGContainer ngp) throws Exception {
-        AddressListEntry ale = new AddressListEntry(getModifiedBy());
+        AddressListEntry ale = AddressListEntry.findOrCreate(getModifiedBy());
         JSONObject data = new JSONObject();
         data.put("from", ale.getJSON());
         data.put("instructions", getInstructions());
@@ -346,7 +346,7 @@ public class ReminderRecord extends DOMFace
 
             MailInst msg = ngw.createMailInst();
             msg.setSubject(subject);
-            AddressListEntry from =  new AddressListEntry(EmailSender.composeFromAddress(ngw));
+            AddressListEntry from =  AddressListEntry.findOrCreate(EmailSender.composeFromAddress(ngw));
             msg.setBodyFromTemplate(templateFile, data, ooa);
             EmailSender.generalMailToOne(msg, from, ooa);
         }

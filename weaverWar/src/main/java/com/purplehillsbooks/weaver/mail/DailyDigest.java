@@ -26,7 +26,6 @@ import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.streams.HTMLWriter;
@@ -705,7 +704,7 @@ public class DailyDigest {
                 ar.write("\n </td>");
 
                 ar.write("\n <td>");
-                (new AddressListEntry(reminder.getModifiedBy()))
+                (AddressListEntry.findOrCreate(reminder.getModifiedBy()))
                         .writeLink(ar);
                 // ar.write(reminder.getModifiedBy());
                 ar.write("\n </td>");

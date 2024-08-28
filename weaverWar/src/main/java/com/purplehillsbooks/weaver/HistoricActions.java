@@ -56,7 +56,7 @@ public class HistoricActions {
      * @return the site created, or null if denied
      */
     public NGBook completeSiteRequest(SiteRequest siteRequest, boolean granted) throws Exception {
-        AddressListEntry ale = new AddressListEntry(siteRequest.getRequester());
+        AddressListEntry ale = AddressListEntry.findOrCreate(siteRequest.getRequester());
         NGBook ngb = null;
         if (granted) {
             //Create new Site

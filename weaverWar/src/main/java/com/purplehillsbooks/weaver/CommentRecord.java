@@ -115,7 +115,7 @@ public class CommentRecord extends DOMFace {
     }
 
     public AddressListEntry getUser()  {
-        return new AddressListEntry(getAttribute("user"));
+        return AddressListEntry.findOrCreate(getAttribute("user"));
     }
     public void setUser(UserRef newVal) {
         if (newVal==null) {
@@ -666,7 +666,7 @@ public class CommentRecord extends DOMFace {
                     continue;
                 }
                 String responseUser = oneResp.getString("user");
-                AddressListEntry ale = new AddressListEntry(responseUser);
+                AddressListEntry ale = AddressListEntry.findOrCreate(responseUser);
                 boolean removeMe = (oneResp.has("removeMe") && oneResp.getBoolean("removeMe"));
                 if (removeMe) {
                     removeResponse(ale);

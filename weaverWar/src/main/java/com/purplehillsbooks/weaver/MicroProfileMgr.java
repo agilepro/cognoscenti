@@ -84,7 +84,7 @@ public class MicroProfileMgr {
             String lowerCase = profileRecord.getId().toLowerCase();
             if (MicroProfileRecord.validEmailAddress(lowerCase)) {
                 microProfiles.put(lowerCase, profileRecord);
-                allProfileIds.add(new AddressListEntry(profileRecord.getId()));
+                allProfileIds.add(AddressListEntry.findOrCreate(profileRecord.getId()));
             }
         }
     }
@@ -114,7 +114,7 @@ public class MicroProfileMgr {
                 }
                 else {
                     //seems like we should remember email addresses even if we don't have a name
-                    res.add(new AddressListEntry(id));
+                    res.add(AddressListEntry.findOrCreate(id));
                 }
             }
         }

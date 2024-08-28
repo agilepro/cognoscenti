@@ -107,7 +107,7 @@ public class ResponseRecord extends DOMFace
         OptOutAddr.appendOneDirectUser(commenter1, sendTo);
 
 
-        AddressListEntry responder = new AddressListEntry(getUserId());
+        AddressListEntry responder = AddressListEntry.findOrCreate(getUserId());
         UserProfile commenterProfile = responder.getUserProfile();
         if (commenterProfile==null || !commenterProfile.hasLoggedIn()) {
             System.out.println("DATA PROBLEM: proposal response came from a person who has not logged in ("+getUserId()+") ignoring");
@@ -133,7 +133,7 @@ public class ResponseRecord extends DOMFace
         if (toProfile!=null) {
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }
-        AddressListEntry owner = new AddressListEntry(this.getUserId());
+        AddressListEntry owner = AddressListEntry.findOrCreate(this.getUserId());
         String detailMsg = "??";
         boolean isProposal = false;
         switch (cr.getCommentType()) {
@@ -181,7 +181,7 @@ public class ResponseRecord extends DOMFace
 
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
-        AddressListEntry ale = new AddressListEntry(getUserId());
+        AddressListEntry ale = AddressListEntry.findOrCreate(getUserId());
         jo.put("alt", ale.getJSON());
         jo.put("user", ale.getUniversalId());
         jo.put("userName", ale.getName());

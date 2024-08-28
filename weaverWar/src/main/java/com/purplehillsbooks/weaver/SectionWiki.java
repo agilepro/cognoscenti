@@ -175,7 +175,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         TopicRecord newNote = noteSection.createChildWithID(
             SectionForNotes.LEAFLET_NODE_NAME, TopicRecord.class, "id", IdGenerator.generateKey());
         newNote.setOwner(wikiSection.getLastModifyUser());
-        newNote.setModUser(new AddressListEntry(wikiSection.getLastModifyUser()));
+        newNote.setModUser(AddressListEntry.findOrCreate(wikiSection.getLastModifyUser()));
         newNote.setLastEdited(wikiSection.getLastModifyTime());
         newNote.setEffectiveDate(wikiSection.getLastModifyTime());
         newNote.setSubject(def.displayName + " - " + wikiSection.parent.getFullName());

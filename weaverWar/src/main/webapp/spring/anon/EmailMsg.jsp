@@ -18,8 +18,8 @@
     if (emailMsg==null) {
         throw new Exception("Sorry, can not  find an email message #"+msgId);
     }
-    AddressListEntry fromAle = new AddressListEntry(emailMsg.getFromAddress());
-    AddressListEntry toAle = new AddressListEntry(emailMsg.getAddressee());
+    AddressListEntry fromAle = AddressListEntry.findOrCreate(emailMsg.getFromAddress());
+    AddressListEntry toAle = AddressListEntry.findOrCreate(emailMsg.getAddressee());
     
     JSONObject mailObject = new JSONObject();
     String specialBody = "";

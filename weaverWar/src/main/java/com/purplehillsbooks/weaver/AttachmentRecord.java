@@ -308,7 +308,7 @@ public class AttachmentRecord extends CommentContainer {
         String modifiedBy = checkAndReturnAttributeValue("modifiedBy");
 
         //clean up old email addresses, and send latest if found
-        return new AddressListEntry(modifiedBy);
+        return AddressListEntry.findByAnyId(modifiedBy);
     }
     public String getModifiedBy() {
         //clean up old email addresses, and send latest if found

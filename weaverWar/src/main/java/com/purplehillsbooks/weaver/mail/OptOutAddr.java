@@ -130,14 +130,14 @@ public class OptOutAddr {
     }
 
     public boolean isUserWithProfile() {
-        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getEmail());
+        UserProfile up = UserManager.lookupUserByAnyId(getEmail());
         return (up!=null);
     }
 
 
     public void prepareInternalMessage(Cognoscenti cog) throws Exception {
         MemFile body = new MemFile();
-        UserProfile up = cog.getUserManager().lookupUserByAnyId(getEmail());
+        UserProfile up = UserManager.lookupUserByAnyId(getEmail());
         AuthRequest clone = new AuthDummy(up, body.getWriter(), cog);
         writeUnsubscribeLink(clone);
         clone.flush();
@@ -164,7 +164,7 @@ public class OptOutAddr {
     
     protected void writeConcludingPart(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
-        UserProfile up = clone.getCogInstance().getUserManager().lookupUserByAnyId(emailId);
+        UserProfile up = UserManager.lookupUserByAnyId(emailId);
         if(up != null){
             clone.write("  To change the e-mail communication you receive from ");
             clone.write("Weaver in future, you can ");
@@ -188,7 +188,7 @@ public class OptOutAddr {
 
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         assertValidEmail();
-        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(assignee.getEmail());
+        UserProfile up = UserManager.lookupUserByAnyId(assignee.getEmail());
         JSONObject jo = new JSONObject();
         String emailId = assignee.getEmail();
         jo.put("emailId", emailId);
@@ -273,7 +273,7 @@ public class OptOutAddr {
     public static void appendUsersEmail(List<String> emailList,
             List<OptOutAddr> collector) throws Exception {
         for (String email : emailList) {
-            AddressListEntry ale = new AddressListEntry(email);
+            AddressListEntry ale = AddressListEntry.findOrCreate(email);
             if (ale.isWellFormed()) {
                 appendOneUser(new OptOutDirectAddress(ale), collector);
             }

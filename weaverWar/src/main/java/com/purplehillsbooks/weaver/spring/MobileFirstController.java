@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver.spring;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;

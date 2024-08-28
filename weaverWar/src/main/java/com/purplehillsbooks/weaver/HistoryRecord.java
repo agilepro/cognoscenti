@@ -790,7 +790,7 @@ history.task.subtask.add    113
         ar.write("</a> was ");
         ar.writeHtml(convertEventTypeToString(getEventType()));
         ar.write(" by ");
-        AddressListEntry ale = new AddressListEntry(getResponsible());
+        AddressListEntry ale = AddressListEntry.findOrCreate(getResponsible());
         ale.writeLink(ar);
         ar.write(" on ");
         SectionUtil.nicePrintDate(ar.w, getTimeStamp(), null);
@@ -802,7 +802,7 @@ history.task.subtask.add    113
     }
 
     public JSONObject getJSON(NGWorkspace ngw, AuthRequest ar) throws Exception {
-        AddressListEntry ale = new AddressListEntry(getResponsible());
+        AddressListEntry ale = AddressListEntry.findOrCreate(getResponsible());
         JSONObject jo = new JSONObject();
         jo.put("ctxId", getContext());
         jo.put("ctxName", lookUpObjectName(ngw));

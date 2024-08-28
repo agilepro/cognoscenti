@@ -392,7 +392,7 @@ public class WikiToPDF
     {
 
         String meetingName = stripBadCharacters(meet.getName());
-        UserRef lastEditor = UserManager.getStaticUserManager().lookupUserByAnyId(meet.getOwner());
+        UserRef lastEditor = UserManager.lookupUserByAnyId(meet.getOwner());
         String startTime = convertDateAndTime(meet.getStartTime());
 
         headerText = "Meeting "+meetNum+": "+meetingName;
@@ -472,7 +472,7 @@ public class WikiToPDF
                 }
             }
             String person = rr.getUserId();
-            AddressListEntry responder = new AddressListEntry(person);
+            AddressListEntry responder = AddressListEntry.findOrCreate(person);
             Frame responseFrame = commentInterior.newInteriorFrame();
             responseFrame.setBorder(lightBlue, new Stroke());
             responseFrame.setMargin(0, 0, 5, 5);

@@ -261,11 +261,11 @@ public class ProjectGoalController extends BaseController {
         }
         if(assigneeAddress!=null) {
             //if the assignee is set, use it
-            task.getAssigneeRole().addPlayer(new AddressListEntry(assigneeAddress));
+            task.getAssigneeRole().addPlayer(AddressListEntry.findOrCreate(assigneeAddress));
         }
         else {
             //if the assignee is not set, then set assignee to the current user.
-            task.getAssigneeRole().addPlayer(new AddressListEntry(userProfile));
+            task.getAssigneeRole().addPlayer(userProfile.getAddressListEntry());
         }
 
 
@@ -332,17 +332,17 @@ public class ProjectGoalController extends BaseController {
         if (assignto==null || assignto.length()==0) {
             //The assignee is not set, then set assignee to the current user.
             //They can change that later.
-            task.getAssigneeRole().addPlayer(new AddressListEntry(userProfile));
+            task.getAssigneeRole().addPlayer(userProfile.getAddressListEntry());
         }
         else {
             String assignee = parseEmailId(assignto);
             if(assignee!=null) {
                 //if the assignee is set, use it
-                task.getAssigneeRole().addPlayer(new AddressListEntry(assignee));
+                task.getAssigneeRole().addPlayer(AddressListEntry.findOrCreate(assignee));
             }
             else {
                 //if the assignee is not set, then set assignee to the current user.
-                task.getAssigneeRole().addPlayer(new AddressListEntry(userProfile));
+                task.getAssigneeRole().addPlayer(userProfile.getAddressListEntry());
             }
         }
 
@@ -406,11 +406,11 @@ public class ProjectGoalController extends BaseController {
             NGRole goalRole = task.getAssigneeRole();
             if(removeUser!=""){
                 String removeAssignee= ar.defParam("removeAssignee","") ;
-                goalRole.removePlayer(new AddressListEntry(removeAssignee));
+                goalRole.removePlayer(AddressListEntry.findOrCreate(removeAssignee));
             }
             else{
                 goalRole.clear();
-                goalRole.addPlayer(new AddressListEntry(assignee));
+                goalRole.addPlayer(AddressListEntry.findOrCreate(assignee));
                 updateUserContactAndSaveUserPage(ar, "Add" ,assignto);
             }
 
@@ -480,7 +480,7 @@ public class ProjectGoalController extends BaseController {
                 NGRole assignees = goal.getAssigneeRole();
                 if (assignees.isPlayer(uProf)) {
                     String userId = assignees.whichIDForUser(uProf);
-                    AddressListEntry ale = new AddressListEntry(userId);
+                    AddressListEntry ale = AddressListEntry.findOrCreate(userId);
                     assignees.removePlayer(ale);
                     eventType = HistoryRecord.EVENT_PLAYER_REMOVED;
                     accomp = "using 'Remove Me' from anonymous web form";

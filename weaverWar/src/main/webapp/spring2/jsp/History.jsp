@@ -33,7 +33,7 @@ Required parameters:
         if (endRecord >= start+size) {
             break;
         }
-        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        AddressListEntry ale = AddressListEntry.findOrCreate(hist.getResponsible());
         JSONObject userObject = ale.getJSON();
         UserProfile responsible = ale.getUserProfile();
         if(responsible!=null && responsible.hasLoggedIn()) {

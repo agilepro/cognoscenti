@@ -177,7 +177,7 @@ public abstract class ContainerCommon extends NGContainer
     public void addPlayerToRole(String roleName,String newMember) throws Exception
     {
         NGRole role= getRoleOrFail(roleName);
-        role.addPlayer(new AddressListEntry(newMember));
+        role.addPlayer(AddressListEntry.findOrCreate(newMember));
     }
 
     public List<NGRole> findRolesOfPlayer(UserRef user) throws Exception {
@@ -437,7 +437,7 @@ public abstract class ContainerCommon extends NGContainer
             return false;
         }
 
-        AddressListEntry ale = new AddressListEntry(lr.getCreator());
+        AddressListEntry ale = AddressListEntry.findOrCreate(lr.getCreator());
         NGRole ngr = getRole(lr.getRole());
         if (ngr!=null) {
             //check to see if the user who created it, is still in the

@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -280,7 +279,7 @@ public class TopicController extends BaseController {
 
             topic.updateNoteFromJSON(noteInfo, ar);
             topic.setLastEdited(ar.nowTime);
-            topic.setModUser(new AddressListEntry(ar.getBestUserId()));
+            topic.setModUser(AddressListEntry.findByAnyIdOrFail(ar.getBestUserId()));
             if (!isAutoSave) {
                 HistoryRecord.createHistoryRecord(ngw, topic.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
                     0, eventType, ar, "");
@@ -351,7 +350,7 @@ public class TopicController extends BaseController {
             if (up==null) {
                 //if they are not logged in, but allowed, then they must have
                 //and emailId parameter
-                ale = new AddressListEntry(ar.reqParam("emailId"));
+                ale = AddressListEntry.findOrCreate(ar.reqParam("emailId"));
             }
             else {
                 ale = up.getAddressListEntry();
@@ -391,7 +390,7 @@ public class TopicController extends BaseController {
             if (up==null) {
                 //if they are not logged in, but allowed, then they must have
                 //and emailId parameter
-                ale = new AddressListEntry(ar.reqParam("emailId"));
+                ale = AddressListEntry.findOrCreate(ar.reqParam("emailId"));
             }
             else {
                 ale = up.getAddressListEntry();

@@ -56,7 +56,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         for (String assignee : getAssigneeList()) {
             if (assignee.length() > 0) {
-                list.add(new AddressListEntry(assignee));
+                list.add(AddressListEntry.findOrCreate(assignee));
             }
         }
         return list;
