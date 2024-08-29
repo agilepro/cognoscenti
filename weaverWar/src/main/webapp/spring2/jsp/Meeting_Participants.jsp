@@ -1,13 +1,14 @@
 
     <div style="max-width:800px">
       <div style="margin:10px;vertical-align:middle">
-          <span class="h2">Meeting Participants: </span> 
-          <span ng-hide="editMeetingPart=='participants'">
-              <button class="btn btn-comment btn-primary p-1" 
+          <span class=" col-md-4 h2">Meeting Participants: </span> 
+          <span class="col-md-2" ng-hide="editMeetingPart=='participants'">
+              <button class="btn btn-secondary btn-raised btn-wide mx-2 py-1 my-md-3 my-3" 
                       ng-click="startParticipantEdit()"
                       title="Add more people to the list below">
               <span class="fa fa-plus"></span> Add Participants </button>
           </span>
+          <span class="col-md-3 ms-auto me-3"><a class="btn-wide btn-comment btn-raised mx-2 py-1 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a></span>
       </div>
       <div class="well" ng-show="editMeetingPart=='participants'">
           <div>

@@ -100,7 +100,7 @@ Required parameters:
     Hashtable<String,String> seenBefore = new Hashtable<String,String>();
 
     for (HistoryRecord hist : histRecs) {
-        AddressListEntry ale = AddressListEntry.findOrCreate(hist.getResponsible());
+        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
         if(responsible!=null) {
@@ -526,7 +526,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <!-- COLUMN 2 -->
-    <div class="col-md-4 col-sm-12">
+    <div class="col-md-4 col-sm-12 px-0 align-center justify-content-center">
         <svg height="{{maxLength}}px" width="{{maxWidth}}px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
             <g ng-show="parent.key">
                 <ellipse cx="179" cy="69" rx="70" ry="35"
@@ -626,7 +626,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <!-- COLUMN 3 -->
-    <div class="col-md-4 col-sm-12">
+    <div class="col-md-4 col-sm-12 px-0 mx-0">
         <div class="accordion m-3" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingVision">

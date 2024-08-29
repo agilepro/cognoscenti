@@ -11,23 +11,18 @@
           <div class="row">
             <div class="col-6">
               <div class="form-group">
-            <label for="labels">Name of Agenda Item:</label>
+            <label class="h6" for="name">Name of Agenda Item:</label>
             <input ng-model="agendaItem.subject"  class="form-control"  placeholder="Enter Agenda Item Name"/>
-        </div>
-        <div class="form-check my-3 mx-2">
-                <input class="form-check-input form-control-md"  type="checkbox" ng-model="agendaItem.isSpacer" />
-                This is a break time
-        </div>
-        <div class="form-group row g-3">
-          <div class="col-auto">
-            <label for="labels">Planned Duration: (minutes)</label>
-            <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"/>
-        </div>          
+          </div>
+
+        <div class="form-group mt-3">
+          <label class="h6" for="description">Short Description</label>
+          <textarea class="form-control" maxlength="50" placeholder="Enter description" ng-model="agendaItem.description" ></textarea>
         </div>
             </div>
             <div class="col-6">
               <div class="form-group">
-            <label for="labels">Presenter:</label>
+            <label class=" h6" for="labels">Presenter:</label>
             <tags-input ng-model="agendaItem.presenterList"
                       placeholder="Enter user name or id"
                       display-property="name" key-property="uid"
@@ -37,14 +32,22 @@
             </tags-input>
               </div>
               <div class="form-check my-3 mx-2">
-            <input type="checkbox"  ng-model="agendaItem.proposed" class="form-check-input"/>
+                <input class="form-check-input form-control-md h6"  type="checkbox" ng-model="agendaItem.isSpacer" />
+                This is a break time
+        </div>
+              <div class="form-check my-3 mx-2">
+            <input type="checkbox"  ng-model="agendaItem.proposed" class="form-check-input h6"/>
             Proposed Item
               </div>
               <div class="form-group row g-3">
-                <div class="col-auto">
-                  <label for="labels">Actual Duration: (minutes)</label>
+                <div class="col-6">
+                  <label class="h6" for="labels ">Planned Duration: (minutes)</label>
+                  <input ng-model="agendaItem.duration"  class="form-control" />
+              </div> 
+                <div class="col-6">
+                  <label class="h6" for="labels ">Actual Duration: (minutes)</label>
                   <input ng-model="agendaItem.previousElapsed"  class="form-control" style="width:100px;" ng-hide="agendaItem.timerRunning"/>
-                  <span class="form-control" style="width:100px;color:lightgray" ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
+                  <span class="form-control"  ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}
                   </span>
                 </div>
               </div>
@@ -53,10 +56,10 @@
           <div class="row">
             <div class="col-12">
               <div class="form-group">
-            <label for="labels">Description:</label>
+            <label class="h6" for="labels ">Additional Details:</label>
             
             
-            <textarea class="form-control min-vh-50" placeholder="Enter description" ui-tinymce="tinymceOptions" ng-model="agendaItem.descriptionHtml" ></textarea>
+            <textarea class="form-control min-vh-50" placeholder="Enter discussion details" ui-tinymce="tinymceOptions" ng-model="agendaItem.details" ></textarea>
               </div>
             </div>
           </div>

@@ -1,17 +1,16 @@
 
-<div class="container-fluid">
-    <h2 class="h3 page-name text-secondary">Agenda:</h2>
 
-    <div class="container-fluid">
-      <div class="row" ng-dblclick="openAgenda(item)">
+    <div class="container-fluid col-12">
+      <div class="row d-flex" ng-dblclick="openAgenda(item)">
         <span ng-click="openAgenda(item)"></span>
-        <span ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary">
+        <span class="col-8" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary">
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
+          <span class="col-4 "><em><a class="h5 text-secondary" href="">Zoom Link Placeholder</a></em></span>
+
       </div>
-      <div class="row">
+      <div class="row d-flex">
         <div class="col-md-7">
           <div ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
-            <h4 ng-click="openAgendaControlled(item,'Description')" class="h6 mb-auto">Description: </h4>
             <div class="p pt-4 flex-grow-1" ng-bind-html="item.descriptionHtml"></div>
             <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to edit description
@@ -20,8 +19,8 @@
         </div>
         <div class="col-md-5">
           <div class="timers" >
-            <div class="row g-1 justify-content-between">
-              <span class="col-md-5">
+            <div class="row g-1">
+              <span class="col-md-5 me-0">
                 <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                 </div>
@@ -31,22 +30,18 @@
                 <span ng-show="item.timerRunning">
                     <button class="btn-endTime btn-raised mx-2 my-3" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                 </span>
-              
+
               
               </span>
               
-              <span class="col-md-7">
+              <span class="col-md-6">
 
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
                   <div ng-hide="item.presenterList && item.presenterList.length>0">
-                  </div>
-                  <div class="border-0 border shadow py-1 m-2 bg-weaverbody rounded">
-                  <div type="button" class="btn btn-wide btn-raised btn-primary text-weaverbody px-md-4 mx-md-4 my-2 mx-sm-2">
-                    <span ng-click="openAgenda(item)"></span> 
-                    Edit Agenda Item
                   </div>                  
-                  <div ng-repeat="presenter in item.presenterList">
-                    <ul class="navbar-btn" >
+                    
+                  <div class="ps-0" ng-repeat="presenter in item.presenterList">
+                    <ul class="navbar-btn ps-3" >
                       <span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)">Presenter:</span>
                       <li class="nav-item dropdown" id="presenter" data-toggle="dropdown"> 
                         <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" style="width:32px;height:32px" title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; {{presenter.name}}
@@ -60,15 +55,15 @@
                       </ul>
                     </li>
                     </ul>
-                      </div>
-                  </div> 
-                  <span class="h6 ms-1 fst-italic"  ng-show="meeting.state>=2">
+                  </div>
+                  <div class="container px-3 gy-5">
+                  <span class="h6 ms-0 fst-italic pb-5"  ng-show="meeting.state>=2">
                     item time remaining: {{item.duration - item.timerTotal| minutes}}
-                  </span> <br> <br>
-                  <span class="h6 ms-1 push-right"  ng-show="meeting.state>=2">
-                    elapsed duration: {{meeting.timerTotal|minutes}}  (meeting) 
+                  </span> <hr class="my-0">
+                  <span class="h6 mt-2 ms-0 push-right"  ng-show="meeting.state>=2">
+                    elapsed duration: <br>{{meeting.timerTotal|minutes}}  (meeting) 
                   </span>
-                 
+                </div>
                  
                   <!-- button to select timer
                   <ul type="button" class="btn btn-raised btn-primary text-weaverbody mx-2 mb-3" >
@@ -88,7 +83,7 @@
                               
             </div>
           </div>
-          <div class="col-md-7 ms-auto me-3"><a class="btn-wide btn-comment btn-raised mx-2 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a></div>
+          
       </div>
     
       <hr/>
@@ -297,9 +292,11 @@
               Create New <i class="fa fa-star-o"></i> Proposal</button>
           <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
               Create New <i class="fa fa-question-circle"></i> Round</button>
+          <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
+            Edit Agenda Item</button>
       </div>
 
-     
+      
   </div> <hr/>
       <div ng-repeat="cmt in item.comments"  ng-hide="item.isSpacer">
 
