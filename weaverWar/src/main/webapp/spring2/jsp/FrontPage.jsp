@@ -100,7 +100,7 @@ Required parameters:
     Hashtable<String,String> seenBefore = new Hashtable<String,String>();
 
     for (HistoryRecord hist : histRecs) {
-        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        AddressListEntry ale = AddressListEntry.findOrCreate(hist.getResponsible());
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
         if(responsible!=null) {

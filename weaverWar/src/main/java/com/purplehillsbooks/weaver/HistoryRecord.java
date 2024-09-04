@@ -141,19 +141,6 @@ public class HistoryRecord extends DOMFace
     {
         super(definingDoc, definingElement, p);
     }
-/*
-    public void copyFrom(HistoryRecord other)
-        throws Exception
-    {
-        setEventType(other.getEventType());
-        setContext(other.getContext());
-        setContextType(other.getContextType());
-        setContextVersion(other.getContextVersion());
-        setComments(other.getComments());
-        setTimeStamp(other.getTimeStamp());
-        setResponsible(other.getResponsible());
-    }
-*/
 
     public String getId()
         throws Exception
@@ -853,9 +840,6 @@ history.task.subtask.add    113
                 return "#" + dr.getNumber() + ": " + val;
             }
         }
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-        //    return "";
-        //}
         else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
             return objectKey;
         }
@@ -897,9 +881,6 @@ history.task.subtask.add    113
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             return ar.getResourceURL(ngw, "DecisionList.htm#DEC")+objectKey;
         }
-        //else if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-        //    return ar.getResourceURL(ngw, "projectAllTasks.htm");
-        //}
         else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
             return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
         }
