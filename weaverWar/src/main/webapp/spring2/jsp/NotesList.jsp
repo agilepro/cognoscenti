@@ -361,25 +361,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div class="contentColumn">
      
         <div class="well">Filter <input ng-model="filter"> &nbsp;
-            <span class="dropdown" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton" ng-click="toggleLabel(role)"
-                   style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+            <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             </span>
-            <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
-                       type="button" id="menu1" data-toggle="dropdown"
-                     
-                       title="Add Filter by Label">
-                    <i class="fa fa-filter"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-               style="width:320px;left:-130px">
-                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                         {{rolex.name}}</button>
-                 </li>
-               </ul>
+            <span class="dropdown nav-item mb-0">
+                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                           style="width:320px;left:-130px;margin-top:-2px;">
+                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                                 {{rolex.name}}</button>
+                         </li>
+                       </ul>
             </span> &nbsp;
             <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
             <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>

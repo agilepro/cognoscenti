@@ -6,8 +6,8 @@
 <div class="learningBox" ng-hide="learningMode.done" ng-cloak>
   <div class="learningInfo">
     <div class="h5">
-      Learning Path 
-      
+      Learning Path <button class="btn-comment btn-raised mx-3 " ng-click="toggleLearningDone()">Close</button>
+        
     </div>
     <div ng-bind-html="learningMode.description|wiki"></div>
   </div>
@@ -21,7 +21,8 @@
     </div>
     
     <hr/>
-  </div>
+  </div>        
+
   <div style="clear:both"></div>
 
 <%
@@ -31,7 +32,7 @@
         <button class="btn btn-secondary btn-wide btn-raised" ng-click="openLearningEditor()">
               Improve this Learning Path</button>
         <span class="h6">  <%=wrappedJSP%>  </span>
-        <span class="float-end"><button class="learningBtn btn-wide btn-raised me-5" ng-click="toggleLearningDone()">Close</button></span>
+
     </div>
 <%
     }

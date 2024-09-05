@@ -54,42 +54,46 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
+<div class="container  pull-left col-8 ms-4">
+    <div class="row well mb-3">
+        <span class="h6 col-8 ms-3 guideVocal">
+            These are your learning path steps.  As you close a learning path box on a 
+            page of the workspace, that is remembered.  But to see them again, please
+            uncheck the boxes below.</span>
 
-<div class="guideVocal">
-    These are your learning path steps.  As you close a learning path box on a 
-    page of the workspace, that is remembered.  But to see them again, please
-    uncheck the boxes below.
-
-    <button ng-click="clearAllLearning()" class="btn btn-primary btn-raised">
+    <button ng-click="clearAllLearning()" class="col-3 btn btn-primary btn-raised">
         Reset all Learning Path Flags</button>
-</div>
+    </div>
 
-
-    <div class="col-xs-12 col-sm-6 col-md-3 padded">
+    <div class="row ms-5 mt-3">
+        <span class="col-xs-12 col-sm-6 col-md-3 h5">
         <b>JSP</b>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-3 padded">
+        </span>
+        <span class="col-xs-12 col-sm-6 col-md-3 h5">
         <b>Mode</b>
-    </div>
-    <div class="col-xs-12 col-md-6 padded">
+        </span>
+        <span class="col-xs-12 col-md-6 h5">
         <b>Active</b>
+        </span>
+        <span class="col-xs-12 col-sm-12 col-md-12 border-bottom border-2"></span>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 bottomline"></div>
+    <div class="row ms-5">
 
-  <div ng-repeat="(jsp, path) in learningPath">
-    <div ng-repeat="step in path">
-        <div class="col-xs-12 col-sm-6 col-md-3 padded">
+        <div ng-repeat="(jsp, path) in learningPath">
+            <div class="row border-bottom border-1 py-3" ng-repeat="step in path">
+                <span class="col-3 ">
             <b>{{jsp}}</b>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-3 padded">
+                </span>
+                <span class="col-3 ">
             <b>{{step.mode}}</b> <br/>
             
-        </div>
-        <div class="col-xs-12 col-md-6 padded">
+                </span>
+                <span class="col-6 ">
             <img src="<%=ar.retPath%>bits/sliderOn.png" ng-hide="step.done">
             <img src="<%=ar.retPath%>bits/sliderOff.png" ng-show="step.done">
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 bottomline">
+                </span>
+            </div>    
+            
         </div>
      </div>
   </div>

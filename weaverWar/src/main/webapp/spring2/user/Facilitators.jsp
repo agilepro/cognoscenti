@@ -50,7 +50,7 @@ label {
     width: 100px;
 }
 input {
-    width: 300px;
+    width: 400px;
 }
 </style>
 
@@ -59,50 +59,46 @@ input {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="col col-lg-6 col-md-6 col-sm-12" style="height:600px;overflow: auto">
+<div class="container-fluid px-5 py-2" >
 
-    <table class="table" width="100%">
-        <tr>
-            <td>Name</td>
-        </tr>
-        <tr ng-repeat="fac in allFacilitators">
-            <td>
-              <a ng-click="setRec(fac)">{{fac.name}}</a>
-            </td>
-        </tr>
-    </table>
+    <div class="row">
+        <span class="col-3">Name</span>
+    </div>
+    <div class="row d-flex" ng-repeat="fac in allFacilitators">
+        <span class="col-4">
+          <a ng-click="setRec(fac)">{{fac.name}}</a>
+        </span>
+   
 
-</div>
-<div class="col col-lg-6 col-md-6 col-sm-12" style="height:600px;overflow: auto">
-
-    <div class="well">
-
-        <div>
+        <span class="well col-4 m-2">
+<div class="h5 mb-2">Contact Information</div>
+<br/>
+        <div class="h6 mb-2" >
             <label>Name</label>
             <input ng-model="selFac.name">
         </div>
-        <div>
+        <div class="h6 mb-2" >
             <label>Email</label>
             <input ng-model="selFac.uid">
         </div>
-        <div>
+        <div class="h6 mb-2" >
             <label>Available</label>
             <input ng-model="selFac.facilitator.isActive">
         </div>
-        <div>
+        <div class="h6 mb-2" >
             <label>Phone</label>
             <input ng-model="selFac.facilitator.phone">
         </div>
-        <div>
+        <div class="h6 mb-2" >
             <label>Region</label>
             <input ng-model="selFac.facilitator.region">
         </div>
-        <div>
+        <div class="h6 mb-2" >
             <label>Key</label>
             <input ng-model="selFac.key">
         </div>
-    </div>
+        </span>
 
-</div>
+    </div>
 
 </div>

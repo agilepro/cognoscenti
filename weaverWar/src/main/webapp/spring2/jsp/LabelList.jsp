@@ -56,7 +56,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.newLabelsCreated = [];
 
     
-    $scope.openEditLabelsModal = function (item) {
+    $scope.allLabels = <%= labelList.toString() %>;
+    
+    
+    $scope.openEditLabelsModal = function (label) {
         
         var attachModalInstance = $modal.open({
             animation: true,
@@ -65,16 +68,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             size: 'lg',
             resolve: {
                 siteInfo: function () {
-                  return $scope.siteInfo;
+                  return label;
+                },
+                siteInfo: function () {
+                    return $scope.siteInfo;
                 },
             }
         });
 
         attachModalInstance.result
-        .then(function (selectedActionItems) {
-            //not sure what to do here
+        .then(function (updatedLabel) {
+            // Handle saving the updated label
+            const index = $scope.allLabels.findIndex(l => l.id === updatedLabel.id);
+            if (index !== -1) {
+                $scope.allLabels[index] = updatedLabel; // Update the label in the list
+            }
         }, function () {
-            //cancel action - nothing really to do
+            // Cancel action
         });
     };
 
@@ -94,20 +104,67 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         var postdata = angular.toJson(postObj);
         $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.newLabelsCreated = data.list;
+        .then(function (response) {
+            $scope.newLabelsCreated = response.data.list;
             console.log("SUCCESS");
         })
-        .error( function(data, status, headers, config) {
-            console.log("FAILURE", data);
-            $scope.reportError(data);
+        .catch(function (error) {
+            console.log("FAILURE", error.data);
+            $scope.reportError(error.data);
         });
         $scope.selectedWS = {};        
     }
 
+    $scope.getAllLabels = function () {
+        var postURL = "getLabels.json";
+        $scope.showError = false;
+        $http.post(postURL, "{}")
+            .success(function (data) {
+                console.log("All labels are gotten: ", data);
+                $scope.allLabels = data.list;
+                $scope.sortAllLabels();
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
+    };
+
+    $scope.updateLabel = function (label) {
+        var key = label.name;
+        var postURL = "labelUpdate.json?op=Create";
+        var postdata = angular.toJson(label);
+        $scope.showError = false;
+        $http.post(postURL, postdata)
+            .success(function (data) {
+                console.log("Updated Label: ", data);
+                $scope.getAllLabels();
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
+    };
+
+    $scope.deleteLabel = function (label) {
+        var specialName = label.name;
+        var postURL = "labelUpdate.json?op=Delete";
+        var postdata = angular.toJson(label);
+        $scope.showError = false;
+        $http.post(postURL, postdata)
+            .success(function (data) {
+                console.log("Deleted Label: ", data);
+                $scope.getAllLabels();
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
+    };
 });
 
+
+
+
 </script>
+
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
@@ -122,43 +179,141 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
                         <a class="nav-link">Create or Delete Labels</a>
                     </span>
+                    <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button">Copy Labels from another Workspace
+                    </span>
+                    <table>
+                        <tr ng-hide="selectedWS.name">
+                            <td class="h5">
+                                From:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-3">
+                                <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="my-2 btn-flex btn-comment btn-raised">{{ws.name}}</button>
+                            </td>
+                        </tr>
+                        <tr style="height:50px;padding:15px" ng-show="selectedWS.name">
+                            <td class="h5">
+                                Confirm:
+                            </td>
+                        </tr>
+                        <tr ng-show="selectedWS.name">
+                            <td class="p-2">
+                                <button ng-click="copyLabels()" class="btn btn-small btn-outline-secondary btn-raised">Add all labels from --{{selectedWS.name}}-- to this workspace.</button>
+                                <button ng-click="cancelCopy()" class="mt-3 btn btn-small btn-danger btn-raised">Cancel</button>
+                            </td>
+                        </tr>
+                        <tr ng-show="newLabelsCreated.length>0">
+                            <td class="h5">
+                                Created:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:15px">
+                                <div ng-repeat="lab in newLabelsCreated">
+                                <button style="background-color:{{lab.color}};" class="labelButton">{{lab.name}}</button>
+                                </div>
+                            </td>
+                        </tr>
+                        </table>
+                </div>
+    
+                <div class="d-flex col-9"><div class="contentColumn">
+                    <h2 class="text-secondary fs-3">Edit Labels</h2>
+                    <div class="container-fluid">
+                        <div class="card col-md-12 align-top">
+                                <div class="card-body p-2" >
+                                    <div class="container">
+                                        <div class="row p-1">
+                                            <span class="col-3 fs-5 fw-bold">Label</span>
+                                            <span class="col-3 fs-5 fw-bold">Color</span>
+                                            <span class="col-3 fs-5 fw-bold"></span>
+                                        </div>
+                                        <div class="row" >
+                                            <div class="d-flex my-2" ng-repeat="labels in allLabels" ng-click="label.isEdit=true;label.editedName=lab.name">
+                                                <div class="col-md-3">
+                                                    <span ng-hide="label.isEdit || label.isNew">
+                                                        <button style="background-color:{{lab.color}}" class="btn-flex" placeholder="Enter Label Name">{{lab.name}}What name?</button>
+                                                    </span>
+                                                    <span ng-show="label.isEdit || label.isNew">
+                                                        <input class="form-control fs-6" style="width:200px; overflow: auto;" type="text" ng-model="label.editedName" placeholder="Enter Label Name">
+                                                    </span>
+                                                    
+                                                </div>
+    
+                                                <span class="col-md-3">
+                                                    <ul class="dropdown btn-flex" ng-show="label.isEdit || label.isNew">
+                                                        <li class="nav-item dropdown" type="button" id="EditLabels" data-bs-toggle="dropdown" style="background-color:{{rolex.color}}">
+                                                            <a class=" mt-0 border border-1 p-2 nav-link dropdown-toggle" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        {{rolex.color}}color</a>
+                        
+                                                            <ul class="dropdown-menu" role="menu" aria-labelledby="EditLabels">
+                                                                <li role="presentation" ng-repeat="color in colors">
+                                                                    <a class="nav-link dropdown-item p-1" style="background-color:{{color}}" href="#"  ng-click="lab.color=color">{{color}}</a></li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="dropdown" ng-hide="label.isEdit || label.isNew">
+                                                    {{lab.color}}
+                                                    </div>
+                                                </span>
                     
-    </div>
+                                            <span class="col-md-3 d-flex">
+                                                <span ng-hide="label.isEdit"></span>
+                                                <span ng-show="label.isNew">
+                                                    <button class="btn btn-sm btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
+                                                </span>
+                                                <span class="col-1" ng-hide="label.isEdit || label.isNew">
+                                                    <button class="btn btn-sm btn-flex btn-secondary" ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
+                                                </span>
+                                                <span ng-show="label.isEdit">
+                                                    <button class="btn btn-sm btn-flex btn-primary me-2" ng-click="updateLabel(label)">Save</button>
+                                                </span>
+                                                <span class="col-1" ng-show="label.isEdit">
+                                                    <button class="mx-2 btn btn-sm btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
+                                                </span>
+                                            </span>
+                                        </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
     
-    <div class="d-flex col-9"><div class="contentColumn">
-    <h2 class="text-secondary fs-3">Copy Labels from another Workspace</h2>
-    <div class="row col-12">
-    <div class="bg-weaver-white p-2" ng-hide="selectedWS.name">
-        <div class="ms-3 fs-4 fw-bold ">
-            From:
-        </div>
-        <span class="p-3">
-            <button class="btn btn-wide btn-flex btn-outline-secondary btn-raised shadow-sm mx-2 my-0" ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)">{{ws.name}}</button>
-        </span>
     
-    <span class="p-2" ng-show="selectedWS.name">
-        <span class="p-2">
-            Confirm:
-        </span>
-        <span class="p-2">
-            <button ng-click="copyLabels()" class="btn btn-small btn-warning btn-raised">Add all labels from --{{selectedWS.name}}-- to this workspace.</button>
-            <button ng-click="cancelCopy()" class="btn btn-small btn-default btn-raised">Cancel</button>
-        </span>
-    </span>
-    <span class="p-2" ng-show="newLabelsCreated.length>0">
-        <span class="p-2">
-            Created:
-        </span>
-        <span class="p-2">
-            <div ng-repeat="lab in newLabelsCreated">
-            <button style="background-color:{{lab.color}};" class="labelButton">{{lab.name}}</button>
+                        <div class="mt-5 p-3 bg-primary-subtle text-primary">
+                <span class="p-2 h5 my-3" id="attachDocumentLabel">
+                    Create Custom Labels
+                </span>
+                <div class="row d-flex mt-3 ms-2">
+                <span class="col-1"><label>Name:</label></span>
+                <span class="col-3"><input ng-model="newLabel.editedName" class="form-control"></span>
+                <span class="col-3">
+                <label>Select Custom Color: </label>{{nameMessage()}}</span>
+                <span class="col-md-3 mx-2">
+                    <input class="p-0 form-control" type="color" ng-model="newLabel.color">
+                    <ul class="dropdown btn btn-flex" ng-show="label.isEdit || label.isNew">
+                        <li class="nav-item dropdown" type="button" id="EditLabels" data-bs-toggle="dropdown" style="background-color:{{lab.color}}">
+                            <a class=" dropdown-toggle p-4" id="newLabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{lab.color}} </a>
+                
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="EditNewLabels">
+                                <li role="presentation" ng-repeat="color in colors">
+                                    <a class="dropdown-item p-1" style="background-color:{{color}}" href="#"  ng-click="newLabel.color=color">{{color}}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </span>
+                </div>
+                <button class="btn btn-primary btn-raised mt-3" ng-click="createLabel()">
+                Create</button>
+                        </div>
+                    </div>  
+
+                </div>    
             </div>
-        </span>
-    </span>
+        </div>
     </div>
-</div>  
-    </div>    
-</div>
 
 
 <script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

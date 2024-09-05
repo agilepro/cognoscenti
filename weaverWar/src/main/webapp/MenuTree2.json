@@ -514,15 +514,6 @@
             "NotesList.jsp",
             "NoteZoom.jsp"
           ],
-          "ng-click": "openTopicCreator()",
-          "name": "Create",
-          "title": "Create a new discussion"
-        },
-        {
-          "use": [
-            "NotesList.jsp",
-            "NoteZoom.jsp"
-          ],
           "href": "PDFExport.htm",
           "name": "Create PDF",
           "title": "Create a PDF of a discussion or discussions"
@@ -631,17 +622,6 @@
           "name": "Item View",
           "title": "List the actions items in the simpler items view",
           "readOnly": true
-        },
-        {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "GoalEdit.jsp",
-            "TaskAreas.jsp"
-          ],
-          "href": "GoalEdit.htm",
-          "name": "Create",
-          "title": "Create a new action item"
         },
         {
           "use": [

@@ -11,7 +11,7 @@
       <div class="row d-flex">
         <div class="col-md-7">
           <div ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
-            <div class="p pt-4 flex-grow-1" ng-bind-html="item.descriptionHtml"></div>
+            <div class="border border-2 border-primary-subtle py-2 px-4 m-4 " ng-bind-html="item.descriptionHtml"></div>
             <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to edit description
             </span>
