@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@ include file="/spring/jsp/include.jsp"
 %><%
-
     if (!Cognoscenti.getInstance(request).isInitialized()) {
         String go = ar.getCompleteURL();
         String configDest = ar.retPath + "init/config.htm?go="+URLEncoder.encode(go);
@@ -12,7 +11,36 @@
     if (property_msg_key.startsWith("nugen")) {
         warningMessage = ar.getMessageFromPropertyFile(property_msg_key, new Object[0]);
     }
-    UserProfile user = ar.getUserProfile();
+    UserProfile loggedUser = ar.getUserProfile();
+    boolean isLoggedIn = ar.isLoggedIn();
+    NGBook site = null;
+    NGWorkspace ws = null;
+    if (ar.ngp != null) {
+        if (ar.ngp instanceof NGBook) {
+            site = (NGBook) ar.ngp;
+        }
+        else {
+            ws = (NGWorkspace) ar.ngp;
+            site = ws.getSite();
+        }
+    }
+    String niceDate = SectionUtil.getDateAndTime(System.currentTimeMillis());
+    
+    JSONObject loginConfigSetup = new JSONObject();
+    loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    loginConfigSetup.put("serverUrl",   ar.baseURL);
+    
+    JSONObject loginInfoPrefetch = new JSONObject();
+    if (ar.isLoggedIn()) {
+        loginInfoPrefetch.put("userId", ar.getBestUserId());
+        loginInfoPrefetch.put("userName", loggedUser.getName());
+        loginInfoPrefetch.put("verified", true);
+        loginInfoPrefetch.put("msg", "Previously logged into server");
+    }
+    else {
+        //use this to indicate the very first display, before the page knows anything
+        loginInfoPrefetch.put("haveNotCheckedYet", true);
+    }
     
 
 %>
@@ -52,7 +80,7 @@
     <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/weaver.min.css" />
 
  
-    <title>Display Error</title>
+    <title>Display Warning</title>
 
 
 <!-- anon/Warning.jsp -->
@@ -61,24 +89,33 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.warningMessage = "<% ar.writeJS(warningMessage); %>"
     $scope.login = function() {
+        console.log("SLAP LOGIN:", SLAP);
         SLAP.loginUserRedirect();
     }
     $scope.logout = function() {
+        console.log("SLAP LOGOUT:", SLAP);
         SLAP.displayLoginStatus = function(data) {
-            window.location.reload();
             SLAP.displayLoginStatus = function () {};
+            window.location.reload();
         }
         SLAP.logoutUser();
     }
-    $scope.createNewSite = function() {
-        window.location = "../../NewSiteApplication.htm";
-    }
+    $scope.slap = SLAP;
 });
+function displayWelcomeMessage() {
+    console.log("SLAP:", SLAP);
+    <% if (!isLoggedIn) { %>
+    if (SLAP.loginInfo.isLoggedIn) {
+        // we can't reload because logging in is not finished yet
+        // window.location.reload();
+    }
+    <% } %>
+    // SLAP.displayLoginStatus = function () {};
+};
 
+SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
+console.log("SLAP:", SLAP);
 
-function reloadIfLoggedIn() {
-    //don't do anything if logged in, this is a warning message regardless of login status
-}
 </script>
 
 <style>
@@ -134,17 +171,6 @@ function reloadIfLoggedIn() {
     Weaver</span>
   </a>
 
-                <!-- Search Bar -->
-                <div class="row search">
-                  <form class="d-flex" role="search" action="searchAllNotes.htm">
-                    <div class="form-group specialweaver is-empty">
-                      <input type="text" class="form-control me-2 " name="s" placeholder=" &#xF002; Search" style="font-family:Arial, FontAwesome">
-                    </div>
-                    </form>
-                  </div>
-        
-                  
-                  <!-- end Search Bar -->
 
 
   <!-- Drop Down Workspaces -->
@@ -154,6 +180,7 @@ function reloadIfLoggedIn() {
       
       
       
+<% if (isLoggedIn) { %>
   <ul class="navbar-nav">
       <li class="nav-item dropdown">
             <a href="#" 
@@ -180,7 +207,6 @@ function reloadIfLoggedIn() {
 
   
         
-    
         <!-- Drop Down User -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-weaverbody"
@@ -202,21 +228,15 @@ function reloadIfLoggedIn() {
             <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 
             <li class="divider"></li>
-            <li><a class="dropdown-item" onclick='logOutPage();'>Log Out</a></li>
+            <li><a class="dropdown-item" ng-click='logout();'>Log Out</a></li>
  
           </ul>
         </li>
       </ul>
+<% } %>
       <!-- END App Bar -->
-      <!-- BEGIN Input Search -->
-      <div class="search navbar-left collapse">
-        <form class="navbar-form" role="search" action="searchAllNotes.htm">
-          <div class="form-group specialweaver is-empty">
-            <input type="text" class="form-control specialweaver" name="s" placeholder="Search">
-          </div>
-        </form>
-      </div>
-      <!-- END Input Search -->
+      
+      
     </div>
 </nav>
 
@@ -255,26 +275,48 @@ function reloadIfLoggedIn() {
               Error:
             </td>
             <td>
-            {{warningMessage}}
+            <b>{{warningMessage}}</b>
             </td>
           </tr>
+          <% if (ws != null) { %>
+          <tr>
+            <td class="header-column">
+              Workspace:
+            </td>
+            <td>
+                <% ar.writeHtml(ws.getFullName()); %>
+            </td>
+          </tr>
+          <% } %>
+          <% if (site != null) { %>
           <tr>
             <td class="header-column">
               Site:
             </td>
             <td>
-                <b>Sociocracy</b>
+                <% ar.writeHtml(site.getFullName()); %>
             </td>
           </tr>
+          <% } %>
+          <% if (isLoggedIn) { %>
           <tr>
             <td class="header-column">
-                Run By: 
+              Login as:
             </td>
             <td>
-                <% if (ar.ngp != null) {
+                <% ar.writeHtml(loggedUser.getName()); %>, <% ar.writeHtml(loggedUser.getKey()); %>, <% ar.writeHtml(loggedUser.getLastLoginId()); %>
+            </td>
+          </tr>
+          <% } %>
+          <tr>
+            <td class="header-column">
+                Admins: 
+            </td>
+            <td>
+                <% if (ws != null) {
                    NGRole admins = ar.ngp.getSecondaryRole(); 
                    boolean needsComma = false;
-                   for (AddressListEntry player : admins.getExpandedPlayers(ar.ngp)) {
+                   for (AddressListEntry player : admins.getExpandedPlayers(ws)) {
                        if (needsComma) {
                            ar.write(", ");
                        }
@@ -287,7 +329,23 @@ function reloadIfLoggedIn() {
                 %>
             </td>
           </tr>
-        </table> 
+          <tr>
+            <td class="header-column">
+              When:
+            </td>
+            <td>
+                <% ar.writeHtml(niceDate); %>
+            </td>
+          </tr>
+          <tr>
+            <td class="header-column">
+              URL:
+            </td>
+            <td>
+                <% ar.writeHtml(ar.getCompleteURL()); %>
+            </td>
+          </tr>
+         </table> 
     </div>
 
 
@@ -297,7 +355,7 @@ function reloadIfLoggedIn() {
 
 <% if (ar.isLoggedIn()) {  %>
     <div>
-        <p>You are currently logged in as <%=user.getName()%> (<%=user.getUniversalId()%>).</p>
+        <p>You are currently logged in as <%=loggedUser.getName()%> (<%=loggedUser.getUniversalId()%>).</p>
         <p>If that is the wrong user account, you can logout and login with the correct one.</p>
         <button class="btn btn-primary btn-raised" ng-click="logout()">
             Logout
@@ -307,11 +365,10 @@ function reloadIfLoggedIn() {
     
 <% } else { %>
     <div>
-        If you already have an account, please
+        <p>If you already have an account, please Login to find out more.</p>
         <button class="btn btn-primary btn-raised" ng-click="login()">
             Login
         </button>
-        to find out more.
     </div>
 <% } %>
 
@@ -326,15 +383,7 @@ function reloadIfLoggedIn() {
 
   <div>
     
-<% if (!ar.isLoggedIn()) { %>
-    <div>
-        No account?  Please
-        <button class="btn btn-primary btn-raised" ng-click="login()">
-            Register
-        </button> 
-        to get one.
-    </div>
-<% } %>
+
   </div>
   </div>
 </div>

@@ -111,7 +111,7 @@ public class BaseController {
     protected static void showDisplayWarning(AuthRequest ar, String why) throws Exception {
         System.out.println("SHOW DISPLAY WARNING: "+why);
         //always create a small delay when generating a warning.
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         ar.req.setAttribute("property_msg_key", why);
         ar.invokeRootJSP("DisplayWarning.jsp");
     }
