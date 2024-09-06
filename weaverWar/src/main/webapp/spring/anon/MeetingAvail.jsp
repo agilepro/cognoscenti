@@ -234,7 +234,7 @@ label {
     <table class="table">
       <tr>
         <td>Name</td>
-        <td>{{meeting.name}}</td>
+        <td><b>{{meeting.name}}</b></td>
       </tr>
       <tr>
         <td>Description</td>
@@ -246,6 +246,14 @@ label {
         <td>{{meeting.startTime |date:"dd-MMM-yyyy &nbsp; HH:mm"}}</td>
       </tr>
 <% } %>
+      <tr>
+        <td>Info</td>
+        <td>You can view the
+            <a href="MeetPrint.htm?id={{meeting.id}}&tem={{meeting.notifyLayout}}&mnm=<%=mnm%>">Agenda</a> or the 
+            <a href="MeetPrint.htm?id={{meeting.id}}&tem={{meeting.defaultLayout}}&mnm=<%=mnm%>">Minutes</a>
+        </td>
+      </tr>
+
 <% if (!ar.isLoggedIn()) { %>
       <tr ng-show="emailId">
         <td>Email</td>

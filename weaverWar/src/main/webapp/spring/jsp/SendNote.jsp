@@ -41,7 +41,7 @@ Optional Parameters:
     ar.setPageAccessLevels(ngw);
     ar.assertAccessWorkspace("Must be a member to send email");
     UserProfile uProf = ar.getUserProfile();
-    AddressListEntry uAle = AddressListEntry.findOrCreate(uProf);
+    AddressListEntry uAle = new AddressListEntry(uProf);
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
     JSONArray allLayoutNames = new JSONArray();
     for (File aFile : allLayouts) {
