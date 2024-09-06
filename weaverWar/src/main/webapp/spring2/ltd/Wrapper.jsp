@@ -278,7 +278,9 @@ myApp.filter('wiki', function() {
 myApp.filter('encode', function() {
   return window.encodeURIComponent;
 });
-
+function setUpLearningMethods($scope, $modal, $http) {
+    // learning path is not used on Limited pages
+}
  </script>
 
 <style>

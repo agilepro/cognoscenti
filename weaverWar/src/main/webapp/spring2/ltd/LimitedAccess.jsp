@@ -114,6 +114,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     for (String accessId : ar.ngsession.honararyAccessList()) {
         int colonPos = accessId.indexOf(":");
         int secondColon = accessId.indexOf(":", colonPos+2);
+        if (secondColon < 0) {
+            System.out.println(String.format("Unknown resource(%s) on LimitedAccess page with only one colon", accessId));
+            continue;
+        }
         String resourceType = accessId.substring(0, colonPos);
         String actualId = accessId.substring(colonPos+1, secondColon);
         

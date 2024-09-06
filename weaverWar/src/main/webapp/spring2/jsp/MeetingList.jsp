@@ -31,6 +31,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
     $scope.meetings = [];
     $scope.wsProxy.getMeetingList(data => {$scope.meetings = data.meetings});
+    console.log("MEETINGS", $scope.meetings);
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
     $scope.getMeetings = function() {
@@ -198,7 +199,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </a>
             </span>
             <span class="actions col-1"><a title="Meeting Agenda" 
-                 href="MeetingHtml.htm?id={{rec.id}}&mode=Agenda">
+                 href="{{rec.agendaUrl}}">
                 <button type="button" name="edit" class="btn-sm btn-comment"> 
                     <span class="fa fa-file-o"></span>
                 </button>
@@ -214,7 +215,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </span>
             <span class="col-1 actions">
               <a role="menuitem" tabindex="-1" title="Meeting Minutes" 
-                 href="MeetingHtml.htm?id={{rec.id}}&mode=Minutes">
+                 href="{{rec.minutesUrl}}">
                 <button type="button" name="edit" class="btn-sm btn-comment">
                     <span class="fa fa-file-text-o"></span>
                 </button>
