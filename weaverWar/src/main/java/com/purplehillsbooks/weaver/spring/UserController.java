@@ -408,7 +408,7 @@ public class UserController extends BaseController {
                     streamJSP(ar, "WarningNotMember.jsp");
                 }
                 else {
-                    showWarningView(ar, "nugen.project.login.msg");
+                    showDisplayWarning(ar, "nugen.project.login.msg");
                 }
                 return;
             }
@@ -673,7 +673,7 @@ public class UserController extends BaseController {
             ar.req.setAttribute("userKey",  userKey);
             if (searchedFor==null) {
                 if (userKey.indexOf("@")<0) {
-                    showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                    showDisplayWarning(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
                     return;
                 }
                 //this looks like an email address, so display non-profile display
@@ -701,7 +701,7 @@ public class UserController extends BaseController {
                 userKey = ar.defParam("uid", null);
             }
             if (userKey==null || userKey.length()==0) {
-                showWarningAnon(ar, "The FindPerson page requires an ID to search for but that appears to be missing from the URL.");
+                showDisplayWarning(ar, "The FindPerson page requires an ID to search for but that appears to be missing from the URL.");
                 return;
             }
             ar.req.setAttribute("userKey",  userKey);
@@ -712,7 +712,7 @@ public class UserController extends BaseController {
                 return;
             }
             if (userKey.indexOf("@")<0) {
-                showWarningAnon(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
+                showDisplayWarning(ar, "Can't find any person with that key ("+userKey+").  Maybe that person no longer has an account, or maybe there was some other mistake.");
                 return;
             }
             //this looks like an email address, so display non-profile display

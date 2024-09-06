@@ -50,11 +50,11 @@ public class SuperAdminController extends BaseController {
 
     private static void streamAdminJSP(AuthRequest ar, String jspName) throws Exception {
         if (!ar.isLoggedIn()) {
-            showWarningAnon(ar, "In order to see this section, you need to be logged in.");
+            showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
             return;
         }
         if (!ar.isSuperAdmin()) {
-            showWarningDepending(ar, "In order to see this section, you need to be a system administrator.");
+            showDisplayWarning(ar, "In order to see this section, you need to be a system administrator.");
             return;
         }
         ar.req.setAttribute("wrappedJSP", jspName);

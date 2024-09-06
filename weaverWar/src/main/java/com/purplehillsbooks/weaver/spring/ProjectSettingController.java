@@ -202,7 +202,7 @@ public class ProjectSettingController extends BaseController {
         long msgId = ar.reqParamLong("msg");
         MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
         if (emailMsg==null) {
-            showWarningDepending(ar, "Unable to find an existing email message with id: "+msgId);
+            showDisplayWarning(ar, "Unable to find an existing email message with id: "+msgId);
             return;
         }
         showJSPDepending(ar, ngw, "EmailMsg.jsp", true);
@@ -221,7 +221,7 @@ public class ProjectSettingController extends BaseController {
         if (eGenId!=null) {
             EmailGenerator eGen = ngw.getEmailGeneratorOrNull(eGenId);
             if (eGen==null) {
-                showWarningDepending(ar, "Can not find an email generator with the id: "+eGenId);
+                showDisplayWarning(ar, "Can not find an email generator with the id: "+eGenId);
                 return;
             }
         }

@@ -63,7 +63,7 @@ public class TopicController extends BaseController {
            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
            TopicRecord topic = ngw.getDiscussionTopic(topicId);
            if (topic==null) {
-               showWarningDepending(ar, "Can not find a discussion topic with the id  "+topicId
+               showDisplayWarning(ar, "Can not find a discussion topic with the id  "+topicId
                        +".  Was it deleted?");
                return;
            }

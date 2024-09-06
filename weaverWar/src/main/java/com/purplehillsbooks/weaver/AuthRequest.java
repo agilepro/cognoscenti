@@ -1465,7 +1465,7 @@ public class AuthRequest
     public void invokeJSP(String JSPName) throws Exception {
         try {
             if (!JSPName.startsWith("/spring")) {
-                System.out.println("invokeJSP hsa been invoked with something OTHER than spring!!!");
+                System.out.println("invokeJSP has been called with something OTHER than spring!!!");
             }
             else {
                 UserProfile uProf = getUserProfile();
@@ -1501,6 +1501,38 @@ public class AuthRequest
         }
         catch (Exception e) {
             throw WeaverException.newWrap("Unable to invoke JSP '%s'", e, JSPName);
+        }
+        finally {
+            nestingCount--;
+        }
+    }
+    public void invokeRootJSP(String JSPName) throws Exception {
+        try {
+            nestingCount++;
+            if (nestingCount>10) {
+                throw WeaverException.newBasic("Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
+            }
+            String relPath = getRelPathFromCtx();
+            resp.setContentType("text/html;charset=UTF-8");
+
+            RequestDispatcher rd = req.getRequestDispatcher(relPath+JSPName);
+            if (rd==null) {
+                //at one point we needed a retPath in here, but now we
+                //don't need it, and I am not sure why....
+                throw WeaverException.newBasic("Unable to construct a RequestDispatcher for JSP %s", JSPName);
+            }
+            Writer saveWriter = w;
+            String msg = reqParam("property_msg_key");
+            rd.include(req, resp);
+
+            //the JSP file may change the writer to be a writer for only the JSP
+            //but that writer is invalidated when we get back to here
+            //so replace the writer that we had before.
+            w = saveWriter;
+            flush();
+        }
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to invoke RAW JSP '%s'", e, JSPName);
         }
         finally {
             nestingCount--;

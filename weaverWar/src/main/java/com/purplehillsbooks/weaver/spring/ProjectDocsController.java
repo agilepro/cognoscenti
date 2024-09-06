@@ -139,7 +139,7 @@ public class ProjectDocsController extends BaseController {
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         AttachmentRecord att = ngw.findAttachmentByID(aid);
         if (att==null) {
-            showWarningDepending(ar, "Can not find a document with the id  "+aid+".  Was it deleted?");
+            showDisplayWarning(ar, "Can not find a document with the id  "+aid+".  Was it deleted?");
             return;
         }
         boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
@@ -568,7 +568,7 @@ public class ProjectDocsController extends BaseController {
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         SharePortRecord spr = ngw.findSharePortOrNull(id);
         if (spr == null) {
-            showWarningDepending(ar, "Unable to find a Share Port Side with the id: "
+            showDisplayWarning(ar, "Unable to find a Share Port Side with the id: "
                     +id+".  Maybe it was deleted, or maybe the link was damaged?");
             return;
         }
@@ -649,14 +649,14 @@ public class ProjectDocsController extends BaseController {
             return;
         }
         if (msgId<=0) {
-            showWarningDepending(ar, "Can not find that email, the id passed appears to be invalid: "+msgId);
+            showDisplayWarning(ar, "Can not find that email, the id passed appears to be invalid: "+msgId);
             return;
         }
         long commentId = MailInst.getCommentIdFromLocator(msgLocator);
 
         MailInst foundMsg = EmailSender.findEmailById(msgId);
         if (foundMsg==null) {
-            showWarningDepending(ar, "Can not find that email with id="+msgId+".  Maybe the email has been deleted?");
+            showDisplayWarning(ar, "Can not find that email with id="+msgId+".  Maybe the email has been deleted?");
             return;
         }
 
@@ -1204,7 +1204,7 @@ public class ProjectDocsController extends BaseController {
             String id = ar.reqParam("aid");
             AttachmentRecord att = ngw.findAttachmentByID(id);
             if (att==null) {
-                showWarningDepending(ar, "Can not find document with the id  "+id
+                showDisplayWarning(ar, "Can not find document with the id  "+id
                         +".  Was it deleted?");
                 return;
             }

@@ -113,11 +113,11 @@ public class ProjectGoalController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             if (taskId==null || taskId.length()==0) {
-                showWarningDepending(ar, "Missing id parameter for action item");
+                showDisplayWarning(ar, "Missing id parameter for action item");
             }
             GoalRecord goal = ngw.getGoalOrNull(taskId);
             if (goal==null) {
-                showWarningDepending(ar, "Can not find an action item with the id  "+taskId
+                showDisplayWarning(ar, "Can not find an action item with the id  "+taskId
                         +".  It might have been deleted or there might be some other mistake.");
                 return;
             }

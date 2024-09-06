@@ -108,35 +108,12 @@ public class BaseController {
         }
     }
 
-    protected static void showWarningView(AuthRequest ar, String why) throws Exception {
-        ar.req.setAttribute("property_msg_key", why);
-        streamJSP(ar, "Warning.jsp");
-    }
-    protected static void showWarningAnon(AuthRequest ar, String why) throws Exception {
+    protected static void showDisplayWarning(AuthRequest ar, String why) throws Exception {
+        System.out.println("SHOW DISPLAY WARNING: "+why);
         //always create a small delay when generating a warning.
         Thread.sleep(3000);
         ar.req.setAttribute("property_msg_key", why);
-        streamJSPAnon(ar, "Warning.jsp");
-    }
-    protected static void showWarningLtd(AuthRequest ar, String why) throws Exception {
-        ar.req.setAttribute("property_msg_key", why);
-        streamJSPLimited(ar, "Warning.jsp");
-    }
-    protected static void showWarningSite(AuthRequest ar, String why) throws Exception {
-        ar.req.setAttribute("property_msg_key", why);
-        streamJSPSite(ar, "Warning.jsp");
-    }
-
-    protected static void showWarningDepending(AuthRequest ar, String why) throws Exception {
-        ar.req.setAttribute("property_msg_key", why);
-        if (ar.isLoggedIn()) {
-            streamJSP(ar, "Warning.jsp");
-        }
-        else {
-            //always create a small delay when generating a warning.
-            Thread.sleep(3000);
-            streamJSPAnon(ar, "Warning.jsp");
-        }
+        ar.invokeRootJSP("DisplayWarning.jsp");
     }
 
 
@@ -151,7 +128,7 @@ public class BaseController {
      */
     protected static boolean warnNotLoggedIn(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
-            showWarningAnon(ar, "In order to see this section, you need to be logged in.");
+            showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
             return true;
         }
         if (needsToSetName(ar)) {
@@ -195,15 +172,15 @@ public class BaseController {
         }
         if(!ar.canAccessWorkspace()){
             if (ar.ngp instanceof NGBook) {
-                showWarningSite(ar, "In order to see this section, you need to be a site executive.");
+                showDisplayWarning(ar, "In order to see this section, you need to be a site executive.");
             }
             else {
-                showWarningLtd(ar, "In order to see this section, you need to be a workspace member.");
+                showDisplayWarning(ar, "In order to see this section, you need to be a workspace member.");
             }
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showWarningView(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, "nugen.missingSuperAdmin");
             return true;
         }
         if (warnSiteMoved(ar)) {
@@ -223,11 +200,11 @@ public class BaseController {
             return false;
         }
         if(!ar.canAccessWorkspace()){
-            showWarningSite(ar, "In order to see this section, you need to be a site executive.");
+            showDisplayWarning(ar, "In order to see this section, you need to be a site executive.");
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showWarningView(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, "nugen.missingSuperAdmin");
             return true;
         }
         return false;
@@ -278,7 +255,7 @@ public class BaseController {
                 warnNotLoggedIn(ar);
             }
             else {
-                showWarningAnon(ar, "Unable to access resource "+accessLevel+"/"+jspName);
+                showDisplayWarning(ar, "Unable to access resource "+accessLevel+"/"+jspName);
             }
         }
         else {
@@ -578,11 +555,11 @@ public class BaseController {
         }
         if(!ar.canAccessWorkspace()){
             ar.req.setAttribute("roleName", "Executive");
-            showWarningView(ar, "nugen.project.executive.msg");
+            showDisplayWarning(ar, "nugen.project.executive.msg");
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showWarningView(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, "nugen.missingSuperAdmin");
             return true;
         }
         return false;

@@ -75,7 +75,7 @@ public class MeetingControler extends BaseController {
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -124,12 +124,12 @@ public class MeetingControler extends BaseController {
         String id = ar.defParam("id", null);
         try{
             if (id==null || id.length()==0) {
-                showWarningDepending(ar, "Missing id parameter for meeting availability page");
+                showDisplayWarning(ar, "Missing id parameter for meeting availability page");
             }
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -159,12 +159,12 @@ public class MeetingControler extends BaseController {
         String id = ar.defParam("id", null);
         try{
             if (id==null || id.length()==0) {
-                showWarningDepending(ar, "Missing id parameter for meeting display page");
+                showDisplayWarning(ar, "Missing id parameter for meeting display page");
             }
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -188,7 +188,7 @@ public class MeetingControler extends BaseController {
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -216,7 +216,7 @@ public class MeetingControler extends BaseController {
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -261,7 +261,7 @@ public class MeetingControler extends BaseController {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
@@ -331,7 +331,7 @@ public class MeetingControler extends BaseController {
             //and we only need to check that the meeting exists if there is a parameter
             MeetingRecord meet = ngw.findMeetingOrNull(id);
             if (meet==null) {
-                showWarningDepending(ar, "Can not find meeting with the id  "+id
+                showDisplayWarning(ar, "Can not find meeting with the id  "+id
                         +".  Was it deleted?");
                 return;
             }
