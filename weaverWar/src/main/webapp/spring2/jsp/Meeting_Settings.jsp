@@ -58,6 +58,18 @@
               {{meeting.owner}}
             </span>
           </div>
+          <div class="row d-flex">
+            <span ng-click="editMeetingPart='conferenceUrl'" class="col-2 labelColumn">Video Conference:</span>
+            <span class="col-8" ng-hide="'conferenceUrl'==editMeetingPart">
+              <a href="{{meeting.conferenceUrl}}" target="_blank">{{meeting.conferenceUrl}}</a>
+            </span>
+            <span class="col-8" ng-show="'conferenceUrl'==editMeetingPart">
+                <div class="well form-horizontal form-group">
+                    <input ng-model="meeting.conferenceUrl"  class="form-control">
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </span>
+          </div>
           <div class="row" >
             <span class="col-2 labelColumn" style="cursor: text;">Previous Meeting: <span ng-show="previousMeeting.id"></span></span>
             <span class="col-8 mt-2" >

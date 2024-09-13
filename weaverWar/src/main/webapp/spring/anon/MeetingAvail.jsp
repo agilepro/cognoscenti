@@ -240,6 +240,10 @@ label {
         <td>Description</td>
         <td><div ng_bind-html="meeting.description|wiki"></div></td>
       </tr>
+      <tr>
+        <td>Video Conference</td>
+        <td><a href="{{meeting.conferenceUrl}}" target="_blank">{{meeting.conferenceUrl}}</a></td>
+      </tr>
 <% if (isScheduled) { %>
       <tr>
         <td>Date/Time</td>
