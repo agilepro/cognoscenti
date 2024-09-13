@@ -537,6 +537,7 @@ public class MeetingControler extends BaseController {
 
               meeting.updateFromJSON(meetingInfo, ar);
               meeting.updateAgendaFromJSON(meetingInfo, ar, ngw);
+              meeting.updateLastMeetingNotes(ngw);
 
               if (meetingInfo.has("agenda")) {
                   JSONArray agenda = meetingInfo.getJSONArray("agenda");
@@ -890,6 +891,7 @@ public class MeetingControler extends BaseController {
 
               //everything else updated here
               ai.updateFromJSON(ar, agendaInfo, ngw);
+              meeting.updateLastMeetingNotes(ngw);
 
               JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
               meetingCache.updateCacheNotes(ngw, ar, id);

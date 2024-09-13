@@ -190,7 +190,7 @@ app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $in
         $scope.autosave();
     }
     $scope.autosave = function () {
-        console.log("AUTOSAVE");
+        console.log("AUTOSAVE Meeting Notes");
         if ($scope.showError) {
             console.log("Autosave is turned off when there is an error.")
             return;

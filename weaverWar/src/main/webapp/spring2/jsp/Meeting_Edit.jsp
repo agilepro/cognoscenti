@@ -103,7 +103,7 @@
           <div ng-hide="item.isSpacer">
             <div class="modal-body" ng-style="bodyStyle()">
               <div class="form-group" >
-                <div ng-click="openNotesDialog(item)">                
+                <div>                
                   <div ng-bind-html="item.minutes | wiki"></div>
                 </div>
               </div>

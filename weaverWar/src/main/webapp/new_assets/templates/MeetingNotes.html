@@ -10,14 +10,11 @@
 <div class="modal-body" ng-style="bodyStyle()">
   <div ng-show="editMode=='edit'">
     <div class="form-group" 
-         title="The status is text describing the current situation for all the actions in this area.">
-      <label for="labels">Status:</label>
+         title="The minutes is text describing the the things discussed during the meeting.">
       <div style="margin-bottom:15px;">
     	<div ui-tinymce="tinymceOptions" ng-model="agendaHtml" 
              class="leafContent" style="min-height:250px;" ></div>
       </div>
-      <!--<textarea ng-model="agendaData.new" class="form-control markDownEditor" style="height:250px;width:80%"
-      placeholder="Enter meeting notes" ng-disabled="!isEditing"></textarea-->
     </div>
   </div>
   <div ng-show="editMode=='legend'">

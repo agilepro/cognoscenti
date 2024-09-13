@@ -1809,7 +1809,8 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         agendaModalInstance.result
             .then(function (changedAgendaItem) {
                 $scope.saveAgendaItemParts(changedAgendaItem,
-                    ["subject", "descriptionMerge", "duration", "timerElapsed", "isSpacer", "presenters", "proposed"]);
+                    ["subject", "descriptionMerge", "minutesMerge", "duration", 
+                     "timerElapsed", "isSpacer", "presenters", "proposed"]);
                 $scope.extendBackgroundTime();
             }, function () {
                 $scope.putGetMeetingInfo(null);
@@ -2103,6 +2104,8 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
 
     $scope.openNotesDialog = function (agendaItem) {
+        console.log("openNotesDialog called");
+        
         if (!embeddedData.canUpdate) {
             alert("Unable to update meeting because you are an observer");
             return;

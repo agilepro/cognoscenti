@@ -17,7 +17,7 @@
 
         <div class="form-group mt-3">
           <label class="h6" for="description">Short Description</label>
-          <textarea class="form-control" maxlength="50" placeholder="Enter description" ng-model="agendaItem.description" ></textarea>
+          <textarea class="form-control" maxlength="150" placeholder="Enter description" ng-model="agendaItem.description" ></textarea>
         </div>
             </div>
             <div class="col-6">
@@ -59,7 +59,7 @@
             <label class="h6" for="labels ">Additional Details:</label>
             
             
-            <textarea class="form-control min-vh-50" placeholder="Enter discussion details" ui-tinymce="tinymceOptions" ng-model="agendaItem.details" ></textarea>
+            <textarea class="form-control min-vh-50" placeholder="Enter meeting minutes" ui-tinymce="tinymceOptions" ng-model="minutesHtml" ></textarea>
               </div>
             </div>
           </div>

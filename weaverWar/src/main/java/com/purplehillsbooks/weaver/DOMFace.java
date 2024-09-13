@@ -190,12 +190,13 @@ public class DOMFace
         String result = ThreeWayMerge.mergeThem(curDoc, vals.optString("old",""),  vals.optString("new",""));
         setScalar(key, result);
     }
-    public boolean mergeIfPresent(JSONObject updateJSON, String key) throws Exception {
+    public void mergeIfPresent(JSONObject updateJSON, String key) throws Exception {
     	if (updateJSON.has(key+"Merge")) {
     		mergeScalarDelta(key, updateJSON.getJSONObject(key+"Merge"));
-    		return true;
     	}
-    	return false;
+        else {
+            updateScalarString(key, updateJSON);
+    	}
     }
 
     /**

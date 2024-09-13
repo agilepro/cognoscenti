@@ -2,7 +2,9 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
 
     $scope.siteId = siteId;
     $scope.agendaItem = agendaItem;
-    $scope.agendaItem.descriptionHtml = convertMarkdownToHtml($scope.agendaItem.description);
+    $scope.descriptionOld = $scope.agendaItem.description;
+    $scope.minutesOld = $scope.agendaItem.minutes;
+    $scope.minutesHtml = convertMarkdownToHtml($scope.agendaItem.minutes);
     $scope.descriptMode = false;
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 250;
@@ -12,10 +14,13 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     console.log("AgendaItem is: ", agendaItem);
 
     $scope.ok = function () {
-        var newDesc = HTML2Markdown($scope.agendaItem.descriptionHtml, {});
-        if (newDesc != $scope.agendaItem.description) {
-            var merObj = { new: newDesc, old: $scope.agendaItem.description };
-            $scope.agendaItem.descriptionMerge = merObj;
+        var newDesc = $scope.agendaItem.description;
+        if (newDesc != $scope.descriptionOld) {
+            $scope.agendaItem.descriptionMerge = { new: newDesc, old: $scope.descriptionOld };
+        }
+        var newMinutes = HTML2Markdown($scope.minutesHtml);
+        if (newMinutes != $scope.minutesOld) {
+            $scope.agendaItem.minutesMerge = { new: newMinutes, old: $scope.minutesOld };
         }
         if ($scope.agendaItem.isSpacer) {
             //spacers (breaks) can not be proposed

@@ -44,10 +44,10 @@
     </tr>
     <tr ng-hide="item.isSpacer">
       <td class="labelColumn" ng-click="openNotesDialog(item)">Notes/Minutes:</td>
-      <td ng-dblclick="openNotesDialog(item)">
+      <td>
         <div ng-bind-html="item.minutes | wiki"></div>
         <div ng-hide="item.minutes" class="doubleClickHint">
-            Double-click to edit notes
+            Click to edit notes
         </div>
       </td>
     </tr>

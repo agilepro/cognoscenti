@@ -392,7 +392,6 @@ public class AgendaItem extends CommentContainer {
         updateAttributeBool("isSpacer", input);
         updateAttributeBool("showMinutes", input);
         updateAttributeBool("proposed", input);
-        updateScalarString("lastMeetingMinutes", input);
         
         if (input.has("timerElapsed")) {
             if (getAttributeBool("timerRunning")) {
@@ -403,23 +402,13 @@ public class AgendaItem extends CommentContainer {
             }
             updateAttributeLong("timerElapsed", input);
         }
-        if (input.has("descriptionMerge")) {
-            JSONObject mergeObj = input.getJSONObject("descriptionMerge");
-            String lastSaveVal = mergeObj.optString("old", "");
-            String newVal = mergeObj.getString("new");
-            mergeScalar("desc", lastSaveVal, newVal);
-        }
-        else if (input.has("description")) {
-            String description = input.getString("description");
-            this.setDesc(description);
-        }
 
-        if (input.has("minutesMerge")) {
-        	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
-        }
-        else if (input.has("minutes")) {
-            updateScalarString("minutes", input);
-        }
+        // either descriptionMerge or description
+        mergeIfPresent(input, "description");
+
+        // either minutesMerge or minutes
+        mergeIfPresent(input, "minutes");
+
         updateCommentsFromJSON(input, ar);
 
         if (input.has("topics")) {

@@ -1523,4 +1523,27 @@ public class MeetingRecord extends DOMFace {
         }
         return jo;
     }
+
+    public void updateLastMeetingNotes(NGWorkspace ngw) throws Exception {
+        String previousMeetingId = getScalar("previousMeeting");
+        if (previousMeetingId==null || previousMeetingId.length()==0) {
+            return;
+        }
+        MeetingRecord previous = ngw.findMeetingOrNull(previousMeetingId);
+        if (previous==null) {
+            return;
+        }
+        for( AgendaItem newAi : this.getAgendaItems()) {
+            String newName = newAi.getSubject();
+            if (newName == null || newName.length()==0) {
+                continue;
+            }
+            newAi.setScalar("lastMeetingMinutes", "");
+            for (AgendaItem oldAi : previous.getAgendaItems()) {
+                if (newName.equals(oldAi.getSubject())) {
+                    newAi.setScalar("lastMeetingMinutes", oldAi.getMeetingNotes());
+                }
+            }
+        }
+    }
 }

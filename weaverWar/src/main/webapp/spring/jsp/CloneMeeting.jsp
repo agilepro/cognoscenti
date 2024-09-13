@@ -149,7 +149,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 newAgenda.readyToGo = false;
                 newAgenda.timerElapsed = 0;
                 newAgenda.comments = [];
-                newAgenda.lastMeetingMinutes = newAgenda.minutes;
                 newAgenda.minutes = "";
                 newMeeting.agenda.push(newAgenda);
             }

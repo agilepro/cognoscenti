@@ -164,10 +164,8 @@ public class DecisionRecord extends DOMFace {
         
         // Two ways to update, either with a decisionMerge object which contains a new 
         // and old value,  or by setting the decision value outright.
-        // Only on of these should be used generally.
-        if (!mergeIfPresent(decisionObj, "decision")) {
-        	updateScalarString("decision", decisionObj);
-        }
+        // Only one of these should be used generally.
+        mergeIfPresent(decisionObj, "decision");
 
         updateAttributeLong("timestamp", decisionObj);
         if (decisionObj.has("labelMap")) {

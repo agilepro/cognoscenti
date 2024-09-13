@@ -65,15 +65,6 @@
       "icon": "Workspaces.png"
     },
     {
-      "href": "RoleRequest.htm",
-      "name": "Role Requests",
-      "title": "Check on who has requested a position in a role",
-      "opts": [],
-      "useOpts": [],
-      "readOnly": true,
-      "icon": "RoleRequest.png"
-    },
-    {
       "href": "SiteUsers.htm",
       "name": "Users",
       "title": "Add, remove, and configure users.",
