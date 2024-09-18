@@ -357,16 +357,16 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.meetingStateStyle = function (val) {
         if (val <= 0) {
-            return "background-color:#f0c85a; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#f0c85a; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 10px;";
         }
         if (val <= 1) {
-            return "background-color:#7dc7ff; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#7dc7ff; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 10px;";
         }
         if (val == 2) {
-            return "background-color:#90b990; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#90b990; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 10px;";
         }
         if (val > 2) {
-            return "background-color:#9f8fae; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 1.5rem;";
+            return "background-color:#9f8fae; color: primary; font-weight: 500; font-size: 1.1rem; text-align: center; border-radius: 10px;";
         }
         return "Unknown";
     }
@@ -514,7 +514,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             style["background-color"] = "#ffb57d";
         }
         else {
-            style["background-color"] = "#90b990";
+            style["background"] = "#90b990";
         }
         /*
         if ($scope.selectedItem && item.position==$scope.selectedItem.position) {
@@ -1369,7 +1369,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             animation: true,
             templateUrl: embeddedData.retPath + "new_assets/templates/ActionItem.html" + templateCacheDefeater,
             controller: 'ActionItemCtrl',
-            size: 'lg',
+            size: 'xl',
             backdrop: "static",
             resolve: {
                 goal: function () {
@@ -1791,7 +1791,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             animation: true,
             templateUrl: embeddedData.retPath + "new_assets/templates/Agenda.html" + templateCacheDefeater,
             controller: 'AgendaCtrl',
-            size: 'lg',
+            size: 'xl',
             backdrop: "static",
             resolve: {
                 agendaItem: function () {
@@ -1809,8 +1809,8 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         agendaModalInstance.result
             .then(function (changedAgendaItem) {
                 $scope.saveAgendaItemParts(changedAgendaItem,
-                    ["subject", "descriptionMerge", "minutesMerge", "duration", 
-                     "timerElapsed", "isSpacer", "presenters", "proposed"]);
+                    ["subject", "descriptionMerge", "minutesMerge", "duration",
+                        "timerElapsed", "isSpacer", "presenters", "proposed"]);
                 $scope.extendBackgroundTime();
             }, function () {
                 $scope.putGetMeetingInfo(null);
@@ -2019,10 +2019,10 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.labelButtonClass = function (state, item) {
         if ("Items" == $scope.displayMode && item) {
             if (item.id == $scope.selectedItem.id) {
-                return "btn btn-outline-secondary btn-success labelButton";
+                return "btn btn-outline-primary btn-success labelButton";
             }
             else {
-                return "btn btn-outline-secondary labelButton";
+                return "btn btn-outline-primary labelButton";
             }
         }
         if (state == $scope.displayMode) {
@@ -2105,7 +2105,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openNotesDialog = function (agendaItem) {
         console.log("openNotesDialog called");
-        
+
         if (!embeddedData.canUpdate) {
             alert("Unable to update meeting because you are an observer");
             return;

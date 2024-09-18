@@ -1,7 +1,7 @@
 
 <div class="modal-item pt-3"></div>
   <div class="modal-header bg-primary-subtle text-primary">
-    <h5 class="modal-title" id="attachDocumentLabel">Action Item</h5>
+    <h4 class="modal-title" id="attachDocumentLabel">Action Item</h4>
 
   </div>
 
@@ -164,27 +164,33 @@
           </ul>
         </div>
 
-        <div class="" ng-show="goal.state==3 && goal.waitUntil<nowTime">
-          <div class="container"><div class="row"><span>
-            <button ng-click="setWaitUntil()" class="btn-comment" 
-                  ng-show="goal.waitUntil<nowTime">Pause Task</button>
-          </span><span style="padding:5px">
-            until 
-          </span><span>
-            <span datetime-picker ng-model="waitProxy" 
-              class="form-control" style="max-width:150px">
+        <div ng-show="goal.state==3 && goal.waitUntil<nowTime">
+          <div class="container ms-0 ps-0">
+            <div class="row ms-0 ps-0">
+              <span class="col-4 ms-0 ps-0">
+                <button ng-click="setWaitUntil()" class="btn-comment py-1" 
+                  ng-show="goal.waitUntil<nowTime">Pause Task Until</button>
+              </span>
+              <span datetime-picker ng-model="waitProxy" 
+              class="col-4 form-control py-1" style="max-width:150px">
               {{waitProxy|date:"dd-MMM-yyyy"}}
-            </span> 
-          </span></div></div>
-        </div>        
-        <div class="btn-comment" ng-show="goal.waitUntil>=nowTime">
-          <div class="container"><div class="row d-flex"><span>
-            Paused until  
-            {{goal.waitUntil|date:"dd-MMM-yyyy"}} 
-          </span>
-          <span style="padding:5px">
-            <button ng-click="cancelWaitUntil()" class="btn btn-danger btn-raised ms-3" >Cancel</button>
-          </span></div></div>
+              </span>
+            </div>
+          </div>
+        </div>       
+        <div ng-show="goal.waitUntil>=nowTime">
+          <div class="container ms-0 mt-2 ps-0">
+            <span class="border border-2 p-2 h5">
+              Paused until  
+              {{goal.waitUntil|date:"dd-MMM-yyyy"}} 
+            </span>
+            <span class="col-1 ms-2">
+              <button ng-click="cancelWaitUntil()" class="btn-danger btn py-1" >Cancel</button>
+            </span>
+          </div>
+        </div>
+
+            
         </div>
         <!--State end-->
 

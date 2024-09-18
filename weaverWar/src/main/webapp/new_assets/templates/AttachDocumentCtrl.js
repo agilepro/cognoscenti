@@ -1,5 +1,5 @@
-app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, containingQueryParams, 
-               docSpaceURL) {
+app.controller('AttachDocumentCtrl', function ($scope, $http, $modalInstance, containingQueryParams,
+    docSpaceURL) {
     window.MY_SCOPE = $scope;
     $scope.docsList = [];
     $scope.docSpaceURL = docSpaceURL;
@@ -9,93 +9,95 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.uploadMode = false;
     $scope.fileProgress = [];
 
-    $scope.retrieveDocumentList = function() {
+    $scope.retrieveDocumentList = function () {
         var getURL = "docsList.json";
-        $scope.showError=false;
+        $scope.showError = false;
         $http.get(getURL)
-        .success( function(data) {
-            var undeleted = [];
-            data.docs.forEach( function(item) {
-                if (!item.deleted) {
-                    undeleted.push(item);
-                }
+            .success(function (data) {
+                var undeleted = [];
+                data.docs.forEach(function (item) {
+                    if (!item.deleted) {
+                        undeleted.push(item);
+                    }
+                });
+                $scope.docsList = undeleted;
+                console.log("DOCUMENT LIST", data);
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
             });
-            $scope.docsList = undeleted;
-            console.log("DOCUMENT LIST", data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
 
-        var getURL = "attachedDocs.json?"+containingQueryParams;
+        var getURL = "attachedDocs.json?" + containingQueryParams;
         $http.get(getURL)
-        .success( function(data) {
-            $scope.attachedDocs = data.list;
-            console.log("ATTACHED LIST", data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+            .success(function (data) {
+                $scope.attachedDocs = data.list;
+                console.log("ATTACHED LIST", data);
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
 
     }
     $scope.retrieveDocumentList();
-    
-    
-    $scope.saveDocumentList = function(closeDialog) {
-        var getURL = "attachedDocs.json?"+containingQueryParams;
-        var newData = {list: $scope.attachedDocs};
+
+
+    $scope.saveDocumentList = function (closeDialog) {
+        var getURL = "attachedDocs.json?" + containingQueryParams;
+        var newData = { list: $scope.attachedDocs };
         $http.post(getURL, JSON.stringify(newData))
-        .success( function(data) {
-            $scope.attachedDocs = data.list;
-            if (closeDialog) {
-                $modalInstance.close($scope.attachedDocs);
-            }
-            else {
-                $scope.retrieveDocumentList();
-            }
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+            .success(function (data) {
+                $scope.attachedDocs = data.list;
+                if (closeDialog) {
+                    $modalInstance.close($scope.attachedDocs);
+                }
+                else {
+                    $scope.retrieveDocumentList();
+                }
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
 
     }
-    
-    
-    
-    $scope.filterDocs = function() {
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+
+    $scope.filterDocs = function () {
         var filterlc = $scope.realDocumentFilter.toLowerCase();
-        var rez =  $scope.docsList.filter( function(oneDoc) {
-            return (filterlc.length==0
-                || oneDoc.name.toLowerCase().indexOf(filterlc)>=0
-                || oneDoc.description.toLowerCase().indexOf(filterlc)>=0);
+        var rez = $scope.docsList.filter(function (oneDoc) {
+            return (filterlc.length == 0
+                || oneDoc.name.toLowerCase().indexOf(filterlc) >= 0
+                || oneDoc.description.toLowerCase().indexOf(filterlc) >= 0);
         });
-        rez = rez.sort( function(a,b) {
+        rez = rez.sort(function (a, b) {
             return b.modifiedtime - a.modifiedtime;
         });
         return rez;
     }
-    $scope.itemHasDoc = function(doc) {
+    $scope.itemHasDoc = function (doc) {
         var res = false;
-        var found = $scope.attachedDocs.forEach( function(docid) {
+        var found = $scope.attachedDocs.forEach(function (docid) {
             if (docid == doc.universalid) {
                 res = true;
             }
         });
         return res;
     }
-    $scope.itemDocs = function() {
-        return $scope.docsList.filter( function(oneDoc) {
+    $scope.itemDocs = function () {
+        return $scope.docsList.filter(function (oneDoc) {
             return $scope.itemHasDoc(oneDoc);
         });
     }
-    $scope.addDocToItem = function(doc) {
+    $scope.addDocToItem = function (doc) {
         if (!$scope.itemHasDoc(doc)) {
             $scope.attachedDocs.push(doc.universalid);
         }
         $scope.saveDocumentList(false);
     }
-    $scope.removeDocFromItem = function(doc) {
-        $scope.attachedDocs = $scope.attachedDocs.filter( function(docid) {
+    $scope.removeDocFromItem = function (doc) {
+        $scope.attachedDocs = $scope.attachedDocs.filter(function (docid) {
             return (docid != doc.universalid);
         });
         $scope.saveDocumentList(false);
@@ -108,10 +110,10 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-    
-    $scope.unfinishedUpload = function() {
+
+    $scope.unfinishedUpload = function () {
         var res = false;
-        $scope.fileProgress.forEach( function(fp) {
+        $scope.fileProgress.forEach(function (fp) {
             if (!fp.done) {
                 res = true;
             }
@@ -123,17 +125,17 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     /// FILE UPLOAD ///
 
     $scope.isHover = false;
-    $scope.dragIn = function(event) {
+    $scope.dragIn = function (event) {
         event.preventDefault();
         $scope.isHover = true;
         $scope.$apply();
     }
-    $scope.dragOut = function(event) {
+    $scope.dragOut = function (event) {
         event.preventDefault();
         $scope.isHover = false;
         $scope.$apply();
     }
-    $scope.dragDrop = function(event)  {
+    $scope.dragDrop = function (event) {
         event.preventDefault();
         $scope.isHover = false;
         $scope.uploadMode = true;
@@ -143,17 +145,17 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
             return;
         }
 
-        for (var i=0; i<newFiles.length; i++) {
+        for (var i = 0; i < newFiles.length; i++) {
             var newProgress = {};
             newProgress.file = newFiles[i];
             newProgress.status = "Preparing";
             newProgress.done = false;
             $scope.fileProgress.push(newProgress);
         }
-        $scope.selectedTab='Upload';
+        $scope.selectedTab = 'Upload';
         $scope.$apply();
     }
-    $scope.greenOnDrag = function() {
+    $scope.greenOnDrag = function () {
         if ($scope.isHover) {
             return "lvl-over";
         }
@@ -161,49 +163,49 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
             return "";
         }
     }
-    $scope.reportError = function(serverErr) {
+    $scope.reportError = function (serverErr) {
         console.log("ERROR", serverErr);
         alert(JSON.stringify(serverErr));
     };
-    $scope.cancelUpload = function(oneProgress) {
+    $scope.cancelUpload = function (oneProgress) {
         oneProgress.done = true;
         oneProgress.status = "Cancelled";
         $scope.switchBackIfDone();
     }
-    $scope.startUpload = function(oneProgress) {
+    $scope.startUpload = function (oneProgress) {
         oneProgress.status = "Starting";
         oneProgress.loaded = 0;
         oneProgress.percent = 0;
         oneProgress.labelMap = $scope.filterMap;
         var postURL = $scope.docSpaceURL;
         var postdata = '{"operation": "tempFile"}';
-        $scope.showError=false;
+        $scope.showError = false;
         $http.post(postURL, postdata)
-        .success( function(data) {
-            oneProgress.tempFileName = data.tempFileName;
-            oneProgress.tempFileURL = data.tempFileURL;
-            $scope.actualUpload(oneProgress);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+            .success(function (data) {
+                oneProgress.tempFileName = data.tempFileName;
+                oneProgress.tempFileURL = data.tempFileURL;
+                $scope.actualUpload(oneProgress);
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
     };
-    $scope.actualUpload = function(oneProgress) {
+    $scope.actualUpload = function (oneProgress) {
         oneProgress.status = "Uploading";
         var postURL = $scope.docSpaceURL;
 
         var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener("progress", function(e){
-          $scope.$apply( function(){
-            if(e.lengthComputable){
-              oneProgress.loaded = e.loaded;
-              oneProgress.percent = Math.round(e.loaded * 100 / e.total);
-            } else {
-              oneProgress.percent = 50;
-            }
-          });
+        xhr.upload.addEventListener("progress", function (e) {
+            $scope.$apply(function () {
+                if (e.lengthComputable) {
+                    oneProgress.loaded = e.loaded;
+                    oneProgress.percent = Math.round(e.loaded * 100 / e.total);
+                } else {
+                    oneProgress.percent = 50;
+                }
+            });
         }, false);
-        xhr.upload.addEventListener("load", function(data) {
+        xhr.upload.addEventListener("load", function (data) {
             $scope.nameUploadedFile(oneProgress);
         }, false);
         xhr.upload.addEventListener("error", $scope.reportError, false);
@@ -211,10 +213,10 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         xhr.open("PUT", oneProgress.tempFileURL);
         xhr.send(oneProgress.file);
     };
-    $scope.nameUploadedFile = function(oneProgress) {
+    $scope.nameUploadedFile = function (oneProgress) {
         oneProgress.status = "Finishing";
         var postURL = $scope.docSpaceURL;
-        var op = {operation: "newDoc"};
+        var op = { operation: "newDoc" };
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
         op.doc.description = oneProgress.description;
@@ -222,27 +224,27 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         op.doc.labelMap = oneProgress.labelMap;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
-        .success( function(data) {
-            if (data.exception) {
+            .success(function (data) {
+                if (data.exception) {
+                    $scope.reportError(data);
+                    return;
+                }
+                oneProgress.status = "DONE";
+                oneProgress.done = true;
+                oneProgress.doc = data;
+                $scope.attachedDocs.push(data.doc.universalid);
+                $scope.docsList.push(data.doc);
+                $scope.saveDocumentList(false);
+                $scope.switchBackIfDone();
+            })
+            .error(function (data, status, headers, config) {
                 $scope.reportError(data);
-                return;
-            }
-            oneProgress.status = "DONE";
-            oneProgress.done = true;
-            oneProgress.doc = data;
-            $scope.attachedDocs.push(data.doc.universalid);
-            $scope.docsList.push(data.doc);
-            $scope.saveDocumentList(false);
-            $scope.switchBackIfDone();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+            });
     };
 
-    $scope.switchBackIfDone = function() {
+    $scope.switchBackIfDone = function () {
         var moreToUpload = false;
-        $scope.fileProgress.forEach( function(item) {
+        $scope.fileProgress.forEach(function (item) {
             if (!item.done) {
                 moreToUpload = true;
             }
@@ -252,43 +254,43 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.selectedTab = "Settings";
     $scope.newLink = {
         id: "~new~",
-        labelMap:{},
-        attType:"URL"
+        labelMap: {},
+        attType: "URL"
     };
     $scope.createdLink = {}
-    $scope.addLink = function() {
+    $scope.addLink = function () {
         console.log("NEWLINK", $scope.newLink);
         if (!$scope.newLink.name || !$scope.newLink.url) {
             alert("Enter both a URL and a name");
             return;
         }
-        var postURL = "docsUpdate.json?did="+$scope.newLink.id;
+        var postURL = "docsUpdate.json?did=" + $scope.newLink.id;
         var postdata = angular.toJson($scope.newLink);
-        $scope.showError=false;
+        $scope.showError = false;
         $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.createdLink = data;
-            $scope.newLink = {
-                id: "~new~",
-                labelMap:{},
-                attType:"URL"
-            };
-            $scope.attachedDocs.push(data.universalid);
-            $scope.saveDocumentList(false);
-            $scope.selectedTab='Settings';
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+            .success(function (data) {
+                $scope.createdLink = data;
+                $scope.newLink = {
+                    id: "~new~",
+                    labelMap: {},
+                    attType: "URL"
+                };
+                $scope.attachedDocs.push(data.universalid);
+                $scope.saveDocumentList(false);
+                $scope.selectedTab = 'Settings';
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
     };
-    
-    $scope.nameMessage = function() {
+
+    $scope.nameMessage = function () {
         if (!$scope.newLink.name) {
             return "";
         }
         var newNameLC = $scope.newLink.name.toLowerCase();
         var found = false;
-        $scope.docsList.forEach( function(item) {
+        $scope.docsList.forEach(function (item) {
             if (newNameLC == item.name.toLowerCase()) {
                 found = true;
             }
@@ -298,5 +300,5 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         }
         return "";
     }
-    
+
 });

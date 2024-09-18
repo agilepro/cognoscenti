@@ -1,19 +1,19 @@
 
-<html>
-  <body>
-    <div class="modal-header mt-2 bg-primary-subtle text-primary">
-      <h5 class="modal-title" id="attachDocumentLabel">
+<div class="modal-item pt-3"></div>
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h4 class="modal-title" id="attachDocumentLabel">
     Edit Meeting Notes
-      </h5>
+      </h4>
 
   </div>
 <div class="modal-body" ng-style="bodyStyle()">
   <div ng-show="editMode=='edit'">
     <div class="form-group" 
-         title="The minutes is text describing the the things discussed during the meeting.">
+         title="The minutes is text describing the things discussed during the meeting.">
+
       <div style="margin-bottom:15px;">
-    	<div ui-tinymce="tinymceOptions" ng-model="agendaHtml" 
-             class="leafContent" style="min-height:250px;" ></div>
+    	  <div ui-tinymce="tinymceOptions" ng-model="agendaHtml" 
+        class="leafContent" style="min-height:250px;" ></div>
       </div>
     </div>
   </div>

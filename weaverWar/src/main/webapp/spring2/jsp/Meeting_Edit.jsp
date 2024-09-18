@@ -3,9 +3,9 @@
     <div class="container-fluid col-12">
       <div class="row d-flex" ng-dblclick="openAgenda(item)">
         <span ng-click="openAgenda(item)"></span>
-        <span class="col-8" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary">
+        <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary">
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
-          <span class="col-4 "><em><a class="h5 text-secondary" href="">Zoom Link Placeholder</a></em></span>
+          <span class="col-5"><em><a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">Click Here to Join the Meeting Conference Call</a></em></span>
 
       </div>
       <div class="row d-flex">
@@ -20,10 +20,11 @@
         <div class="col-md-5">
           <div class="timers" >
             <div class="row g-1">
-              <span class="col-md-5 me-0">
+              <span class="col-md-5 me-3">
                 <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                 </div>
+                  
                           <span ng-hide="item.timerRunning">
                     <button class="btn-startTime btn-raised mx-2 my-3" ng-click="agendaStartButton(item)">Start</button>
                 </span>
@@ -37,12 +38,12 @@
               <span class="col-md-6">
 
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
-                  <div ng-hide="item.presenterList && item.presenterList.length>0">
-                  </div>                  
-                    
-                  <div class="ps-0" ng-repeat="presenter in item.presenterList">
+                  <div class="mt-2" ng-hide="item.presenterList && item.presenterList.length>0"><b>Add Presenter</b>
+                  </div>                 
+                  
+                  <div class="ps-0 mt-2" ng-repeat="presenter in item.presenterList">
                     <ul class="navbar-btn ps-3" >
-                      <span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)">Presenter:</span>
+                      <span class="fs-6 fw-bold mb-2" ng-click="openAgenda(item)"></span>
                       <li class="nav-item dropdown" id="presenter" data-toggle="dropdown"> 
                         <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{presenter.key}}.jpg" style="width:32px;height:32px" title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; {{presenter.name}}
                         <ul class="dropdown-menu" role="menu" aria-labelledby="presenter">
@@ -56,6 +57,7 @@
                     </li>
                     </ul>
                   </div>
+                  <hr>
                   <div class="container px-3 gy-5">
                   <span class="h6 ms-0 fst-italic pb-5"  ng-show="meeting.state>=2">
                     item time remaining: {{item.duration - item.timerTotal| minutes}}
@@ -65,22 +67,24 @@
                   </span>
                 </div>
                  
-                  <!-- button to select timer
-                  <ul type="button" class="btn btn-raised btn-primary text-weaverbody mx-2 mb-3" >
-                    <li class="nav-item dropdown">
-                      <a id="timerSelect" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-clock-o"></i>&nbsp;&nbsp; Select Timer</a>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" ng-click="#">Count-up Timer<span class="timerStyleComplete"><br>Actual Time:
-                          <span ng-style="timerStyleComplete(item)">{{item.timerTotal|minutes}} </span></span></a></li>
-                          <li><a class="dropdown-item" ng-click="#">Count-down Timer<span class="timerStyleComplete"> <br>Remaining Time: <span ng-style="timerStyleComplete(item)"> {{item.duration - item.timerTotal| minutes}}</span></span></a>
-                        </li>
-                      </ul>
-                    </li> 
-                  </ul>-->
                 </div>
 
               </span>
                               
+            </div>
+            <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer" >
+              <div class="justify-content-center ms-2 mb-3 mt-2" ng-click="item.readyToGo = ! item.readyToGo">
+              <span class="btn btn-comment mt-2" ng-hide="item.readyToGo" >
+                  <b>Not <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
+                       title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                       style="width:24px;height:24px">
+                        Ready</b>
+              </span>
+              <span class="btn-comment btn-wide py-2 " ng-show="item.readyToGo"  >
+                  <b>Ready <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-ready-to-go.png"
+                       title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting." style="width:24px;height:24px"> To Go </b>
+                         Presentation attached (if any)
+              </span></div>
             </div>
           </div>
           
@@ -221,7 +225,7 @@
                   {{fullDoc.name}}
                 </div>
               </div>
-              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">Double-click to add / remove files
+              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">
               </div>
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid">
@@ -259,7 +263,6 @@
             <span ng-click="navigateToTopic(topic.universalid)" ><i class="fa fa-lightbulb-o fs-5" ></i>&nbsp;
             {{topic.subject}}</span></div>
             <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
-              Double-click to set or unset linked discussion
           </div>
 <!-- Button trigger modal -->
 <div class="container-fluid">
@@ -286,11 +289,11 @@
 
 
       <div class="d-flex col-sm-12 mb-3">
-          <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
+          <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
               Create New <i class="fa fa-comments-o"></i> Comment</button>
-          <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
+          <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
               Create New <i class="fa fa-star-o"></i> Proposal</button>
-          <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
+          <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
               Create New <i class="fa fa-question-circle"></i> Round</button>
           <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
             Edit Agenda Item</button>

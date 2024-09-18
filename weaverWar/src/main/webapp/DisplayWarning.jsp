@@ -165,9 +165,9 @@ console.log("SLAP:", SLAP);
 
 
   <!-- Logo Brand -->
-  <a class="navbar-brand py-2" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserHome.htm" title="Access your overall personal Weaver Home Page">
+  <a class="navbar-brand pb-2" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserHome.htm" title="Access your overall personal Weaver Home Page">
     <span class="fw-semibold fs-1 vertical-align-middle">
-      <img class="d-inline-flex m-2" alt="Weaver Logo" src="http://localhost:8080/weaver/new_assets/bits/header-icon.png">
+      <img class="d-inline-block mx-2" alt="Weaver Logo" src="http://localhost:8080/weaver/new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
 
@@ -181,7 +181,7 @@ console.log("SLAP:", SLAP);
       
       
 <% if (isLoggedIn) { %>
-  <ul class="navbar-nav">
+  <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown">
             <a href="#" 
             class="nav-link dropdown-toggle text-weaverbody"
@@ -254,9 +254,8 @@ console.log("SLAP:", SLAP);
   <div class="container-fluid min-vh-100 sidebar bg-primary">
     <ul class="sidebar-nav list-unstyled py-2">
     
-    <li class="my-5 text-weaverbody">  
-        <img src="http://localhost:8080/weaver/new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
-    class="accessIndicator"/>
+    <li class="my-5 text-weaverbody" style="width: 55px;">  
+        
     </li>
     
     </ul>

@@ -108,9 +108,8 @@
    
 
 <div class="modal-footer">
-  <span class="instruction my-2 fs-6 fw-bold me-auto">
-    Refresh browser after saving to see changes <i class="fa fa-exclamation-triangle"></i>
-</span>
+  <button class="btn btn-danger me-auto" type="button" ng-click="cancel()">
+    Cancel</button>
     <button ng-click="addLink()" class="btn btn-primary" ng-show="newLink.url && newLink.name">
         Attach Link</button>
         <button class="btn btn-primary"

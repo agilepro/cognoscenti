@@ -319,7 +319,20 @@ a {
     overflow: hidden;
     box-shadow: #cccccc 2px 2px 5px;
     margin: 0px 10px 10px 0px;
-    border-radius: 3px;
+    border-radius: 10px;
+    border: 1px solid $primary-700;
+    background-color: #f5f5f5;
+    color: $primary;
+    font-size: .95rem !important;
+    font-weight: 600 !important;
+}
+
+.labelButtonClass {
+    padding: 1px 4px;
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    margin: 0px 10px 10px 0px;
+    border-radius: 10px;
     border: 1px solid $primary-700;
     background-color: #f5f5f5;
     color: $primary;
@@ -334,7 +347,7 @@ a {
     margin: 0px 10px 10px 0px;
     border-radius: 3px;
     border: 1px solid $primary;
-    background-color: $secondary-10;
+    background-color: #f5f5f5;
     color: $primary;
     font-size: .95rem !important;
     font-weight: 500 !important;
@@ -390,7 +403,7 @@ a {
 }
 
 .btn    {
-    width: 160px;
+    width: 150px;
     position: unset;
     border-color:#672978;
     color:#39134C;
@@ -404,7 +417,7 @@ a {
     }
 }
 a.btn-primary .btn-primary  {
-    width: 160px;
+    width: 150px;
     position: unset;
     border-color:#39134C;
     background-color:#39134C;
@@ -420,7 +433,7 @@ a.btn-primary .btn-primary  {
     }
 }
 a.btn-secondary .btn-secondary  {
-    width: 160px;
+    width: 150px;
     position: unset;
     border-color:#672978;
     background-color:#672978;
@@ -436,19 +449,39 @@ a.btn-secondary .btn-secondary  {
     }
     
 }
-
-
+.btn.ng-binding    {
+    background-color: #e0dce2;
+}
+.btn.btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 10px;
+    width: 150px;
+    box-shadow: #cccccc 2px 2px 5px;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+        border: $primary-60, solid, 1px;
+    }
+}
 .btn-flex {
     width: auto;
     min-width: 75px;
-    max-width: 160px;
+    max-width: 150px;
     background: inherit;
     border-radius: 10px;
     flex-grow: 1;
+    text-align: center;
 }
 .btn-sm {
     width: fit-content;
-    max-width: 160px;
+    max-width: 150px;
     text-align: center;
     vertical-align: middle;
     flex-grow: 1;
@@ -462,12 +495,9 @@ a.btn-secondary .btn-secondary  {
 }
 .btn-wide {
     width: fit-content;
-    flex-grow: 5;
-    padding: 5px;
-    display: inline-block;
-    min-width: max-content;
+    max-width: max-content;
+    flex-grow: 1;
     text-align: center;
-    display: inline-block;
     border: #4d2f5e 1px solid;
     border-radius: 10px;
     &:hover {
@@ -551,13 +581,25 @@ a.btn-secondary .btn-secondary  {
     border-radius: 10px;
     border-style: solid;
     border-width: 1px;
+    background-color: #020d6d;
     &:hover {
-        background-color: $secondary-20;
+        background-color: $primary-20;
         color: $primary;
         cursor: pointer;
     }
 }
-
+.btn-outline-secondary {
+    color: $secondary;
+    border-color: $secondary;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $secondary;
+        cursor: pointer;
+    }
+}
 .learningBox {
     width: 1000px;
     #background-color: #DBEEF9;
@@ -566,7 +608,7 @@ a.btn-secondary .btn-secondary  {
     margin-bottom: 30px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     .btn {
-        min-width: 160px;
+        min-width: 150px;
         max-width: fit-content;
     }
 }
@@ -590,7 +632,7 @@ a.btn-secondary .btn-secondary  {
 
 }
 .learningBtn {
-    min-width: 160px;
+    min-width: 150px;
     max-width: fit-content;
     background-color: $primary-20;
     color: $primary;
@@ -686,11 +728,12 @@ a.btn-secondary .btn-secondary  {
     background-color: $primary-20;
     color: $primary;
     border: $primary, solid, 1px;
-    padding: 8px 10px;
     font-size: 1rem;
     font-weight: 500;
     position: relative;
-    border-radius: 8px;
+    border-radius: 10px;
+    padding: 8px;
+    width: 150px;
     box-shadow: #cccccc 2px 2px 5px;
     &:hover {
         background-color: $primary-30;
@@ -703,7 +746,6 @@ a.btn-comment {
     background-color: $primary-20;
     color: $primary;
     border: $primary, solid, 1px;
-    padding: 8px 10px;
     font-size: 1rem;
     font-weight: 500;
     position: relative;
@@ -740,7 +782,7 @@ a.btn-comment {
     color: $primary-10;
     border: $darkgreen, solid, 1px;
     padding: 8px 10px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 500;
     position: relative;
     border-radius: 10px;
@@ -909,7 +951,7 @@ foreignObject {
     border: $secondary solid 1px;
     min-width: 350px;
     max-width: 415px;
-    border-radius: 3px;
+    border-radius: 10px;
     background-color: $primary-10;
     padding: 5px;
     margin: 5px;
@@ -917,7 +959,7 @@ foreignObject {
         color: inherit;
         font-size: 1rem;
         font-weight: 400;
-        border: none;
+
     }
     .btn-sm {
             background-color: inherit;

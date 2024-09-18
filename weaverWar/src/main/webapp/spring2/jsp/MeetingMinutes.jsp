@@ -358,7 +358,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             animation: true,
             templateUrl: "<%=ar.retPath%>templates/AttachAction.html"+templateCacheDefeater,
             controller: 'AttachActionCtrl',
-            size: 'lg',
+            size: 'xl',
             backdrop: "static",
             resolve: {
                 containingQueryParams: function() {

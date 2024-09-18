@@ -45,7 +45,7 @@
     </div>
     <div class="modal-footer d-flex">
         
-        <button class="btn btn-secondary" ng-show="selectedTab=='Create'"
+        <button class="col-2 ms-auto btn btn-secondary btn-wide" ng-show="selectedTab=='Create'"
         type="button" ng-click="createActionItem()">Attach Action Item</button>
     
     </div>
@@ -107,8 +107,10 @@
     </div>
     </div>
     <div class="modal-footer d-flex">
+        <button class="btn btn-danger me-auto" type="button" ng-click="cancel()">
+            Cancel</button>
         <button class="ms-auto btn btn-primary" type="button" ng-click="exitPopup()">
-            Exit</button>
+            Save</button>
 
     </div>
 </div>

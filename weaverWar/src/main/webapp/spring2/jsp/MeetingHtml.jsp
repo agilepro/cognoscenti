@@ -196,6 +196,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
     var accordion = currentItem.parentElement;
     var items = accordion.getElementsByClassName('accordion-item');
   
+
+
     // Close all accordion items
     for (var i = 0; i < items.length; i++) {
       items[i].classList.remove('active');
@@ -206,6 +208,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
     currentItem.classList.add('active');
     currentItem.querySelector('.accordion-content').style.display = 'block';
   }
+
+
   </script>
 
 <script src="../../../spring2/jsp/MeetingHtml.js"></script>
@@ -261,7 +265,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
                             <span class="text-secondary align-center m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
                             &nbsp;<span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
         <br/>
-                            <button class="btn btn-comment btn-outline-secondary" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+                            <button class="btn" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
                             <span style="ms-auto" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
                         </div>
                     </div>
