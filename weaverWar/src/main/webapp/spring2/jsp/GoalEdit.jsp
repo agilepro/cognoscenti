@@ -696,7 +696,7 @@ function addvalue() {
         <div class="row col-12 my-2 py-2 border-bottom border-1 clickable ">
             <span class="col-3 h6" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</span>
             <span class="col-9" title="On the discussion page, you can link action items, and those discussions will appear here">
-                <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                <span ng-repeat="topic in linkedTopics" class="btn btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
                 </span>
@@ -763,7 +763,7 @@ function addvalue() {
                 <div class="row col-12 my-2 px-0 py-2 border-bottom border-1">
                     <span class="col-4 ms-0">
                         <ul class="dropdown mx-0 my-1">
-                            <li class="nav-item dropdown btn-comment btn-sm btn-wide  py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
+                            <li class="nav-item dropdown btn-comment btn-wide  py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
                         Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                           <li role="presentation">
@@ -796,11 +796,11 @@ function addvalue() {
                         </ul>
                     </span>
                     <span class="col-6">
-                        <button class="col-2 btn-sm btn-wide m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                        <button class="col-2 btn-wide m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
-                        <button class="col-2  btn-sm btn-wide m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                        <button class="col-2 btn-wide m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
-                        <button class="col-2 btn-sm btn-wide m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                        <button class="col-2  btn-wide m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
                     </span>
                 </div>
@@ -843,7 +843,7 @@ function addvalue() {
             <span class="col-2 h6" title="On the meeting page, you can link action items, and those meetings will appear here">
                 Linked Meetings:</span>
             <span class="col-10" title="On the meeting page, you can link action items, and those meetings will appear here">
-                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-outline-secondary btn-raised"  style="margin:4px;"
+                <span ng-repeat="meet in linkedMeetings" class="btn btn-outline-secondary btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                 </span>

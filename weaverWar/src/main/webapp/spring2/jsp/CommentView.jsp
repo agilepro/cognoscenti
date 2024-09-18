@@ -479,7 +479,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     <div class="leafContent comment-inner px-2" ng-hide="cmt.meet || cmt.commentType==6" ng-dblclick="openCommentEditor(null,cmt)">
         <div ng-bind-html="cmt.html2"></div>
     </div>
-    <div ng-show="cmt.meet" class="btn btn-sm btn-secondary btn-raised btn-wide "  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
+    <div ng-show="cmt.meet" class="btn btn-secondary btn-raised btn-wide "  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
     </div>
     <div ng-repeat="doc in cmt.docDetails">
@@ -548,12 +548,12 @@ function setUpCommentMethods($scope, $http, $modal) {
         <div ng-bind-html="getOutcomeHtml(cmt)"></div>
       </div>
       <div class="d-flex mt-2">
-        <button class="btn btn-sm btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
+        <button class="btn btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
                 ng-show="cmt.state<=12">Delete</button>
-        <button class="btn btn-sm btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
-        <button class="btn btn-wide btn-sm btn-primary btn-raised ms-auto" ng-click="createModifiedProposal(item,cmt)"
+        <button class="btn btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
+        <button class="btn btn-wide btn-primary btn-raised ms-auto" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
-        <button class="btn btn-sm btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"
+        <button class="btn btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"
                  ng-show="cmt.state==12">Close with Decision</button>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">

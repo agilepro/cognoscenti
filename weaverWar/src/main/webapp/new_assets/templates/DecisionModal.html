@@ -78,15 +78,15 @@
       <div class="row my-3 col-12 d-flex">
           <div class="form-group d-flex">
             <label for="startdate" class="col-3 control-label h6">Review Completed:</label>
-            <button class="btn btn-secondary btn-raised btn-sm btn-wide col-3" ng-click="advanceReviewDate()">Advance by 1 year</button>
-            <button class="col-3 btn btn-danger btn-raised btn-wide btn-sm ms-auto" ng-click="deleteDecision()" ng-hide="decision.deleteMe">DELETE DECISION</button>
+            <button class="btn btn-secondary btn-raised btn-wide col-3" ng-click="advanceReviewDate()">Advance by 1 year</button>
+            <button class="col-3 btn btn-danger btn-raised btn-wide ms-auto" ng-click="deleteDecision()" ng-hide="decision.deleteMe">DELETE DECISION</button>
           </div>
         </div>
       </div>
       <div class="row my-3 col-12 d-flex">
         <div class="form-group d-flex">
             <p class="h5" ng-show="decision.deleteMe"><b><em>Click 'Save' to actually delete the decision</em></b></p>
-            <button class="btn btn-danger btn-raised btn-sm ms-auto" ng-click="deleteCancel()" ng-show="decision.deleteMe">Cancel Delete</button>
+            <button class="btn btn-danger btn-raised ms-auto" ng-click="deleteCancel()" ng-show="decision.deleteMe">Cancel Delete</button>
           </div>
         </div>
       </div>

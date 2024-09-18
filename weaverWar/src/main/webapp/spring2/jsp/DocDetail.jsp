@@ -374,7 +374,7 @@ function copyTheLink() {
                         </a>
                     </div>
                     <div ng-hide="hasURL">
-                        <button class="btn btn-danger btn-raised btn-wide btn-sm">Error - this web attachment has no URL</button>
+                        <button class="btn btn-danger btn-raised btn-wide">Error - this web attachment has no URL</button>
                         <div class="alert" style="color:red">Someone in this workspace has attempted to attach a web page (URL) but they left the URL field empty, and so there is no place for us to direct you.  Someone should change details of this attached document and supply a suitable URL.</div>
                     </div>
                 </div>
@@ -421,7 +421,7 @@ function copyTheLink() {
                 </div>
                 <div class="col-8 my-2">
                     <input type="text" ng-model="generatedLink" id="generatedLink"/>
-                    <button onClick="copyTheLink()" class="btn btn-sm btn-primary btn-raised">Copy to Clipboard</button>
+                    <button onClick="copyTheLink()" class="btn btn-primary btn-raised">Copy to Clipboard</button>
                 </div>
             </span>
             </span>

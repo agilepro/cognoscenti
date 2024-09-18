@@ -74,7 +74,7 @@
             </div>
             <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer" >
               <div class="justify-content-center ms-2 mb-3 mt-2" ng-click="item.readyToGo = ! item.readyToGo">
-              <span class="btn btn-comment mt-2" ng-hide="item.readyToGo" >
+              <span class="btn btn-comment mt-0" ng-hide="item.readyToGo" >
                   <b>Not <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
                        title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                        style="width:24px;height:24px">
@@ -96,7 +96,7 @@
     <!-- Column 1 -->
       <div class="col-md-6 col-sm-12">
       <!--Current Meeting Minutes - top of first column-->
-      <div class="card my-2" ng-click="openNotesDialog(item)">
+      <div class="card my-2" ng-dblclick="openNotesDialog(item)">
         <div class="d-flex card-header" title="Current Meeting Minutes">
           <span ng-hide="item.isSpacer">
             <h4 class="h6" >Current Meeting Minutes</h4>
@@ -187,15 +187,15 @@
             </div>
         <!--Button to create new action item-->
         <div class="container-fluid">
-        <div class="row py-3 ">      
+        <div class="row justify-content-center">      
           <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
           </span>
         </div>
         </div>
         <!--END Buttons to trigger action item modals -->
 
-      </div><!--END Action Items card body-->
-          </div>
+      </div>
+          </div><!--END accordion body-->
         </div>
         </div><!--END Action Items accordion-->
       </div>
@@ -230,9 +230,9 @@
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid">
       <div class="row justify-content-center"> 
-        <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
+        <div type="button" class="btn btn-sm btn-outline-primary">
+          <span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
         </div>
-
       </div>
       </div>
 
@@ -261,21 +261,21 @@
             <div class="row d-flex mb-2 ms-0" 
             ng-repeat="topic in itemTopics(item)" style="cursor: pointer">
             <span ng-click="navigateToTopic(topic.universalid)" ><i class="fa fa-lightbulb-o fs-5" ></i>&nbsp;
-            {{topic.subject}}</span></div>
+            {{topic.subject}}</span>
+          </div>
             <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
           </div>
 <!-- Button trigger modal -->
-<div class="container-fluid">
-  <div class="row py-3 ">      
-    <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
+          <div class="container-fluid">
+  <div class="row justify-content-center ">      
+    <div type="button" class="btn btn-sm btn-outline-primary">
+      <span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
     </span>
   </div>
   </div>
 <!-- ForumModal -->
-
-<div>&nbsp;</div>
-          </div><!--END accordion body-->
-        </div>
+          </div>
+        </div><!--END accordion body-->
         </div>
       </div>  
       </div><!--END Forum-->

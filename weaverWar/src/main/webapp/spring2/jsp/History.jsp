@@ -134,10 +134,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         <div class="row">
             <span class="fixed-width border-end border-1 border-secondary">
                 <span class="d-flex">
-                    <a class="btn-comment btn-secondary mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
+                    <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
                     <i class="fa  fa-arrow-circle-left"></i></a>
-                    <%=start%> - <%=endRecord%> 
-                    <a class="btn-comment btn-secondary mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
+                    <span class="h5 pt-2"><%=start%> - <%=endRecord%> </span>
+                    <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
                     <i class="fa  fa-arrow-circle-right"></i></a>
                 </span>
             </span>

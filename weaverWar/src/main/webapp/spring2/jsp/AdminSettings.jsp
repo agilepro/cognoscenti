@@ -520,16 +520,16 @@ app.filter('escape', function() {
                             </div>
                             <div class="row " >
                                 <span class="col-12 d-block">
-                                    <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="m-2 py-0 btn-sm btn-comment btn-wide">
+                                    <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="m-2 py-0 btn-comment btn-wide">
                             {{ws.name}}</button></span>
                         </div>
                         <div class="row " >
                             <span class="col-12 d-flex">
                             <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
-                                class="btn btn-danger btn-raised btn-sm btn-wide">
+                                class="btn btn-danger btn-raised btn-wide">
                             Cancel</button>
                             <button ng-click="deleteParentKey()" 
-                                class="btn btn-primary btn-sm btn-wide btn-raised ms-auto">
+                                class="btn btn-primary btn-wide btn-raised ms-auto">
                             Remove Parent</button></span>
                         </div>
                     </span>

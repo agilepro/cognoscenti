@@ -8,7 +8,7 @@
             <div class="h6 panel-heading" >{{sim.item.number}}. {{sim.item.subject}}
                 <span ng-hide="sim.item.needMerge">
                     <span ng-hide="sim.item.timerRunning" style="padding:5px">
-                        <button class="btn btn-comment btn-success btn-sm" ng-click="agendaStartButton(sim.item)"><i class="fa fa-clock-o"></i> Start</button>
+                        <button class="btn btn-comment btn-success " ng-click="agendaStartButton(sim.item)"><i class="fa fa-clock-o"></i> Start</button>
                         Elapsed: {{sim.item.timerTotal| minutes}}
                         Remaining: {{sim.item.duration - item.timerTotal| minutes}}
                     </span>
@@ -16,7 +16,7 @@
                         <span>Running</span>
                         Elapsed: {{sim.item.timerTotal| minutes}}
                         Remaining: {{sim.item.duration - sim.item.timerTotal| minutes}}
-                        <button class="btn btn-comment btn-danger btn-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+                        <button class="btn btn-comment btn-danger " ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                     </span>
                 </span>
                 <span ng-show="sim.needMerge">
@@ -44,7 +44,7 @@
         
         <div class="h6">
             Meeting Duration: {{timerTotal|minutes}}  
-            <button class="btn btn-secondary btn-comment btn-sm" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+            <button class="btn btn-secondary btn-comment btn-wide" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
         </div>
 
         

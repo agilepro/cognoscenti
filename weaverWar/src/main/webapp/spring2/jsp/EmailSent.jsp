@@ -133,9 +133,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div class="d-flex col-9"><div class="contentColumn">
         <div class="col-12 well ms-3">Filter <input ng-model="filter">
-<button ng-click="fetchEmailRecords(0)" class="btn btn-secondary btn-sm btn-wide btn-raised">Refresh</button>
-            <button ng-click="fetchEmailRecords(-20)" class="btn btn-secondary btn-sm btn-wide btn-raised">Previous</button>
-            <button ng-click="fetchEmailRecords(20)" class="btn btn-secondary btn-sm btn-wide  btn-raised">Next</button>
+<button ng-click="fetchEmailRecords(0)" class="btn btn-secondary btn-wide btn-raised">Refresh</button>
+            <button ng-click="fetchEmailRecords(-20)" class="btn btn-secondary btn-wide btn-raised">Previous</button>
+            <button ng-click="fetchEmailRecords(20)" class="btn btn-secondary btn-wide  btn-raised">Next</button>
             <span style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
         </div>
         <div class="container-fluid col-12 ms-3">

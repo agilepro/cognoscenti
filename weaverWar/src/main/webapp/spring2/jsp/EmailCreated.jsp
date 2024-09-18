@@ -169,7 +169,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             <td>{{stateName(rec.state)}}</td>
             <td ng-show="rec.state<=1">
               <a role="menuitem" tabindex="-1" title="Delete Email" href="#" ng-click="deleteEmail(rec)">
-                <button type="button" name="delete" class="btn-sm btn-comment bg-danger-subtle text-danger">
+                <button type="button" name="delete" class=" btn-comment bg-danger-subtle text-danger">
                     <span class="fa fa-trash"></span>
                 </button>
               </a>

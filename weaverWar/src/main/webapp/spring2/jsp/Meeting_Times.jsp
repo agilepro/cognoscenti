@@ -3,7 +3,7 @@
     <span class="h5 card-title">Start Time</span>
   </div>
     <div class="card-body">
-      <button class="btn btn-sm btn-primary" ng-hide="'startTime'==editMeetingPart" 
+      <button class="btn btn-wide btn-primary" ng-hide="'startTime'==editMeetingPart" 
           ng-click="editMeetingPart='startTime'">Edit</button>
     
       <table class="table" ng-hide="'startTime'==editMeetingPart">
@@ -24,7 +24,7 @@
         </tr>
         <tr ng-hide="meeting.startTime<=0">
           <td>
-             <button class="btn btn-sm btn-primary" ng-click="getTimeZoneList()">Show Timezones</button><br/>
+             <button class="btn btn-wide btn-primary" ng-click="getTimeZoneList()">Show Timezones</button><br/>
           </td>
           <td></td>
           <td></td>
@@ -43,7 +43,7 @@
             </span>
             <span>&nbsp; ({{browserZone}})</span><br/>
             <div class="row d-flex">
-            <button class="btn btn-sm btn-danger btn-raised col-3" ng-click="editMeetingPart=null">Cancel</button>
+            <button class="btn btn-wide btn-danger btn-raised col-3" ng-click="editMeetingPart=null">Cancel</button>
             <button class="btn btn-wide btn-secondary btn-raised col-3" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
             
             <button class="btn btn-primary btn-raised col-3 ms-auto" 
@@ -151,7 +151,7 @@
     
     <div ng-hide="showTimeAdder">
         <button ng-click="showTimeAdder=true" 
-                class="btn btn-sm btn-wide btn-primary">Add Proposed Time</button>
+                class="btn btn-wide btn-primary">Add Proposed Time</button>
     </div>
 
     <div ng-show="showTimeAdder" class="well px-2 py-3">

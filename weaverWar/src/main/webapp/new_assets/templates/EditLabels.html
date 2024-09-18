@@ -46,18 +46,18 @@
                 
                 <div class="col-6">
                     <span ng-hide="label.isEdit || label.isNew">
-                        <button class="btn btn-sm btn-flex btn-secondary" 
+                        <button class="btn btn-flex btn-secondary" 
                         ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
                     </span>
                     <span ng-show="label.isEdit">
-                        <button class="btn btn-sm btn-flex btn-primary" ng-click="updateLabel(label)">Save</button>
+                        <button class="btn btn-flex btn-primary" ng-click="updateLabel(label)">Save</button>
                     </span>
                     <span ng-show="label.isEdit">
-                        <button class="btn btn-sm btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
+                        <button class="btn btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
                     </span>
                     <span ng-hide="label.isEdit"></span>
                     <span ng-show="label.isNew">
-                        <button class="btn btn-sm btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
+                        <button class="btn btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
                     </span>
                 </div>
             </div>

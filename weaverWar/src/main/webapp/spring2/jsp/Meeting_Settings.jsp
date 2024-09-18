@@ -81,7 +81,7 @@
           <div class="row" >
             <span class="col-2 labelColumn" style="cursor: text;">Previous Minutes:<span ng-show="previousMeeting.minutesId"></span></span>
             <span class="col-8" >
-                <span class="btn btn-sm btn-comment btn-outline-secondary"  style="margin:4px;"
+                <span class="btn btn-wide btn-comment btn-outline-secondary"  style="margin:4px;"
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
                      title="Navigate to the discussion that holds the minutes for the previous meeting">
                      Previous Minutes
@@ -103,12 +103,12 @@
                         <option>Days</option>
                         </select>
                     before the meeting, ({{meeting.reminderTime}} minutes)<br/>
-                    <button class="btn btn-primary btn-sm btn-raised" ng-click="savePendingEdits()">Save</button>
+                    <button class="btn btn-primary btn-wide btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
             </span>
           </div>
           <div class="row" >
-              <span class="col-2 ms-5 my-3"><button ng-click="expertMode = !expertMode" class="btn btn-secondary btn-sm  btn-raised">Expert Mode</button></span>
+              <span class="col-2 ms-5 my-3"><button ng-click="expertMode = !expertMode" class="btn btn-secondary btn-wide  btn-raised">Expert Mode</button></span>
               
           </div>
           <div class="row" ng-show="expertMode">

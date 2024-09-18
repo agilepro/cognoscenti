@@ -261,16 +261,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                             <span class="col-md-3 d-flex">
                                                 <span ng-hide="label.isEdit"></span>
                                                 <span ng-show="label.isNew">
-                                                    <button class="btn btn-sm btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
+                                                    <button class="btn  btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
                                                 </span>
                                                 <span class="col-1" ng-hide="label.isEdit || label.isNew">
-                                                    <button class="btn btn-sm btn-flex btn-secondary" ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
+                                                    <button class="btn btn-flex btn-secondary" ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
                                                 </span>
                                                 <span ng-show="label.isEdit">
-                                                    <button class="btn btn-sm btn-flex btn-primary me-2" ng-click="updateLabel(label)">Save</button>
+                                                    <button class="btn btn-flex btn-primary me-2" ng-click="updateLabel(label)">Save</button>
                                                 </span>
                                                 <span class="col-1" ng-show="label.isEdit">
-                                                    <button class="mx-2 btn btn-sm btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
+                                                    <button class="mx-2 btn  btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
                                                 </span>
                                             </span>
                                         </div>

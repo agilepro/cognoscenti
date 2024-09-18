@@ -306,7 +306,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </span>
         <span>
              <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
+               <button class="btn btn-primary btn-raised dropdown-toggle" 
                        type="button" id="menu3" data-toggle="dropdown"
                        title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 

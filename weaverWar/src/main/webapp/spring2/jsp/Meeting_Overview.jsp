@@ -58,11 +58,12 @@
           <th></th>
         </tr>
         <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-hide="item.proposed" >
-          <td  ng-dblclick="openAgenda(item)">
+          <td ng-dblclick="openAgenda(item)">
                 <span ng-show="item.isSpacer" >--</span>
                 <span ng-hide="item.isSpacer" >{{item.number}}.</span>
                 {{item.subject}} 
           </td>
+
           <td ng-dblclick="openAgenda(item)">
               <span ng-repeat="person in item.presenterList">
                   <span class="dropdown" >
@@ -147,11 +148,11 @@
           </td>
           <td>
           </td>
+          <td></td>
+
           <td ng-dblclick="openAgenda(item)" >
-                {{item.duration| minutes}}
+            {{item.duration}}
           </td>
-          <td ></td>
-          <td ng-dblclick="openAgenda(item)"></td>
           <td ng-dblclick="openAgenda(item)"></td>
           <td ng-style="timerStyleComplete(item)" >
             <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
