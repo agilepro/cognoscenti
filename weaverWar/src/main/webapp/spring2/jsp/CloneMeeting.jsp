@@ -121,6 +121,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newMeeting.reminderSent = -1;
         newMeeting.id = "~new~";
         newMeeting.duration = $scope.meeting.duration;
+        newMeeting.conferenceUrl = $scope.meeting.conferenceUrl;
         newMeeting.previousMeeting = $scope.meeting.id;
         newMeeting.description = HTML2Markdown($scope.meeting.descriptionHtml, {});
         newMeeting.name = $scope.meeting.name;

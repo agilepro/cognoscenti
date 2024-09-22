@@ -403,8 +403,9 @@ public class AgendaItem extends CommentContainer {
             updateAttributeLong("timerElapsed", input);
         }
 
-        // either descriptionMerge or description
-        mergeIfPresent(input, "description");
+        // either descriptionMerge or description, but the stored name of the attribute
+        // is different so use special version of that.
+        mergeIfPresentSpecial(input, "description", "desc");
 
         // either minutesMerge or minutes
         mergeIfPresent(input, "minutes");

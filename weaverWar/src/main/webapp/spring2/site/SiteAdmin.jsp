@@ -218,7 +218,12 @@ $scope.garbageCollect = function() {
 </script>
 
 
-
+<style>
+.numberColumn {
+    width:120px;
+    text-align: right;
+}
+</style>
 
 
 <div ng-cloak>
@@ -323,13 +328,13 @@ $scope.garbageCollect = function() {
                 <span class="col-1 h6" >Set</span>
                 <span class="col-1 numberColumn h6">Current Usage</span>
                 <span class="col-1 numberColumn h6">Gratis</span>
-                <span class="col-1 numberColumn h6">Extra</span>
+                <span class="col-1 numberColumn h6">Charged</span>
                 <span class="col-1 numberColumn h6">Cost</span>
             </div>
             <div class="row" ng-click="toggleEditor('CreatorLimit')">
                 <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Active Users:</span>
                 <span class="col-1 numberColumn">
-                    {{siteStats.editUserLimit|number}}
+                    {{siteInfo.editUserLimit|number}}
                 </span>
                 <span class="col-1 numberColumn">
                     <button class="specCaretBtn" ng-click="changePeople(1)">+</button>
@@ -358,13 +363,13 @@ $scope.garbageCollect = function() {
                     <button class="specCaretBtn" ng-click="changeWS(1)">+</button>
                     <button class="specCaretBtn" ng-click="changeWS(-1)">-</button>
                 </span>
-                <span class="col-1 numberColumn" ng-hide="isEditing =='CreatorLimit'">
+                <span class="col-1 numberColumn">
                     {{actual.numActive}}
                 </span>
-                <span class="col-1 numberColumn" ng-show="isEditing =='CreatorLimit'">
-                    {{comp.numActive}}
+                <span class="col-1 numberColumn">
+                    1
                 </span>
-                <span class="col-1 numberColumn" ng-show="isEditing =='CreatorLimit'">
+                <span class="col-1 numberColumn">
                     {{overflow.numActive}}
                 </span>
                 <span class="col-1 numberColumn">
@@ -372,7 +377,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
             <div class="row">
-                <span class="col-2 h6">Documents:</span>
+                <span class="col-2 h6">Document MB:</span>
                 <span class="col-1 numberColumn">
                     
                 </span>
@@ -380,13 +385,13 @@ $scope.garbageCollect = function() {
                     
                 </span>
                 <span class="col-1 numberColumn" >
-                    {{ actual.documentLimit|number: '0'}} MB
+                    {{ actual.documentLimit|number: '0'}}
                 </span>
                 <span class="col-1 numberColumn">
-                    {{included.documentLimit|number}} MB
+                    {{included.documentLimit|number}}
                 </span>
                 <span class="col-1 numberColumn" ng-show="overflow.documentLimit>0">
-                    {{overflow.documentLimit|number: '0'}} MB
+                    {{overflow.documentLimit|number: '0'}}
                 </span>
                 <span class="col-1 numberColumn" ng-show="costs.documentLimit>0">
                     $ {{costs.documentLimit|number: '0'}}
