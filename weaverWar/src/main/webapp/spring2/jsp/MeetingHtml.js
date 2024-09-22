@@ -261,30 +261,13 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         return res;
     }
-    $scope.itemHasGoal = function (item, goal) {
-        for (var j = 0; j < item.actionItems.length; j++) {
-            if (item.actionItems[j] == goal.universalid) {
+    $scope.itemHasGoal = function(item, goal) {
+        for (var j=0; j<item.aiList.length; j++) {
+            if (item.aiList[j].id == goal.universalid) {
                 return true;
             }
         }
         return false;
-    }
-    $scope.addGoalToItem = function (item, goal) {
-        if (!$scope.itemHasGoal(item, goal)) {
-            item.actionItems.push(goal.universalid);
-        }
-        $scope.saveAgendaItem(item);
-    }
-    $scope.removeGoalFromItem = function (item, goal) {
-        var res = [];
-        for (var j = 0; j < item.actionItems.length; j++) {
-            var aiId = item.actionItems[j];
-            if (aiId != goal.universalid) {
-                res.push(aiId);
-            }
-        }
-        item.actionItems = res;
-        $scope.saveAgendaItem(item);
     }
 
     $scope.meetingStateName = function () {
@@ -884,7 +867,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             docList: [],
             presenters: [],
             presenterList: [],
-            actionItems: [],
+            aiList: [],
             proposed: true
         };
         $scope.meeting.agenda.push(newAgenda);
@@ -1600,6 +1583,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
                 doc.push(item);
             }
         });
+        console.log("GOT DOCS: ", doc);
         return doc;
     }
     $scope.navigateToDoc = function (docId) {
@@ -1734,7 +1718,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
         attachModalInstance.result
             .then(function (selectedActionItems) {
-                item.actionItems = selectedActionItems;
+                // item.actionItems = selectedActionItems;
                 //no need to save...
                 $scope.refreshAllGoals();
                 $scope.extendBackgroundTime();

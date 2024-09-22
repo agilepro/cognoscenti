@@ -249,7 +249,6 @@ public class Thumbnail {
 
             makeSquare(inFileName, outFileName, thumbWidth, quality);
 
-            System.out.println("Done.");
             System.exit(0);
         }
         catch (Exception e) {

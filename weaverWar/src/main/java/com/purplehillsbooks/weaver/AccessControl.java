@@ -54,10 +54,8 @@ public class AccessControl {
         //then, check to see if there is any special condition in session
         String resourceId = "doc:"+attachRec.getId()+":"+ngw.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
-            System.out.println("CAN-ACCESS-DOC: session has resource: ("+resourceId+")");
             return true;
         }
-        System.out.println("CAN-ACCESS-DOC: checking for resource: ("+resourceId+")");
 
         //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mndoc"  (magic number for doc)

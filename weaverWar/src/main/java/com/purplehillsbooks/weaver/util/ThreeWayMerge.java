@@ -71,7 +71,6 @@ public class ThreeWayMerge {
             old.advance();
             neu.advance();
         }
-        //System.out.println("MERGE -- equals up to: "+result.toString());
     }
 
     /**
@@ -161,8 +160,7 @@ public class ThreeWayMerge {
             if (curPos + oldPos + neuPos < bestValue) {
                 bestValue = curPos + oldPos + neuPos;
                 bestWhich = which;
-                bestBias = bias;
-                //System.out.println("     new best value: "+bestValue+" = "+curPos+" + "+oldPos+" + "+neuPos);                
+                bestBias = bias;              
             }
         }
     }
@@ -179,7 +177,6 @@ public class ThreeWayMerge {
         String curDiff = cur.getDiffBlock();
         String oldDiff = old.getDiffBlock();
         String newDiff = neu.getDiffBlock();
-        //System.out.println("MERGE DIFF: ("+curDiff+")("+oldDiff+")("+newDiff+")");
         
         if (curDiff.length()==0 && oldDiff.length()==0 && newDiff.length()==0) {
             throw new RuntimeException("STRANGE, got zero zero zero for diff results ... they are all equal?");

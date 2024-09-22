@@ -173,7 +173,6 @@ public class HtmlToWikiConverter2 {
     }
     
     public void recurseNodes(Node node, String depth) {
-        System.out.println(depth + node.nodeName());
         for (Node child : node.childNodes()) {
             recurseNodes(child, depth + "  ");
         }
@@ -184,7 +183,6 @@ public class HtmlToWikiConverter2 {
             String nodeName = child.nodeName().toLowerCase();
             
             if (child instanceof Element) {
-                // System.out.println(depth + "<"+nodeName+">");
                 if ("style".equals(nodeName)) {
                     continue; // we don't care about styles or any contents
                 }
@@ -433,7 +431,6 @@ public class HtmlToWikiConverter2 {
                 sb.append( ch );
             }
         }
-        //System.out.println("--("+debug.toString()+")");
     }
     
     public String niceText(String in) {
@@ -496,11 +493,9 @@ public class HtmlToWikiConverter2 {
         currentFrame.isIgnoring = ignore;
         currentFrame.frameNo = ++frameCount;
         wikiFrames.add(currentFrame);
-        //System.out.println("Created: "+currentFrame.tagType+":"+currentFrame.frameNo);
     }
     
     public void pop() {
-        //System.out.println("-end-  : "+currentFrame.tagType+":"+currentFrame.frameNo);
         if (wikiStack.size()>0) {
             currentFrame = wikiStack.remove(wikiStack.size()-1);
         }
@@ -676,7 +671,6 @@ class ParseFrame2 {
             if (text.length()>40) {
                 text = value.substring(0, 40);
             }
-            //System.out.println("text   : "+tagType+":"+frameNo+": "+text);
         }
     }
     

@@ -91,7 +91,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     $scope.getTaskAreas();
 
     $scope.openTaskAreaModal = function (ta) {
-        console.log("THIS TA: ", ta);
         if ($scope.isFrozen) {
             alert("You are not able to edit task areas because this workspace is frozen");
             return;

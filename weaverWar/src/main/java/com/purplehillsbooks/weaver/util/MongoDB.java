@@ -101,7 +101,6 @@ public class MongoDB {
 
     public void createRecord(JSONObject emailRecord) throws Exception {
         String rep = emailRecord.toString(2);
-        //System.out.println("=============INSERTING===============\n"+rep+"\n=========================");
         emaildb.insertOne(Document.parse(rep));
     }
 

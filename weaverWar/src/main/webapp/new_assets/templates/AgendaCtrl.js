@@ -15,6 +15,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
 
     $scope.ok = function () {
         var newDesc = $scope.agendaItem.description;
+        console.log("DESCRIPTION:", newDesc);
         if (newDesc != $scope.descriptionOld) {
             $scope.agendaItem.descriptionMerge = { new: newDesc, old: $scope.descriptionOld };
         }

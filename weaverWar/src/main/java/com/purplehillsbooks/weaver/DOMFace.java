@@ -186,12 +186,9 @@ public class DOMFace
         setScalar(key, result);
     }
     public void mergeScalarDelta(String key, JSONObject vals) throws Exception {
-        System.out.println(String.format("MERGING (%s)  %s: %s", key, 
-                vals.optString("old",""),  vals.optString("new","")));
         String curDoc = getScalar(key);
         String result = ThreeWayMerge.mergeThem(curDoc, vals.optString("old",""),  vals.optString("new",""));
         setScalar(key, result);
-        System.out.println(String.format("MERGING RESULT (%s)  %s", key, result));
     }
     public void mergeIfPresent(JSONObject updateJSON, String key) throws Exception {
     	if (updateJSON.has(key+"Merge")) {
@@ -203,7 +200,7 @@ public class DOMFace
     }
 
 
-    
+    // needed when the external key is different from the internal one.  Ugh!
     public void mergeIfPresentSpecial(JSONObject updateJSON, String key, String internalKey) throws Exception {
     	if (updateJSON.has(key+"Merge")) {
     		mergeScalarDelta(internalKey, updateJSON.getJSONObject(key+"Merge"));

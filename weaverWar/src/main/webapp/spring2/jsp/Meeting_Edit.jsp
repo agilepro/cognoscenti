@@ -212,8 +212,8 @@
           </div>
           <div id="collapseAttachments" class="accordion-collapse collapse" aria-labelledby="headingAttachments" data-bs-parent="#accordionAttachments">
             <div class="accordion-body">
-              <div class="mb-2" ng-repeat="docid in item.docList track by $index">
-                <div ng-repeat="fullDoc in getSelectedDocList(docid)"> 
+              <div class="mb-2" ng-repeat="docid in item.attList track by $index">
+                <div ng-repeat="fullDoc in getSelectedDocList(docid.universalid)"> 
                   <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
                     <img src="<%=ar.retPath%>new_assets/assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
                     <img src="<%=ar.retPath%>new_assets/assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
@@ -225,7 +225,7 @@
                   {{fullDoc.name}}
                 </div>
               </div>
-              <div ng-hide="item.docList && item.docList.length>0" class="doubleClickHint">
+              <div ng-hide="item.attList && item.attList.length>0" class="doubleClickHint">
               </div>
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid">

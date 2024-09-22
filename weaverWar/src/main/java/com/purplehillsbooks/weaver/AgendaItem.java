@@ -372,12 +372,12 @@ public class AgendaItem extends CommentContainer {
         
         
 
-        //actionItems is deprecated, DONT USE, use aiList instead.
-        aiInfo.put("actionItems", constructJSONArray(getActionItems()));
-        //docList is deprecated, use attList instead
-        aiInfo.put("docList", constructJSONArray(getDocList()));
-        //topics is deprecated, use topicList instead
-        aiInfo.put("topics", constructJSONArray(getLinkedTopics()));
+        // actionItems is deprecated, DONT USE, use aiList instead.
+        // aiInfo.put("actionItems", constructJSONArray(getActionItems()));
+        // docList is deprecated, use attList instead
+        // aiInfo.put("docList", constructJSONArray(getDocList()));
+        // topics is deprecated, use topicList instead
+        // aiInfo.put("topics", constructJSONArray(getLinkedTopics()));
         
         return aiInfo;
     }
@@ -461,6 +461,7 @@ public class AgendaItem extends CommentContainer {
             setActionItems(newActionItemList);
         }
         if (input.has("docList")) {
+            System.out.println("Use of DEPRECATED docList on an AgendaItem");
             List<String> newDocList = new ArrayList<String>();
             for (String oneDoc : constructVector(input.getJSONArray("docList"))) {
                 AttachmentRecord aRec = ngw.findAttachmentByUidOrNull(oneDoc);

@@ -127,10 +127,6 @@
             {...}
           ],
           "description": "An autocracy vests power in one autocratic.",
-          "docList": [
-            "VKSSSCSRG@sec-inline-xbrl@4841",
-            "HGYDQWIWG@clone-c-of-clone-4@9358"
-          ],
           "duration": 14,
           "id": "1695",
           "position": 1,
@@ -139,7 +135,6 @@
         {
           "aiList": [],
           "description": "Many new organizational support.",
-          "docList": [],
           "duration": 5,
           "id": "2695",
           "position": 2,

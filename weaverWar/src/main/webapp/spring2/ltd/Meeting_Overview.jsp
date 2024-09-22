@@ -31,9 +31,9 @@
         </tr>
         </table>
       <div ng-show="meeting.state<=2">
-          <p ng-show="meeting.state<=0">Meeting is in draft mode and is hidden from the participants.
-             Advance the meeting to planning mode to let them know about it
-             before the meeting starts.</p>
+          <p ng-show="meeting.state<=0">Meeting is in draft mode and will not send any notifications or reminders.
+            Advance the meeting to planning mode to let participants know about it
+            before the meeting starts.</p>
           <p ng-show="meeting.state==1">
           Meeting is in planning mode until the time that the meeting starts.
           </p>

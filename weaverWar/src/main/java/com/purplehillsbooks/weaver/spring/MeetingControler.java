@@ -450,13 +450,14 @@ public class MeetingControler extends BaseController {
           JSONArray agenda = meetingInfo.getJSONArray("agenda");
           for (int i=0; i<agenda.length(); i++) {
               JSONObject agendaItem = agenda.getJSONObject(i);
-              if (!agendaItem.has("actionItems")) {
+              if (!agendaItem.has("aiList")) {
                   continue;
               }
-              JSONArray actionItems = agendaItem.getJSONArray("actionItems");
+              JSONArray aiList = agendaItem.getJSONArray("aiList");
               JSONArray approvedItems = new JSONArray();
-              for (int j=0; j<actionItems.length(); j++) {
-                  String universalId = actionItems.getString(j);
+              for (int j=0; j<aiList.length(); j++) {
+                  JSONObject itemObj = aiList.getJSONObject(j);
+                  String universalId =  itemObj.getString("id");
                   GoalRecord gr = ngw.getGoalOrNull(universalId);
                   if (gr==null) {
                       continue;
@@ -467,9 +468,9 @@ public class MeetingControler extends BaseController {
                   if (gr.getState()==BaseRecord.STATE_SKIPPED) {
                       continue;
                   }
-                  approvedItems.put(universalId);
+                  approvedItems.put(itemObj);
               }
-              agendaItem.put("actionItems", approvedItems);
+              agendaItem.put("aiList", approvedItems);
           }
 
       }
