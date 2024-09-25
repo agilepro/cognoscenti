@@ -25,7 +25,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
         }
         if ($scope.agendaItem.isSpacer) {
             //spacers (breaks) can not be proposed
-            agendaItem.proposed = true;
+            agendaItem.proposed = false;
         }
         if (!$scope.agendaItem.timerRunning) {
             $scope.agendaItem.timerElapsed = $scope.agendaItem.previousElapsed * 60000;

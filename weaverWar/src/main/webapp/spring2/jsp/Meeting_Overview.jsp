@@ -35,7 +35,8 @@
         </td>
         </tr>
             </table>
-            <div ng-show="meeting.state<=2">
+        </div>
+            <div class="container px-4"  ng-show="meeting.state<=2">
           <p ng-show="meeting.state<=0">Meeting is in draft mode and will not send any notifications or reminders.
             Advance the meeting to planning mode to let participants know about it
             before the meeting starts.</p>
@@ -45,8 +46,8 @@
           <p ng-show="meeting.state==2">
           Meeting is in running mode and will allow updates normally done during the meeting.
           </p>
-            </div>
-            <table class="table">
+            
+            <table  ng-hide="meeting.state==3" class="table">
         <tr>
           <th></th>
           <th>Presenter</th>
@@ -165,11 +166,10 @@
             </span>
           </td>
         </tr>        
-      </table>
+            </table>
+        </div>
 
-      </div>
-
-        <div ng-show="meeting.state>=3">
+        <div class="container px-4" ng-show="meeting.state>=3">
           <p>Meeting is completed and no more updates are expected.</p>
         <table class="table">
         <tr>

@@ -3,7 +3,7 @@
     <div class="container-fluid col-12">
       <div class="row d-flex" ng-dblclick="openAgenda(item)">
         <span ng-click="openAgenda(item)"></span>
-        <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary">
+        <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary py-2">
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
           <span class="col-5"><em><a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">Click Here to Join the Meeting Conference Call</a></em></span>
 
@@ -21,7 +21,7 @@
           <div class="timers" >
             <div class="row g-1">
               <span class="col-md-5 me-3">
-                <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}"><i class="fa fa-clock-o fa-2x"></i><br>
+                <div ng-click="changeMeetingMode('Overview')" class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}; cursor: pointer;"><i class="fa fa-clock-o fa-2x"></i><br>
                   {{meetingStateName()}} Mode
                 </div>
                   
@@ -99,7 +99,7 @@
       <div class="card my-2" ng-dblclick="openNotesDialog(item)">
         <div class="d-flex card-header" title="Current Meeting Minutes">
           <span ng-hide="item.isSpacer">
-            <h4 class="h6" >Current Meeting Minutes</h4>
+            <h4 class="h6" >Meeting Notes</h4>
           </span>
           
         </div><!--END Current Meeting Minutes card header-->

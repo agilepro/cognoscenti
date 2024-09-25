@@ -372,7 +372,7 @@ app.filter('encode', function() {
               <div class="my-2">
                 <span class="fs-6">
                 <b><em>Creator &nbsp;</em></b></span>
-                <button ng-click="changeAccess(true)" class="btn btn-sm btn-comment btn-secondary btn-raised">
+                <button ng-click="changeAccess(true)" class="btn btn-comment btn-secondary btn-raised">
                 Make Observer</button>
               </div>
             </div>
@@ -381,7 +381,7 @@ app.filter('encode', function() {
               <div class="my-2">
                 <span class="fs-6">
                 <b><em>Observer &nbsp;</em></b></span>
-                <button ng-click="changeAccess(false)" class="btn btn-sm btn-comment btn-secondary btn-raised">
+                <button ng-click="changeAccess(false)" class="btn btn-comment btn-secondary btn-raised">
                 Make Creator</button>
                 
               </div>
@@ -398,7 +398,7 @@ app.filter('encode', function() {
         <span class="col-4" ng-hide="showNamePanel" ng-click="showNamePanel=true">{{userDetails.name}}</span>
         <span class="col-4" ng-show="showNamePanel">
            <input type="text" ng-model="userDetails.name" class="form-control"/>
-           <button class=" my-2 py-1 btn btn-sm btn-comment btn-secondary btn-raised"  ng-click="updateUserProfile(['name']);showNamePanel=false"> Set User Name</button>
+           <button class=" my-2 py-1 btn btn-comment btn-secondary btn-raised"  ng-click="updateUserProfile(['name']);showNamePanel=false"> Set User Name</button>
         </span>
     </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" style="cursor:pointer">
@@ -406,23 +406,23 @@ app.filter('encode', function() {
         <span class="col-4" ng-hide="showDescPanel" ng-click="showDescPanel=true">{{userDetails.description}}</span>
         <span class="col-4" ng-show="showDescPanel">
            <textarea ng-model="userDetails.description" class="form-control"></textarea>
-           <button class="py-1 btn btn-sm btn-comment btn-secondary btn-raised" 
+           <button class="py-1 btn btn-comment btn-secondary btn-raised" 
                    ng-click="updateUserProfile(['description']);showDescPanel=false">
                    Set User Description</button>
         </span>
     </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" >
-        <span class="h6 col-2 align-baseline">EMail</span>
+        <span class="h6 col-2 align-baseline">Email</span>
         <span class="col-4">
           <div ng-repeat="id in userDetails.ids">{{id}}</div>
         </span>
         <span class="h6 col-2" ng-click="showAddEmailPanel=!showAddEmailPanel"></span>
         <span class="col-4" ng-hide="showAddEmailPanel">
-           <button class="py-1 btn btn-sm btn-comment btn-secondary btn-raised" ng-click="showAddEmailPanel=true">Add Email</button>
+           <button class="py-1 btn btn-comment btn-secondary btn-raised" ng-click="showAddEmailPanel=true">Add Email</button>
         </span>
         <span class="col-4" ng-show="showAddEmailPanel">
            <input type="text" ng-model="newEmail" class="form-control"/>
-           <button class="py-1 my-2 btn btn-sm btn-wide btn-comment btn-secondary btn-raised" ng-click="addEmail()">Add New Primary Email</button>
+           <button class="py-1 my-2 btn btn-comment-wide btn-secondary btn-raised" ng-click="addEmail()">Add New Primary Email</button>
         </span>
     </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" style="cursor: pointer;">
@@ -447,7 +447,7 @@ app.filter('encode', function() {
                 <input ng-model="tzFilter" class="form-control " style="width:300px"/>
             </div>
             <div ng-repeat="item in filteredTimeZones()">
-                <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn-sm btn-comment py-0 px-1 m-2">Select</button> 
+                <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn-comment py-0 px-1 m-2">Select</button> 
             </div>
           </div>
         </span>
@@ -459,14 +459,14 @@ app.filter('encode', function() {
       </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" >
         <span class="h6 col-2" style="cursor: pointer;" ng-click="showUserDisabledPanel=!showUserDisabledPanel">Disabled</span>
-        <span class="col-6"  >
+        <span class="col-5"  >
           <div ng-hide="userInfo.disabled">User is NOT Disabled</div>
           <div ng-show="userInfo.disabled" style="background-color:yellow">User is Disabled</div>
           <div ng-show="showUserDisabledPanel"><i>Users can not be enabled or disabled at the site level.  Only the global administrator can enable and disable a user's global access.   Instead, at the site level, consider simply removing them from each/any workspace, or the entire site (bottom).</i></div>
         </span>
         <span class="h6 col-2" ng-click="showInvitePanel=!showInvitePanel"></span>
-        <span class="col-2" >
-           <button class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised" ng-click="openInviteSender()">
+        <span class="col-3" >
+           <button class="py-1 btn btn-comment-wide btn-secondary btn-raised" ng-click="openInviteSender()">
                Send invitation Email</button>
         </span>
       </div>
@@ -487,11 +487,11 @@ app.filter('encode', function() {
           <td></td>
           <td>{{role}}</td>
           <td ><div ng-show="avail">
-              <button ng-click="manageUserRoles(key,role,false)" class="py-1 btn btn-sm btn-wide btn-comment btn-outline-secondary btn-raised">
+              <button ng-click="manageUserRoles(key,role,false)" class="py-1 btn btn-wide btn-comment btn-outline-secondary btn-raised">
               Remove</button>
           </div></td>
           <td><div ng-hide="avail">
-              <button ng-click="manageUserRoles(key,role,true)" class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised">
+              <button ng-click="manageUserRoles(key,role,true)" class="py-1 btn btn-wide btn-comment btn-secondary btn-raised">
               Add</button>
           </div></td>
         </tr>        
@@ -502,7 +502,7 @@ app.filter('encode', function() {
     
 
     <div ng-hide="showRemovePanel">
-        <button class="py-1 btn btn-sm btn-wide btn-comment btn-secondary btn-raised m-3" ng-click="showRemovePanel=true">Completely Remove This User</button>
+        <button class="py-1 btn btn-comment-wide btn-secondary btn-raised m-3" ng-click="showRemovePanel=true">Completely Remove This User</button>
     </div>
     <div class="well" ng-show="showRemovePanel" style="max-width:600px">
         <span class="h5">Eliminate all References to this User</span>
@@ -526,9 +526,9 @@ app.filter('encode', function() {
         </div>
         <div class="row form-group d-flex col-12 m-2">
             <span class="d-flex">
-                <button class="py-1 btn btn-sm btn-wide btn-comment btn-danger" ng-click="showRemovePanel=false">
+                <button class="py-1 btn btn-wide btn-comment btn-danger" ng-click="showRemovePanel=false">
                 Cancel</button>
-                <button ng-click="replaceUsers()" class="py-1 btn btn-sm btn-wide btn-comment btn-danger ms-auto">
+                <button ng-click="replaceUsers()" class="py-1 btn btn-wide btn-comment btn-danger ms-auto">
                 Transfer All Responsibilities</button>
                 
             </span>

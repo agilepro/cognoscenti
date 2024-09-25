@@ -759,6 +759,24 @@ a.btn-comment {
     }
 }
 
+.btn.btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 10px;
+    width: 150px;
+    box-shadow: #cccccc 2px 2px 5px;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+        border: $primary-60, solid, 1px;
+    }
+}
 @media (max-width: 768px) {
     .btn-responsive {
       padding:2px 4px;
@@ -810,6 +828,24 @@ a.btn-comment {
         background-color: $red-100;
         color: $red;
         cursor: pointer;
+    }
+}
+.btn.btn-comment-wide {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 10px;
+    width: fit-content;
+    box-shadow: #cccccc 2px 2px 5px;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+        border: $primary-60, solid, 1px;
     }
 }
 

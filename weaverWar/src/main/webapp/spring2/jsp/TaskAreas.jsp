@@ -155,14 +155,14 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
   <div ng-show="loaded">
     <div class="container-fluid col-12 ms-5">
         <div class="row d-flex border-bottom border-1">
-            <span class="col-1"></span>
+            <span class="col-2"></span>
             <span class="col-3 h6">Name</span>
             <span class="col-2 h6">Assignee</span>
             <span class="col-2 h6" title="Red-Yellow-Green assessment of status">R-Y-G</span>
             <span class="col-2 h6">Status</span>
         </div>
-      <div class="row d-flex border-bottom border-1"  ng-repeat="ta in allTaskAreas">
-        <span class="col-1" style="cursor:pointer" 
+      <div class="row d-flex border-bottom border-1 py-2"  ng-repeat="ta in allTaskAreas">
+        <span class="col-2" style="cursor:pointer" 
             title="Edit this task area">
           <span ng-click="openTaskAreaModal(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;

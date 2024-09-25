@@ -275,8 +275,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 <div ng-repeat="item in getAgendaItems()">
                     <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
          ng-dblclick="openAgenda(selectedItem)">
-        <span class="h6" ng-show="item.proposed">Proposed:</span>
-        <button class="mx-4" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+        <span class="h6" ng-show="item.proposed">Backlog:</span>
+        <button class="my-2 mx-4" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
                     </div>
                 </div>
 <hr/>
@@ -306,20 +306,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
     </span>
 </div>
     <div class="d-flex col-12 mt-5">
-        <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer">
-        <div class="labelColumn" ng-click="item.readyToGo = ! item.readyToGo">Ready:</div>
-        <span ng-hide="item.readyToGo" >
-            <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
-                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                 style="width:24px;height=24px">
-                 Not ready yet.
-        </span>
-        <span ng-show="item.readyToGo"  >
-            <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-ready-to-go.png"
-                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting.">
-                 Ready to go.  Presentation attached (if any).
-        </span>
-        </div>
+        
 
         <span  ng-dblclick="openAgenda(item)" ng-hide="item.proposed">
             <button ng-click="toggleProposed(item)" class="btn btn-primary btn-raised" ng-show="item.proposed">

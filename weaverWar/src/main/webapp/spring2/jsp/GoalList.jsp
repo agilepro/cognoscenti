@@ -426,7 +426,7 @@ function addvalue() {
               ng-click="isCreating=true">Create New Action Item</a>
             </span>
           <hr/>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="GoalList.htm">Action Items View</a></span>
+
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
               href="GoalStatus.htm">Status List View</a></span>
               <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="TaskAreas.htm">Manage Task Areas</a></span>

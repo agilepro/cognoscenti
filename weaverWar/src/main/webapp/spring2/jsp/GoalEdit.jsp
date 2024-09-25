@@ -763,7 +763,7 @@ function addvalue() {
                 <div class="row col-12 my-2 px-0 py-2 border-bottom border-1">
                     <span class="col-4 ms-0">
                         <ul class="dropdown mx-0 my-1">
-                            <li class="nav-item dropdown btn-comment btn-wide  py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
+                            <li class="nav-item dropdown btn-comment btn-wide py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
                         Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                           <li role="presentation">
@@ -796,11 +796,11 @@ function addvalue() {
                         </ul>
                     </span>
                     <span class="col-6">
-                        <button class="col-2 btn-wide m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                        <button class="col-6 btn-wide m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
-                        <button class="col-2 btn-wide m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                        <button class="col-6 btn-wide m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
-                        <button class="col-2  btn-wide m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                        <button class="col-6  btn-wide m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
                     </span>
                 </div>

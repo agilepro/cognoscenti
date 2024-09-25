@@ -261,8 +261,8 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         return res;
     }
-    $scope.itemHasGoal = function(item, goal) {
-        for (var j=0; j<item.aiList.length; j++) {
+    $scope.itemHasGoal = function (item, goal) {
+        for (var j = 0; j < item.aiList.length; j++) {
             if (item.aiList[j].id == goal.universalid) {
                 return true;
             }
@@ -460,7 +460,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         if (!item.timerRunning) {
             if (item.proposed) {
-                return { "background-color": "#f0c85a" };
+                return { "background-color": "#cccccc" };
             }
             if (item.isSpacer) {
                 return { "background-color": "#bbbbbb" }
@@ -487,7 +487,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         };
         if (!item.timerRunning) {
             if (item.proposed) {
-                style["background-color"] = "#f8e6b4";
+                style["background-color"] = "#cccccc";
             }
             else if (item.isSpacer) {
                 style["background-color"] = "#bbbbbb";

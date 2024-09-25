@@ -144,7 +144,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                 </div>
             </span>
             <span class="col-2 align-top"><div>
-                <button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Time Zone</button>
+                <button class="btn btn-primary btn-wide btn-raised" ng-click="updatePersonal()">Update Time Zone</button>
             </div></span>
             </div>
             <div class="row-cols-2 d-flex m-3 well">
@@ -154,7 +154,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                 </span></span>
                 <span class="d-block col-6">
                     <div class="my-2 border-1 border-bottom border-secondary border-opacity-50" ng-repeat="item in filteredTimeZones()">
-                    <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-primary btn-raised py-1">Select</button> 
+                    <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-primary btn-wide btn-raised py-1">Select</button> 
                     </div>
                 </span>
             </div>
