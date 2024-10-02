@@ -418,6 +418,8 @@ if (ar.isLoggedIn()) { %>
             </span>
         </div>
     <% } %>
+<% } %>
+<%if (viewingSelf || ar.isSuperAdmin()){ %>
         <div class="row-cols-3 d-flex ">
             <span class="col-2 labelColumn ps-2">UI Mode:</span>
             <span class="col-5 p-2 m-0">You are currently viewing the NEW user interface<br/>
@@ -431,8 +433,6 @@ if (ar.isLoggedIn()) { %>
               </div>
             </span>
         </div>
-    
-
 <% } %>
         <div class="row-cols-3 d-flex ">
             <span class="col-2 labelColumn ps-2">Last Login:</span>

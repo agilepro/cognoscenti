@@ -52,6 +52,16 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <!-- INCLUDE web fonts for icons-->
+    <link href="http://localhost:8080/weaver/new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          data-semver="4.3.0" data-require="font-awesome@*" />
+      <link href="http://localhost:8080/weaver/new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+
+
+    <!-- Bootstrap 5.0-->
+    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/weaver.min.css" />
+
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="http://localhost:8080/weaver/new_assets/jscript/angular.js"></script>
     <script src="http://localhost:8080/weaver/new_assets/jscript/angular-translate.js"></script>
@@ -69,21 +79,12 @@
 
     <link href="http://localhost:8080/weaver/new_assets/jscript/ng-tags-input.css" rel="stylesheet">
 
-    <!-- INCLUDE web fonts for icons-->
-    <link href="http://localhost:8080/weaver/new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="http://localhost:8080/weaver/new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
-
-
-    <!-- Bootstrap 5.0-->
-    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/weaver.min.css" />
 
  
     <title>Display Warning</title>
 
 
-<!-- anon/Warning.jsp -->
+<!-- DisplayWarning.jsp -->
 <script>
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http, $modal) {
@@ -105,16 +106,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 function displayWelcomeMessage() {
     console.log("SLAP:", SLAP);
     <% if (!isLoggedIn) { %>
-    if (SLAP.loginInfo.isLoggedIn) {
-        // we can't reload because logging in is not finished yet
-        // window.location.reload();
+    if (SLAP.loginInfo.verified) {
+        console.log("WAS not logged in, but now logged in", SLAP.loginInfo);
+        window.location.reload();
     }
     <% } %>
-    // SLAP.displayLoginStatus = function () {};
 };
 
 SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
-console.log("SLAP:", SLAP);
+console.log("SLAP CONFIGURATION:", SLAP);
 
 </script>
 

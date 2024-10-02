@@ -443,6 +443,8 @@ if (ar.isLoggedIn()) { %>
             <td></td>
         </tr>
     <% } %>
+<% } %>
+<%if (viewingSelf || ar.isSuperAdmin()){ %>     
         <tr>
             <td class="firstcol">UI Mode:</td>
             <td>
@@ -457,7 +459,6 @@ if (ar.isLoggedIn()) { %>
               </div>
             </td>
         </tr>
-
 <% } %>
         <tr>
             <td class="firstcol">Last Login:</td>
