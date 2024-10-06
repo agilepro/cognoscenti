@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="/spring/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%
     UserProfile uProf = ar.getUserProfile();
     Cognoscenti cog = ar.getCogInstance();

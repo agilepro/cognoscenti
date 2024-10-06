@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 
 import org.w3c.dom.Document;
@@ -143,19 +143,19 @@ public abstract class ContainerCommon extends NGContainer
         CustomRole ret = getRole(roleName);
         if (ret==null)
         {
-            throw new NGException("nugen.exception.unable.to.locate.role.with.name", new Object[]{roleName, getFullName()});
+            throw WeaverException.newBasic("Unable to locate a role with name '%s' on '%s'.", roleName, getFullName());
         }
         return ret;
     }
 
     public CustomRole createRole(String roleName, String description) throws Exception {
         if (roleName==null || roleName.length()==0) {
-            throw new NGException("nugen.exception.role.cant.be.empty",null);
+            throw WeaverException.newBasic("The name of a role can not be empty when creating the role.");
         }
 
         NGRole existing = getRole(roleName);
         if (existing!=null) {
-            throw new NGException("nugen.exception.cant.create.new.role", new Object[]{roleName});
+            throw WeaverException.newBasic("Can not create a new role, because there is already a role named '%s'", roleName);
         }
         CustomRole newRole = roleParent.createChild("role", CustomRole.class);
         newRole.setName(roleName);

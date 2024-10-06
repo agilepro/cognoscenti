@@ -3,7 +3,7 @@
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.util.NameCounter"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><% 
 
 ar.assertLoggedIn("");
@@ -194,7 +194,8 @@ $scope.recalcStats = function() {
 // auto refresh if stats are empty
 if ($scope.siteStats.editUserCount < 1) {
     console.log("Automatically recalculating statistics");
-    $scope.recalcStats();
+    // if there really are zero users then this causes infinite loop
+    // $scope.recalcStats();
 }
 
 $scope.garbageCollect = function() {

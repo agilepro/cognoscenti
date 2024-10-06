@@ -257,27 +257,33 @@ public class UserCache {
         return token;
     }
 
-    public boolean verifyEmailAddressAttempt(UserProfile user, String token) throws Exception {
+    public String verifyEmailAddressAttempt(UserProfile user, String token) throws Exception {
         JSONArray allAttempts = cacheObj.requireJSONArray("emailAddAttempts");
         JSONArray remainingAttempts = new JSONArray();
-        boolean foundIt = false;
+        String resultMsg = String.format("Verification link token is not valid for (%s).  Tokens must be used within 7 days of being sent by the user that sent it.  If you still need to add the email address to your profile, please request a new confirmation message.", user.getName());
         long timeLimit = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
         for (int i=0; i<allAttempts.length(); i++) {
             JSONObject oneAttempt = allAttempts.getJSONObject(i);
-            //eliminate timed out attempts
-            if (oneAttempt.getLong("timestamp")>timeLimit) {
-                remainingAttempts.put(oneAttempt);
-                if (token.equals(oneAttempt.getString("token"))) {
-                    foundIt = true;
-                    String email = oneAttempt.getString("email");
+            if (oneAttempt.getLong("timestamp")<timeLimit) {
+                //eliminate timed out attempts
+                continue;
+            }
+            if (token.equals(oneAttempt.getString("token"))) {
+                String email = oneAttempt.getString("email");
+                if (user.hasAnyId(email)) {
+                    resultMsg = String.format("The email address (%s) is already part of your user profile, looks like you have already used this verification link.", email);
+                }
+                else {
                     user.addId(email);
                     UserManager.writeUserProfilesToFile();
+                    resultMsg = String.format("Success!  You have now confirmed the email address (%s) and it has been added to your user profile.", email);
                 }
             }
+            remainingAttempts.put(oneAttempt);
         }
         cacheObj.put("emailAddAttempts", remainingAttempts);
         save();
-        return foundIt;
+        return resultMsg;
     }
 
     

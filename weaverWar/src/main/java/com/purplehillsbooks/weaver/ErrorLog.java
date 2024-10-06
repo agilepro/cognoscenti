@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONException;
@@ -125,9 +127,9 @@ public class ErrorLog extends DOMFile {
         errorLogDetails.setURI(errorURL);
 
         if (msg!=null && msg.length()>0) {
-            errorLogDetails.setErrorMessage(msg+"\n"+NGException.getFullMessage(ex, Locale.getDefault()));
+            errorLogDetails.setErrorMessage(msg+"\n"+WeaverException.getFullMessage(ex));
         } else {
-            errorLogDetails.setErrorMessage(NGException.getFullMessage(ex, Locale.getDefault()));
+            errorLogDetails.setErrorMessage(WeaverException.getFullMessage(ex));
         }
         errorLogDetails.setErrorDetails(convertStackTraceToString(ex));
 
@@ -169,13 +171,13 @@ public class ErrorLog extends DOMFile {
                 msg = "LOGGED EXCEPTION: t="+Thread.currentThread().threadId()
                         +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
             }
-            if (JSONException.containsMessage(ex, "Must be logged in")) {
+            if (WeaverException.containsMessage(ex, "Must be logged in")) {
                 //suppress the logging of the entire stack trace just for not logged in.
                 System.out.println(msg);
-                System.out.println(JSONException.getFullMessage(ex));
+                System.out.println(WeaverException.getFullMessage(ex));
             }
             else {
-                JSONException.traceException(System.out, ex, msg);
+                WeaverException.traceException(System.out, ex, msg);
             }
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);

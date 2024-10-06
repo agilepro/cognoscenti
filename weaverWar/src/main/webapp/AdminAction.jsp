@@ -13,7 +13,7 @@
 %><%@page import="com.purplehillsbooks.weaver.util.ThreeWayMerge"
 %><%
 
-    AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
+    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     Cognoscenti cog = ar.getCogInstance();
 
     //to restart server have to skip all the normal stuff

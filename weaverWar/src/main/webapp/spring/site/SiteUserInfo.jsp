@@ -2,7 +2,7 @@
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="java.util.TimeZone"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("");

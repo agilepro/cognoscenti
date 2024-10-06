@@ -37,7 +37,8 @@ import com.purplehillsbooks.weaver.SearchResultRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,38 +80,30 @@ public class MainTabsViewControler extends BaseController {
             showJSPDepending(ar, ngw, "FrontTop.jsp", true);
         }
     }
-
-    
-    //backward compatibility, some old emails created with this kind of front page in them
-    @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
-    public void frontPageOld(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        
-        frontPage(siteId,pageId,request, response);
-    }
-    
     
     
     @RequestMapping(value = "/{siteId}/{pageId}/FrontPage.htm", method = RequestMethod.GET)
     public void frontPage(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        if ("$".equals(pageId)) {
-            //if this is a site instead of a workspace, display something else
-            response.sendRedirect("SiteWorkspaces.htm");
-            return;
+        try {
+            if ("$".equals(pageId)) {
+                //if this is a site instead of a workspace, display something else
+                response.sendRedirect("SiteWorkspaces.htm");
+                return;
+            }
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            showJSPDepending(ar, ngw, "FrontPage.jsp", true);
         }
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-        showJSPDepending(ar, ngw, "FrontPage.jsp", true);
+        catch (Exception e) {
+            showDisplayException(ar, e);
+        }
     }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/History.htm", method = RequestMethod.GET)
     public void showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response)  {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "History.jsp");
     }
@@ -122,8 +115,8 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
            throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (warnNotLoggedIn(ar)) {
                 return;
             }
@@ -138,7 +131,9 @@ public class MainTabsViewControler extends BaseController {
             }
 
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.draft.notes.page", new Object[]{pageId,siteId} , ex);
+            showDisplayException(ar, 
+                    WeaverException.newWrap("Failed to open draft topics page of workspace %s in site %s.", 
+                        ex, pageId, siteId));
         }
     }
 
@@ -162,7 +157,7 @@ public class MainTabsViewControler extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get learning path", ex);
+            Exception ee = WeaverException.newWrap("Unable to get learning path", ex);
             streamException(ee, ar);
         }
     }
@@ -184,7 +179,7 @@ public class MainTabsViewControler extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to set learning path to done", ex);
+            Exception ee = WeaverException.newWrap("Unable to set learning path to done", ex);
             streamException(ee, ar);
         }
     }
@@ -213,7 +208,7 @@ public class MainTabsViewControler extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to set learning path to done", ex);
+            Exception ee = WeaverException.newWrap("Unable to set learning path to done", ex);
             streamException(ee, ar);
         }
     }
@@ -237,7 +232,7 @@ public class MainTabsViewControler extends BaseController {
              streamJSPAnon(ar, "Index.jsp");  /*needtest*/
              return;
          }catch(Exception ex){
-             throw new Exception("Failed to open welcome page." , ex);
+             throw WeaverException.newWrap("Failed to open welcome page." , ex);
          }
      }
 
@@ -261,7 +256,7 @@ public class MainTabsViewControler extends BaseController {
             streamJSP(ar, "EmailAdjustment.jsp");
         }
         catch(Exception ex){
-            throw new Exception("Unable to stream EmailAdjustment.jsp", ex);
+            throw WeaverException.newWrap("Unable to stream EmailAdjustment.jsp", ex);
         }
     }
 
@@ -300,7 +295,7 @@ public class MainTabsViewControler extends BaseController {
             response.sendRedirect(go);
         }
         catch(Exception ex){
-            throw new Exception("Unable to process EmailAdjustmentAction.form", ex);
+            throw WeaverException.newWrap("Unable to process EmailAdjustmentAction.form", ex);
         }
     }
 
@@ -330,7 +325,7 @@ public class MainTabsViewControler extends BaseController {
             sendJson(ar, results);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to remove user from role.", ex);
+            Exception ee = WeaverException.newWrap("Unable to remove user from role.", ex);
             streamException(ee, ar);
         }
     }
@@ -376,7 +371,7 @@ public class MainTabsViewControler extends BaseController {
             }
             sendJsonArray(ar, resultList);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to search for topics.", ex);
+            Exception ee = WeaverException.newWrap("Unable to search for topics.", ex);
             streamException(ee, ar);
         }
     }
@@ -437,13 +432,13 @@ public class MainTabsViewControler extends BaseController {
               gr.updateGoalFromJSON(goalInfo, ngw, ar);
               gr.setCreator(ar.getBestUserId());
               if (gr.getCreator()==null || gr.getCreator().length()==0) {
-                  throw new Exception("can not set the creator");
+                  throw WeaverException.newBasic("can not set the creator");
               }
               JSONObject repo = gr.getJSON4Goal(ngw);
               saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Action Item .", ex);
+              Exception ee = WeaverException.newWrap("Unable to create Action Item .", ex);
               streamException(ee, ar);
           }
       }
@@ -475,7 +470,7 @@ public class MainTabsViewControler extends BaseController {
               }
               response.sendRedirect(go);
           }catch(Exception ex){
-              throw new Exception("Unable to set your required user full name", ex);
+              throw WeaverException.newWrap("Unable to set your required user full name", ex);
           }
       }
 

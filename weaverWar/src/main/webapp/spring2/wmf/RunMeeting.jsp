@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     String pageId    = ar.reqParam("pageId");
     String siteId    = ar.reqParam("siteId");

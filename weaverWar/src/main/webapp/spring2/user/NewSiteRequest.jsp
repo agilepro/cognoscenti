@@ -3,7 +3,7 @@
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.SiteReqFile"
 %><%@page import="com.purplehillsbooks.weaver.SiteRequest"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
 

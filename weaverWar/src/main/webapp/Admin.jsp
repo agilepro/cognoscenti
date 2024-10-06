@@ -15,7 +15,7 @@
 %><%@page import="com.purplehillsbooks.weaver.NGWorkspace"
 %><%
 
-    AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
+    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     Cognoscenti cog = ar.getCogInstance();
     if (cog.initializer.serverInitState!=ServerInitializer.STATE_RUNNING) {
 

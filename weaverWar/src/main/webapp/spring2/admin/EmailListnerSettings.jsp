@@ -2,7 +2,7 @@
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.Set"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     Cognoscenti cog = Cognoscenti.getInstance(request);

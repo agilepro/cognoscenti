@@ -1,7 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
-    ar = AuthRequest.getOrCreate(request, response, out);
+    ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     ar.assertLoggedIn("Program Logic -- RequireName.jsp is useful only for logged in users and should only appear then.");
     UserProfile up = ar.getUserProfile();
 

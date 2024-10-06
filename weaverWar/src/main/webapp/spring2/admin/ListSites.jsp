@@ -1,5 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("New Site page should never be accessed when not logged in");

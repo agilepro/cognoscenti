@@ -173,7 +173,7 @@ public class AuthRequest
     */
     public static AuthRequest getOrCreate(HttpServletRequest  areq, HttpServletResponse aresp)
     {
-        return getOrCreate(areq, aresp, null);
+        return getOrCreateWithWriter(areq, aresp, null);
     }
 
     /**
@@ -181,16 +181,13 @@ public class AuthRequest
     * JSP's play with the out stream as well, and so you need to be able to
     * adopt that stream, and ignore the stream from the original request.
     */
-    public static AuthRequest getOrCreate(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw)
-    {
+    public static AuthRequest getOrCreateWithWriter(HttpServletRequest  areq, HttpServletResponse aresp, Writer aw) {
         AuthRequest ar = (AuthRequest) areq.getAttribute("AuthRequest");
-        if (ar == null)
-        {
-            ar = new AuthRequest(areq,aresp,aw);
+        if (ar == null) {
+            ar = new AuthRequest(areq, aresp, aw);
             areq.setAttribute("AuthRequest", ar);
         }
-        else if (aw!=null)
-        {
+        else if (aw!=null) {
             ar.setWriter(aw);
         }
         //arbitrarily increment this so we can track what is happening.

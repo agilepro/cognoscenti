@@ -64,11 +64,10 @@ public class MeetingControler extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingFull.htm", method = RequestMethod.GET)
     public void meetingFull(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
 
@@ -110,19 +109,21 @@ public class MeetingControler extends BaseController {
             }
 
             streamJSP(ar, "MeetingFull.jsp");
-        }catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the meeting page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        }
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingAvail.htm", method = RequestMethod.GET)
     public void meetingAvail(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String id = ar.defParam("id", null);
         try{
+            String id = ar.defParam("id", null);
             if (id==null || id.length()==0) {
                 showDisplayWarning(ar, "Missing id parameter for meeting availability page");
             }
@@ -138,8 +139,10 @@ public class MeetingControler extends BaseController {
             boolean canAccess = true;
             showJSPDepending(ar, ngw, "../anon/MeetingAvail.jsp", canAccess);
         }
-        catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the meeting availability page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting availability page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
     }
 
@@ -171,8 +174,10 @@ public class MeetingControler extends BaseController {
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
         }
-        catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the meeting display page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting display page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
     }
 
@@ -181,8 +186,8 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
@@ -199,8 +204,11 @@ public class MeetingControler extends BaseController {
             }
 
             streamJSP(ar, "MeetMerge.jsp");
-        }catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the Meet Merge page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        }
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting merge page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
     }
 
@@ -209,8 +217,8 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
@@ -245,8 +253,10 @@ public class MeetingControler extends BaseController {
             	ChunkTemplate.streamAuthRequest(ar.w, ar, baseTemplateName,   meetingJSON, Calendar.getInstance() );
             }
 
-        }catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the Meeting Print page for workspace (%s) in site (%s)", ex, pageId,siteId);
+        } catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting print page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
     }
 
@@ -255,8 +265,8 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             String id = ar.reqParam("id");
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeetingOrNull(id);
@@ -274,10 +284,11 @@ public class MeetingControler extends BaseController {
             ar.setParam("id", id);
             ar.setParam("pageId", pageId);
             ar.invokeJSP("/spring/jsp/MeetingMinutes.jsp");
-        }catch(Exception ex){
-            throw WeaverException.newWrap("Unable to construct the meeting minutes page for workspace (%s) in site (%s)", ex, pageId,siteId);
-        }
-    }
+        } catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting minutes page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
+        }    }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingTime{meetId}.ics", method = RequestMethod.GET)
@@ -316,39 +327,49 @@ public class MeetingControler extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/CloneMeeting.htm", method = RequestMethod.GET)
     public void cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-        if (ngw.isFrozen()) {
-            streamJSP(ar, "WarningFrozen.jsp");
-            return;
-        }
-
-        String id = ar.defParam("id", null);
-        if (id != null && id.length()>0) {
-            //when creating a meeting by itself without cloning then no parameter is passed
-            //and we only need to check that the meeting exists if there is a parameter
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
+        try {
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            if (ngw.isFrozen()) {
+                streamJSP(ar, "WarningFrozen.jsp");
                 return;
             }
+
+            String id = ar.defParam("id", null);
+            if (id != null && id.length()>0) {
+                //when creating a meeting by itself without cloning then no parameter is passed
+                //and we only need to check that the meeting exists if there is a parameter
+                MeetingRecord meet = ngw.findMeetingOrNull(id);
+                if (meet==null) {
+                    showDisplayWarning(ar, "Can not find meeting with the id  "+id
+                            +".  Was it deleted?");
+                    return;
+                }
+            }
+            showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
+        } catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to construct the meeting clone page for workspace (%s) in site (%s)", 
+                e, pageId, siteId));
         }
-        showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingCreate.htm", method = RequestMethod.GET)
     public void meetingCreateUi(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-        if (ngw.isFrozen()) {
-            streamJSP(ar, "WarningFrozen.jsp");
-            return;
+        try {
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            if (ngw.isFrozen()) {
+                streamJSP(ar, "WarningFrozen.jsp");
+                return;
+            }
+            showJSPMembers(ar, siteId, pageId, "MeetingCreate.jsp");
         }
-        showJSPMembers(ar, siteId, pageId, "MeetingCreate.jsp");
+        catch (Exception e) {
+            showDisplayException(ar, e);
+        }
     }
 
 

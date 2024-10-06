@@ -1,7 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.NGRole"
 %><%@page import="com.purplehillsbooks.weaver.License"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("");

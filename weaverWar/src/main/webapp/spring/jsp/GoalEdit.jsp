@@ -4,7 +4,7 @@
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AgendaItem"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 /*
 Required parameters:

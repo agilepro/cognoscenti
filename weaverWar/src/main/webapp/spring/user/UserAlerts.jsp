@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="/spring/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"
 %><%@page import="com.purplehillsbooks.weaver.GoalRecord"
 %><%@page import="com.purplehillsbooks.weaver.NGBook"

@@ -1,10 +1,10 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
     if (uProf == null) {
-        throw new NGException("nugen.exception.cant.find.user",null);
+        throw WeaverException.newBasic("Can not find that user profile to display.");
     }
 
     UserProfile  operatingUser =null;

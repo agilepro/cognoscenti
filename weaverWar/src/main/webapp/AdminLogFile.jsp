@@ -13,7 +13,7 @@
 %><%@page import="com.purplehillsbooks.weaver.rest.ServerInitializer"
 %><%
 
-    AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
+    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     ServerInitializer si = ar.getCogInstance().initializer;
     if (si.serverInitState!=ServerInitializer.STATE_RUNNING) {
         throw new Exception("Server is not running???  Must be running to see log file.");

@@ -1,4 +1,4 @@
-<%@ include file="/spring2/jsp/include.jsp"
+<%@ include file="/include.jsp"
 %><%@ include file="/spring2/jsp/functions.jsp"
 %><%
 /*

@@ -4,7 +4,7 @@
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.TaskArea"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     //set 'forceTemplateRefresh' in config file to 'true' to get this

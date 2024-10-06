@@ -2,7 +2,7 @@
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLogDetails"
 %><%@page import="java.text.ParsePosition"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     Cognoscenti cog = Cognoscenti.getInstance(request);

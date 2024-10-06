@@ -1,7 +1,7 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SiteRequest"
 %><%@page import="com.purplehillsbooks.weaver.SiteReqFile"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("New Site page should never be accessed when not logged in");
@@ -83,18 +83,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <tbody>
                     <tr ng-repeat="rec in allRequests">
                         <td>
-                          <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                            <span class="caret"></span></button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation">
-                                  <a role="menuitem" ng-click="changeStatus(rec,true)" ng-show="notDone(rec)">Grant Site</a></li>
-                              <li role="presentation">
-                                  <a role="menuitem" ng-click="changeStatus(rec,false)" ng-show="notDone(rec)">Deny Site</a></li>
-                              <li role="presentation" ng-hide="notDone(rec)">
-                                  <a role="menuitem" href="SiteMerge.htm?site={{rec.siteId}}">Review Automatic Messages</a></li>
-                            </ul>
-                          </div>
+                          <button ng-click="changeStatus(rec,true)" ng-show="notDone(rec)">Grant Site</button><br/>
+                          <button ng-click="changeStatus(rec,false)" ng-show="notDone(rec)">Deny Site</button>
                         </td>
                         <td>{{rec.status}}</td>
                         <td>{{rec.siteName}}<br/>

@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -726,10 +725,10 @@ public class NGPageIndex {
         }
         NGTerm term = NGTerm.findTerm(combinedKey);
         if (term == null) {
-            throw new NGException("nugen.exception.key.dont.have.alphanum", null);
+            throw WeaverException.newBasic("Can not find page because the key given does not contain any alphanum characters and can not be used to find any page.");
         }
         if (isInVector(term.targetLeaves)) {
-            throw new NGException("nugen.exception.duplicacy.problem", null);
+            throw WeaverException.newBasic("Here is the duplication problem, targetLeaves already has a reference to this key, but 'this' does not know about it.");
         }
         term.targetLeaves.add(this);
         nameTermsTmp.add(term);
@@ -748,7 +747,7 @@ public class NGPageIndex {
             }
             if (!nameTermsTmp.contains(term)) {
                 if (isInVector(term.targetLeaves)) {
-                    throw new NGException("nugen.exception.duplicacy.problem", null);
+                    throw WeaverException.newBasic("Here is the duplication problem, targetLeaves already has a reference to this key, but 'this' does not know about it.");
                 }
                 term.targetLeaves.add(this);
                 sortByName(term.targetLeaves);

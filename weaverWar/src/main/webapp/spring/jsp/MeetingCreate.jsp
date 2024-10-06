@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@ include file="functions.jsp"
 %><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%@page import="java.util.Calendar"

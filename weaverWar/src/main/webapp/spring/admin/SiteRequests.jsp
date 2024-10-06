@@ -1,7 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SiteRequest"
 %><%@page import="com.purplehillsbooks.weaver.SiteReqFile"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("New Site page should never be accessed when not logged in");

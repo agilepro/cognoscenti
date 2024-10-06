@@ -1,12 +1,12 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.UserCache"
 %><%@page import="com.purplehillsbooks.weaver.UserCacheMgr"
 %><%
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
     if (uProf == null) {
-        throw new NGException("nugen.exception.cant.find.user",null);
+        throw WeaverException.newBasic("Can not find that user profile to display.");
     }
     NGPageIndex.clearLocksHeldByThisThread();
     UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());

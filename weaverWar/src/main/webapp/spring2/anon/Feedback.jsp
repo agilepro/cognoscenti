@@ -1,6 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page isErrorPage="true"
-%><%@include file="/spring2/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLogDetails"
 %><%

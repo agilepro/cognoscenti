@@ -1,5 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@include file="/spring2/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getWorkspacesUserIsIn(uProf);

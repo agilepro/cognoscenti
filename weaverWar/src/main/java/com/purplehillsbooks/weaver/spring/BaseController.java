@@ -108,12 +108,22 @@ public class BaseController {
         }
     }
 
-    protected static void showDisplayWarning(AuthRequest ar, String why) throws Exception {
-        System.out.println("SHOW DISPLAY WARNING: "+why);
-        //always create a small delay when generating a warning.
-        Thread.sleep(1000);
-        ar.req.setAttribute("property_msg_key", why);
-        ar.invokeRootJSP("DisplayWarning.jsp");
+    protected static void showDisplayWarning(AuthRequest ar, String why) {
+        try {
+            System.out.println("SHOW DISPLAY WARNING: "+why);
+            //always create a small delay when generating a warning.
+            Thread.sleep(1000);
+            ar.req.setAttribute("property_msg_key", why);
+            ar.invokeRootJSP("DisplayWarning.jsp");
+        }
+        catch (Exception e) {
+            System.out.println("\n\nFAILURE DISPLAYING SIMPLE PAGE: DisplayWarning.jsp is broken!");
+            System.out.println("MESSAGE: "+why);
+            WeaverException.traceException(e, "EXCEPTION ON DisplayWarning.jsp");
+        }
+    }
+    protected static void showDisplayException(AuthRequest ar, Exception e) {
+        showDisplayWarning(ar, WeaverException.getFullMessage(e));
     }
 
 
@@ -233,53 +243,60 @@ public class BaseController {
 
 
 
-    private static void streamWrappedJSP(AuthRequest ar, String accessLevel, String jspName) throws Exception {
-        //just to make sure there are no DOUBLE pages being sent
-        if (ar.req.getAttribute("wrappedJSP")!=null) {
-            throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
-                     +") when trying to set it to ("+jspName+")");
-        }
-        if (!jspName.endsWith(".jsp")) {
-            throw new Exception("Program Logic Error: streamJSP* called without JSP in name");
-        }
-        if (jspName.endsWith(".jsp.jsp")) {
-            throw new Exception("Program Logic Error: streamJSP* called with double JSP in name");
-        }
-        
-        File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
-        File accessFolder = new File(springFolder, accessLevel);
-        File jspFile = new File(accessFolder, jspName);
-        if (!jspFile.exists()) {
-            System.out.println("JSP file does not exist: "+jspFile.getAbsolutePath());
-            if (!ar.isLoggedIn()) {
-                warnNotLoggedIn(ar);
+    private static void streamWrappedJSP(AuthRequest ar, String accessLevel, String jspName) {
+        try {
+            //just to make sure there are no DOUBLE pages being sent
+            if (ar.req.getAttribute("wrappedJSP")!=null) {
+                throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
+                        +") when trying to set it to ("+jspName+")");
+            }
+            if (!jspName.endsWith(".jsp")) {
+                throw new Exception("Program Logic Error: streamJSP* called without JSP in name");
+            }
+            if (jspName.endsWith(".jsp.jsp")) {
+                throw new Exception("Program Logic Error: streamJSP* called with double JSP in name");
+            }
+            
+            File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
+            File accessFolder = new File(springFolder, accessLevel);
+            File jspFile = new File(accessFolder, jspName);
+            if (!jspFile.exists()) {
+                System.out.println("JSP file does not exist: "+jspFile.getAbsolutePath());
+                if (!ar.isLoggedIn()) {
+                    warnNotLoggedIn(ar);
+                }
+                else {
+                    showDisplayWarning(ar, "Unable to access resource "+accessLevel+"/"+jspName);
+                }
             }
             else {
-                showDisplayWarning(ar, "Unable to access resource "+accessLevel+"/"+jspName);
+                ar.req.setAttribute("wrappedJSP", jspName);
+                ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
             }
         }
-        else {
-            ar.req.setAttribute("wrappedJSP", jspName);
-            ar.invokeJSP("/spring/"+accessLevel+"/Wrapper.jsp");
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare page (%s) at level (%s)", e, jspName, accessLevel));
         }
+
     }
-    protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
+    protected static void streamJSP(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "jsp", jspName);
     }
     
-    protected static void streamJSPLimited(AuthRequest ar, String jspName) throws Exception {
+    protected static void streamJSPLimited(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "ltd", jspName);
     }
     
-    protected static void streamJSPUser(AuthRequest ar, String jspName) throws Exception {
+    protected static void streamJSPUser(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "user", jspName);
     }
     
-    protected static void streamJSPSite(AuthRequest ar, String jspName) throws Exception {
+    protected static void streamJSPSite(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "site", jspName);
     }
     
-    public static void streamJSPAnon(AuthRequest ar, String jspName) throws Exception {
+    public static void streamJSPAnon(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "anon", jspName);
     }
 
@@ -287,7 +304,7 @@ public class BaseController {
         ar.invokeJSP("/spring/anon/"+jspName);
     }
     
-    protected static void streamJSPMobileFirst(AuthRequest ar, String jspName) throws Exception {
+    protected static void streamJSPMobileFirst(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "wmf", jspName);
     }
     
@@ -325,7 +342,7 @@ public class BaseController {
         ar.req.setAttribute("pageId",     pageId);
         NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
         if (!siteId.equals(ngw.getSiteKey())) {
-            throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
+            throw WeaverException.newBasic("Improperly formed web page address, the workspace %s does not belong to the site %s.", pageId, siteId);
         }
         ar.setPageAccessLevels(ngw);
         ar.req.setAttribute("title", ngw.getFullName());
@@ -413,7 +430,8 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare JSP view of %s for page (%s) in (%s)", ex, jspName, pageId, siteId));
         }
     }
 
@@ -429,7 +447,8 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare JSP view of %s for page (%s) in (%s)", ex, jspName, pageId, siteId));
         }
     }
     
@@ -445,12 +464,13 @@ public class BaseController {
             streamJSPSite(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare JSP view of %s for site (%s)", ex, jspName, siteId));
         }
     }
 
 
-    public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+    public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) {
         try{
             registerSiteOrProject(ar, siteId, pageId);
             if (warnNoAccess(ar)){
@@ -459,10 +479,11 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare JSP view of %s for page (%s) in (%s)", ex, jspName, pageId, siteId));
         }
     }
-    public static void showJSPExecutives(AuthRequest ar, String siteId, String jspName) throws Exception {
+    public static void showJSPExecutives(AuthRequest ar, String siteId, String jspName) {
         try{
             prepareSiteView(ar, siteId);
             if (warnNotExecutive(ar)){
@@ -471,7 +492,8 @@ public class BaseController {
             streamJSPSite(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for site ("+siteId+")", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare JSP view of %s for site (%s)", ex, jspName, siteId));
         }
     }
 
@@ -687,15 +709,27 @@ public class BaseController {
     
     
     public void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
-            String userKey, String viewName) throws Exception {
-        if (!viewName.endsWith(".jsp")) {
-            throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
-        }
+            String userKey, String viewName) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPUserLoggedIn(ar, userKey, viewName);
+        try {
+            if (!viewName.endsWith(".jsp")) {
+                throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
+            }
+            if(!ar.isLoggedIn()){
+                throw WeaverException.newBasic("In order to see this section, you need to be logged in.");
+            }
+            UserProfile up = UserManager.getUserProfileOrFail(userKey);
+            ar.req.setAttribute("userProfile", up);
+            ar.req.setAttribute("userKey", up.getKey());
+            streamJSPUser(ar, viewName);
+        }
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare page (%s) for user (%s)", e, viewName, userKey));
+        }
     }
     
-    public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
+    public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) {
         try {
             if(!ar.isLoggedIn()){
                 ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
@@ -708,7 +742,8 @@ public class BaseController {
             streamJSPUser(ar, jspName);
         }
         catch (Exception e) {
-            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userKey+")", e);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to prepare page (%s) for user (%s)", e, jspName, userKey));
         }
     }
 

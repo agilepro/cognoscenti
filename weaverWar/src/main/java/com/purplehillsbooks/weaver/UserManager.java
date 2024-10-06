@@ -24,8 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
 
@@ -308,7 +308,7 @@ public class UserManager
     public static synchronized UserProfile getUserProfileOrFail(String key) throws Exception {
         UserProfile up = getUserProfileByKey(key);
         if (up == null) {
-            throw new NGException("nugen.exception.user.profile.not.exist", new Object[]{key});
+            throw WeaverException.newBasic("Can not find a user profile for the key: %s", key);
         }
         return up;
     }
@@ -428,7 +428,7 @@ public class UserManager
             }
         }
         if (sendTo.size() == 0) {
-            throw new NGException("nugen.exceptionhandling.account.no.super.admin", null);
+            throw WeaverException.newBasic("Either there is no Super Admin in the System or system doesn't have profile for super admin.");
         }
         return sendTo;
     }

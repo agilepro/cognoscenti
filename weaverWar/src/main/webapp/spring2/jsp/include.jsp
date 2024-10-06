@@ -65,6 +65,7 @@
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.dms.RemoteLinkCombo"
 %><%@page import="com.purplehillsbooks.weaver.exception.NGException"
+%><%@page import="com.purplehillsbooks.weaver.exception.WeaverException"
 %><%@page import="com.purplehillsbooks.weaver.exception.ProgramLogicError"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
 %><%@page import="com.purplehillsbooks.weaver.SiteUsers"
@@ -80,7 +81,7 @@
 %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%
-    AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
+    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
 %>
 <fmt:setBundle basename="messages"/>
 

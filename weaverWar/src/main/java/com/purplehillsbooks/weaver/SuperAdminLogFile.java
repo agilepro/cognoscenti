@@ -21,9 +21,6 @@
 package com.purplehillsbooks.weaver;
 
 import java.io.File;
-import java.util.Locale;
-
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.w3c.dom.Document;
@@ -108,7 +105,7 @@ public class SuperAdminLogFile extends DOMFile {
 
     public void setEmailListenerProblem(Throwable ex) throws Exception {
         setScalar("emailListenerProblem",
-                NGException.getFullMessage(ex, Locale.getDefault()));
+                WeaverException.getFullMessage(ex));
         save();
     }
 

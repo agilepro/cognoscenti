@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
@@ -239,7 +238,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             File attachmentFile =  attachmentVersion.getLocalFile();
 
             if (!attachmentFile.exists()) {
-                throw new NGException("nugen.exception.attachment.not.exist", new Object[]{attachmentFile.getAbsolutePath()});
+                throw WeaverException.newBasic("Attachment '%s' does not exist.", attachmentFile.getAbsolutePath());
             }
 
             ar.resp.setHeader( "Content-Length", Long.toString(attachmentVersion.getFileSize()) );
@@ -253,7 +252,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //Someone might be trying all the possible file names just to
             //see what is here.  A three second sleep makes that more difficult.
             Thread.sleep(3000);
-            throw new Exception("Unable to serve up a file named '"+fileName+"' from workspace '"+ngw.getFullName()+"'", e);
+            throw WeaverException.newWrap("Unable to serve up a file named '%s' from workspace '%s'", e, fileName, ngw.getFullName());
         }
     }
 
@@ -289,10 +288,11 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
                 return attachmentVersion;
             }
 
-            throw new NGException("Attachment does not have ANY versions", new Object[0]);
+            throw WeaverException.newBasic("Attachment does not have ANY versions");
         }
         catch (Exception e) {
-            throw new Exception("Unable to get contents of version "+version+" file named '"+fileName+"' from workspace '"+ngw.getFullName()+"'", e);
+            throw WeaverException.newWrap("Unable to get contents of version %s file named '%s' from workspace '%s'", 
+                    e, version, fileName, ngw.getFullName());
         }
     }
 

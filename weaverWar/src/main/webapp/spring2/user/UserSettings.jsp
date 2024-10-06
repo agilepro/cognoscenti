@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="include.jsp"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%
 
@@ -11,7 +11,7 @@
     UserCache uc = cog.getUserCacheMgr().getCache(userKey);
     UserProfile runningUser = ar.getUserProfile();
     if (uProf == null) {
-        throw new NGException("nugen.exception.cant.find.user",null);
+        throw WeaverException.newBasic("Can not find that user profile to display.");
     }
 
     boolean viewingSelf = uProf.getKey().equals(runningUser.getKey());

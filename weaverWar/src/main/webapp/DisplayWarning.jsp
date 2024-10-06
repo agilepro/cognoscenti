@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ include file="/spring/jsp/include.jsp"
+<%@ include file="/include.jsp"
 %><%
     if (!Cognoscenti.getInstance(request).isInitialized()) {
         String go = ar.getCompleteURL();
@@ -7,10 +7,7 @@
         response.sendRedirect(configDest);
     }
     String property_msg_key = ar.defParam("property_msg_key", "Warning message is unspecified.");
-    String warningMessage = property_msg_key;
-    if (property_msg_key.startsWith("nugen")) {
-        warningMessage = ar.getMessageFromPropertyFile(property_msg_key, new Object[0]);
-    }
+    String[] warningMessage = property_msg_key.split("\n");
     UserProfile loggedUser = ar.getUserProfile();
     boolean isLoggedIn = ar.isLoggedIn();
     NGBook site = null;
@@ -55,16 +52,14 @@
     <!-- INCLUDE web fonts for icons-->
     <link href="http://localhost:8080/weaver/new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="http://localhost:8080/weaver/new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+    <link href="http://localhost:8080/weaver/new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
 
     <!-- Bootstrap 5.0-->
     <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/weaver.min.css" />
 
-    <!-- INCLUDE the ANGULAR JS library -->
-    <script src="http://localhost:8080/weaver/new_assets/jscript/angular.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/angular-translate.js"></script>
+
     <script src="http://localhost:8080/weaver/new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="http://localhost:8080/weaver/new_assets/jscript/jquery-3.6.0.min.js"></script>
     <script src="http://localhost:8080/weaver/new_assets/jscript/bootstrap.min.js"></script>
@@ -72,10 +67,6 @@
     <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/MarkdownToHtml.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/HtmlParser.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/TextMerger.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/HtmlToMarkdown.js"></script>
 
     <link href="http://localhost:8080/weaver/new_assets/jscript/ng-tags-input.css" rel="stylesheet">
 
@@ -86,23 +77,21 @@
 
 <!-- DisplayWarning.jsp -->
 <script>
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http, $modal) {
-    $scope.warningMessage = "<% ar.writeJS(warningMessage); %>"
-    $scope.login = function() {
-        console.log("SLAP LOGIN:", SLAP);
-        SLAP.loginUserRedirect();
+
+function logoutButton() {
+    console.log("SLAP LOGOUT:", SLAP);
+    SLAP.displayLoginStatus = function(data) {
+        SLAP.displayLoginStatus = function () {};
+        window.location.reload();
     }
-    $scope.logout = function() {
-        console.log("SLAP LOGOUT:", SLAP);
-        SLAP.displayLoginStatus = function(data) {
-            SLAP.displayLoginStatus = function () {};
-            window.location.reload();
-        }
-        SLAP.logoutUser();
-    }
-    $scope.slap = SLAP;
-});
+    SLAP.logoutUser();
+}
+
+function loginButton() {
+    console.log("SLAP LOGIN:", SLAP);
+    SLAP.loginUserRedirect();
+}
+
 function displayWelcomeMessage() {
     console.log("SLAP:", SLAP);
     <% if (!isLoggedIn) { %>
@@ -128,13 +117,22 @@ console.log("SLAP CONFIGURATION:", SLAP);
     font-family:"PT_Sans"
 }
 .guideVocal {
-    font-size:20px;
+    font-size:24px;
     font-weight:300;
+    padding: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border: 2px solid green;
+    border-radius: 20px;
+    background-color: #F6FFED;
+}
+.innerVoice {
+    padding: 20px;
 }
 .main-content {
     max-width: 800px;
-    padding: 50px;
-    margin: 50px;
+    padding: 20px;
+    margin: 20px;
 }
 .header-column {
     width: 100px;
@@ -228,7 +226,7 @@ console.log("SLAP CONFIGURATION:", SLAP);
             <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 
             <li class="divider"></li>
-            <li><a class="dropdown-item" ng-click='logout();'>Log Out</a></li>
+            <li><a class="dropdown-item" onClick='logoutButton();'>Log Out</a></li>
  
           </ul>
         </li>
@@ -265,18 +263,15 @@ console.log("SLAP CONFIGURATION:", SLAP);
 
 <div class="main-content">
     
-    <h2>Weaver encountered a problem . . . please read</h2>
+    <h4>Weaver has a message for you . . . please read</h4>
     
     <div class="warningBox">
+        <div class="guideVocal">
+        <% for (String line: warningMessage) { %>
+           <div class="innerVoice"><% ar.writeHtml(line); %></div>
+        <% } %>
+        </div>
         <table class="table">
-          <tr>
-            <td class="header-column">
-              Error:
-            </td>
-            <td>
-            <b>{{warningMessage}}</b>
-            </td>
-          </tr>
           <% if (ws != null) { %>
           <tr>
             <td class="header-column">
@@ -348,15 +343,11 @@ console.log("SLAP CONFIGURATION:", SLAP);
     </div>
 
 
-<div class="main-content">
-</div>
-
-
 <% if (ar.isLoggedIn()) {  %>
     <div>
         <p>You are currently logged in as <%=loggedUser.getName()%> (<%=loggedUser.getUniversalId()%>).</p>
         <p>If that is the wrong user account, you can logout and login with the correct one.</p>
-        <button class="btn btn-primary btn-raised" ng-click="logout()">
+        <button class="btn btn-primary btn-raised" onClick="logoutButton()">
             Logout
         </button>
         
@@ -365,7 +356,7 @@ console.log("SLAP CONFIGURATION:", SLAP);
 <% } else { %>
     <div>
         <p>If you already have an account, please Login to find out more.</p>
-        <button class="btn btn-primary btn-raised" ng-click="login()">
+        <button class="btn btn-primary btn-raised" onClick="loginButton()">
             Login
         </button>
     </div>

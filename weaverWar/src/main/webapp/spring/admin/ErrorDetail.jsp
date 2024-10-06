@@ -1,7 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLogDetails"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
 /*

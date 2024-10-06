@@ -38,7 +38,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -348,7 +349,7 @@ public class DOMUtils {
             return nodeList;
        }
        catch (Exception e) {
-           throw new NGException("nugen.exception.error.while.searching.dom", new Object[]{e.getMessage()});
+           throw WeaverException.newWrap("Error while searching data file for node (%s)", e, expr);
        }
     }
 

@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.capture.CapturePage"
 %><%@page import="com.purplehillsbooks.streams.NullWriter"
 %><%@page import="com.purplehillsbooks.streams.MemFile"

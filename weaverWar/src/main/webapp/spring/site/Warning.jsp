@@ -1,5 +1,5 @@
 <%@page import="com.purplehillsbooks.weaver.NGRole"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%
     UserProfile up = ar.getUserProfile();

@@ -1,7 +1,7 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SharePortRecord"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 /*
 Required parameters:

@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 
 public class MicroProfileMgr {
@@ -123,7 +124,7 @@ public class MicroProfileMgr {
 
     public synchronized static void save() throws Exception{
         if(profileFile == null){
-            throw new NGException("nugen.exception.microprofile.name.not.set",null);
+            throw WeaverException.newBasic("Unable to write micro profile information to disk.  The micro profile file name is not set.");
         }
         profileFile.save();
     }

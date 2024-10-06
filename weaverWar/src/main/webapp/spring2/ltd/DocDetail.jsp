@@ -1,5 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentVersion"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"

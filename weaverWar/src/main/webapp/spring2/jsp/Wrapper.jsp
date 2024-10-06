@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="/spring2/jsp/error.jsp"
-%><%@ include file="/spring2/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 
 %><%
     long renderStart = System.currentTimeMillis();

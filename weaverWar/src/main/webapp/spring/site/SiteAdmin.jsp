@@ -3,7 +3,7 @@
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.util.NameCounter"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><% 
 
     ar.assertLoggedIn("");

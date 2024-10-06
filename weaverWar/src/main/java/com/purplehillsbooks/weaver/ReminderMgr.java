@@ -23,7 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -81,7 +82,7 @@ public class ReminderMgr extends DOMFace
     public ReminderRecord findReminderByIDOrFail(String id) throws Exception {
         ReminderRecord ret =  findReminderByID( id );
         if (ret==null) {
-            throw new NGException("nugen.exception.reminder.not.found",new Object[]{id});
+            throw WeaverException.newBasic("Unable to locate a Reminder with id '%s'.", id);
         }
         return ret;
     }

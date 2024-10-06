@@ -48,6 +48,7 @@ import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -215,7 +216,7 @@ public class UserController extends BaseController {
                 uPage.deleteProfileRef(address);
             }
             else {
-                throw new Exception("RemoteProfileAction does not understand the act "+act);
+                throw WeaverException.newBasic("RemoteProfileAction does not understand the act %s", act);
             }
             uPage.save();
 
@@ -231,7 +232,7 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             if(!ar.isLoggedIn()){
-                throw new Exception("Must be logged in.");
+                throw WeaverException.newBasic("Must be logged in.");
             }
             String address = ar.reqParam("address");
             String act = ar.reqParam("act");
@@ -247,12 +248,12 @@ public class UserController extends BaseController {
                 ar.write("Remote profile deleted "+address);
             }
             else {
-                throw new Exception("RemoteProfileAction does not understand the act "+act);
+                throw WeaverException.newBasic("RemoteProfileAction does not understand the act "+act);
             }
             uPage.save();
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get update from remote profile.", ex);
+            Exception ee = WeaverException.newWrap("Unable to get update from remote profile.", ex);
             streamException(ee, ar);
         }
     }
@@ -273,7 +274,7 @@ public class UserController extends BaseController {
 
             if (!userEditing.getKey().equals(userBeingEdited.getKey())) {
                 if (!ar.isSuperAdmin()) {
-                    throw new Exception("User "+userEditing.getName()+" is not allowed to edit the profile of user "+userBeingEdited.getName());
+                    throw WeaverException.newBasic("User "+userEditing.getName()+" is not allowed to edit the profile of user "+userBeingEdited.getName());
                 }
             }
 
@@ -285,7 +286,7 @@ public class UserController extends BaseController {
             sendJson(ar, userObj);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update user "+userKey, ex);
+            Exception ee = WeaverException.newWrap("Unable to update user "+userKey, ex);
             streamException(ee, ar);
         }
     }
@@ -321,7 +322,7 @@ public class UserController extends BaseController {
             int dotPos = uploadedFileName.lastIndexOf(".");
             String fileExtension = uploadedFileName.substring(dotPos).toLowerCase();
             if (!".jpg".equals(fileExtension)) {
-                throw new Exception("You must upload a JPG file, got: "+uploadedFileName);
+                throw WeaverException.newBasic("You must upload a JPG file, got: "+uploadedFileName);
             }
 
 
@@ -399,7 +400,7 @@ public class UserController extends BaseController {
             String requestId = ar.reqParam("requestId");
             RoleRequestRecord roleRequestRecord = ngw.getRoleRequestRecordById(requestId);
             if (roleRequestRecord==null) {
-                throw new Exception("Unable to find a role request record with id="+requestId);
+                throw WeaverException.newBasic("Unable to find a role request record with id="+requestId);
             }
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngw, roleRequestRecord);
 
@@ -447,7 +448,7 @@ public class UserController extends BaseController {
 
             sendJson(ar, received);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update micro profile.", ex);
+            Exception ee = WeaverException.newWrap("Unable to update micro profile.", ex);
             streamException(ee, ar);
         }
     }
@@ -457,37 +458,25 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/{userKey}/NotificationSettings.htm", method = RequestMethod.GET)
     public void goToNotificationSetting(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
-            if(ar.hasSpecialSessionAccess("Notifications:"+userKey)){
-                //need to show this even if not logged in
-                streamJSP(ar, "NotificationSettings.jsp");
-                return;
-            }
-
-            //this will fail if not logged in
-            streamJSPUserLoggedIn(ar, userKey, "NotificationSettings.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
+        if(ar.hasSpecialSessionAccess("Notifications:"+userKey)){
+            //need to show this even if not logged in
+            streamJSP(ar, "NotificationSettings.jsp");
+            return;
         }
+
+        streamJSPUserLoggedIn(ar, userKey, "NotificationSettings.jsp");
     }
     @RequestMapping(value = "/{userKey}/LearningPath.htm", method = RequestMethod.GET)
     public void learningPath(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            //this will fail if not logged in
-            streamJSPUserLoggedIn(ar, userKey, "LearningPath.jsp");
-        }catch(Exception ex){
-            throw new Exception("Unable to servve up the learning path page", ex);
-        }
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        streamJSPUserLoggedIn(ar, userKey, "LearningPath.jsp");
     }
 
     @RequestMapping(value = "/unsubscribe.htm", method = RequestMethod.GET)
@@ -520,6 +509,7 @@ public class UserController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value="/{userKey}/saveNotificationSettings.form", method = RequestMethod.POST)
     public void saveNotificationSettings(
             @PathVariable String userKey,
@@ -595,7 +585,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
         }
     }
-
+    */
 
 
     @RequestMapping(value = "/{userKey}/UserSettings.htm", method = RequestMethod.GET)
@@ -644,13 +634,13 @@ public class UserController extends BaseController {
             }
             sendJsonArray(ar, resultList);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to search for notes.", ex);
+            Exception ee = WeaverException.newWrap("Unable to search for notes.", ex);
             streamException(ee, ar);
         }
     }
 
 
-
+/*
     private static void removeFromRole(NGWorkspace ngw, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
         if(stopRolePlayer != null && stopRolePlayer.length > 0){
             NGRole role = null;
@@ -661,14 +651,14 @@ public class UserController extends BaseController {
             ngw.getSite().flushUserCache();
         }
     }
-
+*/
     
     @RequestMapping(value = "/{userKey}/PersonShow.htm", method = RequestMethod.GET)
     public void personShow(@PathVariable String userKey, 
                            HttpServletRequest request, 
                            HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             UserProfile searchedFor = UserManager.lookupUserByAnyId(userKey);
             ar.req.setAttribute("userKey",  userKey);
             if (searchedFor==null) {
@@ -683,7 +673,7 @@ public class UserController extends BaseController {
             showJSPDependingUser(ar, "PersonShow.jsp");
         }
         catch(Exception ex){
-            throw new Exception("Failure trying to find user", ex);
+            throw WeaverException.newWrap("Failure trying to find user", ex);
         }
     }
 
@@ -719,7 +709,7 @@ public class UserController extends BaseController {
             streamJSPAnon(ar, "PersonMissing.jsp");
             return;
         }catch(Exception ex){
-            throw new Exception("Failure trying to find user", ex);
+            throw WeaverException.newWrap("Failure trying to find user", ex);
         }
     }
 
@@ -767,22 +757,26 @@ public class UserController extends BaseController {
             HttpServletResponse response,
             @PathVariable String userKey) throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if(!ar.isLoggedIn()) {
+                showDisplayWarning(ar, "Please log in first, and then try another time to click on the email token.");
+                return;
+            }
+            if (userKey==null || userKey.isEmpty()) {
+                showDisplayWarning(ar, "Weaver can not understand that email verfication link.  It appears to be improperly formed.  Please request a new email verification link.");
+                return;
+            }
             Cognoscenti cog = ar.getCogInstance();
             UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
-
 
             String token = ar.reqParam("token");
             UserCacheMgr cacheMgr = cog.getUserCacheMgr();
             UserCache uCache = cacheMgr.getCache(user.getKey());
-            if (!uCache.verifyEmailAddressAttempt(user, token)) {
-                throw new Exception("Unable to confirm that email address");
-            }
-
-            redirectBrowser(ar,"UserSettings.htm");
+            String message = uCache.verifyEmailAddressAttempt(user, token);
+            showDisplayWarning(ar, message);
         }catch(Exception ex){
-            throw new Exception("Email address not added to profile", ex);
+            showDisplayWarning(ar, WeaverException.getFullMessage(ex));
         }
     }
 
@@ -836,7 +830,7 @@ public class UserController extends BaseController {
             Cognoscenti cog = ar.getCogInstance();
             UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
             if (!user.equals(ar.getUserProfile()) && !ar.isSuperAdmin()) {
-                throw new Exception("User email list is accessible only from the user themselves, or administrator.");
+                throw WeaverException.newBasic("User email list is accessible only from the user themselves, or administrator.");
             }
             JSONObject posted = this.getPostedObject(ar);
             posted.put("userKey", user.getKey());
@@ -846,7 +840,7 @@ public class UserController extends BaseController {
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -864,7 +858,7 @@ public class UserController extends BaseController {
             JSONObject repo = user.getFacilitatorFields();
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -891,7 +885,7 @@ public class UserController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -949,7 +943,7 @@ public class UserController extends BaseController {
                 sendJson(ar, getMailProblems(ar));
         }
         catch (Exception ex) {
-            Exception ee = new Exception("Unable to get mail blockers", ex);
+            Exception ee = WeaverException.newWrap("Unable to get mail blockers", ex);
             streamException(ee, ar);
         }
     }
@@ -991,7 +985,7 @@ public class UserController extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get mail blockers", ex);
+            Exception ee = WeaverException.newWrap("Unable to get mail blockers", ex);
             streamException(ee, ar);
         }
     }
@@ -1003,7 +997,7 @@ public class UserController extends BaseController {
         try{
             UserProfile user = ar.getUserProfile();
             if (user==null) {
-                throw new Exception("User is not logged in or has no user profile");
+                throw WeaverException.newBasic("User is not logged in or has no user profile");
             }
             UserPage userPage = user.getUserPage();
             userPage.clearAllLearning();
@@ -1014,7 +1008,7 @@ public class UserController extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to clear all learning flags", ex);
+            Exception ee = WeaverException.newWrap("Unable to clear all learning flags", ex);
             streamException(ee, ar);
         }
     }

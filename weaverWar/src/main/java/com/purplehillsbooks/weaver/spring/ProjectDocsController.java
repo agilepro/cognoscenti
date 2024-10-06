@@ -51,7 +51,6 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WikiToPDF;
 import com.purplehillsbooks.weaver.capture.WebFile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -248,7 +247,7 @@ public class ProjectDocsController extends BaseController {
             //Someone might be trying all the possible file names just to
             //see what is here.  A three second sleep makes that more difficult.
             Thread.sleep(3000);
-            throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Failed to perform operation while downloading document of workspace %s in site %s.", ex, pageId, siteId);
         }
     }
 
@@ -290,7 +289,7 @@ public class ProjectDocsController extends BaseController {
             WikiToPDF.handlePDFRequest(ar, ngw);
 
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
+            throw WeaverException.newWrap("Failed to perform operation while downloading document of workspace %s in site %s.", ex, pageId, siteId);
         }
     }
 

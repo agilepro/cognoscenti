@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     ar.assertLoggedIn("You need to Login to Upload a file.");
     String pageId = ar.reqParam("pageId");

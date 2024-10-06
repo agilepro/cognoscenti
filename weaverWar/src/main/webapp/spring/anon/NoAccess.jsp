@@ -1,5 +1,5 @@
 <%@page import="com.purplehillsbooks.weaver.NGRole"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     String property_msg_key = ar.reqParam("property_msg_key");
     String warningMessage = property_msg_key;

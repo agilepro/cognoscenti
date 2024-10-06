@@ -53,4 +53,30 @@ public class WeaverException extends JSONException {
         return false;
     }
 
+    public static String getFullMessage(Throwable e) {
+        StringBuilder retMsg = new StringBuilder();
+        while (e != null) {
+            String line = e.toString();
+            int colonPos = line.indexOf(":");
+            if (colonPos>0 && colonPos<60) {
+                String prefix = line.substring(0, colonPos);
+                boolean strip = false;
+                if (prefix.contains("WeaverException")) {
+                    strip = true;
+                }
+                if (prefix.contains("Exception")) {
+                    strip = true;
+                }
+                if (strip) {
+                    line = line.substring(colonPos+1);
+                }
+            }
+            retMsg.append(line);
+            retMsg.append("\n");
+            e = e.getCause();
+        }
+        return retMsg.toString();
+    }
+  
+
 }

@@ -80,7 +80,7 @@
 %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%
-    AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
+    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
 %>
 <fmt:setBundle basename="messages"/>
 

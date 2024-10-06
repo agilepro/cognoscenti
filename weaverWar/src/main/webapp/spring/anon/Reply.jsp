@@ -6,7 +6,7 @@
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"
 %><%@page import="com.purplehillsbooks.weaver.EmailContext"
 %><%@page import="com.purplehillsbooks.weaver.mail.MailInst"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 /*
 Required parameters:

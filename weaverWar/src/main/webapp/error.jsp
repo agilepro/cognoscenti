@@ -1,7 +1,7 @@
 <%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page isErrorPage="true"
 %><%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
-%><%@include file="/spring/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLog"
 %><%@page import="com.purplehillsbooks.weaver.ErrorLogDetails"
 %><%@page import="com.purplehillsbooks.weaver.DOMFace"

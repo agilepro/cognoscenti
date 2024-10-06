@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@include file="/spring/jsp/include.jsp"
+%><%@include file="/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();

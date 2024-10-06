@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     long renderStart = System.currentTimeMillis();
     ar.assertLoggedIn("Must be logged in for administration pages");

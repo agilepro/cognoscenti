@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.capture.CapturePage"
 %><%@page import="com.purplehillsbooks.streams.NullWriter"
 %><%@page import="com.purplehillsbooks.weaver.capture.WebFile"

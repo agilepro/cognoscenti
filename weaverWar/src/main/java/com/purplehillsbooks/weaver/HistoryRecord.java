@@ -25,8 +25,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -152,13 +153,13 @@ public class HistoryRecord extends DOMFace
         throws Exception
     {
         if (id.length()!=4) {
-            throw new NGException("nugen.exception.invalid.id",null);
+            throw WeaverException.newBasic("Invalid id, must be a exactly four digits and no other characters");
         }
 
         for (int i=0; i<4; i++)
         {
             if (id.charAt(i)<'0' || id.charAt(i)>'9') {
-                throw new NGException("nugen.exception.invalid.id",null);
+                throw WeaverException.newBasic("Invalid id, must be a exactly four digits and no other characters");
             }
         }
         setAttribute("id", id);
