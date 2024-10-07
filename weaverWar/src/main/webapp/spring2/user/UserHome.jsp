@@ -142,7 +142,7 @@ myApp.controller('myCtrl', function($scope, $http) {
             </div>
             <div ng-show="openActionItems.length>10">
                  <a href="UserActiveTasks.htm" 
-                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+                      class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                 </div>
                 <div ng-show="proposals.length>10">
                  <a href="userMissingResponses.htm" 
-                     class="btn btn-sm btn-secondary btn-raised" translate>See all...</a>
+                     class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
                 </div>
             </div>
         </div>
@@ -193,7 +193,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                </div>
                <div ng-show="openRounds.length>10">
                  <a href="userOpenRounds.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+                     class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
                </div>
             </div>
         </div>
@@ -228,7 +228,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                </div>
                <div ng-show="wList.length>10">
                  <a href="WatchedProjects.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+                     class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
                </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                </div>
                <div ng-show="wList.length>10">
                  <a href="ParticipantProjects.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+                     class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
                </div>
           </div>
         </div>
@@ -265,7 +265,7 @@ myApp.controller('myCtrl', function($scope, $http) {
                </div>
                <div ng-show="siteList.length>10">
                  <a href="userSites.htm" 
-                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+                     class="btn btn-comment btn-raised p-1 mt-2 float-end" translate>See all...</a>
                </div>
            </div>
        </div>

@@ -47,7 +47,7 @@
           Meeting is in running mode and will allow updates normally done during the meeting.
           </p>
             
-            <table  ng-hide="meeting.state==3" class="table">
+            <table ng-hide="meeting.state==3" class="table">
         <tr>
           <th></th>
           <th>Presenter</th>
@@ -62,7 +62,7 @@
           <td ng-dblclick="openAgenda(item)">
                 <span ng-show="item.isSpacer" >--</span>
                 <span ng-hide="item.isSpacer" >{{item.number}}.</span>
-                {{item.subject}} 
+                {{item.subject}}
           </td>
 
           <td ng-dblclick="openAgenda(item)">
@@ -142,19 +142,18 @@
             <td></td>
             <td></td>
         </tr>
-        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed" >
-          <td  ng-dblclick="openAgenda(item)">
-                <span>--</span>
+        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed">
+          <td ng-dblclick="openAgenda(item)">
+                <span >--</span>
                 {{item.subject}} 
           </td>
           <td>
           </td>
           <td></td>
-
           <td ng-dblclick="openAgenda(item)" >
             {{item.duration}}
           </td>
-          <td ng-dblclick="openAgenda(item)"></td>
+          <td ng-dblclick="openAgenda(item)" ></td>
           <td ng-style="timerStyleComplete(item)" >
             <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
                   title="delete agenda item">
@@ -167,7 +166,7 @@
           </td>
         </tr>        
             </table>
-        </div>
+            </div>
 
         <div class="container px-4" ng-show="meeting.state>=3">
           <p>Meeting is completed and no more updates are expected.</p>

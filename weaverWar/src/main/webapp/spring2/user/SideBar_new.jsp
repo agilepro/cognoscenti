@@ -94,18 +94,43 @@
                         <% }} %>
                 </li>
             <% } %>
-           <% 
+           </ul><% 
     
     %> 
-    <li class="my-5 text-weaverbody">  <% if (userIsReadOnly) { %>
+    <span class="my-5 text-weaverbody" data-bs-toggle="modal" data-bs-target="#accessModal">  <% if (userIsReadOnly) { %>
         <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
         class="accessIndicator"/>
     <% } else { %>
         <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
     class="accessIndicator"/>
-    <% } %></li>
+    <% } %></span>
     
-</ul>
+    <div class="modal fade" id="accessModal" tabindex="-1" aria-labelledby="accessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content"><% if (userIsReadOnly) { %>
+            <div class="modal-header">
+              <h5 class="modal-title" id="accessModalLabel">Observer Only</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                You have observer access only. If you would like to edit this workspace, please contact your administrator.
+            </div>
+            <% } else { %>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accessModalLabel">Full Edit Access</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    You have full editing access.
+                  </div>
+                  <% } %>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
 </div>
 <%if (false) {ar.write(wrappedJSP);} %>
     </nav>

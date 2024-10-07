@@ -86,7 +86,7 @@
             JSONArray options = getOptions(jo, wrappedJSP);
             if (options.length()>0) {
             %>
-              <ul class="dropdown-menu bg-weaverbody ms-0"><%
+            <ul class="dropdown-menu bg-weaverbody ms-0"><%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
                     if (userIsReadOnly && !jo2.has("readOnly")) {
                         //skip anything not marked for observer when user is readonly.
@@ -110,20 +110,46 @@
                 </a>
             </li> 
             <% } %>
-        </ul>
+            </ul>
         <% }} %>
-    </li><% 
-    }
-    %>
-    <li class="my-5 text-weaverbody">  <% if (userIsReadOnly) { %>
-        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
-        class="accessIndicator"/>
-    <% } else { %>
-        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
+    </li>
+    <% } %>
+</ul>
+
+<span class="my-5 text-weaverbody" data-bs-toggle="modal" data-bs-target="#accessModal">  <% if (userIsReadOnly) { %>
+    <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
     class="accessIndicator"/>
-    <% } %></li>
+<% } else { %>
+    <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
+class="accessIndicator"/>
+<% } %></span>
+<!-- Modal -->
+<div class="modal fade" id="accessModal" tabindex="-1" aria-labelledby="accessModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content"><% if (userIsReadOnly) { %>
+    <div class="modal-header">
+      <h5 class="modal-title" id="accessModalLabel">Observer Only</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        You have observer only access to this site. If you would like to edit this workspace, please contact your administrator.
+    </div>
+    <% } else { %>
+        <div class="modal-header">
+            <h5 class="modal-title" id="accessModalLabel">Full Edit Access</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You have full editing access to this site.
+          </div>
+          <% } %>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
     
-    </ul>
   </div>
 
   

@@ -726,14 +726,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
                 </span>
                 <span class="col-md-4" >
-                <div class="my-2">
-                <span ng-show="isWatching">
+                
+
+                <a class="btn btn-comment btn-raised mx-2 my-md-1 py-0" title="See your own settings that are unique to this workspace" href="Personal.htm"><i fa class="fa fa-cog"></i> Workspace Personal Settings</a></span>
+            <div class="my-2 h5">
+                <span ng-show="isWatching" class="float-end">
                     You <span class="fa fa-eye"></span> watch this workspace
                 </span>
-                </div>
-
-                <a class="btn btn-comment btn-raised mx-2 my-md-1 py-0" title="See your own settings that are unique to this workspace" href="Personal.htm">Workspace Email <i fa class="fa fa-envelope-o"></i> Settings</a></span>
-            </div>
+                </div></div>
         </div>
         <div class="card m-3">
             <div class="card-header">
