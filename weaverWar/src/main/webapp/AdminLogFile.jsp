@@ -2,13 +2,9 @@
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
 %><%@page import="java.io.File"
 %><%@page import="java.io.InputStreamReader"
-%><%@page import="java.io.FileInputStream"
 %><%@page import="java.util.Properties"
-%><%@page import="com.purplehillsbooks.weaver.AuthRequest"
 %><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
-%><%@page import="com.purplehillsbooks.weaver.NGBook"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
-%><%@page import="com.purplehillsbooks.weaver.NGPageIndex"
 %><%@page import="com.purplehillsbooks.weaver.NGSession"
 %><%@page import="com.purplehillsbooks.weaver.rest.ServerInitializer"
 %><%

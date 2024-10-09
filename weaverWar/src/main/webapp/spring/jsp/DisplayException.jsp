@@ -1,5 +1,4 @@
-<%@page import="com.purplehillsbooks.weaver.NGRole"
-%><%@ include file="/include.jsp"
+<%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
 %><%
     /*

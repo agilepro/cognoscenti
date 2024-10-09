@@ -6,14 +6,12 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     $scope.realDocumentFilter = "";
     
     function generateList() {
-        console.log("Topic BEFORE: ", $scope.fullTopics);
         var res = [];
-        $scope.attachmentList.forEach( function(oneTopic) {
+        $scope.topics.forEach( function(oneTopic) {
             if ($scope.itemHasTopic(oneTopic.universalid)) {
                 res.push(oneTopic);
             }
         });
-        console.log("Topic gotten: ", res);
         $scope.fullTopics = res;
     }
 
@@ -31,7 +29,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     $scope.itemHasTopic = function(oneTopic) {
         var found = false;
         $scope.topics.forEach( function(item) {
-            if (item == oneTopic) {
+            if (item.universalid == oneTopic) {
                 found = true;
             }
         });
@@ -46,31 +44,29 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
                 res.push(oneTopic);
             }
         });
-        console.log("Topic gotten: ", res);
         return res;
     }
 
     $scope.addTopicToItem = function(oneTopic) {
         if (!$scope.itemHasTopic(oneTopic.universalid)) {
-            $scope.topics.push(oneTopic.universalid);
+            $scope.topics.push(oneTopic);
         }
-        console.log("Topic list: ", $scope.topics);
+        console.log("Topic ADDED: ", $scope.topics);
         generateList();
     }
     $scope.removeTopicFromItem = function(oneTopic) {
         var newList = [];
         $scope.topics.forEach( function(item) {
-            if (item != oneTopic.universalid) {
+            if (item.universalid != oneTopic.universalid) {
                 newList.push(item);
             }
         });
         $scope.topics = newList;
-        console.log("Topic list: ", $scope.topics);
+        console.log("Topic REMOVED: ", $scope.topics);
         generateList();
     }
 
     $scope.ok = function () {
-        console.log("CLOSING TOPIC DIALOG 1", $scope.topics);
         $modalInstance.close($scope.topics);
     };
 

@@ -3,7 +3,6 @@
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%
 

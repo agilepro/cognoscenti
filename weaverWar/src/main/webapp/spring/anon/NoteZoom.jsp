@@ -2,8 +2,6 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%/*
 Required parameter:
 
@@ -21,7 +19,7 @@ Required parameter:
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     String mnnote = ar.defParam("mnnote", null);
-    
+
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     JSONObject workspaceInfo = ngw.getConfigJSON();
@@ -49,7 +47,7 @@ Required parameter:
     TopicRecord note = ngw.getNoteOrFail(topicId);
     int topicNumericId = DOMFace.safeConvertInt(topicId);
     boolean canDisplay = AccessControl.canAccessTopic(ar, ngw, note);
-    
+
 
     if (!canDisplay) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
@@ -105,7 +103,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.mainTopicHtml = convertMarkdownToHtml($scope.noteInfo.wiki);
     $scope.topicId = "<%=topicId%>";
     $scope.mnnote = "<%=mnnote%>";
-    
+
     $scope.allDocs = [];
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -130,7 +128,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.cancelBackgroundTime();
         errorPanelHandler($scope, serverErr);
     };
-    
+
     $scope.shownComments = [];
     $scope.noteInfo.comments.forEach( function (cmt) {
         if (cmt.newPhase) {
@@ -174,7 +172,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <table ng-show="cmt.responses" class="spacey">
             <tr ng-repeat="resp in cmt.responses" ng-show="resp.body">
               <td><i>{{resp.userName}}</i></td>
-              <td style="min-width:400px"><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
+              <td style="min-width:400px"><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td>
               <td ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></td>
             </tr>
           </table>

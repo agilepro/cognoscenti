@@ -2,8 +2,6 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%
 
@@ -12,7 +10,7 @@
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     NGBook ngb = ngw.getSite();
     UserProfile user = ar.getUserProfile();
-    
+
     boolean isRequested = false;
     String requestState = "";
     String requestMsg = "";
@@ -89,8 +87,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     You have only limited access to the workspace <b><%=ngw.getFullName()%></b>.
     You have access to items listed below, if any.
     </span>
-    
-    
+
+
 <%
     for (TopicRecord topicRec : ngw.getAllDiscussionTopics()) {
         NGRole subscribers = topicRec.getSubscriberRole();
@@ -104,8 +102,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <%ar.writeHtml( topicRec.getSubject() );%>
         </a></span>
         </span>
-        
-    
+
+
 <%
     }
 %>
@@ -120,7 +118,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         String resourceType = accessId.substring(0, colonPos);
         String actualId = accessId.substring(colonPos+1, secondColon);
-        
+
         if ("doc".equals(resourceType)) {
 %>
     <span ><i class="fa  fa-bullseye"></i> <a href="DocDetail.htm?aid=<%=actualId%>">
@@ -142,7 +140,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                  The status of that request is: <b>{{requestState}}</b>.
             </div>
             <div class="h6 my-3 " ng-hide="isRequested">
-                If you think you should be a member then please:  
+                If you think you should be a member then please:
             </div>
             <button class="btn btn-primary btn-comment btn-wide btn-sm btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
         </div>

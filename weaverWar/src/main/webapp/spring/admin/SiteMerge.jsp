@@ -1,11 +1,8 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.SiteMailGenerator"
 %><%@page import="com.purplehillsbooks.weaver.mail.ChunkTemplate"
-%><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.HashSet"
 %><%
 

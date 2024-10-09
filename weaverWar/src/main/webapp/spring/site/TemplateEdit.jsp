@@ -1,6 +1,4 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@page import="com.purplehillsbooks.weaver.NGRole"
-%><%@page import="com.purplehillsbooks.weaver.License"
 %><%@ include file="/include.jsp"
 %><%
 

@@ -469,7 +469,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <!-- COLUMN 2 -->
 <div class="col-md-4 col-sm-12">
-    <svg height="{{maxLength}}px" width="{{maxWidth}}px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
+    <svg height="{{maxLength}}px" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
         <g ng-show="parent.key">
             <ellipse cx="179" cy="69" rx="70" ry="35"
                     style="fill:gray;stroke:gray" ></ellipse>

@@ -195,11 +195,15 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         });
     }
     $scope.itemTopics = function (item) {
-        if (!item || !item.topics) {
+        if (!item || !item.topicList) {
             return false;
         }
+        let topicIdList = [];
+        for (aTopic of item.topicList) {
+            topicIdList.push(aTopic.universalid);
+        }
         return $scope.allTopics.filter(function (oneTopic) {
-            return item.topics.includes(oneTopic.universalid);
+            return topicIdList.includes(oneTopic.universalid);
         });
     }
 
@@ -1583,7 +1587,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
                 doc.push(item);
             }
         });
-        console.log("GOT DOCS: ", doc);
         return doc;
     }
     $scope.navigateToDoc = function (docId) {
@@ -1668,7 +1671,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             backdrop: "static",
             resolve: {
                 selectedTopics: function () {
-                    return item.topics;
+                    return item.topicList;
                 },
                 attachmentList: function () {
                     return $scope.allTopics;
@@ -1680,7 +1683,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             .then(function (selectedTopics) {
                 var replacement = {};
                 replacement.id = item.id;
-                replacement.topics = selectedTopics;
+                replacement.topicList = selectedTopics;
                 $scope.saveAgendaItem(replacement);
                 $scope.extendBackgroundTime();
             }, function () {

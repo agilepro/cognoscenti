@@ -1,12 +1,8 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.SiteMailGenerator"
 %><%@page import="com.purplehillsbooks.weaver.mail.ChunkTemplate"
-%><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.HashSet"
 %><%
 
@@ -19,7 +15,7 @@
 
     String layoutName = ar.defParam("layout", "SiteIntro1.chtml");
     File layoutFile = NGBook.findSiteLayout(ar,layoutName);
-    
+
     JSONObject allMail = ngb.getSiteDripContent(ar);
 
     JSONObject siteJSON = ngb.getConfigJSON();
@@ -35,12 +31,12 @@
     JSONObject mergeable = new JSONObject();
     mergeable.put("site", siteJSON);
     mergeable.put("baseUrl", ar.baseURL);
-    
+
     JSONArray pastSendings = new JSONArray();
     for (SiteMailGenerator smg : ngb.getAllSiteMail()) {
         pastSendings.put(smg.getJSON());
     }
-    
+
     List<AddressListEntry> collector = new ArrayList<AddressListEntry>();
     NGRole prime = ngb.getPrimaryRole();
     for (AddressListEntry ale : prime.getExpandedPlayers(ngb)) {
@@ -54,7 +50,7 @@
     for (AddressListEntry ale : collector) {
         affected.put( ale.getJSON() );
     }
-    
+
 
     %>
     <style>
@@ -72,7 +68,7 @@
 <script>
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    
+
     $scope.pastSendings = <% pastSendings.write(out,2,4);%>;
     $scope.selectedLayout  = "<% ar.writeJS(layoutName);%>";
     $scope.data = <% mergeable.write(out,2,4);%>;
@@ -112,20 +108,20 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
     <table class="table">
-        
+
       <tr ng-repeat="drip in allMail.list">
         <td>{{drip.name}}</td>
         <td><a href="SiteMerge.htm?site=<% ar.writeURLData(siteId); %>&layout={{drip.name}}">LINK</a></td>
         <td></td>
       </tr>
     </table>
-    
+
     <pre>
     {{allMail.list}}
     </pre>
     <div class="form-horizontal">
       <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" 
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
                 title="Choose the layout to display with">
         <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

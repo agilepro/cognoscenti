@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");

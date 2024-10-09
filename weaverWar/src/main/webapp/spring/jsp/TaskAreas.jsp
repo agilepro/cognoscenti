@@ -1,8 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="java.util.Date"
-%><%@page import="com.purplehillsbooks.weaver.NGRole"
-%><%@page import="java.text.SimpleDateFormat"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.TaskArea"
 %><%@ include file="/include.jsp"
 %><%

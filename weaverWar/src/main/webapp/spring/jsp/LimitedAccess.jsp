@@ -2,8 +2,6 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%
 
     String pageId = ar.reqParam("pageId");

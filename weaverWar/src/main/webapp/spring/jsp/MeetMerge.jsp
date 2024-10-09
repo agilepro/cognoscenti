@@ -1,11 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%@page import="com.purplehillsbooks.weaver.mail.ChunkTemplate"
-%><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.HashSet"
 %><%
 
@@ -18,29 +14,29 @@
     MeetingRecord meet = ngw.findMeeting(id);
 
     JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
-    
- 
-    
+
+
+
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
-    
+
     String layoutName = ar.defParam("tem", "FullDetail.chtml");
-    File layoutFile = MeetingRecord.findMeetingLayout(ar,ngw,layoutName);        
-    
-    
+    File layoutFile = MeetingRecord.findMeetingLayout(ar,ngw,layoutName);
+
+
     %>
     <script>
-    window.setMainPageTitle("Meeting Display"); 
+    window.setMainPageTitle("Meeting Display");
 
-    var app = angular.module('myApp');    
+    var app = angular.module('myApp');
     app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
         //no real function here
     });
      </script>
-     
+
 <div>
-    
-    <div class="upRightOptions rightDivContent">    
+
+    <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
@@ -60,8 +56,8 @@
         </ul>
       </span>
     </div>
-    
-    <div class="upRightOptions rightDivContent"  style="right:150px">    
+
+    <div class="upRightOptions rightDivContent"  style="right:150px">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" title="Choose the layout to display with">
         <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
@@ -75,12 +71,12 @@
         <% } %>
         </ul>
       </span>
-    </div>    
+    </div>
     <div class="well">
     <%
-    
-    ChunkTemplate.streamIt(ar.w, layoutFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
-    
+
+    ChunkTemplate.streamIt(ar.w, layoutFile,   meetingJSON, ar.getUserProfile().getCalendar() );
+
 %>
     </div>
   </div>
@@ -95,7 +91,7 @@
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <%!
 /**
-* convert XxxYyyZzz.chmtl 
+* convert XxxYyyZzz.chmtl
 *    into Xxx Yyy Zzz
 */
 public String conditionFileName(String fileName) {

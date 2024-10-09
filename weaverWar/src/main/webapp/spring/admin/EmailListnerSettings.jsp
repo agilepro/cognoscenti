@@ -7,9 +7,6 @@
 
     Cognoscenti cog = Cognoscenti.getInstance(request);
     Set<String> activeUsers = cog.whoIsLoggedIn();
-    
-
- 
 
 %>
 
@@ -66,7 +63,7 @@ myApp.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr>
                 <td>Last Email Send</td>
-                <td>{{lastSend|date:"dd-MMM-yyyy HH:mm:ss"}}  
+                <td>{{lastSend|date:"dd-MMM-yyyy HH:mm:ss"}}
                     (server:<%=SectionUtil.getDateAndTime(EmailSender.lastEmailProcessTime)%>)</td>
             </tr>
             <tr>
@@ -75,12 +72,12 @@ myApp.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr>
                 <td>Last Email Error Time</td>
-                <td>{{lastFailure|date:"dd-MMM-yyyy HH:mm:ss"}}  
+                <td>{{lastFailure|date:"dd-MMM-yyyy HH:mm:ss"}}
                     (server:<%=SectionUtil.getDateAndTime(EmailSender.lastEmailFailureTime)%>)</td>
             </tr>
             <tr>
                 <td>Last Email Error</td>
-                <td><pre><% if (EmailSender.lastEmailSendFailure!=null) { 
+                <td><pre><% if (EmailSender.lastEmailSendFailure!=null) {
                     JSONException.traceException(out,EmailSender.lastEmailSendFailure, "EMAIL FAILURE"); }
                 %></pre></td>
             </tr>
@@ -148,7 +145,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         %>
     </table>
   </div>
-  
+
   <div style="height:300px"></div>
 
 </div>

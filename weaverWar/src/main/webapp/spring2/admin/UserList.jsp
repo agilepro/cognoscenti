@@ -1,5 +1,4 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@page import="java.io.FileInputStream"
 %><%@page import="com.purplehillsbooks.streams.StreamHelper"
 %><%@ include file="/include.jsp"
 %><%

@@ -1,10 +1,8 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.mail.ChunkTemplate"
-%><%@page import="com.purplehillsbooks.weaver.MicroProfileMgr"
 %><%
 
     String pageId = ar.reqParam("pageId");
@@ -158,7 +156,7 @@
 %>
 
 
-<script src="../../new_assets/jscript/AllPeople.js"></script>
+<script src="../../../new_assets/jscript/AllPeople.js"></script>
 
 <script>
 var embeddedData = {};
