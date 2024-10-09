@@ -269,7 +269,7 @@ public abstract class ContainerCommon extends NGContainer
                         +"Both a sense of humor and able to be firm.";
             }
             else if ("External Expert".equals(roleName)) {
-                desc = "Person from outside the company who has expertise about the company�s environment, "
+                desc = "Person from outside the company who has expertise about the company's environment, "
                         +"eg, regulatory, economic, social, technical, or ecology. Able to provide information "
                         +"and feedback not available inside the company and to inform or influence key "
                         +"external institutions. ";

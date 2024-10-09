@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring/anon/Error.jsp"
-%><%@ include file="/spring/anon/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     String title = "Weaver Meeting";
     NGWorkspace ngw =null;

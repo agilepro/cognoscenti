@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring2/anon/Error.jsp"
-%><%@ include file="/spring2/anon/include.jsp"
+%><%@ include file="/include.jsp"
 %><%
     String title = "sss";
     NGWorkspace ngw =null;

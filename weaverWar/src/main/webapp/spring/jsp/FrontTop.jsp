@@ -213,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="width:1200px;vertial-align:top;">
        <div class="siteMapColumn">
-           <svg height="{{maxLength}}px" width="{{maxWidth}}px">
+           <svg height="{{maxLength}}px" width="100%">
                 <ellipse cx="50" cy="50" rx="21" ry="20" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" ></ellipse>
                <g ng-repeat="child in children">
