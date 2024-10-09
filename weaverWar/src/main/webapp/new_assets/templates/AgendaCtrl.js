@@ -8,6 +8,8 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     $scope.descriptMode = false;
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 250;
+    $scope.tinymceOptions2 = standardTinyMCEOptions2();
+    $scope.tinymceOptions.height = 150;
 
     $scope.agendaItem.previousElapsed = Math.floor($scope.agendaItem.timerElapsed / 60) / 1000;
 
