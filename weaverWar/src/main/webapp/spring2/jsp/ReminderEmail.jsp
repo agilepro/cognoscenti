@@ -78,4 +78,4 @@ Required parameter:
         </form>
     </div>
 
-<%@ include file="functions.jsp"%>
+<%@ include file="/functions.jsp"%>

@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="include.jsp"
+%><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%@page import="com.purplehillsbooks.weaver.SuperAdminLogFile"

@@ -5,7 +5,7 @@
 %><%@page import="java.util.TimeZone"
 %><%
 
-// %)(%@ include file="functions.jsp"
+// %)(%@ include file="/functions.jsp"
 
     ar.assertLoggedIn("Can't edit a user's profile.");
     UserProfile uProf = findSpecifiedUserOrDefault(ar);

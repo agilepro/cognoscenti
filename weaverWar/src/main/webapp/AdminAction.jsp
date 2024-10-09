@@ -84,7 +84,7 @@ public void deleteMarkedPages(AuthRequest ar)
             deadFile.delete();
         }
     }
-}%><%@ include file="functions.jsp"
+}%><%@ include file="/functions.jsp"
 %><%
 
     NGPageIndex.clearLocksHeldByThisThread();

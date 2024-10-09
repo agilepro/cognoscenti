@@ -211,7 +211,7 @@
     </body>
 </html>
 
-<%@ include file="functions.jsp"%>
+<%@ include file="/functions.jsp"%>
 <%
     NGPageIndex.clearLocksHeldByThisThread();
 %>

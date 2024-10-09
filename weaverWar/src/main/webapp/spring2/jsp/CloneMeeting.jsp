@@ -1,6 +1,6 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@ include file="functions.jsp"
+%><%@ include file="/functions.jsp"
 %><%@page import="java.util.Calendar"
 %><%
 

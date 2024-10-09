@@ -1,5 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
-%><%@ include file="include.jsp"
+%><%@ include file="/include.jsp"
 %><%
 
     ar.assertLoggedIn("Must be logged in to edit roles");

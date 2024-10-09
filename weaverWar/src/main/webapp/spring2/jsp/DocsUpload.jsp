@@ -1,7 +1,7 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@ include file="functions.jsp"
+%><%@ include file="/functions.jsp"
 %><%
 
 

@@ -2,7 +2,7 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentVersion"
-%><%@ include file="functions.jsp"
+%><%@ include file="/functions.jsp"
 %><%
 
 
