@@ -24,26 +24,41 @@
                   data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
                   aria-expanded="false" aria-label="Toggle navigation"> 
                   <span class="navbar-toggler-icon"></span> </button>
-                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                      <li class="nav-item"> <a class="nav-link" href="index.html">Home </a> </li>
-                      <li class="nav-item"> <a class="nav-link" href="about.html">About </a> </li>
-                      <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="Policies.html" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Policies <span class="sr-only">(current)</span></a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <a class="dropdown-item" href="AcceptableUsePolicy.html">Acceptable Use Policy</a>
-                          <a class="dropdown-item" href="CookiePolicy.html">Cookie Policy</a> 
-                          <a class="dropdown-item" href="PrivacyPolicy.html">Privacy Policy</a> 
-                          <a class="dropdown-item" href="TermsOfService.html">Terms of Service</a> 
-                          <a class="dropdown-item" href="GDPR.html">GDPR</a> 
-                        </div>
-                      </li>
-                      <li class="nav-item"> <a class="nav-link" href="Facilitators.html">Facilitators</a> </li>
-                      <li class="nav-item"> <a class="nav-link" href="GetStarted.html">Get Started</a> </li>
-                      <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
-                      <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
-                    </ul>
-                  </div>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item"> <a class="nav-link" href="index.html">Home </a> </li>
+              <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle" href="about.html" id="aboutDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About </a>
+                <div class="dropdown-menu" aria-labelledby="aboutDropdown">
+                    <a class="dropdown-item" href="about.html">About</a>
+                    <a class="dropdown-item" href="pricing.html">Pricing</a>
+                </div>
+                  
+                 
+                
+                </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="Policies.html" id="policyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Policies <span class="sr-only">(current)</span></a>
+                <div class="dropdown-menu" aria-labelledby="policyDropdown">
+                  <a class="dropdown-item" href="AcceptableUsePolicy.html">Acceptable Use Policy</a>
+                  <a class="dropdown-item" href="CookiePolicy.html">Cookie Policy</a> 
+                  <a class="dropdown-item" href="PrivacyPolicy.html">Privacy Policy</a> 
+                  <a class="dropdown-item" href="TermsOfService.html">Terms of Service</a> 
+                  <a class="dropdown-item" href="GDPR.html">GDPR</a> 
+                </div>
+              </li>
+              <li class="nav-item"> <a class="nav-link" href="Facilitators.html">Facilitators</a> </li>
+              <li class="nav-item dropdown"> 
+                <a class="nav-link dropdown-toggle" href="GetStarted.html" id="getStartedDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Get Started</a> 
+                <div class="dropdown-menu" aria-labelledby="getStartedDropdown">
+                  <a class="dropdown-item" href="GetStarted.html">Get Started</a>
+                  <a class="dropdown-item" href="pricing.html">Pricing</a>
+                </div>  
+              </li>
+              <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
+              <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
+            </ul>
+          </div>
         </nav>
       </div>
     </header>
@@ -71,7 +86,7 @@
 	</section>
 	<section>
 	  <div class="container">
-		  <div class="row">
+		  <div class="row py-5">
 			  <h3>Information for Data Subjects</h3>
 			   <p>Weaver users meet the GDPR definition of data subjects. The GDPR provides enhanced rights to individuals including the right to data portability and the right to erasure, also known as the right to be forgotten, the right to restrict processing and the right to object. You have the ability to exercise these rights by submitting a written request to Weaver Tech LLC. Because we care about your privacy rights we make these access requests available to you whether you are in the EU or not.</p>
 
@@ -88,75 +103,72 @@
 	 
  
 	 
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-md-8 mx-auto">
-          <div class="jumbotron">
-            <div class="row">
-              <div class="text-center col-12">
-                <h2>We'd love to hear from you!</h2>
-              </div>
-              <div class="col-12">
-                <!-- CONTACT FORM https://github.com/jonmbake/bootstrap3-contact-form -->
-                <form id="feedbackForm" >
-                  <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" aria-describedby="nameHelp">
-                    <span id="nameHelp" class="form-text text-muted" style="display: none;">Please enter your name.</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="email">E-Mail</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" aria-describedby="emailHelp">
-                    <span id="emailHelp" class="form-text text-muted" style="display: none;">Please enter a valid e-mail address.</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea rows="10" cols="100" class="form-control" id="message" name="message" placeholder="Message" aria-describedby="messageHelp"></textarea>
-                    <span id="messageHelp" class="form-text text-muted" style="display: none;">Please enter a message.</span>
-                  </div>
-                  <button type="submit" id="feedbackSubmit" class="btn btn-primary btn-lg">Send</button>
-                </form>
-              </div>
+    <section class="jumbotron row">
+      <div class="col-8 mx-auto">
+        
+          <div class="row">
+            <div class="text-center col-12">
+              <h2>We'd love to hear from you!</h2>
+            </div>
+            <div class="col-12">
+              <!-- CONTACT FORM https://github.com/jonmbake/bootstrap3-contact-form -->
+              <form id="feedbackForm" >
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="Name" aria-describedby="nameHelp">
+                  <span id="nameHelp" class="form-text text-muted" style="display: none;">Please enter your name.</span>
+                </div>
+                <div class="form-group">
+                  <label for="email">E-Mail</label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" aria-describedby="emailHelp">
+                  <span id="emailHelp" class="form-text text-muted" style="display: none;">Please enter a valid e-mail address.</span>
+                </div>
+                <div class="form-group">
+                  <label for="message">Message</label>
+                  <textarea rows="10" cols="100" class="form-control" id="message" name="message" placeholder="Message" aria-describedby="messageHelp"></textarea>
+                  <span id="messageHelp" class="form-text text-muted" style="display: none;">Please enter a message.</span>
+                </div>
+                <button type="submit" id="feedbackSubmit" class="btn btn-primary btn-lg">Send</button>
+              </form>
             </div>
           </div>
+        </div>
+  </section>
+<div class="container-fluid py-5">
+        <div class="row col-10 mx-auto">
+          <div class="text-center col-9 mx-auto">
+            <p class="lead"><b><i>The power of organized decision making and talking about progress cannot be underestimated!</i><br> Every act of support and loyal participation, no matter how small, holds the possibility for inspiration. Not just for the people directly involved but for anyone wishing to be a part of a larger movement for egalitarian organizing.</b></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 col-auto mx-auto"> <a class="btn btn-block btn-lg btn-success" href="https://s06.circleweaver.com/weaver/" title="">Try Out Circle Weaver Today!</a> <br></div>
+        </div>
+  </div>
+
+  <footer class="text-center">
+    <div class="jumbotron footer-menu">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
+    </button>
+    <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"> <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a> </li>
+      <li class="nav-item"> <a class="nav-link" href="about.html">About</a> </li>
+      <li class="nav-item">	<a class="nav-link" href="policies.html"> Policies </a> </li>
+      <li class="nav-item"> <a class="nav-link" href="GetStarted.html">Get Started</a> </li>
+      <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
+      <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
+    </ul>
+  
+    </div>
+  </nav>
+      <div class="row">
+        <div class="col-12">
+          <p>Copyright ©&nbsp;2022  CircleWeaver LLC. All rights reserved.</p>
         </div>
       </div>
     </div>
-		        <div class="container">
-          <div class="row">
-            <div class="text-center col-12 mx-auto">
-              <p class="lead"><b>The power of organized decision making and talking about progress cannot be underestimated!</b><br> Every act of support and loyal participation, no matter how small, holds the possibility for inspiration. Not just for the people directly involved but for anyone wishing to be a part of a larger movement for egalitarian organizing.</p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4 col-auto mx-auto"> <a class="btn btn-block btn-lg btn-success" href="https://s06.circleweaver.com/weaver/" title="">Try Out Weaver</a> <br></div>
-          </div>
-        </div>
-
-    <footer class="text-center">
-      <div class="jumbotron footer-menu">
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
-		  </button>
-		  <div class="collapse navbar-collapse">
-			<ul class="navbar-nav mr-auto">
-			  <li class="nav-item"> <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a> </li>
-			  <li class="nav-item"> <a class="nav-link" href="about.html">About</a> </li>
-			  <li class="nav-item">	<a class="nav-link" href="Policies.html"> Policies </a> </li>
-			  <li class="nav-item"> <a class="nav-link" href="GetStarted.html">Get Started</a> </li>
-        <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
-			  <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
-			</ul>
-		
-		  </div>
-		</nav>
-        <div class="row">
-          <div class="col-12">
-            <p>Copyright ©&nbsp;2022  CircleWeaver LLC. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+  </footer>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
     <script src="js/jquery-3.4.1.min.js"></script> 
     <!-- Include all compiled plugins (below), or include individual files as needed --> 

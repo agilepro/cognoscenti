@@ -23,30 +23,47 @@
 				<button id="menu-toggle" class="menu-toggle">menu</button>
               
    
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
-		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item"> <a class="nav-link" href="index.html">Home </a> </li>
-              <li class="nav-item"> <a class="nav-link" href="about.html">About </a> </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="Policies.html" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Policies <span class="sr-only">(current)</span></a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="AcceptableUsePolicy.html">Acceptable Use Policy</a>
-                  <a class="dropdown-item" href="CookiePolicy.html">Cookie Policy</a> 
-                  <a class="dropdown-item" href="PrivacyPolicy.html">Privacy Policy</a> 
-                  <a class="dropdown-item" href="TermsOfService.html">Terms of Service</a> 
-                  <a class="dropdown-item" href="GDPR.html">GDPR</a> 
-                </div>
-              </li>
-              <li class="nav-item"> <a class="nav-link" href="Facilitators.html">Facilitators</a> </li>
-              <li class="nav-item"> <a class="nav-link" href="GetStarted.html">Get Started</a> </li>
-              <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
-              <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
-            </ul>
-          </div>
-		</nav>
+		        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+					<button class="navbar-toggler" type="button" data-toggle="collapse" 
+							data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+							aria-expanded="false" aria-label="Toggle navigation"> 
+							<span class="navbar-toggler-icon"></span> </button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					  <ul class="navbar-nav mr-auto">
+						<li class="nav-item"> <a class="nav-link" href="index.html">Home </a> </li>
+						<li class="nav-item dropdown">
+						   <a class="nav-link dropdown-toggle" href="about.html" id="aboutDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About </a>
+						  <div class="dropdown-menu" aria-labelledby="aboutDropdown">
+							  <a class="dropdown-item" href="about.html">About</a>
+							  <a class="dropdown-item" href="pricing.html">Pricing</a>
+						  </div>
+							
+						   
+						  
+						  </li>
+						<li class="nav-item dropdown">
+						  <a class="nav-link dropdown-toggle" href="Policies.html" id="policyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Policies <span class="sr-only">(current)</span></a>
+						  <div class="dropdown-menu" aria-labelledby="policyDropdown">
+							<a class="dropdown-item" href="AcceptableUsePolicy.html">Acceptable Use Policy</a>
+							<a class="dropdown-item" href="CookiePolicy.html">Cookie Policy</a> 
+							<a class="dropdown-item" href="PrivacyPolicy.html">Privacy Policy</a> 
+							<a class="dropdown-item" href="TermsOfService.html">Terms of Service</a> 
+							<a class="dropdown-item" href="GDPR.html">GDPR</a> 
+						  </div>
+						</li>
+						<li class="nav-item"> <a class="nav-link" href="Facilitators.html">Facilitators</a> </li>
+						<li class="nav-item dropdown"> 
+						  <a class="nav-link dropdown-toggle" href="GetStarted.html" id="getStartedDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Get Started</a> 
+						  <div class="dropdown-menu" aria-labelledby="getStartedDropdown">
+							<a class="dropdown-item" href="GetStarted.html">Get Started</a>
+							<a class="dropdown-item" href="pricing.html">Pricing</a>
+						  </div>  
+						</li>
+						<li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
+						<li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
+					  </ul>
+					</div>
+				  </nav>
 	  </div>
 	</header>
     <section>
@@ -83,7 +100,7 @@
 	</section>
 	<section>
 	  <div class="container">
-		  <div class="row">
+		  <div class="row py-5">
 			  <h2>The Short Version</h2>
 			   <p>Circle Weaver Tech is dedicated to providing a system for people to use to collaborate with each other more effectively.  The purpose of a collaboration system is to allow a way for people to share "client data" (information of any type including files, documents, discussions, agreements, commitments, status, etc) with each other.  Users of Weaver have control over what client data they add to the system and to whom it is shared.</p>
 
@@ -126,9 +143,11 @@
 	</section>
 	<section>
 		<div class="container">
-			 <h4>Required Information</h4>
-			
-				<h5>Email Address</h5>
+			<div class="row py-5 px-3">
+				<div class="col-md-12">
+			 <h3>Required Information</h3>
+
+				<h4>Email Address</h4>
 
 				<p>All participants are required to provide an email address.  An email address is required to serve as a globally unique identification number, so that access control to all information can be accurately implemented.  A functioning email address is required so that you can set up and manage a password to authenticate yourself to the system.  All users are authenticated using an email address and a password.</p>
 
@@ -140,17 +159,17 @@
 
 				<p>If you wish to use Circle Weaver without your personal email address being seen by others, you are encouraged to obtain and use a email address from a free or low cost supplier, like GMail or competitor to use as a unique ID and as a way to receive communications from Circle Weaver.  If you are not able to find a suitable vendor for this, an obfuscated email address can be provided for a reasonable charge not to exceed $25/month by making a written request to Circle Weaver Tech LLC.</p>
 
-				<h5>Full Name</h5>
+				<h4>Full Name</h4>
 
 				<p>Each user provides a full name which is used as a label for the records of the actions that you take in the system.  Your name will be disclosed to other users of the system.</p>
 
 				<p>You are allowed to enter an alias.  You can set your name to be any value that you wish, and that will be the name that others in the system will identify you as.</p>
 
-				<h5>Trace (History) Records</h5>
+				<h4>Trace (History) Records</h4>
 
 				<p>As mentioned above, as you take actions in the system, records of the actions you take are retained in order to let others know what you have done.  For example, if you upload a document to the system, your name and id will be associated with the document so that others know who uploaded it.  If an action item is assigned to you, then other users in the system (with appropriate access rights) will be able to see the task and see that it is assigned to you.  This is the very purpose of a collaboration system.</p>
 
-				<h5>Cookies</h5>
+				<h4>Cookies</h4>
 
 				<p>Cookies are a technology feature of a browser that allows you to log into Circle Weaver, and for the software to reliably identify you as you access other pages.  When you log in, a cookie is supplied to the browser, and subsequent requests on your behalf will be trusted only if that cookie is returned as part of the request.  This is how authentication and access control works.</p>
 
@@ -158,19 +177,19 @@
 
 				<p>You may clear your cookies at any time, but you will lose your current logged in session, and you will not be allowed access until you log in again.</p>
 
-				<h5>Icon Image</h5>
+				<h4>Icon Image</h4>
 
 				<p>A user may set an image to represent them on the site.  This image might be a personal photo of their head, or it might be anything else.  If the user uploads a personal photo of themselves as their icon, they must be aware that others using the site will be able to see that image.  If you do not wish a personal image to be seen by other users, you should use some other, non-personal image, as your icon image.</p>
 
 
-			  </div>				
-
-
-	  </section> 
-	  <section>
+			  	</div>				
+		  	</div>
+		</div>
+	</section> 
+	<section>
 		  <div class="jumbotron">
 		  	<div class="container">
-			  <h4>Client Data</h4>
+			  <h3>Client Data</h3>
 			   <p>Circle Weaver is a site people use to collaborate with each other.  It is a site for sharing information.  Circle Weaver has no control of the type or nature of information that the users may wish to share.   Client Data includes:
 
 				<ul>
@@ -208,7 +227,8 @@
 	  </section>
 	<section>
 		<div class="container">
-			<h4>Non-Collected Information</h4>
+			<div class="row py-5 px-3">
+			<h3>Non-Collected Information</h3>
 
 			<p>We do not intentionally collect sensitive personal information, such as social security numbers, genetic data, health information, or religious information. Although Circle Weaver does not request or intentionally collect any other sensitive personal information, we realize that users might store this kind of information as client data. Users who store any sensitive personal information on our servers are responsible for complying with any regulatory controls regarding that data.</p>
 
@@ -216,17 +236,17 @@
 
 			<p>We do not intentionally collect User Personal Information that is stored in your repositories or other free-form content inputs. Client data shared in a workspace  belongs to the members of the workspace, and members are responsible for managing it, as well as for making sure that your content complies with our Terms of Service. Any personal information within the client data of a workspace is the responsibility of the workspace owner.</p>
 
-			<h4>Aggregated Information</h4>
+			<h3>Aggregated Information</h3>
 
 			<p>We do share certain aggregated, non-personally identifying information with others about how our users, collectively, use Circle Weaver. For example, we may compile statistics on the patterns of usage of certain types of documents and use this information to optimize the operation of the servers.   However, we do not sell this information to advertisers or marketers.</p>
 
-
+			</div>
 		</div>
 	</section>
 	<section>
 		<div class="jumbotron">
 			<div class="container">
-				 <h4>Compelled Disclosure</h4>
+				 <h3>Compelled Disclosure</h3>
 					<p>Circle Weaver Tech LLC may disclose personally-identifying information or other information we collect about you to law enforcement in response to a valid subpoena, court order, warrant, or similar government order, or when we believe in good faith that disclosure is reasonably necessary to protect our property or rights, or those of third parties or the public at large.</p>
 
 					<p>In complying with court orders and similar legal processes, Circle Weaver Tech strives for transparency. When permitted, we will make a reasonable effort to notify users of any disclosure of their information, unless we are prohibited by law or court order from doing so, or in rare, exigent circumstances.</p>
@@ -235,8 +255,9 @@
 	</section>
 	<section>
 		<div class="container">
+			<div class="row py-5 px-3">
 
-			<h4>Removal From the System</h4>
+			<h3>Removal From the System</h3>
 
 			<p>We offer you simple methods of accessing, correcting, or deleting the User Personal Information we have collected.</p>
 
@@ -245,13 +266,13 @@
 			<p>Users may delete client data (such as uploaded documents or entered text information) from the workspace at any time.  Deleting is generally a two-step process.  First, the object in question is marked for delete by the user.  Second, the Site Administrator must perform a 'Garbage Collect' operation to effect the final deletion of the information.  Until the Garbage Collect is performed, the deleted item is available to be un-deleted by the user or others.  Users wishing immediate deletion of document or other information must mark it for deletion and then contact their site administrator to perform the garbage collection immediately.</p>
 
 </div>
+		</div>
 	</section>
  
 	 
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-md-8 mx-auto">
-          <div class="jumbotron">
+	<section class="jumbotron row">
+        <div class="col-8 mx-auto">
+          
             <div class="row">
               <div class="text-center col-12">
                 <h2>We'd love to hear from you!</h2>
@@ -279,19 +300,17 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-		        <div class="container">
-          <div class="row">
-            <div class="text-center col-12 mx-auto">
-              <p class="lead"><b>The power of organized decision making and talking about progress cannot be underestimated!</b><br> Every act of support and loyal participation, no matter how small, holds the possibility for inspiration. Not just for the people directly involved but for anyone wishing to be a part of a larger movement for egalitarian organizing.</p>
+    </section>
+	<div class="container-fluid py-5">
+          <div class="row col-10 mx-auto">
+            <div class="text-center col-9 mx-auto">
+              <p class="lead"><b><i>The power of organized decision making and talking about progress cannot be underestimated!</i><br> Every act of support and loyal participation, no matter how small, holds the possibility for inspiration. Not just for the people directly involved but for anyone wishing to be a part of a larger movement for egalitarian organizing.</b></p>
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-4 col-auto mx-auto"> <a class="btn btn-block btn-lg btn-success" href="https://s06.circleweaver.com/weaver/" title="">Try Out Weaver</a> <br></div>
+            <div class="col-sm-4 col-auto mx-auto"> <a class="btn btn-block btn-lg btn-success" href="https://s06.circleweaver.com/weaver/" title="">Try Out Circle Weaver Today!</a> <br></div>
           </div>
-        </div>
+    </div>
 
     <footer class="text-center">
       <div class="jumbotron footer-menu">
@@ -302,9 +321,9 @@
 			<ul class="navbar-nav mr-auto">
 			  <li class="nav-item"> <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a> </li>
 			  <li class="nav-item"> <a class="nav-link" href="about.html">About</a> </li>
-			  <li class="nav-item">	<a class="nav-link" href="Policies.html"> Policies </a> </li>
+			  <li class="nav-item">	<a class="nav-link" href="policies.html"> Policies </a> </li>
 			  <li class="nav-item"> <a class="nav-link" href="GetStarted.html">Get Started</a> </li>
-			  <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="TutorialList.html">Tutorials</a> </li>
 			  <li class="nav-item"> <a class="nav-link" href="https://s06.circleweaver.com/weaver/">Login</a> </li>
 			</ul>
 		

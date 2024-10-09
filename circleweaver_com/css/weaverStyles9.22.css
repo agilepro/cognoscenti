@@ -134,7 +134,7 @@
   background-color: #39174b;
   color           : #fff;
   padding         : 55px 45px;
-  min-height      : 400px;
+  min-height      : fit-content;
   margin-bottom   : 0em;
 
   a {
