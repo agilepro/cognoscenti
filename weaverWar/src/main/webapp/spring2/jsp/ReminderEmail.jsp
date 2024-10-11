@@ -6,7 +6,6 @@
 %><%@page import="com.purplehillsbooks.weaver.UserProfile"
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="org.w3c.dom.Element"
 %><%@ include file="/include.jsp"
 %><%
 /*

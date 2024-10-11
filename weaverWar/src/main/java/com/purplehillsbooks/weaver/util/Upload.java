@@ -204,12 +204,9 @@ public class Upload
     }
 
     @SuppressWarnings("deprecation")
-    public int save(String destPathName, int option)
-        throws Exception, IOException, ServletException
-    {
+    public int save(String destPathName, int option) throws Exception {
         int count = 0;
-        if(destPathName == null)
-        {
+        if(destPathName == null) {
             destPathName = m_application.getRealPath("/");
         }
         else
@@ -465,6 +462,10 @@ public class Upload
         m_maxFileSize = maxFileSize;
     }
 
+    /**
+     * This needs to be rewritten to use the Java File class as parameter
+     * and for all manipulations.
+     */
     protected String getPhysicalPath(String filePathName, int option)
         throws IOException
     {
@@ -562,6 +563,10 @@ public class Upload
         }
     }
 
+    /**
+     * This needs to be rewritten to use the Java File class as parameter
+     * and for all manipulations.
+     */
     public void uploadInFile(String destFilePathName)
         throws Exception, IOException
     {
@@ -606,6 +611,10 @@ public class Upload
         }
     }
 
+    /**
+     * This needs to be rewritten to use the Java File class as parameter
+     * and for all manipulations.
+     */
     private boolean isVirtual(String pathName)
     {
         if(m_application.getRealPath(pathName) != null)

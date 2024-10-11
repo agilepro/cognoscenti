@@ -2,6 +2,7 @@
 %><%@page import="com.purplehillsbooks.json.JSONArray"
 %><%@page import="com.purplehillsbooks.json.JSONObject"
 %><%@page import="com.purplehillsbooks.streams.StreamHelper"
+%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.AddressListEntry"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentRecord"
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"

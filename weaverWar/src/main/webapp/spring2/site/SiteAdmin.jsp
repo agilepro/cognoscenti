@@ -219,7 +219,7 @@ $scope.garbageCollect = function() {
 
 <style>
 .numberColumn {
-    width:120px;
+    width:100px;
     text-align: right;
 }
 </style>
@@ -236,95 +236,95 @@ $scope.garbageCollect = function() {
               href="LabelList.htm">Site Labels</a></span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">New Workspace</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="SiteStats.htm">Site Statistics</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               href="SiteLedger.htm">Site Charges</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
+<% if (ar.isSuperAdmin()) { %>
+          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="TemplateEdit.htm">Template Edit</a></span>
-          <% if (ar.isSuperAdmin()) { %>
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
               href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
-          <% } %>
-            </div>
+<% } %>
+      </div>
 
 
-            <div class="d-flex col-9"><div class="contentColumn">
-<div class="container-fluid">
-                <div class="generalContent">
-                    <div class="spaceyTable">
-                       <div class="row" ng-dblclick="toggleEditor('NewName')">
-                           <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
-                           <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
-                               <input type="text" class="form-control mb-2" ng-model="newName">
-                               <button ng-click="addName(newName)" class="btn btn-sm btn-primary  btn-raised">Change Name</button>
-                           </span>
-                           <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
-                               <b>{{newName}}</b>
-                           </span>
-                           <span class="col-2 helpColumn" ng-hide="isEditing =='NewName'"></span>
-                           <span ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
-                               If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
-                           </span>
-                       </div>
-                       <div class="row"  >
-                           <span class="col-2 labelColumn" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</span>
-                           <span class="col-6 dataColumn" ng-hide="isEditing =='SiteDescription'">
-                              {{siteInfo.description}}
-                           </span>
-                           <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
-                               <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
-                               title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
-                           </span>
-                           <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
-                           <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
-                               The description of the site appears in lists of sites to help others know what the 
-                               purpose of the site is.
-                           </span>
-                       </div>
-                       <div class="row" >
-                           <span class="col-2 labelColumn" ng-click="toggleEditor('SiteMessage')">Site Message:</span>
-                           <span class="col-6 dataColumn" ng-hide="isEditing =='SiteMessage'">
-                               {{siteInfo.siteMsg}}
-                           </span>
-                           <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
-                               <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
-                               title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
-                           </span>
-                           <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
-                           <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
-                               Set a message and it will show on every page of every workspace in the site.</div>
-                       </div>
-                       <div class="row" ng-dblclick="toggleEditor('LabelColors')">
-                           <span class="col-2 labelColumn" ng-click="toggleEditor('LabelColors')">Label Colors:</span>
-                           <span class="col-6 dataColumn" ng-hide="isEditing =='LabelColors'">
-                               <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
-                               title="A comma separated list of standard color names."></textarea>
-                           </span>
-                           <span class="col-6 dataColumn mb-2" ng-show="isEditing =='LabelColors'">
-                               <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
-                               title="A comma separated list of standard color names."></textarea>
-                               <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised ">Save</button>
-                           </span>
-                           <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
-                           <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
-                               Use web standard color names to create the set of colors that you can set on labels.
-                           </span>
-                       </div>
+    <div class="d-flex col-9"><div class="contentColumn">
+      <div class="container-fluid">
+        <div class="generalContent">
+            <div class="spaceyTable">
+                <div class="row" ng-dblclick="toggleEditor('NewName')">
+                    <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
+                    <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
+                        <input type="text" class="form-control mb-2" ng-model="newName">
+                        <button ng-click="addName(newName)" class="btn btn-sm btn-primary  btn-raised">Change Name</button>
+                    </span>
+                    <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
+                        <b>{{newName}}</b>
+                    </span>
+                    <span class="col-2 helpColumn" ng-hide="isEditing =='NewName'"></span>
+                    <span ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
+                        If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
+                    </span>
+                </div>
+                <div class="row"  >
+                    <span class="col-2 labelColumn" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</span>
+                    <span class="col-6 dataColumn" ng-hide="isEditing =='SiteDescription'">
+                        {{siteInfo.description}}
+                    </span>
+                    <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
+                        <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
+                        title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
+                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
+                    </span>
+                    <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
+                    <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
+                        The description of the site appears in lists of sites to help others know what the 
+                        purpose of the site is.
+                    </span>
+                </div>
+                <div class="row" >
+                    <span class="col-2 labelColumn" ng-click="toggleEditor('SiteMessage')">Site Message:</span>
+                    <span class="col-6 dataColumn" ng-hide="isEditing =='SiteMessage'">
+                        {{siteInfo.siteMsg}}
+                    </span>
+                    <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
+                        <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
+                        title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
+                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
+                    </span>
+                    <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
+                    <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
+                        Set a message and it will show on every page of every workspace in the site.</div>
+                </div>
+                <div class="row" ng-dblclick="toggleEditor('LabelColors')">
+                    <span class="col-2 labelColumn" ng-click="toggleEditor('LabelColors')">Label Colors:</span>
+                    <span class="col-6 dataColumn" ng-hide="isEditing =='LabelColors'">
+                        <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
+                        title="A comma separated list of standard color names."></textarea>
+                    </span>
+                    <span class="col-6 dataColumn mb-2" ng-show="isEditing =='LabelColors'">
+                        <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
+                        title="A comma separated list of standard color names."></textarea>
+                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised ">Save</button>
+                    </span>
+                    <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
+                    <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
+                        Use web standard color names to create the set of colors that you can set on labels.
+                    </span>
+                </div>
 
 
         </div>
         
         <div style="height:100px"></div>
-        <span class="h5">Payment Plan</span>
+        <span class="h5">Budget Usage</span>
         
         <div class="spaceyTable">
             <div class="row">
                 <span class="col-2 "></span>
                 <span class="col-1 numberColumn h6">Your Limit</span>
-                <span class="col-1 h6" >Set</span>
+                <span class="col-1 numberColumn h6" >Set</span>
                 <span class="col-1 numberColumn h6">Current Usage</span>
                 <span class="col-1 numberColumn h6">Gratis</span>
                 <span class="col-1 numberColumn h6">Charged</span>
@@ -418,7 +418,7 @@ $scope.garbageCollect = function() {
                     $ {{costs.numFrozen|number: '0'}}
                 </span>
             </div>
-<hr>
+            <hr/>
             <div class="row">
                 <span class="col-2 h6">Total per Month:</span>
                 <span class="col-1 numberColumn">
@@ -441,7 +441,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
 
-<hr>
+            <hr/>
            
         
         <div class="row col-10 justify-content-end my-3 well">
@@ -482,19 +482,6 @@ $scope.garbageCollect = function() {
             <tr>
                 <td class="labelColumn">Site Key:</td>
                 <td>{{siteInfo.key}}</td>
-            </tr>
-            <tr ng-dblclick="toggleEditor('CurrentNames')">
-                <td class="labelColumn" valign="top">Current Names:</td>
-                 
-                <td class=" dataColumn">
-                    <div ng-repeat="name in siteInfo.names">
-                        {{name}}
-                        <img src="<%=ar.retPath%>/assets/iconDelete.gif" ng-click="removeName(name)">
-                    </div>
-                </td>
-                <td ng-show="showHelpNames" ng-click="showHelpNames = !showHelpNames" class="helpColumn guideVocal">
-                    Sites can have more than one names, but you can ignore that.</td>
-                <td ng-hide="showHelpNames" ng-click="showHelpNames = !showHelpNames" class="helpColumn"></td>
             </tr>
         </table>
         <% } %>

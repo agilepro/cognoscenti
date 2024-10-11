@@ -166,22 +166,6 @@ public class ProcessRecord extends BaseRecord
 
 
 
-
-
-    /**
-    * @deprecated
-    */
-    public void setParentProcesses(String[] parentProcesses) throws Exception
-    {
-        LicensedURL[] lps = new LicensedURL[parentProcesses.length];
-        for (int i=0; i<parentProcesses.length; i++)
-        {
-            lps[i] = new LicensedURL(parentProcesses[i]);
-        }
-        setLicensedParents(lps);
-    }
-
-
  
 
 

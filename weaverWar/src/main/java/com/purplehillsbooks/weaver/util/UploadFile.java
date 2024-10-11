@@ -184,7 +184,6 @@ public class UploadFile {
     }
 
     /**
-     * @deprecated use saveToFile instead.
      *
      *             This method attempts to enforce a number of undocumented
      *             rules about where files can be placed, and what is allowed.
@@ -195,6 +194,9 @@ public class UploadFile {
      *             application that has logic for that. The saveToFile method
      *             simply believes that the file path given to it is the right
      *             one, and writes out the data there.
+     * 
+     * This needs to be rewritten to use the Java File class as parameter
+     * and for all manipulations.
      */
     public void saveAsXXXXX(String destFilePathName, int optionSaveAs)
             throws Exception, IOException {

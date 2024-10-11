@@ -3,7 +3,6 @@
 %><%@page import="java.net.URLDecoder"
 %><%@page import="com.purplehillsbooks.weaver.AttachmentVersion"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%/*
 Required parameters:
 

@@ -1,6 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@ include file="/spring/jsp/functions.jsp"
+%><%@ include file="/functions.jsp"
 %><%/*
 Required parameter:
 
@@ -16,7 +16,6 @@ Optional Parameter:
 
     String s  = ar.defParam("s", "Attachments");%><%!String pageTitle="";
     ReminderRecord rRec = null;%>
-<%@page import="com.purplehillsbooks.weaver.AccessControl"%>
 <script>
     var specialSubTab = '<fmt:message key="${requestScope.subTabId}"/>';
     var tab0_remind_attachments = '<fmt:message key="nugen.projecthome.subtab.upload.document"/>';

@@ -1,5 +1,5 @@
 <%@ include file="/include.jsp"
-%><%@ include file="/spring2/jsp/functions.jsp"
+%><%@ include file="/functions.jsp"
 %><%
 /*
 Required parameter:

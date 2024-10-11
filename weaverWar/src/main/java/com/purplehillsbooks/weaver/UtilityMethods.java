@@ -41,22 +41,6 @@ public class UtilityMethods {
     }
 
     /**
-     * Split a string into an array.
-     * This method NEVER returns a null.
-     * If passed a null, or a zero length string, it returns an empty array
-     *
-     * @deprecated use {@link #splitString(String, char)} instead
-     */
-    static public String[] splitOnDelimiter(String str, char delim) {
-        List<String> vec = splitString(str, delim);
-        String[] result = new String[vec.size()];
-        for (int i = 0; i < vec.size(); i++) {
-            result[i] = (vec.get(i));
-        }
-        return result;
-    }
-
-    /**
      * Proper split string.
      * Returns a List of string
      * Never returns a null, but will accept a null
@@ -116,13 +100,6 @@ public class UtilityMethods {
             needsComma = true;
         }
         return res.toString();
-    }
-
-    /**
-     * @deprecated use HTMLWriter.writeHtml() instead
-     */
-    public static void writeHtml(Writer out, String t) throws Exception {
-        HTMLWriter.writeHtml(out, t);
     }
 
     public static void writeURLData(Writer w, String data) throws Exception {

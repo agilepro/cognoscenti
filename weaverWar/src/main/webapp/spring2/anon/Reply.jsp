@@ -1,6 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.SharePortRecord"
-%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.CommentContainer"
 %><%@page import="com.purplehillsbooks.weaver.AgendaItem"
 %><%@page import="com.purplehillsbooks.weaver.CommentRecord"

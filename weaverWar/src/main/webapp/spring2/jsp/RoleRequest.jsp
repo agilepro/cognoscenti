@@ -2,7 +2,6 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.ConfigFile"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
-%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%/*
 Required parameter:
 

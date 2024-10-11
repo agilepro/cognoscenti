@@ -1,5 +1,4 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@ include file="/include.jsp"
 %><%
 /*

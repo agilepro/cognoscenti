@@ -269,7 +269,7 @@ Optional Parameters:
                 </table>
             </form>
         </div>
-        <%@ include file="/spring/jsp/functions.jsp"%>
+        <%@ include file="/functions.jsp"%>
 <%!private static String composeFromAddress(NGContainer ngc) throws Exception
     {
         StringBuilder sb = new StringBuilder("^");

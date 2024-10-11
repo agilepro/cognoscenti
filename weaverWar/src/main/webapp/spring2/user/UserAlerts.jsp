@@ -8,7 +8,6 @@
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.ArrayList"
-%><%@page import="org.w3c.dom.Element"
 %><%
     /*
 

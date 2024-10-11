@@ -1,6 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.AccessControl"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%/*
@@ -460,7 +459,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var res = [];
         if ($scope.noteInfo.comments) {
             $scope.noteInfo.comments.forEach( function(item) {
-                res.push(item);
+                if (item.commentType != 6) {
+                    res.push(item);
+                }
             });
         }
         res.sort( function(a,b) {
