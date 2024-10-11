@@ -1,6 +1,7 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="com.purplehillsbooks.weaver.util.NameCounter"
+%><%@page import="com.purplehillsbooks.weaver.Ledger"
 %><%@ include file="/include.jsp"
 %><%
 

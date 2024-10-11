@@ -1,5 +1,6 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
+%><%@page import="com.purplehillsbooks.weaver.Ledger"
 %><%
 
     ar.assertLoggedIn("New Site page should never be accessed when not logged in");
