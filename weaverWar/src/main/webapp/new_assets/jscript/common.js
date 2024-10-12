@@ -50,6 +50,32 @@ function standardTinyMCEOptions() {
 	};
 }
 
+function standardTinyMCEOptions2() {
+    console.log("Running standardTinyMCEOptions2");
+    return {
+		handle_event_callback: function (e) {
+		// put logic here for keypress
+		},
+        paste_preprocess: function(plugin, args) {
+            console.log("PASTE:", args.content);
+            //var modified = args.content.replace(new RegExp("<br ?/>", 'g'),"</p><p>");
+            
+            //args.content = modified;
+            //console.log("MOD  :", args.content);
+        },
+        paste_as_text: false,
+        browser_spellcheck: true,
+        plugins: "link stylebuttons lists paste",
+        entity_encoding: "raw",
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        toolbar: "style-p, style-h1, style-h2, style-h3, bullist, outdent, indent | bold, italic, link |  cut, copy, paste, undo, redo",
+        target_list: false,
+        link_title: false
+	};
+}
 //A filter is a string with words separated by spaces
 //this function splits them, trims, and lowercases them
 function parseLCList(str) {
