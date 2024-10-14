@@ -213,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div ng-hide="editField=='name'">{{userInfo.name}}</div>
             <div ng-show="editField=='name'">
                 <input class="form-control" ng-model="userInfo.name"/>
-                <button class="my-2 btn btn-primary btn-raised btn-comment btn-sm" ng-click="saveChanges('name');editField=''">Save</button>
+                <button class="my-2 btn btn-primary btn-raised btn-wide btn-sm py-1" ng-click="saveChanges('name');editField=''">Save</button>
             </div>
         </span>
         <span class="col-5 p-0 m-0" ng-click="helpFullName=!helpFullName">

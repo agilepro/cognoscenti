@@ -526,8 +526,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <!-- COLUMN 2 -->
-    <div class="col-md-4 col-sm-12 px-0 align-center justify-content-center">
-        <svg height="{{maxLength}}px" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
+    <div class="col-md-4 col-sm-12 ">
+        <div style="display: flex; justify-content: center;">
+            <svg height="{{maxLength}}px" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0">
             <g ng-show="parent.key">
                 <ellipse cx="179" cy="69" rx="70" ry="35"
                         style="fill:gray;stroke:gray" ></ellipse>
@@ -568,8 +569,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            ng-click="ellipse(child)">{{child.name}}</div>
                    </foreignObject>
                </g>
-        </svg>
+            </svg></div>
+
 <!--Workspace State-->
+
         <div class="row m-2">
             <span ng-click="setEdit('frozen')" class="col-1 bold fixed-width-sm labelColumn mt-2">Workspace State:</span>
             <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">

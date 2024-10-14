@@ -80,9 +80,9 @@
                        style="width:24px;height:24px">
                         Ready</b>
               </span>
-              <span class="btn-comment btn-wide py-2 " ng-show="item.readyToGo"  >
+              <span class="btn btn-comment btn-flex py-2 " title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting." ng-show="item.readyToGo"  >
                   <b>Ready <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-ready-to-go.png"
-                       title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting." style="width:24px;height:24px"> To Go </b>
+                       > To Go </b><br>
                          Presentation attached (if any)
               </span></div>
             </div>

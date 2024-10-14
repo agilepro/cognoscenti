@@ -75,7 +75,7 @@
 <% } %>      
       
 <% if (loggedUser!=null) { %>      
-  <ul class="navbar-nav">
+  <ul class="navbar-nav me-3">
       <li class="nav-item dropdown">
             <a href="#" 
             class="nav-link dropdown-toggle text-weaverbody"
@@ -137,7 +137,7 @@
               <% ar.writeHtml(userName); %>
             </span>
           </a>
-          <ul class="dropdown-menu bg-weaverbody text-weaverdark">
+          <ul class="dropdown-menu bg-weaverbody text-weaverdark"  style="position:fixed; margin-left: -50px;">
             <li><a class="dropdown-item" href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
             <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>

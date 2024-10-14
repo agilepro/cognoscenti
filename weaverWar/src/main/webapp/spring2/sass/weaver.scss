@@ -195,7 +195,10 @@ a {
         margin-left: $dropdown-margin-left;
     }
 }
-
+.user-dropdown-menu {
+    min-width: 160px;
+    margin-left: -100px;
+}
 .dropdown-toggle::after {
    display: none;
 }
