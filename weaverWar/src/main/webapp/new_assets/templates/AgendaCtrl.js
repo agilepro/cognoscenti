@@ -3,21 +3,21 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     $scope.siteId = siteId;
     $scope.agendaItem = agendaItem;
     $scope.descriptionOld = $scope.agendaItem.description;
+    $scope.descriptionHtml = convertMarkdownToHtml($scope.agendaItem.description);
     $scope.minutesOld = $scope.agendaItem.minutes;
     $scope.minutesHtml = convertMarkdownToHtml($scope.agendaItem.minutes);
     $scope.descriptMode = false;
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 250;
     $scope.tinymceOptions2 = standardTinyMCEOptions2();
-    $scope.tinymceOptions.height = 150;
+    $scope.tinymceOptions2.height = 100;
 
     $scope.agendaItem.previousElapsed = Math.floor($scope.agendaItem.timerElapsed / 60) / 1000;
 
     console.log("AgendaItem is: ", agendaItem);
 
     $scope.ok = function () {
-        var newDesc = $scope.agendaItem.description;
-        console.log("DESCRIPTION:", newDesc);
+        var newDesc = HTML2Markdown($scope.descriptionHtml);
         if (newDesc != $scope.descriptionOld) {
             $scope.agendaItem.descriptionMerge = { new: newDesc, old: $scope.descriptionOld };
         }
