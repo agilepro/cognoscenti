@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
 * Base class of the section classes, contains a number of
@@ -494,7 +494,7 @@ public class SectionUtil
         }
         if (slash1==0)
         {
-            throw new ProgramLogicError("Error parsing date value.  Date must be in the format of MM/DD/YYYY.  No month value found");
+            throw WeaverException.newBasic("Error parsing date value.  Date must be in the format of MM/DD/YYYY.  No month value found");
         }
         month = DOMFace.safeConvertInt(dateImage.substring(0,slash1))-1;
         cal.set(Calendar.MONTH, month);
@@ -508,7 +508,7 @@ public class SectionUtil
         }
         if (slash2==slash1+1)
         {
-            throw new ProgramLogicError("Error parsing date value.  Date must be in the format of MM/DD/YYYY. No day value found.");
+            throw WeaverException.newBasic("Error parsing date value.  Date must be in the format of MM/DD/YYYY. No day value found.");
         }
         day = DOMFace.safeConvertInt(dateImage.substring(slash1+1,slash2));
         cal.set(Calendar.DAY_OF_MONTH, day);
@@ -539,7 +539,7 @@ public class SectionUtil
     public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
-        throw new ProgramLogicError("convertToLeaflet is not implemented on this section format");
+        throw WeaverException.newBasic("convertToLeaflet is not implemented on this section format");
     }
 
 

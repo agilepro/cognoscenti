@@ -1,15 +1,9 @@
-<%@page errorPage="error.jsp"
-%><%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
-%><%@page import="java.io.File"
-%><%@page import="java.io.InputStreamReader"
-%><%@page import="java.util.Properties"
-%><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
-%><%@page import="com.purplehillsbooks.weaver.ConfigFile"
-%><%@page import="com.purplehillsbooks.weaver.NGSession"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.rest.ServerInitializer"
 %><%
 
-    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
+    // AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     ServerInitializer si = ar.getCogInstance().initializer;
     if (si.serverInitState!=ServerInitializer.STATE_RUNNING) {
         throw new Exception("Server is not running???  Must be running to see log file.");
@@ -35,7 +29,7 @@
     if (!actualFile.exists()) {
         throw new Exception("File does not exist in log folder: "+fileName);
     }
-    InputStreamReader isr = new InputStreamReader( new FileInputStream(actualFile), "ISO-8859-1" );
+    InputStreamReader isr = new InputStreamReader( new FileInputStream(actualFile), "UTF-8" );
 
 %>
 <html>

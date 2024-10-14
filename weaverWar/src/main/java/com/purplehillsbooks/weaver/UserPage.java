@@ -23,7 +23,6 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.w3c.dom.Document;
@@ -139,7 +138,7 @@ public class UserPage extends ContainerCommon
 
     public void saveContent(AuthRequest ar, String comment)  throws Exception
     {
-        throw new ProgramLogicError("saveContent not implemented on UserPage");
+        throw WeaverException.newBasic("saveContent not implemented on UserPage");
     }
     public  String getFullName()
     {
@@ -159,12 +158,12 @@ public class UserPage extends ContainerCommon
 
 
     public String getTaskLink(AuthRequest ar, String taskId) throws Exception {
-       throw new ProgramLogicError("Not Implemented");
+       throw WeaverException.newBasic("Not Implemented");
     }
 
 
     public String getReminderLink(AuthRequest ar, String reminderId) throws Exception {
-        throw new ProgramLogicError("Not Implemented");
+        throw WeaverException.newBasic("Not Implemented");
     }
 
 

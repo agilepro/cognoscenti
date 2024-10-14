@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
 * This convenience class carries a URL, a username
@@ -79,11 +79,11 @@ public class LicensedURL
     {
         if (url == null)
         {
-            throw new ProgramLogicError("LicensedURL has a null url value, that is not allowed.");
+            throw WeaverException.newBasic("LicensedURL has a null url value, that is not allowed.");
         }
         if (url.length()<6)
         {
-            throw new ProgramLogicError("getCombinedRepresentation does not know how to handle url: "+url);
+            throw WeaverException.newBasic("getCombinedRepresentation does not know how to handle url: "+url);
         }
         int pos = url.indexOf('?');
         char separator = '?';
@@ -112,11 +112,11 @@ public class LicensedURL
     {
         if (url == null)
         {
-            throw new ProgramLogicError("LicensedURL has a null url value, that is not allowed.");
+            throw WeaverException.newBasic("LicensedURL has a null url value, that is not allowed.");
         }
         if (url.length()<6)
         {
-            throw new ProgramLogicError("getCombinedRepresentation does not know how to handle url: "+url);
+            throw WeaverException.newBasic("getCombinedRepresentation does not know how to handle url: "+url);
         }
         StringBuilder res = new StringBuilder();
         int pos = 0;
@@ -132,7 +132,7 @@ public class LicensedURL
         }
         else
         {
-            throw new ProgramLogicError("getCobinedSub can only handle complete http URLs at this point.  Does not know how to handle "+url);
+            throw WeaverException.newBasic("getCobinedSub can only handle complete http URLs at this point.  Does not know how to handle "+url);
         }
         res.append(user);
         res.append(":");
@@ -156,7 +156,7 @@ public class LicensedURL
         }
         if (pos < 0)
         {
-            throw new ProgramLogicError("can not parse this combined URL because no 'lic' parameter found");
+            throw WeaverException.newBasic("can not parse this combined URL because no 'lic' parameter found");
         }
         int endPos = newVal.indexOf('&', pos+5);
         if (endPos<0)
@@ -196,7 +196,7 @@ public class LicensedURL
         }
         else
         {
-            throw new ProgramLogicError("setCombinedSub can only handle complete http URLs at this point.  Does not know how to handle "+newVal);
+            throw WeaverException.newBasic("setCombinedSub can only handle complete http URLs at this point.  Does not know how to handle "+newVal);
         }
         int atpos = newVal.indexOf("@", pos);
         int slashpos = newVal.indexOf("/", pos);

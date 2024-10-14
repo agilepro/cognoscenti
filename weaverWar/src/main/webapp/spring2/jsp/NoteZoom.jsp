@@ -1212,10 +1212,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 </li>
             </ul>
         </span>
-        <span ng-repeat="outcast in nonMembers">
+        <div ng-repeat="outcast in nonMembers">
             <ul class="nav-item dropdown d-inline">
                 <li class="nav-item dropdown d-inline" id="outcast" data-toggle="dropdown">
-                    <img src="<%=ar.retPath%>icon/{{outcast.key}}" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" />
+                    <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" style="width:32px;height:32px" />
                     <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
                         <li role="presentation" style="float: left;"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
                         <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
@@ -1225,7 +1225,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 </li>
           {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
             </ul>
-        </span>
+        </div>
     </div>
     </div>
     <hr>

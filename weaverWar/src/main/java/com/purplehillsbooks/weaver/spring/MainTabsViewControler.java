@@ -217,10 +217,9 @@ public class MainTabsViewControler extends BaseController {
 
 
      @RequestMapping(value = "/index.htm", method = RequestMethod.GET)
-     public void showLandingPage(HttpServletRequest request, HttpServletResponse response)
-                throws Exception {
+     public void showLandingPage(HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
              ar.getCogInstance().assertInitialized();
              //if the user is logged in, redirect to their own home page instead
              if (ar.isLoggedIn())
@@ -231,32 +230,27 @@ public class MainTabsViewControler extends BaseController {
 
              streamJSPAnon(ar, "Index.jsp");  /*needtest*/
              return;
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Failed to open welcome page." , ex);
+         }catch(Exception e){
+             showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open welcome page." , e));
          }
      }
-
-
-
-
-
-
 
 
 
     //allow a user to change their email subscriptions, including opt out
     //even when not logged in.
     @RequestMapping(value = "/EmailAdjustment.htm", method = RequestMethod.GET)
-    public void emailAdjustment(HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+    public void emailAdjustment(HttpServletRequest request, HttpServletResponse response) {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.preserveRealRequestURL();
             streamJSP(ar, "EmailAdjustment.jsp");
         }
-        catch(Exception ex){
-            throw WeaverException.newWrap("Unable to stream EmailAdjustment.jsp", ex);
+        catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to stream EmailAdjustment page", e));
         }
     }
 

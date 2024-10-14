@@ -31,7 +31,6 @@ import com.purplehillsbooks.weaver.ErrorLogDetails;
 import com.purplehillsbooks.weaver.HistoricActions;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -48,158 +47,99 @@ import com.purplehillsbooks.json.JSONObject;
 public class SuperAdminController extends BaseController {
 
 
-    private static void streamAdminJSP(AuthRequest ar, String jspName) throws Exception {
-        if (!ar.isLoggedIn()) {
-            showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
-            return;
+    private static void streamAdminJSP(AuthRequest ar, String jspName) {
+        try {
+            if (!ar.isLoggedIn()) {
+                showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
+                return;
+            }
+            if (!ar.isSuperAdmin()) {
+                showDisplayWarning(ar, "In order to see this section, you need to be a system administrator.");
+                return;
+            }
+            ar.req.setAttribute("wrappedJSP", jspName);
+            ar.invokeJSP("/spring/admin/Wrapper.jsp");
         }
-        if (!ar.isSuperAdmin()) {
-            showDisplayWarning(ar, "In order to see this section, you need to be a system administrator.");
-            return;
+        catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open administration page (%s) for user (%s).",
+                e, jspName, ar.getBestUserId()));            
         }
-        ar.req.setAttribute("wrappedJSP", jspName);
-        ar.invokeJSP("/spring/admin/Wrapper.jsp");
     }
 
 
     @RequestMapping(value = "/su/ErrorList.htm", method = RequestMethod.GET)
-    public void errorList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void errorList(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try {
-            streamAdminJSP(ar, "ErrorList.jsp");
-
-        } catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.administration.page", new Object[] { ar.getBestUserId() }, ex);
-        }
+        streamAdminJSP(ar, "ErrorList.jsp");
     }
 
      @RequestMapping(value = "/su/EmailTest.htm", method = RequestMethod.GET)
      public void emailTest(HttpServletRequest request,
-             HttpServletResponse response)
-     throws Exception {
+             HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "EmailTest.jsp");
-
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
-         }
+         streamAdminJSP(ar, "EmailTest.jsp");
      }
 
      @RequestMapping(value = "/su/EmailListnerSettings.htm", method = RequestMethod.GET)
-     public void emailListnerSettings(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
-
-
+     public void emailListnerSettings(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "EmailListnerSettings.jsp");
-
-         }catch(Exception ex){
-             throw new Exception("Failed while trying to display email listener settings", ex);
-         }
+         streamAdminJSP(ar, "EmailListnerSettings.jsp");
      }
 
      @RequestMapping(value = "/su/NotificationStatus.htm", method = RequestMethod.GET)
-     public void notificationStatus(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void notificationStatus(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "NotificationStatus.jsp");
-
-         }catch(Exception ex){
-             throw new Exception("Failed while trying to display last notification report", ex);
-         }
+         streamAdminJSP(ar, "NotificationStatus.jsp");
      }
 
      @RequestMapping(value = "/su/BlockedEmail.htm", method = RequestMethod.GET)
-     public void blockedEmail(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void blockedEmail(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "BlockedEmail.jsp");
-
-         }catch(Exception ex){
-             throw new Exception("Failed while trying to display blocked email report", ex);
-         }
+         streamAdminJSP(ar, "BlockedEmail.jsp");
      }
 
      @RequestMapping(value = "/su/UserList.htm", method = RequestMethod.GET)
-     public void userList(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void userList(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "UserList.jsp");
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Unable to show all users %s", ex, ar.getBestUserId());
-         }
+         streamAdminJSP(ar, "UserList.jsp");
      }
 
      @RequestMapping(value = "/su/SiteRequests.htm", method = RequestMethod.GET)
-     public void siteRequests(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void siteRequests(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "SiteRequests.jsp");
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Unable to show requested sites for %s", ex, ar.getBestUserId());
-         }
+         streamAdminJSP(ar, "SiteRequests.jsp");
      }
 
      @RequestMapping(value = "/su/ListSites.htm", method = RequestMethod.GET)
-     public void listSites(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void listSites(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "ListSites.jsp");
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Unable to list sites for administrator %s", ex, ar.getBestUserId());
-         }
+         streamAdminJSP(ar, "ListSites.jsp");
      }
 
      @RequestMapping(value = "/su/EstimateCosts.htm", method = RequestMethod.GET)
-     public void estimateCosts(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void estimateCosts(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "EstimateCosts.jsp");
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Unable to estimate costs for administrator %s", ex, ar.getBestUserId());
-         }
+         streamAdminJSP(ar, "EstimateCosts.jsp");
      }
 
      @RequestMapping(value = "/su/SiteDetails.htm", method = RequestMethod.GET)
-     public void siteDetails(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void siteDetails(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "SiteDetails.jsp");
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
-         }
+         streamAdminJSP(ar, "SiteDetails.jsp");
      }
      
      @RequestMapping(value = "/su/EmailScanner.htm", method = RequestMethod.GET)
-     public void emailScanner(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void emailScanner(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "EmailScanner.jsp");
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
-         }
+         streamAdminJSP(ar, "EmailScanner.jsp");
      }
 
 
      @RequestMapping(value = "/su/EmailMsgA.htm", method = RequestMethod.GET)
-     public void emailMsgA(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+     public void emailMsgA(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             streamAdminJSP(ar, "EmailMsgA.jsp");
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
-         }
+         streamAdminJSP(ar, "EmailMsgA.jsp");
      }
 
 
@@ -216,7 +156,7 @@ public class SuperAdminController extends BaseController {
              SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
              SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
              if (siteRequest==null) {
-                 throw new NGException("nugen.exceptionhandling.not.find.account.request",new Object[]{requestId});
+                 throw WeaverException.newBasic("Could not find any site request with id=%s", requestId);
              }
              
              String possiblyChangedSiteId = requestInfo.optString("siteId");
@@ -242,8 +182,8 @@ public class SuperAdminController extends BaseController {
              JSONObject repo = siteRequest.getJSON();
              sendJson(ar, repo);
          }
-         catch(Exception ex){
-             Exception ee = new Exception("Unable to update site request ("+requestId+")", ex);
+         catch(Exception e){
+             Exception ee = WeaverException.newWrap("Unable to update site request (%s)", e, requestId);
              streamException(ee, ar);
          }
      }
@@ -322,17 +262,18 @@ public class SuperAdminController extends BaseController {
      public void errorDetailsPage(@PathVariable String errorId,
              @RequestParam String searchByDate,HttpServletRequest request,
              HttpServletResponse response) throws Exception {
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try {
              ar.setParam("errorId", errorId);
              ar.setParam("errorDate", searchByDate);
              ar.setParam("goURL", ar.getCompleteURL());
              streamAdminJSP(ar, "ErrorDetail.jsp");
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.error.detail.page", null , ex);
+         }catch(Exception e){
+             showDisplayException(ar, e);
          }
      }
 
+     /*
      @RequestMapping(value = "/su/logUserComents.form", method = RequestMethod.POST)
      public void logUserComents(@RequestParam int errorNo,HttpServletRequest request,
              HttpServletResponse response)
@@ -355,22 +296,24 @@ public class SuperAdminController extends BaseController {
              throw new NGException("nugen.operation.fail.error.log.user.comment", null , ex);
          }
      }
+    */
 
-     @RequestMapping(value = "/su/SiteMerge.htm", method = RequestMethod.GET)
-     public void siteMerge(HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
+    @RequestMapping(value = "/su/SiteMerge.htm", method = RequestMethod.GET)
+    public void siteMerge(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
-         String siteId = "UNKNOWN";
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             siteId = ar.reqParam("site");
-             prepareSiteView(ar, siteId);
-
-             streamAdminJSP(ar, "SiteMerge.jsp");
-         }catch(Exception ex){
-             throw WeaverException.newWrap("Unable to perform SiteMerge with site %s", ex, siteId);
-         }
-     }
+        String siteId = "UNKNOWN";
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            siteId = ar.reqParam("site");
+            prepareSiteView(ar, siteId);
+            streamAdminJSP(ar, "SiteMerge.jsp");
+        } catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                    "Unable to perform SiteMerge with site %s",
+                    e, siteId));
+        }
+    }
 
      ///////////////////////// Eamil ///////////////////////
 
@@ -383,9 +326,7 @@ public class SuperAdminController extends BaseController {
                  throw new Exception("Super admin email list is accessible only by administrator.");
              }
              JSONObject posted = this.getPostedObject(ar);
-
              JSONObject repo = EmailSender.querySuperAdminEmail(posted);
-
              sendJson(ar, repo);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to get email", ex);

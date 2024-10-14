@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 
@@ -217,7 +216,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         throws Exception
     {
         if (ngw==null) {
-            throw new ProgramLogicError("SectionAttachments can serve upthe attachment only when the workspace is known.");
+            throw WeaverException.newBasic("SectionAttachments can serve upthe attachment only when the workspace is known.");
         }
         try {
             //get the mime type from the file extension

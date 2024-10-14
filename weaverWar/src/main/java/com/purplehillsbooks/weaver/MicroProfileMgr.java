@@ -94,7 +94,7 @@ public class MicroProfileMgr {
     {
         if (profileFile==null)
         {
-            throw new ProgramLogicError("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
+            throw WeaverException.newBasic("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
         List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
         return vc;
@@ -135,10 +135,10 @@ public class MicroProfileMgr {
     public static MicroProfileRecord findOrCreateMicroProfile(String emailId, String displayName) throws Exception
     {
         if (emailId == null) {
-            throw new ProgramLogicError("createMicroProfileRecord was passed a null emailId parameter");
+            throw WeaverException.newBasic("createMicroProfileRecord was passed a null emailId parameter");
         }
         if (profileFile==null) {
-            throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
+            throw WeaverException.newBasic("profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         if (!MicroProfileRecord.validEmailAddress(emailId)) {
             throw new Exception("This does not look like an email address: "+emailId);
@@ -162,10 +162,10 @@ public class MicroProfileMgr {
 
     public synchronized static boolean removeMicroProfileRecord(String id) throws Exception {
         if (id == null) {
-            throw new ProgramLogicError("removeMicroProfileRecord was passed a null emailId parameter");
+            throw WeaverException.newBasic("removeMicroProfileRecord was passed a null emailId parameter");
         }
         if (profileFile==null) {
-            throw new ProgramLogicError("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
+            throw WeaverException.newBasic("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
         List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
         for (MicroProfileRecord child : vc) {

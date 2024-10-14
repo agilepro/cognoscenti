@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.w3c.dom.Document;
@@ -172,12 +171,12 @@ public class DOMFile extends DOMFace {
         }
 
         if (parent.hasChildNodes()) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "just cleaned out child nodes, but there seems to still be one.");
         }
         childNdList = parent.getChildNodes();
         if (childNdList.getLength() > 0) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "just cleaned out child nodes, but there seems to still be one in childlist.");
         }
 

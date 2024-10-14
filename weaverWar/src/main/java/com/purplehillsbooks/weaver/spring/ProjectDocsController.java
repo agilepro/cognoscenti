@@ -136,11 +136,7 @@ public class ProjectDocsController extends BaseController {
 
         request.setAttribute("aid", aid);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-        AttachmentRecord att = ngw.findAttachmentByID(aid);
-        if (att==null) {
-            showDisplayWarning(ar, "Can not find a document with the id  "+aid+".  Was it deleted?");
-            return;
-        }
+        AttachmentRecord att = ngw.findAttachmentByIDOrFail(aid);
         boolean specialAccess = AccessControl.canAccessDoc(ar, ngw, att);
         BaseController.showJSPDepending(ar, ngw, "DocDetail.jsp", specialAccess);
     }
@@ -1201,12 +1197,9 @@ public class ProjectDocsController extends BaseController {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("aid");
-            AttachmentRecord att = ngw.findAttachmentByID(id);
-            if (att==null) {
-                showDisplayWarning(ar, "Can not find document with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+
+            // check that the attachment exists
+            ngw.findAttachmentByIDOrFail(id);
 
             ar.invokeJSP("/spring/anon/WebFilePrint.jsp");
 

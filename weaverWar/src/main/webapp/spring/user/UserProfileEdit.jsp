@@ -193,13 +193,15 @@ myApp.controller('myCtrl', function($scope, $http) {
 <%!
 
     public UserProfile findSpecifiedUserOrDefault(AuthRequest ar) throws Exception {
-        String userKey = ar.reqParam("userKey");
-        UserProfile up = UserManager.getUserProfileByKey(userKey);
-        if (up==null) {
-            Thread.sleep(3000);
-            throw new NGException("nugen.exception.user.not.found.invalid.key",new Object[]{userKey});
+        try {
+            String userKey = ar.reqParam("userKey");
+            return UserManager.getUserProfileOrFail(userKey);
         }
-        return up;
+        catch (Exception e) {
+            // just need to delay error handling because this might be hacker
+            Thread.sleep(3000);
+            throw e;
+        }
     }
 
 %>

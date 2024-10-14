@@ -23,7 +23,7 @@ package com.purplehillsbooks.weaver.util;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /* UploadRequest.java
  *
@@ -40,10 +40,9 @@ public class UploadRequest {
         m_parameters = new Hashtable<String, Hashtable<Integer, String>>();
     }
 
-    protected void putParameter(String name, String value)
-            throws Exception {
+    protected void putParameter(String name, String value) throws Exception {
         if (name == null) {
-            throw new NGException("nugen.exception.param.invalid",null);
+            throw WeaverException.newBasic("ProgramLogic Error: name parameter ofputParameter must not be null");
         }
 
         if (m_parameters.containsKey(name)) {

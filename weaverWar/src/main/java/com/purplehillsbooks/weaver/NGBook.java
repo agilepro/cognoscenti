@@ -27,7 +27,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -153,7 +152,7 @@ public class NGBook extends ContainerCommon {
     public static NGBook readSiteByKey(String key) throws Exception {
         if (keyToSite == null) {
             // this should never happen, but if it does....
-            throw new ProgramLogicError("in readSiteByKey called before the site index initialzed.");
+            throw WeaverException.newBasic("in readSiteByKey called before the site index initialzed.");
         }
         if (key == null) {
             throw new Exception("Program Logic Error: Site key of null is no longer allowed.");
@@ -688,12 +687,12 @@ public class NGBook extends ContainerCommon {
 
         String licVal = ar.reqParam("lic");
         if (licVal == null || licVal.length() == 0) {
-            throw new ProgramLogicError("Have to be logged in, or have a licensed link, "
+            throw WeaverException.newBasic("Have to be logged in, or have a licensed link, "
                     + "to create a new workspace");
         }
         License lic = this.getLicense(licVal);
         if (lic == null) {
-            throw new ProgramLogicError("Specified license (" + lic + ") not found");
+            throw WeaverException.newBasic("Specified license (" + lic + ") not found");
         }
         if (ar.nowTime > lic.getTimeout()) {
             throw WeaverException.newBasic("Specified license (%s) is no longer valid.  You will need an updated licensed link to create a new workspace.", lic);
@@ -710,11 +709,11 @@ public class NGBook extends ContainerCommon {
     public NGWorkspace createWorkspaceByKey(AuthRequest ar, String workspaceKey) throws Exception {
         assertPermissionToCreateProject(ar);
         if (workspaceKey.indexOf('/') >= 0) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Expecting a key value, but got something with a slash in it: " + workspaceKey);
         }
         if (workspaceKey.endsWith(".sp")) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "this has changed, and the key should no longer end with .sp: " + workspaceKey);
         }
 

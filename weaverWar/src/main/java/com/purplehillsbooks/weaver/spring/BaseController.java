@@ -37,7 +37,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ServletExit;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
@@ -51,6 +50,9 @@ import com.purplehillsbooks.json.JSONTokener;
 
 @Controller
 public class BaseController {
+
+    public static String NO_ADMIN_MESSAGE =
+        "This server does not have a setting for the System Administrator.  In the 'WEB-INF/config.txt file', set the value of 'superAdmin' to the internal Unique ID for the user to play this role.  Unique ID looks like 9 random capital letters.  System Admin is the user who can approve new sites and must be set before any sites can be created.";
 
     static boolean indentJson = false;
     static int latencyMillis = 0;
@@ -98,7 +100,7 @@ public class BaseController {
             long exceptionNO=ar.logException("SPRING MAPPED EXCEPTION: "+ar.getCompleteURL(), extd);
             ar.req.setAttribute("display_exception", extd);
             ar.req.setAttribute("log_number", exceptionNO);
-            ar.invokeJSP("/spring/anon/Error.jsp");
+            showDisplayException(ar, extd);
         }
         catch (Exception e) {
             JSONException.traceException(System.out, e,
@@ -123,7 +125,18 @@ public class BaseController {
         }
     }
     protected static void showDisplayException(AuthRequest ar, Exception e) {
-        showDisplayWarning(ar, WeaverException.getFullMessage(e));
+        try {
+            showDisplayWarning(ar, WeaverException.getFullMessage(e));
+        }
+        catch (Exception eeee) {
+            // this should really really NEVER happen!!!
+            // but if it does, we want to make sure to stop exceptions here
+            WeaverException.traceException(System.out, eeee, "FATAL ERROR 1: showDisplayException reason unable to display");
+            WeaverException.traceException(System.out, e, "FATAL ERROR 2: showDisplayException error it was trying to display");
+        }
+    }
+    protected static void showDisplayWarningF(AuthRequest ar, String template, Object... args) {
+        showDisplayWarning(ar, String.format(template, args));
     }
 
 
@@ -182,15 +195,15 @@ public class BaseController {
         }
         if(!ar.canAccessWorkspace()){
             if (ar.ngp instanceof NGBook) {
-                showDisplayWarning(ar, "In order to see this section, you need to be a site executive.");
+                showDisplayWarningF(ar, "In order to see this section, (%s) needs to be a site executive.", ar.getBestUserId());
             }
             else {
-                showDisplayWarning(ar, "In order to see this section, you need to be a workspace member.");
+                showDisplayWarningF(ar, "In order to see this section, (%s) needs to be a workspace member.", ar.getBestUserId());
             }
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showDisplayWarning(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, NO_ADMIN_MESSAGE);
             return true;
         }
         if (warnSiteMoved(ar)) {
@@ -210,11 +223,13 @@ public class BaseController {
             return false;
         }
         if(!ar.canAccessWorkspace()){
-            showDisplayWarning(ar, "In order to see this section, you need to be a site executive.");
+            showDisplayWarningF(ar, 
+                "In order to see this section, (%s) needs to be a site executive.", 
+                ar.getBestUserId());
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showDisplayWarning(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, NO_ADMIN_MESSAGE);
             return true;
         }
         return false;
@@ -266,7 +281,7 @@ public class BaseController {
                     warnNotLoggedIn(ar);
                 }
                 else {
-                    showDisplayWarning(ar, "Unable to access resource "+accessLevel+"/"+jspName);
+                    showDisplayWarningF(ar, "Unable to access resource %s / %s", accessLevel, jspName);
                 }
             }
             else {
@@ -577,11 +592,14 @@ public class BaseController {
         }
         if(!ar.canAccessWorkspace()){
             ar.req.setAttribute("roleName", "Executive");
-            showDisplayWarning(ar, "nugen.project.executive.msg");
+            showDisplayWarningF(ar, 
+                "(%s) is not an Executive of this site.  In order to see this section, you need to be a site executive.", 
+                ar.getBestUserId());
+
             return true;
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
-            showDisplayWarning(ar, "nugen.missingSuperAdmin");
+            showDisplayWarning(ar, NO_ADMIN_MESSAGE);
             return true;
         }
         return false;
@@ -732,8 +750,7 @@ public class BaseController {
     public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) {
         try {
             if(!ar.isLoggedIn()){
-                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSPAnon(ar, "Warning.jsp");
+                showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
                 return;
             }
             UserProfile up = UserManager.getUserProfileOrFail(userKey);

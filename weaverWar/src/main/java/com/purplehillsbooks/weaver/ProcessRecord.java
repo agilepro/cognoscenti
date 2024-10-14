@@ -22,7 +22,8 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -92,7 +93,7 @@ public class ProcessRecord extends BaseRecord
         NGContainer ngp = ar.ngp;
         if (ngp==null)
         {
-            throw new ProgramLogicError("the NGWorkspace must be loaded into the AuthRequest for getWfxmlLink to work");
+            throw WeaverException.newBasic("the NGWorkspace must be loaded into the AuthRequest for getWfxmlLink to work");
         }
         return new LicensedURL(
             ar.baseURL + "p/" + ngp.getKey() + "/process.xml",
@@ -135,7 +136,7 @@ public class ProcessRecord extends BaseRecord
     {
         if (parentProcesses == null)
         {
-            throw new ProgramLogicError("null value passed to setLicensedParents, this should never happen");
+            throw WeaverException.newBasic("null value passed to setLicensedParents, this should never happen");
         }
 
         DOMFace ppEle = requireChild("parentProcesses", DOMFace.class);
@@ -156,7 +157,7 @@ public class ProcessRecord extends BaseRecord
     {
         if (newParent == null)
         {
-            throw new ProgramLogicError("null value passed to addLicensedParent, this should never happen");
+            throw WeaverException.newBasic("null value passed to addLicensedParent, this should never happen");
         }
 
         DOMFace ppEle = requireChild("parentProcesses", DOMFace.class);

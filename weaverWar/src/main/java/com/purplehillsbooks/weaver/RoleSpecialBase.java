@@ -23,7 +23,7 @@ package com.purplehillsbooks.weaver;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * Each page can have a role that represents the members of the page, and this
@@ -90,7 +90,7 @@ public abstract class RoleSpecialBase implements NGRole {
     public boolean isExpandedPlayer(UserRef user, NGContainer ngp)
             throws Exception {
         if (user == null) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "isExpandedPlayer called with null user object.");
         }
         return CustomRole.isPlayerOfAddressList(user, getExpandedPlayers(ngp));

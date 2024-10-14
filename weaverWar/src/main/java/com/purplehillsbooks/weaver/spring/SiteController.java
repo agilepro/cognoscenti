@@ -31,7 +31,6 @@ import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.CustomRole;
-import com.purplehillsbooks.weaver.HistoricActions;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
@@ -44,7 +43,6 @@ import com.purplehillsbooks.weaver.SiteUsers;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WorkspaceStats;
-import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 
@@ -89,7 +87,7 @@ public class SiteController extends BaseController {
     }
 
 
-
+/*
     @RequestMapping(value = "/{userKey}/accountRequests.form", method = RequestMethod.POST)
     public void requestNewSite(@PathVariable String userKey, 
                 HttpServletRequest request, HttpServletResponse response)
@@ -121,7 +119,7 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.new.account.request", null , ex);
         }
     }
-
+*/
 
     @RequestMapping(value = "/{userKey}/siteRequest.json", method = RequestMethod.POST)
     public void siteRequest(@PathVariable String userKey, 

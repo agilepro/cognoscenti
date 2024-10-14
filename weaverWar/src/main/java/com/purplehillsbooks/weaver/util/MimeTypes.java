@@ -28,7 +28,7 @@ import java.util.Properties;
 import jakarta.activation.FileTypeMap;
 import jakarta.activation.MimetypesFileTypeMap;
 
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 
 /**
@@ -88,15 +88,11 @@ public class MimeTypes
     * where the mime type property file is located and will
     * be read from.
     */
-    public static void initialize(File basePath)
-        throws Exception
-    {
+    public static void initialize(File basePath) throws Exception {
         File mapFile = new File(basePath,"mimeType.properties");
-        try
-        {
+        try {
             Properties tprops = null;
-            if (!mapFile.exists())
-            {
+            if (!mapFile.exists()) {
                 //mimeType.properties file should always exist, if not found
                 //create it.
                 tprops = new Properties();
@@ -111,8 +107,7 @@ public class MimeTypes
                 tprops.store(fos, "Initialized from defaults");
                 fos.close();
             }
-            else
-            {
+            else {
                 FileInputStream fis = new FileInputStream(mapFile);
                 tprops = new Properties();
                 tprops.load(fis);
@@ -121,9 +116,10 @@ public class MimeTypes
             extensionMap = tprops;
             javaSysMimeMap = MimetypesFileTypeMap.getDefaultFileTypeMap();
         }
-        catch (Exception e)
-        {
-            throw new NGException("nugen.exception.unable.to.initialize.mime.file", new Object[]{mapFile}, e);
+        catch (Exception e) {
+            throw WeaverException.newWrap(
+                "Unable to initialize the Mime-Type mapping class from the file '%s'.", 
+                e, mapFile.getAbsoluteFile());
         }
     }
 
@@ -131,18 +127,14 @@ public class MimeTypes
     * Sometimes it is more convenient to send the entire file name in, and
     * have the extension pulled off within the method.
     */
-    public static String getMimeType(String fileName)
-        throws Exception
-    {
+    public static String getMimeType(String fileName) throws Exception {
         int lastDot = fileName.lastIndexOf(".");
-        if (lastDot<0)
-        {
+        if (lastDot<0) {
             //this is the case that there is no dot, and no extension
             //return default value in this case
             return "application/octet-stream";
         }
-        if (lastDot==fileName.length())
-        {
+        if (lastDot==fileName.length()) {
             //this is the case that the file name ends with a dot, and has no extension
             //so to speak, so return default
             return "application/octet-stream";
@@ -153,9 +145,7 @@ public class MimeTypes
     /**
     * Pass a file extension, and get a mime type back.
     */
-    public static String getMimeTypeFromExtension(String extension)
-        throws Exception
-    {
+    public static String getMimeTypeFromExtension(String extension) throws Exception {
         String lcext = extension.toLowerCase();
         String mt = extensionMap.getProperty(lcext);
         if (mt == null)
@@ -168,7 +158,4 @@ public class MimeTypes
         }
         return mt;
     }
-
-
-
 }

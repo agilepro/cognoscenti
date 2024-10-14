@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.w3c.dom.Document;
@@ -428,8 +427,8 @@ public class HistoryRecord extends DOMFace
                 messageID = "history.container.";
                 break;
             default:
-                throw new ProgramLogicError("HistoryRecord.getCombinedKey does "
-                + "not know how to handle a context type value: "+ctx);
+                throw WeaverException.newBasic("HistoryRecord.getCombinedKey does "
+                + "not know how to handle a context type value: %s ", ctx);
         }
 
         int event = getEventType();

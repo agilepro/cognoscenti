@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
@@ -99,21 +98,21 @@ public class AttachmentVersion {
     */
     public static List<AttachmentVersion> getDocVersions(File wsFolder, AttachmentRecord att) throws Exception  {
         if (wsFolder==null)  {
-            throw new ProgramLogicError("null workspace folder sent to getDocVersions");
+            throw WeaverException.newBasic("null workspace folder sent to getDocVersions");
         }
         if (att==null)  {
-            throw new ProgramLogicError("null attachment object sent to getDocVersions");
+            throw WeaverException.newBasic("null attachment object sent to getDocVersions");
         }
         String attachName = att.getNiceName();
         String attachmentId = att.getId();
         if (attachName==null) {
-            throw new ProgramLogicError("null attachment Name sent to getDocVersions");
+            throw WeaverException.newBasic("null attachment Name sent to getDocVersions");
         }
         if (attachmentId==null) {
-            throw new ProgramLogicError("null attachment Id sent to getDocVersions");
+            throw WeaverException.newBasic("null attachment Id sent to getDocVersions");
         }
         if (!wsFolder.exists()) {
-            throw new ProgramLogicError("getDocVersions needs to be passed a valid workspace folder.  This does not exist: "+wsFolder.toString());
+            throw WeaverException.newBasic("getDocVersions needs to be passed a valid workspace folder.  This does not exist: "+wsFolder.toString());
         }
         List<AttachmentVersion> list = new ArrayList<AttachmentVersion>();
 

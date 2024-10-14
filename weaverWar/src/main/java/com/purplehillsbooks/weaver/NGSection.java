@@ -22,7 +22,8 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,11 +42,11 @@ public class NGSection extends DOMFace
         //to be there.
         if (e==null)
         {
-            throw new ProgramLogicError("someone created a section object, but passed null for element");
+            throw WeaverException.newBasic("someone created a section object, but passed null for element");
         }
         if (p==null)
         {
-            throw new ProgramLogicError("someone created a section object, but passed null for page object");
+            throw WeaverException.newBasic("someone created a section object, but passed null for page object");
         }
 
         parent = (NGWorkspace) p;
@@ -55,7 +56,7 @@ public class NGSection extends DOMFace
         {
             //Sections must be constructed with a name value specified in advance.
             //because sections are identified by name.  Only one section per name allowed.
-            throw new ProgramLogicError("Section tag MUST have an attribute 'name' with a valid value.");
+            throw WeaverException.newBasic("Section tag MUST have an attribute 'name' with a valid value.");
         }
         def = SectionDef.getDefByName(sectionName);
         assertNameIsConsistent();
@@ -70,12 +71,12 @@ public class NGSection extends DOMFace
         String myName = getAttribute("name");
         if (myName==null)
         {
-            throw new ProgramLogicError("Somehow the name is null on this section");
+            throw WeaverException.newBasic("Somehow the name is null on this section");
         }
         String defName = def.getTypeName();
         if (!myName.equals(defName))
         {
-            throw new ProgramLogicError("Was not able to find the right definition for '"
+            throw WeaverException.newBasic("Was not able to find the right definition for '"
                   +myName+"' and got '"+defName+"' instead.");
         }
     }
@@ -87,7 +88,7 @@ public class NGSection extends DOMFace
         String name = getAttribute("name");
         if (name==null)
         {
-            throw new ProgramLogicError("Somehow the name is null on this section");
+            throw WeaverException.newBasic("Somehow the name is null on this section");
         }
         assertNameIsConsistent();
         return name;

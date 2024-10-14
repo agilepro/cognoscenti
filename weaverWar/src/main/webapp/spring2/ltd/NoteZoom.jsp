@@ -889,7 +889,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                         </li>
                     </ul>
                 </span>
-                <span ng-repeat="outcast in nonMembers">
+                <div ng-repeat="outcast in nonMembers">
                     <ul class="nav-item dropdown d-inline">
                         <li class="nav-item dropdown d-inline" id="outcast" data-toggle="dropdown">
                             <img src="<%=ar.retPath%>icon/{{outcast.key}}" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" />
@@ -902,7 +902,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                         </li>
                   {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
                     </ul>
-                </span>
+                </div>
             </div>
         </div>
     </div>

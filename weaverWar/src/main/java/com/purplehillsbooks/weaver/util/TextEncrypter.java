@@ -35,8 +35,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.streams.Base64;
 
 /**
@@ -62,11 +61,11 @@ public class TextEncrypter {
             throws Exception {
         populateKeys();
         if (encryptionKey == null) {
-            throw new ProgramLogicError("Invalid Encryption key");
+            throw WeaverException.newBasic("Invalid Encryption key");
         }
 
         if (encryptionKey.trim().length() < 24) {
-            throw new ProgramLogicError("Invalid Encryption key");
+            throw WeaverException.newBasic("Invalid Encryption key");
 
         }
         byte[] keyAsBytes = encryptionKey.getBytes(UNICODE_FORMAT);
@@ -76,7 +75,7 @@ public class TextEncrypter {
         } else if (encryptionScheme.equals(DES_ENCRYPTION_SCHEME)) {
             keySpec = new DESKeySpec(keyAsBytes);
         } else {
-            throw new ProgramLogicError("Invalid Encryption key");
+            throw WeaverException.newBasic("Invalid Encryption key");
         }
 
         keyFactory = SecretKeyFactory.getInstance(encryptionScheme);
@@ -86,7 +85,7 @@ public class TextEncrypter {
 
     public String encrypt(String unencryptedString) throws Exception {
         if (unencryptedString == null || unencryptedString.trim().length() == 0) {
-            throw new ProgramLogicError("Invalid input text:" + unencryptedString);
+            throw WeaverException.newBasic("Invalid input text:" + unencryptedString);
         }
         SecretKey key = keyFactory.generateSecret(keySpec);
         cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -98,7 +97,7 @@ public class TextEncrypter {
 
     public String decrypt(String encryptedString) throws Exception {
         if (encryptedString == null || encryptedString.trim().length() <= 0) {
-            throw new ProgramLogicError("Invalid input text:" + encryptedString);
+            throw WeaverException.newBasic("Missing input text to decrypt");
         }
         SecretKey key = keyFactory.generateSecret(keySpec);
         cipher.init(Cipher.DECRYPT_MODE, key);
@@ -110,7 +109,7 @@ public class TextEncrypter {
     public void updatePropFile(String fileName) throws Exception {
         File iniFile = new File(fileName);
         if (!iniFile.exists()) {
-            throw new NGException("nugen.exception.file.invalid", new Object[]{fileName});
+            throw WeaverException.newBasic("Can't find file for updatePropFile: %s", iniFile.getAbsolutePath());
         }
 
         BufferedReader fileBr = new BufferedReader(new FileReader(iniFile));

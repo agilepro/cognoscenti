@@ -50,7 +50,7 @@ public class RemoteLinkCombo
         int atPos = rLink.indexOf('@');
         if (atPos<0)
         {
-            throw new ProgramLogicError("Error parsing remote link: there is no @ present in ("+rLink+")  "
+            throw WeaverException.newBasic("Error parsing remote link: there is no @ present in ("+rLink+")  "
                 +"Format is {user}@{folder}/{path}.  "
                 +"This is probably an indication of a corrupted data file.");
         }
@@ -58,7 +58,7 @@ public class RemoteLinkCombo
         int slashPos = rLink.indexOf('/', atPos);
         if (slashPos<0)
         {
-            throw new ProgramLogicError("Error parsing remote link: there is no slash present after the @.  "
+            throw WeaverException.newBasic("Error parsing remote link: there is no slash present after the @.  "
                 +"Format is {user}@{folder}/{path}.  "
                 +"This is probably an indication of a corrupted data file.");
         }

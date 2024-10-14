@@ -1,19 +1,11 @@
-<%@page errorPage="error.jsp"
-%><%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
-%><%@page import="java.io.File"
-%><%@page import="java.util.Arrays"
-%><%@page import="java.util.Properties"
-%><%@page import="com.purplehillsbooks.weaver.Cognoscenti"
-%><%@page import="com.purplehillsbooks.weaver.util.MimeTypes"
-%><%@page import="com.purplehillsbooks.weaver.ConfigFile"
-%><%@page import="com.purplehillsbooks.weaver.NGSession"
-%><%@page import="com.purplehillsbooks.weaver.SuperAdminLogFile"
-%><%@page import="com.purplehillsbooks.weaver.rest.NGLeafServlet"
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+%><%@include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.rest.ServerInitializer"
-%><%@page import="com.purplehillsbooks.weaver.NGWorkspace"
+%><%@page import="com.purplehillsbooks.weaver.util.MimeTypes"
 %><%
 
-    AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
+
+    // AuthRequest ar = AuthRequest.getOrCreateWithWriter(request, response, out);
     Cognoscenti cog = ar.getCogInstance();
     if (cog.initializer.serverInitState!=ServerInitializer.STATE_RUNNING) {
 

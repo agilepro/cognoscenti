@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.api.IconServlet;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailListener;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -294,7 +293,7 @@ System.out.println("Weaver Server Object == Start the Server");
             if (lastFailureMsg != null) {
                 throw WeaverException.newWrap("Weaver server has not initialized correctly", lastFailureMsg);
             }
-            throw new ProgramLogicError("Weaver server has never been initialized");
+            throw WeaverException.newBasic("Weaver server has never been initialized");
         }
     }
 
@@ -330,7 +329,7 @@ System.out.println("Weaver Server Object == Start the Server");
         assertInitialized();
         if (key == null) {
             // this programming mistake should never happen
-            throw new ProgramLogicError("null value passed as key to getSiteByKey");
+            throw WeaverException.newBasic("null value passed as key to getSiteByKey");
         }
         return keyToSites.get(key);
     }
@@ -346,11 +345,11 @@ System.out.println("Weaver Server Object == Start the Server");
     public NGPageIndex getWSBySiteAndKey(String siteKey, String key) throws Exception {
         if (siteKey == null) {
             // this programming mistake should never happen
-            throw new ProgramLogicError("null value passed as siteKey to getWorkspaceBySiteAndKey");
+            throw WeaverException.newBasic("null value passed as siteKey to getWorkspaceBySiteAndKey");
         }
         if (key == null) {
             // this programming mistake should never happen
-            throw new ProgramLogicError("null value passed as key to getWorkspaceBySiteAndKey");
+            throw WeaverException.newBasic("null value passed as key to getWorkspaceBySiteAndKey");
         }
         assertInitialized();
         String realKey = siteKey + "|" + key;

@@ -173,7 +173,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.switchToOldUI = function() {
         var newProfile = {};
-        newProfile.useNewUI = false;
+        newProfile.avoidOldUI = false;
         $scope.updateServer(newProfile, true);
     }
 

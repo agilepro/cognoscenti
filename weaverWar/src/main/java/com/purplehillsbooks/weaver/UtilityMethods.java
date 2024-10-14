@@ -24,10 +24,9 @@ import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.HTMLWriter;
 
 public class UtilityMethods {
     public static String subString(String s, int pos, int len) throws Exception {
@@ -35,7 +34,7 @@ public class UtilityMethods {
             return s.substring(pos, len);
         }
         catch (Exception e) {
-            throw new ProgramLogicError("Substring exception: [" + s + "] (len " + s.length()
+            throw WeaverException.newBasic("Substring exception: [" + s + "] (len " + s.length()
                     + ") at " + pos + " for len " + len + "; " + e.getMessage());
         }
     }
@@ -325,14 +324,14 @@ public class UtilityMethods {
      */
     public static void unquote4JS(StringBuilder res, String literalString) throws Exception {
         if ((res == null) || (literalString == null)) {
-            throw new ProgramLogicError("null parameter passed to unquote4JS");
+            throw WeaverException.newBasic("null parameter passed to unquote4JS");
         }
         if (literalString.length() == 0) {
-            throw new ProgramLogicError("Empty string was passed to unquote4JS");
+            throw WeaverException.newBasic("Empty string was passed to unquote4JS");
         }
         if ((literalString.charAt(0) != '\"')
                 || (literalString.charAt(literalString.length() - 1) != '\"')) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Literal expression passed to unquote4JS must start and end with a quote character");
         }
         int lenMinusTwo = literalString.length() - 2;
@@ -348,7 +347,7 @@ public class UtilityMethods {
             // ok, we got a slash, check the next character, but first check an
             // error condition
             if (pos >= lenMinusTwo) {
-                throw new ProgramLogicError(
+                throw WeaverException.newBasic(
                         "Error decoding a JS expression, the last character is a backslash");
             }
 

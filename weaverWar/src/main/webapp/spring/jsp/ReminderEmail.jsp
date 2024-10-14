@@ -32,11 +32,7 @@ Required parameter:
     ar.assertAccessWorkspace("Can not send email reminder");
 
     ReminderMgr rMgr = ngp.getReminderMgr();
-    ReminderRecord rRec= rMgr.findReminderByID(rid);
-    if (rRec==null)
-    {
-        throw new NGException("nugen.exception.attachment.not.found", new Object[]{rid});
-    }
+    ReminderRecord rRec= rMgr.findReminderByIDOrFail(rid);
     String subject = "Please upload File ";
 %>
 

@@ -29,9 +29,7 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.json.JSONException;
 
 public class ResourceDecoder {
 
@@ -73,7 +71,7 @@ public class ResourceDecoder {
 
         // TEST: check to see that the servlet path starts with /
         if (!path.startsWith("/")) {
-            throw new ProgramLogicError("Path should start with / but instead it is: "
+            throw WeaverException.newBasic("Path should start with / but instead it is: "
                             + path);
         }
         if (path.startsWith("/swagger.json")) {

@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
@@ -360,7 +359,7 @@ public class UserManager
     public synchronized UserProfile createUserWithId(String newId) throws Exception {
         System.out.println("GLOBAL USERS: adding a user with id: "+newId);
         if (lookupUserByAnyId(newId)!=null) {
-            throw new ProgramLogicError("Can not create a new user profile using an address that some other profile already has: "+newId);
+            throw WeaverException.newBasic("Can not create a new user profile using an address that some other profile already has: "+newId);
         }
 
         UserProfile up = new UserProfile(newId);

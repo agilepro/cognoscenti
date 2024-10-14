@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.HttpServletResponseWithoutBug;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.temps.TemplateJSONRetriever;
@@ -327,7 +327,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
         String option = req.getParameter("option");
         if (option == null)
         {
-            throw new ProgramLogicError("Post to config servlet must have an option parameter");
+            throw WeaverException.newBasic("Post to config servlet must have an option parameter");
         }
 
         if (option.equals("Pause the Server")) {

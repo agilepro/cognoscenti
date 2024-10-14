@@ -24,7 +24,6 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.Properties;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.streams.NullWriter;
 
@@ -56,7 +55,7 @@ public class AuthDummy extends AuthRequest
 
     public static void initializeDummyRequest(Cognoscenti cog) throws Exception {
         if (!cog.getConfig().isInitialized()) {
-            throw new ProgramLogicError("ConfigFile class must be initialized before AuthDummy!");
+            throw WeaverException.newBasic("ConfigFile class must be initialized before AuthDummy!");
         }
         Writer wr = new NullWriter();
         theDummy = new AuthDummy(wr, cog);
@@ -94,7 +93,7 @@ public class AuthDummy extends AuthRequest
     @SuppressWarnings("unused")
     private void resolveUser() throws Exception
     {
-        throw new ProgramLogicError("Not implemented on dummy auth request object: resolveUser");
+        throw WeaverException.newBasic("Not implemented on dummy auth request object: resolveUser");
     }
 
 
@@ -118,7 +117,7 @@ public class AuthDummy extends AuthRequest
     public void setLoggedInUser(UserProfile newUser, String loginId, String autoLogin, String openId)
         throws Exception
     {
-        throw new ProgramLogicError("Not implemented on dummy auth request object: setLoggedInUser");
+        throw WeaverException.newBasic("Not implemented on dummy auth request object: setLoggedInUser");
     }
 
     /**
@@ -139,7 +138,7 @@ public class AuthDummy extends AuthRequest
     public String getFormerId()
         throws Exception
     {
-        throw new ProgramLogicError("Not implemented on dummy auth request object: getFormerId");
+        throw WeaverException.newBasic("Not implemented on dummy auth request object: getFormerId");
     }
 
 
@@ -223,7 +222,7 @@ public class AuthDummy extends AuthRequest
         throws Exception
     {
         //there is no real request object, so calling JSP is difficult
-        throw new ProgramLogicError("Dummy Auth objects are not able to actually call JSP");
+        throw WeaverException.newBasic("Dummy Auth objects are not able to actually call JSP");
     }
 
 }

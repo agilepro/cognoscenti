@@ -22,7 +22,7 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
 * Implements the process and task formatting
@@ -46,7 +46,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
     {
         if (sec == null)
         {
-            throw new ProgramLogicError("trying to get tasks from a null section does not make sense");
+            throw WeaverException.newBasic("trying to get tasks from a null section does not make sense");
         }
 
         List<GoalRecord> list = sec.getChildren("task", GoalRecord.class);

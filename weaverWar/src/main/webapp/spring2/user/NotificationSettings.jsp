@@ -21,7 +21,7 @@
 
     if (operatingUser==null) {
         //this should never happen, and if it does it is not the users fault
-        throw new ProgramLogicError("user profile setting is null.  No one appears to be logged in.");
+        throw WeaverException.newBasic("user profile setting is null.  No one appears to be logged in.");
     }
 
     JSONArray partProjects = new JSONArray();

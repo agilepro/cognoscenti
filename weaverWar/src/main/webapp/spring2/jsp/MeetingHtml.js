@@ -872,7 +872,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             presenters: [],
             presenterList: [],
             aiList: [],
-            proposed: true
+            proposed: false
         };
         $scope.meeting.agenda.push(newAgenda);
         $scope.openAgenda(newAgenda);

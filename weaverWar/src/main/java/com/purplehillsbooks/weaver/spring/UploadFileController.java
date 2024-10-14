@@ -30,14 +30,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.ReminderMgr;
 import com.purplehillsbooks.weaver.ReminderRecord;
 import com.purplehillsbooks.weaver.UserManager;
-import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.springframework.stereotype.Controller;
@@ -50,17 +47,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class UploadFileController extends BaseController {
 
-
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/upload.form", method = RequestMethod.POST)
     protected void uploadFile(  @PathVariable String siteId, @PathVariable String pageId,
                 HttpServletRequest request, HttpServletResponse response,
                 @RequestParam("fname") MultipartFile file) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            Cognoscenti cog = ar.getCogInstance();
-            UserManager userManager = cog.getUserManager();
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             //Handling special case for Multipart request
             ar.req = request;
@@ -94,17 +86,18 @@ public class UploadFileController extends BaseController {
             request.setCharacterEncoding("UTF-8");
 
             if (file.getSize() == 0) {
-                throw new NGException("nugen.exceptionhandling.no.file.attached",null);
+                throw WeaverException.newBasic("No file was actually uploaded for this attachment. When reading a file attachment, the file must be uploaded.  Check to see if the form was filled in correctly.");
             }
 
             if(file.getSize() > 500000000){
-                throw new NGException("nugen.exceptionhandling.file.size.exceeded", new Object[]{"500000000"});
+                throw WeaverException.newBasic("File size has exceeded maximum of %d bytes.",500000000);
             }
 
             String fileName = file.getOriginalFilename();
 
             if (fileName == null || fileName.length() == 0) {
-                throw new NGException("nugen.exceptionhandling.filename.empty", null);
+                throw WeaverException.newBasic(
+                    "Internal error:  For some reason the file name for the uploaded file is empty.");
             }
 
             String visibility = ar.defParam("visibility", "*MEM*");
@@ -123,11 +116,14 @@ public class UploadFileController extends BaseController {
             else {
                 response.sendRedirect(go);
             }
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.upload.document", new Object[]{pageId,siteId} , ex);
+        }catch(Exception e){
+            throw WeaverException.newWrap(
+                "Failed to perform operation while uploading document in workspace %s of site %s.", 
+                e, pageId, siteId);
         }
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.form", method = RequestMethod.POST)
     protected void submitEmailReminderForAttachment(
             @PathVariable String siteId, @PathVariable String pageId,
@@ -164,20 +160,16 @@ public class UploadFileController extends BaseController {
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.email.reminder", new Object[]{pageId,siteId} , ex);
         }
-
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/sendemailReminder.htm", method = RequestMethod.GET)
     protected void sendEmailReminderForAttachment(
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            showJSPMembers(ar, siteId, pageId, "ReminderEmail.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.send.email.reminder", new Object[]{pageId,siteId} , ex);
-        }
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "ReminderEmail.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/resendemailReminder.htm", method = RequestMethod.POST)
@@ -185,8 +177,9 @@ public class UploadFileController extends BaseController {
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.resend.email.reminder");
+            ar.assertLoggedIn("Can not resend email reminder.");
             NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             String reminderId = ar.reqParam("rid");
@@ -194,8 +187,10 @@ public class UploadFileController extends BaseController {
             ReminderRecord.reminderEmail(ar, pageId, reminderId, emailto, ngw);
 
             response.sendRedirect("reminders.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.resend.email.reminder", new Object[]{pageId,siteId} , ex);
+        }catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to perform operation while re-sending email reminder in workspace %s of site %s.", 
+                e, pageId, siteId));
         }
     }
 
@@ -204,9 +199,9 @@ public class UploadFileController extends BaseController {
     @RequestMapping(value = "/{siteId}/{pageId}/linkURLToProject.htm", method = RequestMethod.GET)
     protected void getLinkURLToProjectForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             if (warnFrozenOrNotMember(ar, ngw)) {
@@ -215,27 +210,29 @@ public class UploadFileController extends BaseController {
 
             showJSPMembers(ar, siteId, pageId, "linkURLToProject.jsp");
         }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
+        catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open create link url to workspace page in workspace (%s) of site (%s).", 
+                e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/DocLinkGoogle.htm", method = RequestMethod.GET)
     protected void docLinkGoogle(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
-
             if (warnFrozenOrNotMember(ar, ngw)) {
                 return;
             }
-
             showJSPMembers(ar, siteId, pageId, "DocLinkGoogle.jsp");
         }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
+        catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open create link url to workspace page in workspace (%s) of site (%s).", 
+                e, pageId, siteId));
         }
     }
 
@@ -244,9 +241,9 @@ public class UploadFileController extends BaseController {
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.htm", method = RequestMethod.GET)
     protected void getEmailRemainderForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             if (warnFrozenOrNotMember(ar, ngw)) {
@@ -257,8 +254,10 @@ public class UploadFileController extends BaseController {
             request.setAttribute("title", ngw.getFullName());
             showJSPMembers(ar, siteId, pageId, "emailreminder_form.jsp");
 
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.email.reminder.page", new Object[]{pageId,siteId} , ex);
+        }catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open create email reminder page in workspace (%s) of site (%s).", 
+                e, pageId, siteId));
         }
     }
 
@@ -282,20 +281,21 @@ public class UploadFileController extends BaseController {
                 return;
             }
 
-            if(!ar.isLoggedIn()){
-                request.setAttribute("property_msg_key", "You must be logged in to access this page.");
-            }else if(!ar.canAccessWorkspace()){
-                request.setAttribute("property_msg_key", "User "+ar.getUserProfile().getName()+" must be a Member of this workspace to open an document reminder of the Workspace");
-                showJSPMembers(ar, siteId, pageId, "WarningNotMember.jsp");
-            }else {
+            if(!ar.isLoggedIn()) {
+                showDisplayWarningF(ar, "You must be logged in to access this page.");
+                return;
+            } else if(!ar.canAccessWorkspace()) {
+                showDisplayWarningF(ar, "User (%s) must be a Member of this workspace to open an document reminder of the Workspace", ar.getBestUserId());
+                return;
+            } else {
                 //basically, the reminder should have been display, and we have no idea now why not
                 throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
             }
-            showJSPMembers(ar, siteId, pageId, "Warning.jsp");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.reminder.attachment.page",
-                    new Object[]{pageId,siteId} , ex);
+        }
+        catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open reminder attachment page in workspace (%s) of site (%s).", 
+                e, pageId, siteId));
         }
      }
 
@@ -346,25 +346,25 @@ public class UploadFileController extends BaseController {
         if(file.getSize() <= 0){
             //not sure why this would ever happen, but I saw other checks in the code for zero length
             //an just copying that here in the right place to check for it.
-            throw new NGException("nugen.exception.file.size.zero",null);
+            throw WeaverException.newBasic("Uploaded file repords a length of zero and that does not make sense");
         }
         String originalName = file.getOriginalFilename();
 
 
         // Figure out the file extension (including dot)
         if (originalName.indexOf("\\") >= 0) {
-            throw new ProgramLogicError(
-                    "Strange, got a path with a backslash.  This code assumes that will never happen. "
-                            + originalName);
+            throw WeaverException.newBasic(
+                    "Strange, got a path with a backslash.  This code assumes that will never happen. %s",
+                    originalName);
         }
         if (originalName.indexOf("/") >= 0) {
-            throw new ProgramLogicError(
-                    "Just checking: the source file name should not have any slashes "
-                            + originalName);
+            throw WeaverException.newBasic(
+                    "Just checking: the source file name should not have any slashes: %s",
+                    originalName);
         }
         int dotPos = originalName.lastIndexOf(".");
         if (dotPos < 0) {
-            throw new NGException("nugen.exception.file.ext.missing",null);
+            throw WeaverException.newBasic("Uploaded file name is missing an extension");
         }
         String fileExtension = originalName.substring(dotPos);
 
@@ -377,27 +377,29 @@ public class UploadFileController extends BaseController {
 
         return fileExtension;
     }
-    public static void saveToFileAH(MultipartFile file, File destinationFile)
-            throws Exception {
-        if (destinationFile == null) {
-            throw new IllegalArgumentException(
-                    "Can not save file.  Destination file must not be null.");
-        }
-
-        if (destinationFile.exists()) {
-            throw new NGException("nugen.exception.file.already.exist",new Object[]{destinationFile});
-        }
-        File folder = destinationFile.getParentFile();
-        if (!folder.exists()) {
-            throw new NGException("nugen.exception.folder.not.exist" ,new Object[]{destinationFile});
-        }
-
+    public static void saveToFileAH(MultipartFile file, File destinationFile) throws Exception {
         try {
+            if (destinationFile == null) {
+                throw new IllegalArgumentException(
+                        "Can not save file.  Destination file must not be null.");
+            }
+
+            if (destinationFile.exists()) {
+                throw WeaverException.newBasic("Destination file already exists: %s", destinationFile.getAbsolutePath());
+            }
+            File folder = destinationFile.getParentFile();
+            if (!folder.exists()) {
+                throw WeaverException.newBasic(
+                    "Destination file parent folder does not exist: %s",
+                    folder.getAbsolutePath());
+            }
+
             FileOutputStream fileOut = new FileOutputStream(destinationFile);
             fileOut.write(file.getBytes());
             fileOut.close();
         } catch (Exception e) {
-            throw new NGException("nugen.exception.failed.to.save.file", new Object[]{destinationFile}, e);
+            throw WeaverException.newWrap("Unable to save uploaded file to: %s", 
+                    e, destinationFile.getAbsolutePath());
         }
     }
     

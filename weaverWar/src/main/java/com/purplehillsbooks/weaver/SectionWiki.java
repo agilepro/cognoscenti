@@ -23,7 +23,8 @@ package com.purplehillsbooks.weaver;
 import java.io.Writer;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -164,7 +165,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         SectionFormat sf = def.format;
         if (sf != this)
         {
-            throw new ProgramLogicError("Method convertToLeaflet must be called on the format object for the section being converted");
+            throw WeaverException.newBasic("Method convertToLeaflet must be called on the format object for the section being converted");
         }
         String data = wikiSection.asText();
         if (data==null || data.length()==0)

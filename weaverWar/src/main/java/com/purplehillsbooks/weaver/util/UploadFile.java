@@ -23,11 +23,11 @@ package com.purplehillsbooks.weaver.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class UploadFile {
 
-    public UploadFile(Upload parent, String dataHeader, byte[] buffer,
+    public UploadFile(FileUploadSpec parent, String dataHeader, byte[] buffer,
             int startData, int endData) {
         m_parent = parent;
         m_startData = startData;
@@ -57,11 +57,15 @@ public class UploadFile {
         }
 
         if (destinationFile.exists()) {
-            throw new NGException("nugen.exception.file.already.exist", new Object[]{destinationFile});
+            throw WeaverException.newBasic(
+                "The specified file already exists: %s",
+                destinationFile);
         }
         File folder = destinationFile.getParentFile();
         if (!folder.exists()) {
-            throw new NGException("nugen.exception.folder.not.exist", new Object[]{destinationFile});
+            throw WeaverException.newBasic(
+                "The destination parent folder for the file does not exist: %s",
+                folder.getAbsolutePath());
         }
 
         try {
@@ -69,7 +73,9 @@ public class UploadFile {
             fileOut.write(m_parent.m_binArray, m_startData, m_size);
             fileOut.close();
         } catch (Exception e) {
-            throw new NGException("nugen.exception.failed.to.save.file", new Object[]{destinationFile}, e);
+            throw WeaverException.newWrap(
+                "Failure while saving the file to: %s",
+                e, destinationFile);
         }
     }
 
@@ -117,7 +123,7 @@ public class UploadFile {
         return m_endData;
     }
 
-    protected void setParent(Upload parent) {
+    protected void setParent(FileUploadSpec parent) {
         m_parent = parent;
     }
 
@@ -203,20 +209,24 @@ public class UploadFile {
         String path = new String();
         path = m_parent.getPhysicalPath(destFilePathName, optionSaveAs);
         if (path == null) {
-            throw new NGException("nugen.exception.cant.save.file",null);
+            throw WeaverException.newBasic(
+                "The corresponding physical path does not exist: %s",
+                destFilePathName);
         }
 
+        File file = new File(path);
         try {
-            java.io.File file = new java.io.File(path);
             FileOutputStream fileOut = new FileOutputStream(file);
             fileOut.write(m_parent.m_binArray, m_startData, m_size);
             fileOut.close();
         } catch (IOException e) {
-            throw new NGException("nugen.exception.failed.to.save.file", new Object[]{path}, e);
+            throw WeaverException.newWrap(
+                "Failure while saving the file to: %s",
+                e, file.getAbsolutePath());
         }
     }
 
-    private Upload m_parent; // the Upload class that parsed this out
+    private FileUploadSpec m_parent; // the FileUploadSpec class that parsed this out
     private int m_startData; // beginning of the block of data for the file
     private int m_endData; // end of the block of data for the file
 

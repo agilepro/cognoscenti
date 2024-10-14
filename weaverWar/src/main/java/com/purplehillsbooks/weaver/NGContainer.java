@@ -23,7 +23,7 @@ package com.purplehillsbooks.weaver;
 import java.io.File;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailRecord;
 
 import org.w3c.dom.Document;
@@ -123,7 +123,7 @@ public abstract class NGContainer extends DOMFile
             return true;
         }
         if (this instanceof NGWorkspace) {
-            throw new ProgramLogicError("NGWorkspace overrides this, so this should never happen");
+            throw WeaverException.newBasic("NGWorkspace overrides this, so this should never happen");
         }
         return false;
     }
@@ -134,7 +134,7 @@ public abstract class NGContainer extends DOMFile
     */
     public boolean secondaryPermission(UserRef user) throws Exception {
         if (user==null) {
-            throw new ProgramLogicError("secondaryPermission called with null user object.");
+            throw WeaverException.newBasic("secondaryPermission called with null user object.");
         }
         return getSecondaryRole().isExpandedPlayer(user, this);
     }

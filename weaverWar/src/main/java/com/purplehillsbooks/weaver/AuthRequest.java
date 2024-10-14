@@ -457,7 +457,7 @@ public class AuthRequest
 
     public void setPageAccessLevels(NGContainer newNgp) throws Exception {
         if (newNgp==null) {
-            throw new ProgramLogicError("setPageAccessLevels was called with a null parameter.  That should not happen");
+            throw WeaverException.newBasic("setPageAccessLevels was called with a null parameter.  That should not happen");
         }
         //record the fact that workspace was visited in this session
         if (newNgp instanceof NGWorkspace) {
@@ -672,7 +672,7 @@ public class AuthRequest
 
     public void assertAdmin(String opDescription) throws Exception {
         if (ngp==null) {
-            throw new ProgramLogicError("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
+            throw WeaverException.newBasic("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         assertLoggedIn(opDescription);
         if (isSuperAdmin()) {
@@ -698,10 +698,10 @@ public class AuthRequest
     }
     public void assertAccessWorkspace(String opDescription) throws Exception {
         if (ngp==null) {
-            throw new ProgramLogicError("'assertAccessWorkspace' is being called, but no page has been associated with the AuthRequest object");
+            throw WeaverException.newBasic("'assertAccessWorkspace' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGWorkspace)) {
-            throw new Exception("Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
+            throw WeaverException.newBasic("Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
         }
         NGWorkspace ngw = (NGWorkspace) ngp;
 
@@ -726,7 +726,7 @@ public class AuthRequest
     }
     public void assertExecutive(String opDescription) throws Exception {
         if (ngp==null) {
-            throw new ProgramLogicError("'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
+            throw WeaverException.newBasic("'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGBook)) {
             throw new Exception("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
@@ -923,7 +923,7 @@ public class AuthRequest
         String method = req.getMethod();
         if ("post".equalsIgnoreCase(method))
         {
-            throw new ProgramLogicError("this page is being displayed as the result of a POST request, "
+            throw WeaverException.newBasic("this page is being displayed as the result of a POST request, "
                +"and internal guidelines are that pages should be displayed only in response to GET methods.");
         }
     }
@@ -1466,7 +1466,7 @@ public class AuthRequest
             }
             else {
                 UserProfile uProf = getUserProfile();
-                if (uProf!=null && uProf.useNewUI) {
+                if (uProf!=null && uProf.avoidOldUI) {
                     JSPName = "/spring2" + JSPName.substring(7);
                     System.out.println("Using NEW UI: "+JSPName);
                 }
@@ -1776,7 +1776,7 @@ public class AuthRequest
 
     public void assertNotFrozen(NGContainer ngc) throws Exception {
         if (ngc==null) {
-            throw new ProgramLogicError("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
+            throw WeaverException.newBasic("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         if (ngc.isFrozen()) {
             throw WeaverException.newBasic("Workspace is frozen");

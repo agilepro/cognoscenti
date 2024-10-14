@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -153,13 +153,13 @@ public class GoalRecord extends BaseRecord {
 
         NGWorkspace ngw = getWorkspace();
         if (ngw == null) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "handleStateChangeEvent needs a NGWorkspace parameter");
         }
 
         List<GoalRecord> goalList = ngw.getAllGoals();
         if (goalList == null || goalList.size() == 0) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Unable to find any action items on the workspace : " + ngw.getKey());
         }
 

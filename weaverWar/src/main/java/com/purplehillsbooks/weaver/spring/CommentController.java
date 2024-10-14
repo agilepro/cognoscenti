@@ -61,7 +61,9 @@ public class CommentController extends BaseController {
         long cid = Mel.safeConvertLong(ar.reqParam("cid"));
         CommentRecord selectedComment = ngw.getCommentOrNull(cid);
         if (selectedComment==null) {
-            showDisplayWarning(ar, "Can not find comment, proposal, or question with the id  "+cid+".  Was it deleted?");
+            showDisplayWarningF(ar, 
+                "Can not find comment, proposal, or question with the id (%d).  Was it deleted?",
+                cid);
             return;
         }
         showJSPMembers(ar, siteId, pageId, "CommentZoom.jsp");

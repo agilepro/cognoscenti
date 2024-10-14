@@ -20,20 +20,15 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.streams.StreamHelper;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 import org.w3c.dom.Document;
-
-import com.purplehillsbooks.json.JSONException;
-import com.purplehillsbooks.streams.StreamHelper;
 
 public class ErrorLog extends DOMFile {
 

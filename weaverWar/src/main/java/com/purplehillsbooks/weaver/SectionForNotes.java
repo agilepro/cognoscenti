@@ -22,7 +22,7 @@ package com.purplehillsbooks.weaver;
 
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class SectionForNotes extends SectionWiki {
 
@@ -83,7 +83,7 @@ public class SectionForNotes extends SectionWiki {
         SectionDef def = wikiSection.def;
         SectionFormat sf = def.format;
         if (sf != this) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Method convertToLeaflet must be called on the format object for the section being converted");
         }
         for (TopicRecord cr : getAllNotesInSection(wikiSection)) {

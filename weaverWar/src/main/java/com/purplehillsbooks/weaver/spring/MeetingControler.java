@@ -72,12 +72,7 @@ public class MeetingControler extends BaseController {
             ar.setPageAccessLevels(ngw);
 
             String id = ar.reqParam("id");
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
                 showJSPMembers(ar, siteId, pageId, "MeetingFull.jsp");
@@ -128,12 +123,7 @@ public class MeetingControler extends BaseController {
                 showDisplayWarning(ar, "Missing id parameter for meeting availability page");
             }
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             //boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             //just make meeting available accessible by ANYONE
             boolean canAccess = true;
@@ -165,12 +155,7 @@ public class MeetingControler extends BaseController {
                 showDisplayWarning(ar, "Missing id parameter for meeting display page");
             }
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
         }
@@ -191,12 +176,7 @@ public class MeetingControler extends BaseController {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
                 showJSPMembers(ar, siteId, pageId, "MeetingHtml.jsp");
@@ -222,12 +202,7 @@ public class MeetingControler extends BaseController {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
             String id = ar.reqParam("id");
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             String template = ar.reqParam("tem");
             if (!template.endsWith("chtml")) {
                 throw WeaverException.newBasic("Meeting template must end with 'chtml'.  Do you have the right file name? %s", template);
@@ -269,12 +244,7 @@ public class MeetingControler extends BaseController {
         try{
             String id = ar.reqParam("id");
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-            MeetingRecord meet = ngw.findMeetingOrNull(id);
-            if (meet==null) {
-                showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                        +".  Was it deleted?");
-                return;
-            }
+            MeetingRecord meet = ngw.findMeeting(id);
             if (!meetingCache.canAcccessMeeting(siteId, pageId, ar, id)) {
                 showJSPMembers(ar, siteId, pageId, "MeetingMinutes.jsp");
                 return;
@@ -340,12 +310,7 @@ public class MeetingControler extends BaseController {
             if (id != null && id.length()>0) {
                 //when creating a meeting by itself without cloning then no parameter is passed
                 //and we only need to check that the meeting exists if there is a parameter
-                MeetingRecord meet = ngw.findMeetingOrNull(id);
-                if (meet==null) {
-                    showDisplayWarning(ar, "Can not find meeting with the id  "+id
-                            +".  Was it deleted?");
-                    return;
-                }
+                ngw.findMeeting(id);
             }
             showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
         } catch (Exception e) {

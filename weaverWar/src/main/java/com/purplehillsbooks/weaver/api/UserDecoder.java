@@ -21,7 +21,7 @@ import com.purplehillsbooks.weaver.LicenseForUser;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class UserDecoder {
 
@@ -43,7 +43,7 @@ public class UserDecoder {
 
         // TEST: check to see that the servlet path starts with /
         if (!path.startsWith("/")) {
-            throw new ProgramLogicError("Path should start with / but instead it is: "
+            throw WeaverException.newBasic("Path should start with / but instead it is: "
                             + path);
         }
 

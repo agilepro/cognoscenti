@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AccessControl;
-import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.BaseRecord;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -32,22 +31,16 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.DecisionRecord;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
-import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.TaskArea;
-import com.purplehillsbooks.weaver.UserManager;
-import com.purplehillsbooks.weaver.UserPage;
-import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.UtilityMethods;
-import com.purplehillsbooks.weaver.exception.NGException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.servlet.ModelAndView;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -73,7 +66,7 @@ public class ProjectGoalController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/GoalList.htm", method = RequestMethod.GET)
     public void goalList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "GoalList.jsp");
     }
@@ -82,7 +75,7 @@ public class ProjectGoalController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/GoalStatus.htm", method = RequestMethod.GET)
     public void goalStatus(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "GoalStatus.jsp");
     }
@@ -105,12 +98,10 @@ public class ProjectGoalController extends BaseController {
      */
     @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
     public void displayTask(@PathVariable String siteId,
-        @PathVariable String pageId,  @PathVariable String taskId,
-        HttpServletRequest request,   HttpServletResponse response)
-            throws Exception
-    {
+            @PathVariable String pageId,  @PathVariable String taskId,
+            HttpServletRequest request,   HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             if (taskId==null || taskId.length()==0) {
                 showDisplayWarning(ar, "Missing id parameter for action item");
@@ -144,14 +135,16 @@ public class ProjectGoalController extends BaseController {
                 streamJSP(ar, "GoalEdit.jsp");
             }
 
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
+        }catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to action item page of workspace (%s) in site (%s).",
+                e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/DecisionList.htm", method = RequestMethod.GET)
     public void decisionList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "DecisionList.jsp");
     }
@@ -184,6 +177,7 @@ public class ProjectGoalController extends BaseController {
         return assignessEmail;
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/createSubTask.form", method = RequestMethod.POST)
     public void createSubTask(@PathVariable String siteId,
             @PathVariable String pageId, @RequestParam String taskId,
@@ -207,6 +201,7 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.create.sub.task", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
     /*
     @RequestMapping(value = "/{siteId}/{pageId}/subtask.htm", method = RequestMethod.GET)
@@ -230,7 +225,7 @@ public class ProjectGoalController extends BaseController {
     }
     */
 
-    //TODO: is this still used?
+    /*
     private void taskActionUpdate(AuthRequest ar, NGWorkspace ngw, String parentTaskId)
             throws Exception
     {
@@ -287,8 +282,9 @@ public class ProjectGoalController extends BaseController {
 
         ngw.saveFile(ar, CREATE_TASK);
     }
+        */
 
-
+    /*
     private void taskActionCreate(AuthRequest ar, NGWorkspace ngw,
             HttpServletRequest request, String parentTaskId)
             throws Exception
@@ -373,9 +369,10 @@ public class ProjectGoalController extends BaseController {
                         HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, "");
         ngw.saveFile(ar, CREATE_TASK);
     }
+    */
 
 
-
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/reassignTaskSubmit.form", method = RequestMethod.POST)
     public void reassignTask(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
@@ -428,7 +425,9 @@ public class ProjectGoalController extends BaseController {
                     new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/updateTask.form", method = RequestMethod.POST)
     public void updateTask(@PathVariable String siteId,
             @PathVariable String pageId,
@@ -447,9 +446,10 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.update.task", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
 
-    //TODO: is this still used?  Switch to JSON option?
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoalSpecial.form", method = RequestMethod.POST)
     public void updateGoalSpecial(@PathVariable String siteId,
             @PathVariable String pageId,HttpServletRequest request, HttpServletResponse response)
@@ -512,6 +512,7 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.update.task", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
 
 
@@ -749,7 +750,7 @@ public class ProjectGoalController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/TaskAreas.htm", method = RequestMethod.GET)
     public void taskArea(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "TaskAreas.jsp");
     }
@@ -841,8 +842,8 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             //NOTE: you do NOT need to be logged in to get the calendar file
             //It is important to allow anyone to receive these links in an email
             //and not be logged in, and still be able to get the calendar on
@@ -859,8 +860,11 @@ public class ProjectGoalController extends BaseController {
             mf.outToWriter(ar.w);
             ar.flush();
 
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }catch(Exception e) {
+            // this is not so great generating HTML output for calendar, but what else?
+            showDisplayException(ar, WeaverException.newWrap(
+                    "Failed to generate a calendar entry for workspace (%s) in site (%s)", 
+                    e, pageId, siteId));
         }
     }
 
@@ -925,39 +929,40 @@ public class ProjectGoalController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessApps.htm", method = RequestMethod.GET)
     public void processApps(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "ProcessApps.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessRun.htm", method = RequestMethod.GET)
     public void processRun(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "ProcessRun.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessTasks.htm", method = RequestMethod.GET)
     public void processTasks(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "ProcessTasks.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/Analytics.htm", method = RequestMethod.GET)
     public void analytics(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "Analytics.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RulesList.htm", method = RequestMethod.GET)
     public void rulesList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+            HttpServletRequest request,   HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RulesList.jsp");
     }
     
+    /*
     private static void addMembersInContacts(AuthRequest ar,
             List<AddressListEntry> contactList) throws Exception {
         UserPage up = ar.getUserPage();
@@ -989,4 +994,5 @@ public class ProjectGoalController extends BaseController {
             }
         }
     }
+    */
 }

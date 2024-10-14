@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -216,7 +216,7 @@ public class CustomRole extends DOMFace implements NGRole
 
     public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) throws Exception {
         if (user==null) {
-            throw new ProgramLogicError("isPlayerOfAddressList called with null user object.");
+            throw WeaverException.newBasic("isPlayerOfAddressList called with null user object.");
         }
         for (AddressListEntry alr : list) {
             if (user.hasAnyId(alr.getInitialId())) {

@@ -29,16 +29,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.BaseRecord;
 import com.purplehillsbooks.weaver.Cognoscenti;
-import com.purplehillsbooks.weaver.GoalRecord;
-import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MicroProfileMgr;
-import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.ProfileRef;
-import com.purplehillsbooks.weaver.ReminderMgr;
-import com.purplehillsbooks.weaver.ReminderRecord;
 import com.purplehillsbooks.weaver.RoleRequestRecord;
 import com.purplehillsbooks.weaver.SearchResultRecord;
 import com.purplehillsbooks.weaver.UserCache;
@@ -46,8 +40,6 @@ import com.purplehillsbooks.weaver.UserCacheMgr;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -193,7 +185,7 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "Facilitators.jsp");
     }
 
-
+/*
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
     public void RemoteProfileAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -225,6 +217,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
     }
+*/
 
     @RequestMapping(value = "/{userKey}/RemoteProfileUpdate.json", method = RequestMethod.POST)
     public void RemoteProfileUpdate(@PathVariable String userKey,
@@ -299,30 +292,31 @@ public class UserController extends BaseController {
             HttpServletResponse response,
             @PathVariable String userKey,
             @RequestParam("fname") MultipartFile fileInPost) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn( "Must be logged in in order to upload an image file.");
             String go = request.getParameter("go");
             if (go==null || go.length()==0) {
                 go = "UserSettings.htm";
             }
             if (fileInPost.getSize() == 0) {
-                throw new NGException("nugen.exceptionhandling.no.file.attached",null);
+                throw WeaverException.newBasic("No file was actually uploaded for this attachment. When reading a file attachment, the file must be uploaded.  Check to see if the form was filled in correctly.");
             }
             if(fileInPost.getSize() > 500000000){
-                throw new NGException("nugen.exceptionhandling.file.size.exceeded",new Object[]{"500000000"});
+                throw WeaverException.newBasic("File size has exceeded maximum of %d bytes.",500000000);
             }
 
             UserProfile profile = UserManager.getUserProfileOrFail(userKey);
 
             String uploadedFileName = fileInPost.getOriginalFilename();
             if (uploadedFileName == null || uploadedFileName.length()==0) {
-                throw new NGException("nugen.exceptionhandling.filename.empty",null);
+                throw WeaverException.newBasic(
+                    "Internal error:  For some reason the file name for the uploaded file is empty.");
             }
             int dotPos = uploadedFileName.lastIndexOf(".");
             String fileExtension = uploadedFileName.substring(dotPos).toLowerCase();
             if (!".jpg".equals(fileExtension)) {
-                throw WeaverException.newBasic("You must upload a JPG file, got: "+uploadedFileName);
+                throw WeaverException.newBasic("You must upload a JPG file, got: %s", uploadedFileName);
             }
 
 
@@ -364,13 +358,14 @@ public class UserController extends BaseController {
             }
             //now change the name of the newly uploaded file
             if (!userImageTmpFile.renameTo(newUserImage)) {
-                throw new NGException("nugen.exceptionhandling.unable.rename.tempfile",
-                        new Object[]{userImageTmpFile.toString(),newUserImage.toString()});
+                throw WeaverException.newBasic(
+                    "Unable to rename tempfile from (%s) to (%s) some unknown operating system reason.",
+                    userImageTmpFile.getAbsolutePath(), newUserImage.getAbsolutePath());
             }
 
             //just a consistency check to make sure everything worked
             if (userImageTmpFile.exists()) {
-                throw new ProgramLogicError("Temporary file should not exist, but for some reason it does: "
+                throw WeaverException.newBasic("Temporary file should not exist, but for some reason it does: "
                         +userImageTmpFile.toString());
             }
 
@@ -379,9 +374,10 @@ public class UserController extends BaseController {
             ar.getCogInstance().getUserManager().saveUserProfiles();
 
             redirectBrowser(ar,go);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.upload.user.image.page",
-                    new Object[]{userKey} , ex);
+        }catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open upload user image page for user %s.",
+                e, userKey));
         }
     }
 
@@ -390,11 +386,9 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
     public void gotoApproveOrRejectRoleReqPage(
             @PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
 
             String requestId = ar.reqParam("requestId");
@@ -409,7 +403,7 @@ public class UserController extends BaseController {
                     streamJSP(ar, "WarningNotMember.jsp");
                 }
                 else {
-                    showDisplayWarning(ar, "nugen.project.login.msg");
+                    showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
                 }
                 return;
             }
@@ -421,8 +415,10 @@ public class UserController extends BaseController {
             request.setAttribute("isAccessThroughEmail", isAccessThroughEmail);
             request.setAttribute("canAccessPage", canAccessPage);
             streamJSP(ar, "RoleRequest.jsp");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.approve.reject.rolereq.page", null , ex);
+        }catch(Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failure approving or rejecting through email", 
+                e));
         }
     }
 
@@ -481,10 +477,9 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/unsubscribe.htm", method = RequestMethod.GET)
     public void unsubscribe(
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             if(ar.isLoggedIn()){
                 UserProfile profile = ar.getUserProfile();
@@ -504,8 +499,10 @@ public class UserController extends BaseController {
                 }
             }
             sendRedirectToLogin(ar);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.open.notification.page", null , ex);
+        }catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open notification settings page for user (%s)", 
+                e, ar.getBestUserId()));
         }
     }
 
@@ -573,7 +570,7 @@ public class UserController extends BaseController {
                 ReminderMgr rMgr = ngw.getReminderMgr();
                 ReminderRecord rRec = null;
                 for (String reminderId : stopReminding) {
-                    rRec = rMgr.findReminderByID(reminderId);
+                    rRec = rMgr.findReminderByIDOrFail(reminderId);
                     rRec.setSendNotification("no");
                 }
             }
@@ -680,10 +677,9 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)
-    public void FindPerson(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void FindPerson(HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             
             //new parameter 'key' but support old 'uid' in case still there somewhere
             String userKey = ar.defParam("key", null);
@@ -709,7 +705,7 @@ public class UserController extends BaseController {
             streamJSPAnon(ar, "PersonMissing.jsp");
             return;
         }catch(Exception ex){
-            throw WeaverException.newWrap("Failure trying to find user", ex);
+            showDisplayException(ar, WeaverException.newWrap("Failure trying to find user", ex));
         }
     }
 
@@ -776,7 +772,7 @@ public class UserController extends BaseController {
             String message = uCache.verifyEmailAddressAttempt(user, token);
             showDisplayWarning(ar, message);
         }catch(Exception ex){
-            showDisplayWarning(ar, WeaverException.getFullMessage(ex));
+            showDisplayException(ar, ex);
         }
     }
 

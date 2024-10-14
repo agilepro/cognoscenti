@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Properties;
 
 import com.purplehillsbooks.streams.StreamHelper;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 
@@ -210,11 +209,11 @@ public class ConfigFile {
 
     private void saveConfigFile(Properties nProp) throws Exception {
         if (nProp == null) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Call was made to 'saveConfigFile' with null properties object");
         }
         if (configFile == null) {
-            throw new ProgramLogicError(
+            throw WeaverException.newBasic(
                     "Can not save properties when config file path has not been initialized.");
         }
         FileOutputStream fos = new FileOutputStream(configFile);

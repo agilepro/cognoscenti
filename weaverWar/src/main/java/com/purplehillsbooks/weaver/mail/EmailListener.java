@@ -36,7 +36,6 @@ import jakarta.mail.FetchProfile;
 import jakarta.mail.Flags.Flag;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
@@ -237,21 +236,21 @@ public class EmailListener extends TimerTask{
 
             return Session.getInstance(emailProperties, new EmailAuthenticator(user, pwd));
         }catch (Exception e) {
-            throw new Exception("Unable to get the user session", e);
+            throw WeaverException.newWrap("Unable to get the user session", e);
         }
     }
 
-    public Store getPOP3Store()throws Exception {
+    public Store getPOP3Store() throws Exception {
         try {
-
             if(session == null || propertiesChanged ){
                 session = getSession();
                 propertiesChanged = false;
             }
             return session.getStore("pop3");
 
-        }catch (MessagingException me) {
-            throw new Exception("Unable to initialize the POP3 store",me);
+        }
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to initialize the POP3 store", e);
         }
     }
 
@@ -272,8 +271,8 @@ public class EmailListener extends TimerTask{
 
             return popFolder;
 
-        }catch (MessagingException me) {
-            throw new Exception("Unable to connect to mail server",me);
+        }catch (Exception e) {
+            throw WeaverException.newWrap("Unable to connect to mail server", e);
         } finally {
             // close the store.
             // but wait!  Won't that close the folder?
@@ -281,7 +280,7 @@ public class EmailListener extends TimerTask{
                 /*
                 try {
                     store.close();
-                } catch (MessagingException me) {
+                } catch (Exception me) {
                     // ignore this exception
                 }
                 */
@@ -364,7 +363,7 @@ public class EmailListener extends TimerTask{
             lastFolderRead = System.currentTimeMillis();
 
         }catch (Exception e) {
-            throw new Exception("Failure while reading the POP3 mail server", e);
+            throw WeaverException.newWrap("Failure while reading the POP3 mail server", e);
         }finally {
             try {
                 if(popFolder != null){

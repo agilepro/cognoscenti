@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -50,7 +49,14 @@ public class UserProfile implements UserRef
     private String timeZone = "America/Los_Angeles";
     private JSONObject wsSettings = new JSONObject();
     private boolean isFacilitator = false;
-    public boolean useNewUI = false;
+    
+
+    // originally there was a field stored called useNewUI and we had a 
+    // period of time that people could switch.  Now we want to force 
+    // everyone to the new UI, and forget their settings, but we still
+    // want people to be able to go back to the old UI.  So we 
+    // invent a new field avoidOldUI in the profile record and for get the old one.
+    public boolean avoidOldUI = true;
 
     public UserProfile(String preferredEmail) throws Exception {
         userKey = IdGenerator.generateKey();
@@ -98,7 +104,7 @@ public class UserProfile implements UserRef
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
         isFacilitator = fullJO.optBoolean("isFacilitator", false);
-        useNewUI      = fullJO.optBoolean("useNewUI", false);
+        avoidOldUI    = fullJO.optBoolean("avoidOldUI", true);
 
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
@@ -329,10 +335,10 @@ public class UserProfile implements UserRef
     */
     public void addId(String newEmailAddress) throws Exception {
         if (newEmailAddress.indexOf(" ")>=0) {
-            throw new ProgramLogicError("an email with a space in it was passed to UserProfile.addID: ("+newEmailAddress+")");
+            throw WeaverException.newBasic("an email with a space in it was passed to UserProfile.addID: ("+newEmailAddress+")");
         }
         if (!looksLikeEmail(newEmailAddress)) {
-            throw new ProgramLogicError("Attempt to set non-email address on user: ("+newEmailAddress+").   Only email addresses are allowed");
+            throw WeaverException.newBasic("Attempt to set non-email address on user: ("+newEmailAddress+").   Only email addresses are allowed");
         }
 
         //check if this user already has the ID, and do nothing if true
@@ -851,7 +857,7 @@ public class UserProfile implements UserRef
 
         jObj.put("wsSettings",  wsSettings);
         jObj.put("isFacilitator", isFacilitator);
-        jObj.put("useNewUI",    useNewUI);
+        jObj.put("avoidOldUI",  avoidOldUI);
         return jObj;
     }
 
@@ -901,8 +907,8 @@ public class UserProfile implements UserRef
         if (input.has("isFacilitator")) {
             isFacilitator = input.getBoolean("isFacilitator");
         }
-        if (input.has("useNewUI")) {
-            useNewUI = input.getBoolean("useNewUI");
+        if (input.has("avoidOldUI")) {
+            avoidOldUI = input.getBoolean("avoidOldUI");
         }
     }
 

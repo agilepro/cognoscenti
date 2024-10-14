@@ -32,10 +32,7 @@ Optional Parameter:
     NGBook ngb = ngp.getSite();
 
     ReminderMgr rMgr = ngp.getReminderMgr();
-    rRec = rMgr.findReminderByID(rid);
-    if (rRec == null){
-        throw new NGException("nugen.exception.attachment.not.found", new Object[]{rid});
-    }
+    rRec = rMgr.findReminderByIDOrFail(rid);
     String sendemailReminder = ar.baseURL+"t/"+ngb.getKey()+"/"+ngp.getKey()+"/DocsList.htm";
 %>
 <script>

@@ -20,30 +20,26 @@
 
 package com.purplehillsbooks.weaver.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.jsp.PageContext;
-import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  *
  * File Upload
  * @publish internal
  */
-public class Upload
+public class FileUploadSpec
 {
 
-    public Upload()
-    {
+    public FileUploadSpec() {
         m_totalBytes = 0;
         m_currentIndex = 0;
         m_startData = 0;
@@ -58,17 +54,16 @@ public class Upload
     }
 
 
-    public final void initialize(ServletConfig config, HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
-    {
+    public final void initialize(ServletConfig config, 
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         m_application = config.getServletContext();
         m_request = request;
         m_response = response;
     }
 
     public final void initialize(PageContext pageContext)
-        throws ServletException
-    {
+        throws Exception {
         m_application = pageContext.getServletContext();
         m_request = (HttpServletRequest)pageContext.getRequest();
         m_response = (HttpServletResponse)pageContext.getResponse();
@@ -77,8 +72,7 @@ public class Upload
 
     //this routine can only be called once, so why not make it part of initialize?
     public UploadFiles parsePostedContent()
-        throws Exception, IOException, ServletException
-    {
+        throws Exception {
         long totalFileSize = 0L;
         boolean found = false;
         boolean isFile = false;
@@ -86,16 +80,15 @@ public class Upload
         m_binArray = new byte[m_totalBytes];
         int totalRead = 0;
         int readBytes = 0;
-        while(totalRead < m_totalBytes)
-        {
-            try
-            {
+        while(totalRead < m_totalBytes) {
+            try {
                 m_request.getInputStream();
                 readBytes = m_request.getInputStream().read(m_binArray, totalRead, m_totalBytes - totalRead);
             }
-            catch(Exception e)
-            {
-                throw new NGException("nugen.exception.unable.to.read.content" ,null, e);
+            catch(Exception e) {
+                throw WeaverException.newWrap(
+                    "Unable to read the posted content into a byte buffer.",
+                    e);
             }
             totalRead += readBytes;
         }
@@ -104,10 +97,8 @@ public class Upload
 
         //this code appears to be looking for the first CR, and that first
         //line will be the boundary pattern for the MIME encoding.
-        while(!found && m_currentIndex < m_totalBytes)
-        {
-            if(m_binArray[m_currentIndex] == 13)
-            {
+        while(!found && m_currentIndex < m_totalBytes) {
+            if(m_binArray[m_currentIndex] == 13) {
                 found = true;
                 break;
             }
@@ -118,8 +109,7 @@ public class Upload
         }
 
         //I guess this is the case where the boundary was zero length, so give up.
-        if(m_currentIndex == 1)
-        {
+        if(m_currentIndex == 1) {
             return m_files;   //empty at this point
         }
 
@@ -127,8 +117,7 @@ public class Upload
 
         //go one more... is this to skip the line feed?
         m_currentIndex++;
-        while (m_currentIndex < m_totalBytes)
-        {
+        while (m_currentIndex < m_totalBytes) {
             String dataHeader = getDataHeader();
             m_currentIndex = m_currentIndex + 2;
 
@@ -197,23 +186,24 @@ public class Upload
         return m_files;
     }
 
-    public int save(String destPathName)
+    public int saveContentsToDestination(String destPathName)
         throws Exception, IOException, ServletException
     {
-        return save(destPathName, 0);
+        return saveContentsWithOption(destPathName, 0);
     }
 
     @SuppressWarnings("deprecation")
-    public int save(String destPathName, int option) throws Exception {
+    private int saveContentsWithOption(String destPathName, int option) throws Exception {
         int count = 0;
         if(destPathName == null) {
             destPathName = m_application.getRealPath("/");
         }
         else
         {
-            if (destPathName.indexOf("\\")>=0)
-            {
-                throw new NGException("nugen.exception.blackslash.in.path.not.allowed" , new Object[]{destPathName});
+            if (destPathName.indexOf("\\")>=0) {
+                throw WeaverException.newBasic(
+                    "Path name is not allowed to have back slash, convert to forward slash before calling 'Save': %s",
+                    destPathName);
             }
         }
         if(destPathName.indexOf("/") != -1)
@@ -249,7 +239,7 @@ public class Upload
         }
         catch(Exception e)
         {
-            throw new ProgramLogicError("Index " + index + " is out of range.");
+            throw WeaverException.newBasic("Index " + index + " is out of range.");
         }
         return retval;
     }
@@ -399,7 +389,7 @@ public class Upload
         return 0;
     }
 
-    private String getDataHeader() throws UnsupportedEncodingException
+    private String getDataHeader() throws Exception
     {
         int start = m_currentIndex;
         int end = 0;
@@ -585,29 +575,29 @@ public class Upload
         intsize = m_request.getContentLength();
         m_binArray = new byte[intsize];
         for(; pos < intsize; pos += readBytes) {
-            try
-            {
+            try {
                 readBytes = m_request.getInputStream().read(m_binArray, pos, intsize - pos);
             }
-            catch(Exception e)
-            {
-                throw new NGException("nugen.exception.unable.to.upload.file",new Object[]{destFilePathName},e);
+            catch(Exception e) {
+                throw WeaverException.newWrap(
+                    "Unable to upload file %s",
+                    e, destFilePathName);
             }
         }
 
         if(isVirtual(destFilePathName)) {
             destFilePathName = m_application.getRealPath(destFilePathName);
         }
-        try
-        {
+        try {
             File file = new File(destFilePathName);
             FileOutputStream fileOut = new FileOutputStream(file);
             fileOut.write(m_binArray);
             fileOut.close();
         }
-        catch(Exception e)
-        {
-            throw new NGException("nugen.exception.data.cant.saved",new Object[]{destFilePathName},e);
+        catch(Exception e) {
+            throw WeaverException.newWrap(
+                "The Form cannot be saved in the specified file %s",
+                e, destFilePathName);
         }
     }
 

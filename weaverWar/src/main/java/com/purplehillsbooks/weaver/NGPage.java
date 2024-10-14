@@ -1076,7 +1076,7 @@ public abstract class NGPage extends ContainerCommon {
         if (m!=null) {
             return m;
         }
-        throw WeaverException.newBasic("Could not find a meeting with the id=%s", id);
+        throw WeaverException.newBasic("Could not find a meeting with the id (%s).  Was it deleted?", id);
     }
     public MeetingRecord findMeetingOrNull(String id) throws Exception {
         if (id==null) {
