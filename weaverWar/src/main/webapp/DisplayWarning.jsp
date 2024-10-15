@@ -38,37 +38,44 @@
         //use this to indicate the very first display, before the page knows anything
         loginInfoPrefetch.put("haveNotCheckedYet", true);
     }
+
+    String userRelPath = ar.retPath + "v/$/";
+    String userName = "GUEST";
+    if (loggedUser!=null) {
+        userRelPath = ar.retPath + "v/"+loggedUser.getKey()+"/";
+        userName = loggedUser.getName();
+    }
     
 
 %>
 <html>
 <head>
-    <link rel="shortcut icon" href="http://localhost:8080/weaver/bits/favicon.ico" />
+    <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <!-- INCLUDE web fonts for icons-->
-    <link href="http://localhost:8080/weaver/new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+    <link href="<%=ar.baseURL%>new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="http://localhost:8080/weaver/new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+    <link href="<%=ar.baseURL%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
 
     <!-- Bootstrap 5.0-->
-    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="http://localhost:8080/weaver/new_assets/css/weaver.min.css" />
+    <link rel="stylesheet" href="<%=ar.baseURL%>new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.baseURL%>new_assets/css/weaver.min.css" />
 
 
-    <script src="http://localhost:8080/weaver/new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/jquery-3.6.0.min.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/bootstrap.min.js"></script>
-    <script src="http://localhost:8080/weaver/new_assets/jscript/slap.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
     <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
 
-    <link href="http://localhost:8080/weaver/new_assets/jscript/ng-tags-input.css" rel="stylesheet">
+    <link href="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.css" rel="stylesheet">
 
 
  
@@ -163,9 +170,9 @@ console.log("SLAP CONFIGURATION:", SLAP);
 
 
   <!-- Logo Brand -->
-  <a class="navbar-brand pb-2" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserHome.htm" title="Access your overall personal Weaver Home Page">
+  <a class="navbar-brand pb-2" href="<%=ar.baseURL%>" title="Access your overall personal Weaver Home Page">
     <span class="fw-semibold fs-1 vertical-align-middle">
-      <img class="d-inline-block mx-2" alt="Weaver Logo" src="http://localhost:8080/weaver/new_assets/bits/header-icon.png">
+      <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.baseURL%>new_assets/bits/header-icon.png">
     Weaver</span>
   </a>
 
@@ -195,11 +202,11 @@ console.log("SLAP CONFIGURATION:", SLAP);
 </span>
             <li><hr class="dropdown-divider"></li> 
           
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/WatchedProjects.htm">Watched Workspaces</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/templates.htm">Templates</a></li>
-            <li><a class="dropdown-item"  href="http://localhost:8080/weaver/v/OBIEZWJFH/OwnerProjects.htm">Administered</a></li>
-            <li><a class="dropdown-item"  href="http://localhost:8080/weaver/v/OBIEZWJFH/ParticipantProjects.htm">Participant</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/AllProjects.htm">All</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>WatchedProjects.htm">Watched Workspaces</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>templates.htm">Templates</a></li>
+            <li><a class="dropdown-item"  href="<%=userRelPath%>OwnerProjects.htm">Administered</a></li>
+            <li><a class="dropdown-item"  href="<%=userRelPath%>ParticipantProjects.htm">Participant</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>AllProjects.htm">All</a></li>
           </ul>
         </li>
 
@@ -219,10 +226,10 @@ console.log("SLAP CONFIGURATION:", SLAP);
             </span>
           </a>
           <ul class="dropdown-menu bg-weaverbody text-weaverdark">
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserHome.htm">Home</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserSettings.htm">Profile</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/UserAlerts.htm">Updates</a></li>
-            <li><a class="dropdown-item" href="http://localhost:8080/weaver/v/OBIEZWJFH/NotificationSettings.htm">Notifications</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserHome.htm">Home</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>
+            <li><a class="dropdown-item" href="<%=userRelPath%>NotificationSettings.htm">Notifications</a></li>
             <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html" target="_blank">Training</a></li>
 
             <li class="divider"></li>
