@@ -1093,6 +1093,10 @@ foreignObject {
     padding: 0;
     
 }
+.modal-body-scroll {
+    max-height: 300px;
+    overflow-y:scroll;
+}
 
 .modal-content {
     position: relative;

@@ -1,14 +1,14 @@
 
 <div class="modal-item pt-3"></div>
 <div class="modal-header bg-primary-subtle text-primary">
-  <h4 class="modal-title" id="attachDocumentLabel">
+  <h5 class="modal-title" id="attachDocumentLabel">
     Attach/Remove Existing Documents
-  </h4>
+  </h5>
 </div>
 <div class="instruction align-text-center text-weaverlight mx-auto fs-4 fw-bold mt-2">
   To upload new file drag &amp; drop anywhere in the panel below
 </div>
-<div class="modal-body {{greenOnDrag()}}"  
+<div class="modal-body-scroll {{greenOnDrag()}}"  
     ondragover="window.MY_SCOPE.dragIn(event)"
     ondragleave="window.MY_SCOPE.dragOut(event)"
     ondrop="window.MY_SCOPE.dragDrop(event)">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="card col-md-6 align-top">
-        <div class="card-header border-1 vh-65"> Chosen Documents </div>
+        <div class="card-header border-1"> Chosen Documents </div>
         <div class="card-body">
           <div class="row-col-12 align-top">
             <div ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
@@ -89,22 +89,35 @@
 
         </div>
         <div class="header mt-2 bg-primary-subtle text-primary">
-          <h5 class="modal-title p-2" id="attachWebLinkLabel">New Web Link</h5></div>
-      <div class="form-group px-2">
-        <div >
-          <label>URL:</label>
-          <input ng-model="newLink.url" class="form-control fullWidth"/>
-        </div>
-        <div>
-          <label>Name: <span style="color:red">{{nameMessage()}}</span></label>
-          <input ng-model="newLink.name" class="form-control fullWidth"/>
-        </div>
-        <div>
-          <label>Description:</label>
-          <textarea ng-model="newLink.description" class="form-control fullWidth"></textarea>
-        </div>
-
-      </div>
+          <h6 class="modal-title p-2" id="attachWebLinkLabel">New Web Link</h6></div>
+          <div class="modal-body">
+            <div class="container-fluid">
+                <div class="card col-md-12 align-top">
+                    <div class="card-body" >
+                        <div class="spaceyTable">
+                          <div class="row">
+                        <span class="col-2 gridTableColummHeader">URL:</span>
+                        <span class="col-10">
+                            <input type="text" ng-model="newLink.url" class="form-control"/>
+                        </span>
+                          </div>
+                          <div class="row my-1">
+                        <span class="col-2 gridTableColummHeader">Name: <span style="color:red">{{nameMessage()}}</span></span>
+                        <span class="col-10">
+                            <input type="text" ng-model="newLink.name" class="form-control"/>
+                        </span>
+                          </div>
+                          <div class="row my-1">
+                        <span class="col-2 gridTableColummHeader">Description:</span>
+                        <span class="col-10">
+                            <textarea ng-model="newLink.description" class="form-control"></textarea>
+                        </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
    
 
 <div class="modal-footer">

@@ -108,20 +108,28 @@
 <div class="modal fade" id="accessModal" tabindex="-1" aria-labelledby="accessModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content"><% if (userIsReadOnly || isFrozen) { %>
-        <div class="modal-header">
+        <div class="modal-header bg-primary-subtle text-primary">
           <h5 class="modal-title" id="accessModalLabel">Observer Only</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            You have observer access to this workspace. If you would like to edit this workspace, please contact your administrator.
+            <h5><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
+    class="accessIndicator"/>  =  You have observer access to this workspace. If you would like to edit this workspace, please contact your administrator.</h5><br>
+            <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
+    class="accessIndicator"/>  =  You have full editing access to this workspace.
+                
+              </div>
         </div>
         <% } else { %>
-            <div class="modal-header">
+            <div class="modal-header bg-primary-subtle text-primary">
                 <h5 class="modal-title" id="accessModalLabel">Full Edit Access</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                You have full editing access to this workspace.
+                <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
+    class="accessIndicator"/>  =  You have full editing access to this workspace.</b></h6><br>
+                <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
+    class="accessIndicator"/>  =  You have observer access to this workspace. If you would like to edit this workspace, please contact your administrator.
               </div>
               <% } %>
         <div class="modal-footer">

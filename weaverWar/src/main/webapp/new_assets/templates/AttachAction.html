@@ -1,61 +1,10 @@
 
 <div class="modal-item pt-3"></div>
 <div class="modal-header bg-primary-subtle text-primary">
-    <h4 class="modal-title" id="attachActionLabel">Create New Action Item</h4>
-</div>
-<div class="modal-body">
-    <div class="container-fluid">
-        <div class="card col-md-12 align-top">
-            <div class="card-body" >
-                <div class="spaceyTable">
-               <div class="row">
-                    <span class="col-2 gridTableColummHeader">Synopsis:</span>
-                    <span class="col-10">
-                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                    </span>
-               </div>
-                <div class="row">
-                    <span class="col-2 gridTableColummHeader">Assignee:</span>
-                    <span class="col-10">
-                      <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id"
-                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-                          <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                      </tags-input>
-                    </span>
-                </div>
-                <div class="row">
-                    <span class="col-2 gridTableColummHeader">Description:</span>
-                    <span class="col-10">
-                        <textarea type="text" ng-model="newGoal.description" class="mb-1 form-control markDownEditor"
-                        placeholder="Details"></textarea>
-                    </span>
-                </div>
-                <div class="row">
-                    <span class="col-2 gridTableColummHeader">Due Date:</span>
-                    <span class="col-10">
-                        <span datetime-picker ng-model="newGoal.dueDate"  
-                            class="form-control" style="max-width:300px; min-height:30px">
-                            {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                        </span> 
-                    </span>
-                </div>
-            </div>
-        </div>
-   </div>
-    </div>
-    <div class="modal-footer d-flex">
-        
-        <button class="col-2 ms-auto btn btn-secondary btn-wide" ng-show="selectedTab=='Create'"
-        type="button" ng-click="createActionItem()">Attach Action Item</button>
-    
-    </div>
-</div>
-
-<div class="modal-header mt-2 bg-primary-subtle text-primary">
     <h5 class="modal-title" id="attachExActionLabel">Attach/Remove Existing Action Items</h5>
     <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
-<div class="modal-body">
+<div class="modal-body-scroll">
     <div class="container gx-0">
         <div class="row gx-0">
         <div class="card col-md-6 align-top">
@@ -106,12 +55,58 @@
         </div>
     </div>
     </div>
+
+</div>
+<div class="header mt-2 bg-primary-subtle text-primary">
+    <h6 class="modal-title p-2" id="attachActionLabel">Create New Action Item</h6>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="card col-md-12 align-top">
+            <div class="card-body" >
+                <div class="spaceyTable">
+                    <div class="row">
+                    <span class="col-2 gridTableColummHeader">Synopsis:</span>
+                    <span class="col-10">
+                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                    </span>
+                    </div>
+                    <div class="row">
+                    <span class="col-2 gridTableColummHeader">Assignee:</span>
+                    <span class="col-10">
+                      <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id"
+                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                          <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                      </tags-input>
+                    </span>
+                    </div>
+                    <div class="row">
+                    <span class="col-2 gridTableColummHeader">Description:</span>
+                    <span class="col-10">
+                        <textarea type="text" ng-model="newGoal.description" class="mb-1 form-control markDownEditor"
+                        placeholder="Details"></textarea>
+                    </span>
+                    </div>
+                    <div class="row">
+                    <span class="col-2 gridTableColummHeader">Due Date:</span>
+                    <span class="col-10">
+                        <span datetime-picker ng-model="newGoal.dueDate"  
+                            class="form-control" style="max-width:300px; min-height:30px">
+                            {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                        </span> 
+                    </span>
+            </div>
+        </div>
+   </div>
+    </div>
+
+</div>
     <div class="modal-footer d-flex">
         <button class="btn btn-danger me-auto" type="button" ng-click="cancel()">
             Cancel</button>
-        <button class="ms-auto btn btn-primary" type="button" ng-click="exitPopup()">
+            <button ng-click="createActionItem()" class="btn btn-primary btn-wide" ng-show="newGoal.synopsis && newGoal.description">
+                Attach Action Item</button>
+        <button class="btn btn-primary" type="button" ng-click="ok()">
             Save</button>
 
     </div>
-</div>
-
