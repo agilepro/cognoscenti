@@ -363,11 +363,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 <div class="container-fluid">
-    <div class="row d-flex">
+    <div class="row">
 <!-- COLUMN 1 -->
     <div class="col-md-4 col-sm-12">
         <div class="card m-3">

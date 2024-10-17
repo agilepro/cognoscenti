@@ -283,13 +283,7 @@ function setUpLearningMethods($scope, $modal, $http) {
 }
  </script>
 
-<style>
-.navbar.navbar-default.sidebar {
-	margin-bottom: 0;
-	background-color: #ab37c8;
-	border: 0
-}
-</style>
+
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
@@ -306,7 +300,7 @@ function setUpLearningMethods($scope, $modal, $http) {
     <!-- Begin SideBar  -->
     <div class="d-flex">
       <%@ include file="SideBar.jsp" %>
-    
+
     <!-- End SideBar -->
 
     <!-- Begin mainContent -->
@@ -345,7 +339,7 @@ function setUpLearningMethods($scope, $modal, $http) {
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }
       </script>
-      <!-- BEGIN Title and Breadcrump -->
+      
 
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>

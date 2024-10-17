@@ -553,7 +553,7 @@ function setUpCommentMethods($scope, $http, $modal) {
         <button class="btn btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
         <button class="btn btn-wide btn-primary btn-raised ms-auto" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
-        <button class="btn btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"
+        <button class="btn btn-wide btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"
                  ng-show="cmt.state==12">Close with Decision</button>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">

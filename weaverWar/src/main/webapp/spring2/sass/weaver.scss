@@ -419,6 +419,7 @@ a {
         cursor: pointer;
     }
 }
+
 a.btn-primary .btn-primary  {
     width: 150px;
     position: unset;
@@ -540,6 +541,8 @@ a.btn-secondary .btn-secondary  {
         cursor: pointer;
     }
 }
+
+
 .fixed-width-xs {
     width: 30px !important;
     
@@ -851,7 +854,22 @@ a.btn-comment {
         border: $primary-60, solid, 1px;
     }
 }
-
+.btn.btn-short {
+    width: fit-content;
+    height: 30px;
+    max-height: fit-content;
+    border: $primary 1px solid;
+    border-radius: 10px;
+    position: unset;
+    padding: 3px;
+    font-size: .8rem;
+    font-weight: 500;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
 .button {
     .btn {
         background-color: inherit;

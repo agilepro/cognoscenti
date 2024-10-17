@@ -8,7 +8,8 @@
                       title="Add more people to the list below">
               <span class="fa fa-plus"></span> Add Participants </button>
           </span>
-          <span class="col-md-3 ms-auto me-3"><a class="btn-wide btn-comment btn-raised mx-2 py-1 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a></span>
+          <span class="col-md-3 ms-auto me-3"><a class="btn-wide btn-comment btn-raised mx-2 py-1 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a>
+            </span>
       </div>
       <div class="well" ng-show="editMeetingPart=='participants'">
           <div>
@@ -23,12 +24,12 @@
           </div>
           <div>
           <span class="dropdown d-flex">
-                <button class="btn btn-comment btn-danger p-1 me-3" type="button" 
+                <button class="btn btn-danger p-1 me-3" type="button" 
                       ng-click="editMeetingPart=''"
                       title="Ignore what has been put here and close box">
               Cancel 
                 </button>
-                <button class="col-2 btn btn-comment btn-wide btn-secondary py-1 px-3 " ng-click="appendRolePlayers()" 
+                <button class="btn btn-comment btn-wide btn-secondary py-1 px-3 " ng-click="appendRolePlayers()" 
                       ng-hide="roleEqualsParticipants" 
                       title="Look at the workspace role, and suggest anyone not already a participant">
                   Show Everyone from {{meeting.targetRole}}
@@ -42,7 +43,7 @@
           </span>
           </div>
       </div>
-      <div class="table col-12">
+      <div class="col-12 ms-4">
       <div class="row-cols-7 d-flex border-opacity-25 border-bottom border-secondary">
           <span class="col h6">  </span>
           <span class="col h6" title="Name of the participant">Name</span>

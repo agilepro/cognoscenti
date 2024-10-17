@@ -1,4 +1,9 @@
-    <div class="well" ng-cloak>
+<div class="card" id="cardstartTime">
+  <div class="card-header">
+    <span class="h5 card-title"> Overview 
+    </span>
+  </div>
+  <div class="card-body well col-12" ng-cloak>
         <table>
         <tr>
         <td>
@@ -7,21 +12,21 @@
                   ng-click="changeMeetingState(0)">Draft</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==1 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
             <span class="btn btn-default btn-raised" style="{{meetingStateStyle(1)}}" 
                   ng-click="changeMeetingState(1)">Planning</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==2 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
             <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
                   ng-click="changeMeetingState(2)">Running</span>
           </div>
         </td>
-        <td>----&gt;</td>
+        <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==3 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
             <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
@@ -40,19 +45,19 @@
           <p ng-show="meeting.state==2">
           Meeting is in running mode and will allow updates normally done during the meeting.
           </p>
-      <table class="table">
-        <tr>
-          <th></th>
-          <th>Presenter</th>
-          <th>Start</th>
-          <th>Planned<br/>Duration</th>
-          <th></th>
-          <th ng-show="meeting.state==2">Actual<br/>Duration</th>
-          <th ng-show="meeting.state==2">Remaining</th>
-          <th></th>
-        </tr>
+          <table ng-hide="meeting.state==3" class="table">
+            <tr>
+              <th></th>
+              <th>Presenter</th>
+              <th>Start</th>
+              <th>Planned<br/>Duration</th>
+              <th></th>
+              <th ng-show="meeting.state==2">Actual<br/>Duration</th>
+              <th ng-show="meeting.state==2">Remaining</th>
+              <th></th>
+            </tr>
         <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-hide="item.proposed" >
-          <td  ng-dblclick="openAgenda(item)">
+          <td >
                 <span ng-show="item.isSpacer" >--</span>
                 <span ng-hide="item.isSpacer" >{{item.number}}.</span>
                 {{item.subject}} 
@@ -98,17 +103,17 @@
                 <span>{{item.duration - item.timerTotal| minutes}}</span>
           </td>
           <td ng-style="timerStyleComplete(item)" >
-            <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
+            <span style="float:right;margin-right:10px" ng-hide="item.readyToGo || isCompleted()" >
                 <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                      
                      title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                     style="width:24px;height=24px;float:right">
+                     style="width:24px;height:24px;float:right">
             </span>
-            <span style="float:right" ng-show="item.readyToGo && !isCompleted()"  >
+            <span style="float:right;margin-right:10px" ng-show="item.readyToGo && !isCompleted()"  >
                 <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                      
                      title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
-                     style="width:24px;height=24px">
+                     style="width:24px;height:24px">
             </span>
           </td>
         </tr>
@@ -119,11 +124,8 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
         </tr>
-        <tr>
-            <td><br/><br/><b>Proposed:</b></td>
+        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed">
             <td></td>
             <td></td>
             <td></td>
@@ -131,37 +133,23 @@
             <td></td>
             <td></td>
         </tr>
-        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed" >
-          <td  ng-dblclick="openAgenda(item)">
-                <span>--</span>
+        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)" ng-show="item.proposed">
+          <td>
+                <span >--</span>
                 {{item.subject}} 
           </td>
           <td>
           </td>
-          <td ng-dblclick="openAgenda(item)" >
-                {{item.duration| minutes}}
+          <td></td>
+          <td >
+            {{item.duration}}
           </td>
           <td ></td>
-          <td ng-dblclick="openAgenda(item)"></td>
-          <td ng-dblclick="openAgenda(item)"></td>
-          <td ng-style="timerStyleComplete(item)" >
-            <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
-                  title="delete agenda item">
-                <i class="fa fa-trash"></i>
-            </span>
-            <span style="float:right;margin-right:10px" ng-click="toggleProposed(item)" 
-                  title="Accept this proposed agenda item">
-               ACCEPT</i>
-            </span>
-          </td>
+          <td ></td>
         </tr>        
       </table>
-      <div style="margin:20px;">
-        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New Agenda Item</button>
       </div>
-
-      </div>
-      <div ng-show="meeting.state>=3">
+      <div class="container px-4" ng-show="meeting.state>=3">
           <p>Meeting is completed and no more updates are expected.</p>
       <table class="table">
         <tr>
@@ -170,7 +158,7 @@
           <th>Planned Duration</th>
           <th>Actual Duration</th>
         </tr>
-        <tr ng-repeat="item in getAgendaItems()" ng-dblclick="openAgenda(item)" ng-style="timerStyleComplete(item)">
+        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)">
           <td>
                 <span ng-show="item.proposed || item.isSpacer" >--</span>
                 <span ng-hide="item.proposed || item.isSpacer" >{{item.number}}.</span>
@@ -212,3 +200,4 @@
       </table>
     </div>
     </div>
+</div>

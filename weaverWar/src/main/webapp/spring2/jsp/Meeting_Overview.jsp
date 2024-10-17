@@ -8,28 +8,28 @@
         <tr>
         <td>
           <div class="{{meeting.state==0 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(0)}}" 
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(0)}}" 
                   ng-click="changeMeetingState(0)">Draft</span>
           </div>
         </td>
         <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==1 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(1)}}" 
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(1)}}" 
                   ng-click="changeMeetingState(1)">Planning</span>
           </div>
         </td>
         <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==2 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(2)}}" 
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
                   ng-click="changeMeetingState(2)">Running</span>
           </div>
         </td>
         <td><i class="my-4 mx-2 fa fa-arrow-right" aria-hidden="true"></i></td>
         <td>
           <div class="{{meeting.state==3 ? 'buttonSpacerOn' : 'buttonSpacerOff'}}">
-            <span class="btn btn-flex btn-raised" style="{{meetingStateStyle(3)}}" 
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
                   ng-click="changeMeetingState(3)">Completed</span>
           </div>
         </td>

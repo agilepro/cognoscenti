@@ -3,51 +3,57 @@
     <span class="h5 card-title">Start Time</span>
   </div>
     <div class="card-body">
-      <button class="btn btn-wide btn-primary" ng-hide="'startTime'==editMeetingPart" 
-          ng-click="editMeetingPart='startTime'">Edit</button>
+      
     
-      <table class="table" ng-hide="'startTime'==editMeetingPart">
-        <tr>
-            <td>{{browserZone}}</td>
-            <td>
+      <div class="col-12" ng-hide="'startTime'==editMeetingPart">
+        <div class="row ps-0 mb-3">
+            <span class="col-3 ">
+              <button class="btn btn-wide btn-primary" ng-hide="'startTime'==editMeetingPart" ng-click="editMeetingPart='startTime'">Edit Meeting Time</button>
+            </span>
+        </div>
+        <div class="row ps-0">
+            <span class="col-3 h5">{{browserZone}}</span>
+            <span class="col-7 h5">
               <div ng-show="meeting.startTime>0">
                 {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
               </div>
               <div ng-hide="meeting.startTime>0">
                 <i>( To Be Determined )</i>
               </div>
-            </td>
-            <td>
+            </span>
+            <span class="col-1">
                 <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                   <i class="fa fa-calendar"></i></a> &nbsp; 
-            </td>
-        </tr>
-        <tr ng-hide="meeting.startTime<=0">
-          <td>
-             <button class="btn btn-wide btn-primary" ng-click="getTimeZoneList()">Show Timezones</button><br/>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr ng-repeat="val in allDates">
-          <td>{{val.zone}}</td>
-          <td>{{val.time}}</td>
-          <td></td>
-       </tr>
-      </table>
+            </span>
+        </div>
+        <div class="row" ng-hide="meeting.startTime<=0">
+          <span class="col-3">
+             <button class="btn btn-short px-4" ng-click="getTimeZoneList()">Show Timezones</button><br/>
+          </span>
+        </div>
+        <div class="row" ng-repeat="val in allDates">
+          <span>{{val.zone}}</span>
+          <span>{{val.time}}</span>
+          <span></span>
+       </div>
+      </div>
       <div ng-show="'startTime'==editMeetingPart">
-        <div class="well col-6" style="max-width:1000px">
+        <div class="well col-12" style="max-width:1000px">
+          <div class="row d-flex">
             <span datetime-picker ng-model="meeting.startTime"
                   class="form-control">
               {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
-            </span>
-            <span>&nbsp; ({{browserZone}})</span><br/>
+            </span></div>
+            <span class="col-2 h6"> ({{browserZone}})</span><br/>
             <div class="row d-flex">
-            <button class="btn btn-wide btn-danger btn-raised col-3" ng-click="editMeetingPart=null">Cancel</button>
-            <button class="btn btn-wide btn-secondary btn-raised col-3" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+              <span class="col-2 ms-0 ps-0">
+            <button class="btn btn-danger btn-raised" ng-click="editMeetingPart=null">Cancel</button></span>
+            <span class="col-8">
+            <button class="btn btn-wide btn-secondary btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button></span>
+            <span class="col-2">
             
-            <button class="btn btn-primary btn-raised col-3 ms-auto" 
-                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button></div>
+            <button class="btn btn-primary btn-raised ms-auto" 
+                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button></span></div>
         </div>
       </div>
       <hr/>
@@ -58,8 +64,9 @@
 
     <div class="container-fluid">
     <div class="row d-flex my-2 border-bottom border-1 border-secondary border-opacity-50">
-      <span class="col-2 h6">Date and Time</span>
+      
       <span class="col-2 h6">{{browserZone}}</span>
+      <span class="col-2 h6">Date and Time</span>
       <span class="col-1 mb-1 mt-0" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
           style="text-align:center">
           <span class="nav-item dropdown" >
@@ -101,7 +108,7 @@
           <span ng-show="time.proposedTime == meeting.startTime" class="text-primary fa fa-check"></span>
           </div>
       </span>
-      <span class="col-1 text-center mb-5"  ng-repeat="resp in timeSlotResponders">
+      <span class="col-1 text-center"  ng-repeat="resp in timeSlotResponders">
          <span class="nav-item col-1 dropdown "  >select
             <button class=" btn votingButton"  type="button"  d="menu" 
                 data-toggle="dropdown"> 
@@ -164,6 +171,6 @@
         or <button ng-click="showTimeAdder=false" 
                  class="btn btn-danger btn-raised">Cancel</button>
     </div>
-      </div>
+    </div>
     </div>
 

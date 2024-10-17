@@ -167,25 +167,9 @@
 
 
 %>
-<!--
-<style>
-.labelColumn:hover {
-    background-color:#ECB6F9;
-    cursor:pointer;
-}
 
-.agendaItemFull {
-    border: 1px solid lightgrey;
-    border-radius:10px;
-    margin-top:20px;
-}
-.agendaItemBlank {
-    background-color:lightgray;
-    margin-top:20px;
-}
-</style>-->
 
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../../new_assets/jscript/AllPeople.js"></script>
 
 <script>
 var embeddedData = {};
@@ -208,7 +192,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 
 </script>
-<script src="../../../spring/jsp/MeetingHtml.js"></script>
+<script src="../../../spring2/jsp/MeetingHtml.js"></script>
 
 
 
@@ -220,132 +204,164 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 <%@include file="ErrorPanel.jsp"%>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
+            <!--Setup Accordion-->
 
+            <div class="accordion" id="accordionSetup">
+                <div class="accordion-item">
+                    <div class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <h3 class="h5 mb-0">Setup Tools</h3>
+                        </button>
+                    </div>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionSetup">
+                        <div class="accordion-body">
+                            <div class="justify-content-between"> 
+                                <span class="btn btn-setup btn-flex">
+                                <button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button></span>
+                                <span class="btn btn-setup btn-flex">
+                                    <button ng-click="changeMeetingMode('Overview')"  ng-class="labelButtonClass('Overview')" >Overview</button></span>
+                                <span class="btn btn-setup btn-flex">
+                                <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')" >Participants</button></span>
+                                <span class="btn btn-setup btn-flex">
+                                <button ng-click="changeMeetingMode('Time')" ng-class="labelButtonClass('Time')" >Start Time</button></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="upRightOptions rightDivContent">
-      <button class="btn btn-default btn-raised" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'">
-          State: {{meetingStateName()}}</button>
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem"
-              title="Compose an email messsage about this meeting and send it"
-              href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Open the editor for the minutes of the meeting"
-              ng-click="openEditor()">Edit Meeting Notes</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Display the meeting as a HTML page that can be copied into an editor"
-              href="meetingFull.htm?id={{meeting.id}}">Show Single Page Display</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Display the meeting as a HTML page that can be copied into an editor"
-              href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Make a copy of this meeting for a new timeslot"
-              href="CloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Return back to the list of all meetings in the workspace"
-              href="MeetingList.htm">List All Meetings</a></li>
-        </ul>
-      </span>
-
+<hr/>
+<!--Agenda Panel-->
+<div style="height: 0.5rem">&nbsp;</div>
+<h3 class="h5 mb-0">Agenda:</h3>
+<div ng-repeat="item in getAgendaItems()">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed" ng-dblclick="openAgenda(selectedItem)">
+        <div class="d-flex">
+            <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
+            <span class="text-secondary align-center m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
+            &nbsp;<span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
+<br/>
+            <button class="btn" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+            <span style="ms-auto" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
+        </div>
     </div>
-
-
-<div>
-
-<button ng-click="changeMeetingMode('Agenda')"   ng-class="statusButtonClass('Agenda')"  >Agenda</button>
-<button ng-click="changeMeetingMode('Minutes')"  ng-class="statusButtonClass('Minutes')" >Minutes</button>
-<button ng-click="changeMeetingMode('General')"  ng-class="statusButtonClass('General')" >Settings</button>
-<button ng-click="changeMeetingMode('Attendance')" ng-class="statusButtonClass('Attendance')">Participants</button>
-<button ng-click="changeMeetingMode('Times')"    ng-class="statusButtonClass('Times')"   >Start Time</button>
-<button ng-click="changeMeetingMode('Status')"   ng-class="statusButtonClass('Status')"  >Overview</button>
-<button ng-click="changeMeetingMode('Items')"    ng-class="statusButtonClass('Items')"   >Edit</button>
 </div>
+<hr/>
+<div class="d-flex justify-content-start">
+    <h3 class="h6">Proposed End Time:</h3>
+    <span class="h6 ms-5">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;</span>
+</div>
+<div style="height:0.5rem">&nbsp;</div>
+
+<div class="d-flex justify-content-start text-weaverlight"><h3 class="h6 mb-0 me-4">Anticipated End:</h3> 
+    <span class="h6 ms-5">{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}} &nbsp;
+    </span> 
+</div>
+
+<div ng-repeat="item in getAgendaItems()">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-show="item.proposed"
+ng-dblclick="openAgenda(selectedItem)">
+<span class="h6" ng-show="item.proposed">Backlog:</span>
+<button class="my-2 mx-4" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+    </div>
+</div>
+ <!--END OF Agenda Panel-->
+
+
+<h3 class="h5 mt-4 mb-2">Static Displays:</h3>
+<div class="my-3 d-flex justify-content-start">
+                    <div class="smallButton mx-3">
+                    <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
+                    </button>
+                    </div>
+                    <div class="smallButton mx-3">
+                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
+                    </button>
+                    </div>
+</div>
+
+<hr/>
+
+<span>
+Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
+</span> 
+        </div>
+<div class="d-flex col-9">
+    <div class="contentColumn">
+
+        <div ng-show="displayMode=='Agenda'">Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+(available to anonymous users)
+                    <div ng-bind-html="htmlAgenda"></div>
+        </div>
+        <div ng-show="displayMode=='Minutes'">Public link to these minutes:  '
+<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
+(available to anonymous users)
+<div ng-bind-html="htmlMinutes"> </div>
+        </div>
+        <div ng-show="displayMode=='General'">
+            <%@ include file="Meeting_Settings.jsp"%>                
+        </div>
+        <div ng-show="displayMode=='Overview'">
+            <%@ include file="Meeting_Overview.jsp"%>
+        </div>
+        <div ng-show="displayMode=='Attendance'">
+                <%@ include file="Meeting_Participants.jsp"%>
+        </div>
+        <div ng-show="displayMode=='Time'">
+            <%@ include file="Meeting_Times.jsp"%>
+        </div>                
+        <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
+                    <%@ include file="Meeting_Edit.jsp"%>
+        </div>
+
 
 
 
 <!-- ============================================================================================== -->
 
 
-<div ng-show="displayMode=='General'">
-<%@include file="Meeting_Settings.jsp"%>
-</div>
+
+<link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
+
+            <div ng-show="meeting.agenda.length==0" class="guideVocal">This meeting does not have any agenda items.<br/> Use the <button class="btn btn-sm btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
+            </div>
+        
 
 
-<div ng-show="displayMode=='Attendance'">
-<%@include file="Meeting_Participants.jsp"%>
-</div>    
+
     
 
-<div ng-show="displayMode=='Times'">
-<%@include file="Meeting_Times.jsp"%>
-</div>
 
 
-<div ng-show="displayMode=='Status'">
-<%@include file="Meeting_Overview.jsp"%>
-</div>
+<br/>
 
 
-<div ng-show="displayMode=='Items'">
-<%@include file="Meeting_Edit.jsp"%>
-</div>
+Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
-
-
-<!--
-<link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>-->
-
-<div ng-show="displayMode=='Agenda'">
-    Public link to this agenda:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.notifyLayout}}&<%=mnm%>">{{meeting.name}}</a>' 
-    (available to anonymous users)
-    <div class="well" ng-bind-html="htmlAgenda">
     </div>
-</div>
-<div ng-show="displayMode=='Minutes'">
-    Public link to these minutes:  '<a href="MeetPrint.htm?id=<%=meetId%>&tem={{meeting.defaultLayout}}&<%=mnm%>">
-    {{meeting.name}}</a>' 
-    (available to anonymous users)
-    <div class="well"> 
-    <div ng-bind-html="htmlMinutes"> </div>
-    </div>
+
 </div>
 
 
-
-
-<span>
-Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
-</span> 
+    
 
    
-<span ng-show="meeting.state>=2">
- elapsed duration: {{meeting.timerTotal|minutes}},
-<button ng-click="stopAgendaRunning()" ng-show="meeting.state==2"><i class="fa fa-clock-o"></i> Stop</button>
-</span>
-
-    
-
-    <br/>
-    Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-
-</div>
 
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/MeetingNotes.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
-<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachTopicCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/AgendaCtrl.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/MeetingNotes.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
 
