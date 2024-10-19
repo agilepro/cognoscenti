@@ -11,7 +11,7 @@ import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserRef;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class MeetingNotesCache {
@@ -75,10 +75,13 @@ public class MeetingNotesCache {
 
         void assertMeetingParticipant(AuthRequest ar) throws Exception {
             if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to access meeting "+meetingId+".");
+                throw WeaverException.newBasic(
+                    "Must be logged in to access meeting (%s)",meetingId+".");
             }
             if (!canAccess(ar)) {
-                throw new Exception("User ("+ar.getBestUserId()+") is not a participant for meeting "+meetingId+" and can not access the meeting");
+                throw WeaverException.newBasic(
+                    "User (%s) is not a participant for meeting (%s) and can not access the meeting",
+                    ar.getBestUserId(), meetingId);
             }
         }
     }

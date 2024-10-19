@@ -83,7 +83,7 @@ public class ResourceDecoder {
         int curPos = 1;
         int slashPos = path.indexOf("/", curPos);
         if (slashPos<=curPos) {
-            throw new Exception("Can't find a site ID in the URL.");
+            throw WeaverException.newBasic("Can't find a site ID in the URL.");
         }
         siteId = path.substring(curPos, slashPos);
         site = ar.getCogInstance().getSiteByIdOrFail(siteId);
@@ -96,7 +96,7 @@ public class ResourceDecoder {
         projId = path.substring(curPos, slashPos);
 
         if ("$".equals(projId)) {
-            throw new Exception("ResourceDecoder Access to SITE is not supported");
+            throw WeaverException.newBasic("ResourceDecoder Access to SITE is not supported");
         }
         workspace = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,projId).getWorkspace();
         ar.setPageAccessLevels(workspace);
@@ -121,51 +121,13 @@ public class ResourceDecoder {
             tempName = resource.substring(slashPos);
             return;
         }
-        throw new Exception("ResourceDecoder Unable to handle resource="+resource);
-        /*
-        if (resource.startsWith("doc")) {
-            isDoc = true;
-            if (slashPos<=3) {
-                throw new Exception("malformed document access URL, did not find a document ID");
-            }
-            int hyphenPos = resource.indexOf("-");
-            if (hyphenPos>0 && hyphenPos<slashPos) {
-                String verStr = resource.substring(hyphenPos+1, slashPos);
-                docId = resource.substring(3, hyphenPos);
-                docVersion = DOMFace.safeConvertInt(verStr);
-            }
-            else {
-                docId = resource.substring(3, slashPos);
-                docVersion = -1;
-            }
-            return;
-        }
-        if (resource.startsWith("note")) {
-            isNote = true;
-            if (slashPos<=4) {
-                throw new Exception("malformed topic access URL, did not find a topic ID");
-            }
-            noteId = resource.substring(4, slashPos);
-            if (resource.endsWith("htm")) {
-                isHtmlFormat = true;
-            }
-            return;
-        }
-        if (resource.startsWith("goal")) {
-            isGoal = true;
-            if (slashPos<=4) {
-                throw new Exception("malformed action item access URL, did not find a goal ID");
-            }
-            goalId = resource.substring(4, slashPos);
-            return;
-        }
-        */
+        throw WeaverException.newBasic("ResourceDecoder Unable to handle resource=%s", resource);
     }
 
     private void setUserFromLicense(AuthRequest ar) throws Exception {
         if (lic!=null) {
             String userId = lic.getCreator();
-            UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
+            UserProfile up = UserManager.lookupUserByAnyId(userId);
             if (up==null) {
                 throw WeaverException.newBasic("This license '%s' is no longer valid because the creator of the license can not be found.", licenseId);
             }
@@ -203,7 +165,7 @@ public class ResourceDecoder {
         String restrictRole = lic.getRole();
 
         if (site==null) {
-            throw new Exception("Program Logic Error: getLicensedRoles called before site is known");
+            throw WeaverException.newBasic("Program Logic Error: getLicensedRoles called before site is known");
         }
         if (workspace==null) {
             //this is the case that you are being called on a site

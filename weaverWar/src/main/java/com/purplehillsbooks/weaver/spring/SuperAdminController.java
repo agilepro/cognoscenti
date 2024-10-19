@@ -175,7 +175,7 @@ public class SuperAdminController extends BaseController {
                  ha.completeSiteRequest(siteRequest, false);
              }
              else{
-                 throw new Exception("Unrecognized new status ("+newStatus+") in acceptOrDenySite.json");
+                 throw WeaverException.newBasic("Unrecognized new status ("+newStatus+") in acceptOrDenySite.json");
              }
              siteReqFile.save();
 
@@ -239,10 +239,10 @@ public class SuperAdminController extends BaseController {
                  ErrorLog eLog = ErrorLog.getLogForDate(logDate, cog);
                  ErrorLogDetails det = eLog.getDetails(errNo);
                  if (det==null) {
-                     throw new Exception("Unable to find an error with number "+errNo);
+                     throw WeaverException.newBasic("Unable to find an error with number %s", errNo);
                  }
                  if (errNo != det.getErrorNo()) {
-                     throw new Exception("For some reason looked for error "+errNo+" but got error "+det.getErrorNo());
+                     throw WeaverException.newBasic("For some reason looked for error "+errNo+" but got error "+det.getErrorNo());
                  }
                  det.updateFromJSON(requestInfo);
                  det.sendFeedbackEmail(ar);
@@ -323,7 +323,7 @@ public class SuperAdminController extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
              if (!ar.isSuperAdmin()) {
-                 throw new Exception("Super admin email list is accessible only by administrator.");
+                 throw WeaverException.newBasic("Super admin email list is accessible only by administrator.");
              }
              JSONObject posted = this.getPostedObject(ar);
              JSONObject repo = EmailSender.querySuperAdminEmail(posted);

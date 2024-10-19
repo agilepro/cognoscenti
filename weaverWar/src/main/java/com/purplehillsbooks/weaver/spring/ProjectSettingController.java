@@ -42,6 +42,7 @@ import com.purplehillsbooks.weaver.RoleInvitation;
 import com.purplehillsbooks.weaver.RoleRequestRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -297,7 +298,7 @@ public class ProjectSettingController extends BaseController {
                 ngw.save(); //just save flag, don't mark workspace as changed
             }
             else {
-                throw new Exception("Unable to understand the operation "+op);
+                throw WeaverException.newBasic("Unable to understand the operation %s", op);
             }
 
             JSONObject repo = new JSONObject();
@@ -395,7 +396,7 @@ public class ProjectSettingController extends BaseController {
                 }
             }
             else {
-                throw new Exception("Unable to understand the operation "+op);
+                throw WeaverException.newBasic("Unable to understand the operation %s", op);
             }
 
             ngw.getSite().flushUserCache();  //calculate the users again
@@ -421,7 +422,7 @@ public class ProjectSettingController extends BaseController {
         Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
         if (up == null) {
-            throw new Exception(
+            throw WeaverException.newBasic(
                     "Program Logic Error: only logged in users can request to join a role, and got such a request when there appears to be nobody logged in");
         }
 
@@ -481,7 +482,7 @@ public class ProjectSettingController extends BaseController {
             boolean canAccess = AccessControl.canAccessRoleRequest(ar, ngw, rrr);
 
             if (!canAccess) {
-                throw new Exception("Unable to access that RoleRequestRecord.  You might need to be logged in.");
+                throw WeaverException.newBasic("Unable to access that RoleRequestRecord.  You might need to be logged in.");
             }
 
             if ("Approve".equals(op)) {
@@ -495,7 +496,7 @@ public class ProjectSettingController extends BaseController {
                 rrr.setCompleted(true);
             }
             else {
-                throw new Exception("roleRequestResolution doesn't understand the request for "+op);
+                throw WeaverException.newBasic("roleRequestResolution doesn't understand the request for %s", op);
             }
 
             if (ar.isLoggedIn()) {
@@ -649,7 +650,7 @@ public class ProjectSettingController extends BaseController {
 
             NGRole role = ngc.getRole(roleName);
             if (role==null) {
-                throw new Exception("Can not file a role named '"+roleName+"'");
+                throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
             }
             boolean isPlayer = role.isExpandedPlayer(ar.getUserProfile(), ngc);
 
@@ -822,14 +823,18 @@ public class ProjectSettingController extends BaseController {
                 NGLabel other = ngw.getLabelRecordOrNull(editedName);
                 if (label==null) {
                     if (other!=null) {
-                        throw new Exception("Cannot create label '"+editedName+"' because a label already exists with that name.");
+                        throw WeaverException.newBasic(
+                            "Cannot create label '%s' because a label already exists with that name.",
+                            editedName);
                     }
                     label = ngw.findOrCreateLabelRecord(editedName, labelInfo.getString("color"));
                 }
                 else {
                     if (!editedName.equals(labelName)) {
                         if (other!=null) {
-                            throw new Exception("Cannot change label '"+labelName+"' to '"+editedName+"' because a label already exists with that name.");
+                            throw WeaverException.newBasic(
+                                "Cannot change label '%s' to '%s' because a label already exists with that name.",
+                                labelName, editedName);
                         }
                     }
                     label.setName(editedName);

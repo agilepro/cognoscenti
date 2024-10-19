@@ -160,7 +160,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
             if (go==null) {
                 //accessing without a go parameter might be an attempt to crawl all the pages
                 //and this is simply an error.
-                throw new ProgramLogicError("Emergency config page needs a 'go' parameter, none found.");
+                throw WeaverException.newBasic("Emergency config page needs a 'go' parameter, none found.");
             }
 
             resp = new HttpServletResponseWithoutBug(resp);

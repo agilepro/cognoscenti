@@ -149,23 +149,23 @@ public class SiteController extends BaseController {
 
             ar.assertLoggedIn("Must be logged in to take ownership of a site.");
             if(!ar.isSuperAdmin()){
-                throw new Exception("Must be super admin in to take ownership of a site.");
+                throw WeaverException.newBasic("Must be super admin in to take ownership of a site.");
             }
             UserProfile uProf = ar.getUserProfile();
             JSONObject incoming = getPostedObject(ar);
             if (!incoming.has("key")) {
-                throw new Exception("Must specify 'key' of the site you want to take ownership of");
+                throw WeaverException.newBasic("Must specify 'key' of the site you want to take ownership of");
             }
             String siteKey = incoming.getString("key");
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteById(siteKey);
             if (site==null) {
-                throw new Exception("Unable to find a site with the key: "+siteKey);
+                throw WeaverException.newBasic("Unable to find a site with the key: %s", siteKey);
             }
             CustomRole owners = (CustomRole) site.getSecondaryRole();
             owners.addPlayerIfNotPresent(uProf.getAddressListEntry());
             if (!owners.isPlayer(uProf)) {
-                throw new Exception("Failure to add to owners role this user: "+uProf.getUniversalId());
+                throw WeaverException.newBasic("Failure to add to owners role this user: %s", uProf.getUniversalId());
             }
             site.saveFile(ar, "adding super admin to site owners");
 
@@ -186,17 +186,17 @@ public class SiteController extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged to garbage collect a site.");
             if(!ar.isSuperAdmin()){
-                throw new Exception("Must be super admin to garbage collect a site.");
+                throw WeaverException.newBasic("Must be super admin to garbage collect a site.");
             }
             JSONObject incoming = getPostedObject(ar);
             if (!incoming.has("key")) {
-                throw new Exception("Must specify 'key' of the site you want to take ownership of");
+                throw WeaverException.newBasic("Must specify 'key' of the site you want to take ownership of");
             }
             siteKey = incoming.getString("key");
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteById(siteKey);
             if (site==null) {
-                throw new Exception("Unable to find a site with the key: "+siteKey);
+                throw WeaverException.newBasic("Unable to find a site with the key: %s", siteKey);
             }
             String operation = "nothing";
             if (site.isDeleted()) {
@@ -205,7 +205,9 @@ public class SiteController extends BaseController {
                 File cogFolder = folder.getParentFile();
                 File siteFolder = cogFolder.getParentFile();
                 if (!siteKey.equalsIgnoreCase(siteFolder.getName())) {
-                    throw new Exception("Something strange: expected site named ("+siteKey+") but folder is "+siteFolder);
+                    throw WeaverException.newBasic(
+                        "Something strange: expected site named (%s) but folder is (%s)",
+                        siteKey, siteFolder);
                 }
                 for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(siteKey)) {
                     NGWorkspace ngw = ngpi.getWorkspace();
@@ -215,7 +217,7 @@ public class SiteController extends BaseController {
                 deleteRecursive(siteFolder);
             }
             else {
-                throw new Exception("Site '"+siteKey+"' must be deleted before it can be garbage collected");
+                throw WeaverException.newBasic("Site '"+siteKey+"' must be deleted before it can be garbage collected");
             }
 
 
@@ -238,11 +240,11 @@ public class SiteController extends BaseController {
                 }
             }
             if (!f.delete()) {
-                throw new Exception("Delete command returned false for file: " + f);
+                throw WeaverException.newBasic("Delete command returned false for file: (%s)", f.getAbsolutePath());
             }
         }
         catch (Exception e) {
-            throw new Exception("Failed to delete the folder: " + f, e);
+            throw WeaverException.newWrap("Failed to delete the folder: %s", e, f.getAbsolutePath());
         }
     }
 
@@ -274,7 +276,9 @@ public class SiteController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             showJSPExecutives(ar,siteId,"SiteUsers.jsp");
         }catch(Exception ex){
-            throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
+            throw WeaverException.newWrap(
+                "Unable to handle SiteUsers.htm for site '%s'", 
+                ex, siteId);
         }
     }
     @RequestMapping(value = "/{siteId}/$/SiteUserInfo.htm", method = RequestMethod.GET)
@@ -295,7 +299,9 @@ public class SiteController extends BaseController {
             }
             showJSPExecutives(ar,siteId,"SiteUserInfo.jsp");
         }catch(Exception ex){
-            throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
+            throw WeaverException.newWrap(
+                "Unable to handle SiteUserInfo.htm for site '%s'", 
+                ex, siteId);
         }
     }
 
@@ -459,7 +465,7 @@ public class SiteController extends BaseController {
                 	// check to see if removed
                 	roleObj = ngw.getRole(roleName);
                 	if (roleObj.isExpandedPlayer(user, ngw)) {
-                	    throw new Exception("The user did not actually get removed");
+                	    throw WeaverException.newBasic("The user did not actually get removed");
                 	}
                 	
                     ngw.save();
@@ -513,7 +519,7 @@ public class SiteController extends BaseController {
         try{
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to get users");
+                throw WeaverException.newBasic("Must be logged in to get users");
             }
 
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
@@ -543,7 +549,7 @@ public class SiteController extends BaseController {
         try{
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to get users");
+                throw WeaverException.newBasic("Must be logged in to get users");
             }
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
 
@@ -572,7 +578,7 @@ public class SiteController extends BaseController {
         try{
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to get users");
+                throw WeaverException.newBasic("Must be logged in to get users");
             }
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteByIdOrFail(siteId);
@@ -592,13 +598,13 @@ public class SiteController extends BaseController {
         try{
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to get users");
+                throw WeaverException.newBasic("Must be logged in to get users");
             }
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
             if (!ar.isAdmin()) {
-                throw new Exception("Must be administrator of site to update the permissions");
+                throw WeaverException.newBasic("Must be administrator of site to update the permissions");
             }
             JSONObject userMapDelta = getPostedObject(ar);
             SiteUsers userMap = site.updateUserMap(userMapDelta);

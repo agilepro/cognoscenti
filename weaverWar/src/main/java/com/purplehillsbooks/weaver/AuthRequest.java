@@ -341,9 +341,8 @@ public class AuthRequest
             resolveUser();
 
             servletPath = req.getServletPath();
-            if (servletPath==null)
-            {
-                throw new RuntimeException("Hmmmmmmm, no servlet path???");
+            if (servletPath==null) {
+                throw WeaverException.newBasic("Servlet path is missing.  That should be impossible.");
             }
 
             if(baseURL == null || baseURL.length() == 0){
@@ -729,7 +728,7 @@ public class AuthRequest
             throw WeaverException.newBasic("'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGBook)) {
-            throw new Exception("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
+            throw WeaverException.newBasic("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
         }
         if (!isLoggedIn()) {
             throw WeaverException.newBasic("User is not logged in, not an executive of site. %s", opDescription);
@@ -1867,7 +1866,7 @@ public class AuthRequest
                  site = (NGBook)ngp;
              }
              else {
-                 throw new Exception("No idea what ngp is at this attempt to findChunkTemplate");
+                 throw WeaverException.newBasic("No idea what ngp is at this attempt to findChunkTemplate");
              }
              
              File cogFolder = new File(site.getSiteRootFolder(), ".cog");

@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.JSONWrapper;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
@@ -104,10 +105,10 @@ public class RoleInvitation extends JSONWrapper {
     public void sendEmail(AuthRequest ar) throws Exception {
 
         if (!STATUS_NEW.equals(kernel.getString("status"))) {
-            throw new Exception("Program Logic Error: send is being called when the invite is not in NEW status");
+            throw WeaverException.newBasic("Program Logic Error: send is being called when the invite is not in NEW status");
         }
         if (!kernel.has("ss")) {
-        	throw new Exception("RoleInvitation.sendEmail requires a 'ss' field in the record to work.");
+        	throw WeaverException.newBasic("RoleInvitation.sendEmail requires a 'ss' field in the record to work.");
         }
         String ss = kernel.getString("ss");
 

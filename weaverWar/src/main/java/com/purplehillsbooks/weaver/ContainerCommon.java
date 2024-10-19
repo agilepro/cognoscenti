@@ -402,7 +402,7 @@ public abstract class ContainerCommon extends NGContainer
             String token = id.substring(bangPos+1);
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
             if (!token.equals(up.getLicenseToken())) {
-                throw new Exception("License token does not match for user: "+token);
+                throw WeaverException.newBasic("License token does not match for user: %s", token);
             }
             return new LicenseForUser(up);
         }

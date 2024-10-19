@@ -50,7 +50,7 @@ public class UserDecoder {
         int curPos = 1;
         int slashPos = path.indexOf("/", curPos);
         if (slashPos<=curPos) {
-            throw new Exception("Can't find a user key in the URL.");
+            throw WeaverException.newBasic("Can't find a user key in the URL.");
         }
         userKey = path.substring(curPos, slashPos);
         uProf = UserManager.getUserProfileByKey(userKey);

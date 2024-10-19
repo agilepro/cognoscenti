@@ -289,7 +289,7 @@ public class UploadFileController extends BaseController {
                 return;
             } else {
                 //basically, the reminder should have been display, and we have no idea now why not
-                throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
+                throw WeaverException.newBasic("Program Logic Error ... something is wrong with the canAccessReminder method");
             }
         }
         catch(Exception e){
@@ -380,7 +380,7 @@ public class UploadFileController extends BaseController {
     public static void saveToFileAH(MultipartFile file, File destinationFile) throws Exception {
         try {
             if (destinationFile == null) {
-                throw new IllegalArgumentException(
+                throw WeaverException.newBasic(
                         "Can not save file.  Destination file must not be null.");
             }
 

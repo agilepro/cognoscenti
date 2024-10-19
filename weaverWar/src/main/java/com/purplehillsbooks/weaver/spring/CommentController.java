@@ -31,6 +31,7 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.xml.Mel;
@@ -170,16 +171,16 @@ public class CommentController extends BaseController {
             long msgId = Mel.safeConvertLong(ar.reqParam("msg"));
             MailInst mail = EmailSender.findEmailById(msgId);
             if (mail == null) {
-                throw new Exception("Can't find an email message for "+msgId);
+                throw WeaverException.newBasic("Can't find an email message for %s", msgId);
             }
             if (cid != mail.getCommentId()) {
-                throw new Exception("Comment and email message id do not match");
+                throw WeaverException.newBasic("Comment and email message id do not match");
             }
                     
             JSONObject repo = null;
             String meetingId = ngw.findMeetingIdForComment(cid);
             if (postObject.has("deleteMe")) {
-                throw new Exception("delete is not allowed anonymously");
+                throw WeaverException.newBasic("delete is not allowed anonymously");
             }
             else {
                 CommentRecord cmt = ngw.getCommentOrFail(cid);
@@ -240,7 +241,7 @@ public class CommentController extends BaseController {
                 repo = handleComment(ar, ngw, postObject);
             }
             else {
-                throw new Exception("Unrecognized command: "+command);
+                throw WeaverException.newBasic("Unrecognized command: %s", command);
             }
             sendJson(ar, repo);
         }catch(Exception ex){
@@ -277,7 +278,7 @@ public class CommentController extends BaseController {
     private CommentRecord createNewComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {
         
         if (postObject == null) { 
-            throw new Exception("Creating a comment requires a POST of JSON parameters");
+            throw WeaverException.newBasic("Creating a comment requires a POST of JSON parameters");
         }
         
         char containerType = postObject.getString("containerType").charAt(0);
@@ -286,7 +287,7 @@ public class CommentController extends BaseController {
         if ('M' == containerType) {
             int pos = containerID.indexOf(":");
             if (pos<0) {
-                throw new Exception("Meeting ID must contain a colon.  Got: "+containerID);
+                throw WeaverException.newBasic("Meeting ID must contain a colon.  Got: %s", containerID);
             }
             String meetID = containerID.substring(0, pos);
             String agendaID = containerID.substring(pos+1);
@@ -304,7 +305,9 @@ public class CommentController extends BaseController {
             cr = att.addComment(ar);
         }
         else {
-            throw new Exception("CreateComment is unable to understand the containerType: "+containerType);
+            throw WeaverException.newBasic(
+                "CreateComment is unable to understand the containerType: %s", 
+                containerType);
         }
         return cr;
     }

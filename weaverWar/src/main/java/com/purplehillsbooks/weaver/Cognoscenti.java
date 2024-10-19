@@ -358,7 +358,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public NGPageIndex getWSBySiteAndKeyOrFail(String siteKey, String key) throws Exception {
         NGPageIndex ngpi = getWSBySiteAndKey(siteKey, key);
         if (ngpi == null) {
-            throw new Exception("Unable to find a workspace with the site ("+siteKey+") and key ("+key+")");
+            throw WeaverException.newBasic("Unable to find a workspace with the site (%s) and key (%s)", siteKey, key);
         }
         return ngpi;
     }
@@ -384,7 +384,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
         NGPageIndex ngpi = getWSByCombinedKey(combinedKey);
         if (ngpi==null) {
-            throw new Exception("Unable to find a workspace with the combined key ("+combinedKey+")");
+            throw WeaverException.newBasic("Unable to find a workspace with the combined key (%s)", combinedKey);
         }
         return ngpi;
     }
@@ -684,7 +684,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         NGPageIndex bIndex = new NGPageIndex(ngb);
         if (bIndex.containerType == 0) {
-            throw new Exception("uninitialized ngpi.containerType in makeIndex");
+            throw WeaverException.newBasic("uninitialized ngpi.containerType in makeIndex");
         }
         allContainers.add(bIndex);
         keyToSites.put(key, bIndex);
@@ -728,7 +728,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         NGPageIndex bIndex = new NGPageIndex(ngw);
         if (bIndex.containerType == 0) {
-            throw new Exception("uninitialized ngpi.containerType in makeIndex");
+            throw WeaverException.newBasic("uninitialized ngpi.containerType in makeIndex");
         }
         allContainers.add(bIndex);
         keyToWorkspace.put(workspaceKey, bIndex);
@@ -813,7 +813,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
     public NGPageIndex getParentWorkspace(NGPageIndex child) throws Exception {
         if (!child.isWorkspace()) {
-            throw new Exception("You can only get a parent of a workspace, but this is not workspace: "+child.containerKey);
+            throw WeaverException.newBasic("You can only get a parent of a workspace, but this is not workspace: %s", child.containerKey);
         }
         String searchKey = child.parentKey;
         if (searchKey == null || searchKey.length()==0) {
@@ -821,7 +821,7 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         String siteKey = child.wsSiteKey;
         if (siteKey == null || siteKey.length()==0) {
-            throw new Exception("Can not get parent of a workspace is not in a site: "+child.containerKey);
+            throw WeaverException.newBasic("Can not get parent of a workspace is not in a site: %s", child.containerKey);
         }
         if (searchKey != null && searchKey.length()>0) {
             for (NGPageIndex ngpi : this.allContainers) {
@@ -834,13 +834,13 @@ System.out.println("Weaver Server Object == Start the Server");
     }
     public List<NGPageIndex> getChildWorkspaces(NGPageIndex parent) throws Exception {
         if (!parent.isWorkspace()) {
-            throw new Exception("You can only get children of a workspace, but this is not workspace: "+parent.containerKey);
+            throw WeaverException.newBasic("You can only get children of a workspace, but this is not workspace: %s", parent.containerKey);
         }
         List<NGPageIndex> res = new ArrayList<NGPageIndex>();
         String searchKey = parent.containerKey;
         String siteKey = parent.wsSiteKey;
         if (siteKey == null || siteKey.length()==0) {
-            throw new Exception("Can not get children of a workspace that is not in a site: "+parent.containerKey);
+            throw WeaverException.newBasic("Can not get children of a workspace that is not in a site: %s", parent.containerKey);
         }
         for (NGPageIndex ngpi : this.allContainers) {
             if (searchKey.equals(ngpi.parentKey) && siteKey.equals(ngpi.wsSiteKey)) {

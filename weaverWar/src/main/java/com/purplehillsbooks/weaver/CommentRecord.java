@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -496,9 +497,9 @@ public class CommentRecord extends DOMFace {
             noteOrMeet.markTimestamp(ar.nowTime);
         }
         catch (Exception e) {
-            throw new Exception("Unable to compose email for comment #"+this.getTime()
-                    +" in "+noteOrMeet.selfDescription()
-                    +" in workspace "+ngw.getFullName(), e);
+            throw WeaverException.newWrap(
+                "Unable to compose email for comment #%d in %s in workspace %s", 
+                e, this.getTime(), noteOrMeet.selfDescription(), ngw.getFullName());
         }
     }
 
@@ -539,7 +540,7 @@ public class CommentRecord extends DOMFace {
 
         //this is needed for the HTML conversion.
         if (ngw==null) {
-            throw new Exception("constructEmailRecordOneUser requires NGP non null");
+            throw WeaverException.newBasic("constructEmailRecordOneUser requires NGP non null");
         }
         clone.ngp = ngw;
 
@@ -732,7 +733,7 @@ public class CommentRecord extends DOMFace {
             else {
                 //the state should have been set at the same time, so this should never 
                 //happen, but testing here to make sure.
-                throw new Exception("No able to resendEmail in state = "+getState());
+                throw WeaverException.newBasic("No able to resendEmail in state = "+getState());
             }
         }
     }

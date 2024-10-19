@@ -217,7 +217,7 @@ public class UserProfile implements UserRef
     private void convertOldWSSettings(JSONObject fullJO) throws Exception {
 
         if (fullJO.has("wsSettings")) {
-            throw new Exception("program logic error: convertOldWSSettings should be called only on objects with wsSettings");
+            throw WeaverException.newBasic("program logic error: convertOldWSSettings should be called only on objects with wsSettings");
         }
         System.out.println("FOUND USER WITH OLD DATA: wsSettings is the old way somehow -- this should no longer be happening.");
         wsSettings = new JSONObject();
@@ -262,7 +262,9 @@ public class UserProfile implements UserRef
 
     private JSONObject assureSettings(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|")<0) {
-            throw new Exception("User profile workspace settings requires a combined key of the form: (site) | (workspace), got: "+siteWorkspaceCombo);
+            throw WeaverException.newBasic(
+                "User profile workspace settings requires a combined key of the form: (site) | (workspace), got: %s", 
+                siteWorkspaceCombo);
         }
         if (wsSettings.has(siteWorkspaceCombo)) {
             return wsSettings.getJSONObject(siteWorkspaceCombo);
@@ -674,7 +676,8 @@ public class UserProfile implements UserRef
     */
     public void assureWatch(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|")<0) {
-            throw new Exception("assureWatch requires a combined key of the form: (site) | (workspace)");
+            throw WeaverException.newBasic(
+                "assureWatch requires a combined key of the form: (site) | (workspace)");
         }
         if (!isWatch(siteWorkspaceCombo)) {
             setReviewTime( siteWorkspaceCombo, System.currentTimeMillis());
@@ -877,7 +880,7 @@ public class UserProfile implements UserRef
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("removeId")) {
             if (emailAddresses.size()<=1) {
-                throw new Exception("Can not remove an id from user who only has less than two ids!");
+                throw WeaverException.newBasic("Can not remove an id from user who only has less than two ids!");
             }
             this.removeId(input.getString("removeId"));
         }

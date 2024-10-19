@@ -264,7 +264,7 @@ public class EmailListener extends TimerTask{
             Folder popFolder = store.getFolder("INBOX");
             popFolder.open(Folder.READ_WRITE);
             if (!popFolder.isOpen()) {
-                throw new Exception("for some reason the 'INBOX' folder was not opened.");
+                throw WeaverException.newBasic("for some reason the 'INBOX' folder was not opened.");
             }
 
             ar.getSuperAdminLogFile().setEmailListenerWorking(true);
@@ -295,7 +295,7 @@ public class EmailListener extends TimerTask{
             popFolder = connectToMailServer();
 
             if (!popFolder.isOpen()) {
-                throw new Exception("for some reason the 'INBOX' folder was not opened.");
+                throw WeaverException.newBasic("for some reason the 'INBOX' folder was not opened.");
             }
             Message[] messages = popFolder.getMessages();
             if (messages == null || messages.length == 0) {

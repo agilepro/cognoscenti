@@ -95,8 +95,8 @@ public class UserManager
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
         if (!userFolder.exists()) {
-            throw new Exception("The user folder does not exist.  To protect against errors you need to create the folder: "
-                + userFolder.getAbsolutePath());
+            throw WeaverException.newBasic("The user folder does not exist.  To protect against errors you need to create the folder: %s",
+                userFolder.getAbsolutePath());
         }
 
         jsonFileName = new File(userFolder, "UserProfs.json");
@@ -434,7 +434,7 @@ public class UserManager
 
     public synchronized UserPage findOrCreateUserPage(String userKey)  throws Exception {
         if (userKey==null || userKey.length()==0) {
-            throw new Exception("Program logic error: findOrCreateUserPage needs a non-null user key");
+            throw WeaverException.newBasic("Program logic error: findOrCreateUserPage needs a non-null user key");
         }
         File userFolder = cog.getConfig().getUserFolderOrFail();
         File newPlace = new File(userFolder, userKey+".user");

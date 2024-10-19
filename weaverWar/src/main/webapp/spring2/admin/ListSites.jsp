@@ -27,14 +27,12 @@
         }
     }
     
-    boolean notFirstTime = false;
     StringBuilder emailAddressList = new StringBuilder();
     for (AddressListEntry ale : allEmail) {
-        if (notFirstTime) {
-            emailAddressList.append(",\n");
-        }
-        notFirstTime = true;
+        emailAddressList.append(ale.getName());
+        emailAddressList.append(",");
         emailAddressList.append(ale.getEmail());
+        emailAddressList.append("\n");
     }
 
 %>
@@ -217,7 +215,9 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="h1">
         Email of all owners and executives
     </div>
-    
+   
+
+<p>Copy the following list to a csv file and open as a spreadsheet</p>   
 <pre>
 <% ar.writeHtml(emailAddressList.toString()); %>
 </pre>

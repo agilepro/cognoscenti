@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * This servlet serves up pages using the following URL format:
@@ -61,7 +62,7 @@ public class RestServlet extends jakarta.servlet.http.HttpServlet {
         try {
             NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
-                throw new Exception("not initialized", ar.getCogInstance().lastFailureMsg);
+                throw WeaverException.newWrap("not initialized", ar.getCogInstance().lastFailureMsg);
             }
 
             RestHandler rh = new RestHandler(ar);

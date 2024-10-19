@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 @SuppressWarnings("serial")
 public class NameCounter extends Hashtable<String,Integer>
@@ -18,9 +19,7 @@ public class NameCounter extends Hashtable<String,Integer>
     }
 
 
-    public List<String> getSortedKeys()
-        throws Exception
-    {
+    public List<String> getSortedKeys() throws Exception {
         try {
             ArrayList<String> sortedKeys = new ArrayList<String>();
             Enumeration<String> unsorted = keys();
@@ -31,7 +30,7 @@ public class NameCounter extends Hashtable<String,Integer>
             return sortedKeys;
         }
         catch (Exception e) {
-            throw new Exception("Failure creating a sorted Enumeration object", e);
+            throw WeaverException.newWrap("Failure creating a sorted Enumeration object", e);
         }
     }
 

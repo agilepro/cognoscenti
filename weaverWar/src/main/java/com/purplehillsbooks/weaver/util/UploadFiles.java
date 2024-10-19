@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 /**
  * @publish extension
  */
@@ -35,7 +37,7 @@ public class UploadFiles {
 
     protected void addFile(UploadFile newFile) throws Exception {
         if (newFile == null) {
-            throw new IllegalArgumentException("Null file passed to addFile.  File must not be null.");
+            throw WeaverException.newBasic("Null file passed to addFile.  File must not be null.");
         }
         m_files.add(newFile);
     }

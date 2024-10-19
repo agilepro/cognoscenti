@@ -113,7 +113,7 @@ public class ProjectGoalController extends BaseController {
                 return;
             }
             if(goal.isPassive()) {
-                throw new Exception("Passive goals are not supported any more");
+                throw WeaverException.newBasic("Passive goals are not supported any more");
             }
             boolean isLoggedIn = ar.isLoggedIn();
 
@@ -725,7 +725,9 @@ public class ProjectGoalController extends BaseController {
             else {
                 int didVal = DOMFace.safeConvertInt(did);
                 if (didVal<=0) {
-                    throw new Exception("Don't understand the decision number: "+didVal);
+                    throw WeaverException.newBasic(
+                        "Don't understand the decision number: (%s)",
+                        didVal);
                 }
                 dr = ngw.findDecisionOrFail(didVal);
                 dr.updateDecisionFromJSON(decisionInfo, ngw, ar);
@@ -891,7 +893,9 @@ public class ProjectGoalController extends BaseController {
 
             GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
             if (oldGoal==null) {
-                throw new Exception("Unable to find a action item with id="+goalId);
+                throw WeaverException.newBasic(
+                    "Unable to find a action item with id=%s",
+                    goalId);
             }
 
             JSONObject goalJSON = oldGoal.getJSON4Goal(fromWS);

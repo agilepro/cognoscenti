@@ -303,7 +303,7 @@ public class EmailRecord extends DOMFace
      */
     public File getAttachPath(String attId) throws Exception  {
         if (attachmentPaths==null) {
-            throw new Exception("EmailRecord object has not been prepared for sending, and so can not return attachment paths.");
+            throw WeaverException.newBasic("EmailRecord object has not been prepared for sending, and so can not return attachment paths.");
         }
         return attachmentPaths.get(attId);
     }
@@ -315,7 +315,7 @@ public class EmailRecord extends DOMFace
      */
     public MemFile getAttachContents(String attId) throws Exception  {
         if (attachmentContents==null) {
-            throw new Exception("EmailRecord object has not been prepared for sending, and so can not return attachment contents.");
+            throw WeaverException.newBasic("EmailRecord object has not been prepared for sending, and so can not return attachment contents.");
         }
         MemFile mf = attachmentContents.get(attId);
         if (mf==null) {

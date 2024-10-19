@@ -128,17 +128,13 @@ public class NGSection extends DOMFace
     * Set the 'value' of this section as text.
     * Only for simple wiki value sections
     */
-    public void setText(String textValue, AuthRequest ar)
-        throws Exception
-    {
-        if (fEle==null)
-        {
-            throw new RuntimeException("Why is the fEle variable null?????");
+    public void setText(String textValue, AuthRequest ar) throws Exception {
+        if (fEle==null) {
+            throw WeaverException.newBasic("Why is the fEle variable null?????");
         }
 
         setScalar("wiki", textValue);
-        if (ar!=null)
-        {
+        if (ar!=null) {
             setLastModify(ar);
         }
     }

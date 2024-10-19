@@ -146,7 +146,7 @@ public class MainTabsViewControler extends BaseController {
             String jspName = ar.reqParam("jsp");
             UserProfile user = ar.getUserProfile();
             if (user==null) {
-                throw new Exception("User is not logged in or has no user profile");
+                throw WeaverException.newBasic("User is not logged in or has no user profile");
             }
             UserPage userPage = user.getUserPage();
             JSONArray learningPathList = userPage.getLearningPathForUser(jspName);
@@ -192,7 +192,7 @@ public class MainTabsViewControler extends BaseController {
         try{
             UserProfile user = ar.getUserProfile();
             if (user==null) {
-                throw new Exception("User is not logged in or has no user profile");
+                throw WeaverException.newBasic("User is not logged in or has no user profile");
             }
             JSONObject postedObject = this.getPostedObject(ar);
             String jspName = postedObject.getString("jsp");
@@ -272,7 +272,9 @@ public class MainTabsViewControler extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             String expectedMn = ngw.emailDependentMagicNumber(email);
             if (!expectedMn.equals(mn)) {
-                throw new Exception("Something is wrong, improper request for email address "+email);
+                throw WeaverException.newBasic(
+                    "Something is wrong, improper request for email address %s",
+                    email);
             }
 
             String cmd = ar.reqParam("cmd");
@@ -283,7 +285,9 @@ public class MainTabsViewControler extends BaseController {
                 ngw.getSite().flushUserCache();
             }
             else {
-                throw new Exception("emailAdjustmentActionForm does not understand the cmd "+cmd);
+                throw WeaverException.newBasic(
+                    "emailAdjustmentActionForm does not understand the cmd %s",
+                    cmd);
             }
 
             response.sendRedirect(go);

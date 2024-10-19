@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AuthRequest;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.x5.template.providers.TemplateProvider;
 
 public class TemplateProviderWeaver extends TemplateProvider {
@@ -58,7 +59,7 @@ public class TemplateProviderWeaver extends TemplateProvider {
         try {
             //System.out.println("TemplateProviderWeaver.loadContainerDoc called for template="+templateName);
             if (!templateName.endsWith(".chtml")) {
-                throw new Exception("Something is wrong, the file should end with .chtml");
+                throw WeaverException.newBasic("Something is wrong, the file should end with .chtml");
             }
             File templateFile = ar.findChunkTemplate(templateName);
             //System.out.println("TemplateProviderWeaver found template="+templateFile.getAbsolutePath());

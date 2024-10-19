@@ -6,7 +6,7 @@ import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGRole;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.testframe.TestDriver;
 import com.purplehillsbooks.testframe.TestRecorder;
 import com.purplehillsbooks.testframe.TestSet;
@@ -57,11 +57,11 @@ public class TestBuildSite implements TestSet {
         //a special symbol ''
         int pos = name.indexOf("!@#$%^&*");
         if (pos<0) {
-            throw new Exception("Strange.  Found a site with the key '"+siteKey+"' but the name does not have special punctuation in it, so please delete this manually");
+            throw WeaverException.newBasic("Strange.  Found a site with the key '"+siteKey+"' but the name does not have special punctuation in it, so please delete this manually");
         }
 
         if (testSiteCon.isWorkspace()) {
-            throw new Exception("Strange.  Found a site with the key '"+siteKey+"' but it is not a NGBook .... don't know what to do with it.");
+            throw WeaverException.newBasic("Strange.  Found a site with the key '"+siteKey+"' but it is not a NGBook .... don't know what to do with it.");
         }
 
         NGBook testSite = testSiteCon.getSite();
@@ -186,7 +186,7 @@ public class TestBuildSite implements TestSet {
 
     private void assertNotNull(String id, Object testVal) throws Exception {
         if (null==testVal) {
-            throw new Exception(id + " Test object was null, further testing must be aborted.");
+            throw WeaverException.newBasic(id + " Test object was null, further testing must be aborted.");
         }
     }
 

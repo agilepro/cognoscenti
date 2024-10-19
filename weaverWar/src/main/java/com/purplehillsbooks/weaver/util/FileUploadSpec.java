@@ -71,8 +71,7 @@ public class FileUploadSpec
 
 
     //this routine can only be called once, so why not make it part of initialize?
-    public UploadFiles parsePostedContent()
-        throws Exception {
+    public UploadFiles parsePostedContent() throws Exception {
         long totalFileSize = 0L;
         boolean found = false;
         boolean isFile = false;
@@ -145,11 +144,11 @@ public class FileUploadSpec
                     long thisDataSize = (m_endData - m_startData) + 1;
                     if(m_maxFileSize > 0 && thisDataSize > m_maxFileSize)
                     {
-                        throw new SecurityException("Size exceeded for this file : " + fileName + ". The max file size is " + m_maxFileSize);
+                        throw WeaverException.newBasic("Size exceeded for this file : " + fileName + ". The max file size is " + m_maxFileSize);
                     }
                     totalFileSize += (m_endData - m_startData) + 1;
                     if(m_totalMaxFileSize > 0 && totalFileSize > m_totalMaxFileSize) {
-                        throw new SecurityException("Total File Size exceeded. The max total size is " + m_totalMaxFileSize);
+                        throw WeaverException.newBasic("Total File Size exceeded. The max total size is " + m_totalMaxFileSize);
                     }
                 }
                 UploadFile newFile = new UploadFile(this, dataHeader, m_binArray, m_startData, m_endData);

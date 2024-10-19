@@ -23,6 +23,7 @@ package com.purplehillsbooks.weaver;
 import java.util.List;
 
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * This is a sub class of WikiConverter that handles the HTML to WIKI conversion
@@ -52,7 +53,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
     */
     public static String makeHtmlString(AuthRequest destination, String tv) throws Exception {
         if (destination.ngp==null) {
-            throw new Exception("makeHtmlString requires the AuthRequest to have a ngp object");
+            throw WeaverException.newBasic("makeHtmlString requires the AuthRequest to have a ngp object");
         }
         MemFile htmlChunk = new MemFile();
         AuthDummy dummy = new AuthDummy(destination.getUserProfile(), htmlChunk.getWriter(), destination.getCogInstance());
@@ -82,7 +83,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         throws Exception
     {
         if (ar.ngp==null) {
-            throw new RuntimeException("outputProperLink requires the AuthRequest to have a ngp object");
+            throw WeaverException.newBasic("outputProperLink requires the AuthRequest to have a ngp object");
         }
         linkContentText = linkContentText.trim();
         int barPos = linkContentText.indexOf("|");

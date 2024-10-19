@@ -85,7 +85,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
             NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
-                throw new Exception("Server is not ready to handle requests.");
+                throw WeaverException.newBasic("Server is not ready to handle requests.");
             }
             doAuthenticatedGet(ar);
         }
@@ -99,13 +99,9 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
         ar.logCompletedRequest();
     }
 
-    private void doAuthenticatedGet(AuthRequest ar)  throws Exception {
+    private void doAuthenticatedGet(AuthRequest ar) {
 
         try {
-            //if (!ar.isLoggedIn()) {
-            //    throw new Exception("must be logged in to get APU information ... for now");
-            //}
-
             UserDecoder userDec = new UserDecoder(ar);
 
             JSONObject root = new JSONObject();
@@ -171,7 +167,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
     private JSONObject getLicenseInfo(License lic) throws Exception {
         JSONObject licenseInfo = new JSONObject();
         if (lic == null) {
-            throw new Exception("Program Logic Error: null license passed to getLicenseInfo");
+            throw WeaverException.newBasic("Program Logic Error: null license passed to getLicenseInfo");
         }
         licenseInfo.put("id", lic.getId());
         licenseInfo.put("timeout", lic.getTimeout());
@@ -189,7 +185,7 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
         JSONArray goalArray = new JSONArray();
 
         if (up == null) {
-            throw new Exception("invalid parameter to getTaskList");
+            throw WeaverException.newBasic("invalid parameter to getTaskList");
         }
 
         for (NGPageIndex ngpi : ar.getCogInstance().getWorkspacesUserIsIn(up)) {

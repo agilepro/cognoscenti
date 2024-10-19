@@ -57,7 +57,7 @@ public class SuperAdminLogFile extends DOMFile {
 
         if (objectId == null || modUser == null || context == null
                 || context.equals("")) {
-            throw new RuntimeException(
+            throw WeaverException.newBasic(
                     "parameter is required to log an event for Super Admin");
         }
 

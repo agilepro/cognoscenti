@@ -41,35 +41,7 @@ public class RemoteLinkCombo
     public String folderId;
     public String rpath;
 
-/*
-    public static RemoteLinkCombo parseLink(String rLink) throws Exception
-    {
-        if (rLink==null || rLink.length()==0) {
-            return new RemoteLinkCombo("", "", "");
-        }
-        int atPos = rLink.indexOf('@');
-        if (atPos<0)
-        {
-            throw WeaverException.newBasic("Error parsing remote link: there is no @ present in ("+rLink+")  "
-                +"Format is {user}@{folder}/{path}.  "
-                +"This is probably an indication of a corrupted data file.");
-        }
 
-        int slashPos = rLink.indexOf('/', atPos);
-        if (slashPos<0)
-        {
-            throw WeaverException.newBasic("Error parsing remote link: there is no slash present after the @.  "
-                +"Format is {user}@{folder}/{path}.  "
-                +"This is probably an indication of a corrupted data file.");
-        }
-
-        String userKey  = rLink.substring(0, atPos);
-        String folderId = rLink.substring(atPos+1, slashPos);
-        String rpath    = rLink.substring(slashPos);
-
-        return new RemoteLinkCombo(userKey, folderId, rpath);
-    }
-*/
     public RemoteLinkCombo(String _userKey, String _folderId, String _rpath)
     {
         if (_userKey==null) {
