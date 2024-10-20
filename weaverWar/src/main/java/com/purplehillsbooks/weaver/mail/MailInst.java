@@ -414,7 +414,8 @@ public class MailInst extends JSONWrapper {
 
             try {
                 addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 throw WeaverException.newWrap("Error while attempting to send email to (%s)", ex, addressee);
             }
 
@@ -455,7 +456,8 @@ public class MailInst extends JSONWrapper {
             if (transport != null) {
                 try {
                     transport.close();
-                } catch (Exception ce) { /* ignore this exception */
+                }
+                catch (Exception ce) { /* ignore this exception */
                     JSONException.traceException(System.out, ce, "transport.close() threw an exception in a finally block!  Ignored!");
                 }
             }

@@ -46,7 +46,6 @@ import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**

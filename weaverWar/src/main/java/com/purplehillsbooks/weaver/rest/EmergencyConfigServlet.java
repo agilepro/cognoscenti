@@ -169,7 +169,8 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
 
             resp.sendRedirect(go);
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             handleException(e, req, resp);
         }
     }
@@ -191,7 +192,8 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
         try {
             displayMsgPage(req, resp, e, "Error.htm");
             return;
-        } catch (Exception eeeee) {
+        } 
+        catch (Exception eeeee) {
             // nothing we can do here...
         }
     }

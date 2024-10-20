@@ -652,7 +652,8 @@ public class BaseController {
             ar.resp.setContentType("application/json");
             errorResponse.write(ar.resp.writer, 2, 0);
             ar.flush();
-        } catch (Exception eeeee) {
+        } 
+        catch (Exception eeeee) {
             // nothing we can do here...
             System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().threadId()+", "+eeeee.toString());
         }

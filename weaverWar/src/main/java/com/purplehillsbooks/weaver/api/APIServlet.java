@@ -140,7 +140,6 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
         }
         catch (Exception e) {
             Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
-
             streamException(ctx, ar);
         }
         finally {
@@ -182,7 +181,8 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             }
             ar.flush();
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
@@ -514,7 +514,8 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
             ar.resp.setContentType("application/json");
             errorResponse.write(ar.resp.writer, 2, 0);
             ar.flush();
-        } catch (Exception eeeee) {
+        } 
+        catch (Exception eeeee) {
             // nothing we can do here...
             ar.logException("API Servlet Error Within Error", eeeee);
         }

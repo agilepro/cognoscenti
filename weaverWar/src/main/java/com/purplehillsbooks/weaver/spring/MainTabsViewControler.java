@@ -130,7 +130,8 @@ public class MainTabsViewControler extends BaseController {
                 streamJSP(ar, "SearchAllNotes.jsp");
             }
 
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             showDisplayException(ar, 
                     WeaverException.newWrap("Failed to open draft topics page of workspace %s in site %s.", 
                         ex, pageId, siteId));
@@ -230,7 +231,8 @@ public class MainTabsViewControler extends BaseController {
 
              streamJSPAnon(ar, "Index.jsp");  /*needtest*/
              return;
-         }catch(Exception e){
+         }
+         catch(Exception e){
              showDisplayException(ar, WeaverException.newWrap(
                 "Failed to open welcome page." , e));
          }
@@ -368,7 +370,8 @@ public class MainTabsViewControler extends BaseController {
                 resultList.put(srr.getJSON());
             }
             sendJsonArray(ar, resultList);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = WeaverException.newWrap("Unable to search for topics.", ex);
             streamException(ee, ar);
         }
@@ -435,7 +438,8 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = gr.getJSON4Goal(ngw);
               saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
               sendJson(ar, repo);
-          }catch(Exception ex){
+          }
+          catch(Exception ex){
               Exception ee = WeaverException.newWrap("Unable to create Action Item .", ex);
               streamException(ee, ar);
           }
@@ -467,7 +471,8 @@ public class MainTabsViewControler extends BaseController {
                   ar.getCogInstance().getUserManager().saveUserProfiles();
               }
               response.sendRedirect(go);
-          }catch(Exception ex){
+          }
+          catch(Exception ex){
               throw WeaverException.newWrap("Unable to set your required user full name", ex);
           }
       }

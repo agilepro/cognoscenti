@@ -476,7 +476,8 @@ public class HtmlToWikiConverter2 {
             hcb.setSSLHostnameVerifier(SSLPatch.getAllHostVerifier());
             return hcb.build();
             
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             return null;
         }
     }

@@ -35,17 +35,15 @@ package com.purplehillsbooks.weaver.exception;
  * only it does not kill the entire JVM, instead it it just quits the
  * handling of this particular browser request.
  *
- * This does not carry a message.  This class should never be used to wrap
- * another exception.  An exception should be handled or recorded, and
+ * This does not carry a message. This class should never be used to wrap
+ * another exception. An exception should be handled or recorded, and
  * then this can be used to get the rest of the way out of the call stack.
  */
 @SuppressWarnings("serial")
-public class ServletExit extends Exception
-{
+public class ServletExit extends Exception {
 
     public ServletExit() {
         super();
     }
-
 
 }

@@ -104,7 +104,8 @@ public class CreateProjectController extends BaseController {
 
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = WeaverException.newWrap("Unable to create workspace in Site: %s", ex, siteId);
             streamException(ee, ar);
         }

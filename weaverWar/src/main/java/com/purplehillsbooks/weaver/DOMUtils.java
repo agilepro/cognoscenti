@@ -60,28 +60,26 @@ import com.purplehillsbooks.xml.Mel;
  */
 public class DOMUtils {
 
-     /**
-      * Enforce the fact that this object has only static methods
-      * by having a private constructor. No reason to ever construct one of these
-      */
-  private DOMUtils() {
-  }
-
+    /**
+     * Enforce the fact that this object has only static methods
+     * by having a private constructor. No reason to ever construct one of these
+     */
+    private DOMUtils() {
+    }
 
     /**
-    * Returns the text of all the chidren of a node as a single string
-    *
-    * @param node is the parent of the text
-    * @param nodeName
-    */
+     * Returns the text of all the chidren of a node as a single string
+     *
+     * @param node     is the parent of the text
+     * @param nodeName
+     */
     public static String textValueOf(
-        Node node,
-        boolean trim)
-    {
-        // unfold the loop.  99.9% of the time, the XML will have a
-        // single text node.  Memory is much more efficiently handled
+            Node node,
+            boolean trim) {
+        // unfold the loop. 99.9% of the time, the XML will have a
+        // single text node. Memory is much more efficiently handled
         // if the string from that text node is used directly, instead
-        // of being copied into the string buffer.   Unfold the loop,
+        // of being copied into the string buffer. Unfold the loop,
         // and if there is a single child node, simply return that
         // value.
         Node child = skipToNextTextNode(node.getFirstChild());
@@ -92,8 +90,7 @@ public class DOMUtils {
         if (nextChild == null) {
             if (trim) {
                 return child.getNodeValue().trim();
-            }
-            else {
+            } else {
                 return child.getNodeValue();
             }
         }
@@ -103,16 +100,14 @@ public class DOMUtils {
         StringBuilder text = new StringBuilder();
         if (trim) {
             text.append(child.getNodeValue().trim());
-        }
-        else {
+        } else {
             text.append(child.getNodeValue());
         }
         child = nextChild;
         while (child != null) {
             if (trim) {
                 text.append(child.getNodeValue().trim());
-            }
-            else {
+            } else {
                 text.append(child.getNodeValue());
             }
             child = skipToNextTextNode(child.getNextSibling());
@@ -120,16 +115,14 @@ public class DOMUtils {
         return text.toString();
     }
 
-
-  /**
-   * @returns the text value of a single node
-   * @param contextNode
-   * @param nodeName is the name of the subelement to find, if there
-   *        are multiple then it finds and returns only the first one.
-   * @param trim
-   */
-    public static String textValueOfChild(Node contextNode, String nodeName, boolean trim)
-    {
+    /**
+     * @returns the text value of a single node
+     * @param contextNode
+     * @param nodeName    is the name of the subelement to find, if there
+     *                    are multiple then it finds and returns only the first one.
+     * @param trim
+     */
+    public static String textValueOfChild(Node contextNode, String nodeName, boolean trim) {
         Node node = getFirstNodeByTagName(contextNode, nodeName);
         if (node == null) {
             return null;
@@ -137,29 +130,26 @@ public class DOMUtils {
         return textValueOf(node, trim);
     }
 
-    public static String getChildText(Element parent, String name)
-    {
+    public static String getChildText(Element parent, String name) {
         Element child = getChildElement(parent, name);
-        if (child==null) {
+        if (child == null) {
             return "";
         }
         return textValueOf(child, true);
     }
 
-
-  /**
-   * @returns the text value of nodes with the specified name
-   * @param contextNode
-   * @param nodeName
-   * @param trim
-   */
+    /**
+     * @returns the text value of nodes with the specified name
+     * @param contextNode
+     * @param nodeName
+     * @param trim
+     */
     public static String[] textValuesOfAll(Node contextNode, String nodeName, boolean trim)
-        throws Exception
-    {
+            throws Exception {
         NodeList nodes = findNodesOneLevel(contextNode, nodeName);
         int last = nodes.getLength();
         String[] retval = new String[last];
-        for (int i=0; i<last; i++) {
+        for (int i = 0; i < last; i++) {
             Node n = nodes.item(i);
             if (n == null) {
                 continue; // there are strange cases where it can be null
@@ -169,18 +159,16 @@ public class DOMUtils {
         return retval;
     }
 
-
     // PRIVATE:
     // if text node passed in, then that is returned.
     // if not, skips nodes that are not text nodes.
     // returns null when gets to the last sibling.
-    private static Node skipToNextTextNode(Node child)
-    {
-        if (child==null) {
+    private static Node skipToNextTextNode(Node child) {
+        if (child == null) {
             return null;
         }
         while (child.getNodeType() != Node.CDATA_SECTION_NODE &&
-               child.getNodeType() != Node.TEXT_NODE) {
+                child.getNodeType() != Node.TEXT_NODE) {
             child = child.getNextSibling();
             if (child == null) {
                 return null;
@@ -189,20 +177,17 @@ public class DOMUtils {
         return child;
     }
 
-
     /////////////////// ONE CHILD ///////////////////////
 
-
     /**
-    * Returns the first child (direct descendant) with the specified name
-    * Returns null if no child is found with that name.
-    * Should be called 'findChildByName'
-    *
-    * @param contextNode
-    * @param nodeName
-    */
-    public static Node getFirstNodeByTagName(Node contextNode, String nodeName)
-    {
+     * Returns the first child (direct descendant) with the specified name
+     * Returns null if no child is found with that name.
+     * Should be called 'findChildByName'
+     *
+     * @param contextNode
+     * @param nodeName
+     */
+    public static Node getFirstNodeByTagName(Node contextNode, String nodeName) {
         // Use DOM traversal
         Node child = contextNode.getFirstChild();
         while (child != null) {
@@ -214,24 +199,23 @@ public class DOMUtils {
         return null;
     }
 
-    public static Element getChildElement(Element parent, String name)
-    {
+    public static Element getChildElement(Element parent, String name) {
         NodeList childNdList = parent.getChildNodes();
-        if (childNdList==null) {
+        if (childNdList == null) {
             return null;
         }
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
+        for (int i = 0; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
 
-            if (n==null) {
-                //apparently, there is some situations where the Nodellist will return
-                //a null.  Have gotten a null opinter exception on the line below.
-                //don't understand how it happens, but this seems to happen, just skip it.
+            if (n == null) {
+                // apparently, there is some situations where the Nodellist will return
+                // a null. Have gotten a null opinter exception on the line below.
+                // don't understand how it happens, but this seems to happen, just skip it.
                 continue;
             }
 
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue ;
+                continue;
             }
             if (name.equals(n.getLocalName())) {
                 return (Element) n;
@@ -243,37 +227,32 @@ public class DOMUtils {
         return null;
     }
 
-    public static Element getOrCreateChild(Document doc, Element parent, String name)
-    {
+    public static Element getOrCreateChild(Document doc, Element parent, String name) {
         Element ret = getChildElement(parent, name);
-        if (ret==null)
-        {
+        if (ret == null) {
             ret = createChildElement(doc, parent, name);
         }
         return ret;
     }
 
+    /////////////////// ALL CHILDREN ///////////////////////
 
+    /**
+     * Get an ordered list of all ELEMENTs that are children of a context Node
+     * NOTE: This is DIFFERENT THAN getElementsByTagName("*")
+     * because this method does NOT traverse the full tree!!! It just gets direct
+     * children.
+     *
+     * @param contextNode - a Node/Element from which we want to get all the child
+     *                    elements
+     * @return a List of org.w3c.dom.Element objects
+     *         or an empty List if there are no child elements
+     */
 
-
-
-    /////////////////// ALL CHILDREN  ///////////////////////
-
-   /**
-   * Get an ordered list of all ELEMENTs that are children of a context Node
-   * NOTE: This is DIFFERENT THAN   getElementsByTagName("*")
-   *   because this method does NOT traverse the full tree!!! It just gets direct children.
-   *
-   * @param contextNode - a Node/Element from which we want to get all the child elements
-   * @return a List of org.w3c.dom.Element objects
-   * or an empty List if there are no child elements
-   */
-
-    public static List<Element> getChildElementsList(Node contextNode)
-    {
-        ArrayList<Element> list = new ArrayList<Element>() ;
+    public static List<Element> getChildElementsList(Node contextNode) {
+        ArrayList<Element> list = new ArrayList<Element>();
         NodeList childNdList = contextNode.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
+        for (int i = 0; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
             if (n == null) {
                 continue; // there are strange cases where it can be null
@@ -283,62 +262,59 @@ public class DOMUtils {
             }
             list.add((Element) n);
         }
-        return list ;
+        return list;
     }
 
-
-
-
-    /////////////////// SET OF CHILDREN  ///////////////////////
+    /////////////////// SET OF CHILDREN ///////////////////////
 
     public static List<Element> getNamedChildrenVector(Element from, String name) {
-        List<Element> list = new ArrayList<Element>() ;
+        List<Element> list = new ArrayList<Element>();
         NodeList childNdList = from.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
+        for (int i = 0; i < childNdList.getLength(); i++) {
+            org.w3c.dom.Node n = childNdList.item(i);
             if (n == null) {
                 continue; // there are strange cases where it can be null
             }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue ;
+                continue;
             }
             if (name.equals(n.getLocalName())) {
-                list.add((Element)n) ;
+                list.add((Element) n);
             }
             if (name.equals(n.getNodeName())) {
-                list.add((Element)n) ;
+                list.add((Element) n);
             }
         }
         return list;
     }
 
     /**
-    * Searches a Node for children matching a particular Local Name
-    * @param contextNode - the Node to start searching from
-    * @param Local Name - the LOCAL NAME of the child node to search for (assuming of course that the DOM Document
-    *            supports namespaces. If not, this will search for a full name matching this string.
-    * @param recursively - If true - this will recurse downward in the Node tree.
-    *   If false, then this will only search DIRECT CHILD NODES of the contextNode.
-    */
+     * Searches a Node for children matching a particular Local Name
+     * 
+     * @param contextNode - the Node to start searching from
+     * @param Local       Name - the LOCAL NAME of the child node to search for
+     *                    (assuming of course that the DOM Document
+     *                    supports namespaces. If not, this will search for a full
+     *                    name matching this string.
+     * @param recursively - If true - this will recurse downward in the Node tree.
+     *                    If false, then this will only search DIRECT CHILD NODES of
+     *                    the contextNode.
+     */
     private static NodeList findNodes(Node contextNode, String expr, boolean recursively)
-        throws Exception
-    {
-        if (contextNode == null)
-        {
+            throws Exception {
+        if (contextNode == null) {
             // recover gracefully
             return new NodeListImpl();
         }
-        try
-        {
+        try {
             // Use DOM traversal on children
             NodeListImpl nodeList = new NodeListImpl();
             Node child = contextNode.getFirstChild();
-            while (child != null)
-            {
-                String lclNm = child.getLocalName() ;
-                String fullNm = child.getNodeName() ;
+            while (child != null) {
+                String lclNm = child.getLocalName();
+                String fullNm = child.getNodeName();
                 if ((lclNm != null && lclNm.equals(expr)) ||
-                    (fullNm != null && fullNm.equals(expr))) {
+                        (fullNm != null && fullNm.equals(expr))) {
                     nodeList.add(child);
                 }
                 if (recursively) {
@@ -347,100 +323,80 @@ public class DOMUtils {
                 child = child.getNextSibling();
             }
             return nodeList;
-       }
-       catch (Exception e) {
-           throw WeaverException.newWrap("Error while searching data file for node (%s)", e, expr);
-       }
+        } catch (Exception e) {
+            throw WeaverException.newWrap("Error while searching data file for node (%s)", e, expr);
+        }
     }
 
-
-  /**
-   * Recursively searches a Node for children matching a particular Local Name
-   * @param contextNode
-   * @param Local Name
-   */
+    /**
+     * Recursively searches a Node for children matching a particular Local Name
+     * 
+     * @param contextNode
+     * @param Local       Name
+     */
     public static NodeList findNodesOneLevel(Node contextNode, String expr)
-        throws Exception
-    {
-        return findNodes(contextNode, expr, true) ;
+            throws Exception {
+        return findNodes(contextNode, expr, true);
     }
-
-
-
 
     public static Node findNodeWithAttrValue(Document doc, String elementName,
-                       String attrName, String attrValue)
-        throws Exception
-    {
-        NodeList elmts = doc.getElementsByTagNameNS("*", elementName) ; ;
-        for (int i = 0 ; i < elmts.getLength(); i++)
-        {
+            String attrName, String attrValue)
+            throws Exception {
+        NodeList elmts = doc.getElementsByTagNameNS("*", elementName);
+        ;
+        for (int i = 0; i < elmts.getLength(); i++) {
             Node n = elmts.item(i);
             if (n == null) {
                 continue; // there are strange cases where it can be null
             }
             NamedNodeMap attrs = n.getAttributes();
-            if (attrs != null && attrs.getLength() > 0)
-            {
-                Node attrNode = attrs.getNamedItem(attrName) ;
-                if (attrNode != null && attrValue.equals(attrNode.getNodeValue()))
-                {
-                    return elmts.item(i) ;
+            if (attrs != null && attrs.getLength() > 0) {
+                Node attrNode = attrs.getNamedItem(attrName);
+                if (attrNode != null && attrValue.equals(attrNode.getNodeValue())) {
+                    return elmts.item(i);
                 }
             }
         }
-        return null ;
+        return null;
     }
-
 
     ////////////////////////// REMOVE / REPLACE /////////////////////////////
 
-
-    public static void removeAllChildren(Element parent)
-    {
+    public static void removeAllChildren(Element parent) {
         NodeList childNdList = parent.getChildNodes();
         int last = childNdList.getLength();
-        for (int i=last-1; i>=0 ; i--)
-        {
+        for (int i = last - 1; i >= 0; i--) {
             org.w3c.dom.Node n = childNdList.item(i);
-            if (n==null) {
-                continue;  //there are strange cases where it can be null
+            if (n == null) {
+                continue; // there are strange cases where it can be null
             }
             parent.removeChild(n);
         }
 
-        //DEBUG: make sure it worked
+        // DEBUG: make sure it worked
         childNdList = parent.getChildNodes();
-        if (childNdList!=null)
-        {
+        if (childNdList != null) {
             last = childNdList.getLength();
-            if (last>0)
-            {
+            if (last > 0) {
                 throw new RuntimeException("Attempted to remove all children, but it did not work!");
             }
         }
     }
 
-
-    public static void removeAllNamedChild(Element parent, String name)
-    {
+    public static void removeAllNamedChild(Element parent, String name) {
         NodeList childNdList = parent.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++)
-        {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n==null) {
-                continue;  //there are strange cases where it can be null
+        for (int i = 0; i < childNdList.getLength(); i++) {
+            org.w3c.dom.Node n = childNdList.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
             }
-            if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE)
-            {
-                continue ;
+            if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
+                continue;
             }
-            if (name.equals(n.getLocalName()))
-            {
+            if (name.equals(n.getLocalName())) {
                 parent.removeChild(n);
             }
-            if (name.equals(n.getNodeName()))
-            {
+            if (name.equals(n.getNodeName())) {
                 parent.removeChild(n);
             }
         }
@@ -449,10 +405,9 @@ public class DOMUtils {
     // This method walks the document and removes all nodes
     // of the specified type and specified name.
     // If name is null, then the node is removed if the type matches.
-    public static void removeAll(Node node, short nodeType, String name)
-    {
-        if (node==null) {
-            return; //ignore if passed a null
+    public static void removeAll(Node node, short nodeType, String name) {
+        if (node == null) {
+            return; // ignore if passed a null
         }
         if (node.getNodeType() == nodeType &&
                 (name == null || node.getNodeName().equals(name))) {
@@ -460,51 +415,44 @@ public class DOMUtils {
         } else {
             // Visit the children
             NodeList list = node.getChildNodes();
-            for (int i=0; i<list.getLength(); i++) {
+            for (int i = 0; i < list.getLength(); i++) {
                 removeAll(list.item(i), nodeType, name);
             }
         }
     }
 
     /**
-    * passing a null removed all evidence of a tag by that name
-    * removed all duplicate values, and leaves with one child
-    * of the name and value specified.
-    */
-    public static void setChildValue(Document doc, Element parent, String childName, String newValue)
-    {
+     * passing a null removed all evidence of a tag by that name
+     * removed all duplicate values, and leaves with one child
+     * of the name and value specified.
+     */
+    public static void setChildValue(Document doc, Element parent, String childName, String newValue) {
         Element child = getChildElement(parent, childName);
 
-        if (newValue==null)
-        {
+        if (newValue == null) {
             removeAllNamedChild(parent, childName);
             return;
         }
 
-        if (child==null)
-        {
+        if (child == null) {
             child = createChildElement(doc, parent, childName, newValue);
-        }
-        else
-        {
+        } else {
             removeAllChildren(child);
             DOMUtils.addChildText(doc, child, newValue);
         }
     }
 
-
-
     ///////////////////////// CREATE / CONSTRUCT /////////////////////////////
 
     /**
      * This method is used to create a Child element.
-     * @param doc document on which the Child Element has to be created.
+     * 
+     * @param doc    document on which the Child Element has to be created.
      * @param parent Parent Element.
-     * @param name Tag name of the Child Element.
+     * @param name   Tag name of the Child Element.
      * @return Element.
      */
-    public static Element createChildElement(Document doc, Element parent, String name)
-    {
+    public static Element createChildElement(Document doc, Element parent, String name) {
         Element newElem = doc.createElement(name);
         parent.appendChild(newElem);
         return newElem;
@@ -512,18 +460,18 @@ public class DOMUtils {
 
     /**
      * This method is used to create a Child Text element.
-     * @param doc document on which the Text Element has to be created.
-     * @param parent Parent Element.
-     * @param name Tag name of the Text Element.
+     * 
+     * @param doc       document on which the Text Element has to be created.
+     * @param parent    Parent Element.
+     * @param name      Tag name of the Text Element.
      * @param textValue tag value of the Text Element.
      * @return Element.
      */
-    public static Element createChildElement(Document doc, Element parent, String name, String textValue)
-    {
-        //if a null is passed in, then do not create the child element
-        //at all.  Then when reading, if the element does not exist,
-        //the value will be null.  This is standard behaviod for
-        //optional element.
+    public static Element createChildElement(Document doc, Element parent, String name, String textValue) {
+        // if a null is passed in, then do not create the child element
+        // at all. Then when reading, if the element does not exist,
+        // the value will be null. This is standard behaviod for
+        // optional element.
         if (textValue == null) {
             return null;
         }
@@ -536,35 +484,31 @@ public class DOMUtils {
 
     /**
      * This method is used to create a Child Text node directly after the
-     * last child of an existing element.  Needed when you have tags and
+     * last child of an existing element. Needed when you have tags and
      * text interspursed.
-     * @param doc document on which the Text has to be created.
-     * @param parent Parent Element.
+     * 
+     * @param doc       document on which the Text has to be created.
+     * @param parent    Parent Element.
      * @param textValue tag value of the Text.
      * @return Element.
      */
-    public
-    static
-    void
-    addChildText( Document doc, Element parent, String textValue)
-    {
+    public static void addChildText(Document doc, Element parent, String textValue) {
         textValue = Mel.assureValidXMLChars(textValue);
         parent.appendChild(doc.createTextNode(textValue));
     }
 
-
     /**
      * This method is used to create an element with Attributes.
-     * @param doc document on which the Child Element has to be created.
-     * @param parent Parent Element.
-     * @param name Tag Name of the Element
-     * @param attributeNames List of Attribute names.
+     * 
+     * @param doc             document on which the Child Element has to be created.
+     * @param parent          Parent Element.
+     * @param name            Tag Name of the Element
+     * @param attributeNames  List of Attribute names.
      * @param attributeValues List of Attribute values.
      * @return Element
      */
     public static Element createChildElement(Document doc, Element parent, String name,
-                          String textValue, String[] attributeNames, String[] attributeValues)
-    {
+            String textValue, String[] attributeNames, String[] attributeValues) {
         Element newElem = doc.createElement(name);
 
         if (textValue != null) {
@@ -572,15 +516,13 @@ public class DOMUtils {
             newElem.appendChild(doc.createTextNode(textValue));
         }
 
-        for (int i=0; i< attributeNames.length; i++) {
+        for (int i = 0; i < attributeNames.length; i++) {
             newElem.setAttribute(attributeNames[i], attributeValues[i]);
         }
 
         parent.appendChild(newElem);
         return newElem;
     }
-
-
 
     ///////////////////////// DOCUMENTS /////////////////////////////
 
@@ -589,16 +531,16 @@ public class DOMUtils {
      * Pass in the name of the root node, since you ALWAYS need
      * a root node, and attaching this to the document is not like other children.
      * Retrieve the root element with the standard getDocumentElement.
+     * 
      * @return
      * @throws Exception
      */
     public static Document createDocument(String rootNodeName)
-        throws Exception
-    {
+            throws Exception {
         DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
         dfactory.setNamespaceAware(true);
         dfactory.setValidating(false);
-        DocumentBuilder bldr = dfactory.newDocumentBuilder() ;
+        DocumentBuilder bldr = dfactory.newDocumentBuilder();
         Document doc = bldr.newDocument();
         Element rootEle = doc.createElement(rootNodeName);
         doc.appendChild(rootEle);
@@ -606,12 +548,11 @@ public class DOMUtils {
     }
 
     public static Document createDocument(String rootNodeName, String schema)
-        throws Exception
-    {
+            throws Exception {
         DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
         dfactory.setNamespaceAware(true);
         dfactory.setValidating(false);
-        DocumentBuilder bldr = dfactory.newDocumentBuilder() ;
+        DocumentBuilder bldr = dfactory.newDocumentBuilder();
         Document doc = bldr.newDocument();
         Element rootEle = doc.createElement(rootNodeName);
         rootEle.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -620,119 +561,104 @@ public class DOMUtils {
         return doc;
     }
 
-
-
     ////////////////////////// READ WRITE /////////////////////////
 
     /**
      * This method is used to De-Serialize the DOM Document Object from a String.
-     * @param xmlString The XML String.
+     * 
+     * @param xmlString        The XML String.
      * @param validate
      * @param isNamespaceAware
      * @return Document of the DOM.
      * @throws Exception
      */
     public static Document convertInputStreamToDocument(
-        InputStream is, boolean validate, boolean isNamespaceAware)
-        throws Exception
-    {
+            InputStream is, boolean validate, boolean isNamespaceAware)
+            throws Exception {
         DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
         dfactory.setNamespaceAware(isNamespaceAware);
-        dfactory.setValidating(validate) ;
-        dfactory.setIgnoringElementContentWhitespace(true) ;
+        dfactory.setValidating(validate);
+        dfactory.setIgnoringElementContentWhitespace(true);
         DocumentBuilder bldr = dfactory.newDocumentBuilder();
-        bldr.setErrorHandler(new ErrorHandler()
-        {
-            public void warning (SAXParseException exception) throws SAXException {
-                //ignore warnings
+        bldr.setErrorHandler(new ErrorHandler() {
+            public void warning(SAXParseException exception) throws SAXException {
+                // ignore warnings
             }
-            public void error (SAXParseException exception) throws SAXException {
+
+            public void error(SAXParseException exception) throws SAXException {
                 // ignore parse validation errors
             }
-            public void fatalError (SAXParseException exception) throws SAXException {
-                throw exception ;
+
+            public void fatalError(SAXParseException exception) throws SAXException {
+                throw exception;
             }
         });
         Document doc = bldr.parse(new InputSource(is));
         return doc;
     }
 
-
     private static void writeDom(Document doc, OutputStream out)
-        throws Exception
-    {
+            throws Exception {
         DOMSource docSource = new DOMSource(doc);
         Transformer transformer = getXmlTransformer();
         transformer.transform(docSource, new StreamResult(out));
     }
 
     public static void writeDomToFile(Document doc, File outFile)
-        throws Exception
-    {
-        //if there is already a file, write to a temp file
+            throws Exception {
+        // if there is already a file, write to a temp file
         File tempFile = null;
         Random r = new Random();
-        do
-        {
-            tempFile = new File(outFile.toString()+"tmp-"+r.nextInt(1000));
-        }
-        while (tempFile.exists());
+        do {
+            tempFile = new File(outFile.toString() + "tmp-" + r.nextInt(1000));
+        } while (tempFile.exists());
         OutputStream fw = new FileOutputStream(tempFile);
         DOMUtils.writeDom(doc, fw);
         fw.flush();
         fw.close();
 
-        //got here without problem, ok, delete the backup file, and rename output file
-        if (outFile.exists())
-        {
+        // got here without problem, ok, delete the backup file, and rename output file
+        if (outFile.exists()) {
             outFile.delete();
         }
         tempFile.renameTo(outFile);
     }
 
-
-  /**************************************************************************
-   * Title:        A trivial ArrayList based NodeList implementation
-   * Description:
-   * @version 1.0
-   */
-    private static class NodeListImpl implements NodeList
-    {
+    /**************************************************************************
+     * Title: A trivial ArrayList based NodeList implementation
+     * Description:
+     * 
+     * @version 1.0
+     */
+    private static class NodeListImpl implements NodeList {
         private ArrayList<Node> nodeVector = null;
 
-        public NodeListImpl()
-        {
+        public NodeListImpl() {
             nodeVector = new ArrayList<Node>();
         }
 
-        public Node item(int index)
-        {
+        public Node item(int index) {
             return nodeVector.get(index);
         }
 
-        public void add(NodeList appendList)
-        {
-            for (int i = 0 ; i < appendList.getLength(); i++) {
+        public void add(NodeList appendList) {
+            for (int i = 0; i < appendList.getLength(); i++) {
                 Node n = appendList.item(i);
                 if (n == null) {
                     continue; // there are strange cases where it can be null
                 }
-                nodeVector.add(n) ;
+                nodeVector.add(n);
             }
         }
 
-        public int getLength()
-        {
+        public int getLength() {
             return nodeVector.size();
         }
 
-        public void add(Node node)
-        {
+        public void add(Node node) {
             nodeVector.add(node);
         }
     }
-
-
 
     private static Transformer getXmlTransformer() throws Exception {
         /*
@@ -764,6 +690,7 @@ public class DOMUtils {
 
     private static TransformerFactory transformerFactory = null;
     private static final String mutex2 = "goofy string";
+
     private static final void initTransformer()
             throws TransformerFactoryConfigurationError,
             TransformerConfigurationException {

@@ -46,7 +46,6 @@ import com.purplehillsbooks.weaver.util.MongoDB;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.json.SimpleException;
 
 /**
  * Support class for sending email messages based on an email configuration
@@ -235,8 +234,9 @@ public class EmailSender extends TimerTask {
                 handleGlobalEmail();
                 lastEmailProcessTime = startTime;
                 //System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
-            } catch (Exception e) {
-                SimpleException.traceException(e, "Weaver EmailSender Run Method");
+            }
+            catch (Exception e) {
+                WeaverException.traceException(e, "Weaver EmailSender Run Method");
                 if (WeaverException.contains(e, "InterruptedException")) {
                     throw WeaverException.newWrap("Got InterruptedException at the root level of EmailSender.", e);
                 }
@@ -308,7 +308,7 @@ public class EmailSender extends TimerTask {
 
             // if this is older than an hour . . . ignore it.
             if (inst.getCreateDate() < cutoffTime) {
-                System.out.println(String.format("EmailSender: message (%d) SKIPPED because it is more than 1 hour old (%s): %s", 
+                System.out.println(String.format("EmailSender: message (%d) SKIPPED because it is more than 1 hour old (%s): %s",
                         inst.getCreateDate(), inst.getAddressee(), inst.getSubject()));
                 inst.setStatus(MailInst.SKIPPED);
                 updateEmailInDB(inst);

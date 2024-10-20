@@ -113,7 +113,8 @@ public class APUServlet extends jakarta.servlet.http.HttpServlet {
             ar.resp.setContentType("application/json");
             root.write(ar.w, 2, 0);
             ar.flush();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             Exception ctx = WeaverException.newWrap("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }

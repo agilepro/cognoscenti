@@ -112,7 +112,8 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
             Writer w = resp.getWriter();
             jo.write(w);
             w.flush();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             JSONException.traceException(System.out, e, "COG-LAuth FAILURE LightweightAuthServlet handling GET request");
         }
     }

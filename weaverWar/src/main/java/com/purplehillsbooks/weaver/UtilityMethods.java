@@ -34,8 +34,8 @@ public class UtilityMethods {
             return s.substring(pos, len);
         }
         catch (Exception e) {
-            throw WeaverException.newBasic("Substring exception: [" + s + "] (len " + s.length()
-                    + ") at " + pos + " for len " + len + "; " + e.getMessage());
+            throw WeaverException.newWrap("Substring exception: [" + s + "] (len " + s.length()
+                    + ") at " + pos + " for len " + len + "; ", e);
         }
     }
 

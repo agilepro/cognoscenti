@@ -244,7 +244,8 @@ public class CommentController extends BaseController {
                 throw WeaverException.newBasic("Unrecognized command: %s", command);
             }
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = new Exception("Unable to fetch "+command+ " info from workspace "+siteId+"/"+pageId, ex);
             streamException(ee, ar);
         }
