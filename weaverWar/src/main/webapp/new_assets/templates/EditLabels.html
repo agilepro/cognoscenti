@@ -1,8 +1,9 @@
 
-<div class="modal-header mt-2 bg-primary-subtle text-primary">
-    <h5 class="modal-title" id="attachDocumentLabel">
+<div class="modal-item pt-3"></div>
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h4 class="modal-title" id="attachDocumentLabel">
     Edit Labels
-    </h5>
+    </h4>
     <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
 <div class="modal-body">
@@ -12,29 +13,29 @@
 
             <div class="spaceyTable">
             <div class="row">
-                <span class="col-3 fs-5 fw-bold">Label</span>
-                <span class="col-3 fs-5 fw-bold">Color</span>
-                <span class="col-1 fs-5 fw-bold"></span>
+                <span class="col-4 fs-5 fw-bold">Label</span>
+                <span class="col-4 fs-5 fw-bold">Color</span>
+                <span class="col-4 fs-5 fw-bold"></span>
             </div>
             <div class="row" ng-repeat="label in allLabels" ng-click="label.isEdit=true;label.editedName=label.name">
-                <div class="col-3">
+                <div class="col-4 my-3">
                     <span ng-show="label.isEdit || label.isNew">
                         <input class="form-control fs-6" style="width:200px; overflow: auto;" type="text" ng-model="label.editedName"
                         placeholder="Enter Label Name">
                     </span>
                     <span ng-hide="label.isEdit || label.isNew">
-                        <button style="background-color:{{label.color}};" class="h6" placeholder="Enter Label Name">{{label.name}}</button>
+                        <button class="btn-wide py-1 px-3" style="background-color:{{label.color}};" class="h6" placeholder="Enter Label Name">{{label.name}}</button>
                     </span>
                 </div>
 
-                <div class="col-3">
-                    <ul class="dropdown btn btn-flex" ng-show="label.isEdit || label.isNew">
-                        <li class="nav-item dropdown" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle p-4" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="col-4 my-3">
+                    <ul class="dropdown btn-flex" ng-show="label.isEdit || label.isNew">
+                        <li class="nav-item dropdown p-2 mb-0" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle p-2" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{label.color}} </a>
                     
                         <ul class="dropdown-menu" role="menu" aria-labelledby="EditLabels">
                             <li role="presentation" ng-repeat="color in colors">
-                                <a class="dropdown-item p-1" style="background-color:{{color}};"
+                                <a class="dropdown-item p-3" style="background-color:{{color}};"
                                 href="#"  ng-click="label.color=color">{{color}}</a></li>
                         </ul>
                     </li>
@@ -44,9 +45,9 @@
                     </div>
                 </div>
                 
-                <div class="col-6">
+                <div class="col-4 my-3">
                     <span ng-hide="label.isEdit || label.isNew">
-                        <button class="btn btn-flex btn-secondary" 
+                        <button class="btn btn-small btn-comment btn-flex py-1 px-2" 
                         ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
                     </span>
                     <span ng-show="label.isEdit">
@@ -64,18 +65,27 @@
         </div>
             </div>
         </div>
-
-
-    <div class="modal-header mt-2 bg-primary-subtle text-primary">
+    </div>
+</div>
+<div class="modal-header mt-2 bg-primary-subtle text-primary">
         <h5 class="modal-title" id="attachDocumentLabel">
   Create Custom Labels
         </h5>
     </div>
-        <div class="modal-body">
-            <label>Name:</label>
-            <input ng-model="newLabel.editedName" class="form-control">
-            <label>Select Custom Color: </label>{{nameMessage()}}
-            <div class="row mx-2"><input class="p-2 form-control" style="min-height: 50px;width: 200px; color: aliceblue;" type="color" ng-model="newLabel.color">
+<div class="modal-body">
+    <div class="container-fluid">
+    
+        <div class="card col-md-12 align-top">
+        <div class="card-body" >
+            <div class="row">
+            <span class="col-5">Label Name</span>
+            <span class="col-5">Select Custom Color</span>
+            </div>
+            <div class="row">
+            <span class="col-5 my-2">
+            <input ng-model="newLabel.editedName" class="p-0 form-control">
+{{nameMessage()}}</span>
+            <span class="col-5 my-2"><input class="p-0 form-control" type="color" ng-model="newLabel.color">
                 <ul class="dropdown btn btn-flex" ng-show="label.isEdit || label.isNew">
                 <li class="nav-item dropdown" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class=" dropdown-toggle p-4" id="newLabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{label.color}} </a>
@@ -87,7 +97,7 @@
                     </ul>
                 </li>
                 </ul>
-            </div>
+            </span>
         </div>
     </div>
 </div>

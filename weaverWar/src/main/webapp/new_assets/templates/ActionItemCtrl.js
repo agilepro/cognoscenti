@@ -128,7 +128,7 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
             animation: true,
             templateUrl: '../../new_assets/templates/EditLabels.html',
             controller: 'EditLabelsCtrl',
-            size: 'xl',
+            size: 'lg',
             resolve: {
                 siteInfo: function () {
                     return $scope.siteInfo;

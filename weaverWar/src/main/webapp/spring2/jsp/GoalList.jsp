@@ -620,5 +620,5 @@ function addvalue() {
 </div>
 
 <script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
-
+<script src="<%=ar.retPath%>new_assets/templates/EditLabelsCtrl.js"></script>
 

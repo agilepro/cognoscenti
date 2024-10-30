@@ -1014,6 +1014,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     //now actually get it
     refreshTopic();
+    $scope.openEditLabelsModal = function (item) {
+        
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '../../../new_assets/templates/EditLabels.html',
+            controller: 'EditLabelsCtrl',
+            size: 'lg',
+            resolve: {
+                siteInfo: function () {
+                  return $scope.siteInfo;
+                },
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            $scope.getAllLabels();
+        }, function () {
+            $scope.getAllLabels();
+        });
+    };
 });
 
 </script>
