@@ -111,27 +111,6 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         return "Attachments Format";
     }
 
-/*
-    public static void moveAttachmentsFromDeprecatedSection(NGPage ngw) throws Exception
-    {
-        NGSection oldSec = ngw.getSection("Public Attachments");
-        if (oldSec==null) {
-            throw new Exception("Null parameter passed to moveAttachmentsFromDeprecatedSection");
-        }
-        List<AttachmentRecord> wrongPlaceAtts = oldSec.getChildren("attachment", AttachmentRecord.class);
-        for (AttachmentRecord oldRec: wrongPlaceAtts)
-        {
-            AttachmentRecord newRec = oldSec.parent.createAttachment();
-            newRec.copyFrom(oldRec);
-            newRec.setId(oldRec.getId());
-
-            //now remove from the source.
-            DOMFace allSourceAttachments = oldSec.getChild("attachments", DOMFace.class);
-            allSourceAttachments.removeChild(oldRec);
-        }
-    }
-    */
-
     /**
     * pass ar=null if you do not want any history records created
     * recording that the document was removed.
@@ -153,37 +132,6 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             }
         }
     }
-
-
-    /* @Override
-    public void writePlainText(NGSection section, Writer out) throws Exception
-    {
-        assertRightAttachmentsSection(section);
-        for (AttachmentRecord attachment : section.parent.getAllAttachments())
-        {
-            SectionUtil.writeTextWithLB(attachment.getId() , out);
-            SectionUtil.writeTextWithLB(attachment.getNiceName() , out);
-            SectionUtil.writeTextWithLB(attachment.getURLValue() , out);
-            SectionUtil.writeTextWithLB(attachment.getType() , out);
-            SectionUtil.writeTextWithLB(attachment.getModifiedBy() , out);
-            SectionUtil.writeTextWithLB(Long.toString(attachment.getModifiedDate()) , out);
-            SectionUtil.writeTextWithLB(attachment.getDescription() , out);
-        }
-    }
- */
-
-    /*
-    private void assertRightAttachmentsSection(NGSection sec) throws Exception
-    {
-        //there should only be on section of type attachments, and it should
-        //be named "Attachments" so check this quickly to make sure that the
-        //right section, and only the right section is being passed here.
-        if (!"Attachments".equals(sec.getName())) {
-            throw new Exception("Internal error, SectionAttachments was passed a section that is not named 'Attachments' but is named '"+sec.getName()+"' instead");
-        }
-    }
-    */
-
 
 
     /**

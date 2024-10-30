@@ -141,7 +141,7 @@ public class MicroProfileMgr {
             throw WeaverException.newBasic("profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         if (!MicroProfileRecord.validEmailAddress(emailId)) {
-            throw new Exception("This does not look like an email address: "+emailId);
+            throw WeaverException.newBasic("This does not look like an email address: %s", emailId);
         }
 
         MicroProfileRecord profileRecord = findMicroProfileById(emailId);

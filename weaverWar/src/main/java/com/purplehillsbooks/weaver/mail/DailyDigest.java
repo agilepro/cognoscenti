@@ -118,9 +118,11 @@ public class DailyDigest {
 
 
 
-        } catch (Exception e) {
-            throw new Exception("Unable to compose and send daily digets", e);
-        } finally {
+        } 
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to compose and send daily digets", e);
+        } 
+        finally {
             NGPageIndex.clearLocksHeldByThisThread();
             logFile.writeToFile(dailyDigestFile);
         }
@@ -344,7 +346,8 @@ public class DailyDigest {
                 userLog.put("conclusion", "Nothing to Report");
             }
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             EmailSender.threadLastMsgException = e;
             arx.logException(
                     "Error while sending daily update message", e);
@@ -380,7 +383,7 @@ public class DailyDigest {
 
         for (NGPageIndex ngpi : containers) {
             if (ngpi==null) {
-                throw new Exception("How did I get a null value by iterating a List collection?");
+                throw WeaverException.newBasic("How did I get a null value by iterating a List collection?");
             }
             if (!ngpi.isWorkspace()) {
                 //ignore sites

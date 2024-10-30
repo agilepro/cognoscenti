@@ -271,7 +271,7 @@ public class AttachmentVersion {
             actualFile.delete();
         }
         if (actualFile.exists()) {
-            throw new Exception("Attempted, and unable to delete file "+actualFile);
+            throw WeaverException.newBasic("Attempted, and unable to delete file %s", actualFile);
         }
     }
 

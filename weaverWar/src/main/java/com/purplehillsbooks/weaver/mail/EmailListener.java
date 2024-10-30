@@ -188,7 +188,8 @@ public class EmailListener extends TimerTask{
                  SuperAdminLogFile salf = ar.getSuperAdminLogFile();
                  salf.setEmailListenerWorking(false);
                  salf.setEmailListenerProblem(failure);
-             } catch (Exception ex) {
+             }
+             catch (Exception ex) {
                  ar.logException("Could not set EmailListenerPropertiesFlag in superadmin.logs file.", ex);
              }
          }
@@ -235,7 +236,8 @@ public class EmailListener extends TimerTask{
             }
 
             return Session.getInstance(emailProperties, new EmailAuthenticator(user, pwd));
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
             throw WeaverException.newWrap("Unable to get the user session", e);
         }
     }
@@ -264,14 +266,15 @@ public class EmailListener extends TimerTask{
             Folder popFolder = store.getFolder("INBOX");
             popFolder.open(Folder.READ_WRITE);
             if (!popFolder.isOpen()) {
-                throw new Exception("for some reason the 'INBOX' folder was not opened.");
+                throw WeaverException.newBasic("for some reason the 'INBOX' folder was not opened.");
             }
 
             ar.getSuperAdminLogFile().setEmailListenerWorking(true);
 
             return popFolder;
 
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
             throw WeaverException.newWrap("Unable to connect to mail server", e);
         } finally {
             // close the store.
@@ -280,7 +283,8 @@ public class EmailListener extends TimerTask{
                 /*
                 try {
                     store.close();
-                } catch (Exception me) {
+                }
+                catch (Exception me) {
                     // ignore this exception
                 }
                 */
@@ -295,7 +299,7 @@ public class EmailListener extends TimerTask{
             popFolder = connectToMailServer();
 
             if (!popFolder.isOpen()) {
-                throw new Exception("for some reason the 'INBOX' folder was not opened.");
+                throw WeaverException.newBasic("for some reason the 'INBOX' folder was not opened.");
             }
             Message[] messages = popFolder.getMessages();
             if (messages == null || messages.length == 0) {
@@ -362,14 +366,17 @@ public class EmailListener extends TimerTask{
             }
             lastFolderRead = System.currentTimeMillis();
 
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
             throw WeaverException.newWrap("Failure while reading the POP3 mail server", e);
-        }finally {
+        }
+        finally {
             try {
                 if(popFolder != null){
                     popFolder.close(true);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 /* ignore this exception */
             }
         }
@@ -518,7 +525,8 @@ public class EmailListener extends TimerTask{
             //this should re-send the email back out again to the others.
 
 
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
             //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
             throw WeaverException.newWrap("Unable to process email message subject=%s", e, msg.getSubject());
         }
@@ -595,7 +603,8 @@ class Outliner extends HTMLEditorKit.ParserCallback {
         try {
             out.write(text);
             out.flush();
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             JSONException.traceException(ioe, "Outliner.handleText extended from HTMLEditorKit.ParserCallback.handleText");
             /* Ignore this Exception */
         }

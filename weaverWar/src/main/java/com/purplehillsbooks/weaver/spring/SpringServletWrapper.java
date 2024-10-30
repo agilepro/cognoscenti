@@ -32,6 +32,7 @@ import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.SectionUtil;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -93,7 +94,7 @@ public class SpringServletWrapper extends HttpServlet
                     return;
                 }
                 catch (Exception e) {
-                    throw new ServletException("Error while attempting to redirect to the configuration page", e);
+                    throw WeaverException.newWrap("Error while attempting to redirect to the configuration page", e);
                 }
             }
             wrappedServlet.service(ar.req, ar.resp); //must use the versions from AuthRequest

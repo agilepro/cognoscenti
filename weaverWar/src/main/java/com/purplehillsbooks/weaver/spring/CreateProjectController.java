@@ -104,7 +104,8 @@ public class CreateProjectController extends BaseController {
 
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             Exception ee = WeaverException.newWrap("Unable to create workspace in Site: %s", ex, siteId);
             streamException(ee, ar);
         }
@@ -197,38 +198,42 @@ public class CreateProjectController extends BaseController {
     @RequestMapping(value = "/NewSiteApplication.htm", method = RequestMethod.GET)
     public void NewSiteApplication(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (ar.isLoggedIn()) {
                 redirectBrowser(ar, ar.getUserProfile().getKey()+"/NewSiteRequest.htm");
             }
             streamJSPAnon(ar, "NewSiteApplication.jsp");  /*needtest*/
         }
         catch(Exception ex){
-            throw new Exception("Unable to display the Register New Site page", ex);
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to display the Register New Site page", ex));
         }
     }
 
     @RequestMapping(value = "/{userKey}/NewSiteRequest.htm", method = RequestMethod.GET)
     public void NewSiteRequest(HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-       try{
-           AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           if (!ar.isLoggedIn()) {
-               redirectBrowser(ar, "../NewSiteApplication.htm");
-           }
-           UserProfile uProf = ar.getUserProfile();
-           if (uProf==null) {
-               //this should be impossible
-               throw new Exception("Inconsistancy: user logged in but does not have a profile: "+ar.getBestUserId());
-           }
-           String userKey = uProf.getKey();
-           streamJSPUserLoggedIn(ar, userKey, "NewSiteRequest.jsp");
-       }
-       catch(Exception ex){
-           throw new Exception("Unable to display the Register New Site page", ex);
-       }
-   }
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            if (!ar.isLoggedIn()) {
+                redirectBrowser(ar, "../NewSiteApplication.htm");
+            }
+            UserProfile uProf = ar.getUserProfile();
+            if (uProf == null) {
+                // this should be impossible
+                throw WeaverException.newBasic(
+                        "Inconsistancy: user logged in but does not have a profile: %s", 
+                        ar.getBestUserId());
+            }
+            String userKey = uProf.getKey();
+            streamJSPUserLoggedIn(ar, userKey, "NewSiteRequest.jsp");
+        } 
+        catch (Exception ex) {
+            showDisplayException(ar, WeaverException.newWrap(
+                "Unable to display the Register New Site page", ex));
+        }
+    }
 
 
 }

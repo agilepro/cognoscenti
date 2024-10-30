@@ -75,7 +75,7 @@ public class NGBook extends ContainerCommon {
             siteFolder = cogFolder.getParentFile();
         }
         else {
-            throw new Exception("Unable to open site file with path: "+theFile);
+            throw WeaverException.newBasic("Unable to open site file with path: %s", theFile);
         }
 
         // migration code, make sure there is a stored value for key
@@ -90,7 +90,8 @@ public class NGBook extends ContainerCommon {
                 siteInfoRec.setScalar("key", key);
             }
             else {
-                throw new Exception("Site is missing key, and unable to generate one: " + theFile);
+                throw WeaverException.newBasic("Site is missing key, and unable to generate one: %s", 
+                        theFile.getAbsolutePath());
             }
         }
         System.out.println("Cached site (" + key + ") from : " + theFile);
@@ -155,7 +156,7 @@ public class NGBook extends ContainerCommon {
             throw WeaverException.newBasic("in readSiteByKey called before the site index initialzed.");
         }
         if (key == null) {
-            throw new Exception("Program Logic Error: Site key of null is no longer allowed.");
+            throw WeaverException.newBasic("Program Logic Error: Site key of null is no longer allowed.");
         }
 
         NGBook retVal = keyToSite.get(key);
@@ -299,9 +300,9 @@ public class NGBook extends ContainerCommon {
 
         File domFolder = allSiteFiles.get(0);
         if (!domFolder.exists()) {
-            throw new Exception(
-                    "Config setting 'libFolder' is not correct, first value must be an existing folder: ("
-                            + domFolder + ")");
+            throw WeaverException.newBasic(
+                    "Config setting 'libFolder' is not correct, first value must be an existing folder: (%s)",
+                    domFolder);
         }
         File newSiteFolder = new File(domFolder, key);
         if (newSiteFolder.exists()) {
@@ -680,7 +681,7 @@ public class NGBook extends ContainerCommon {
     private void assertPermissionToCreateProject(AuthRequest ar) throws Exception {
         if (ar.isLoggedIn()) {
             if (!isSiteExecutive(ar.getUserProfile())) {
-                throw new Exception("Must be an executive of the site to create new projects");
+                throw WeaverException.newBasic("Must be an executive of the site to create new projects");
             }
             return;
         }
@@ -1162,7 +1163,7 @@ public class NGBook extends ContainerCommon {
     
     public boolean userReadOnly(String userId) throws Exception {
         if (userId==null || userId.length()==0) {
-            throw new Exception("userReadOnly requires a non-empty parameter");
+            throw WeaverException.newBasic("userReadOnly requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
         AddressListEntry ale = AddressListEntry.findOrCreate(userId);
@@ -1170,7 +1171,7 @@ public class NGBook extends ContainerCommon {
     }
     public boolean userReadOnly(UserProfile uProf) throws Exception {
         if (uProf==null) {
-            throw new Exception("userReadOnly requires a non-empty parameter");
+            throw WeaverException.newBasic("userReadOnly requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
         return siteUsers.isReadOnly(uProf);

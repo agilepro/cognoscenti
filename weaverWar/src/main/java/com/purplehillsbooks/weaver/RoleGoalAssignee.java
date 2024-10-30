@@ -23,6 +23,7 @@ package com.purplehillsbooks.weaver;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -142,7 +143,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
 
     @Override
     public JSONObject getJSON() throws Exception {
-        throw new Exception("getJSON has not been implemented on RoleGoalAssignee");
+        throw WeaverException.newBasic("getJSON has not been implemented on RoleGoalAssignee");
     }
 
 

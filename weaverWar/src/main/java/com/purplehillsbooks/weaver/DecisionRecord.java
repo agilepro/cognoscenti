@@ -27,6 +27,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class DecisionRecord extends DOMFace {
 
@@ -158,8 +159,8 @@ public class DecisionRecord extends DOMFace {
         String universalid = decisionObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
-            throw new Exception("Error trying to update the record for a decision with UID ("
-                    +getUniversalId()+") with post from decision with UID ("+universalid+")");
+            throw WeaverException.newBasic("Error trying to update the record for a decision with UID (%s) with post from decision with UID %s)",
+                   getUniversalId(), universalid);
         }
         
         // Two ways to update, either with a decisionMerge object which contains a new 

@@ -119,7 +119,8 @@ public class CapturePage {
             hcb.setSSLContext(scb.build());
             return hcb.build();
             
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) {
             return null;
         }
     }

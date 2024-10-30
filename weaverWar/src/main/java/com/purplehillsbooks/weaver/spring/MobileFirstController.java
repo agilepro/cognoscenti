@@ -32,24 +32,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 @Controller
 public class MobileFirstController extends BaseController {
 
-
     @RequestMapping(value = "/{siteId}/{wsId}/{pageName}.wmf", method = RequestMethod.GET)
-    public void meetingFull(@PathVariable String siteId,@PathVariable String wsId, @PathVariable String pageName,
+    public void meetingFull(@PathVariable String siteId, @PathVariable String wsId, @PathVariable String pageName,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, wsId);
             ar.setPageAccessLevels(ngw);
 
-            streamJSPMobileFirst(ar, pageName+".jsp");
-        }catch(Exception ex){
-            throw WeaverException.newWrap("Unable to serve up a mobile first page named %s", ex, pageName);
+            streamJSPMobileFirst(ar, pageName + ".jsp");
+        } catch (Exception e) {
+            showDisplayException(ar, WeaverException.newWrap(
+                    "Unable to serve up a mobile first page named %s",
+                    e, pageName));
         }
     }
 

@@ -86,14 +86,14 @@ public class ConfigFile {
             rootPath = newRoot;
             if (!rootPath.exists()) {
                 //this is just paranoia, should never happen
-                throw new Exception("Something is very wrong with the server ... "+
+                throw WeaverException.newBasic("Something is very wrong with the server ... "+
                      "the root of the application is not being retrieved correctly from the "+
                      "servlet contxt object.  Something is wrong with the TomCat server.");
             }
             webInfPath = new File(rootPath,"WEB-INF");
             if (!webInfPath.exists()) {
                 //this is just paranoia, should never happen
-                throw new Exception("Something is very wrong with the server ... "+
+                throw WeaverException.newBasic("Something is very wrong with the server ... "+
                      "the WEB-INF folder is not being found from the "+
                      "servlet contxt object.  Something is wrong with the TomCat server.");
             }
@@ -129,7 +129,7 @@ public class ConfigFile {
             MimeTypes.initialize(webInfPath);
         }
         catch (Exception e) {
-            throw new Exception("Failure during basic initialization of the server", e);
+            throw WeaverException.newWrap("Failure during basic initialization of the server", e);
         }
     }
 
@@ -332,7 +332,7 @@ public class ConfigFile {
             parentPath.mkdirs();
         }
         if (!parentPath.exists()) {
-            throw new Exception("For some reason can not find or create the data container: "+parent);
+            throw WeaverException.newBasic("For some reason can not find or create the data container: "+parent);
         }
         return parentPath;
     }

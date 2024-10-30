@@ -187,7 +187,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp==null) {
-            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
+            throw WeaverException.newBasic("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
             //super admin is automatically a member of every group, no need to check further
@@ -216,7 +216,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp==null) {
-            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
+            throw WeaverException.newBasic("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
             //super admin is automatically a member of every group, no need to check further
@@ -262,14 +262,14 @@ public class BaseController {
         try {
             //just to make sure there are no DOUBLE pages being sent
             if (ar.req.getAttribute("wrappedJSP")!=null) {
-                throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
+                throw WeaverException.newBasic("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
                         +") when trying to set it to ("+jspName+")");
             }
             if (!jspName.endsWith(".jsp")) {
-                throw new Exception("Program Logic Error: streamJSP* called without JSP in name");
+                throw WeaverException.newBasic("Program Logic Error: streamJSP* called without JSP in name");
             }
             if (jspName.endsWith(".jsp.jsp")) {
-                throw new Exception("Program Logic Error: streamJSP* called with double JSP in name");
+                throw WeaverException.newBasic("Program Logic Error: streamJSP* called with double JSP in name");
             }
             
             File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
@@ -523,7 +523,7 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+            throw WeaverException.newWrap("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
 */
@@ -652,7 +652,8 @@ public class BaseController {
             ar.resp.setContentType("application/json");
             errorResponse.write(ar.resp.writer, 2, 0);
             ar.flush();
-        } catch (Exception eeeee) {
+        } 
+        catch (Exception eeeee) {
             // nothing we can do here...
             System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().threadId()+", "+eeeee.toString());
         }
@@ -731,7 +732,7 @@ public class BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             if (!viewName.endsWith(".jsp")) {
-                throw new Exception("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
+                throw WeaverException.newBasic("gotta have a .jsp on the end of the name -- this is temporary message for conversion");
             }
             if(!ar.isLoggedIn()){
                 throw WeaverException.newBasic("In order to see this section, you need to be logged in.");

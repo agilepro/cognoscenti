@@ -226,8 +226,7 @@ public class SiteReqFile {
                 }
             }
             catch (Exception e) {
-                //this should never happen...
-                throw new RuntimeException(e);
+                return 0;
             }
             return 1;
 

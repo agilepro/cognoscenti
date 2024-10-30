@@ -185,40 +185,6 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "Facilitators.jsp");
     }
 
-/*
-    @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
-    public void RemoteProfileAction(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (warnNotLoggedIn(ar)) {
-                return;
-            }
-            String address = ar.reqParam("address");
-            String go = ar.reqParam("go");
-            String act = ar.reqParam("act");
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            UserPage uPage = userBeingViewed.getUserPage();
-            if ("Create".equals(act)) {
-                ProfileRef pr = uPage.findOrCreateProfileRef(address);
-                pr.setLastAccess(ar.nowTime);
-            }
-            else if ("Delete".equals(act)) {
-                uPage.deleteProfileRef(address);
-            }
-            else {
-                throw WeaverException.newBasic("RemoteProfileAction does not understand the act %s", act);
-            }
-            uPage.save();
-
-            redirectBrowser(ar, go);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
-*/
-
     @RequestMapping(value = "/{userKey}/RemoteProfileUpdate.json", method = RequestMethod.POST)
     public void RemoteProfileUpdate(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) {
@@ -252,8 +218,6 @@ public class UserController extends BaseController {
     }
 
 
-
-
     @RequestMapping(value = "/{userKey}/updateProfile.json", method = RequestMethod.POST)
     public void updateProfile(HttpServletRequest request, HttpServletResponse response,
                               @PathVariable String userKey) throws Exception {
@@ -283,9 +247,6 @@ public class UserController extends BaseController {
             streamException(ee, ar);
         }
     }
-
-
-
 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
     protected void uploadImageFile(HttpServletRequest request,
@@ -381,8 +342,6 @@ public class UserController extends BaseController {
         }
     }
 
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
     public void gotoApproveOrRejectRoleReqPage(
             @PathVariable String siteId, @PathVariable String pageId,
@@ -421,12 +380,6 @@ public class UserController extends BaseController {
                 e));
         }
     }
-
-
-
-
-
-
 
 
     @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
@@ -505,85 +458,6 @@ public class UserController extends BaseController {
                 e, ar.getBestUserId()));
         }
     }
-
-    /*
-    @RequestMapping(value="/{userKey}/saveNotificationSettings.form", method = RequestMethod.POST)
-    public void saveNotificationSettings(
-            @PathVariable String userKey,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        try{
-            AuthRequest ar =  AuthRequest.getOrCreate(request, response);
-            if(!ar.hasSpecialSessionAccess("Notifications:"+userKey)){
-                ar.assertLoggedIn("Can not update notification settings.");
-            }
-            String pageId = ar.reqParam("pageId");
-
-            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
-            ar.setPageAccessLevels(ngw);
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
-
-            String sendDigest = ar.defParam("sendDigest", null);
-            if(sendDigest != null && "never".equals(sendDigest)){
-
-                up.clearNotification( ngw.getKey());
-                ar.getCogInstance().getUserManager().saveUserProfiles();
-            }
-
-            int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
-            String[] tasksToBeCompleted= ar.req.getParameterValues("markascompleted");
-            if(tasksToBeCompleted != null && tasksToBeCompleted.length > 0){
-                GoalRecord taskRecord = null;
-                for (String taskId : tasksToBeCompleted) {
-                    taskRecord = ngw.getGoalOrFail(taskId);
-                    taskRecord.setEndDate(ar.nowTime);
-                    taskRecord.setStateAndAct(BaseRecord.STATE_COMPLETE, ar);
-                    eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
-                    taskRecord.setModifiedDate(ar.nowTime);
-                    taskRecord.setModifiedBy(ar.getBestUserId());
-                    HistoryRecord.createHistoryRecord(ngw, taskRecord.getId(),
-                            HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, "task completed");
-                }
-            }
-
-            String[] tasksToBeUnassigned= ar.req.getParameterValues("unassign");
-            if(tasksToBeUnassigned != null && tasksToBeUnassigned.length > 0){
-                GoalRecord taskRecord = null;
-                for (String taskId : tasksToBeUnassigned) {
-                    taskRecord = ngw.getGoalOrFail(taskId);
-                    taskRecord.getAssigneeRole().removePlayer(AddressListEntry.findOrCreate(up.getPreferredEmail()));
-                    taskRecord.setModifiedDate(ar.nowTime);
-                    taskRecord.setModifiedBy(ar.getBestUserId());
-                    HistoryRecord.createHistoryRecord(ngw, taskRecord.getId(),
-                            HistoryRecord.CONTEXT_TYPE_TASK,
-                            HistoryRecord.EVENT_TYPE_MODIFIED, ar, "unassigned");
-                }
-            }
-
-            String[] stopRolePlayer= ar.req.getParameterValues("stoproleplayer");
-            removeFromRole(ngw, new AddressListEntry(up), stopRolePlayer);
-
-
-            String[] stopReminding= ar.req.getParameterValues("stopReminding");
-            if(stopReminding != null && stopReminding.length > 0){
-                ReminderMgr rMgr = ngw.getReminderMgr();
-                ReminderRecord rRec = null;
-                for (String reminderId : stopReminding) {
-                    rRec = rMgr.findReminderByIDOrFail(reminderId);
-                    rRec.setSendNotification("no");
-                }
-            }
-
-            ngw.saveFile(ar,"updated notification settings");
-            redirectBrowser(ar,"NotificationSettings.htm");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
-        }
-    }
-    */
-
 
     @RequestMapping(value = "/{userKey}/UserSettings.htm", method = RequestMethod.GET)
     public void userSettings(@PathVariable String userKey,

@@ -34,7 +34,7 @@ import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -88,7 +88,7 @@ public class OptOutAddr {
     public void assertValidEmail() throws Exception {
         String useraddress = assignee.getEmail();
         if (useraddress==null || useraddress.length()==0) {
-            throw new Exception("Email address is missing");
+            throw WeaverException.newBasic("Email address is missing from the assignee for opt out");
         }
     }
 
@@ -227,7 +227,9 @@ public class OptOutAddr {
             }
         }
         catch (Exception e) {
-            throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngc.getFullName()+")",e);
+            throw WeaverException.newWrap(
+                "Unable to append users from the role (%s) in workspace (%s)",
+                e, roleName, ngc.getFullName());
         }
     }
     public static void appendUnmutedUsersFromRole(NGWorkspace ngw, String roleName,
@@ -247,7 +249,9 @@ public class OptOutAddr {
             }
         }
         catch (Exception e) {
-            throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngw.getFullName()+")",e);
+            throw WeaverException.newWrap(
+                "Unable to append users from the role (%s) in workspace (%s)",
+                e, roleName, ngw.getFullName());
         }
     }
     public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {

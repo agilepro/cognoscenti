@@ -46,7 +46,6 @@ import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.json.SimpleException;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
@@ -981,7 +980,7 @@ public class NGWorkspace extends NGPage {
         // this might not actually be an email address so check and skip otherwise
         Matcher matcher = pattern.matcher(emailId.trim());
         if (!matcher.matches()) {
-            throw new SimpleException("This email id (%s) does not look like an email address", emailId);
+            throw WeaverException.newBasic("This email id (%s) does not look like an email address", emailId);
         }
         newInvite.put("email", ale.getEmail());
         invites.put(newInvite);

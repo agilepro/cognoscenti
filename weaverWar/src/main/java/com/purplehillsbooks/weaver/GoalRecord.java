@@ -67,7 +67,7 @@ public class GoalRecord extends BaseRecord {
 
     public void setCreator(String newVal) throws Exception {
         if (newVal==null || newVal.length()==0) {
-            throw new Exception("Why is the creator being set to null string?");
+            throw WeaverException.newBasic("Why is the creator being set to null string?");
         }
         setScalar("creator", newVal);
     }
@@ -267,7 +267,7 @@ public class GoalRecord extends BaseRecord {
      */
     public void setPercentComplete(int newVal) throws Exception {
         if (newVal < 0 || newVal > 100) {
-            throw new Exception(
+            throw WeaverException.newBasic(
                     "Percent complete value must be between 0% and 100%, instead received "
                             + newVal + "%");
         }
@@ -834,7 +834,7 @@ public class GoalRecord extends BaseRecord {
     }
     public JSONObject getJSON4Goal(NGWorkspace ngw, String baseURL, License license) throws Exception {
         if (license==null) {
-            throw new Exception("getJSON4Goal needs a license object");
+            throw WeaverException.newBasic("getJSON4Goal needs a license object");
         }
         JSONObject thisGoal = getJSON4Goal(ngw);
         String urlRoot = baseURL + "api/" + ngw.getSiteKey() + "/" + ngw.getKey() + "/";
@@ -857,7 +857,7 @@ public class GoalRecord extends BaseRecord {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
-            throw new Exception("Error trying to update the record for a action item with UID ("
+            throw WeaverException.newBasic("Error trying to update the record for a action item with UID ("
                     +getUniversalId()+") with post from action item with UID ("+universalid+")");
         }
         if (goalObj.has("synopsis")) {
@@ -932,7 +932,7 @@ public class GoalRecord extends BaseRecord {
             }
         }
         else if (goalObj.has("assignee")) {
-            throw new Exception("Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
+            throw WeaverException.newBasic("Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
         }
 
         if (goalObj.has("labelMap")) {
@@ -977,7 +977,7 @@ public class GoalRecord extends BaseRecord {
     public void goalEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
         try {
             if (!needSendEmail()) {
-                throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
+                throw WeaverException.newBasic("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
             }
             boolean isStarted = isStarted(getState());
 
@@ -997,7 +997,7 @@ public class GoalRecord extends BaseRecord {
                 NGRole owners = ngw.getSecondaryRole();
                 List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngw);
                 if (ownerList.size()==0) {
-                    throw new Exception("Action Item has no requester, and the Workspace has no owner");
+                    throw WeaverException.newBasic("Action Item has no requester, and the Workspace has no owner");
                 }
                 creatorProfile = ownerList.get(0).getUserProfile();
             }
@@ -1033,7 +1033,7 @@ public class GoalRecord extends BaseRecord {
             clearSendEmail();
         }
         catch (Exception e) {
-            throw new Exception("Unable to send email for Action Item: "+getSynopsis(), e);
+            throw WeaverException.newWrap("Unable to send email for Action Item: %s", e, getSynopsis());
         }
     }
 

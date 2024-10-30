@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.pdflayout.elements.PDFDoc;
 import com.purplehillsbooks.pdflayout.elements.Frame;
 import com.purplehillsbooks.pdflayout.elements.Orientation;
@@ -293,7 +294,7 @@ public class WikiToPDF
             out.flush();
        }
         catch (Exception e) {
-            throw new Exception("Failure while generating PDF file", e);
+            throw WeaverException.newWrap("Failure while generating PDF file", e);
         }
     }
     

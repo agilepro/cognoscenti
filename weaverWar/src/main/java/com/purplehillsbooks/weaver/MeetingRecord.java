@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -158,11 +159,11 @@ public class MeetingRecord extends DOMFace {
     }
     public AgendaItem findAgendaItem(String id) throws Exception {
         if (id==null) {
-            throw new Exception("Program Logic Error: Attempt to find an agenda item with a null id");
+            throw WeaverException.newBasic("Program Logic Error: Attempt to find an agenda item with a null id");
         }
         AgendaItem ai = findAgendaItemOrNull(id);
         if (ai==null) {
-            throw new Exception("Agenda Item with that id ("+id+") does not exist in this meeting.");
+            throw WeaverException.newBasic("Agenda Item with that id (%s) does not exist in this meeting.", id);
         }
         return ai;
     }
@@ -300,7 +301,7 @@ public class MeetingRecord extends DOMFace {
         }
 
         //oh no, there are no roles at all.  Give up
-        throw new Exception("Workspace ("+ngw.getFullName()+") does not appear to have any roles and at least one is required to have a meeting.");
+        throw WeaverException.newBasic("Workspace (%s) does not appear to have any roles and at least one is required to have a meeting.", ngw.getFullName());
     }
 
     /**
@@ -372,7 +373,7 @@ public class MeetingRecord extends DOMFace {
             }
         }
         if (!found) {
-            throw new Exception("Unable to find an agenda item with the id: "+itemId);
+            throw WeaverException.newBasic("Unable to find an agenda item with the id: %s", itemId);
         }
     }
     public void stopTimer() throws Exception {
@@ -423,7 +424,7 @@ public class MeetingRecord extends DOMFace {
             long time = cmdInput.getLong("time");
             MeetingProposeTime mpt = findProposedTime("timeSlots", time);
             if (mpt==null) {
-                throw new Exception("This meeting does not have a proposed time of "+time);
+                throw WeaverException.newBasic("This meeting does not have a proposed time of %s", Long.toString(time));
             }
             String user = cmdInput.getString("user");
             int value = cmdInput.getInt("value");
@@ -448,7 +449,7 @@ public class MeetingRecord extends DOMFace {
             this.removeUserFromAllSlots("timeSlots", user);
         }
         else {
-            throw new Exception("actOnProposedTime does not understand the command: "+action);
+            throw WeaverException.newBasic("actOnProposedTime does not understand the command: %s", action);
         }
     }
 
@@ -1153,15 +1154,15 @@ public class MeetingRecord extends DOMFace {
             emg.setMeetingId(getId());
             String meetingOwner = getOwner();
             if (meetingOwner==null || meetingOwner.length()==0) {
-                throw new Exception("The owner of the meeting has not been set.");
+                throw WeaverException.newBasic("The owner of the meeting has not been set.");
             }
             emg.setOwner(meetingOwner);
             emg.constructEmailRecords(ar, ngw, mailFile);
             setReminderSent(ar.nowTime);
         }
         catch (Exception e) {
-            throw new Exception("Unable to send reminder email for meeting '"+getName()
-                    +"' in workspace '"+ngw.getFullName()+"'",e);
+            throw WeaverException.newWrap("Unable to send reminder email for meeting (%s) in workspace (%s)", 
+                    e, getName(), ngw.getFullName());
         }
     }
 
@@ -1349,11 +1350,11 @@ public class MeetingRecord extends DOMFace {
         @Override
         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
-                throw new Exception("Attempting to send email reminder when not in planning state.  State="+meet.getState());
+                throw WeaverException.newBasic("Attempting to send email reminder when not in planning state.  State=%s", meet.getState());
             }
 
             if (!needsSendingBefore(ar.nowTime)) {
-                throw new Exception("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
+                throw WeaverException.newBasic("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
                      +SectionUtil.getNicePrintDate(futureTimeToSend())+") is still in the future!");
             }
 

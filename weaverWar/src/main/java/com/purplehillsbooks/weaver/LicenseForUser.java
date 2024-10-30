@@ -21,6 +21,7 @@
 package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 
 /**
@@ -45,7 +46,8 @@ public class LicenseForUser implements License
 
     public LicenseForUser(UserProfile up) throws Exception {
         if (up==null) {
-            throw new Exception("Program Logic Error: Unable to create a LicenseForUser on a null user profile");
+            throw WeaverException.newBasic(
+                "Program Logic Error: Unable to create a LicenseForUser on a null user profile");
         }
         uProf = up;
     }
@@ -57,7 +59,8 @@ public class LicenseForUser implements License
 
         UserProfile up = UserManager.lookupUserByAnyId(other.getCreator());
         if (up==null) {
-            throw new Exception("Attempt to use a user license for a user that does not exist");
+            throw WeaverException.newBasic(
+                "Attempt to use a user license for a user that does not exist");
         }
         return new LicenseForUser(up);
     }

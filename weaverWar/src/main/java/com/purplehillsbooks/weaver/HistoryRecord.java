@@ -228,7 +228,7 @@ public class HistoryRecord extends DOMFace
     }
     public void setContextType(int contextTypeVal) throws Exception {
         if (contextTypeVal<0 || contextTypeVal>8) {
-            throw new Exception("Program Logic Error: history context type must be from 0 to 8.");
+            throw WeaverException.newBasic("Program Logic Error: history context type must be from 0 to 8.");
         }
         setScalar("contextType", Integer.toString(contextTypeVal));
     }

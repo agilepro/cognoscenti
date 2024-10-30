@@ -121,7 +121,7 @@ public abstract class RoleSpecialBase implements NGRole {
     }
 
     public void addPlayerIfNotPresent(AddressListEntry member) throws Exception {
-        throw new Exception("addPlayerIfNotPresent not implemented");
+        throw WeaverException.newBasic("addPlayerIfNotPresent not implemented");
     }
 
     public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {

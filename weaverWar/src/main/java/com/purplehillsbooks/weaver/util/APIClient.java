@@ -63,7 +63,7 @@ public class APIClient {
             }
         }
         catch (Exception e) {
-            throw new Exception("Unable to call the server site located at "+url, e);
+            throw WeaverException.newWrap("Unable to call the server site located at %s", e, url);
         }
     }
 

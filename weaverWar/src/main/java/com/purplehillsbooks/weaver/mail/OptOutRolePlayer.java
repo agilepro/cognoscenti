@@ -27,6 +27,7 @@ import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
 * This is for email messages which are sent to the Super Admin
@@ -52,7 +53,8 @@ public class OptOutRolePlayer extends OptOutAddr {
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
         if (emailId==null || emailId.length()==0) {
-            throw new Exception("There is a problem with this addressee, the email field is blank????");
+            throw WeaverException.newBasic(
+                "There is a problem with this addressee, the email field is blank????");
         }
         
         NGPageIndex ngpi = null;

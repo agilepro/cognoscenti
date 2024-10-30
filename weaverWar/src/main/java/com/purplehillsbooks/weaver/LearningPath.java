@@ -5,6 +5,7 @@ import java.io.File;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class LearningPath {
     
@@ -20,7 +21,8 @@ public class LearningPath {
             StreamHelper.copyFileToFile(templateFile, learningPathFile);
         }
         if (!learningPathFile.exists()) {
-            throw new Exception("Learning path file is missing and can not be created: "+learningPathFile.getAbsolutePath());
+            throw WeaverException.newBasic("Learning path file is missing and can not be created: %s", 
+                    learningPathFile.getAbsolutePath());
         }
     }
     
@@ -64,7 +66,9 @@ public class LearningPath {
         }
         catch (Exception e) {
             pathFile = null;  //force re-read
-            throw new Exception(String.format("Failure while trying to update learning path mode=%s, jsp=%s", mode, jspName), e);
+            throw WeaverException.newWrap(
+                "Failure while trying to update learning path mode=%s, jsp=%s", 
+                e,  mode, jspName);
         }
     }
     

@@ -36,7 +36,7 @@ public class TaskArea extends JSONWrapper {
             return kernel.getString("id");
         }
         catch (Exception e) {
-            throw new RuntimeException("TaskArea does not have an id????");
+            throw new RuntimeException("TaskArea does not have an id????", e);
         }
     }
     public void setId(String newId) throws Exception {
