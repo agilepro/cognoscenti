@@ -8,7 +8,9 @@ public class LedgerCharge {
     public int year;
     public double amount;
     
-    
+    public long getTimestamp() {
+        return Ledger.getTimestamp(year, month, 1);
+    }
     
     public JSONObject generateJson() throws Exception {
         JSONObject jo = new JSONObject();

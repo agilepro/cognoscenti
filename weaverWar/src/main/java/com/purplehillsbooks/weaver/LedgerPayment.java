@@ -16,6 +16,9 @@ public class LedgerPayment {
         jo.put("month", Ledger.getMonth(payDate));
         jo.put("day", Ledger.getDay(payDate));
         jo.put("amount", payAmount);
+        if (detail==null || detail.isEmpty()) {
+            detail = "UNKNOWN DETAIL";
+        }
         jo.put("detail", detail);
         return jo;
     }

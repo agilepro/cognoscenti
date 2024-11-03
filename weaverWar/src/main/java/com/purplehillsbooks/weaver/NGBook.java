@@ -55,7 +55,6 @@ public class NGBook extends ContainerCommon {
     private final NGRole ownerRole;
 
     private List<AddressListEntry> allUserList;
-    private boolean forceNewStatistics = false;
 
     //this is the file system folder where site exists
     //workspaces are underneath this folder
@@ -833,15 +832,18 @@ public class NGBook extends ContainerCommon {
     }
 
     public WorkspaceStats getRecentStats() throws Exception {
-        if (!this.forceNewStatistics) {
-            File statsFile = getStatsFilePath();
-            long timeStamp = statsFile.lastModified();
-            long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
-            if (timeStamp>recentEnough) {
-                return getStatsFile();
-            }
+
+        File statsFile = getStatsFilePath();
+        if (!statsFile.exists()) {
+            return recalculateStats(cog);
         }
-        return recalculateStats(cog);
+        long timeStamp = statsFile.lastModified();
+        long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
+        if (timeStamp < recentEnough) {
+            return recalculateStats(cog);
+        }
+
+        return getStatsFile();
     }
 
     /**
@@ -922,8 +924,10 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.extractAttributeBool(jo, "frozen");
         siteInfoRec.extractAttributeBool(jo, "offLine");
         siteInfoRec.extractAttributeInt(jo, "workspaceLimit", 4);
+        siteInfoRec.extractAttributeInt(jo, "workspaceGratis", 1);
         siteInfoRec.extractAttributeInt(jo, "frozenLimit", 12);
         siteInfoRec.extractAttributeInt(jo, "editUserLimit", 3);
+        siteInfoRec.extractAttributeInt(jo, "editUserGratis", 1);
         siteInfoRec.extractAttributeInt(jo, "viewUserLimit", 50);
         siteInfoRec.extractAttributeInt(jo, "emailLimit", 100);
         siteInfoRec.extractAttributeInt(jo, "fileSpaceLimit", 100);
@@ -972,8 +976,10 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.updateAttributeBool("frozen", jo);
         siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeInt("workspaceLimit", jo);
+        siteInfoRec.updateAttributeInt("workspaceGratis", jo);
         siteInfoRec.updateAttributeInt("frozenLimit", jo);
         siteInfoRec.updateAttributeInt("editUserLimit", jo);
+        siteInfoRec.updateAttributeInt("editUserGratis", jo);
         siteInfoRec.updateAttributeInt("viewUserLimit", jo);
         siteInfoRec.updateAttributeInt("emailLimit", jo);
         siteInfoRec.updateAttributeInt("fileSpaceLimit", jo);
@@ -1129,7 +1135,6 @@ public class NGBook extends ContainerCommon {
     }
     public void flushUserCache() throws Exception {
         allUserList = null;
-        forceNewStatistics = true;
     }
 
 
@@ -1221,9 +1226,14 @@ public class NGBook extends ContainerCommon {
 
     
     public Ledger getLedger() throws Exception {
-        File sitefolder = getFilePath().getParentFile();
-        Ledger ledger = Ledger.readLedger(sitefolder);
-        return ledger;
+        try {
+            File sitefolder = getFilePath().getParentFile();
+            Ledger ledger = Ledger.readLedger(sitefolder);
+            return ledger;
+        }
+        catch (Exception e) {
+            throw WeaverException.newWrap("Failure getting ledger for site (%s)", e, this.getKey());
+        }
     }
     public void saveLedger(Ledger ledger) throws Exception {
         File sitefolder = getFilePath().getParentFile();

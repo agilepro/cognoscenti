@@ -66,6 +66,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
+        alert("ERROR: " + JSON.stringify(serverErr));
         errorPanelHandler($scope, serverErr);
     };
     $scope.notDone = function(rec) {
@@ -127,6 +128,7 @@ app.controller('myCtrl', function($scope, $http) {
         postObj.month = $scope.month;
         postObj.day = $scope.day;
         postObj.amount = parseFloat($scope.paymentAmt);
+        postObj.detail = $scope.paymentDetail;
         postObj.site = $scope.theSite.key;
         var postURL = "recordPayment.json";
         var postdata = angular.toJson(postObj);
@@ -183,7 +185,19 @@ app.controller('myCtrl', function($scope, $http) {
         });
     }
    
-   
+    $scope.pickCharge = function(charge) {
+        $scope.year  = charge.year;
+        $scope.month = charge.month;
+        $scope.chargeAmt = charge.amount;
+    }
+
+    $scope.pickPayment = function(pay) {
+        $scope.year  = pay.year;
+        $scope.month = pay.month;
+        $scope.day   = pay.day;
+        $scope.paymentAmt = pay.amount;
+        $scope.paymentDetail = pay.detail;
+    }  
 });
 
 </script>
@@ -296,6 +310,39 @@ app.controller('myCtrl', function($scope, $http) {
     <hr/>
     
     <div class="well">
+    <h2>Site Charges</h2>
+        
+    <table class="table">
+      <tr>
+        <td>
+          Year
+        </td>
+        <td>
+          <input ng-model="year"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Month
+        </td>
+        <td>
+          <input ng-model="month"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Charge
+        </td>
+        <td>
+          <input ng-model="chargeAmt"/><br/>
+          <button ng-click="makeCharge()">Make Charge</button>
+        </td>
+      </tr>
+    </table>
+    
+    </div>
+    
+    <div class="well">
     <h2>Site Payment</h2>
         
     <table class="table">
@@ -325,11 +372,10 @@ app.controller('myCtrl', function($scope, $http) {
       </tr>
       <tr>
         <td>
-          Plan
+          Detail
         </td>
         <td>
-          <input ng-model="planName"/>
-          <button ng-click="setPlan()">Set Plan</button>
+          <input ng-model="paymentDetail"/>
         </td>
       </tr>
       <tr>
@@ -337,40 +383,23 @@ app.controller('myCtrl', function($scope, $http) {
           Payment
         </td>
         <td>
-          <input ng-model="paymentAmt"/>
+          <input ng-model="paymentAmt"/><br/>
           <button ng-click="recordPayment()">Record Payment</button>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Charge
-        </td>
-        <td>
-          <input ng-model="chargeAmt"/>
-          <button ng-click="makeCharge()">Make Charge</button>
         </td>
       </tr>
     </table>
     
-    </div>
-    
-    
+    </div>    
     <div>
     <table class="table">
-      <tr ng-repeat="plan in siteLedger.plans">
-        <td>PLAN</td>
-        <td>{{plan.planName}}</td>
-        <td>{{plan.year}} / {{ (plan.month + "").padStart(2 ,"0") }}</td>
-        <td>End: {{plan.endDate|cdate}}</td>
-      </tr>
       <tr ng-repeat="charge in siteLedger.charges">
-        <td>CHARGE</td>
+        <td>CHARGE <button ng-click="pickCharge(charge)">Pick</botton></td>
         <td>$ {{charge.amount}}</td>
         <td>{{charge.year}} / {{(charge.month + "").padStart(2 ,"0")}}</td>
         <td></td>
       </tr>
       <tr ng-repeat="pay in siteLedger.payments">
-        <td>PAYMENT</td>
+        <td>PAYMENT <button ng-click="pickPayment(pay)">Pick</botton></td>
         <td>$ {{pay.amount}}</td>
         <td>{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</td>
         <td>Detail: {{pay.detail}}</td>

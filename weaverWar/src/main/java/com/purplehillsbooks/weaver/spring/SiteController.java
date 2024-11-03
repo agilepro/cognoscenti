@@ -715,8 +715,7 @@ public class SiteController extends BaseController {
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             
             Ledger ledger = site.getLedger();
-            LedgerCharge charge = ledger.requiredCharges(year, month);
-            charge.amount = amount;
+            ledger.setChargeAmt(year, month, amount);
             site.saveLedger(ledger);
 
             sendJson(ar, ledger.generateJson());
@@ -741,12 +740,17 @@ public class SiteController extends BaseController {
             int month = posted.getInt("month");
             int day = posted.getInt("day");
             double amount = posted.getDouble("amount");
+            String detail = posted.getString("detail");
+            if (detail == null || detail.isEmpty()) {
+                throw WeaverException.newBasic(
+                    "Field 'detail' is empty.  When setting a payment include detail about the payment.");
+            }
             
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             Ledger ledger = site.getLedger();
             
             long timestamp = Ledger.getTimestamp(year, month, day);
-            ledger.createPayment(timestamp, amount);
+            ledger.createPayment(timestamp, amount, detail);
             site.saveLedger(ledger);
 
             JSONObject jo = ledger.generateJson();
@@ -756,34 +760,30 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    @RequestMapping(value = "/su/setPlan.json", method = RequestMethod.POST)
-    public void setPlan(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
 
+    @RequestMapping(value = "/su/clearAllSiteCharges.json", method = RequestMethod.POST)
+    public void clearAllSiteCharges(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String siteId = "UNKNOWN";
         try{
-            ar.assertSuperAdmin("Must be super admin to create payment record.");
-            JSONObject posted = getPostedObject(ar);
-            siteId = posted.getString("site");
-            
+            ar.assertSuperAdmin("Site charges can only be cleared by super admin");
+            JSONObject posted = this.getPostedObject(ar);
+
             int year = posted.getInt("year");
             int month = posted.getInt("month");
-            int day = posted.getInt("day");
-            String name = posted.getString("planName");
-            
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            Ledger ledger = site.getLedger();
-            
-            long timestamp = Ledger.getTimestamp(year, month, day);
-            ledger.createOrSetPlan(timestamp, name);
-            site.saveLedger(ledger);
 
-            JSONObject jo = ledger.generateJson();
-            sendJson(ar, jo);
+            JSONArray list = new JSONArray();
+            for (NGBook site : NGBook.getAllSites()) {
+                Ledger ledger = site.getLedger();
+                ledger.setChargeAmt(year, month, 0);
+                list.put(site.getKey());
+            }
+            
+            JSONObject rslt = new JSONObject();
+            rslt.put("list", list);
+
+            sendJson(ar, rslt);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create payment record for site "+siteId, ex);
+            Exception ee = new Exception("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }

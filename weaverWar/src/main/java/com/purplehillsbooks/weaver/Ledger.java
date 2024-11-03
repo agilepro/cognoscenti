@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,55 +36,61 @@ public class Ledger {
     public static final String PLAN_TYPE_SMALL_BUSINESS = "SmallBusiness";
     public static final String PLAN_TYPE_BUSINESS       = "Business";
     public static final String PLAN_TYPE_UNLIMITED      = "Unlimited";
+
+    public static final int LAST_POSSIBLE_YEAR = getYear(System.currentTimeMillis()) + 1;
     
     private static final ObjectMapper mapper = new ObjectMapper();
         
-    public List<LedgerPlan> plans = new ArrayList<>();
     public List<LedgerCharge> charges = new ArrayList<>();
     public List<LedgerPayment> payments = new ArrayList<>();
     
     @SuppressWarnings("deprecation")
     public static Ledger readLedger(File folder) throws Exception {
-        // disable is deprecated, but not clear what the replacement is
-        // except for using a builder which seems like pointless
-        mapper.disable(MapperFeature.AUTO_DETECT_CREATORS,
-                MapperFeature.AUTO_DETECT_GETTERS,
-                MapperFeature.AUTO_DETECT_IS_GETTERS);
-        mapper.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        
         File ledgerFilePath = new File(folder, "ledger.json");
-        if (ledgerFilePath.exists()) {
-            Ledger ledger = mapper.readValue(ledgerFilePath, Ledger.class);
-            ledger.sortAndCleanPlans();
-            return ledger;
+        try {
+            // disable is deprecated, but not clear what the replacement is
+            // except for using a builder which seems like pointless
+            mapper.disable(MapperFeature.AUTO_DETECT_CREATORS,
+                    MapperFeature.AUTO_DETECT_GETTERS,
+                    MapperFeature.AUTO_DETECT_IS_GETTERS);
+            mapper.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
+            mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+            mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.setSerializationInclusion(Include.NON_NULL);
+            
+            if (ledgerFilePath.exists()) {
+                Ledger ledger = mapper.readValue(ledgerFilePath, Ledger.class);
+                ledger.sortAndCleanPlans();
+                return ledger;
+            }
+            else {
+                Ledger ledger = new Ledger();
+                return ledger;
+            }
         }
-        else {
-            Ledger ledger = new Ledger();
-            return ledger;
+        catch (Exception e) {
+            throw WeaverException.newWrap("Failure reading ledger file: %s", 
+                    e,  ledgerFilePath.getAbsolutePath());
         }
     }
     public void saveLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
-        mapper.writeValue(ledgerFilePath, this);
+        File ledgerTempPath = new File(folder, "ledger_TEMP.json");
+        if (ledgerTempPath.exists()) {
+            ledgerTempPath.delete();
+        }
+
+        mapper.writeValue(ledgerTempPath, this);
+        if (ledgerFilePath.exists()) {
+            ledgerFilePath.delete();
+        }
+        ledgerTempPath.renameTo(ledgerFilePath);
     }
 
     private Ledger() {
-    }
-
-    /**
-     * This returns a TRIAL plan with the start date set 
-     * to the first of the current month
-     */
-    private LedgerPlan getDefaultPlan() throws Exception {
-        LedgerPlan defPlan = new LedgerPlan();
-        defPlan.planName = PLAN_TYPE_TRIAL;
-        defPlan.startDate = getFirstOfMonth(System.currentTimeMillis());
-        return defPlan;
     }
     
     public static int getYear(long timestamp) {
@@ -150,10 +157,10 @@ public class Ledger {
     }
     
     public static List<Long> getAllMonthsInRange(long startDate, long endDate) throws Exception {
-        long timestamp = getFirstOfMonth(startDate);
         if (startDate > endDate) {
             throw WeaverException.newBasic("end date must be after the start date");
         }
+        long timestamp = getFirstOfMonth(startDate);
         List<Long> res = new ArrayList<>();
         int guard = 100;
         while (timestamp <= endDate) {
@@ -171,92 +178,13 @@ public class Ledger {
     }
     
     private void sortAndCleanPlans() {
-        // put them in order
-        Collections.sort(plans, new PlanSorter());
-        Collections.sort(plans, new PlanSorter());
-        Collections.sort(plans, new PlanSorter());
-        
-        int count = 0;
-        for (LedgerPlan current : plans) {
-            count++;
-            System.out.println("PLAN["+count+"].startDate is "+current.startDate);
-        }       
-        
-        
         Collections.sort(charges, new ChargeSorter());
-        Collections.sort(payments, new PaymentSorter());
-        // clean up the end dates
-        LedgerPlan previous = null;
-        long previousStartDate = 0;
-        for (LedgerPlan current : plans) {
-            if (current.startDate < previousStartDate) {
-                throw new RuntimeException("PLANS are not in order!" + previousStartDate + " is greater than " + current.startDate);
-            }
-            previousStartDate = current.startDate;
-            if (previous != null) {
-                previous.endDate = current.startDate;
-            }
-            current.endDate = 0;
-            previous = current;
-        }        
+        Collections.sort(payments, new PaymentSorter());    
     }
-    
-    public LedgerPlan getPlanForMonth(long timestamp) throws Exception {
-        timestamp = getFirstOfMonth(timestamp);
-        LedgerPlan latest;
-        if (plans.size()==0) {
-            latest = getDefaultPlan();
-            plans.add(latest);
-            return latest;
-        }
-        sortAndCleanPlans();
-        for (LedgerPlan another : plans) {
-            if (another.startDate <= timestamp) {
-                if (another.endDate<=0 || another.endDate > timestamp) {
-                    return another;
-                }
-            }
-        }
-        return null;
-    }
-    
-    public LedgerPlan createOrSetPlan(long timestamp, String planName) throws Exception {
-        timestamp = getFirstOfMonth(timestamp);
-        
-        // look for exact match
-        for (LedgerPlan another : plans) {
-            if (another.startDate == timestamp) {
-                another.planName = planName;
-                return another;
-            }
-        }
-        
-        //no exact month, so create a new one
-        LedgerPlan latest = new LedgerPlan();
-        latest.startDate = timestamp;
-        latest.planName = planName;
-        plans.add(latest);
-        sortAndCleanPlans();
-        return latest;
-    }
-    
-    
-    /* 
-     * sorts the SiteLedgerPlan in chrono order by start date
-     */
-    private class PlanSorter implements Comparator<LedgerPlan> {
 
-        @Override
-        public int compare(LedgerPlan arg0, LedgerPlan arg1) {
-            long difference = (arg0.startDate - arg1.startDate);
-            if (difference < 0) {
-                return -1;
-            } 
-            else {
-                return 1;
-            }
-        }
-    }
+
+    
+
     /* 
      * sorts the SiteLedgerCharg in chrono order by year and month
      */
@@ -289,9 +217,25 @@ public class Ledger {
         }
     }
     
-    
-    public LedgerPayment createPayment(long timestamp, double amount) {
+    private void removePayment(long timestamp) {
         timestamp = getBeginningOfDay(timestamp);
+        List<LedgerPayment> newList = new ArrayList<>();
+        for (LedgerPayment onePay : payments) {
+            if (onePay.payDate != timestamp) {
+                newList.add(onePay);
+            }
+        }
+        payments = newList;
+    }
+    public void createPayment(long timestamp, double amount, String detail) throws Exception {
+        if (detail== null || detail.isEmpty()) {
+            throw WeaverException.newBasic("'detail' is missing.  Please always include detail with a payment");
+        }
+        timestamp = getBeginningOfDay(timestamp);
+        if (amount == 0) {
+            removePayment(timestamp);
+            return;
+        }
         LedgerPayment payRec = null;
         for (LedgerPayment onePay : payments) {
             if (onePay.payDate == timestamp) {
@@ -305,7 +249,7 @@ public class Ledger {
             sortAndCleanPlans();
         }
         payRec.payAmount = amount;
-        return payRec;
+        payRec.detail = detail;
     }
     
     public List<LedgerPayment> getPaymentsInRange(long start, long end) {
@@ -317,15 +261,30 @@ public class Ledger {
         }
         return ret;
     }
+
+    public double getBalance() throws Exception {
+        double balance = 0;
+        for (LedgerCharge oneCharge : charges) {
+            balance += oneCharge.amount;
+        }
+        for (LedgerPayment onePayment : payments) {
+            balance -= onePayment.payAmount;
+        }
+        return balance;
+    }
+
     
     public JSONArray getInfoForAllMonths() throws Exception {
         JSONArray ja = new JSONArray();
         
         long today = System.currentTimeMillis();
         long startDate = today;
-        for (LedgerPlan slp : plans) {
-            if (slp.startDate < startDate) {
-                startDate = slp.startDate;
+
+        // find the first charge to set beginning of range
+        for (LedgerCharge charge : charges) {
+            long chargeDate = charge.getTimestamp();
+            if (chargeDate < startDate) {
+                startDate = chargeDate;
             }
         }
 
@@ -339,13 +298,6 @@ public class Ledger {
             jo.put("firstOfMonth", monthBegin);
             jo.put("year",  year);
             jo.put("month",  month);
-            LedgerPlan slp = getPlanForMonth(monthBegin);
-            if (slp == null) {
-                jo.put("plan", "UNKNOWN");
-            }
-            else {
-                jo.put("plan", slp.planName);
-            }
             
             LedgerCharge charge = getChargesOrNull(year, month);
             if (charge != null) {
@@ -369,11 +321,24 @@ public class Ledger {
         return ja;
     }
 
+    public void assertValid(int year, int month) throws Exception {
+        if (year < 2020) {
+            throw WeaverException.newBasic("No charges are allowed of years less than 2020, value %d not allowed", year);
+        }
+        if (year > LAST_POSSIBLE_YEAR) {
+            throw WeaverException.newBasic("No charges are allowed of years greater than %d, value %d not allowed", LAST_POSSIBLE_YEAR, year);
+        }
+        if (month < 1 || month > 12) {
+            throw WeaverException.newBasic("Month value (%d) not a valid month value (1 thru 12)", month);
+        }        
+    }
+
     /**
      * find the charges for a given year and month.
      * Month is defined in the standard Java way 0 - 11
      */
     public LedgerCharge getChargesOrNull(int year, int month) throws Exception {
+        assertValid(year, month);
         for (LedgerCharge aCharge : charges) {
             if (year != aCharge.year) {
                 continue;
@@ -385,13 +350,12 @@ public class Ledger {
         }
         return null;
     }
-    
-
     /**
-     * find the charges for a given year and month.
+     * find the charge for a given year and month.
      * Month is defined in the standard Java way 0 - 11
      */
-    public LedgerCharge requiredCharges(int year, int month) throws Exception {
+    public LedgerCharge getOrCreateCharge(int year, int month) throws Exception {
+        assertValid(year, month);
         LedgerCharge charge = getChargesOrNull(year, month);
         if (charge == null) {
             charge = new LedgerCharge();
@@ -402,6 +366,45 @@ public class Ledger {
         }
         return charge;
     }
+    /**
+     * find the charge for a given year and month.
+     * Month is defined in the standard Java way 0 - 11
+     */
+    public void removeCharge(int year, int month) throws Exception {
+        assertValid(year, month);
+        List<LedgerCharge> newList = new ArrayList<>();
+        for (LedgerCharge aCharge : charges) {
+            if (year != aCharge.year || month != aCharge.month) {
+                newList.add(aCharge);
+            }
+        }
+        charges = newList;
+    }
+
+
+    public void setChargeAmt(int year, int month, double thisCharge) throws Exception {
+        assertValid(year, month);
+        if (thisCharge == 0) {
+            removeCharge(year, month);
+        }
+        else {
+            LedgerCharge aCharge = getOrCreateCharge(year, month);
+            aCharge.amount = thisCharge;
+        }
+    }    
+    public double getChargeAmt(int year, int month, double thisCharge) throws Exception {
+        assertValid(year, month);
+        for (LedgerCharge aCharge : charges) {
+            if (year != aCharge.year) {
+                continue;
+            }
+            if (month != aCharge.month) {
+                continue;
+            }
+            return aCharge.amount;
+        }
+        return 0;
+    }    
     
     public static void calculateChargesAllSites(Cognoscenti cog) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -414,25 +417,9 @@ public class Ledger {
             site.recalculateStats(cog);
             File sitefolder = site.getFilePath().getParentFile();
             Ledger ledger = readLedger(sitefolder);
-            LedgerCharge chargeMonth = ledger.requiredCharges(year, month);
-            LedgerPlan plan = ledger.getPlanForMonth(System.currentTimeMillis());
+            LedgerCharge chargeMonth = ledger.getOrCreateCharge(year, month);
             double chargeAmt = 10.0;
-            
-            if (PLAN_TYPE_TRIAL.contentEquals(plan.planName)) {
-                chargeAmt = 0;
-            }
-            else if (PLAN_TYPE_GRASS_ROOTS.contentEquals(plan.planName)) {
-                chargeAmt = 10;
-            }
-            else if (PLAN_TYPE_SMALL_BUSINESS.contentEquals(plan.planName)) {
-                chargeAmt = 20;
-            }
-            else if (PLAN_TYPE_BUSINESS.contentEquals(plan.planName)) {
-                chargeAmt = 40;
-            }
-            else if (PLAN_TYPE_UNLIMITED.contentEquals(plan.planName)) {
-                chargeAmt = 10;
-            }
+
             chargeMonth.amount =  chargeAmt;
             // SiteUsers siteUser = site.getUserMap();
             
@@ -443,22 +430,24 @@ public class Ledger {
     public JSONObject generateJson() throws Exception {
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
-        for (LedgerPlan onePlan : plans) {
-            ja.put(onePlan.generateJson());
-        }
-        jo.put("plans", ja);
+        double balance = 0;
 
         ja = new JSONArray();
         for (LedgerCharge oneCharge : charges) {
             ja.put(oneCharge.generateJson());
+            balance += oneCharge.amount;
         }
         jo.put("charges", ja);
 
         ja = new JSONArray();
         for (LedgerPayment onePayment : payments) {
             ja.put(onePayment.generateJson());
+            balance -= onePayment.payAmount;
         }
         jo.put("payments", ja);
+
+        // balance is calculated every time.
+        jo.put("balance", balance);
         return jo;
     }
 

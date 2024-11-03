@@ -284,6 +284,11 @@ public class WorkspaceStats {
         res.sizeArchives = jo.getLong("sizeArchives");
         res.numWorkspaces = jo.optInt("numWorkspaces", 0);
         res.recentChange = jo.getLong("recentChange");
+        res.editUserCount = jo.getInt("editUserCount");
+        res.readUserCount = jo.getInt("readUserCount");
+        res.numActive = jo.getInt("numActive");
+        res.numFrozen = jo.getInt("numFrozen");
+
         res.topicsPerUser.fromJSON(jo, "topicsPerUser");
         res.docsPerUser.fromJSON(jo ,"docsPerUser");
         res.commentsPerUser.fromJSON(jo, "commentsPerUser");

@@ -18,6 +18,8 @@
 %><%@page import="com.purplehillsbooks.weaver.GoalRecord"
 %><%@page import="com.purplehillsbooks.weaver.HistoryRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicensedURL"
+%><%@page import="com.purplehillsbooks.weaver.Ledger"
+%><%@page import="com.purplehillsbooks.weaver.LedgerCharge"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"
 %><%@page import="com.purplehillsbooks.weaver.MeetingRecord"
 %><%@page import="com.purplehillsbooks.weaver.NGBook"

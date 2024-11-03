@@ -7,6 +7,8 @@
     UserProfile uProf=ar.getUserProfile();
     
     String filter = ar.defParam("filter", "");
+    int showMonth = 10;
+    int showYear = 2024;
     
     Cognoscenti cog = Cognoscenti.getInstance(request);
     List<AddressListEntry> allEmail = new ArrayList<AddressListEntry>();
@@ -17,6 +19,15 @@
         JSONObject jo = site.getConfigJSON();
         WorkspaceStats stats = site.getRecentStats();
         jo.put("stats", stats.getJSON());
+        Ledger ledger = site.getLedger();
+        jo.put("ledger", ledger.generateJson());
+        
+        LedgerCharge charge = ledger.getChargesOrNull(showYear, showMonth);
+        double foundCharge = 0;
+        if (charge!=null) {
+            foundCharge = charge.amount;
+        }
+        jo.put("foundCharge", foundCharge);
         
         allSites.put(jo);
         
@@ -49,11 +60,11 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showOwners = true;
     $scope.filterChars = "<%=filter%>";
     
-    $scope.costCreator = 1.0;
-    $scope.costReader = 0.01;
-    $scope.costDocuments = 0.001;
-    $scope.costActive = 1.0;
-    $scope.costFrozen = 0.1;
+    $scope.costCreator = 1;
+    $scope.costReader = 0;
+    $scope.costDocuments = 0;
+    $scope.costActive = 2;
+    $scope.costFrozen = 0;
     
     
 
@@ -154,12 +165,12 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.calculateCost = function(item) {
         console.log("ACTIVE = "+$scope.costActive);
-        var total = item.stats.numActive * $scope.costActive;
-        total = total + (item.stats.numFrozen * $scope.costFrozen);
-        total = total + ((item.stats.sizeDocuments / 1000000) * $scope.costDocuments);
-        total = total + (item.stats.editUserCount * $scope.costCreator);
-        total = total + (item.stats.readUserCount * $scope.costReader);
-        item.totalCost = total;
+        var total = (item.stats.numActive-item.workspaceGratis) * $scope.costActive;
+        total = total + ((item.stats.editUserCount-item.editUserGratis) * $scope.costCreator);
+        if (total < 0) {
+            total = 0;
+        }
+        item.chargeThisMonth = total;
         return total;
     }
     $scope.updateAllCosts();
@@ -171,6 +182,28 @@ app.controller('myCtrl', function($scope, $http) {
         $http.get(getURL)
         .success( function(data) {
             site.stats = data.stats;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
+    $scope.chargeAllSites = function() {
+        if (confirm("Are you sure you want to do this?")) {
+            $scope.allSites.forEach( function(site) {
+                $scope.chargeSite(site);
+            });
+        }
+    };
+    
+    $scope.chargeSite = function(site) {
+        var postURL = "updateCharge.json";
+        var postObj = {year: <%=showYear%>, month: <%=showMonth%>, site: site.key, amount: site.chargeThisMonth};
+        var postdata = angular.toJson(postObj);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            console.log("SUCCESS: charged "+site.key+" == "+site.chargeThisMonth);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -192,18 +225,12 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="h1">
-        Site Cost Calculator
+        Site Cost Calculator Year=<%=showYear%> Month=<%=showMonth%>
     </div>
     
     <p>
         Filter
            <input type="text" ng-model="filterChars"/>
-           Cost per Creator <input type="text" ng-model="costCreator"> - 
-           Reader <input type="text" ng-model="costReader"> - 
-           Document MB <input type="text" ng-model="costDocuments"> - 
-           Active <input type="text" ng-model="costActive"> - 
-           Frozen <input type="text" ng-model="costFrozen"> - 
-           <button ng-click="updateAllCosts()">Recalc</button>
     </p>
 
     
@@ -214,21 +241,19 @@ app.controller('myCtrl', function($scope, $http) {
                     <th></th>
                     <th >Site Name</th>
                     <th >Status</th>
-                    <th ng-show="showOwners">Owners</th>
+                    <th ng-show="showOwners"></th>
                     <th class="rightColumn">Cost</th>
-                    <th class="rightColumn">Creators</th>
-                    <th class="rightColumn">Readers</th>
+                    <th class="rightColumn">Users</th>
                     <th class="rightColumn">Doc MB</th>
-                    <th class="rightColumn">Active WS</th>
-                    <th class="rightColumn">Frozen WS</th>
+                    <th class="rightColumn">workspace</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="rec in filterSites()">
                     <td>
                       <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                        <span class="caret"></span></button>
+                        <a class="btn btn-default dropdown-toggle" role="button" id="menu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                           <li role="presentation">
                               <a href="SiteDetails.htm?siteKey={{rec.key}}">View Details</a></li>
@@ -242,35 +267,44 @@ app.controller('myCtrl', function($scope, $http) {
                               <a role="menuitem" ng-click="recalcStats(rec)">Recalculate Stats</a></li>
                         </ul>
                       </div>
+                      <button ng-click="recalcStats(rec)">recalc</button>
+                      <button ng-click="chargeSite(rec)">charge</button>
+                      <a href="SiteDetails.htm?siteKey={{rec.key}}">View Details</a>
                     </td>
-                    <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a></td>
+                    <td><a href="../../t/{{rec.key}}/$/SiteAdmin.htm"><b>{{rec.names[0]}}</b></a></td>
                     <td><div ng-show="rec.isDeleted">Deleted</div>
                         <div ng-show="rec.frozen">Frozen</div>
                         <div ng-show="rec.offLine">OffLine</div>
                         <div ng-show="rec.movedTo">Moved</div>
                     </td>
-                    <td ng-show="showOwners"><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
+                    <td></td>
                     <td class="rightColumn">
-                        <br/>$ {{rec.totalCost|number:2}}</td>
+                        <br/>Balance $ {{rec.ledger.balance|number:2}}<br/>
+                        (<%=showYear%>/<%=showMonth%>) has $ {{rec.foundCharge|number:2}}<br/>
+                        <input ng-model="rec.chargeThisMonth"/>
+                        </td>
                     <td class="rightColumn">
-                        {{rec.stats.editUserCount}}<br/>
-                        $ {{rec.stats.editUserCount*costCreator|number:2}}</td>
+                        Full {{rec.stats.editUserCount}}<br/>
+                        Observer {{rec.stats.readUserCount}}<br/>
+                        Gratis {{rec.editUserGratis}}<br/>
+                        $ {{(rec.stats.editUserCount-rec.editUserGratis)*costCreator|number:2}}</td>
                     <td class="rightColumn">
-                        {{rec.stats.readUserCount}}<br/>
-                        $ {{rec.stats.readUserCount*costReader|number:2}}</td>
+                        {{rec.stats.sizeDocuments/1000000|number:0}}</td>
                     <td class="rightColumn">
-                        {{rec.stats.sizeDocuments/1000000|number:0}}<br/>
-                        $ {{rec.stats.sizeDocuments/1000000*costDocuments|number:2}}</td>
-                    <td class="rightColumn">
-                        {{rec.stats.numActive}}<br/>
-                        $ {{rec.stats.numActive*costActive|number:2}}</td>
-                    <td class="rightColumn">
-                        {{rec.stats.numFrozen}}<br/>
-                        $ {{rec.stats.numFrozen*costFrozen|number:2}}</td>
+                        Active: {{rec.stats.numActive}}<br/>
+                        Frozen: {{rec.stats.numFrozen}}<br/>
+                        Gratis: {{rec.workspaceGratis}}<br/>
+                        $ {{(rec.stats.numActive-rec.workspaceGratis)*costActive|number:2}}</td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="well">
+      <button class="btn btn-primary btn-raised" ng-click="chargeAllSites()">Charge All Sites</button>
+    </div>
+
+
 
     <div class="h1">
         Email of all owners and executives
