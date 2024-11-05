@@ -196,14 +196,25 @@ app.controller('myCtrl', function($scope, $http) {
         }
     };
     
+    $scope.clearAllSites = function() {
+        if (confirm("Are you sure you want get rid of ALL charges for this month?")) {
+            $scope.allSites.forEach( function(site) {
+                site.chargeThisMonth = 0;
+                $scope.chargeSite(site);
+            });
+        }
+    };
+    
     $scope.chargeSite = function(site) {
         var postURL = "updateCharge.json";
         var postObj = {year: <%=showYear%>, month: <%=showMonth%>, site: site.key, amount: site.chargeThisMonth};
         var postdata = angular.toJson(postObj);
-        $scope.showError=false;
+        $scope.showError = false;
         $http.post(postURL, postdata)
         .success( function(data) {
             console.log("SUCCESS: charged "+site.key+" == "+site.chargeThisMonth);
+            site.foundCharge = site.chargeThisMonth;
+            $scope.calculateCost(site);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -302,6 +313,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="well">
       <button class="btn btn-primary btn-raised" ng-click="chargeAllSites()">Charge All Sites</button>
+      <button class="btn btn-primary btn-raised" ng-click="clearAllSites()">Clear Charges from All Sites</button>
     </div>
 
 
