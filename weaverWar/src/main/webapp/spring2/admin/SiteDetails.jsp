@@ -228,12 +228,12 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr>
                 <td>
-                  <div class="dropdown">
+                  <div class="nav-item dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="addAdmin(theSite)">Add Yourself to Owners</a></li>
+                      <li class="nav-item" role="presentation">
+                          <a class="dropdown-item" role="menuitem" ng-click="addAdmin(theSite)">Add Yourself to Owners</a></li>
                     </ul>
                   </div>
                 </td>
@@ -249,33 +249,34 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-repeat="key in stdKeys">
                 <td>
-                  <div class="dropdown">
+                  <div class="nav-item dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="startEdit(key)">Edit</a></li>
+                      <li class="nav-item" role="presentation">
+                          <a class="dropdown-item" role="menuitem" ng-click="startEdit(key)">Edit</a></li>
                     </ul>
                   </div>
                 </td>
                 <td>{{key}}</td>
                 <td>
                     <div ng-hide="key==editKey">{{theSite[key]}}</div>
-                    <div ng-show="key==editKey">
-                        <input class="form-control" style="width:400px" ng-model="theSite[key]">
+                    <div class="col-4" ng-show="key==editKey">
+                        <input class="form-control" ng-model="theSite[key]">
+                        <span class="d-flex col-12">
                         <button class="btn btn-primary" ng-click="saveProp(key)">Save</button>
-                        <button class="btn btn-warning" ng-click="cancelSave()">Cancel</button>
+                        <button class="btn btn-danger ms-auto" ng-click="cancelSave()">Cancel</button></span>
                     </div>
                 </td>
             </tr>
             <tr ng-repeat="key in boolKeys">
                 <td>
-                  <div class="dropdown">
+                  <div class="nav-item dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="startEdit(key)">Edit</a></li>
+                      <li class="nav-item" role="presentation">
+                          <a class="dropdown-item" role="menuitem" ng-click="startEdit(key)">Edit</a></li>
                     </ul>
                   </div>
                 </td>

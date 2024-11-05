@@ -177,18 +177,18 @@ app.controller('myCtrl', function($scope, $http) {
             <tbody>
                 <tr ng-repeat="rec in filterSites()">
                     <td>
-                      <div class="dropdown">
+                      <div class="nav-item dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                         <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li role="presentation">
-                              <a href="SiteDetails.htm?siteKey={{rec.key}}">View Details</a></li>
-                          <li role="presentation">
-                              <a href="SiteMerge.htm?site={{rec.key}}">See Layouts</a></li>
-                          <li role="presentation">
-                              <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
-                          <li role="presentation">
-                              <a role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>
+                          <li class="nav-item" role="presentation">
+                              <a class="dropdown-item" role="menuitem" href="SiteDetails.htm?siteKey={{rec.key}}">View Details</a></li>
+                          <li class="nav-item" role="presentation">
+                              <a class="dropdown-item" role="menuitem" href="SiteMerge.htm?site={{rec.key}}">See Layouts</a></li>
+                          <li class="nav-item" role="presentation">
+                              <a class="dropdown-item" role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
+                          <li class="nav-item" role="presentation">
+                              <a class="dropdown-item" role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>
                         </ul>
                       </div>
                     </td>
