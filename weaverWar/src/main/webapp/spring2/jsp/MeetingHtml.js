@@ -1622,6 +1622,10 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             alert("Please select an agenda item, and try again");
             return;
         }
+        if ($scope.workspaceInfo.frozen) {
+            alert("Workspace is frozen so you can't change the attached documents");
+            return;
+        }
         $scope.cancelBackgroundTime();
 
         var attachModalInstance = $modal.open({
@@ -1659,6 +1663,10 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         if (!item || !item.id) {
             alert("Please select an agenda item, and try again");
+            return;
+        }
+        if ($scope.workspaceInfo.frozen) {
+            alert("Workspace is frozen so you can't change the attached topics");
             return;
         }
         $scope.cancelBackgroundTime();
@@ -2092,6 +2100,10 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openNotesDialog = function (agendaItem) {
         console.log("openNotesDialog called");
+        if ($scope.workspaceInfo.frozen) {
+            alert("Workspace is frozen so notes can not be edited");
+            return;
+        }
 
         if (!embeddedData.canUpdate) {
             alert("Unable to update meeting because you are an observer");
