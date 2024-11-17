@@ -18,6 +18,11 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List of Users in Site");
     $scope.siteUsers = <%siteUsers.getJson().write(out,2,4);%>;
+    var keys = Object.keys($scope.siteUsers);
+    $scope.sortedUsers = [];
+    keys.forEach( function(item) {$scope.sortedUsers.push($scope.siteUsers[item])} );
+    $scope.sortedUsers.sort(function(a, b){return b.lastAccess-a.lastAccess});
+    
     $scope.siteSettings = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
@@ -55,17 +60,13 @@ app.controller('myCtrl', function($scope, $http) {
     
     $scope.findUsers = function() {
         var keys = Object.keys($scope.siteUsers);
-        var finalList = [];
         if (!$scope.filter) {
-            keys.forEach( function(key) {
-                finalList.push($scope.siteUsers[key]);
-            });
-            return finalList;
+            return $scope.sortedUsers;
         }
+        var finalList = [];
         var filterlist = parseLCList($scope.filter);
         console.log("FILTER LIST", filterlist);
-        keys.forEach( function(key) {
-            var aUser = $scope.siteUsers[key];
+        $scope.sortedUsers.forEach( function(aUser) {
             if (aUser.info) {
                 if (containsOne(aUser.info.name, filterlist)) {
                     finalList.push(aUser);
@@ -109,6 +110,42 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     }
+    $scope.preserveCount = $scope.siteSettings.editUserLimit;
+    $scope.demoteBatchUsers = function() {
+        var countLeft = $scope.preserveCount;
+        $scope.sortedUsers.forEach( function(userRecord) {
+            console.log("checking", userRecord);
+            if (!userRecord.readOnly) {
+                if (countLeft>0) {
+                    countLeft--;
+                }
+                else {
+                    userRecord.readOnly = true;
+                    $scope.updateUserMap(userRecord, ["readOnly"]);
+                }
+            }
+        });
+        // window.location.reload(false);
+    }
+    $scope.updateUserMap = function(userRecord, fields) {
+        var userEntry = {};
+        fields.forEach( function(item) {
+            userEntry[item] = userRecord[item];
+        });
+        var postObj = {};
+        postObj[userRecord.info.key] = userEntry;
+        var postdata = angular.toJson(postObj);
+        $scope.showError=false;
+        console.log("UPDATE:", postObj);
+        $http.post("SiteUserMap.json" ,postdata)
+        .success( function(data) {
+            console.log("RESPONSE:", data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -119,12 +156,13 @@ app.filter('encode', function() {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
+
     <div class="container-fluid well mx-3">
         <div class="row col-12 d-flex">
             <div ng-hide="addUserPanel">
             <p class="h6 guideVocal">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.</p>
             <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
-                <p ><b>Site has too many active users.</b>  You are allowed {{siteSettings.editUserLimit}} in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your payment plan.</p>
+                <p ><b>Site has too many active users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
             </div>
             <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
                 <p ><b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an observer. You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.
@@ -156,13 +194,22 @@ app.filter('encode', function() {
             <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
             <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
         </span>
-        <span class="col-2"><span ng-show="value.aUser.lastLogin>0">{{value.info.lastLogin|cdate}}</span></span>
+        <span class="col-2"><span>{{value.info.lastLogin|cdate}}</span></span>
         <span class="col-1">{{value.count}}</span>
         <span class="col-1">{{value.wscount}}</span>
         
     </div>
     </div>
 </div>
+
+    <div class="container-fluid well mx-3">
+        Set to 'Observer' all users except the 
+        <input ng-model="preserveCount"/> 
+        users who most recently logged in.  
+        <button class="btn btn-primary btn-raised" ng-click="demoteBatchUsers()">
+            Demote Users</button>
+    </div>
+
 <div class="container-fluid d-flex">
     <div class="row d-flex col-12 my-3">
         <span class="col-md-6 col-sm-12 my-3">
