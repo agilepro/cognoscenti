@@ -151,12 +151,36 @@ app.controller('AttachActionCtrl', function ($scope, $modalInstance, $http, cont
         $modalInstance.dismiss('cancel');
     };
     $scope.selectedTab = "Create";
+
+
+    $scope.getAllLabels = function () {
+        var postURL = "getLabels.json";
+        $scope.showError = false;
+        $http.post(postURL, "{}")
+            .success(function (data) {
+                console.log("All labels are gotten: ", data);
+                $scope.allLabels = data.list;
+                $scope.sortAllLabels();
+            })
+            .error(function (data, status, headers, config) {
+                reportError(data);
+            });
+    };
+    $scope.sortAllLabels = function () {
+        $scope.allLabels.sort(function (a, b) {
+            if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+            return 0;
+        });
+    };
     $scope.getAllLabels();
     $scope.openEditLabelsModal = function (item) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '../../../new_assets/templates/EditLabels.html',
+            templateUrl: '../../new_assets/templates/EditLabels.html',
             controller: 'EditLabelsCtrl',
             size: 'lg',
             resolve: {
