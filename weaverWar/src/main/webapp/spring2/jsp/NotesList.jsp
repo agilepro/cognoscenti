@@ -340,30 +340,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-      
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
-                </span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                    <span class="second-menu-btn mx-2" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
+                    </span>
 
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
-              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" />
-              Send Email</a>
-        </span>
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" >
-              Create PDF</a>
-        </span>
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >  
-              Search All Topics </a>
-        </span>
-      </div>
-      <div class="d-flex col-9">
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
+                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
+                    </span>
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" > Create PDF</a>
+                    </span>
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >Search All Topics </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex col-10">
         <div class="contentColumn">
-     
-        <div class="well">Filter <input ng-model="filter"> &nbsp;
-            <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+            <div class="container-fluid">
+                <div class="generalContent">
+                    <div class="well col-lg-6 col-md-12">Filter <input ng-model="filter"> &nbsp;
+                        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
                 <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown nav-item mb-0">
+                        </span>
+                        <span class="dropdown nav-item mb-0">
                 <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                            style="width:320px;left:-130px;margin-top:-2px;">
@@ -373,38 +378,34 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                  {{rolex.name}}</button>
                          </li>
                        </ul>
-            </span> &nbsp;
-            <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
-            <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
-        </div>
-     
+                        </span> &nbsp;
+                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+                    </div>
+                    <div class="col-10">
+                        <div class="my-3" ng-repeat="rec in getRows()">
+                        <div class="{{getTopicStyle(rec)}}">
+                            <div id="headline" >
+                                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
+                                            <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
+                                            <li ng-hide="rec.deleted">
+                                                <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
+                                            <li ng-show="rec.deleted"><a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <span style="color:#220011;">
+                                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
 
-    <div style="height:20px;"></div>
-    
-        <div class="my-3" ng-repeat="rec in getRows()">
-            <div class="{{getTopicStyle(rec)}}">
-                <div id="headline" >
-                    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
-                        <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
-                                <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
-                                <li ng-hide="rec.deleted">
-                                    <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
-                                <li ng-show="rec.deleted">
-                                    <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                  <span style="color:#220011;">
-                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
-
-                    <a href="noteZoom{{rec.id}}.htm" style="color:black;">
-                        <b>{{rec.subject}}</b>
-                        ({{rec.modUser.name}})
-                        {{rec.modTime|cdate}}
-                    </a>
+                                    <a href="noteZoom{{rec.id}}.htm" style="color:black;">
+                                    <b>{{rec.subject}}</b>
+                                    ({{rec.modUser.name}})
+                                    {{rec.modTime|cdate}}
+                                    </a> &nbsp;
 
                     <span ng-repeat="label in getNoteLabels(rec)">
                       <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)"
@@ -478,7 +479,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
                 </div>
             </div>
-        </div>
+                        </div>
+                    </div>
 
         
     <div class="instruction" ng-show="!initialFetchDone" style="margin-top:80px">

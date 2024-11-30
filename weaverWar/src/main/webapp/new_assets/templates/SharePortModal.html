@@ -30,37 +30,31 @@
       <label for="labels">Filter Text:</label>
       <input ng-model="sharePort.filter" class="form-control" placeholder="Document name description filter"/>
     </div>
-    <div class="form-group"
-         title="Only documents with all specified labels will be shared.">
-      <label for="labels">Labels:</label>
-      <span class="dropdown" ng-repeat="role in allLabels">
-        <button class="dropdown-toggle labelButton" type="button" id="menu2"
-           data-toggle="dropdown" style="background-color:{{role.color}};"
-           ng-show="hasLabel(role)">{{role.name}}</button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-           <li role="presentation"><a role="menuitem" title="{{add}}"
-              ng-click="removeLabel(role)" style="border:2px {{role.color}} solid;">Remove Label:<br/>{{role.name}}</a></li>
-        </ul>
-      </span>
-      <span>
-         <span class="dropdown">
-           <button class="btn btn-sm btn-primary btn-raised labelButton" 
-               type="button" 
-               id="menu1" 
-               data-toggle="dropdown"
-               title="Add Filter"
-               style="padding:5px 10px">
-               <i class="fa fa-plus"></i></button>         
-           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-               style="width:320px;left:-130px">
-             <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                 <button role="menuitem" tabindex="-1" ng-click="addLabel(rolex)" class="labelButton" 
-                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                     {{rolex.name}}</button>
-             </li>
-           </ul>
-         </span>
-      </span>
+    <div class="form-group">
+      <label for="labels" class="h6">Labels:</label>
+      <span class="nav-item dropdown d-inline mb-0">
+        <button class="btn-tiny btn-comment p-0 ">
+          <i class="fa fa-plus"></i></button>         
+            <ul class="dropdown-menu mt-0 p-2" role="menu" aria-labelledby="selectLabel" 
+          style="width:320px;left:-130px;top:20px">
+            <li class="mb-0" role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+            <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+            ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                {{rolex.name}}</button>
+        </li>
+        <div class="dropdown-divider" style="float:clear"></div>               
+        <li role="presentation" style="float:right">
+          <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+              Add/Remove Labels</button>
+        </li>
+      </ul>
+    </span>
+
+ <span class="dropdown" ng-repeat="role in allLabels">
+   <button class="dropdown labelButton mb-0" ng-click="toggleLabel(role)"
+      style="background-color:{{role.color}};"
+      ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+ </span>
     </div>
     <div class="form-group">
       <button ng-click="sharePort.isActive = !sharePort.isActive" class="btn btn-default btn-raised" 

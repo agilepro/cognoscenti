@@ -474,6 +474,24 @@ a.btn-secondary .btn-secondary  {
         border: $primary-60, solid, 1px;
     }
 }
+
+a.btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    text-decoration: none;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+
 .btn-flex {
     width: auto;
     min-width: 75px;
@@ -541,7 +559,28 @@ a.btn-secondary .btn-secondary  {
         cursor: pointer;
     }
 }
+.second-menu {
+    margin-left: 12px;
+    padding-bottom: 12px;
+    display: inline;
 
+}
+.second-menu-btn a {
+    width: fit-content;
+    max-width: max-content;
+    flex-grow: 1;
+    padding: 3px 6px;
+    text-align: center;
+    border: $primary 1px solid;
+    border-radius: 10px;
+    text-decoration: none;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        border: $primary 1px solid;
+        cursor: pointer;
+    }
+}
 
 .fixed-width-xs {
     width: 30px !important;
@@ -730,59 +769,8 @@ a.btn-secondary .btn-secondary  {
     padding:4px;
     max-width:400px
 }
-.btn-comment {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    padding: 8px;
-    width: 150px;
-    box-shadow: #cccccc 2px 2px 5px;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-    }
-}
 
-a.btn-comment {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 8px;
-    box-shadow: #cccccc 2px 2px 5px;
-    text-decoration: none;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-    }
-}
 
-.btn.btn-comment {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    padding: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    width: 150px;
-    box-shadow: #cccccc 2px 2px 5px;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-        border: $primary-60, solid, 1px;
-    }
-}
 @media (max-width: 768px) {
     .btn-responsive {
       padding:2px 4px;

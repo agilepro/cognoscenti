@@ -6,10 +6,10 @@
                title="Add Filter"
             >
                <i class="fa fa-plus"></i></button>         
-           <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="menu1" 
+           <ul class="dropdown-menu mb-0" role="menu" aria-labelledby="menu1" 
                style="width:320px;left:-130px">
              <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                 <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                 <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton mb-0" 
                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                      {{rolex.name}}</button>
              </li>
@@ -21,8 +21,8 @@
            </ul>
          </span>
 
-      <span class="dropdown" ng-repeat="role in allLabels">
-        <button class="dropdown-toggle labelButton" ng-click="toggleLabel(role)"
+      <span class="dropdown mt-0" ng-repeat="role in allLabels">
+        <button class="labelButton" ng-click="toggleLabel(role)"
            style="background-color:{{role.color}};"
            ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
       </span>

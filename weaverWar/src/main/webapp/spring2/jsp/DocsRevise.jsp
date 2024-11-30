@@ -128,6 +128,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     };
+    $scope.getDocumentInfo = function() {
+        if (!$scope.canAccess) {
+            //avoid generating error if the user does not have access
+            return;
+        }
+        $scope.isUpdating = true;
+        var postURL = "docInfo.json?did="+$scope.docId;
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.setDocumentData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.getDocumentInfo();
     $scope.openDocDialog = function (doc) {
         if (!$scope.canUpdate) {
             alert("Unable to update meeting because you are an observer");
@@ -135,7 +151,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var docsDialogInstance = $modal.open({
             animation: true,
-            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
+            templateUrl: "<%= ar.retPath%>new_assets/templates/DocumentDetail2.html<%=templateCacheDefeater%>",
             controller: 'DocumentDetailsCtrl',
             size: 'lg',
             backdrop: "static",
@@ -145,6 +161,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                siteInfo: function() {
+                    return $scope.siteInfo;
                 },
                 wsUrl: function() {
                     return $scope.wsUrl;
@@ -165,29 +184,34 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 });
 </script>
-
+<script src="../../../jscript/AllPeople.js"></script>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid">
     <div class="row">
-      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" href="DocsList.htm" >List Documents</a></span>
-                <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
-              <div ng-show="canUpdate">
-                <span class="btn btn-comment btn-secondary btn-raised m-3" ng-click="openDocDialog(docInfo)">Document Settings</span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                    <span class="second-menu-btn mx-2" type="button"><a href="DocsList.htm" >List Documents</a></span>
+                    <span class="second-menu-btn mx-2" type="button"><a href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
+                </div>
             </div>
         </div>
+    </div>
+
 
     
     
-        <div class="d-flex col-9">
+        <div class="d-flex col-10">
         <div class="contentColumn">
             <div class="container-fluid">
                 <div class="generalContent">
-                    <div id="TheNewDocument" class="well" ng-show="canUpdate">
+                    <div id="TheNewDocument" class="well col-lg-6 col-md-12" ng-show="canUpdate">
                         <div>
             <table>
                 <tr>

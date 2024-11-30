@@ -266,26 +266,33 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     <div class="container-fluid">
       <div class="row">
-        <div class="fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="DocsFolder.htm">
-              Show Folders</a>
-            </span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="addDocument"><a class="nav-link"  href="DocsAdd.htm">
-              <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
-          </span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm">
-              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
-          </span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" aria-labelledby="SharePorts"><a class="nav-link"  href="SharePorts.htm">
-              Share Ports</a>
-          </span>
-          
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                    <span class="second-menu-btn mx-2" type="button"><a href="DocsFolder.htm">Show Folders</a></span>
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="addDocument"><a href="DocsAdd.htm">
+                        <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
+                    </span>
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="sendEmail"><a href="SendNote.htm">
+                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
+                    </span>
+                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="SharePorts"><a href="SharePorts.htm">Share Ports</a>
+                    </span>
+                </div>
+            </div>
         </div>
+      </div>
 
     
-    <div class="d-flex col-9"><div class="contentColumn">
-    <div class="well">Filter <input ng-model="filter"> &nbsp;
-        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+    <div class="d-flex col-12">
+        <div class="contentColumn">
+            <div class="container-fluid">
+                <div class="generalContent">
+            <div class="well col-lg-6 col-md-12">Filter <input ng-model="filter"> &nbsp;
+                <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
             <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>
         <span class="dropdown nav-item mb-0">
@@ -301,23 +308,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </span> &nbsp;
         <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
         <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
-    </div>
+            </div>
 
-    <div style="height:20px;"></div>
+    <div class="col-12">
 
-    <table class="gridTable2" width="100%">
-        <tr class=" my-2 gridTableHeader">
-            <td width="50px">
-            </td>
-            <td width="40px"></td>
-            <td width="420px"><h2 class="text-secondary fs-5">Name ~ Description</h2></td>
-            <td width="40px"></td>
-            <td width="40px"></td>
-            <td width="80px"><span class="text-secondary fs-5">Date</span></td>
-            <td width="80px"><span class="text-secondary fs-5">Size</span></td>
-        </tr>
-        <tr ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
-            <td>
+        <div class="row">
+            <span class="col-8 fs-5">Name ~ Description</span>
+            <span class="col-2 fs-5">Date</span>
+            <span class="col-2 fs-5">Size</span>
+        </div>
+        <div class="row my-3" ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
+            <span class="col-6">
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
                     <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
@@ -333,14 +334,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </ul>
                     </li>
                 </ul>
-            <td style="text-align: center">
-              <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
+                <span style="text-align: center">
+                <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
                 <span class="fa fa-external-link"></span></span>
-              <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
+                <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
                 <span class="fa fa-download"></span></span>
-            </td>
-            <td>
-              <div>
+                </span>
+
                 <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
                 <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
                 <span ng-repeat="label in getLabelsForDoc(rec)">
@@ -349,11 +349,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         style="background-color:{{label.color}};">{{label.name}}
                     </button>
                 </span>
-              </div>
+            
               <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
               </div>
-            </td>
-            <td>
+            </span>
+            <span class="col-1">
               <span class="dropdown" >
                 <span id="menu1" data-toggle="dropdown">
                 <img class="rounded-5" 
@@ -370,15 +370,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       <span class="fa fa-user"></span> Visit Profile</a></li>
                 </ul>
               </span>
-            </td>
-            <td style="text-align: center" ng-click="openDocDialog(rec)">
+            </span>
+            <span class="col-1" style="text-align: center" ng-click="openDocDialog(rec)">
                 <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                 <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-            </td>
-            <td ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</td>
-            <td ng-click="openDocDialog(rec)"><span ng-show="rec.size>0">{{rec.size|number}}</span></td>
-        </tr>
-    </table>
+            </span>
+            <span class="col-2" ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</span>
+            <span class="col-2" ng-click="openDocDialog(rec)"><span ng-show="rec.size>0">{{rec.size|number}}</span></span>
+        </div>
+    </div>
     
     
     <div class="guideVocal" ng-show="dataArrived && atts.length==0" style="margin-top:80px">
@@ -388,7 +388,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
     
     
-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <!--have to make room for menu on bottom line-->
 <div style="height:300px"></div>
 

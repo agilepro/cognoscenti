@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<%@page errorPage="/spring2/jsp/error.jsp"
+<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+%><%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
+
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
@@ -9,7 +11,6 @@
     if (ar.isLoggedIn()) {
         loggedKey = loggedUser.getKey();
     }
-
 
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
@@ -255,7 +256,7 @@ $(document).ready(function() {
 });
 
 //Must initialize the app with all the right packages here, before the 
-//individual pages create the controlles
+//individual pages create the controls
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
 myApp.filter('cdate', function() {
@@ -270,14 +271,15 @@ myApp.filter('cdate', function() {
     return moment(x).format("DD-MMM @ HH:mm");
   };
 });
+myApp.filter('encode', function() {
+  return window.encodeURIComponent;
+});
 myApp.filter('wiki', function() {
   return function(x) {
     return convertMarkdownToHtml(x);
   };
 });
-myApp.filter('encode', function() {
-  return window.encodeURIComponent;
-});
+
 function setUpLearningMethods($scope, $modal, $http) {
     // learning path is not used on Limited pages
 }
@@ -306,7 +308,7 @@ function setUpLearningMethods($scope, $modal, $http) {
     <!-- Begin mainContent -->
     <div class="col-10 col-lg-11 main-content">
 
-      <!-- BEGIN Title and Breadcrump -->
+      <!-- BEGIN Title and Breadcrumb -->
       <nav aria-label="Breadcrumb">
         <ol class="breadcrumb px-3">
       <% if(!ar.isLoggedIn()) { %>
@@ -321,8 +323,8 @@ function setUpLearningMethods($scope, $modal, $http) {
             Site: '<%ar.writeHtml(mainSiteName);%>'</a></li>
       <% } else { %>
 
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+        <li class="breadcrumb-item"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/FrontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a>
                 <span style="color:gray">
                 <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
@@ -354,7 +356,7 @@ function setUpLearningMethods($scope, $modal, $http) {
           console.log('LOGGED IN', info);
       }
       function displayWelcomeMessage(info) {
-          console.log("WELCOME:", knowWeAreLoggedIn, info)
+          //console.log("WELCOME:", knowWeAreLoggedIn, info)
           var y = document.getElementById("welcomeMessage");
           if (knowWeAreLoggedIn && info.verified) {
               //nothing to do in this case
@@ -392,6 +394,9 @@ function setUpLearningMethods($scope, $modal, $http) {
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       console.log("WELCOME INIT:", knowWeAreLoggedIn);
       </script>
+
+
+
 <h1 class="px-3 page-name" id="mainPageTitle"></h1>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />

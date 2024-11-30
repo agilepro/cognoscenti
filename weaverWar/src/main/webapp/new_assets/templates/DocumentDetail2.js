@@ -77,7 +77,7 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '../../new_assets/templates/EditLabels.html',
+            templateUrl: '../../../new_assets/templates/EditLabels.html',
             controller: 'EditLabelsCtrl',
             size: 'lg',
             resolve: {

@@ -326,14 +326,12 @@ function copyTheLink() {
         <div class="well">
             <div class="row col-12">
                 <h2 class="h5 me-2"><b>{{docInfo.name}}</b></h2>
-            </div>
-            <div class="row col-12">
                 <span ng-show="docInfo.deleted" style="color:red">
                 <i class="fa fa-trash"></i> (DELETED)
                 </span>
                 <span ng-bind-html="docInfo.html"></span>
-                </div>
-                <div class="row d-flex col-12">
+            </div>
+            <div class="row d-flex">
                 <span class="col-3">{{docInfo.modifiedtime|cdate}}</span> &nbsp;
                 <span class="col-3 dropdown">
                     <ul class="navbar-btn p-0">
@@ -358,9 +356,9 @@ function copyTheLink() {
         </div>
             <div class="row d-flex">
 
-                <span class="col-5 ms-auto mb-0">
+                <span class="mb-0">
                 <div ng-show="canAccess">
-                <div ng-show="docInfo.attType=='FILE'">
+                <div class="col-6" ng-show="docInfo.attType=='FILE'">
                     <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>">
                     <img src="<%=ar.retPath%>download.gif"></a>
                 </div>

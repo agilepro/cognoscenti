@@ -1040,48 +1040,56 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </script>
 <script src="../../new_assets/jscript/AllPeople.js"></script>
 
-<div ng-cloak style="max-width:1000px">
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid">
     <div class="row">
-      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
 
-
-
-      <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                    <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
               href="NotesList.htm">List Topics</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
               ng-click="sendNoteByMail()">Send Topic By Email</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-hide="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
+              <span class="second-menu-btn mx-2" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></span>
+              </div>
+            </div>
+        </div>
+    </div>
               
               <!--experimental mobile UI not finished-->
              <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Access the new mobile UI in development"
               href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>-->
-    </div>
-<div class="d-flex col-9"><div class="contentColumn">
+<div class="d-flex col-12"><div class="contentColumn">
+    <div class="container-fluid">
+        <div class="generalContent">
 
 
-    <h2 class="h3" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
+    <h2 class="h3" ng-hide="isEditing" ng-click="startEdit()" >
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </h2>
     <div class="well" ng-show="addressMode" ng-cloak>
-      <h2 class="h4 text-secondary">Email Notification To (Subscribers):</h2>
-      <div>
+        <h2 class="h4 text-secondary">Email Notification To (Subscribers):</h2>
+        <div>
           <tags-input ng-model="subscriberBuffer" placeholder="Enter users to send notification email to"
                       display-property="name" key-property="uid"
                       replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
@@ -1089,33 +1097,33 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                       on-tag-removed="updatePlayers()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
-      </div>
-      <div class="d-flex">
-        <span class="me-auto">
+        </div>
+        <div class="d-flex">
+            <span class="me-auto">
           <button class="btn btn-primary btn-raised btn-wide fs-6 btn-danger" type="button" ng-click="addressMode = false"
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
-      </span>
-      <span>
+            </span>
+            <span>
           <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(false)"
                   title="Post this discussion but don't send any email">
           Post Without Email </button>
-      </span>
-      <span>
+            </span>
+            <span>
           <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(true)"
                   title="Post this discussion and send the email to selected users">
           Post &amp; Send Email </button>
-      </span>
-</div>
+            </span>
+        </div>
     </div>
     
-    <div class="bordereddiv" ng-hide="isEditing" >
+    <div class="col-12" ng-hide="isEditing" >
         <div class="leafContent" ng-dblclick="startEdit()">
             <div ng-bind-html="htmlEditing"></div>
         </div>
     </div>
 <%if (isLoggedIn) { %>
-    <div class="leafContent" ng-show="isEditing">
+    <div class="col-12 leafContent" ng-show="isEditing">
         <input type="text" class="form-control" ng-model="noteInfo.subject">
         <div style="height:15px"></div>
         <div ui-tinymce="tinymceOptions" ng-model="htmlEditing"></div>
@@ -1132,9 +1140,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <% } %>
 
 <div class="col-12">
-
+<hr>
     <div class="row d-flex">   
-        <span class="col-2 h6">Labels:</span>
+        <span class="col-1 h6">Labels:</span>
         <span class="col-5">
         <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
         </span>
@@ -1268,25 +1276,29 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <div class="row d-flex ps-5 my-3">
     <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
-        <button class=" btn btn-primary btn-raised dropdown-toggle" type="button" id="phases" data-toggle="dropdown">{{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-        <ul class="dropdown-menu " role="menu" aria-labelledby="phases">
-            <li role="presentation" ng-repeat="phase in getPhases()"><a class="dropdown-item " role="menuitem" ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
-        </ul>
+
     </span> 
     <span class="dropdown" ng-show="noteInfo.draft">   
         <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
     </span>
 </div>
 <hr>
-<div ng-show="canComment">
-        <div class="d-flex col-sm-12 mb-3">
-            <button ng-click="openCommentCreator(null,1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
-                Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator(null,2)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
-                Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator(null,3)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
-                Create New <i class="fa  fa-question-circle"></i> Round</button>
-        </div>
+          <!--Create Comment/Proposal/Round Row-->
+          <div class="row row-md-cols-3">
+
+            <div class="d-flex col-sm-12 mb-3">
+                <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                    Create New <i class="fa fa-comments-o"></i> Comment</button>
+                <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                    Create New <i class="fa fa-star-o"></i> Proposal</button>
+                <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                    Create New <i class="fa fa-question-circle"></i> Round</button>
+                <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
+                  Edit Agenda Item</button>
+            </div>
+      
+            
+        </div> <hr/>
         <div ng-repeat="cmt in getComments()">
 
             <%@ include file="/spring2/jsp/CommentView.jsp" %>

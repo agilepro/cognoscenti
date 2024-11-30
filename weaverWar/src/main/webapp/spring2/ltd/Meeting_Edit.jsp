@@ -1,3 +1,5 @@
+
+
 <div class="container-fluid col-12">
   <div class="row d-flex" ng-dblclick="openAgenda(item)">
     <span ng-click="openAgenda(item)"></span>
@@ -12,6 +14,7 @@
       <div ng-show="!item.isSpacer" class="description-container">
         <div class="border border-2 border-primary-subtle py-2 px-4 m-4 " ng-bind-html="item.descriptionHtml"></div>
         <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
+        Double-click to edit description
         </span>
       </div>
     </div>
@@ -20,12 +23,12 @@
       <div class="timers" >
         <div class="row g-1">
           <span class="col-md-5 me-3">
-            <div ng-click="changeMeetingMode('Overview')" class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}; cursor: pointer;"><i class="fa fa-clock-o fa-2x"></i><br>
+            <div class="m-2 py-2 fixed-width-sm text-center shadow" id="statusMenu" style="{{meetingStateStyle(meeting.state)}}; cursor: pointer;"><i class="fa fa-clock-o fa-2x"></i><br>
               {{meetingStateName()}} Mode
             </div>
               
                       <span ng-hide="item.timerRunning">
-                <button class="btn-startTime btn-raised mx-2 my-3" ng-click="agendaStartButton(item)">Start</button>
+                <button class="btn-startTime btn-raised mx-2 my-3">Start</button>
             </span>
             <span ng-show="item.timerRunning">
                 <button class="btn-endTime btn-raised mx-2 my-3" ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
@@ -185,7 +188,8 @@
                 <!--Button to create new action item-->
                 <div class="container-fluid">
                 <div class="row justify-content-center">      
-                  <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
+                  <div type="button" class="btn btn-sm btn-outline-primary">
+                    <span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
                   </span>
                 </div>
                 </div>
@@ -316,4 +320,3 @@
             </div>
             </div>
 
-<!---------------------------------------------->

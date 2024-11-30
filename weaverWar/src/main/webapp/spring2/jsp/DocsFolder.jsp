@@ -89,7 +89,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Document Folders");
+    window.setMainPageTitle("Document Folders/Labels");
     $scope.atts = <%attachments.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
@@ -352,7 +352,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-auto fixed-width border-end border-1 border-secondary">
       
         <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="DocsList.htm">
-              Show Without Folders</a>
+              Show Without Labels/Folders</a>
         </span>
           <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="addDocs"><a class="nav-link" role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
@@ -380,7 +380,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </button>
                     </span>
                 </div>
-                <div class="well" ng-show="getAvailableFolders().length>0"> Choose Folder: 
+                <div class="well" ng-show="getAvailableFolders().length>0"> Choose Folder/Label: 
                     <span class="folderLine" style="cursor:pointer" ng-repeat="folder in getAvailableFolders()">
                         <span ng-click="addFolderPath(folder)">
                     <button class="labelButton"

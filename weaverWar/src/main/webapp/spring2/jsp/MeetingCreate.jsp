@@ -45,21 +45,21 @@
         
         JSONObject thirdItem = new JSONObject();
         thirdItem.put("selected", true);
-        thirdItem.put("subject", "Reports");
+        thirdItem.put("subject", "Report:");
         thirdItem.put("description", "Ahead of the meeting, include any report(s) to be given during the meeting.");
         thirdItem.put("duration", 10);
         newAgenda.put(thirdItem);
 
         JSONObject fourthItem = new JSONObject();
         fourthItem.put("selected", true);
-        fourthItem.put("subject", "Explorations");
+        fourthItem.put("subject", "Discussion:");
         fourthItem.put("description", "Ahead of the meeting, include any exploration(s) to be discussed during the meeting.");
         fourthItem.put("duration", 10);
         newAgenda.put(fourthItem);
 
         JSONObject fifthItem = new JSONObject();
         fifthItem.put("selected", true);
-        fifthItem.put("subject", "Decisions");
+        fifthItem.put("subject", "Decision:");
         fifthItem.put("description", "Ahead of the meeting, include any decision(s) to be made during the meeting.");
         fifthItem.put("duration", 10);
         newAgenda.put(fifthItem);

@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
 %><%@page import="com.purplehillsbooks.weaver.mail.ChunkTemplate"
@@ -192,6 +192,29 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 
 </script>
+
+<script>
+    function toggleAccordion(event) {
+    var currentItem = event.currentTarget.parentElement;
+    var accordion = currentItem.parentElement;
+    var items = accordion.getElementsByClassName('accordion-item');
+  
+
+
+    // Close all accordion items
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.remove('active');
+      items[i].querySelector('.accordion-content').style.display = 'none';
+    }
+  
+    // Open the clicked accordion item
+    currentItem.classList.add('active');
+    currentItem.querySelector('.accordion-content').style.display = 'block';
+  }
+
+
+  </script>
+
 <script src="../../../spring2/jsp/MeetingHtml.js"></script>
 
 
@@ -207,8 +230,8 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
-            <!--Setup Accordion-->
-
+            <!--Setup Accordion - not needed for guest access-->
+<!--
             <div class="accordion" id="accordionSetup">
                 <div class="accordion-item">
                     <div class="accordion-header" id="headingOne">
@@ -232,7 +255,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
                     </div>
                 </div>
             </div>
-
+-->
 <hr/>
 <!--Agenda Panel-->
 <div style="height: 0.5rem">&nbsp;</div>
@@ -270,6 +293,8 @@ ng-dblclick="openAgenda(selectedItem)">
 </div>
  <!--END OF Agenda Panel-->
 
+<!--Static Display buttons-->
+<!--Agenda and Minutes buttons  -->
 
 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
 <div class="my-3 d-flex justify-content-start">
@@ -285,9 +310,6 @@ ng-dblclick="openAgenda(selectedItem)">
 
 <hr/>
 
-<span>
-Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
-</span> 
         </div>
 <div class="d-flex col-9">
     <div class="contentColumn">
@@ -301,20 +323,21 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
 (available to anonymous users)
 <div ng-bind-html="htmlMinutes"> </div>
         </div>
+        <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
+                    <%@ include file="Meeting_Edit.jsp"%>
+        </div>
         <div ng-show="displayMode=='General'">
             <%@ include file="Meeting_Settings.jsp"%>                
-        </div>
-        <div ng-show="displayMode=='Overview'">
-            <%@ include file="Meeting_Overview.jsp"%>
         </div>
         <div ng-show="displayMode=='Attendance'">
                 <%@ include file="Meeting_Participants.jsp"%>
         </div>
         <div ng-show="displayMode=='Time'">
             <%@ include file="Meeting_Times.jsp"%>
-        </div>                
-        <div ng-show="displayMode=='Items'" ng-repeat="item in [selectedItem]">
-                    <%@ include file="Meeting_Edit.jsp"%>
+        </div>  
+
+        <div ng-show="displayMode=='Overview'">
+            <%@ include file="Meeting_Overview.jsp"%>
         </div>
 
 

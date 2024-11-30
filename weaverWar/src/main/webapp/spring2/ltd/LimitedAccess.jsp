@@ -71,7 +71,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 });
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="../../../new_assets/jscript/AllPeople.js"></script>
 
 <div>
 
