@@ -271,8 +271,15 @@ public class BaseController {
             if (jspName.endsWith(".jsp.jsp")) {
                 throw WeaverException.newBasic("Program Logic Error: streamJSP* called with double JSP in name");
             }
-            
-            File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
+
+            File springFolder = null;
+            UserProfile uProf = ar.getUserProfile();
+            if (uProf != null && uProf.avoidOldUI) {
+                springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring2");
+            } else {
+                springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
+            }
+
             File accessFolder = new File(springFolder, accessLevel);
             File jspFile = new File(accessFolder, jspName);
             if (!jspFile.exists()) {

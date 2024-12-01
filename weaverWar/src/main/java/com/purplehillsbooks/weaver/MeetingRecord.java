@@ -622,8 +622,9 @@ public class MeetingRecord extends DOMFace {
             attended.put(UserManager.getCorrectedEmail(attendee));
         }
         meetingInfo.put("attended", attended);
-        meetingInfo.put("agendaUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("notifyLayout")));
-        meetingInfo.put("minutesUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("defaultLayout")));
+        String mnm = AccessControl.getAccessMeetParams((NGWorkspace)ar.ngp, this); 
+        meetingInfo.put("agendaUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("notifyLayout")+"&"+mnm));
+        meetingInfo.put("minutesUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("defaultLayout")+"&"+mnm));
         return meetingInfo;
     }
 

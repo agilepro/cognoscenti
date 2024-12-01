@@ -189,7 +189,9 @@ myApp.controller('myCtrl', function($scope, $http) {
         UserProfile up = UserManager.getUserProfileByKey(userKey);
         if (up==null) {
             Thread.sleep(3000);
-            throw new NGException("nugen.exception.user.not.found.invalid.key",new Object[]{userKey});
+            throw WeaverException.newBasic(
+                "Can not find a user with key = '%s'.  This page requires a valid key.", 
+                userKey);
         }
         return up;
     }

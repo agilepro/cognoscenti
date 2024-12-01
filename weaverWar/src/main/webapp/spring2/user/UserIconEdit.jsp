@@ -1,63 +1,78 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%@ include file="/functions.jsp"
+%><%@page import="com.purplehillsbooks.weaver.UserManager"
+%><%@page import="com.purplehillsbooks.weaver.UserProfile"
+%><%@page import="java.util.TimeZone"
 %><%
 
+    ar.assertLoggedIn("Can't edit a user's profile.");
+    UserProfile uProf = findSpecifiedUserOrDefault(ar);
+    UserProfile runningUser = ar.getUserProfile();
+    boolean isSuperAdmin = ar.isSuperAdmin();
 
-    String pageId = ar.reqParam("pageId");
-    String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngp);
-    ar.assertAccessWorkspace("Must be a member to upload documents");
-    NGBook ngb = ngp.getSite();
-    NGBook site = ngp.getSite();
+    //the following should be impossible since above log-in is checked.
+    if (uProf == null) {
+        throw new Exception("Must be logged in to edit a user's profile.");
+    }
+    boolean selfEdit = uProf.getKey().equals(runningUser.getKey());
+    if (!selfEdit) {
+        //there is one super user who is allowed to edit other user profiles
+        //that user is specified in the system properties -- by KEY
+        if (!isSuperAdmin) {
+            throw new Exception("User "+runningUser.getName()
+                +" is not allowed to edit the profile of user "+uProf.getName());
+        }
+    }
+    
+    JSONObject userObj = uProf.getFullJSON();
 
-    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-    String remoteProjectLink = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
-                    + "/summary.json?lic="+lfu.getId();
-
-    JSONArray allLabels = ngp.getJSONLabels();
-
+    String photoSource = ar.retPath+"assets/photoThumbnail.gif";
+    String imagePath = uProf.getImage();
+    if(imagePath!=null && imagePath.length() > 0){
+        photoSource = ar.retPath+"icon/"+imagePath;
+    }
+    Object errMsg = session.getAttribute("error-msg");
+    
 %>
 
-
-
-
-
 <script type="text/javascript">
-
-var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, $modal) {
-    setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Upload Documents");
-    window.MY_SCOPE = $scope;
-    $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.docInfo = {description: ""};
-    $scope.fileProgress = [];
-    $scope.browsedFile = null;
-    $scope.filterMap = {};
+var MY_SCOPE = "FOO";
+var myApp = angular.module('myApp');
+myApp.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Change Your Icon Image");
+    $scope.profile = <%userObj.write(out,2,4);%>;
+    MY_SCOPE = $scope;
+    
+    $scope.myTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
+        console.log("ERROR", serverErr);
         errorPanelHandler($scope, serverErr);
     };
+
+    $scope.fileProgress = [];
     $scope.cancelUpload = function(oneProgress) {
         oneProgress.done = true;
         oneProgress.status = "Cancelled";
     }
     $scope.startUpload = function(oneProgress) {
+        let fileName = oneProgress.file.name.toLowerCase();
+        if (!fileName.endsWith(".jpg")) {
+            //alert("File must be a JPG file");
+            //return;
+        }
         oneProgress.status = "Starting";
         oneProgress.loaded = 0;
         oneProgress.percent = 0;
         oneProgress.labelMap = $scope.filterMap;
-        var postURL = "<%=remoteProjectLink%>";
-        var postdata = '{"operation": "tempFile"}';
+        var postURL = "UserPostOps.json";
+        var postdata = '{"op": "tempFile"}';
         $scope.showError=false;
+        console.log("REQUESTING TEMP FILE NAME");
         
         $http.post(postURL, postdata)
         .success( function(data) {
@@ -71,7 +86,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     $scope.actualUpload = function(oneProgress) {
         oneProgress.status = "Uploading";
-        var postURL = "<%=remoteProjectLink%>";
+        console.log("UPLOADING TO: "+oneProgress.tempFileURL);
 
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener("progress", function(e){
@@ -95,8 +110,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     $scope.nameUploadedFile = function(oneProgress) {
         oneProgress.status = "Finishing";
-        var postURL = "<%=remoteProjectLink%>";
-        var op = {operation: "newDoc"};
+        var postURL = "UserPostOps.json";
+        var op = {op: "finishIcon"};
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
         op.doc.description = oneProgress.description;
@@ -104,6 +119,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         op.doc.size = oneProgress.file.size;
         op.doc.labelMap = oneProgress.labelMap;
         var postdata = JSON.stringify(op);
+        console.log("UPLOADING DONE: finishing icon");
         $http.post(postURL, postdata)
         .success( function(data) {
             if (data.exception || data.error) {
@@ -113,86 +129,83 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             oneProgress.status = "DONE";
             oneProgress.done = true;
             oneProgress.doc = data;
+            console.log("UPLOADING ALL DONE SUCCESS");
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
-
-    $scope.$watch('browsedFile', function() {
-       if ($scope.browsedFile) {
-           alert('hey, browsedFile has changed!');
-       }
-    });
-
-    $scope.hasLabel = function(searchName) {
-        return $scope.filterMap[searchName];
+    
+    
+    $scope.updatePersonal = function() {
+        var newProfile = {};
+        newProfile.name = $scope.profile.name;
+        newProfile.description = $scope.profile.description;
+        newProfile.notifyPeriod = $scope.profile.notifyPeriod;
+        newProfile.timeZone = $scope.profile.timeZone;
+        $scope.updateServer(newProfile);
     }
-    $scope.toggleLabel = function(label) {
-        $scope.filterMap[label.name] = !$scope.filterMap[label.name];
-        $scope.showFilter=true;
-    }
-    $scope.allLabelFilters = function() {
-        var res = [];
-        $scope.allLabels.map( function(val) {
-            if ($scope.filterMap[val.name]) {
-                res.push(val);
-            }
+    $scope.updateServer = function(newProfile) {
+        console.log("UPDATE PROFILE WITH", newProfile);
+        var postURL = "updateProfile.json";
+        $http.post(postURL, JSON.stringify(newProfile))
+        .success( function(data) {
+            //$scope.profile = data;
+            window.location='UserSettings.htm';
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
         });
-        return res;
+    }
+    $scope.exit = function() {
+        window.location='UserSettings.htm';
     }
     
-
-    initializeLabelPicker($scope, $http, $modal);    
-    $scope.getAllLabels();
-    $scope.openEditLabelsModal = function (item) {
-        
-        var attachModalInstance = $modal.open({
-            animation: true,
-            templateUrl: '../../../new_assets/templates/EditLabels.html',
-            controller: 'EditLabelsCtrl',
-            size: 'lg',
-            resolve: {
-                siteInfo: function () {
-                  return $scope.siteInfo;
-                },
-            }
-        });
-
-        attachModalInstance.result
-        .then(function (selectedActionItems) {
-            $scope.getAllLabels();
-        }, function () {
-            $scope.getAllLabels();
-        });
-    };
+    $scope.addEmail = function() {
+        var newProfile = {};
+        newProfile.preferred = $scope.newEmail;
+        $scope.updateServer(newProfile);
+    }
+    $scope.selectTimeZone = function(newTimeZone) {
+        $scope.profile.timeZone = newTimeZone;
+        var newProfile = {};
+        newProfile.key = $scope.profile.key;
+        newProfile.timeZone = newTimeZone;
+        $scope.updateServer(newProfile);
+    }
 });
+
 </script>
 
-<div ng-cloak>
 
-<%@include file="ErrorPanel.jsp"%>
+<div>
+
+<%@include file="../jsp/ErrorPanel.jsp"%>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-      
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="clearDocs"><a class="nav-link" href="DocsUpload.htm" >Clear</a></span>
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="docsList"><a class="nav-link" href="DocsList.htm" >List Document</a></span>
+            <span class="col-2 m-3" style="cursor: pointer;">
+                <button class="btn btn-secondary btn-raised btn-comment btn-wide py-1" ng-click="exit()">Return to Profile</button>
+            </span>
         </div>
-
-        <div class="d-flex col-9">
+        
+        <div class="row-cols-3 d-flex  m-3">
+<div class="d-flex col-9">
             <div class="contentColumn">
                 <div class="form-group d-flex">
-                    <label class="col-md-2 control-label h6">Drop Here:</label>
+                    <label class="col-md-2 control-label h6"></label>
                     <div class="col-md-10">
-                        <div id="holder" class="nicenice">Drop Files Here</div>
+                        <p>Drag and drop a JPG image into the spot below. 
+                        <ul><li>It must be less than 1MB in size</li>
+                        <li>ideally should be about 100 pixels square.</li>
+                        <li>Image formats other than JPG are not supported.</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="form-group d-flex">
-                    <label class="col-md-2 control-label h6">Labels:</label>
+                    <label class="col-md-2 control-label h6">Drop Here:</label>
                     <div class="col-md-10">
-                        <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+                        <div id="holder" class="nicenice">Drop Your Image Here</div>
                     </div>
                 </div>
                 <div ng-repeat="fp in fileProgress" class="form-group d-flex">
@@ -201,11 +214,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <span class="col-6"><b>{{fp.file.name}}</b></span>
 
                           <span class="col-4 h6">{{fp.status}}</span>
-                        </div>
-
-                        <div class="h6 my-2" ng-hide="fp.done">
-                             Description:<br/><br/>
-                             <textarea ng-model="fp.description" class="form-control"></textarea>
                         </div>
                         <div style="padding:5px;">
                             <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
@@ -227,8 +235,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
         </div>
+            
     </div>
+
+
+
 </div>
+
+<%!
+
+    public UserProfile findSpecifiedUserOrDefault(AuthRequest ar) throws Exception {
+        String userKey = ar.reqParam("userKey");
+        UserProfile up = UserManager.getUserProfileByKey(userKey);
+        if (up==null) {
+            Thread.sleep(3000);
+            throw WeaverException.newBasic(
+                "Can not find a user with key = '%s'.  This page requires a valid key.", 
+                userKey);
+        }
+        return up;
+    }
+
+%>
 <script>
 var holder = document.getElementById('holder');
 holder.ondragenter = function (e) {
@@ -256,8 +284,8 @@ holder.ondrop = function (e) {
     }
 
     this.className = 'nicenice';
-    var scope = window.MY_SCOPE;
-    //scope.fileName = newFiles[0].name;
+    var scope = MY_SCOPE;
+
 
     for (var i=0; i<newFiles.length; i++) {
         var newProgress = {};
@@ -269,6 +297,3 @@ holder.ondrop = function (e) {
     scope.$apply();
 };
 </script>
-
-
-<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

@@ -395,6 +395,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <!--have to make room for menu on bottom line-->
 <div style="height:300px"></div>
+    <!--room at bottom to show white space so it is clear page is ended-->
+    <div style="height:200px"></div>    
+</div>
+
 
 <script src="<%=ar.retPath%>new_assets/templates/DocumentDetail2.js"></script>
 <script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>

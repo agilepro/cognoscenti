@@ -832,6 +832,10 @@ public class NGBook extends ContainerCommon {
     }
 
     public WorkspaceStats getRecentStats() throws Exception {
+        return getRecentStats(false);
+    }
+
+    public WorkspaceStats getRecentStats(boolean force) throws Exception {
 
         File statsFile = getStatsFilePath();
         if (!statsFile.exists()) {
@@ -839,7 +843,7 @@ public class NGBook extends ContainerCommon {
         }
         long timeStamp = statsFile.lastModified();
         long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
-        if (timeStamp < recentEnough) {
+        if (timeStamp < recentEnough || force) {
             return recalculateStats(cog);
         }
 

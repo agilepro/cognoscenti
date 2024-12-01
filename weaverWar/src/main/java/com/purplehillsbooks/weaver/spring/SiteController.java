@@ -557,7 +557,7 @@ public class SiteController extends BaseController {
             if (recalc!=null) {
                 site.flushUserCache();
             }
-            WorkspaceStats ws = site.getRecentStats();
+            WorkspaceStats ws = site.getRecentStats(recalc!=null);
 
             JSONObject result = new JSONObject();
             result.put("siteId",  siteId);

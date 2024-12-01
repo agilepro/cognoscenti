@@ -21,6 +21,8 @@
 package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
+import com.purplehillsbooks.weaver.IdGenerator;
 import com.purplehillsbooks.weaver.MicroProfileMgr;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.ProfileRef;
@@ -49,10 +52,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 
 
 @Controller
@@ -149,10 +151,17 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/{userKey}/UserProfileEdit.htm")
-    public void changeUserProfile(@PathVariable String userKey,
+    public void userProfileEdit(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
         streamJSPUserLogged2(request, response, userKey, "UserProfileEdit.jsp");
+    }
+
+    @RequestMapping(value = "/{userKey}/UserIconEdit.htm")
+    public void userIconEdit(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        streamJSPUserLogged2(request, response, userKey, "UserIconEdit.jsp");
     }
 
 
@@ -248,6 +257,7 @@ public class UserController extends BaseController {
         }
     }
 
+    /* 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
     protected void uploadImageFile(HttpServletRequest request,
             HttpServletResponse response,
@@ -340,7 +350,8 @@ public class UserController extends BaseController {
                 "Failed to open upload user image page for user %s.",
                 e, userKey));
         }
-    }
+    */
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
     public void gotoApproveOrRejectRoleReqPage(
@@ -882,5 +893,113 @@ public class UserController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+    /**
+     * This method is primarily for uploading a temporary file 
+     * for the use as a user icon.
+     */
+    @RequestMapping(value = "/{userKey}/TempFile/{tempName}", method = RequestMethod.PUT)
+    public void doPut(@PathVariable String userKey, @PathVariable String tempName, 
+            HttpServletRequest req, HttpServletResponse resp) {
+        AuthRequest ar = AuthRequest.getOrCreate(req, resp);
+        try {
+            System.out.println("USER_PUT: "+ar.getCompleteURL());
+            if (!tempName.startsWith("~tmp")) {
+                throw WeaverException.newBasic("Temporary file name (%s) is not valid for use as temp file.  Must request a temp file name from the system.", 
+                tempName);
+            }
+            File userfolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
+            File tempFile = new File(userfolder, tempName);
+            if (tempFile.exists()) {
+                throw WeaverException.newBasic("Temporary file (%s) already exists.  Should only be used once.", 
+                tempName);
+            }
+            InputStream is = ar.req.getInputStream();
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            StreamHelper.copyInputToOutput(is, fos);
+            fos.flush();
+            fos.close();
+            
+            //now wait to make sure it is actually there in the file system
+            if (!tempFile.exists()) {
+                //we had a problem where requests were getting here but the temp file did not exist
+                //but inspection showed the file to exist.  There might be a delay in uploading the 
+                //file due to caching delays.   This just waits for up to 4 seconds to see if the
+                //file appears in the file system after a delay.
+                int count = 0;
+                while (!tempFile.exists() && count++ < 20) {
+                    System.out.println("WAITING "+count+" FOR PUT FILE: "+tempFile.toString());
+                    Thread.sleep(200);
+                }
+                throw WeaverException.newBasic("PUT temp file failed.  Can't see it in file system: %s", tempFile);
+            }
+            System.out.println("    PUT: file written: "+tempFile.getAbsolutePath());
+            JSONObject result = new JSONObject();
+            result.put("responseCode", 200);
+            result.write(ar.resp.getWriter(), 2, 0);
+        }
+        catch (Exception e) {
+            Exception ctx = WeaverException.newWrap("Unable to handle PUT to %s", e, ar.getCompleteURL());
+            streamException(ctx, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{userKey}/UserPostOps.json", method = RequestMethod.POST)
+    private void userPostOps(@PathVariable String userKey,
+    HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            JSONObject responseOK = new JSONObject();
+            responseOK.put("responseCode", 200);
+            JSONObject input = getPostedObject(ar);
+            String op = input.getString("op");
+
+            if ("tempFile".equals(op)) {
+                String fileName = "~tmp~"+IdGenerator.generateKey()+".jpg";
+                responseOK.put("tempFileName", fileName);
+                responseOK.put("tempFileURL", ar.getServerPath() + "v/" + userKey + "/TempFile/" + fileName + "?lic=95125");
+                responseOK.write(ar.resp.getWriter(), 2, 0);
+                ar.flush();
+                return;
+            }
+
+            if ("finishIcon".equals(op)) {
+                String tempFileName = input.getString("tempFileName");
+                File userfolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
+                File tempFile = new File(userfolder, tempFileName);
+                File tempFile2 = new File(userfolder, tempFileName+"~2");
+    
+                if (!tempFile.exists()) {
+                    throw WeaverException.newBasic("Can not fine temporary file (%s), can not make an icon from that", tempFileName);
+                }
+                File userIconFile = new File(userfolder, userKey.toLowerCase() + ".jpg");
+                Thumbnail.makeSquareFile(tempFile, tempFile2, 100);
+                tempFile.delete();
+                if (tempFile2.length()>999999) {
+                    throw WeaverException.newBasic("Temporary file (%s) is more than 1MB in size, and can not be used as an icon.", tempFileName);
+                }
+
+                if (userIconFile.exists()) {
+                    userIconFile.delete();
+                }
+                tempFile2.renameTo(userIconFile);
+
+                System.out.println("USER ICON: updated: "+userIconFile.getAbsolutePath());
+                responseOK.put("tempFileName", tempFileName);
+                responseOK.put("iconFileName", userIconFile.getName());
+                responseOK.write(ar.resp.getWriter(), 2, 0);
+                ar.flush();
+                return;
+            }
+
+            throw WeaverException.newBasic("UserPostOps does not understand operation: %s", op);
+        }
+        catch (Exception e) {
+            streamException(WeaverException.newWrap(
+                "Failed to handle post operation for user (%s).", 
+                e, userKey), ar);
+        }
+    }
+  
 }
 

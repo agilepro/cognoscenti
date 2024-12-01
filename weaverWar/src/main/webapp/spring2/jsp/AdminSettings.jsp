@@ -202,7 +202,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
         }
         if ((!$scope.workspaceConfig.frozen) && <%=mustBeFrozen%>) {
             $scope.workspaceConfig.frozen = true;
-            alert("Sorry, you already have too many unfrozen workspaces, please freeze another workspace before unfreezing this one");
+            alert("Sorry, the administrator has set a limit on the number of workspaces, and you already have too many unfrozen workspaces.  You options are to freeze another workspace before unfreezing this one, or raising the limit on the number of workspaces.");
             return;
         }
             

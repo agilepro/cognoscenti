@@ -127,98 +127,80 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4"></span>
            <span class="col-2 h6">Entire Site</span>
-           <span class="col-2 h6">Site Limit</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Last Change:</span>
            <span class="col-2">{{siteInfo.changed|cdate}}</span>
-           <span class="col-2"></span>
            </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Full Users:</span>
            <span class="col-2">{{siteStats.editUserCount}}</span>
-           <span class="col-2">{{siteInfo.editUserLimit}}</span>
            </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Observers:</span>
            <span class="col-2">{{siteStats.readUserCount}}</span>
-           <span class="col-2">{{siteInfo.viewUserLimit}}</span>
            </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Emails / Month:</span>
            <span class="col-2"></span>
-           <span class="col-2">{{siteInfo.emailLimit}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Size of Documents:</span>
            <span class="col-2">{{siteStats.sizeDocuments|number}}</span>
-           <span class="col-2">{{siteInfo.fileSpaceLimit*1000000|number}}</span>
            </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Active Workspaces:</span>
            <span class="col-2">{{siteStats.numActive}}</span>
-           <span class="col-2">{{siteInfo.workspaceLimit}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Frozen Workspaces:</span>
            <span class="col-2">{{siteStats.numFrozen}}</span>
-           <span class="col-2">{{siteInfo.frozenLimit}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Workspaces:</span>
            <span class="col-2">{{stats.numWorkspaces}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Users:</span>
            <span class="col-2">{{stats.numUsers}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Discussions:</span>
            <span class="col-2">{{stats.numTopics}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Meetings:</span>
            <span class="col-2">{{stats.numMeetings}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Decisions:</span>
            <span class="col-2">{{stats.numDecisions}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Comments:</span>
            <span class="col-2">{{stats.numComments}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Proposals:</span>
            <span class="col-2">{{stats.numProposals}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Number of Files:</span>
            <span class="col-2">{{stats.numDocs}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
            <span class="col-4 h6">Last WS Change:</span>
            <span class="col-2">{{stats.recentChange|cdate}}</span>
-           <span class="col-2"></span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-2">
            <span class="col-4 h6">Size of Old Versions:</span>
            <span class="col-2">{{stats.sizeArchives|number}} bytes</span>
-           <span class="col-2"></span>
         </div>
 
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
          <span class="col-2"></span>
-         <span class="col-6 h6">Entire Site</span>
-         <span class="col-2 h6">Site Limit</span>
+         <span class="col-6 h6">User Link</span>
+         <span class="col-2 h6">Amount</span>
       </div>
 
          <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.topicsPerUser">

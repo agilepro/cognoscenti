@@ -29,7 +29,6 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
-    
 %>
 
 <script type="text/javascript">
@@ -66,6 +65,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         window.location = "UserProfileEdit.htm";
     }
+    $scope.goToIconEdit = function() {
+        if (<%=cantEdit%>) {
+            alert("User <% ar.writeHtml(runningUser.getName()); %> is not allowed to edit the profile for <% ar.writeHtml(uProf.getName()); %>");
+            return;
+        }
+        window.location = "UserIconEdit.htm";
+    }
+    
+    
     $scope.requestEmail = function() {
         var url="addEmailAddress.htm?newEmail="+encodeURIComponent($scope.newEmail);
         promise = $http.get(url)
@@ -188,10 +196,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="row">
       	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
-                <a class="nav-link" ng-click="goToEdit()" >
-                <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                Update Settings</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
                 <a class="nav-link" ng-click="openSendEmail()" >
                 Send Email to this User</a></span>
             <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
@@ -231,34 +235,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </span>
     </div>
     <div class="row-cols-3 d-flex">
-            <span class="col-2  labelColumn ps-2" style="cursor: pointer;"  ng-click="editField='icon'">Icon:</span>
-            <span class="col-5 p-0 m-0" ng-dblclick="editField='icon'">
+            <span class="col-2  labelColumn ps-2" style="cursor: pointer;"  ng-click="goToIconEdit()">Icon:</span>
+            <span class="col-5 p-0 m-0" ng-dblclick="goToIconEdit()">
                 <div>
                 <img src="<%ar.writeHtml(photoSrc);%>" width="100" height="100" alt="user photo" />
                 &nbsp; &nbsp;
                 <img src="<%ar.writeHtml(photoSrc);%>" class="rounded-5" style="width:50px;height:50px" alt="user photo" />
                 &nbsp; &nbsp;
                 <img src="<%ar.writeHtml(photoSrc);%>" class="rounded-5" style="width:32px;height:32px" alt="user photo" />
-                </div>
-                <div ng-show="editField=='icon'">
-                    <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >
-                    <input type="hidden" name="go" value="UserSettings.htm" />
-                    <div class="col-12">
-                        <div class="row d-flex">
-                            <span class="col-2 h6">Profile Photo:</span>
-                            <span class="col-5" valign="bottom">
-                                <input type="file" name="fname" id="fname" class="btn btn-default btn-raised"/>
-                            </span>
-                            <span class="col-5">You must upload a JPG file.</br>Please choose one around 100x100 pixels if possible</span>
-                        </div>
-                        <div class="row d-flex">
-                            <span class="col-2" ></span>
-                            <span class="col-2">
-                                <button class="my-2 btn btn-primary btn-raised btn-wide btn-sm"
-                                onclick="javascript:uploadUserPhoto();">Upload Photo</button></span>
-                        </div>
-                    </div>
-                    </form>
                 </div>
             </span>
             <span class="col-5 p-0 m-0" ng-click="helpIcon=!helpIcon">

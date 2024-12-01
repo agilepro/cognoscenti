@@ -52,20 +52,17 @@ function positive(a,b) {
 
 $scope.calc = function() {
     $scope.comp = {
-        editUserCount: 1,
-        numActive: 1,
+        editUserGratis: $scope.siteInfo.editUserGratis,
+        workspaceGratis: $scope.siteInfo.workspaceGratis,
     };
     $scope.actual = {
         editUserCount: $scope.siteStats.editUserCount,
         numActive: $scope.siteStats.numActive,
-        observerCount: $scope.siteStats.numActive,
+        observerCount: $scope.siteStats.numUsers - $scope.siteStats.editUserCount,
         documentLimit: $scope.siteStats.sizeDocuments/1000000,
         numFrozen: $scope.siteStats.numFrozen
     };
     
-    //while ($scope.actual.documentLimit > 500 * $scope.actual.editUserCount) {
-    //    $scope.actual.editUserCount++;
-    //}
     while ($scope.siteStats.numActive > 20 * $scope.actual.editUserCount) {
         $scope.actual.editUserCount++;
     }
@@ -74,8 +71,8 @@ $scope.calc = function() {
     }
     
     $scope.included = {
-        editUserCount: $scope.comp.editUserCount,
-        numActive: $scope.comp.numActive,
+        editUserCount: $scope.comp.editUserGratis,
+        numActive: $scope.comp.workspaceGratis,
         observerCount: 20 * $scope.actual.editUserCount,
         documentLimit: 500 * $scope.actual.editUserCount,
         numFrozen: 4 * $scope.actual.numActive
@@ -233,8 +230,6 @@ $scope.garbageCollect = function() {
     <div class="row">
       <div class="col-md-auto fixed-width border-end border-1 border-secondary">
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="LabelList.htm">Site Labels</a></span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">New Workspace</a></span>
           <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
               href="SiteStats.htm">Site Statistics</a></span>
@@ -343,13 +338,33 @@ $scope.garbageCollect = function() {
                     {{actual.editUserCount}}
                 </span>
                 <span class="col-1 numberColumn">
-                    {{comp.editUserCount}}
+                    {{comp.editUserGratis}}
                 </span>
                 <span class="col-1 numberColumn">
                     {{overflow.editUserCount}}
                 </span>
                 <span class="col-1 numberColumn">
                     $ {{costs.editUserCount|number: '0'}}
+                </span>
+            </div>
+            <div class="row" ng-click="toggleEditor('CreatorLimit')">
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Observer Users:</span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                </span>
+                <span class="col-1 numberColumn">
+                    {{actual.observerCount}}
+                </span>
+                <span class="col-1 numberColumn">
+                    {{included.observerCount}}
+                </span>
+                <span class="col-1 numberColumn">
+                    {{overflow.observerCount}}
+                </span>
+                <span class="col-1 numberColumn">
+                    $ {{costs.observerCount|number: '0'}}
                 </span>
             </div>
 
@@ -366,34 +381,13 @@ $scope.garbageCollect = function() {
                     {{actual.numActive}}
                 </span>
                 <span class="col-1 numberColumn">
-                    1
+                    {{comp.workspaceGratis}}
                 </span>
                 <span class="col-1 numberColumn">
                     {{overflow.numActive}}
                 </span>
                 <span class="col-1 numberColumn">
                     $ {{costs.numActive|number: '0'}}
-                </span>
-            </div>
-            <div class="row">
-                <span class="col-2 h6">Document MB:</span>
-                <span class="col-1 numberColumn">
-                    
-                </span>
-                <span class="col-1 numberColumn">
-                    
-                </span>
-                <span class="col-1 numberColumn" >
-                    {{ actual.documentLimit|number: '0'}}
-                </span>
-                <span class="col-1 numberColumn">
-                    {{included.documentLimit|number}}
-                </span>
-                <span class="col-1 numberColumn" ng-show="overflow.documentLimit>0">
-                    {{overflow.documentLimit|number: '0'}}
-                </span>
-                <span class="col-1 numberColumn" ng-show="costs.documentLimit>0">
-                    $ {{costs.documentLimit|number: '0'}}
                 </span>
             </div>
 
@@ -416,6 +410,27 @@ $scope.garbageCollect = function() {
                 </span>
                 <span class="col-1 numberColumn" ng-show="costs.numFrozen>0">
                     $ {{costs.numFrozen|number: '0'}}
+                </span>
+            </div>
+            <div class="row">
+                <span class="col-2 h6">Document MB:</span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn">
+                    
+                </span>
+                <span class="col-1 numberColumn" >
+                    {{ actual.documentLimit|number: '0'}}
+                </span>
+                <span class="col-1 numberColumn">
+                    {{included.documentLimit|number}}
+                </span>
+                <span class="col-1 numberColumn" ng-show="overflow.documentLimit>0">
+                    {{overflow.documentLimit|number: '0'}}
+                </span>
+                <span class="col-1 numberColumn" ng-show="costs.documentLimit>0">
+                    $ {{costs.documentLimit|number: '0'}}
                 </span>
             </div>
             <hr/>
@@ -442,7 +457,137 @@ $scope.garbageCollect = function() {
             </div>
 
             <hr/>
-           
+        <div class="row col-10 justify-content-end my-3 well">
+        <p>Here is a detailed explanation of the fields above: </p>
+        <ul>
+          <li><b>Active Users</b>
+          <ul>
+            <li><b>Your Limit</b>: 
+              As the administrator, you declare what limits you want to place on 
+              the number of active users for your site.
+              You are charged only for what you actually use, but this limit helps
+              you control how many users can be added.
+              The system will not allow any workspace to add an active user once 
+              your user limit is reached.  A site administrator will need to come 
+              and raise this limit for more active users to be added.  Please note,
+              lowering this limit does not automatically remove users who are already
+              entered as active users.  You will need to remove users manually.
+              </li>
+              <li><b>Set</b>: 
+              Use these controls to raise and lower your limit for the site.
+              </li>
+              <li><b>Current Usage</b>: 
+              This is the number of active users you actually have using your site
+              across all the workspaces.  This is also known as the count of 
+              <b>paid users</b> as the basis for other calculations.
+              </li>
+              <li><b>Gratis</b>: 
+              This is the number of active users that are being provided to you 
+              for free from Circle Weaver Tech.
+              </li>
+              <li><b>Charged</b>: 
+              This is the number of active users that you actually need to pay for.
+              </li>
+              <li><b>Cost</b>: 
+              This is the monthly charge at $1 per user.
+              </li>
+            </ul>
+          </li>
+          <li><b>Observer Users</b>
+          <ul>
+            <li><b>Current Usage</b>: 
+              This is the number of observer users you actually have using your site
+              across all the workspaces.  
+              </li>
+              <li><b>Gratis</b>: 
+              This is the number of observer users that you can use for free.
+              You are allowed 20 observer users for every paid user.
+              If you have more than that, a charge of $0.05 per month is made 
+              for each observer over the limit.
+              </li>
+              <li><b>Charged</b>: 
+              This is the number of active users that you actually need to pay for.
+              </li>
+              <li><b>Cost</b>: 
+              This is the monthly charge at $0.05 per user.  Most normal sites will see a zero charge in this spot.
+              </li>
+            </ul>
+          </li>
+          <li><b>Active Workspaces</b>
+          <ul>
+            <li><b>Your Limit</b>: 
+              As the administrator, you declare what limits you want for your site.
+              You are charged only for what you actually use, but this limit helps
+              you control how many workspaces can be added.
+              The system will not allow any new unfrozen workspaces to be addeed 
+              once your workspace limit is reached.  
+              To add more unfrozen workspaces, a site administrator will need to come 
+              and raise this limit.  
+              Please note, lowering this limit does not automatically remove workspaces that already exist.  You will need to remove workspaces, or change them
+              to frozen, manually to lower the actual charge.
+              </li>
+              <li><b>Set</b>: 
+              Use these controls to raise and lower your limit for the site.
+              </li>
+              <li><b>Current Usage</b>: 
+              This is the number of active workspaces you actually have in your site.
+              This is also known as the count of 
+              <b>paid workspaces</b> as the basis for other calculations.
+              </li>
+              <li><b>Gratis</b>: 
+              This is the number of active workspaces that are being provided to you 
+              for free from Circle Weaver Tech.
+              </li>
+              <li><b>Charged</b>: 
+              This is the number of active workspaces that you actually need to pay for.
+              </li>
+              <li><b>Cost</b>: 
+              This is the monthly charge at $2 per workspace.
+              </li>
+            </ul>
+          </li>
+          <li><b>Frozen Workspaces</b>
+          <ul>
+              <li><b>Current Usage</b>: 
+              This is the number of frozen workspaces you actually have in your site.
+              </li>
+              <li><b>Gratis</b>: 
+              You are allowed 4 free frozen workspaces for every paid workspace.
+              </li>
+              <li><b>Charged</b>: 
+              This is the number of frozen workspaces that you actually need to pay for, if any.
+              </li>
+              <li><b>Cost</b>: 
+              This is the monthly charge at $0.50 per frozen workspace.
+              </li>
+            </ul>
+          </li>
+          <li><b>Document Megabytes</b>
+          <ul>
+              <li><b>Current Usage</b>: 
+              This is the total size in megabytes of all documents across all 
+              your workspaces in this site.  
+              </li>
+              <li><b>Gratis</b>: 
+              You are allowed 500 megabytes for every paid user.  
+              For most organizations, this will be more than enough necessary 
+              to run the team.
+              </li>
+              <li><b>Charged</b>: 
+              This is the number of megabytes more than the allowed amount that you need to pay for.
+              </li>
+              <li><b>Cost</b>: 
+              This is the monthly charge at $1 per gigabyte of document storage.  
+              If you have a charge here, try searching for videos or other large 
+              documents that you no longer need, and delete them.  
+              Remember to run garbage collection to actually remove all the 
+              old deleted documents.
+              </li>
+            </ul>
+          </li>
+          <li><b>Total Per Month</b> This is the total charge you can expect to pay every month if you are using resources at the current level.
+          </li>
+        </div>
         
         <div class="row col-10 justify-content-end my-3 well">
         <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p><button ng-click="recalcStats()" class="col-2 btn btn-primary btn-wide">Recalculate Current Usage</button></div>
