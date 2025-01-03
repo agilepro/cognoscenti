@@ -146,14 +146,23 @@
     <!--Action Items-->
     <div class="col-md-4">
       <div ng-hide="item.isSpacer">
-        <div class="accordion accordionAssets" 
-        id="accordionActionItems">
+        <div class="accordion accordionAssets" id="accordionActionItems">
         <div class="accordion-item">
           <div class="h6 accordion-header" id="headingActionItems">
-          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseActionItems" aria-expanded="false" aria-labelledby="collapseActionItems" aria-controls="collapseActionItems">
-            <i class="fa fa-check-circle-o"></i> &nbsp;Action Items ({{itemGoals(item).length}}):</div> 
+          <button class="accordion-button" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#collapseActionItems" 
+            aria-expanded="true"
+            aria-labelledby="collapseActionItems" 
+            aria-controls="collapseActionItems">
+            <i class="fa fa-check-circle-o"></i> &nbsp;Action Items ({{itemGoals(item).length}}):
+          </button> 
           </div>
-          <div id="collapseActionItems" class="accordion-collapse collapse" aria-labelledby="headingActionItems" data-bs-parent="#accordionActionItems">
+          <div id="collapseActionItems" 
+            class="collapse show" 
+            aria-labelledby="headingActionItems" 
+            data-bs-parent="#accordionActionItems">
           <div class="accordion-body">
             <div class="mb-2" ng-repeat="goal in itemGoals(item)">
                 <a href="task{{goal.id}}.htm" class="me-2" title="access action item details">
@@ -208,9 +217,16 @@
         <div class="accordion accordionAssets" id="accordionAttachments">
         <div class="accordion-item" >
           <div class="h6 accordion-header" id="headingAttachments">
-          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttachments" aria-expanded="false" aria-labelledby="collapseAttachments" aria-controls="collapseAttachments"><i class="fa fa-paperclip"></i> &nbsp; Files ({{item.attList.length}}):</div>
+            <button class="accordion-button" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#collapseAttachments" 
+            aria-expanded="true" 
+            aria-labelledby="collapseAttachments" 
+            aria-controls="collapseAttachments"><i class="fa fa-paperclip"></i> &nbsp; Files ({{item.attList.length}}):
+            </button>
           </div>
-          <div id="collapseAttachments" class="accordion-collapse collapse" aria-labelledby="headingAttachments" data-bs-parent="#accordionAttachments">
+          <div id="collapseAttachments" class="collapse show" aria-labelledby="headingAttachmentss" data-bs-parent="#accordionAttachments">
             <div class="accordion-body">
               <div class="mb-2" ng-repeat="docid in item.attList track by $index">
                 <div ng-repeat="fullDoc in getSelectedDocList(docid.universalid)"> 
@@ -248,15 +264,20 @@
     <!--Discussion-->
       <div class="col-md-4">
       <div ng-hide="item.isSpacer">
-        <div class="accordion accordionAssets" 
-      id="accordionForum">
-      <div class="accordion-item">
-        <div class="h6 accordion-header" id="headingForum">
-          <div class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForum" aria-expanded="false" aria-labelledby="headingForum" aria-controls="collapseForum">
-            <i class="fa fa-lightbulb-o"></i>&nbsp;Discussions ({{itemTopics(item).length}}):
-          </div>
-        </div>
-        <div id="collapseForum" class="accordion-collapse collapse" data-bs-parent="#accordionForum">
+        <div class="accordion accordionAssets" id="accordionForum">
+          <div class="accordion-item">
+            <div class="h6 accordion-header" id="headingForum">
+              <button class="accordion-button" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapseForum" 
+                aria-expanded="true" 
+                aria-labelledby="headingForum" 
+                aria-controls="collapseForum">
+                <i class="fa fa-lightbulb-o"></i>&nbsp;Discussions ({{itemTopics(item).length}}):
+              </button>
+            </div>
+        <div id="collapseForum" class="collapse show" data-bs-parent="#accordionForum">
 
           <div class="accordion-body">
             <div class="row d-flex mb-2 ms-0" 

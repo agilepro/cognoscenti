@@ -1293,8 +1293,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                     Create New <i class="fa fa-star-o"></i> Proposal</button>
                 <button ng-click="openCommentCreator(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-question-circle"></i> Round</button>
-                <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
-                  Edit Agenda Item</button>
+
             </div>
       
             
