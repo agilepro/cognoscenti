@@ -1287,11 +1287,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <div class="row row-md-cols-3">
 
             <div class="d-flex col-sm-12 mb-3">
-                <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-comments-o"></i> Comment</button>
-                <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-star-o"></i> Proposal</button>
-                <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-question-circle"></i> Round</button>
                 <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
                   Edit Agenda Item</button>

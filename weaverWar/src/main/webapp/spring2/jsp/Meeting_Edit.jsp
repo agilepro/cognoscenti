@@ -156,7 +156,7 @@
           <div id="collapseActionItems" class="accordion-collapse collapse" aria-labelledby="headingActionItems" data-bs-parent="#accordionActionItems">
           <div class="accordion-body">
             <div class="mb-2" ng-repeat="goal in itemGoals(item)">
-                <a href="task{{goal.id}}" class="me-2" title="access action item details">
+                <a href="task{{goal.id}}.htm" class="me-2" title="access action item details">
                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
                 <span class="me-2" ng-click="openModalActionItem(item, goal)">{{goal.synopsis}}
                 </span>
