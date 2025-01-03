@@ -84,51 +84,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- INCLUDE the ANGULAR JS library -->
 <!-- INCLUDE the ANGULAR JS library -->
-<script src="<%=ar.baseURL%>jscript/angular_1.8.js"></script>
-<script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
-<script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-<script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-<script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
-<script src="<%=ar.baseURL%>jscript/slap.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
 
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
-    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
-    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
-    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
-    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
-    <script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+    <!-- Are these needed -->
+    <script src="<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/tinymce/tinymce-ng.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/textAngular-sanitize.min.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/MarkdownToHtml.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
+    <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
+    <script src="<%=ar.retPath%>new_assets/jscript/HtmlToMarkdown.js"></script>
+
+    <script src="<%=ar.baseURL%>new_assets/jscript/common.js"></script>
+    <link href="<%=ar.baseURL%>new_assets/jscript/ng-tags-input.css" rel="stylesheet">
 
 
-    <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <!-- INCLUDE web fonts for icons -->
+    <link href="<%=ar.retPath%>new_assets/assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+        data-semver="4.3.0" data-require="font-awesome@*" />
+    <link href="<%=ar.retPath%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <!-- Bootstrap Material Design 
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
-    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
-    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+        <link rel="stylesheet" href="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>new_assets/bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
 
-    -->
-    <!-- INCLUDE web fonts -->
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
-
-    
-    <!-- Date and Time Picker -->
-    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
-    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
-    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
-    <script src="<%=ar.retPath%>bits/moment.js"></script>
-    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
+    <!--Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link href="<%=ar.retPath%>new_assets/css/superAdminStyle.css" rel="styleSheet" type="text/css" media="screen" />
+      <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
+      
     <script>  moment().format(); </script>
-
-    <!-- Weaver specific tweaks 
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
--->
  
     <title><% ar.writeHtml(title); %></title>
 

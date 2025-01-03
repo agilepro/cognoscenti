@@ -335,9 +335,7 @@ public class AgendaItem extends CommentContainer {
         
         JSONArray attList = new JSONArray();
         for (String guid : getDocList()) {
-            int pos = guid.lastIndexOf("@");
-            String id = guid.substring(pos+1);
-            AttachmentRecord arec = ngw.findAttachmentByID(id);
+            AttachmentRecord arec = ngw.findAttachmentByID(guid);
             if (arec!=null) {
                 JSONObject oneAI = arec.getLinkableJSON();
                 oneAI.put("url", ar.baseURL + arec.getEmailURL(ar, ngw));

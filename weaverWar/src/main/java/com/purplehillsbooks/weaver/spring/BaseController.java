@@ -274,7 +274,7 @@ public class BaseController {
 
             File springFolder = null;
             UserProfile uProf = ar.getUserProfile();
-            if (uProf != null && uProf.avoidOldUI) {
+            if (uProf == null || uProf.avoidOldUI) {
                 springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring2");
             } else {
                 springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
@@ -320,10 +320,6 @@ public class BaseController {
     
     public static void streamJSPAnon(AuthRequest ar, String jspName) {
         streamWrappedJSP(ar, "anon", jspName);
-    }
-
-    public static void streamJSPAnonUnwrapped(AuthRequest ar, String jspName) throws Exception {
-        ar.invokeJSP("/spring/anon/"+jspName);
     }
     
     protected static void streamJSPMobileFirst(AuthRequest ar, String jspName) {

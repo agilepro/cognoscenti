@@ -1374,7 +1374,7 @@ public class AuthRequest {
                 System.out.println("invokeJSP has been called with something OTHER than spring!!!");
             } else {
                 UserProfile uProf = getUserProfile();
-                if (uProf != null && uProf.avoidOldUI) {
+                if (uProf == null || uProf.avoidOldUI) {
                     JSPName = "/spring2" + JSPName.substring(7);
                     System.out.println("Using NEW UI: " + JSPName);
                 } else {
