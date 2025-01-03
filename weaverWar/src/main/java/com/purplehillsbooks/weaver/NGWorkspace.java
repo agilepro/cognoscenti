@@ -35,10 +35,8 @@ import java.util.regex.Pattern;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
-import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
-import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -339,7 +337,6 @@ public class NGWorkspace extends NGPage {
     public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
         if (fromLevel<101) {
             getAllAttachments();
-            this.getAllEmail();
             this.getAllGoals();
             this.getAllHistory();
             this.getAllLabels();
@@ -553,12 +550,6 @@ public class NGWorkspace extends NGPage {
         //initialize to some time next year
         long yearFromNow = System.currentTimeMillis() + 31000000000L;
         long nextTime = yearFromNow;
-        if (getAllEmail().size()>0) {
-            //if any email is found in the workspace, then immediately mark it as
-            //needing an action.   The background email processing will move all email to DB.
-            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN workspace: "+this.getCombinedKey());
-            return System.currentTimeMillis()-100000;
-        }
 
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
         gatherUnsentScheduledNotification(resList, yearFromNow);
@@ -579,52 +570,6 @@ public class NGWorkspace extends NGPage {
         return nextTime;
     }
 
-    public boolean transferEmailToDB(Cognoscenti cog, EmailSender sender) throws Exception {
-        List<EmailRecord> allEmail = getAllEmail();
-        if (allEmail.size()==0) {
-            return false;
-        }
-
-        //at this point, this should NEVER be happening.   Remove this routine.
-
-        System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL BEING REMOVED FROM WORKSPACE: "+this.getFullName());
-        for (EmailRecord er : allEmail) {
-            String fullFromAddress = er.getFromAddress();
-            AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
-            List<OptOutAddr> allAddressees = er.getAddressees();
-            for (OptOutAddr oaa : allAddressees) {
-                //create a message for each addressee ... actually there is
-                //usually only one so this usually creates only a single email
-                MailInst inst = createMailInst();
-                inst.setAddressee(oaa.getEmail());
-                inst.setStatus(MailInst.SENT);    //suppress the sending of anything in here
-                inst.setSubject(er.getSubject());
-                inst.setFromAddress(fromAle.getEmail());
-                inst.setFromName(fromAle.getName());
-                oaa.prepareInternalMessage(cog);
-                inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
-                inst.setLastSentDate(er.getLastSentDate());
-                ArrayList<File> attachments = new ArrayList<File>();
-                for (String id : er.getAttachmentIds()) {
-                    File path = getAttachmentPathOrNull(id);
-                    if (path!=null) {
-                        attachments.add(path);
-                    }
-                }
-                inst.setAttachmentFiles(attachments);
-                sender.updateEmailInDB(inst);
-            }
-        }
-        clearAllEmail();
-        return true;
-    }
-    /**
-     * This will delete all email records in the workspace (workspace)
-     */
-    private void clearAllEmail() throws Exception {
-        DOMFace mail = requireChild("mail", DOMFace.class);
-        mail.clearVector("email");
-    }
     public MailInst createMailInst() throws Exception {
         MailInst msg = new MailInst();
         msg.setSiteKey(getSiteKey());

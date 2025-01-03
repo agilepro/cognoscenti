@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.EmailRecord;
 
 import org.w3c.dom.Document;
 
@@ -365,13 +364,6 @@ public abstract class ContainerCommon extends NGContainer
         return Cognoscenti.getServerGlobalId() + "@" + getKey();
 
     }
-
-    @Override
-    public List<EmailRecord> getAllEmail() throws Exception {
-        DOMFace mail = requireChild("mail", DOMFace.class);
-        return mail.getChildren("email", EmailRecord.class);
-    }
-
 
 
     /**

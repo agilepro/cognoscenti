@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
@@ -1002,18 +1001,6 @@ public class NGBook extends ContainerCommon {
             if (smg.notSentYet()) {
                 return hundredSecondsAgo;
             }
-        }
-        
-
-        //TODO: remove this, I don't believe any email is being generated this way in a Site
-        for (EmailRecord er : getAllEmail()) {
-            if (er.statusReadyToSend()) {
-                //there is no scheduled time for sending email .. it just is scheduled
-                //immediately and supposed to be sent as soon as possible after that
-                //so return now minus 1 minutes
-                return hundredSecondsAgo;
-            }
-            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN SITE: "+this.getFullName());
         }
         
         //nothing to do, return time for next year

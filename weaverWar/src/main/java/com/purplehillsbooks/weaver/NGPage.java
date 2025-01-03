@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
-import com.purplehillsbooks.weaver.mail.EmailRecord;
 import com.purplehillsbooks.weaver.util.LRUCache;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;
@@ -310,20 +309,6 @@ public abstract class NGPage extends ContainerCommon {
         }
         ngpi.unlinkAll();
         ngpi.buildLinks(this);
-
-        // check if there is new email, and put this in the index as well
-        if (hasEmailToSend()) {
-            cog.workspacesWithEmailToSend.add(key);
-        }
-    }
-    public boolean hasEmailToSend() throws Exception {
-        for (EmailRecord er : getAllEmail()) {
-            if (er.statusReadyToSend()) {
-                return true;
-            }
-            System.out.println("!!!!!!!\n\n\n\n~~~~~~~\n EMAIL FOUND IN Workspace: "+this.getCombinedKey());
-        }
-        return false;
     }
 
 

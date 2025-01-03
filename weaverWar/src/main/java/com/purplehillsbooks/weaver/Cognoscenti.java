@@ -732,11 +732,6 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         allContainers.add(bIndex);
         keyToWorkspace.put(workspaceKey, bIndex);
-
-        // look for email and remember if there is some
-        if (ngw.hasEmailToSend()) {
-            workspacesWithEmailToSend.add(key);
-        }
     }
 
     public void eliminateIndexForWorkspace(NGWorkspace ngw) {

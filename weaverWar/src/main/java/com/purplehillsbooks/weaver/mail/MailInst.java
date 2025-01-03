@@ -427,7 +427,7 @@ public class MailInst extends JSONWrapper {
             //tally the email begin sent without error
             EmailSender.emailSendCount++;
 
-            setStatus(EmailRecord.SENT);
+            setStatus(MailInst.SENT);
             setLastSentDate(sendStart);
             setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             return true;
@@ -443,7 +443,7 @@ public class MailInst extends JSONWrapper {
                 JSONException.traceException(System.out, me, context);
                 incrementFailCount();
                 if (getFailCount()>3) {
-                    setStatus(EmailRecord.FAILED);
+                    setStatus(MailInst.FAILED);
                 }
                 setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             }
@@ -518,7 +518,7 @@ public class MailInst extends JSONWrapper {
 
     /**
      * Note that this method needs to work without accessing the NGWorkspace object
-     * directly.  We must use only the EmailRecord object alone, by using
+     * directly.  We must use only the Multipart object alone, by using
      * the attachment contents inside the object.
      */
     private void attachFiles(Multipart mp) throws Exception {

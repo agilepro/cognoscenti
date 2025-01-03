@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.EmailRecord;
 
 import org.w3c.dom.Document;
 
@@ -184,12 +183,6 @@ public abstract class NGContainer extends DOMFile
     * guaranteed to remain constant unless specified by the server administrator.
     */
     public abstract String getContainerUniversalId();
-
-
-    /**
-     * returns all the email records in this container
-     */
-    public abstract List<EmailRecord> getAllEmail() throws Exception;
 
     /**
      * figure out when the next background event is scheduled

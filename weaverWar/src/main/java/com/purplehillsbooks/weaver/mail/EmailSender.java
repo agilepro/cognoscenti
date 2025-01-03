@@ -349,7 +349,7 @@ public class EmailSender extends TimerTask {
                 System.out.println("OVERDUE EMAIL on Workspace: "+ngpi.containerName);
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
-                boolean sentMsg = ngw.transferEmailToDB(cog, this);
+                boolean sentMsg = false;
 
                 if (ngw.generateNotificationEmail(ar, this, nowTime)) {
                     sentMsg = true;
