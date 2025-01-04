@@ -130,7 +130,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid m-2">
+    <div class="container-fluid m-2 override">
         <div class="row">
             <span class="fixed-width border-end border-1 border-secondary">
                 <span class="d-flex">

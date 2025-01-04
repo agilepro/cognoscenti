@@ -203,7 +203,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <input type="checkbox" ng-model="filterDraft"> Draft &nbsp;

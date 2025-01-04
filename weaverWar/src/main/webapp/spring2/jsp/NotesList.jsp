@@ -338,8 +338,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid override">
+    <div class="row px-4">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                 <i class="fa fa-arrow-down"></i>
@@ -373,7 +374,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                            style="width:320px;left:-130px;margin-top:-2px;">
                          <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn labelButton" 
                              ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                                  {{rolex.name}}</button>
                          </li>
@@ -382,7 +383,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
                         <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
                     </div>
-                    <div class="col-10">
+                    <div class="col-12">
                         <div class="my-3" ng-repeat="rec in getRows()">
                         <div class="{{getTopicStyle(rec)}}">
                             <div id="headline" >
@@ -408,7 +409,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                     </a> &nbsp;
 
                     <span ng-repeat="label in getNoteLabels(rec)">
-                      <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)"
+                      <button class="btn labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)"
                               title="click to filter/unfilter all discussions by this label">
                       {{label.name}}
                       </button>

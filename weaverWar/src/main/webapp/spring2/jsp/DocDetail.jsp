@@ -321,7 +321,7 @@ function copyTheLink() {
 
 
 <div class="col-12 mx-4">
-    <div class="container-fluid row">
+    <div class="container-fluid override row">
         <div class="col-md-6 col-sm-12">
         <div class="well">
             <div class="row col-12">
@@ -450,7 +450,7 @@ function copyTheLink() {
                 </span>
             </div>
             <div ng-hide="isCreatingComment" >
-                <button ng-click="openCommentCreator(null, 1)" class="btn-comment btn-raised mx-2 my-md-3 my-sm-3">
+                <button ng-click="openCommentCreator(null, 1)" class="btn btn-comment btn-wide btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
             </div>
         </div>

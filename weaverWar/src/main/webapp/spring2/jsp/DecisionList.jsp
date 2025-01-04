@@ -284,19 +284,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startCreating()">Create New Decision</a></span>
+<div class="container-fluid override">
+    <div class="row px-4">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                    <span class="second-menu-btn mx-2" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
+                </div>
+            </div>
+        </div>
       </div>
 
 
 
-    <div class="d-flex col-9"><div class="contentColumn">
-    <div class="well">
+    <div class="d-flex">
+        <div class="contentColumn ms-3">
+    <div class="well col-9">
         Filter <input ng-model="filter"> &nbsp;
         <span ng-repeat="role in allLabelFilters()">
-            <button class="labelButton" type="button" id="menu2"
+            <button class="btn labelButton" type="button" id="menu2"
                style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)" 
                ng-click="toggleLabel(role)">{{role.name}} <i class="fa fa-close"></i></button>
@@ -323,33 +332,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-  <div  id="searchresultdiv0">
+  <div id="searchresultdiv0">
     <div class="taskListArea">
-      <table id="ActiveTask" style="min-width:800px">
-         <tr ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)"
-             style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
-                <td style="padding:3px;vertical-align:top;margin:5px;">
+      <div id="ActiveTask">
+         <div class="flex-row labelRow col-9" ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)">
+                <span class="col-2">
 <% if (canUpdate) { %>
-    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
         <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item"  role="menuitem" tabindex="-1" ng-click="openDecisionEditor(rec)" title="Open the decision edit box.">Edit Decision</a></li>
                 <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="advanceDate(rec)" translate title="Sets the review date to be one year later than currently set">Advance Review Date 1 Year</a></li>
             </ul>
         </li>
-    </ul>
+                    </ul>
 <% } %>
-                </td>
-                <td style="padding:3px;vertical-align:top;;margin:5px;" id="DEC{{rec.num}}">
+                    </span>
+                <span class="col-1" id="DEC{{rec.num}}">
                   <a href="DecisionList.htm#DEC{{rec.num}}"><span style="font-size:200%;">{{rec.num}}</span></a>
-                </td>
-                <td style="padding:3px;vertical-align:top;;margin:5px;">
-                  <div class="leafContent" style="padding:0px">
+                </span>
+                <span class="col-9">
+                  <div class="leafContent">
                     <div id="{{rec.id}}_1" class="decisionDate">
                         <div class="taskOverview">
                             <i>{{rec.timestamp|cdate}}</i>
-                            <span ng-repeat="label in getGoalLabels(rec)">
-                              <button class="labelButton" style="background-color:{{label.color}};color:black;" 
+                            <span class="mx-1" ng-repeat="label in getGoalLabels(rec)">
+                              <button class="labelButton btn btn-wide" style="background-color:{{label.color}};color:black;" 
                                      ng-click="toggleLabel(label)">
                                   {{label.name}}
                               </button>
@@ -358,7 +366,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         </div>
                     </div>
                     <div ng-click="rec.show=!rec.show" >
-                        <div ng-bind-html="rec.html" style="max-width:800px;"></div>
+                        <div ng-bind-html="rec.html"></div>
                     </div>
                     <div ng-show="rec.sourceType==4">
                         See discussion <a href="<%=ar.retPath%>{{rec.sourceUrl}}">discussion</a>
@@ -370,10 +378,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         See document <a href="<%=ar.retPath%>{{rec.sourceUrl}}">discussion</a>
                     </div>
                   </div>
-                </td>
+                </span>
 
-        </tr>
-      </table>
+            </row>
+        </div>
     </div>
   </div>
 

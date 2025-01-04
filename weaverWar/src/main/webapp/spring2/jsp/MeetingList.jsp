@@ -168,13 +168,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="row">
+<div class="row override">
     <div class="d-flex col-12 mb-2">
-        <button class="btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>
+        <button class="btn btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>
     </div>
 </div>
 
-    <div class="container-fluid col-12 ms-4">
+    <div class="container-fluid override col-12 ms-4">
         <div class="row my-2 border-1 border-bottom gridTableHeader">
             <span class="col-1 h6" >Actions</span>
             <span class="col-1 h6" >Agenda</span>
@@ -184,22 +184,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <span class="col-1 h6" >State</span>
             <span class="col-1 text-center h6" >Duration</span>
         </div>
-        <div class="row my-2 py-2 border-1 border-bottom" ng-repeat="rec in meetings">
+        <div class="row my-2 py-2" ng-repeat="rec in meetings">
             <span class="actions col-1">
-              <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
-                <button type="button" name="clone" class="btn-sm btn-comment">
+              <a class="btn btn-sm btn-comment" role="button" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
                     <span class="fa fa-clone"></span>
-                </button>
               </a>
               <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
-                <button type="button" name="delete" class="btn-sm btn-comment bg-danger-subtle text-danger">
+                <button type="button" name="delete" class="btn btn-sm btn-comment bg-danger-subtle text-danger">
                     <span class="fa fa-trash"></span>
                 </button>
               </a>
             </span>
             <span class="actions col-1"><a title="Meeting Agenda" 
                  href="{{rec.agendaUrl}}">
-                <button type="button" name="edit" class="btn-sm btn-comment"> 
+                <button type="button" name="edit" class="btn btn-sm btn-comment"> 
                     <span class="fa fa-file-o"></span>
                 </button>
               </a>
@@ -215,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <span class="col-1 actions">
               <a role="menuitem" tabindex="-1" title="Meeting Minutes" 
                  href="{{rec.minutesUrl}}">
-                <button type="button" name="edit" class="btn-sm btn-comment">
+                <button type="button" name="edit" class="btn btn-sm btn-comment">
                     <span class="fa fa-file-text-o"></span>
                 </button>
               </a>
@@ -225,7 +223,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
 <% if (userCanUpdate) { %>
-    <div class="row ms-4">
+    <div class="row ms-4 override">
         <div class="d-flex col-2 m-2">
             <button class="btn btn-primary btn-raised btn-wide" ng-click="createMeeting()"><i class="fa fa-plus"></i> &nbsp; Create New Meeting</button>
         </div>

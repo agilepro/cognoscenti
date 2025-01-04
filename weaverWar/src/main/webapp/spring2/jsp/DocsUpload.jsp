@@ -173,16 +173,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-      
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="clearDocs"><a class="nav-link" href="DocsUpload.htm" >Clear</a></span>
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="docsList"><a class="nav-link" href="DocsList.htm" >List Document</a></span>
-        </div>
+<div class="container-fluid  override">
+    <div class="row px-4">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
 
-        <div class="d-flex col-9">
-            <div class="contentColumn">
+                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" class="nav-link" href="DocsUpload.htm" >Clear</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="docsList"><a role="menuitem" tabindex="-1" class="nav-link" href="DocsList.htm" >List Document</a></span>
+        </div>
+            </div>
+        </div>
+        <hr>
+        <div class="col-12">
                 <div class="form-group d-flex">
                     <label class="col-md-2 control-label h6">Drop Here:</label>
                     <div class="col-md-10">

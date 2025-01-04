@@ -347,31 +347,36 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-      
-        <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="DocsList.htm">
-              Show Without Labels/Folders</a>
-        </span>
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="addDocs"><a class="nav-link" role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
+<div class="container-fluid col-12 override">
+    <div class="row col-12">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="DocsList.htm">
+              Show Without Labels/Folders</a></span>
+          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="addDocs"><a class="nav-link" role="menuitem" tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
           </span>
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" role="menuitem" tabindex="-1" href="SendNote.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="sendEmail"><a class="nav-link" role="menuitem" tabindex="-1" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
           </span>
         </div>
+            </div>
+        </div>
+    <div class="col-12">
+            <div class="well" style="width:1000px" id="allthefolders" >
 
-    <div class="d-flex col-9">
-        <div class="contentColumn">
-            <div class=" bg-secondary-subtle p-3" id="allthefolders" >
-
-                <div class="folderLine bg-secondary-subtle p-3" style="cursor:pointer">
+                <div class="folderLine " style="cursor:pointer">
                     <span class="fs-5 fw-bold align-baseline" ng-click="trimFolderPath(0)">
                 <img src="<%=ar.retPath%>assets/iconFolder.gif" style="scale: 150%" >&nbsp;
                 <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Workspace
                     </span>
                 </div>
+            </div>
                 <div class="folderLine" style="margin-left:{{$index*15+15}}px;cursor:pointer" ng-repeat="folder in folderPath">
                     <span ng-click="trimFolderPath($index+1)">
                         <img src="<%=ar.retPath%>assets/iconFolder.gif">
@@ -389,7 +394,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </span>
                     </span>
                 </div>
-            </div>
+
 
     <table class="table" width="100%">
         <tr class="gridTableHeader">

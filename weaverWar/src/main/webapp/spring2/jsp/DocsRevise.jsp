@@ -189,16 +189,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid override">
+    <div class="row px-4">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                 <i class="fa fa-arrow-down"></i>
             </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
-                    <span class="second-menu-btn mx-2" type="button"><a href="DocsList.htm" >List Documents</a></span>
-                    <span class="second-menu-btn mx-2" type="button"><a href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
+
+                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" href="DocsList.htm" >List Documents</a></span>
+                    <span class="btn second-menu-btn btn-wide" type="button"><a href="DocDetail.htm?aid={{docId}}">Access Document</a></span>
                 </div>
             </div>
         </div>
@@ -207,8 +209,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     
     
-        <div class="d-flex col-10">
-        <div class="contentColumn">
+        <div class="d-flex col-12">
             <div class="container-fluid">
                 <div class="generalContent">
                     <div id="TheNewDocument" class="well col-lg-6 col-md-12" ng-show="canUpdate">

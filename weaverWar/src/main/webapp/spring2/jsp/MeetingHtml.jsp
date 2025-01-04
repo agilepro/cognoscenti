@@ -210,7 +210,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <%@include file="ErrorPanel.jsp"%>
 
 
-<div class="container-fluid">
+<div class="container-fluid override">
 
     <div class="row">
         <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
@@ -277,8 +277,8 @@ embeddedData.canUpdate = <%=canUpdate%>;
                     </div>
                 </div>
 <hr/>
-                <div class="d-flex justify-content-center m-2" ng-show="meeting.state<3">
-                    <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised" data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
+                <div class="override d-flex justify-content-center m-2" ng-show="meeting.state<3">
+                    <button ng-click="createAgendaItem()" class="btn btn-raised btn-primary " data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
                 </div> <!--END OF Agenda Panel-->
                 
 <!--Static Display buttons-->
@@ -286,11 +286,11 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
                 <div class="my-3 d-flex justify-content-start">
                     <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
+                    <button ng-click="changeMeetingMode('Agenda')" ng-class="btn btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
                     </div>
                     <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
+                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
                     </button>
                     </div>
                 </div>

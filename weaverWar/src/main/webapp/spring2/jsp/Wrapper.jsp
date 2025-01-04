@@ -246,6 +246,7 @@
     <script>  moment().format(); </script>
     
     <!-- Bootstrap 5.0-->
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     
@@ -373,7 +374,7 @@ function showLearningPath() {
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" <% if(isFrozen) {%>class="bodyFrozen"<%}%> <% if(isDeleted) {%>class="bodyDeleted"<%}%>>
-<div class="bodyWrapper">
+<div class="bodyWrapper override">
 
 <!-- Begin AppBar -->
 <%@ include file="AppBar.jsp" %>

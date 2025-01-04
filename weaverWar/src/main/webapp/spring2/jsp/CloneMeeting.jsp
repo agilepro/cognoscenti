@@ -233,14 +233,14 @@ function GetFirstHundredNoHtml(input) {
 
 <% } else { %>
   
-    <div class="container-fluid col-md-10 ms-4">
+    <div class="container-fluid override col-md-12 ms-4">
         <div class="row shadow-lg p-3">
             <form class="horizontal-form">
                 <fieldset>
             <!-- Form Control NAME Begin -->
             <div class="form-group d-flex my-3">
               <label class="h6 col-1 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Name</label>
-              <div class="col-md-10">
+              <div class="col-md-11">
                 <input type="text" class="form-control" ng-model="meeting.name"
                        title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
               </div>
@@ -257,7 +257,7 @@ function GetFirstHundredNoHtml(input) {
                       {{meeting.startTime|sdate:"DD-MMM-YYYY &nbsp; HH:mm"}}
                   </span> 
                   <span style="padding:10px">{{browserZone}}</span>
-                  <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
+                  <button ng-click="meeting.startTime=0" class="btn btn-comment btn-raised">Clear</button>
                 </div>
             </div>
             <!-- Form Control DESCRIPTION Begin -->
@@ -265,7 +265,7 @@ function GetFirstHundredNoHtml(input) {
                 <label class="col-1 h6 control-label">
                   Description
                 </label>
-                <div class="col-md-10">
+                <div class="col-md-11">
                   <textarea ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
                        class="leafContent form-control" style="min-height:200px;"></textarea>
                 </div>
@@ -273,7 +273,7 @@ function GetFirstHundredNoHtml(input) {
           </fieldset>
           <div ng-show="meeting.agenda.length>0">
               <!-- Table MEETING AGENDA ITEMS Begin -->
-              <div class="container-fluid col-11 ms-5">
+              <div class="container-fluid col-12 ms-1">
                 <div class="h4 my-4">Cloning Agenda Items</div>
               <div class="form-group ms-5">
                 <div class="row d-flex my-4 border-1 border-bottom py-2">
@@ -303,7 +303,7 @@ function GetFirstHundredNoHtml(input) {
         </div>
             </form>
           <!-- Form Control BUTTONS Begin -->
-          <div class="mx-5 row col-10">
+          <div class="mx-5 row col-md-12">
             <span class="col-md-2 me-auto">
             <button type="button" class="btn btn-danger btn-raised" onclick="history.back();">Cancel</button></span>
             <span class="col-md-2 ms-auto ">

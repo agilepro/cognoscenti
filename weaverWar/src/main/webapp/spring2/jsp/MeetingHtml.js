@@ -482,12 +482,12 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             return {};
         }
         let style = {
-            "background-color": "#fefefe",
-            "color": "black",
+            "background-color": "#f5f5f5",
+            "color": "$primary",
             "margin-top": "10px",
             "margin-bottom": "10px",
-            "padding": "5px",
-            "border": "0"
+            "padding": "5px 10px",
+            "border-radius": "4px",
         };
         if (!item.timerRunning) {
             if (item.proposed) {

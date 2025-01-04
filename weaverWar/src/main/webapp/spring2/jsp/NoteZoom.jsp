@@ -1044,8 +1044,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid override">
+    <div class="row px-4">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                 <i class="fa fa-arrow-down"></i>
@@ -1053,21 +1054,21 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
-                    <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
+                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
               href="NotesList.htm">List Topics</a></span>
-              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
-              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
-              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
-              <span class="second-menu-btn mx-2" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
               ng-click="sendNoteByMail()">Send Topic By Email</a></span>
-              <span class="second-menu-btn mx-2" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
-              <span class="second-menu-btn mx-2" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-              <span class="second-menu-btn mx-2" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></span>
               </div>
             </div>
@@ -1142,7 +1143,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <div class="col-12">
 <hr>
     <div class="row d-flex">   
-        <span class="col-1 h6">Labels:</span>
+        <span class="col-1 h6 ps-3">Labels:</span>
         <span class="col-5">
         <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
         </span>
@@ -1287,11 +1288,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <div class="row row-md-cols-3">
 
             <div class="d-flex col-sm-12 mb-3">
-                <button ng-click="openCommentCreator(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 1)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-comments-o"></i> Comment</button>
-                <button ng-click="openCommentCreator(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 2)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-star-o"></i> Proposal</button>
-                <button ng-click="openCommentCreator(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+                <button ng-click="openCommentCreator(item, 3)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-question-circle"></i> Round</button>
 
             </div>

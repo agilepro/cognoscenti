@@ -104,7 +104,7 @@ table tr td {
 
 <% } else { %>
 
-    <div class="generalHeading" style="height:40px">
+    <div class="generalHeading override" style="height:40px">
         <div  style="float:left;margin-top:8px;">
             Create
         </div>

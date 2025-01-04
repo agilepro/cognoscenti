@@ -1,28 +1,28 @@
-        <span class="nav-item dropdown d-inline">
-           <button class="specCaretBtn dropdown" 
+        <span class="nav-item dropdown d-inline override">
+           <button class="btn btn-tiny btn-comment p-0" 
                type="button" 
                id="menu1" 
                data-toggle="dropdown"
                title="Add Filter"
             >
                <i class="fa fa-plus"></i></button>         
-           <ul class="dropdown-menu mb-0" role="menu" aria-labelledby="menu1" 
-               style="width:320px;left:-130px">
+           <ul class="dropdown-menu mt-0 p-2" role="menu" aria-labelledby="menu1" 
+               style="width:320px;left:-130px;top:30px">
              <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                 <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton mb-0" 
+                 <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                      {{rolex.name}}</button>
              </li>
              <div class="dropdown-divider" style="float:clear"></div>               
              <li role="presentation" style="float:right">
-               <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6">
+               <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn btn-wide btn-comment">
                    Add/Remove Labels</button>
              </li>
            </ul>
          </span>
 
       <span class="dropdown mt-0" ng-repeat="role in allLabels">
-        <button class="labelButton" ng-click="toggleLabel(role)"
+        <button class="btn btn-wide labelButton" ng-click="toggleLabel(role)"
            style="background-color:{{role.color}};"
            ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
       </span>

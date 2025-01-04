@@ -1,6 +1,6 @@
 
 
-    <div class="container-fluid col-12">
+    <div class="container-fluid col-12 override">
       <div class="row d-flex" ng-dblclick="openAgenda(item)">
         <span ng-click="openAgenda(item)"></span>
         <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary py-2">
@@ -10,8 +10,8 @@
       </div>
       <div class="row d-flex">
         <div class="col-md-7">
-          <div ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
-            <div class="border border-2 border-primary-subtle py-2 px-4 m-4 " ng-bind-html="item.descriptionHtml"></div>
+          <div class="well py-2 px-4 mx-4" ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
+            <div  ng-bind-html="item.descriptionHtml"></div>
             <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to edit description
             </span>
@@ -141,7 +141,7 @@
       </div><!--END Minutes and Notes-->
       <hr/>
     <!--Assets Section-->
-  <div class="container">
+  <div class="container override">
     <div class="row justify-content-center">
     <!--Action Items-->
     <div class="col-md-4">
@@ -188,14 +188,14 @@
                 <span>{{goal.status}}</span>
                 <div ng-repeat="ci in coal.checkitems">
                   <span ng-click="toggleCheckItem($event, goal, ci.index)" style="cursor:pointer">
-                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>&nbsp; 
+                    <span ng-show="ci.checked"><i class="fa fa-check-square-o"></i></span>
+                    <span ng-hide="ci.checked"><i class="fa fa-square-o"></i></span>&nbsp; 
                   </span>{{ci.name}}
                 </div>
                 </div>
             </div>
         <!--Button to create new action item-->
-        <div class="container-fluid">
+        <div class="container-fluid override">
         <div class="row justify-content-center">      
           <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
           </span>
@@ -244,7 +244,7 @@
               <div ng-hide="item.attList && item.attList.length>0" class="doubleClickHint">
               </div>
       <!-- Buttons to trigger Documents modals -->
-      <div class="container-fluid">
+      <div class="container-fluid override">
       <div class="row justify-content-center"> 
         <div type="button" class="btn btn-sm btn-outline-primary">
           <span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
@@ -289,7 +289,7 @@
             <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
           </div>
 <!-- Button trigger modal -->
-          <div class="container-fluid">
+          <div class="container-fluid override">
   <div class="row justify-content-center ">      
     <div type="button" class="btn btn-sm btn-outline-primary">
       <span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
@@ -312,11 +312,11 @@
 
 
       <div class="d-flex col-sm-12 mb-3">
-          <button ng-click="openMeetingComment(item, 1)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+          <button ng-click="openMeetingComment(item, 1)" class="btn btn-comment btn-wide btn-raised mx-2 my-3">
               Create New <i class="fa fa-comments-o"></i> Comment</button>
-          <button ng-click="openMeetingComment(item, 2)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+          <button ng-click="openMeetingComment(item, 2)" class="btn btn-comment btn-wide btn-raised mx-2 my-3">
               Create New <i class="fa fa-star-o"></i> Proposal</button>
-          <button ng-click="openMeetingComment(item, 3)" class="btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+          <button ng-click="openMeetingComment(item, 3)" class="btn btn-comment btn-wide btn-raised mx-2 my-3">
               Create New <i class="fa fa-question-circle"></i> Round</button>
           <button ng-click="openAgenda(item)" class="btn btn-primary btn-raised ms-auto my-md-3 my-sm-3">
             Edit Agenda Item</button>

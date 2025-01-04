@@ -446,7 +446,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="row">
 <!-- COLUMN 1 -->
     <div class="col-md-4 col-sm-12">
@@ -574,8 +574,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <!--Workspace State-->
 
         <div class="row m-2">
-            <span ng-click="setEdit('frozen')" class="col-1 bold fixed-width-sm labelColumn mt-2">Workspace State:</span>
-            <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
+            <span ng-click="setEdit('frozen')" class="h5"> Workspace State:</span>
+            <span class="col-8 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
                 <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
                 <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
                 <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>

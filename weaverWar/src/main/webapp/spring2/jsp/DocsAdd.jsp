@@ -46,7 +46,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="row">
 <% if (userReadOnly) { %>
 
@@ -78,7 +78,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <table>
 
     <tr>
-        <td colspan="3" class=" p-3 h5 linkWizardHeading">How do you want to attach the file?:</td>
+        <td colspan="3" class="ms-3 p-3 h5">How do you want to attach the file?</td>
     </tr>
     <tr>
         <td class="px-5 py-1">

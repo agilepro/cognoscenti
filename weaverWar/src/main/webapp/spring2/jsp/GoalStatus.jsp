@@ -662,18 +662,26 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" 
+<div class="container-fluid override">
+    <div class="row px-4">
+        <span class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+
+                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" 
             ng-click="isCreating=true">Create New Action Item</a>
           </span>
-        <hr/>
-        <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="GoalList.htm">Action Items View</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
 
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" href="TaskAreas.htm">Manage Task Areas</a></span>
+            <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
       </div>
-      <div class="d-flex col-9"><div class="contentColumn">
+    </div>
+  </div>
+      <div class="d-flex col-12"><div class="contentColumn">
         <div class="well generalSettings" ng-show="isCreating">
             <table>
                <tr>

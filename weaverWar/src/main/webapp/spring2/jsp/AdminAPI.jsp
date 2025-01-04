@@ -341,7 +341,7 @@ editBoxStyle {
 
 
 
-    <div>
+    <div class="override">
     
        <div class="guideVocal"> 
            This page contains helpful details for learning the underlying

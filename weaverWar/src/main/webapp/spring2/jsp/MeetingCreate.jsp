@@ -277,7 +277,7 @@ function GetFirstHundredNoHtml(input) {
 
 <% } else { %>
 
-<div class="container-fluid col-md-10 ms-4">
+<div class="container-fluid override col-md-12 ms-4">
     <div class="row shadow-lg p-3">
         <form class="horizontal-form">
             <fieldset>
@@ -299,7 +299,7 @@ function GetFirstHundredNoHtml(input) {
                         class="form-control" style="width:180px">{{meeting.startTime|sdate:"DD-MMM-YYYY &nbsp; HH:mm"}}
                     </span> 
                     <span style="padding:10px">{{browserZone}}</span>
-                    <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
+                    <button ng-click="meeting.startTime=0" class="btn btn-comment btn-raised">Clear</button>
                 </div>
                 
             </div>

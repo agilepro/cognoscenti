@@ -173,7 +173,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-        <div class="container-fluid">
+        <div class="container-fluid override">
             <div class="row">
                 <div class="col-md-auto fixed-width border-end border-1 border-secondary">
                     <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">

@@ -203,6 +203,218 @@ a {
    display: none;
 }
 
+//buttons//
+.override .btn  {
+    width: 150px;
+    position: relative;
+    border-radius: 8px;
+    padding: .25rem .5rem;
+    font-weight: 500;
+    text-decoration: none;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.override button.btn  {
+    width: 150px;
+    position: relative;
+    border-radius: 8px;
+    padding: .25rem .5rem;
+    font-weight: 500;
+    text-decoration: none;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.override .btn-raised {
+    margin: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: #666 2px 2px 5px, inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075);
+    &:hover {
+        box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.override .btn-outline-primary {
+    color: $primary;
+    border-color: $primary;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: $primary-10;
+    &:hover {
+        background-color: $primary-60;
+        color: #fefefe;
+        cursor: pointer;
+    }
+}
+.override .btn-outline-secondary {
+    color: $secondary;
+    border-color: $secondary;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: $secondary-10;
+    &:hover {
+        background-color: $secondary-60;
+        color: $secondary-10;
+        cursor: pointer;
+    }
+}
+.btn.ng-binding    {
+    background-color: $primary-10;
+}
+.override .btn-comment {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    position: relative;
+    box-shadow: $primary-40 2px 2px 5px;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+        border: $primary-60, solid, 1px;
+    }
+}
+
+.override .btn-success {
+    color: #fff;
+    background-color: #034603;
+    border-color        : #034603;
+    box-shadow           : inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1); 
+
+&:hover {
+    background-color: $primary-10;
+    color: $primary;
+    box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
+
+}
+}
+
+.override .btn-wide {
+    width: fit-content;
+    max-width: max-content;
+    flex-grow: 1;
+}
+
+.override .btn-flex {
+    width: auto;
+    min-width: 75px;
+    max-width: 150px;
+    background: inherit;
+    border-radius: 10px;
+    flex-grow: 1;
+    text-align: center;
+}
+.btn-sm {
+    width: fit-content;
+    max-width: 35px;
+    text-align: center;
+    vertical-align: middle;
+    flex-grow: 1;
+    border: #4d2f5e 1px solid;
+    border-radius: 10px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+
+.btn.btn-tiny {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    padding: 0px;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+
+.override .btn-tiny {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    font-size: .9rem;
+    font-weight: 500;
+
+}
+//labels//
+.override .labelButton {
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    border: $primary 1px solid;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.override .labelButtonAdd {
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    margin: 5px;
+    border-radius: 8px;
+}
+
+.labelColumn {
+    padding: 5px;
+    overflow: hidden;
+    box-shadow: #cccccc 2px 2px 5px;
+    border: #4d2f5e 1px solid;
+    border-radius: 3px;
+    margin: 0px 10px 10px 0px;
+    background-color: #f5f5f5;
+    color: $secondary;
+    font-weight: 600 !important;
+
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.labelCheck {
+    padding: 1px 4px;
+    color: $secondary;
+    font-size: calc(1rem - 1px);
+    font-weight: 600 !important;
+    background-color: transparent;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.labelText {
+    padding: 5px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+.labelRow {
+    background: linear-gradient(#EEE, white); 
+    margin: 10px;
+    padding: 25px 10px;
+    border-style:solid;
+    border-color:#FFF;
+    border-width:1px
+}
+.leafContent {
+    padding: 15px;
+    overflow: hidden;
+    border-radius: 3px;
+    margin: 0px 10px 10px 0px;
+    color: $secondary;
+    font-weight: 600;
+}
+//cards//
+
 .card {
     background-color: $primary-20;
     color: $body-color;
@@ -317,79 +529,7 @@ a {
     width:100%; 
 }
 
-.labelButton {
-    padding: 1px 4px;
-    overflow: hidden;
-    box-shadow: #cccccc 2px 2px 5px;
-    margin: 0px 10px 10px 0px;
-    border-radius: 10px;
-    border: 1px solid $primary-700;
-    background-color: #f5f5f5;
-    color: $primary;
-    font-size: .95rem !important;
-    font-weight: 600 !important;
-}
 
-.labelButtonClass {
-    padding: 1px 4px;
-    overflow: hidden;
-    box-shadow: #cccccc 2px 2px 5px;
-    margin: 0px 10px 10px 0px;
-    border-radius: 10px;
-    border: 1px solid $primary-700;
-    background-color: #f5f5f5;
-    color: $primary;
-    font-size: .95rem !important;
-    font-weight: 600 !important;
-}
-
-.labelButtonAdd {
-    padding: 1px 4px;
-    overflow: hidden;
-    box-shadow: #cccccc 2px 2px 5px;
-    margin: 0px 10px 10px 0px;
-    border-radius: 3px;
-    border: 1px solid $primary;
-    background-color: #f5f5f5;
-    color: $primary;
-    font-size: .95rem !important;
-    font-weight: 500 !important;
-}
-
-.labelColumn {
-    padding: 5px;
-    overflow: hidden;
-    box-shadow: #cccccc 2px 2px 5px;
-    border: #4d2f5e 1px solid;
-    border-radius: 3px;
-    margin: 0px 10px 10px 0px;
-    background-color: #f5f5f5;
-    color: $secondary;
-    font-weight: 600 !important;
-
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.labelCheck {
-    padding: 1px 4px;
-    color: $secondary;
-    font-size: calc(1rem - 1px);
-    font-weight: 600 !important;
-    background-color: transparent;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.labelText {
-    padding: 5px;
-    overflow: hidden;
-    vertical-align: middle;
-}
 .agendaItemFull {
     border: 1px solid lightgrey;
     border-radius:10px;
@@ -405,160 +545,8 @@ a {
     margin:0px;    
 }
 
-.btn    {
-    width: 150px;
-    position: unset;
-    border-color:#672978;
-    color:#39134C;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-radius: 10px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
 
-a.btn-primary .btn-primary  {
-    width: 150px;
-    position: unset;
-    border-color:#39134C;
-    background-color:#39134C;
-    text-decoration: none;
-    color:#f5f5f5;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-radius: 10px;
-    &:hover {
-        background-color: $primary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-a.btn-secondary .btn-secondary  {
-    width: 150px;
-    position: unset;
-    border-color:#672978;
-    background-color:#672978;
-    text-decoration: none;
-    color:#f5f5f5;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-radius: 10px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-    
-}
-.btn.ng-binding    {
-    background-color: #e0dce2;
-}
-.btn.btn-comment {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    padding: 8px 10px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    width: 150px;
-    box-shadow: #cccccc 2px 2px 5px;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-        border: $primary-60, solid, 1px;
-    }
-}
 
-a.btn-comment {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 8px;
-    box-shadow: #cccccc 2px 2px 5px;
-    text-decoration: none;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-
-.btn-flex {
-    width: auto;
-    min-width: 75px;
-    max-width: 150px;
-    background: inherit;
-    border-radius: 10px;
-    flex-grow: 1;
-    text-align: center;
-}
-.btn-sm {
-    width: fit-content;
-    max-width: 35px;
-    text-align: center;
-    vertical-align: middle;
-    flex-grow: 1;
-    border: #4d2f5e 1px solid;
-    border-radius: 10px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.btn-wide {
-    width: fit-content;
-    max-width: max-content;
-    flex-grow: 1;
-    text-align: center;
-    border: #4d2f5e 1px solid;
-    border-radius: 10px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.btn.btn-tiny {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    max-width: 30px;
-    flex-grow: 1;
-    padding: 0px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-
-.btn-tiny {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    max-width: 30px;
-    border: $primary 1px solid;
-    border-radius: 10px;
-    position: unset;
-    
-    font-size: .9rem;
-    font-weight: 500;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
 .second-menu {
     margin-left: 12px;
     padding-bottom: 12px;
@@ -620,31 +608,7 @@ a.btn-comment {
     margin-top: 100px;
 }
 
-.btn-outline-primary {
-    color: $primary;
-    border-color: $primary;
-    border-radius: 10px;
-    border-style: solid;
-    border-width: 1px;
-    background-color: #020d6d;
-    &:hover {
-        background-color: $primary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.btn-outline-secondary {
-    color: $secondary;
-    border-color: $secondary;
-    border-radius: 10px;
-    border-style: solid;
-    border-width: 1px;
-    &:hover {
-        background-color: $secondary-20;
-        color: $secondary;
-        cursor: pointer;
-    }
-}
+
 .learningBox {
     width: 1000px;
     #background-color: #DBEEF9;
@@ -747,11 +711,7 @@ a.btn-comment {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
-.well .btn-raised {
-    margin: 5px;
-    font-size: 1rem;
-    font-weight: 400;
-}
+
 
 .description-container {
     display: inline-flex;
@@ -815,7 +775,7 @@ a.btn-comment {
     font-size: 1rem;
     font-weight: 500;
     position: relative;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: #cccccc 2px 2px 5px;
     min-width: 150px;
     &:hover {
@@ -1015,33 +975,23 @@ foreignObject {
 
     }
 }
-.btn-success {
-        color: #fff !important;
-        background-color: #034603 !important;
-        border-color        : #034603 !important;
-        box-shadow           : inset 0 3px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075); 
 
-    &:hover {
-        background-color: $primary-10;
-        color: $primary;
-    }
-}
-        .nav-link {
-            border: $secondary solid 1px;
-            border-radius: 3px;
-            background-color: $primary;
-            padding: 5px 10px;
-            margin-top: 10px;
-            margin-bottom:  0px;
-            color: $primary-10;
-            font-size: 1rem;
-            font-weight: 400;
+.nav-link {
+    border: $secondary solid 1px;
+    border-radius: 3px;
+    background-color: $primary;
+    padding: 5px 10px;
+    margin-top: 10px;
+    margin-bottom:  0px;
+    color: $primary-10;
+    font-size: 1rem;
+    font-weight: 400;
             
-            &:hover {
-                background-color: "weaverbody";
-                color: "weaverdark";
-            }
+    &:hover {
+        background-color: "weaverbody";
+        color: "weaverdark";
         }
+}
         
 .text-secondary {
     color: $primary-60 !important;
@@ -1131,6 +1081,8 @@ foreignObject {
     font-style: italic;
 
 }
+
+
 
 $vertical-align-classes: (
         property: vertical-align,

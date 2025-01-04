@@ -264,7 +264,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid">
+    <div class="container-fluid override">
       <div class="row">
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">

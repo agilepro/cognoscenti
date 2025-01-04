@@ -37,7 +37,7 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-0">
-  <div class="container-fluid">
+  <div class="container-fluid override">
 
   <!-- Logo Brand -->
   <a class="navbar-brand pb-2" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">

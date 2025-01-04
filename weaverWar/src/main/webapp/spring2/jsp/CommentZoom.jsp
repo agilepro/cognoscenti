@@ -184,8 +184,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
    
 
     <div style="height:20px;"></div>
-    <div class="container mx-md-3">
-      <div style="max-width:800px" ng-show="commentExists">
+    <div class="container override mx-md-3 col-md-12">
+      <div ng-show="commentExists">
         <div class="row d-flex my-2 py-3 border-1 border-bottom border-top">
           <span class="col-3 ">{{containerTypeName}} Key</span>
           <span class="col-6">{{comment.containerType}}:{{comment.containerID}}</span>

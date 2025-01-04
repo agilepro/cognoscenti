@@ -1,12 +1,12 @@
 
-<div class="modal-item pt-3"></div>
+<div class="modal-item pt-3 override"></div>
   <div class="modal-header bg-primary-subtle text-primary">
     <h4 class="modal-title" id="attachDocumentLabel">Action Item</h4>
 
   </div>
 
-<div class="modal-body">
-  <div class="container-fluid h-60">
+<div class="modal-body override">
+  <div class="container-fluid override h-60">
     <div class="row col-lg-12 h-100">
       <h3 class="h5">Synopsis:&nbsp;
             {{goal.synopsis}}
@@ -56,28 +56,28 @@
       <div class="card col-md-6 align-top">
         <div class="card-body" >
           <!--Labels start-->
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="labels" class="h6">Labels:</label>
             <span class="nav-item dropdown d-inline mb-0">
-              <button class="btn-tiny btn-comment p-0 ">
+              <button class="btn btn-tiny btn-comment p-0 ">
                 <i class="fa fa-plus"></i></button>         
                   <ul class="dropdown-menu mt-0 p-2" role="menu" aria-labelledby="selectLabel" 
                 style="width:320px;left:-130px;top:20px">
                   <li class="mb-0" role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
                   ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                       {{rolex.name}}</button>
               </li>
               <div class="dropdown-divider" style="float:clear"></div>               
               <li role="presentation" style="float:right">
-                <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+                <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn btn-wide btn-comment">
                     Add/Remove Labels</button>
               </li>
             </ul>
           </span>
     
        <span class="dropdown" ng-repeat="role in allLabels">
-         <button class="dropdown labelButton mb-0" ng-click="toggleLabel(role)"
+         <button class="dropdown btn btn-wide labelButton mb-0" ng-click="toggleLabel(role)"
             style="background-color:{{role.color}};"
             ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
        </span>
@@ -129,7 +129,7 @@
           <label for="synopsis" class="h6">State: </label>
           <span style="padding:10px;"><img ng-src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
           
-          <ul class="dropdown btn-comment btn-wide mt-3 py-0">
+          <ul class="dropdown btn btn-comment btn-wide py-0 mt-3">
               <li class="nav-item dropdown" type="button" id="changeStatus" data-toggle="dropdown">
                 Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -190,17 +190,17 @@
         </div>
 
             
-        </div>
+        
         <!--State end-->
 
           <!--status start-->
-          <div class="form-group d-flex" 
+          <div class="form-group" 
           title="status is a freeform text statement about your current progress on action item">
          <label for="status" class="col-md-2 mt-3 h6 me-sm-1">Status:</label>
          <textarea ng-model="goal.status" class="col-md-8 my-3 form-control" style="max-width:400px;"    
              placeholder="Enter text describing the current status" ></textarea>            
           </div>
-          <div class="form-group d-flex">
+          <div class="form-group">
             <label for="R-Y-G" class="h6 col-2 mt-3">R-Y-G: </label>
          <div class="col-4 my-3">
            <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
@@ -219,7 +219,7 @@
          <div class="col-4 my-3">Indicate how well you are doing with this action item</div>
           </div>
      <!--status end-->
-
+        </div>
       </div><!--END right side-->
       </div>
     </div>
@@ -259,7 +259,7 @@
     </div>
   </div>  
 </div>
-<div class="modal-footer">
+<div class="modal-footer override">
     <button class="btn btn-danger btn-raised me-auto" ng-click="cancel()">Cancel</button>
     <button class="btn btn-primary btn-raised" ng-click="ok()">Save</button>
 
