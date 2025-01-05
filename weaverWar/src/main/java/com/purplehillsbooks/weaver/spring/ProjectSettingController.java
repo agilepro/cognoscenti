@@ -525,6 +525,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         boolean saveSite = false;
+        boolean roleChanged = false;
         NGBook site = null;
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
@@ -534,14 +535,16 @@ public class ProjectSettingController extends BaseController {
             
             if (ngc instanceof NGWorkspace) {
                 ar.assertUpdateWorkspace("Must be a member to modify roles.");
+                site = ((NGWorkspace)ngc).getSite();
             }
             else {
                 ar.assertExecutive("Must be an executive of site to modify roles.");
+                site = (NGBook)ngc;
             }
             ar.assertNotReadOnly("Cannot modify roles");
             JSONObject roleInfo = getPostedObject(ar);
             JSONObject repo = new JSONObject();
-            System.out.println("UPDATEROLE: "+roleInfo.toString());
+            System.out.println(String.format("roleUpdate: (%s) with %s", op, roleInfo.toString()));
 
             if ("Update".equals(op)) {
                 //OK to do this when frozen
@@ -549,7 +552,9 @@ public class ProjectSettingController extends BaseController {
                 CustomRole role = ngc.getRoleOrFail(roleName);
                 String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
+                roleChanged = true;
                 if (ngc instanceof NGWorkspace) {
+                    
 
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
@@ -557,7 +562,6 @@ public class ProjectSettingController extends BaseController {
                     System.out.println("ROLE: "+roleName+", LinkedRole: "+linkedRole);
                     if (linkedRole!=null && linkedRole.length()>0) {
                         String actualName = "~"+linkedRole;
-                        site = ((NGWorkspace)ngc).getSite();
                         CustomRole siteRole = site.getRole(actualName);
                         boolean wasCreated = false;
                         if (siteRole==null) {
@@ -578,8 +582,6 @@ public class ProjectSettingController extends BaseController {
                         //state of the site role to this role.
                         role.updateFromJSON(siteRole.getJSON());
                     }
-
-                    ((NGWorkspace)ngc).getSite().flushUserCache();  //calculate the users again
                 }
                 repo = role.getJSONDetail();
             }
@@ -587,11 +589,13 @@ public class ProjectSettingController extends BaseController {
                 ar.assertNotFrozen(ngc);
                 CustomRole role = ngc.createRole(roleInfo.getString("name"), "");
                 role.updateFromJSON(roleInfo);
+                roleChanged = true;
                 repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
                 //OK to do this when frozen
                 ngc.deleteRole(roleInfo.getString("name"));
+                roleChanged = true;
                 repo.put("success",  true);
             }
             else if ("GetAll".equals(op)) {
@@ -610,6 +614,10 @@ public class ProjectSettingController extends BaseController {
             }
             if (saveSite & site!=null) {
                 site.save();
+            }
+            if (roleChanged) {
+                site.flushUserCache();  //calculate the users again
+                site.recalculateStats(ar.getCogInstance());
             }
             sendJson(ar, repo);
         }catch(Exception ex){

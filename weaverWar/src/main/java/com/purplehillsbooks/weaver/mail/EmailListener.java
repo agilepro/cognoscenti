@@ -336,7 +336,7 @@ public class EmailListener extends TimerTask{
                 msg.setSiteKey("~");
                 msg.setWorkspaceKey("~");
                 msg.setSubject(subject);
-                msg.setStatus(EmailRecord.RECEIVED);
+                msg.setStatus(MailInst.RECEIVED);
 
                 //returns an array, but keep just the first one if any
                 Address[] from = message.getFrom();

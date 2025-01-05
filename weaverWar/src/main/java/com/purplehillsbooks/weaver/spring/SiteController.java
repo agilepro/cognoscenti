@@ -190,14 +190,11 @@ public class SiteController extends BaseController {
             }
             JSONObject incoming = getPostedObject(ar);
             if (!incoming.has("key")) {
-                throw WeaverException.newBasic("Must specify 'key' of the site you want to take ownership of");
+                throw WeaverException.newBasic("Must specify 'key' of the site you want to garbage collect");
             }
             siteKey = incoming.getString("key");
             Cognoscenti cog = ar.getCogInstance();
-            NGBook site = cog.getSiteById(siteKey);
-            if (site==null) {
-                throw WeaverException.newBasic("Unable to find a site with the key: %s", siteKey);
-            }
+            NGBook site = cog.getSiteByIdOrFail(siteKey);
             String operation = "nothing";
             if (site.isDeleted()) {
                 operation = "delete entire site";
@@ -428,7 +425,8 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            Cognoscenti cog = ar.getCogInstance();
+            NGBook site = cog.getSiteById(siteId);
             ar.setPageAccessLevels(site);
             ar.assertAdmin("Must be owner of a site to replace users.");
 
@@ -437,6 +435,7 @@ public class SiteController extends BaseController {
             String workspace = incoming.getString("workspace");
             String roleName = incoming.getString("role");
             boolean add = incoming.getBoolean("add");
+            boolean madeChange = false;
 
             UserManager um = UserManager.getStaticUserManager();
             UserProfile user = um.findUserByAnyIdOrFail(userId);
@@ -453,7 +452,7 @@ public class SiteController extends BaseController {
                 }
                 else {
                     roleObj.addPlayer(user.getAddressListEntry());
-                    
+                    madeChange = true;
                     ngw.save();
                     System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") added user: "+userId);
                 }
@@ -461,6 +460,7 @@ public class SiteController extends BaseController {
             else {
                 if (isPresent) {
                 	roleObj.removePlayerCompletely(user);
+                    madeChange = true;
                 	
                 	// check to see if removed
                 	roleObj = ngw.getRole(roleName);
@@ -476,7 +476,10 @@ public class SiteController extends BaseController {
                     System.out.println("ROLE: workspace ("+workspace+") role ("+roleName+") attempt to remove when user is not there: "+userId);
                 }
             }
-
+            if (madeChange) {
+                // everytime a role is changed, the site statistics are updated
+                site.recalculateStats(cog);
+            }
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
             Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
@@ -629,6 +632,7 @@ public class SiteController extends BaseController {
             ar.assertAdmin("Must be admin to garbage collect items");
 
             JSONObject result = site.actuallyGarbageCollect();
+            site.recalculateStats(ar.getCogInstance());
             sendJson(ar, result);
         }
         catch(Exception ex){

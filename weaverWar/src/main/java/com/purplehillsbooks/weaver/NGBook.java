@@ -838,14 +838,20 @@ public class NGBook extends ContainerCommon {
 
         File statsFile = getStatsFilePath();
         if (!statsFile.exists()) {
+            // if it does not exist, then go ahead and generate it
             return recalculateStats(cog);
         }
-        long timeStamp = statsFile.lastModified();
-        long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
-        if (timeStamp < recentEnough || force) {
+        long siteTimestamp = associatedFile.lastModified();
+        long statsTimeStamp = statsFile.lastModified();
+        if (statsTimeStamp < siteTimestamp) {
+            // if the site has changed since stats, then regerate it no matter what
             return recalculateStats(cog);
         }
-
+        long recentEnough = System.currentTimeMillis() - 60*60*1000;
+        if (statsTimeStamp < recentEnough || force) {
+            // otherwise recalc stats if it has been an hour
+            return recalculateStats(cog);
+        }
         return getStatsFile();
     }
 
@@ -855,7 +861,9 @@ public class NGBook extends ContainerCommon {
      */
     public WorkspaceStats recalculateStats(Cognoscenti cog) throws Exception {
 
-        System.out.println("SCANNING STATS: for site: "+this.key);
+        System.out.println(String.format(
+            "SCANNING STATS: for site (%s) at %s", 
+            this.key, SectionUtil.currentTimestampString()));
         //we should figure out how to do this at a time when all the
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();

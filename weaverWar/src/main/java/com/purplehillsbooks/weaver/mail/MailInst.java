@@ -51,7 +51,7 @@ public class MailInst extends JSONWrapper {
     public static final String FAILED = "Failed";
     public static final String SKIPPED = "Skipped";
     public static final String SUPPRESS = "Suppressed";
-
+    public static final String RECEIVED = "Received";
 
 
 

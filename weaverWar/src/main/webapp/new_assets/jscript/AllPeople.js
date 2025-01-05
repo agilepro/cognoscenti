@@ -215,18 +215,19 @@ app.service('AllPeople', function($http) {
         AllPeople.internalRefreshCache(site, siteObj);
     }
     AllPeople.clearCache = function(site) { 
+        console.log("AllPeople CLEARING CACHE for "+site);
         var siteObj = AllPeople.getSiteObject(site);
         siteObj.validTime = 0;
         AllPeople.internalRefreshCache(site, siteObj);
     }    
     AllPeople.internalRefreshCache = function(site, siteObj) {        
         if (siteObj.pendingRefresh || refreshDisabled) {
+            console.log("allPersonBySite["+site+"] REFRESH CANCELLED: "+siteObj.pendingRefresh);
             return;
         }
         siteObj.pendingRefresh = true;
         var url = "../../"+site+"/$/SitePeople.json";
         $http.get(url)
-        //$http.get("../../AllPeople.json")
         .success( function(data) {
             console.log("Read people from", url, data);
             data.validTime = new Date().getTime() + 360000;

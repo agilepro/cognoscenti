@@ -136,6 +136,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             $scope.cleanDuplicates(data);
             $scope.updateRoleList(data);
+            console.log("CLEARING USERS FROM SITE: "+$scope.siteInfo.id);
+            AllPeople.clearCache($scope.siteInfo.id);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

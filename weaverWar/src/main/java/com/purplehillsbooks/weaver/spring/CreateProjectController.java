@@ -102,6 +102,9 @@ public class CreateProjectController extends BaseController {
             }
             newWorkspace.saveModifiedWorkspace(ar, "Workspace created from web api");
 
+            // make the new workspace appear in statistics
+            site.recalculateStats(ar.getCogInstance());
+
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
         }

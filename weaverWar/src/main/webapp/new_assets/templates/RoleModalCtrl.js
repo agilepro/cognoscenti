@@ -5,7 +5,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
 
     // initial comment object
     $scope.roleInfo = roleInfo;
-    console.log("ROLE", roleInfo);
+    console.log("RoleModalCtrl ROLE:", roleInfo);
 
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
@@ -24,7 +24,8 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         "peachpuff", "powderblue", "lightskyblue", "white"];
 
     $scope.loadPersonList = function (query) {
-        return AllPeople.findMatchingPeople(query, $scope.siteId);
+        var ret = AllPeople.findMatchingPeople(query, $scope.siteId);
+        return ret;
     }
     $scope.getCurrentTerm = function () {
         $scope.currentTerm = null;
@@ -36,7 +37,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         }
         var curTerm = null;
         $scope.roleInfo.terms.forEach(function (item) {
-            console.log("Considering", $scope.roleInfo.currentTerm, item);
             if (item.key == $scope.roleInfo.currentTerm) {
                 $scope.currentTerm = item;
             }
@@ -50,7 +50,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         $http.post(postURL, postdata)
             .success(function (data) {
                 $scope.allRoles = data.roles;
-                console.log("AllRoles is: ", data);
             })
             .error(function (data, status, headers, config) {
                 $scope.reportError(data);
@@ -59,12 +58,12 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.getAllRoles();
 
     $scope.updatePlayers = function () {
+        console.log("UPDATING ROLE: ", role);
         var role = {};
         role.name = $scope.roleInfo.name;
         role.color = $scope.roleInfo.color;
         role.linkedRole = $scope.roleInfo.linkedRole;
         role.players = cleanUserList($scope.roleInfo.players);
-        console.log("UPDATING ROLE: ", role);
         $scope.updateRole(role);
         $scope.getCurrentTerm();
     }
@@ -75,9 +74,9 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         $scope.showError = false;
         $http.post(postURL, postdata)
             .success(function (data) {
-                console.log("SETTING ROLE TO: ", data);
                 $scope.roleInfo = data;
                 $scope.parentScope.updateRoleList(data);
+                AllPeople.clearCache($scope.siteId);
             })
             .error(function (data, status, headers, config) {
                 $scope.reportError(data);
@@ -117,12 +116,10 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
             $scope.roleInfo = JSON.parse(JSON.stringify($scope.roleToCopy));
             $scope.roleInfo.name = roleName;
         }
-        console.log("COPY FROM", $scope.roleInfo);
         var postdata = angular.toJson($scope.roleInfo);
         postURL = "roleUpdate.json?op=Create";
         $http.post(postURL, postdata)
             .success(function (data) {
-                console.log("RESULT OF COPY", data);
                 $scope.parentScope.cleanDuplicates(data);
                 $scope.parentScope.updateRoleList(data);
                 $modalInstance.dismiss('cancel');
@@ -150,7 +147,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.refreshRole = function () {
         var postURL = "roleUpdate.json?op=Update";
         var postdata = angular.toJson({ name: roleInfo.name });
-        console.log("calling: ", postURL);
         $http.post(postURL, postdata)
             .success(function (data) {
                 $scope.parentScope.cleanDuplicates(data);
@@ -162,7 +158,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
             });
     }
     if (!isNew) {
-        console.log("refreshing role: ", roleInfo);
         $scope.refreshRole();
     }
 
@@ -175,7 +170,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         var role = {};
         role.name = $scope.roleInfo.name;
         role.linkedRole = $scope.roleInfo.linkedRole;
-        console.log("UPDATING LINKED ROLE: ", role);
         $scope.updateRole(role);
         $scope.getCurrentTerm();
     }
@@ -185,7 +179,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         var role = {};
         role.name = $scope.roleInfo.name;
         role.linkedRole = $scope.roleInfo.linkedRole;
-        console.log("UPDATING LINKED ROLE: ", role);
         $scope.updateRole(role);
         $scope.getCurrentTerm();
     }
