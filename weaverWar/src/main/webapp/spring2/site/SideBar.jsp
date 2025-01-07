@@ -115,7 +115,7 @@
     </li>
     <% } %>
 </ul>
-
+<div style="height:100px"></div>
 <span class="my-5 text-weaverbody" data-bs-toggle="modal" data-bs-target="#accessModal">  <% if (userIsReadOnly) { %>
     <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
     class="accessIndicator"/>
@@ -132,15 +132,25 @@ class="accessIndicator"/>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        You have observer only access to this site. If you would like to edit this workspace, please contact your administrator.
+        <h5><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
+            class="accessIndicator"/>  =  You have observer access to this workspace. <br>If you would like to edit this workspace, please contact your administrator.</h5><br>
+                    <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
+            class="accessIndicator"/>  =  Full editing access to this workspace.<br><br>
+            <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have guest access to this workspace" 
+            class="accessIndicator"/>  =  Guest access to this site. 
     </div>
     <% } else { %>
-        <div class="modal-header">
+        <div class="modal-header bg-primary-subtle text-primary">
             <h5 class="modal-title" id="accessModalLabel">Full Edit Access</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            You have full editing access to this site.
+            <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this site" 
+                class="accessIndicator"/>  =  You have full editing access to this site.</b></h6><br>
+                            <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
+                class="accessIndicator"/>  =  Observer access to this site. <br><br>
+                <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have guest access to this workspace" 
+                class="accessIndicator"/>  =  Guest access to this site. 
           </div>
           <% } %>
     <div class="modal-footer">

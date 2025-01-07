@@ -270,6 +270,25 @@
           ]
         },
         {
+          "href": "Personal.htm",
+          "name": "Personal Email Settings ",
+          "title": "See your own settings that are unique to this workspace",
+          "opts": [
+            {
+              "use": [
+                "Personal.jsp"
+              ],
+              "href": "EmailSent.htm?f={{preferred}}",
+              "name": "View Email",
+              "title": "View the email messages sent to you or from you"
+            }
+          ],
+          "useOpts": [
+            "Personal.jsp"
+          ],
+          "readOnly": true
+        },
+        {
           "use": [
             "FrontPage.jsp",
             "CommentList.jsp",
@@ -646,46 +665,9 @@
       ],
       "readOnly": true,
       "icon": "ActionItems.png"
-    },
-    {
-      "href": "Personal.htm",
-      "name": "Personal",
-      "title": "See your own settings that are unique to this workspace",
-      "opts": [
-        {
-          "use": [
-            "Personal.jsp"
-          ],
-          "href": "EmailSent.htm?f={{preferred}}",
-          "name": "View Email",
-          "title": "View the email messages sent to you or from you"
-        }
-      ],
-      "useOpts": [
-        "Personal.jsp"
-      ],
-      "readOnly": true
-    },
-    {
-      "href": "../../su/Feedback.htm?url=",
-      "name": "Feedback",
-      "title": "Tells us what you think about this page or what happened when you used it.",
-      "opts": [],
-      "useOpts": [],
-      "readOnly": true
     }
   ],
-  "allModes": [
-    {
-      "href": "https://s06.circleweaver.com/TutorialList.html",
-      "name": "Training",
-      "title": "Lots of videos on YouTube to help you learn how to use Weaver.",
-      "opts": [],
-      "external": true,
-      "useOpts": [],
-      "readOnly": true
-    }
-  ],
+  "allModes": [],
   "hidden": [
     {
       "href": "NoShow.htm",
