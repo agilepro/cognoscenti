@@ -101,6 +101,11 @@ public class EmailListener extends TimerTask{
      */
      public static void initListener(Timer timer, Cognoscenti _cog) throws Exception
      {
+        /**
+         * DISABLING the POP listener since we are not using it, and it makes a lot 
+         * of noise in the log file
+         * 
+         * 
          singletonListener = new EmailListener(_cog);
          String user = emailProperties.getProperty("mail.pop3.user");
          if (user==null || user.length()==0) {
@@ -113,6 +118,7 @@ public class EmailListener extends TimerTask{
              return;
          }
          timer.scheduleAtFixedRate(singletonListener, 60000, EVERY_MINUTE);
+         */
      }
 
      static long lastRunTime = 0;

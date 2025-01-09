@@ -390,7 +390,9 @@ public class MailInst extends JSONWrapper {
             String emailLocator = getEmailLocator();
             String rawSubject = this.getSubject();
             if (emailLocator!=null && emailLocator.length()>3) {
-                rawSubject = rawSubject + " [$" + emailLocator + "]";
+                // disabled this because it is only useful if POP is being used
+                // to receive replies.  But POP is disabled.
+                // rawSubject = rawSubject + " [$" + emailLocator + "]";
             }
 
             message.setSubject(MimeUtility.encodeText(rawSubject, "utf-8", "B"));
