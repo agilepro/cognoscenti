@@ -272,7 +272,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
         newRec.universalid = "~new~";
-        newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo = newRec.assignList;
 
@@ -498,9 +497,9 @@ function addvalue() {
                 <td class="gridTableColummHeader">Due Date:</td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <span datetime-picker ng-model="newRec.duedate"  
+                    <span datetime-picker ng-model="newGoal.duedate"  
                         class="form-control" style="max-width:300px; min-height: 25px;">
-                        {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                        {{newGoal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                     </span> 
                 </td>
             </tr>
