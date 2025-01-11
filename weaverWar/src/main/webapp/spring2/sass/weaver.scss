@@ -170,9 +170,8 @@ a {
     color: $link-color;
     font-size: 1rem;
     font-weight: 500;
-
     &:hover {
-        color: $tertiary;
+        color: inherit;
 }
 }
 
@@ -202,10 +201,72 @@ a {
 .dropdown-toggle::after {
    display: none;
 }
+//learning path//
+.learningBox {
+    background-color: #DBEEF9;
+    border: 2px solid #360a47;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    .btn {
+        min-width: 150px;
+        max-width: fit-content;
+    }
+}
+.learningTitle {
+    font-size: 30px;
+    margin: 0px;
+    font-weight: 300;
+    color: skyblue;
+}
+.learningInfo {
+    margin: 20px;
+    float: left;
+}
+.learningVideo {
+    margin: 20px;
+    float: right;
+}
+.learningButton {
+    margin: 20px;
+    float: right;
+}
+.learningBtn {
+    min-width: 150px;
+    max-width: fit-content;
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    font-weight: 400;
+    position: relative;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+
+}
+}
+.override .offcanvas-header {
+    padding: .5rem 2rem;
+}
+.override .offcanvas-body  {
+    padding: .5rem 2rem;
+}
+.override .offcanvas.offcanvas-top {
+    height:fit-content;
+    
+}
 //buttons//
+.override button  {
+    border-radius: 8px;
+    border-color: $primary;
+}
 .override .btn  {
-    width: 150px;
     position: relative;
     border-radius: 8px;
     padding: .25rem .5rem;
@@ -215,9 +276,10 @@ a {
         cursor: pointer;
     }
 }
-
+.override .btn-default {
+    width: 150px;
+}
 .override button.btn  {
-    width: 150px;
     position: relative;
     border-radius: 8px;
     padding: .25rem .5rem;
@@ -227,8 +289,11 @@ a {
         cursor: pointer;
     }
 }
-
+.override a.btn  {
+    text-decoration: none;
+}
 .override .btn-raised {
+
     margin: 5px;
     font-size: 1rem;
     font-weight: 600;
@@ -239,6 +304,7 @@ a {
 }
 
 .override .btn-outline-primary {
+
     color: $primary;
     border-color: $primary;
     border-radius: 8px;
@@ -246,12 +312,13 @@ a {
     border-width: 1px;
     background-color: $primary-10;
     &:hover {
-        background-color: $primary-60;
+        background-color: $primary-80;
         color: #fefefe;
         cursor: pointer;
     }
 }
 .override .btn-outline-secondary {
+
     color: $secondary;
     border-color: $secondary;
     border-radius: 8px;
@@ -259,7 +326,7 @@ a {
     border-width: 1px;
     background-color: $secondary-10;
     &:hover {
-        background-color: $secondary-60;
+        background-color: $secondary-80;
         color: $secondary-10;
         cursor: pointer;
     }
@@ -288,8 +355,8 @@ a {
     box-shadow           : inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1); 
 
 &:hover {
-    background-color: $primary-10;
-    color: $primary;
+    background-color: #d9e3d9;
+    color: #034603;
     box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
 
 }
@@ -297,8 +364,7 @@ a {
 
 .override .btn-wide {
     width: fit-content;
-    max-width: max-content;
-    flex-grow: 1;
+    flex-grow: 2;
 }
 
 .override .btn-flex {
@@ -345,7 +411,115 @@ a {
     max-width: 30px;
     font-size: .9rem;
     font-weight: 500;
+}
 
+.btn-startTime {
+    background-color: $green;
+    color: $primary-10;
+    border: $darkgreen, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    min-width: 150px;
+    &:hover {
+        background-color: $green-100;
+        color: $green;
+        cursor: pointer;
+    }
+}
+
+.btn-endTime {
+    background-color: $red;
+    color: $primary-10;
+    border: $dark, solid, 1px;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: #cccccc 2px 2px 5px;
+    min-width: 150px;
+    &:hover {
+        background-color: $red-100;
+        color: $red;
+        cursor: pointer;
+    }
+}
+.btn.btn-comment-wide {
+    background-color: $primary-20;
+    color: $primary;
+    border: $primary, solid, 1px;
+    padding: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative;
+    border-radius: 10px;
+    width: fit-content;
+    box-shadow: #cccccc 2px 2px 5px;
+    &:hover {
+        background-color: $primary-30;
+        color: $primary;
+        cursor: pointer;
+        border: $primary-60, solid, 1px;
+    }
+}
+.btn.btn-short {
+    width: fit-content;
+    height: 30px;
+    max-height: fit-content;
+    border: $primary 1px solid;
+    border-radius: 10px;
+    position: unset;
+    padding: 3px;
+    font-size: .8rem;
+    font-weight: 500;
+    &:hover {
+        background-color: $secondary-20;
+        color: $primary;
+        cursor: pointer;
+    }
+}
+.override .button {
+    .btn {
+        background-color: inherit;
+    }
+    
+    .btn-small {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: 8px;
+        border: $primary solid 3px;
+    }
+    
+}
+
+.second-menu {
+    margin-left: 12px;
+    padding-bottom: 12px;
+    display: inline;
+
+}
+.second-menu-btn a {
+    width: fit-content;
+    max-width: max-content;
+    background-color: $primary-10;
+    flex-grow: 1;
+    padding: 3px 6px;
+    border: $primary 1px solid;
+    border-radius: 8px;
+    box-shadow: #666 2px 2px 5px, inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075);
+    &:hover {
+        box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
+        background-color: $primary-20;
+        color: $primary;
+        border: $primary 1px solid;
+        cursor: pointer;
+    }
 }
 //labels//
 .override .labelButton {
@@ -547,28 +721,7 @@ a {
 
 
 
-.second-menu {
-    margin-left: 12px;
-    padding-bottom: 12px;
-    display: inline;
 
-}
-.second-menu-btn a {
-    width: fit-content;
-    max-width: max-content;
-    flex-grow: 1;
-    padding: 3px 6px;
-    text-align: center;
-    border: $primary 1px solid;
-    border-radius: 10px;
-    text-decoration: none;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        border: $primary 1px solid;
-        cursor: pointer;
-    }
-}
 
 .fixed-width-xs {
     width: 30px !important;
@@ -609,58 +762,7 @@ a {
 }
 
 
-.learningBox {
-    width: 1000px;
-    #background-color: #DBEEF9;
-    background-color: white;
-    border: 2px solid #360a47;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    .btn {
-        min-width: 150px;
-        max-width: fit-content;
-    }
-}
-.learningTitle {
-    font-size: 30px;
-    margin: 0px;
-    font-weight: 300;
-    color: skyblue;
-}
-.learningInfo {
-    width:600px;
-    margin: 20px;
-    float: left;
-}
-.learningVideo {
-    margin: 20px;
-    float: right;
-}
-.learningButton {
-    margin: 20px;
 
-}
-.learningBtn {
-    min-width: 150px;
-    max-width: fit-content;
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    padding: 6px 12px;
-    font-size: 1rem;
-    font-weight: 400;
-    position: relative;
-    border-radius: 10px;
-    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
-	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
-
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-
-}
-}
 .accordion-button:not(.collapsed) { 
     color:$primary !important; 
     font-size: 1.2rem;
@@ -749,90 +851,7 @@ a {
     }
   }
 
-.btn-startTime {
-    background-color: $green;
-    color: $primary-10;
-    border: $darkgreen, solid, 1px;
-    padding: 8px 10px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    box-shadow: #cccccc 2px 2px 5px;
-    min-width: 150px;
-    &:hover {
-        background-color: $green-100;
-        color: $green;
-        cursor: pointer;
-    }
-}
 
-.btn-endTime {
-    background-color: $red;
-    color: $primary-10;
-    border: $dark, solid, 1px;
-    padding: 8px 10px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    box-shadow: #cccccc 2px 2px 5px;
-    min-width: 150px;
-    &:hover {
-        background-color: $red-100;
-        color: $red;
-        cursor: pointer;
-    }
-}
-.btn.btn-comment-wide {
-    background-color: $primary-20;
-    color: $primary;
-    border: $primary, solid, 1px;
-    padding: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    position: relative;
-    border-radius: 10px;
-    width: fit-content;
-    box-shadow: #cccccc 2px 2px 5px;
-    &:hover {
-        background-color: $primary-30;
-        color: $primary;
-        cursor: pointer;
-        border: $primary-60, solid, 1px;
-    }
-}
-.btn.btn-short {
-    width: fit-content;
-    height: 30px;
-    max-height: fit-content;
-    border: $primary 1px solid;
-    border-radius: 10px;
-    position: unset;
-    padding: 3px;
-    font-size: .8rem;
-    font-weight: 500;
-    &:hover {
-        background-color: $secondary-20;
-        color: $primary;
-        cursor: pointer;
-    }
-}
-.button {
-    .btn {
-        background-color: inherit;
-    }
-    
-    .btn-small {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 400;
-        line-height: 1.5;
-        border-radius: 1rem;
-        border: $secondary solid 3px;
-    }
-    
-}
 
 foreignObject {
     font-size: .9rem;

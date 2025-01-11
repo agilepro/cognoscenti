@@ -346,25 +346,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
 <% if (canUpdate) { %>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-
-      <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="manageRoles"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleManagement.htm">
+    <div class="container-fluid override">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+            <div class="col-md-auto second-menu">
+                <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                    <i class="fa fa-arrow-down"></i>
+                </button>
+                <div class="collapse" id="collapseSecondaryMenu">
+                    <div class="col-md-auto">
+    
+                        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="manageRoles"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleManagement.htm">
               <span class="fa fa-group"></span> &nbsp;Manage Roles</a></span>
 
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
 
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite</a></span>
-          <hr/>
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewRole"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewRole"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
               <span class="fa fa-plus-square"></span> &nbsp;Create New Role</a></span>
     </div>
+                </div>
+            </div>
+        </div><hr>
 <% } %>
 
-<div class="d-flex col-9"><div class="contentColumn">
+<div class="d-flex col-12"><div class="contentColumn mx-5">
     
 <% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p>
 <% } %>
@@ -373,7 +380,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <td>
 <% if (canUpdate) { %>
               <div class="nav-item dropdown">
-                <button class="dropdown-toggle specCaretBtn"
+                <button class="btn btn-comment btn-sm btn-raised dropdown-toggle specCaretBtn"
                         type="button" id="roleMembers" data-toggle="dropdown">
                     </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="roleMembers">
@@ -397,13 +404,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
 <% } %>
             </td>
-            <td ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
+            <td style="width:200px" ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
-                <div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
-                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>
+                <!--<div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
+                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>-->
             </td>
-            <td style="width:200px">
+            <td style="width:100px">
               <div ng-hide="roleDetailToggle[role.name]">
                 <span ng-repeat="player in role.players">
                   <span class="dropdown" >

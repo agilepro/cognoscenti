@@ -1044,8 +1044,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override">
-    <div class="row px-4">
+<div class="container-fluid override m-2">
         <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
@@ -1054,26 +1053,26 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
-                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
+                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="NotesList.htm">List Topics</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="sendNoteByMail()">Send Topic By Email</a></span>
               <span class="btn second-menu-btn btn-wide" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></span>
               </div>
             </div>
         </div>
-    </div>
+    </div><hr>
               
               <!--experimental mobile UI not finished-->
              <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
@@ -1152,7 +1151,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 <hr>
     <div class="row ">
-    <span class="labelColumn col-2 ms-3" ng-click="openAttachDocument()">Attachments:</span>
+    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="openAttachDocument()">Attachments:</span>
     <span class="col-9" ng-dblclick="openAttachDocument()">
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
             <span ng-show="doc.attType=='FILE'">
@@ -1176,7 +1175,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </span>
     </div><hr>
     <div class="row ">
-    <span class="col-2 labelColumn ms-3" ng-click="openAttachAction()">Action Items:</span>
+    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="openAttachAction()">Action Items:</span>
     <span class="col-9">
           <table class="table">
           <tr ng-repeat="goal in getActions()">
@@ -1226,7 +1225,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
     <hr>
     <div class="row" ng-hide="editMeetingPart=='subscribers'">
-    <div class="col-2 labelColumn ms-3" ng-click="startSubscriberEdit()">Subscribers:</div>
+    <div class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="startSubscriberEdit()">Subscribers:</div>
     <div class="col-9" ng-click="editMeetingPart='subscribers'">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
             <ul class="nav-item dropdown d-inline">

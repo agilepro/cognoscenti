@@ -7,9 +7,9 @@
     <button type="button" class="btn-close" ng-click="exitPopup()" aria-label="Close"></button>
   </div>
 <div class="modal-body">
-    <div class="container-fluid">
+    <div class="container-fluid override">
         <div class="card col-md-12 align-top">
-            <div class="card-body" >
+            <div class="card-body override" >
 
             <div class="spaceyTable">
             <div class="row">
@@ -18,13 +18,13 @@
                 <span class="col-4 fs-5 fw-bold"></span>
             </div>
             <div class="row" ng-repeat="label in allLabels" ng-click="label.isEdit=true;label.editedName=label.name">
-                <div class="col-4 my-3">
+                <div class="col-4 my-1">
                     <span ng-show="label.isEdit || label.isNew">
                         <input class="form-control fs-6" style="width:200px; overflow: auto;" type="text" ng-model="label.editedName"
                         placeholder="Enter Label Name">
                     </span>
                     <span ng-hide="label.isEdit || label.isNew">
-                        <button class="btn-wide py-1 px-3" style="background-color:{{label.color}};" class="h6" placeholder="Enter Label Name">{{label.name}}</button>
+                        <button class="btn btn-wide labelButton" style="background-color:{{label.color}};" class="h6" placeholder="Enter Label Name">{{label.name}}</button>
                     </span>
                 </div>
 
@@ -73,7 +73,7 @@
         </h5>
     </div>
 <div class="modal-body">
-    <div class="container-fluid">
+    <div class="container-fluid override">
     
         <div class="card col-md-12 align-top">
         <div class="card-body" >
@@ -100,7 +100,7 @@
             </span>
         </div>
     </div>
-</div>
+        </div>
 
 <div class="modal-footer">
     <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="exitPopup()">
@@ -108,3 +108,4 @@
     <button class="btn btn-primary btn-raised" ng-click="createLabel()">
          Create</button>
 </div>
+    </div>

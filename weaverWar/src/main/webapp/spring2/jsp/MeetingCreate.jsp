@@ -347,10 +347,11 @@ function GetFirstHundredNoHtml(input) {
           <!-- Form Control BUTTONS Begin -->
 
         </form>
-                  <div class="mx-5 row col-10">
-                    <span class="col-md-2 me-auto">
-            <button class="btn btn-danger btn-raised " type="button"  onclick="history.back();">Cancel</button></span>
-            <span class="col-md-2 ms-auto "><button class="btn btn-primary btn-raised ms-start" type="submit" ng-click="createMeeting()"><%=pageTitle%></button></span>
+                  <div class="mx-5 row col-10 d-flex">
+                    <span class="col-md-2">
+                        <button class="btn btn-danger btn-raised btn-default" type="button"  onclick="history.back();">Cancel</button></span>
+                    <span class="col-md-3 ms-auto">
+                        <button class="btn btn-default btn-primary btn-raised ms-start" type="submit" ng-click="createMeeting()"><%=pageTitle%></button></span>
 
           </div>
       </div>

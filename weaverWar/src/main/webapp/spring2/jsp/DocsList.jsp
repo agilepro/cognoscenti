@@ -264,34 +264,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid override">
-      <div class="row">
-        <div class="col-md-auto second-menu">
+    <div class="container-fluid override m-2">
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+            <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                 <i class="fa fa-arrow-down"></i>
             </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
-                    <span class="second-menu-btn mx-2" type="button"><a href="DocsFolder.htm">Show Folders</a></span>
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="addDocument"><a href="DocsAdd.htm">
+                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" href="DocsFolder.htm">Show Folders</a></span>
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="addDocument"><a class="nav-link" href="DocsAdd.htm">
                         <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
                     </span>
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="sendEmail"><a href="SendNote.htm">
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm">
                         <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
                     </span>
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="SharePorts"><a href="SharePorts.htm">Share Ports</a>
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="SharePorts"><a class="nav-link" href="SharePorts.htm">Share Ports</a>
                     </span>
+                    
                 </div>
             </div>
         </div>
-      </div>
+      </div><hr>
 
-    
-    <div class="d-flex col-12">
-        <div class="contentColumn">
-            <div class="container-fluid">
-                <div class="generalContent">
-            <div class="well col-lg-6 col-md-12">Filter <input ng-model="filter"> &nbsp;
+
+      <div class="d-flex col-12 m-2"><div class="contentColumn">
+            <div class="well">Filter <input ng-model="filter"> &nbsp;
                 <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
             <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>

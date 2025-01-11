@@ -121,27 +121,34 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
+<div class="container-fluid override">
+    <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+        <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-arrow-down"></i>
+        </button>
+        <div class="collapse" id="collapseSecondaryMenu">
+            <div class="col-md-auto">
+                <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="EmailCreated.htm">
               Email Prepared</a>
             </span>
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
+            <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
               Email Sent</a>
             </span>
-          <hr/>
-          <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm">
               Create Email</a>
           </span>
     </div>
+    </div>
+    </div>
+    </div><hr>
     
-    <div class="d-flex col-9"><div class="contentColumn">
+    <div class="d-flex col-12 m-2"><div class="contentColumn">
         <div class="well">Filter: <input ng-model="filter">
     </div>
     <div style="height:20px;"></div>
 
-    <table class="table" width="100%">
+    <table class="table ms-2" width="100%">
         <tr class="gridTableHeader">
             <td width="50px">From</td>
             <td width="250px">Subject</td>

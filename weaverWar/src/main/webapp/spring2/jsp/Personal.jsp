@@ -160,19 +160,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid ms-4">
-        <div class="row d-flex col-12">
-            <div class="col-6">
-                <div >
-                    <div class="row" ng-repeat="key in propertyOrder">
+    <div class="container-fluid override">
+        <div class="d-flex col-12 m-2">
+            <div class="col-8 ms-5">
+                    <div class="row my-3" ng-repeat="key in propertyOrder">
                         <span class="col-lg-3" >
                         <b>{{metadata[key].title}}:</b></span>
                         <span class="col-1">
-                            <button ng-show="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-check-square-o"></i></button>
-                            <button ng-hide="pSettings[key]" class="btn" ng-click="toggle(key)"><i class="fa  fa-square-o"></i></button>
+                            <button class="btn-sm" ng-show="pSettings[key]" ng-click="toggle(key)"><i class="fa fa-check-square-o"></i></button>
+                            <button class="btn-sm" ng-hide="pSettings[key]"  ng-click="toggle(key)"><i class="fa fa-square-o"></i></button>
                         </span>
                         <span class="col-3" ng-hide="exposed[key]">
-                        <button class="btn" ng-click="exposed[key]=!exposed[key]">?</button>
+                        <button class="btn-sm" ng-click="exposed[key]=!exposed[key]">?</button>
                         </span>
                         <span class="col mt-5" ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
                         <div class="guideVocal">
@@ -181,9 +180,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         </span>
                     </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="well col-6">
+            <div class="col-4">
+                <div class="well col-10">
     
     <div>User = <%=uProf.getName()%></div>
     <div>Key = <%=uProf.getKey()%></div>

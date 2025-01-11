@@ -130,24 +130,22 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid m-2 override">
-        <div class="row">
-            <span class="fixed-width border-end border-1 border-secondary">
-                <span class="d-flex">
+    <div class="container-fluid override mx-5">
+        <div class="col-md-auto second-menu">              
+                    <div class="col-md-auto">
                     <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
                     <i class="fa  fa-arrow-circle-left"></i></a>
                     <span class="h5 pt-2"><%=start%> - <%=endRecord%> </span>
                     <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
                     <i class="fa  fa-arrow-circle-right"></i></a>
-                </span>
-            </span>
-            <div class="d-flex col-9">
-                <div class="contentColumn">
-                    <div class="container-fluid">
+                    </div>
+                </div>
+            </div><hr>
+                    <div class="container-fluid mx-5">
                         <div class="generalContent">
                             <span ng-repeat="hist in getHistory()" class="row d-flex my-2" >
                                 <span class=" col-1 dropdown projectStreamIcons" >
-                        <ul class="navbar-btn p-0">
+                                    <ul class="navbar-btn p-0">
                             <li class="nav-item dropdown" id="user" data-toggle="dropdown" >
                                 <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{hist.responsible.key}}.jpg"  title="{{hist.responsible.name}} - {{hist.responsible.uid}}" style="width: 32px; height: 32px; vertical-align: middle">
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="user">
@@ -157,9 +155,9 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
                                     </li>
                                 </ul>
                             </li>
-                        </ul>
+                                    </ul>
                                 </span>
-                                <span class="col-8">
+                                <span class="col-10">
                                     <span class="projectStreamText">{{hist.time|cdate}} -
                                         <a href="<%=ar.retPath%>{{hist.respUrl}}">
                                             <span class="red">{{hist.respName}}</span>

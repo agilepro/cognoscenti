@@ -4,14 +4,15 @@
         <span class="h5 card-title">Meeting Participants: 
         </span> 
     </div>
-    <div class="card-body well">
-        <span class="col-md-2" ng-hide="editMeetingPart=='participants'">
-            <button class="btn btn-secondary btn-raised btn-wide px-2 py-1 my-md-3 my-3" 
+    <div class="card-body well ">
+        <span class="col-md-2 override" ng-hide="editMeetingPart=='participants'">
+            
+            <button class="btn btn-wide btn-secondary btn-raised" 
                     ng-click="startParticipantEdit()"
                     title="Add more people to the list below">
             <span class="fa fa-plus"></span> Add Participants </button>
         </span>
-        <span class="col-md-3 ms-auto me-3"><a class="btn-wide btn-comment btn-raised px-2 py-1 my-md-3 my-sm-3" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a>
+        <span class="col-md-3 ms-auto me-3"><a class="btn btn-wide btn-comment btn-raised px-2 py-1" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a>
           </span>
     </div>
     <div class="well" ng-show="editMeetingPart=='participants'">

@@ -246,7 +246,6 @@
     <script>  moment().format(); </script>
     
     <!-- Bootstrap 5.0-->
-    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     
@@ -388,9 +387,20 @@ function showLearningPath() {
     <!-- End SideBar -->
 
     <!-- Begin mainContent -->
-    <div class="col-10 col-lg-11 main-content">
-    
-      <%@ include file="WrapLearning.jsp" %>
+    <div class="col-10 col-lg-11 main-content override">
+        <button class="btn-wide btn-comment btn my-3" style="float:right" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" title="Learn more about this page and how to use it"
+        >Open Learning Path</button>
+
+        <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+          <div class="offcanvas-header">
+            <h2 id="offcanvasTopLabel">Learning Path</h2>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <%@ include file="WrapLearning.jsp" %>
+          </div>
+        </div>
+      
       <script>
       console.log("loaded the LEARNING module");
       </script> 

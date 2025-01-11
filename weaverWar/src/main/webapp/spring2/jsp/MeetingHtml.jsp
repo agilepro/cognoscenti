@@ -278,19 +278,19 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 </div>
 <hr/>
                 <div class="override d-flex justify-content-center m-2" ng-show="meeting.state<3">
-                    <button ng-click="createAgendaItem()" class="btn btn-raised btn-primary " data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
+                    <button ng-click="createAgendaItem()" class="btn btn-default btn-raised btn-primary " data-bs-target="#agendaItem" data-bs-toggle="modal">+ New</button>
                 </div> <!--END OF Agenda Panel-->
                 
 <!--Static Display buttons-->
 <!--Agenda and Minutes buttons  -->
                 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
-                <div class="my-3 d-flex justify-content-start">
-                    <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Agenda')" ng-class="btn btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
+                <div class="my-3 d-flex justify-content-start override">
+                    <div class="btn mx-3">
+                    <button ng-click="changeMeetingMode('Agenda')" ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
                     </div>
-                    <div class="smallButton mx-3">
-                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
+                    <div class="btn me-3">
+                    <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
                     </button>
                     </div>
                 </div>
@@ -299,7 +299,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
 <hr/>
 <div class="d-flex justify-content-center m-2">
     <span>
-        <a class="btn btn-secondary btn-raised" href="CloneMeeting.htm?id={{meetId}}">Clone <i class="fa fa-clone"></i> Meeting</a>
+        <a class="btn btn-default btn-secondary btn-raised" href="CloneMeeting.htm?id={{meetId}}">Clone <i class="fa fa-clone"></i> Meeting</a>
     </span>
 </div>
     <div class="d-flex col-12 mt-5">

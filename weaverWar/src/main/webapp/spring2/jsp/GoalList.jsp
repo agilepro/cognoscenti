@@ -416,27 +416,26 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="container-fluid override">
-        <div class="row px-4">
+    <div class="container-fluid override m-2">
             <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-            <div class="col-md-auto second-menu">
                 <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                     <i class="fa fa-arrow-down"></i>
                 </button>
                 <div class="collapse" id="collapseSecondaryMenu">
                     <div class="col-md-auto">
     
-                        <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" 
+                        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
                         ng-click="isCreating=true">Create New Action Item</a>
                         </span>
 
-                        <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" 
+                        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" 
               href="GoalStatus.htm">Status List View</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" href="TaskAreas.htm">Manage Task Areas</a></span>
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="TaskAreas.htm">Manage Task Areas</a></span>
+              
         </div>
       </div>
-    </div>
-<div class="d-flex col-12"><div class="contentColumn">
+    </div><hr>
+<div class="d-flex col-12 m-2"><div class="contentColumn">
     <div class="well" ng-show="!isCreating">
         Filter <input ng-model="filter"> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">

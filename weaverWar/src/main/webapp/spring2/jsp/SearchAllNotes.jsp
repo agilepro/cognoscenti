@@ -81,14 +81,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link">Clear Results</a></span>
+<div class="container-fluid override">
+    <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+        <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-arrow-down"></i>
+        </button>
+        <div class="collapse" id="collapseSecondaryMenu">
+            <div class="col-md-auto">
+                <span class="btn second-menu-btn btn-wide" type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link">Clear Results</a></span>
         </div>
+        </div>
+        </div>
+    </div><hr>
 
-
-    <div class="d-flex col-9"><div class="contentColumn">
+    <div class="d-flex col-12 m-2"><div class="contentColumn">
     <table>
         <tr >
             <td class="gridTableColummHeader">Search For:</td>
@@ -113,7 +120,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr >
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
-            <td><button ng-click="doSearch()" class="btn btn-primary btn-raised">Search</button></td>
+            <td><button ng-click="doSearch()" class="btn btn-default btn-primary btn-raised">Search</button></td>
         </tr>
     </table>
 
@@ -135,7 +142,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            <div class="guideVocal" ng-hide="isSearching"> 
              Did not find any results for search string: {{actualSearch}}
            </div>
-           <div class="guideVocal" ng-show="isSearching"> 
+           <div class="guideVocal" ng-hide="isSearching"> 
              <img src="../../../assets/ajax-loading.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
            </div>
            </td>

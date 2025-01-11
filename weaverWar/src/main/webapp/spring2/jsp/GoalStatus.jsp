@@ -662,27 +662,27 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override">
-    <div class="row px-4">
+<div class="container-fluid override m-2">
         <span class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
+
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
                 <i class="fa fa-arrow-down"></i>
             </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
-                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" 
+                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
             ng-click="isCreating=true">Create New Action Item</a>
           </span>
-        <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
 
-            <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
-      </div>
+            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
+            
+        </div>
     </div>
-  </div>
-      <div class="d-flex col-12"><div class="contentColumn">
-        <div class="well generalSettings" ng-show="isCreating">
+  </div><hr>
+      <div class="d-flex col-12 mx-5"><div class="contentColumn">
+        <div class="well" ng-show="isCreating">
             <table>
                <tr>
                     <td class="gridTableColummHeader">New Synopsis:</td>

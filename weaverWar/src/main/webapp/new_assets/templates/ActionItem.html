@@ -6,7 +6,7 @@
   </div>
 
 <div class="modal-body override">
-  <div class="container-fluid override h-60">
+  <div class="container-fluid override h-60 ">
     <div class="row col-lg-12 h-100">
       <h3 class="h5">Synopsis:&nbsp;
             {{goal.synopsis}}
@@ -153,16 +153,16 @@
                         Mark <img src="../../../assets/goalstate/small5.gif"> Completed
                     </a>
                 </li>
-                <li role="presentation">
+                <!--<li role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
                         Mark <img src="../../../assets/goalstate/small6.gif"> Skipped
                     </a>
-                </li>
+                </li>-->
               </ul>
               </li>
           </ul>
         </div>
-
+<!--
         <div ng-show="goal.state==3 && goal.waitUntil<nowTime">
           <div class="container ms-0 ps-0">
             <div class="row ms-0 ps-0">
@@ -176,7 +176,7 @@
               </span>
             </div>
           </div>
-        </div>       
+        </div>      
         <div ng-show="goal.waitUntil>=nowTime">
           <div class="container ms-0 mt-2 ps-0">
             <span class="border border-2 p-2 h5">
@@ -187,20 +187,20 @@
               <button ng-click="cancelWaitUntil()" class="btn-danger btn py-1" >Cancel</button>
             </span>
           </div>
-        </div>
+        </div>--> 
 
             
         
         <!--State end-->
 
           <!--status start-->
-          <div class="form-group" 
+          <div class="form-group d-flex" 
           title="status is a freeform text statement about your current progress on action item">
          <label for="status" class="col-md-2 mt-3 h6 me-sm-1">Status:</label>
          <textarea ng-model="goal.status" class="col-md-8 my-3 form-control" style="max-width:400px;"    
              placeholder="Enter text describing the current status" ></textarea>            
           </div>
-          <div class="form-group">
+          <div class="form-group d-flex">
             <label for="R-Y-G" class="h6 col-2 mt-3">R-Y-G: </label>
          <div class="col-4 my-3">
            <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
@@ -223,7 +223,7 @@
       </div><!--END right side-->
       </div>
     </div>
-    <div class="row col-12">
+    <div class="row col-12 container-fluid mt-2">
     <div class="card align-top">
 
         <div class="card-body">

@@ -398,7 +398,7 @@ function setUpCommentMethods($scope, $http, $modal) {
 </script>
 
 
-<div class="container-fluid my-2">
+<div class="container-fluid override m-2">
     <div class="row p-0 mb-2"><hr>
         <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
             <span class="h5">Comment</span>
@@ -408,6 +408,9 @@ function setUpCommentMethods($scope, $http, $modal) {
         </span>
         <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
             <span class="h5">Round</span>
+        </span>
+        <span ng-show="cmt.commentType==4" title="{{cmtStateName(cmt)}} Meeting">
+            <span class="h5">Meeting</span>
         </span>
         <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
             <span class="h5">Minutes</span>                
@@ -448,7 +451,9 @@ function setUpCommentMethods($scope, $http, $modal) {
                         <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
                             <i class="fa fa-file-code-o" style="font-size:130%"></i>
                         </span> 
-                        <span ng-show="cmt.commentType!=6"></span>
+                        <span ng-show="cmt.commentType!=6">
+                            
+                        </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="commentList">
                     <li>
                         <a class="dropdown-item" role="menuitem" ng-click="openCommentEditor(null,cmt)">Edit {{commentTypeName(cmt)}}</a></li>
@@ -501,7 +506,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     <div class="leafContent comment-inner px-2" ng-hide="cmt.meet || cmt.commentType==6" ng-dblclick="openCommentEditor(null,cmt)">
         <div ng-bind-html="cmt.html2"></div>
     </div>
-    <div ng-show="cmt.meet" class="btn btn-secondary btn-raised btn-wide"  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
+    <div ng-show="cmt.meet" class="btn btn-comment btn-raised btn-wide"  style="margin:4px;" ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
     </div>
     <div ng-repeat="doc in cmt.docDetails">

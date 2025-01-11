@@ -338,8 +338,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid override">
-    <div class="row px-4">
+<div class="container-fluid override m-2">
         <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
@@ -360,12 +359,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
         </div>
-    </div>
-    <div class="d-flex col-10">
+    </div><hr>
+    <div class="d-flex col-12">
         <div class="contentColumn">
-            <div class="container-fluid">
+            <div class="container-fluid">    
                 <div class="generalContent">
-                    <div class="well col-lg-6 col-md-12">Filter <input ng-model="filter"> &nbsp;
+                    <div class="well">Filter <input ng-model="filter"> &nbsp;
                         <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
                 <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
                         </span>

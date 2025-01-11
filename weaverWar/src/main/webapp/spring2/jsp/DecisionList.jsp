@@ -296,13 +296,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
         </div>
-      </div>
+      </div><hr>
 
 
 
-    <div class="d-flex">
-        <div class="contentColumn ms-3">
-    <div class="well col-9">
+    <div class="d-flex col-12 m-2">
+        <div class="contentColumn">
+    <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <span ng-repeat="role in allLabelFilters()">
             <button class="btn labelButton" type="button" id="menu2"
@@ -333,9 +333,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
   <div id="searchresultdiv0">
-    <div class="taskListArea">
+    <div class="taskListArea ">
       <div id="ActiveTask">
-         <div class="flex-row labelRow col-9" ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)">
+         <div class="flex-row labelRow col-12" ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)">
                 <span class="col-2">
 <% if (canUpdate) { %>
                     <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 

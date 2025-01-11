@@ -2014,17 +2014,17 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.labelButtonClass = function (state, item) {
         if ("Items" == $scope.displayMode && item) {
             if (item.id == $scope.selectedItem.id) {
-                return "btn btn-outline-primary btn-success labelButton";
+                return "btn btn-default btn-raised btn-success labelButton";
             }
             else {
-                return "btn btn-outline-primary labelButton";
+                return "btn btn-default btn-raised btn-outline-primary labelButton";
             }
         }
         if (state == $scope.displayMode) {
-            return "btn btn-success labelButton";
+            return "btn btn-default btn-raised btn-success labelButton";
         }
         else {
-            return "btn btn-outline-secondary labelButton";
+            return "btn btn-default btn-raised btn-outline-primary labelButton";
         }
     }
     $scope.setSelectedItem = function (item) {

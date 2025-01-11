@@ -170,7 +170,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 <div class="row override">
     <div class="d-flex col-12 mb-2">
-        <button class="btn btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>
+        <!--
+        <button class="btn btn-wide btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>-->
     </div>
 </div>
 
@@ -186,9 +187,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="row my-2 py-2" ng-repeat="rec in meetings">
             <span class="actions col-1">
-              <a class="btn btn-sm btn-comment" role="button" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
-                    <span class="fa fa-clone"></span>
-              </a>
+              <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
+                <button type="button" name="clone" class="btn btn-sm btn-comment">
+                    <span class="fa fa-clone"></span></button>
+                </a>
               <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
                 <button type="button" name="delete" class="btn btn-sm btn-comment bg-danger-subtle text-danger">
                     <span class="fa fa-trash"></span>
@@ -218,14 +220,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </button>
               </a>
             </span>
-            <span class="col-1 p-2" style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</span>
+            <span class="btn col-1 p-2" style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</span>
             <span class="col-1 text-center">{{rec.duration}}</span>
         </div>
     </div>
 <% if (userCanUpdate) { %>
     <div class="row ms-4 override">
         <div class="d-flex col-2 m-2">
-            <button class="btn btn-primary btn-raised btn-wide" ng-click="createMeeting()"><i class="fa fa-plus"></i> &nbsp; Create New Meeting</button>
+            <button class="btn btn-wide btn-comment btn-raised " ng-click="createMeeting()">Create New Meeting</button>
         </div>
     </div>
 <% } %>

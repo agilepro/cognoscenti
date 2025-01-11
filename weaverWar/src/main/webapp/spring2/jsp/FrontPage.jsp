@@ -502,7 +502,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="accordion-item">
                 <h2 class="h5 accordion-header" id="headingOne">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" title="Access the detailed history of events in this workspace" aria-expanded="false" aria-controls="collapseOne">
-                        Recent Changes &nbsp; &nbsp; <a href="CommentList.htm">
+                        Recent Changes &nbsp; &nbsp; <a href="History.htm">
                             <i class="fa fa-comments"></i>
                         </a></button>
                 </h2>
@@ -510,7 +510,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    <div ng-repeat="hist in topHistory"  class="clipping">
+                    <div ng-repeat="hist in topHistory | limitTo:10"  class="clipping my-1"><i class="fa fa-hand-o-right"></i>
                 {{hist.time|cdate}} -
                         <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
@@ -731,7 +731,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <span class="col-md-4" >
                 
 
-                <a class="btn btn-comment btn-raised mx-2 my-md-1 py-0" title="See your own settings that are unique to this workspace" href="Personal.htm"><i fa class="fa fa-cog"></i> Workspace Personal Settings</a></span>
+                <a class="btn btn-default btn-comment btn-raised mx-2 my-md-1 py-0" title="See your own settings that are unique to this workspace" href="Personal.htm"><i fa class="fa fa-cog"></i> Workspace Personal Settings</a></span>
             <div class="my-2 h5">
                 <span ng-show="isWatching" class="float-end">
                     You <span class="fa fa-eye"></span> watch this workspace

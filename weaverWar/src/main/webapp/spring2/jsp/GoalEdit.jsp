@@ -571,7 +571,6 @@ function addvalue() {
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid override">
-    <div class="row px-4">
         <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
         <div class="col-md-auto second-menu">
             <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
@@ -588,14 +587,14 @@ function addvalue() {
     </div>
 </div>
 <hr>
+
    <!--end of left menu-->
-<div class="d-flex col-12">
-    <div class="contentColumn">
+
         <div class="container-fluid col-12" ng-hide="editGoalInfo">
         <div class="row d-flex">
             
                 <!--State and Title start-->
-                <div class="row col-12 my-2 border-bottom border-1" ng-click="startEdit('assignee')" 
+                <div class="row col-12" ng-click="startEdit('assignee')" 
                 title="Click here to update the status of this action item">
                     <span class="col-1">
                         <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif"/>
@@ -605,9 +604,9 @@ function addvalue() {
                     </span>
                 </div>
                 <!--State and Title end-->
-
+<div class="row-cols-2 d-flex" >
                 <!--Start left column-->
-                <span class="col-6">
+                <span class="col-6 border-start border-2 ps-3">
 
                     <!--Assigned To Start-->
                     <div class="row col-12 my-2 py-2 border-bottom border-1" title="The action item can be assigned to any number of people who will receive reminders until it is completed." >
@@ -700,7 +699,7 @@ function addvalue() {
                     <!--Attachments End-->
 
 <!--Linked Topics Start-->
-        <div class="row col-12 my-2 py-2 border-bottom border-1 clickable ">
+        <div class="row col-12 my-2 py-2 clickable ">
             <span class="col-3 h6" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</span>
             <span class="col-9" title="On the discussion page, you can link action items, and those discussions will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-default btn-raised"  style="margin:4px;"
@@ -716,10 +715,10 @@ function addvalue() {
                     
 
             </span><!--end of first column-->
-            <span class="col-6">
+            <span class="col-6 border-end border-start border-2 ps-3">
 
                 <!--Labels Start-->
-                <div class="form-group">
+                <div class="form-group my-2 py-2 border-bottom border-1">
                     <label for="labels" class="h6">Labels:</label>
                     <!--<span class="nav-item dropdown d-inline">
                       
@@ -752,17 +751,18 @@ function addvalue() {
                 <div class="row col-12 my-2 py-2 border-bottom border-1">
 
                     <span class="col-3 clickable h6" ng-click="startEdit('details')" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item">Timeframe:</span>
-                    <span class="col-9 clickable" >
-                        <span ng-show="goalInfo.duedate>0">   
+                    <span class="d-flex col-9 clickable" >
+                        <span class="col-6" ng-show="goalInfo.duedate>0">   
                             <h6>Due:</h6>   
-                            {{goalInfo.duedate|cdate}}   &nbsp; &nbsp; </span>
-                        <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
+                            {{goalInfo.duedate|cdate}}  </span>
+                        <span class="col-6" ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
                             <h6>Start:</h6> 
-                            {{goalInfo.startdate|cdate}} &nbsp; &nbsp; </span>
-                        <span ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
-                            <h6>End:</h6>   
-                            {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span>
-                    </span>
+                            {{goalInfo.startdate|cdate}}</span>
+                        </span>
+                        <div class="d-flex col-12 m-2" ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
+                            <span class="col-3"></span>
+                            <span class="col-6"><h6>End:</h6>   
+                            {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span></div>
                 </div>
             <!--Timeframe End-->
 
@@ -770,44 +770,44 @@ function addvalue() {
                 <div class="row col-12 my-2 px-0 py-2 border-bottom border-1">
                     <span class="col-4 ms-0">
                         <ul class="dropdown mx-0 my-1">
-                            <li class="nav-item dropdown btn-comment btn-wide py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
+                            <li class="nav-item dropdown btn btn-comment btn-wide py-0 px-2" type="button" id="changeStatus" data-toggle="dropdown">
                         Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li role="presentation">
-                              <a class="dropdown-item " role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
                                   Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
                               </a>
                           </li>
-                          <li role="presentation">
+                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
                               <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
                                   Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
                               </a>
                           </li>
-                          <li role="presentation">
+                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
                               <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
                                   Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
                               </a>
                           </li>
-                          <li role="presentation">
+                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
                               <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
                                   Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
                               </a>
                           </li>
-                          <li role="presentation">
+                          <!--<li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
                               <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
                                   Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
                               </a>
-                          </li>
+                          </li>-->
                             </ul>
                             </li>
                         </ul>
                     </span>
                     <span class="col-6">
-                        <button class="col-6 btn-wide m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                        <button class="col-6 btn btn-wide btn-comment m-1 py-0 px-2" ng-click="setState(2)" ng-show="goalInfo.state<2">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
-                        <button class="col-6 btn-wide m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                        <button class="col-6 btn btn-wide btn-comment m-1  py-0 px-2" ng-click="setState(3)" ng-show="goalInfo.state<3">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
-                        <button class="col-6  btn-wide m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                        <button class="col-6 btn btn-wide btn-comment m-1 py-0 px-2" ng-click="setState(5)" ng-show="goalInfo.state<5">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
                     </span>
                 </div>
@@ -844,10 +844,10 @@ function addvalue() {
                     <!--R-Y-G End-->
 
             </span><!--end of second column-->
-
+</div>
                     <!--Linked Meetings Start-->
-        <div class="row col-12 my-2 py-2 border-bottom border-1">
-            <span class="col-2 h6" title="On the meeting page, you can link action items, and those meetings will appear here">
+        <div class="row col-12 m-2 py-2 border border-2">
+            <span class="col-2 h5" title="On the meeting page, you can link action items, and those meetings will appear here">
                 Linked Meetings:</span>
             <span class="col-10" title="On the meeting page, you can link action items, and those meetings will appear here">
                 <span ng-repeat="meet in linkedMeetings" class="btn btn-outline-secondary btn-raised"  style="margin:4px;"
@@ -874,8 +874,8 @@ function addvalue() {
 
 
 
-    <div class="container-fluid col-12">
-        <div class="row col-12" ng-show="subGoals.length>0">
+    <div class="container-fluid col-12 ">
+        <div class="row col-12 m-2" ng-show="subGoals.length>0">
             <span class="col-2 h6" >Sub Action Items:</span>
             <span class="col-10" >
                 <div ng-repeat="sub in subGoals">
@@ -897,10 +897,10 @@ function updateVal(){
     
         <!-- ========================================================================= -->
         <div style="height:30px"></div>
-        <div class="generalSubHeading h6">History &amp; Accomplishments
+        <div class="generalSubHeading h5 m-2">History &amp; Accomplishments
         </div>
         <div>
-                <div class="container-fluid col-12" >
+                <div class="container-fluid col-12 m-2" >
                     <div class="row col-12 my-2 py-2" ng-repeat="rec in allHist">
                         <span class="col-1 projectStreamIcons" >
                             <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.responsible.key}}.jpg"

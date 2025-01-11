@@ -177,42 +177,50 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1"
+<div class="container-fluid override">
+
+        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+        <div class="col-md-auto second-menu">
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+
+                    <span class="btn second-menu-btn btn-wide" type="button"ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Create a new meeting record"
               href="MeetingCreate.htm" ><i class="fa fa-plus"></i> Create Meeting</a></span>
-          
-</div>
+                </div>
+            </div>
+
+</div><hr>
 
 
-<div class="d-flex col-9"><div class="contentColumn">
-    <table class="table table-striped table-hover" width="100%">
-        <tr class="gridTableHeader">
-            <th width="200px">Meeting</th>
-            <th width="200px">Date ({{browserZone}})</th>
-            <th ng-repeat="user in foundUsers" class="centerCell"><img class="rounded-5" 
+<div class="container-fluid col-12">
+        <div class="row gridTableHeader m-2">
+            <span class="col-6 h5">Meeting</span>
+            <span class="col-4 h5">Date ({{browserZone}})</span>
+            <span class="col-2 h5" ng-repeat="user in foundUsers" class="centerCell"><img class="rounded-5" 
                 src="<%=ar.retPath%>icon/{{user.key}}.jpg" 
                 style="width:32px;height:32px" 
-                title="{{user.name}} - {{user.uid}}"></th>
-        </tr>
-        <tr ng-repeat="rec in meetings">
-            <td><b><a title="Meeting Agenda" 
+                title="{{user.name}} - {{user.uid}}"></span>
+        </div>
+        <div class="row m-2" ng-repeat="rec in meetings">
+            <span class="col-6"><b><a title="Meeting Agenda" 
                  href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
                 {{rec.name}}</a></b>
-            </td>
-            <td>
+            </span>
+            <span class="col-4">
                 <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
                 <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
-            </td>
-            <td ng-repeat="user in foundUsers" class="centerCell">
+            </span>
+            <span class="col-2" ng-repeat="user in foundUsers" class="centerCell">
                 <span ng-show="attendeeMatrix[user.key][rec.id]"><i class="fa fa-check"></i></span>
                 <span ng-hide="attendeeMatrix[user.key][rec.id]" style="color:grey">.</span>
-            </td>
-        </tr>
-    </table>
-    
+            </span>
+        </div>
+    </div>
+
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     There are no meetings in this workspace.
     </div>

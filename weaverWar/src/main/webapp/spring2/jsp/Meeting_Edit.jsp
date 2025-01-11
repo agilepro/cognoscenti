@@ -74,7 +74,7 @@
             </div>
             <div ng-dblclick="item.readyToGo = ! item.readyToGo"  ng-hide="item.isSpacer" >
               <div class="justify-content-center ms-2 mb-3 mt-2" ng-click="item.readyToGo = ! item.readyToGo">
-              <span class="btn btn-comment mt-0" ng-hide="item.readyToGo" >
+              <span class="btn btn-comment btn-default mt-0" ng-hide="item.readyToGo" >
                   <b>Not <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
                        title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                        style="width:24px;height:24px">

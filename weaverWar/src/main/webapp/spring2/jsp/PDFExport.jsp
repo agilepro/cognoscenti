@@ -74,14 +74,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link "  role="menuitem" tabindex="-1"
-            href="" ng-click="createPdf()">Export PDF</a>
+<div class="container-fluid override">
+            <span class="btn btn-raised btn-default btn-comment mx-5" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a role="menuitem" tabindex="-1"
+            ng-click="createPdf()">Export PDF</a>
         </span>
         </div>
-        <div class="d-flex col-9"><div class="contentColumn">
+        <div class="d-flex col-12 mx-5"><div class="contentColumn">
     <form name="exportPdfFrom" id="exportPdfFrom"  action="pdf/page.pdf"  method="get">
         <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
         
