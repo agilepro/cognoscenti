@@ -1,7 +1,7 @@
 <!-- BEGIN LearningBar.jsp -->
 
 
-<div class="learningBox override" ng-hide="learningMode.done" ng-cloak>
+<div class="learningBox override" ng-cloak>
   <div class="learningInfo">
 
     <div class="modal-body d-flex">

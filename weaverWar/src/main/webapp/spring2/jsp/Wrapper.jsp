@@ -187,9 +187,6 @@
     }
     JSONObject learningMode = null;
     for (JSONObject oneLearn : learningModes.getJSONObjectList()) {
-        if (oneLearn.getBoolean("done")) {
-            continue;
-        }
         learningMode = oneLearn;
         break;
     }
@@ -300,7 +297,7 @@ function setUpLearningMethods($scope, $modal, $http) {
     $scope.findLearningMode = function() {
         $scope.learningMode = {done: true, mode:"standard"};
         $scope.learningModes.forEach(function(item) {
-            if (!item.done && $scope.learningMode.done) {
+            if ($scope.learningMode.done) {
                 $scope.learningMode = item;
             }
         });

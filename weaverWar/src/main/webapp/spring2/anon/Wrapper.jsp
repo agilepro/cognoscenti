@@ -59,9 +59,6 @@
         }
         JSONObject learningMode = null;
         for (JSONObject oneLearn : learningModes.getJSONObjectList()) {
-            if (oneLearn.getBoolean("done")) {
-                continue;
-            }
             learningMode = oneLearn;
             break;
         }
