@@ -25,10 +25,10 @@
 <%
     if (ar.isSuperAdmin()) {
 %>
-    <div class="learningButton">
-        <button class="btn btn-secondary btn-wide btn-raised" ng-click="openLearningEditor()">
-              Improve this Learning Path</button>
-        <span class="h6">  <%=wrappedJSP%>  </span>
+    <div class="superAdminOnly learningButton" >
+        <button class="btn btn-danger btn-wide btn-raised superAdminOnly" ng-click="openLearningEditor()">
+              Improve this Learning Path FF</button>
+        <span class="h6 superAdminOnly">  <%=wrappedJSP%>  </span>
 
     </div>
 <%
