@@ -73,7 +73,7 @@ public class EmailListener extends TimerTask{
     private static Session session = null;
 
     private File emailPropFile = null;
-    private static Properties emailProperties = null;
+    private static Properties emailProperties = new Properties();
     private AuthRequest ar;
     private static HashSet<String> alreadyProcessed = new HashSet<String>();
 

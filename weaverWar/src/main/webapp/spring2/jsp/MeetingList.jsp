@@ -240,6 +240,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     keep notes, and generate the minutes of the meeting.
 <% } %>    
     </div>
+    
+    <div class="row ms-4 override">
+        <div class="d-flex col-2 m-2">
+          <a href="PickMeeting.wmf">
+            <button class="btn btn-wide btn-comment btn-raised"><i class="fa fa-mobile"></i> View Mobile UI</button>
+          </a>
+        </div>
+    </div>
 
     
 </div>

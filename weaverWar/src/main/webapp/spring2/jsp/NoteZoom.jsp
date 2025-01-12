@@ -330,20 +330,26 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("You are not able to update this role because this workspace is frozen");
             return;
         }
+        else {
+            alert("updating now");
+        }
         var postURL = "roleUpdate.json?op=Update";
         var roleData = {name: "Members", addPlayers: []};
         roleData.addPlayers.push(newMember);
         console.log("ADD MEMBER", roleData);
         var postdata = angular.toJson(roleData);
         $scope.showError=false;
+        alert("calling post");
         $http.post(postURL ,postdata)
         .success( function(data) {
             console.log("ADD MEMBER RESULT", data);
-            refreshLabels();
+            location.reload(true);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+        
+        alert("post finished");
     }
     function refreshLabels() {
         if ($scope.isFrozen) {
@@ -1226,7 +1232,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <hr>
     <div class="row" ng-hide="editMeetingPart=='subscribers'">
     <div class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="startSubscriberEdit()">Subscribers:</div>
-    <div class="col-9" ng-click="editMeetingPart='subscribers'">
+    <div class="col-9">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
             <ul class="nav-item dropdown d-inline">
                 <li class="nav-item dropdown d-inline m-3" id="users" data-toggle="dropdown">

@@ -874,7 +874,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
         <div class="row" ng-hide="editMeetingPart=='subscribers'">
             <div class="col-2 labelColumn ms-3" ng-click="startSubscriberEdit()">Subscribers:</div>
-            <div class="col-9" ng-click="editMeetingPart='subscribers'">
+            <div class="col-9">
                 <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
                     <ul class="nav-item dropdown d-inline">
                         <li class="nav-item dropdown d-inline m-3" id="users" data-toggle="dropdown">

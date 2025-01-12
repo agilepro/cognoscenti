@@ -208,7 +208,6 @@ Required parameters:
         }
     }
 
-    
     boolean isWatching = uProf.isWatch(siteId+"|"+pageId);
 
 %>
@@ -245,14 +244,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return convertMarkdownToHtml(value.substring(0,198)+" ...");
         }
     }
-    function generateTheHtmlValues() {
-        $scope.purposeHtml = processHtml($scope.workspaceConfig.purpose);
-        $scope.visionHtml  = processHtml($scope.workspaceConfig.vision);
-        $scope.missionHtml = processHtml($scope.workspaceConfig.mission);
-        $scope.aimHtml  = processHtml($scope.workspaceConfig.aim);
-        $scope.domainHtml  = processHtml($scope.workspaceConfig.domain);
-    }
-    generateTheHtmlValues();
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -642,7 +633,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <div id="collapseVision" class="accordion-collapse collapse" aria-labelledby="headingVision" data-bs-parent="#accordion">
                     <div class="accordion-body">
                         <a href="AdminSettings.htm">
-                        <div ng-bind-html="visionHtml">
+                        <div ng-bind-html="workspaceConfig.vision|wiki">
                         </div>
                         </a>
                     </div>
@@ -662,7 +653,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <div id="collapseMission" class="accordion-collapse collapse" aria-labelledby="headingMission" data-bs-parent="#accordion" >
                     <div class="accordion-body">
                         <a href="AdminSettings.htm">
-                            <div ng-bind-html="missionHtml">
+                            <div ng-bind-html="workspaceConfig.mission|wiki">
                             </div>
                         </a>
                     </div>
@@ -682,7 +673,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <div id="collapseAim" class="accordion-collapse collapse" aria-labelledby="headingAim" data-bs-parent="#accordion" >
                     <div class="accordion-body">
                         <a href="AdminSettings.htm">
-                            <div ng-bind-html="aimHtml">
+                            <div ng-bind-html="workspaceConfig.purpose|wiki">
                             </div>
                         </a>
                     </div>
@@ -702,7 +693,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <div id="collapseDomain" class="accordion-collapse collapse" aria-labelledby="headingDomain" data-bs-parent="#accordion" >
                         <div class="accordion-body">
                             <a href="AdminSettings.htm">
-                                <div ng-bind-html="domainHtml">
+                                <div ng-bind-html="workspaceConfig.domain|wiki">
                                 </div>
                             </a>
                         </div>

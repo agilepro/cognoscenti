@@ -7,8 +7,6 @@
 
     Cognoscenti cog = Cognoscenti.getInstance(request);
     Set<String> activeUsers = cog.whoIsLoggedIn();
-    
-
  
 
 %>
@@ -90,6 +88,9 @@ myApp.controller('myCtrl', function($scope, $http) {
         <div class="h1">Email Listener Settings</div>
         <%
              Properties emailProperties = EmailListener.getEmailProperties();
+             if (emailProperties == null) {
+                emailProperties = new Properties();
+             }
              if(ar.getSuperAdminLogFile().getEmailListenerWorking()){
                  %><img src="<%=ar.retPath%>assets/images/greencircle.jpg" border="green" width="10px" height="10px" />
                   &nbsp;&nbsp; Settings for Email Listener are fine.<br/><%

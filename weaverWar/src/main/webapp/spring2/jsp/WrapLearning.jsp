@@ -1,5 +1,9 @@
 <!-- BEGIN LearningBar.jsp -->
-
+<style>
+  .superAdminOnly {
+    background-color: lime;
+  }
+</style>
 
 <div class="learningBox override" ng-cloak>
   <div class="learningInfo">
@@ -26,9 +30,9 @@
     if (ar.isSuperAdmin()) {
 %>
     <div class="superAdminOnly learningButton" >
-        <button class="btn btn-danger btn-wide btn-raised superAdminOnly" ng-click="openLearningEditor()">
-              Improve this Learning Path FF</button>
-        <span class="h6 superAdminOnly">  <%=wrappedJSP%>  </span>
+        <button class="btn btn-danger btn-wide btn-raised" ng-click="openLearningEditor()">
+              Improve this Learning Path</button>
+        <span class="h6"> (Superadmin Only) <%=wrappedJSP%>  </span>
 
     </div>
 <%
