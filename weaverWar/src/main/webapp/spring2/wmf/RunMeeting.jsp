@@ -115,21 +115,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         {{meeting.startTime|pdate}}
         </div>
     
-    <table class="table">
-    <tr class="listItemStyle">
-        <td style="max-width:200px">Participant</td>
-        <td>P</td>
-        <td>A</td>
-    </tr>
-    <tr ng-repeat="(key, person) in meeting.people" class="listItemStyle">
-    <a href="RunMeeting.wmf?meetid={{person.id}}">
-        <td>{{trimit(person.name, 25)}}</td>
-        <td><input type="checkbox" ng-model="person.attended" ng-click="setAttended(person)"></td>
-        <td><input type="checkbox" ng-model="person.notAttended" ng-click="setNotAttended(person)"></td>
-    </a>
-    </tr>
-    </table>
-    
     </div>
     
     <div class="instruction">
@@ -156,7 +141,40 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
       </div>
     </div>
+
+    <hr style="margin:20px;color:lightgray"/>
     
+    <div class="instruction">
+    Reports:
+    </div>
+      <div class="listItemStyle" >
+        <a href="MeetPrint.htm?id={{meeting.id}}&tem=AgendaDetail.chtml">
+          <span class="fa {{getIcon(comment)}}"></span> Agenda Page</a>
+      </div>
+      <div class="listItemStyle" >
+        <a href="MeetPrint.htm?id={{meeting.id}}&tem=MinutesDetails.chtml">
+          <span class="fa {{getIcon(comment)}}"></span> Minutes Page</a>
+      </div>      
+    
+
+    <hr style="margin:20px;color:lightgray"/>
+    
+    <div class="grayBox">    
+    <table class="table">
+    <tr class="listItemStyle">
+        <td style="max-width:200px">Participant</td>
+        <td>P</td>
+        <td>A</td>
+    </tr>
+    <tr ng-repeat="(key, person) in meeting.people" class="listItemStyle">
+    <a href="RunMeeting.wmf?meetid={{person.id}}">
+        <td>{{trimit(person.name, 25)}}</td>
+        <td><input type="checkbox" ng-model="person.attended" ng-click="setAttended(person)"></td>
+        <td><input type="checkbox" ng-model="person.notAttended" ng-click="setNotAttended(person)"></td>
+    </a>
+    </tr>
+    </table>
+    </div>
     
     <!-- Begin Template Footer -->
     <jsp:include page="WMFFooter.jsp" />

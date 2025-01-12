@@ -302,6 +302,17 @@ embeddedData.canUpdate = <%=canUpdate%>;
         <a class="btn btn-default btn-secondary btn-raised" href="CloneMeeting.htm?id={{meetId}}">Clone <i class="fa fa-clone"></i> Meeting</a>
     </span>
 </div>
+
+
+
+    <div class="row ms-4">
+
+          <a href="RunMeeting.wmf?meetId=<%=meetId%>">
+            <button class="btn btn-wide btn-comment btn-raised"><i class="fa fa-mobile"></i> View Mobile UI</button>
+          </a>
+
+    </div>
+    
     <div class="d-flex col-12 mt-5">
         
 
