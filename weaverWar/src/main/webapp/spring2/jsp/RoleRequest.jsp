@@ -125,17 +125,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
-            <td ></td>
-            <td >Role Name</td>
-            <td >Date</td>
-            <td >Requested by</td>
-            <td >Description</td>
-            <td >State</td>
-        </tr>
-        <tr ng-repeat="rec in allRoleRequests">
-            <td>
+    <div class="container-fluid override m-5">
+        <row class="d-flex col-12">
+            <span class="col-3 h5" >Role Name</span>
+            <span class="col-1 h5" >Date</span>
+            <span class="col-2 h5" >Requested by</span>
+            <span class="col-4 h5" >Description</span>
+            <span class="col-1 h5" >State</span>
+        </row>
+        <row ng-repeat="rec in allRoleRequests">
+            <span class="col-1">
               <div class="dropdown">
                 <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                 <span class="caret"></span></button>
@@ -146,14 +145,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <a role="menuitem" href="#" ng-click="update('Reject', rec)">Reject Request</a></li>
                 </ul>
               </div>
-            </td>
-            <td>{{rec.roleName}}</td>
-            <td>{{rec.modified|cdate}}</td>
-            <td><a href="<%=ar.retPath%>v/{{rec.requestKey}}/UserSettings.htm">{{rec.requestName}}</a></td>
-            <td>{{rec.description}}</td>
-            <td>{{rec.state}} <img src="<%=ar.retPath%>new_assets/assets/iconWarning.png" ng-hide="rec.completed"></td>
-        </tr>
-    </table>
+            </span>
+            <span class="col-2">{{rec.roleName}}</span>
+            <span class="col-1">{{rec.modified|cdate}}</span>
+            <span class="col-2"><a href="<%=ar.retPath%>v/{{rec.requestKey}}/UserSettings.htm">{{rec.requestName}}</a></span>
+            <span class="col-4">{{rec.description}}</span>
+            <span class="col-1">{{rec.state}} <img src="<%=ar.retPath%>new_assets/assets/iconWarning.png" ng-hide="rec.completed"></span>
+        </row>
+    </div>
 
 
 </div>

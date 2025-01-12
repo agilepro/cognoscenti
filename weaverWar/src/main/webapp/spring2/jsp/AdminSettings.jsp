@@ -336,11 +336,10 @@ app.filter('escape', function() {
 <%@include file="ErrorPanel.jsp"%>
 
 <% if (ar.isAdmin()) { %>
-    <div class="container-fluid override m-2">
-            <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-                <div class="col-md-auto second-menu">
-                    <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                        <i class="fa fa-arrow-down"></i>
+    <div class="container-fluid override mx-2">
+            <div class="col-md-auto second-menu d-flex">
+                    <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                        <i class="fa fa-bars"></i>
                     </button>
                     <div class="collapse" id="collapseSecondaryMenu">
                         <div class="col-md-auto">
@@ -368,12 +367,12 @@ app.filter('escape', function() {
               href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
               Create Sibling Workspace</a>
                 </span>
-
-    </div>
-                    </div>
                 </div>
                 </div>
-        </div><hr>
+                </div>
+                </div>
+                </div>
+        <hr class="mx-3">
     <div class="d-flex col-12">
         <div class="contentColumn mx-5">
 <% } %>

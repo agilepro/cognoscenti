@@ -54,7 +54,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.thisWorkspace = <%thisWorkspace.write(out,2,4);%>;
     $scope.selectedWS = {};
     $scope.newLabelsCreated = [];
-
     
     $scope.allLabels = <%= labelList.toString() %>;
     
@@ -158,6 +157,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 $scope.reportError(data);
             });
     };
+    $scope.createRandomLabel = function() {
+        var newLabel = {name: "~new~", editedName: "", color: $scope.colors[0], isEdit:true};
+        $scope.allLabels.push(newLabel);
+    }
+    $scope.sortAllLabels = function() {
+        $scope.allLabels.sort( function(a, b){
+              if (a.name.toLowerCase() < b.name.toLowerCase())
+                return -1;
+              if (a.name.toLowerCase() > b.name.toLowerCase())
+                return 1;
+              return 0;
+        });
+    };
 });
 
 
@@ -173,126 +185,131 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-        <div class="container-fluid override">
-            <div class="row">
-                <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-                    <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
-                        <a class="nav-link">Create or Delete Labels</a>
-                    </span>
-                    <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button">Copy Labels from another Workspace
-                    </span>
-                    <table>
-                        <tr ng-hide="selectedWS.name">
-                            <td class="h5">
-                                From:
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-3">
-                                <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="my-2 btn-flex btn-comment btn-raised">{{ws.name}}</button>
-                            </td>
-                        </tr>
-                        <tr style="height:50px;padding:15px" ng-show="selectedWS.name">
-                            <td class="h5">
-                                Confirm:
-                            </td>
-                        </tr>
-                        <tr ng-show="selectedWS.name">
-                            <td class="p-2">
-                                <button ng-click="copyLabels()" class="btn btn-small btn-outline-secondary btn-raised">Add all labels from --{{selectedWS.name}}-- to this workspace.</button>
-                                <button ng-click="cancelCopy()" class="mt-3 btn btn-small btn-danger btn-raised">Cancel</button>
-                            </td>
-                        </tr>
-                        <tr ng-show="newLabelsCreated.length>0">
-                            <td class="h5">
-                                Created:
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding:15px">
-                                <div ng-repeat="lab in newLabelsCreated">
-                                <button style="background-color:{{lab.color}};" class="labelButton">{{lab.name}}</button>
-                                </div>
-                            </td>
-                        </tr>
-                        </table>
-                </div>
-    
-                <div class="d-flex col-9"><div class="contentColumn">
+        <div class="container-fluid override mx-2">
+            <div class="row col-12 m-2">
+                <div class="contentColumn">
                     <h2 class="text-secondary fs-3">Edit Labels</h2>
-                    <div class="container-fluid">
-                        <div class="card col-md-12 align-top">
-                                <div class="card-body p-2" >
-                                    <div class="container">
-                                        <div class="row p-1">
-                                            <span class="col-3 fs-5 fw-bold">Label</span>
-                                            <span class="col-3 fs-5 fw-bold">Color</span>
-                                            <span class="col-3 fs-5 fw-bold"></span>
-                                        </div>
-                                        <div class="row" >
-                                            <div class="d-flex my-2" ng-repeat="labels in allLabels" ng-click="label.isEdit=true;label.editedName=lab.name">
-                                                <div class="col-md-3">
-                                                    <span ng-hide="label.isEdit || label.isNew">
-                                                        <button style="background-color:{{lab.color}}" class="btn-flex" placeholder="Enter Label Name">{{lab.name}}What name?</button>
-                                                    </span>
-                                                    <span ng-show="label.isEdit || label.isNew">
-                                                        <input class="form-control fs-6" style="width:200px; overflow: auto;" type="text" ng-model="label.editedName" placeholder="Enter Label Name">
-                                                    </span>
-                                                    
-                                                </div>
-    
-                                                <span class="col-md-3">
-                                                    <ul class="dropdown btn-flex" ng-show="label.isEdit || label.isNew">
-                                                        <li class="nav-item dropdown" type="button" id="EditLabels" data-bs-toggle="dropdown" style="background-color:{{rolex.color}}">
-                                                            <a class=" mt-0 border border-1 p-2 nav-link dropdown-toggle" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        {{rolex.color}}color</a>
-                        
-                                                            <ul class="dropdown-menu" role="menu" aria-labelledby="EditLabels">
-                                                                <li role="presentation" ng-repeat="color in colors">
-                                                                    <a class="nav-link dropdown-item p-1" style="background-color:{{color}}" href="#"  ng-click="lab.color=color">{{color}}</a></li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                    <div class="dropdown" ng-hide="label.isEdit || label.isNew">
-                                                    {{lab.color}}
-                                                    </div>
-                                                </span>
+                    <div class="well">
+                        <span class="mx-2 my-5 h5">Copy Labels from another Workspace:</span>
+<br/><br/>
+                        <row style="height:50px;padding:15px" ng-hide="selectedWS.name">
+                            <span class="h5">
+                                Select:
+                            </span>
+                            <span class="row">
+                                <div class="col-md-auto">
+                                    <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-small btn-outline-primary btn-raised" type="button" role="menuitem">{{ws.name}}</button>
+                                </div>
+                            </span>
+                        </row>            
+                        <row style="height:50px;padding:15px" ng-show="selectedWS.name">
+                            <span class="h5">
+                                Confirm:
+                            </span>
+                        </row>
+                        <row style="height:50px;padding:15px" ng-show="selectedWS.name">
+                            <span class="p-2">
+                                <button ng-click="copyLabels()" class="btn btn-small btn-outline-primary btn-raised">Add all labels from --{{selectedWS.name}}-- to this workspace.</button>
+                                <button ng-click="cancelCopy()" class="btn btn-small btn-danger btn-raised">Cancel</button>
+                            </span>
+                        </row>
+                        <row style="height:50px;padding:15px" ng-show="newLabelsCreated.length>0"><br/>
+                            <span class="h5 mx-2">
+                                Created:
+                            </span>
+                        </row>
+                        <row>
+                            <span style="padding:15px">
+                                <div ng-repeat="lab in newLabelsCreated">
+                                <button style="background-color:{{lab.color}};" class="btn btn-wide labelButton">{{lab.name}}</button>
+                                </div>
+                            </span>
+                        </row>
+                    </div>
                     
-                                            <span class="col-md-3 d-flex">
-                                                <span ng-hide="label.isEdit"></span>
-                                                <span ng-show="label.isNew">
-                                                    <button class="btn  btn-primary btn-flex" ng-click="updateLabel(label)">Create</button>
-                                                </span>
-                                                <span class="col-1" ng-hide="label.isEdit || label.isNew">
-                                                    <button class="btn btn-flex btn-secondary" ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
-                                                </span>
-                                                <span ng-show="label.isEdit">
-                                                    <button class="btn btn-flex btn-primary me-2" ng-click="updateLabel(label)">Save</button>
-                                                </span>
-                                                <span class="col-1" ng-show="label.isEdit">
-                                                    <button class="mx-2 btn  btn-danger btn-flex" ng-click="deleteLabel(label)">Delete</button>
-                                                </span>
-                                            </span>
-                                        </div>
+                    <div class="container-fluid override well">
+                        <div class="col-md-auto second-menu">
+                            <span class="h5" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                            Current Labels <i class="fa fa-arrow-down"></i>
+                            </span>
+                            <div class="collapse" id="collapseSecondaryMenu">
+                                <div class="card col-md-12 align-top">
+                            <div class="card-body override" style="overflow-y: auto; max-height: fit-content; overflow-x: auto;">
+                
+                            <div class="container-fluid" >
+                            <div class="row">
+                                <span class="col-4 fs-5 fw-bold">Label</span>
+                                <span class="col-4 fs-5 fw-bold">Color</span>
+                                <span class="col-4 fs-5 fw-bold"></span>
+                            </div>
+                            <div class="row" ng-repeat="label in allLabels" ng-click="label.isEdit=true;label.editedName=label.name">
+                                <div class="col-4 my-1">
+                                    <span ng-show="label.isEdit || label.isNew">
+                                        <input class="form-control fs-6" style="width:200px; overflow: auto;" type="text" ng-model="label.editedName"
+                                        placeholder="Enter Label Name">
+                                    </span>
+                                    <span ng-hide="label.isEdit || label.isNew">
+                                        <button class="h6 btn btn-wide labelButton" style="background-color:{{label.color}};"  placeholder="Enter Label Name">{{label.name}}</button>
+                                    </span>
+                                </div>
+                
+                                <div class="col-4">
+                                    <ul class="btn btn-default" ng-show="label.isEdit || label.isNew">
+                                        <li class="btn nav-item py-2 mb-0" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}}; cursor:default">
                                             
-                                        </div>
+                                            <span class=" p-2" id="LabelcolorList" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{label.color}} </span>
+                                    <!--
+                                        <ul class="dropdown-menu pt-1" role="menu" aria-labelledby="EditLabels">
+                                            <li role="presentation" ng-repeat="color in colors">
+                                                <a class="dropdown-item p-3" style="background-color:{{color}};"
+                                                href="#"  ng-click="label.color=color">{{color}}</a></li>
+                                        </ul>-->
+                                    </li>
+                                </ul>
+                                    <div class="h6 py-2 m-2" ng-hide="label.isEdit || label.isNew">
+                                        {{label.color}}
                                     </div>
                                 </div>
+                                
+                                <div class="col-4 pt-1">
+                                    <span ng-hide="label.isEdit || label.isNew">
+                                        <button class="btn btn-default btn-comment" 
+                                        ng-click="label.isEdit=true;label.editedName=label.name">Edit Name</button>
+                                    </span>
+                                    <span ng-show="label.isEdit">
+                                        <button class="btn btn-small btn-primary" ng-click="updateLabel(label)">Save</button>
+                                    </span>
+                                    <span ng-show="label.isEdit">
+                                        <button class="btn btn-small btn-danger" ng-click="deleteLabel(label)">Delete</button>
+                                    </span>
+                                    <span ng-hide="label.isEdit"></span>
+                                    <span ng-show="label.isNew">
+                                        <button class="btn btn-secondary btn-small" ng-click="updateLabel(label)">Create</button>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
+                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        
     
-    
-                        <div class="mt-5 p-3 bg-primary-subtle text-primary">
-                <span class="p-2 h5 my-3" id="attachDocumentLabel">
-                    Create Custom Labels
-                </span>
+                        <div class="well">
+                            <span class="p-2 h5 my-3" id="attachDocumentLabel">
+                            Create Custom Labels
+                            </span>
                 <div class="row d-flex mt-3 ms-2">
-                <span class="col-1"><label>Name:</label></span>
+                <span class="col-1"><label class="h6">Name:</label></span>
                 <span class="col-3"><input ng-model="newLabel.editedName" class="form-control"></span>
                 <span class="col-3">
-                <label>Select Custom Color: </label>{{nameMessage()}}</span>
+                <label class="h6">Select Custom Color: </label>{{nameMessage()}}</span>
                 <span class="col-md-3 mx-2">
                     <input class="p-0 form-control" type="color" ng-model="newLabel.color">
-                    <ul class="dropdown btn btn-flex" ng-show="label.isEdit || label.isNew">
+                    <ul class="dropdown btn btn-default" ng-show="label.isEdit || label.isNew">
                         <li class="nav-item dropdown" type="button" id="EditLabels" data-bs-toggle="dropdown" style="background-color:{{lab.color}}">
                             <a class=" dropdown-toggle p-4" id="newLabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     {{lab.color}} </a>
@@ -305,9 +322,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </ul>
                 </span>
                 </div>
-                <button class="btn btn-primary btn-raised mt-3" ng-click="createLabel()">
+                <div class="row mt-3 ms-2">
+                <button class="btn btn-primary btn-raised btn-default float-end" ng-click="createLabel()">
                 Create</button>
+                </div>
                         </div>
+                        <div class="container-fluid m-2">
+                        <button class="btn btn-raised btn-primary btn-wide float-end" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
+                            Create or Delete Labels
+                          </button>
                     </div>  
 
                 </div>    

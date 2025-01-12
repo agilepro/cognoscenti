@@ -547,47 +547,33 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-
-
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="saveEmail"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="" ng-click="saveEmail()" >Save Changes</a></span>
-              
-            <span class="btn btn-raised btn-comment btn-secondary m-3 pb-2 pt-0" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
-                <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" />
-                Send Email</a>
-            </span>
-        </div>
-
-    <div class="d-flex col-9">
-        <div class="contentColumn">
+<div class="container override mx-2">
+    <div class="col-12">
             <div ng-show="emailInfo.state==1">
-                <form class="form-horizontal">
+                <form class="form-horizontal col-12">
                     <fieldset>
-                        <div class="form-group d-flex col-12">
+                        <div class="form-group d-flex">
                             <label class="col-md-2 control-label h5">Roles </label>
                             <div class="col-md-10">
-                                <div class="form-inline d-flex flex-wrap">
-                                    <button class="btn-comment btn-wide btn-raised btn-sm" ng-click="showAddressingOptions=!showAddressingOptions">
+                                <div class="form-inline flex-wrap">
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="showAddressingOptions=!showAddressingOptions">
                                     <i class="fa fa-plus"></i>&nbsp;Click here to see addressing options</button>
                                 </div>
                             </div>
                         </div>
                         <div class="row d-flex m-3" ng-show="showAddressingOptions">
-                            <label class="col-md-2 control-label h5 my-2">Roles</label>
+                            <div class="col-md-2 control-label h6">Add Members of: :</div>
                             <div class="col-md-10 well d-flex flex-wrap">
-                                <div ng-repeat="role in allRoles" > <button class="btn-comment mx-2 h6" ng-click="addPlayers(role)">
-                                <span class="h6"> Add {{role.name}}</span></button>
+                                <div ng-repeat="role in allRoles" > <button class="btn-comment btn-wide mx-2 h6" ng-click="addPlayers(role)">
+                                <span class="h6">{{role.name}}</span></button>
                             </div>
                         </div>
                         </div>
                         <!--Meeting Participants-->
                         <div class="row col-12 my-2">
                             <div ng-show="meeting.participants">
-                                <label class="col-md-2 control-label h5">Meeting Participants:</label>
-                                <span class="col-md-10">
+                                <label class="col-md-3 control-label h5">Meeting Participants:</label>
+                                <span class="col-md-9">
                                     <button class="btn-comment ms-0 me-2 h6" ng-click="addMeetingInvitees()" title="Add all the people invited to the meeting">Add Meeting Invitees</button>
                                     <button class="btn-comment mx-2 h6" ng-click="addMeetingAttendees()" title="Add all the people who attended the meeting">Add Meeting Attendees</button>
                                     <button class="btn-comment ms-2 me-0 h6" ng-click="addMeetingNoShows()" title="Add all the people invited but did not show up">Add Meeting No-shows</button>                           
@@ -597,8 +583,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                         <!--Topic Subscribers-->
                         <div class="row col-12 d-flex my-2">
                             <div ng-show="emailInfo.noteInfo.subscribers">
-                                <label class="col-md-2 control-label h5">Topic Subscribers:</label>
-                                <span class="col-md-10">
+                                <label class="col-md-3 control-label h5">Topic Subscribers:</label>
+                                <span class="col-md-9">
                                         <button class="btn-comment my-2 h6" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
                                 </span>
                             </div>
@@ -608,11 +594,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                             <div class="form-group d-flex">
                                 <label class="col-md-2 control-label h5">Clear:</label>
                                 <span class="col-md-10">
-                                        <button class="btn-comment my-2 h6" ng-click="emailInfo.alsoTo = []" title="Add all the people invited to the meeting">Clear Addressees</button>
+                                        <button class="btn-comment btn-wide btn-raised" ng-click="emailInfo.alsoTo = []" title="Add all the people invited to the meeting">Clear Addressees</button>
                                 </span>
                             </div>
                         </div>
-                        <div class="row form-group d-flex my-2">
+                        <!--Send To-->
+                        <div class="row d-flex col-12 my-2">
                             <label class="col-md-2 control-label h5" for="alsoalsoTo">Send To:</label>
                             <div class="col-md-10">
                                 <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="cleanUpAlsoTo()" on-tag-removed="cleanUpAlsoTo()"> 
@@ -620,12 +607,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                                 </tags-input>
                             </div>
                         </div>
+                        <!--Subject-->
                         <div class="row form-group d-flex my-2">
                             <label class="col-md-2 control-label h5 " for="subject">Subject:</label>
                             <div class="col-md-10">
                                 <input id="subject" ng-model="emailInfo.subject" class="form-control"/>
                             </div>
                         </div>
+                        <!--Introduction-->
                         <div class="row my-2 form-group d-flex">
                             <label class="col-md-2 control-label h5 " for="intro">Introduction:</label>
                             <div class="col-md-10">
@@ -656,10 +645,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                                 </div>
                             </div>
                         </div>
-                        
+                        <!--Type-->
                         <div class="row my-3 form-group d-flex" ng-click="emailInfo.attachFiles=!emailInfo.attachFiles" >
-                            <label class="col-md-2 control-label h5">Type:</label>
-                            <div class="col-md-10 h6 ">
+                            <label class="col-md-1 control-label h6 ms-5">Type:</label>
+                            <div class="col-md-9 h6 ">
                                 <input type="checkbox" ng-model="emailInfo.attachFiles"/>  
                 Include attachment data directly in the email <b><em>(unsafe)</em></b>
                             </div>
@@ -692,22 +681,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                         <!--Action Items-->
                         <div class="row my-3 form-group d-flex">
             <hr/>
-                            <label class="col-md-2 control-label h5">Action Items:</label>
-                            <div class="col-md-10 d-flex ">
-                                <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='None'">
+                            <label class="col-md-2 control-label h5">Include Action Items:</label>
+                            <div class="col-md-10">
+                                <span class="btn-wide h6" ng-click="emailInfo.tasksOption='None'">
                                     <input type="radio" ng-model="emailInfo.tasksOption" value="None"> None &nbsp 
                                 </span>
-                                <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='Assignee'">
+                                <span class="btn-wide mx-2 h6" ng-click="emailInfo.tasksOption='Assignee'">
                                     <input type="radio" ng-model="emailInfo.tasksOption" value="Assignee"> Only to Assignee &nbsp 
                                 </span>
-                                <span class="btn-comment btn-wide btn-sm mx-2 h6" ng-click="emailInfo.tasksOption='All'">
+                                <span class="btn-wide mx-2 h6" ng-click="emailInfo.tasksOption='All'">
                                     <input type="radio" ng-model="emailInfo.tasksOption" value="All"> All Action Items to Everyone
                                 </span>
                             </div>
                         </div>
           
-          <!-- Form Control Schedule Time Begin -->
-          <!--div class="form-group" >
+                                    <!-- Form Control Schedule Time Begin -->
+                                    <!--div class="form-group" >
             <label class="col-md-2 control-label" for="scheduledTime">When?</label>
             <div class="col-md-10">
                 <div class="togglebutton col-md-4">
@@ -732,6 +721,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                             {{explainState()}}
                             </div>
                         </div>
+                        <!--Suppression-->
                         <div class="row my-3 form-group d-flex" ng-show="suppressEmail">
                             <label class="col-md-2 control-label h5">Suppression:</label>
                             <div class="col-md-10">
@@ -752,20 +742,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                     </fieldset>
                 </form>
             </div>
+        </div>
             <div class="container well">
-                <div class="row my-3 form-group d-flex">
-                    <label class="col-md-2 control-label h5">For Recipient: </label>
+                <div class="row form-group d-flex">
+                    <div class="my-2">
+                    <h4>Preview Email for a specific recipient:</h4></div>
+                    <label class="col-md-2 control-label h5 ms-5">For Recipient: </label>
                     <div class="col-md-6">
                         <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
                     </div>
-                    <div class="col-md-4">
-                        <button ng-click="getRenderedEmail()" class=" btn-comment btn-wide btn-sm h6">Preview Email</button>
-                    </div>
+                    <!--<div class="col-md-4">
+                        <button ng-click="getRenderedEmail()" class=" btn-comment btn-wide h6">Preview Email</button>
+                    </div>-->
                 </div>
             
         
 
-                <div class="instruction h5">This is what the email will look like:<br/><br/></div>
+                <div class="instruction h6 mt-3">This is what the email will look like:<br/><br/></div>
   
                 <div class="well" style="padding:30px">
                     <div style="padding:10px">{{renderedSubject}}</div>
