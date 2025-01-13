@@ -1050,17 +1050,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override m-2">
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
+<div class="container-fluid override mx-2">
+    <div class="col-md-auto second-menu d-flex">
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-bars"></i>
             </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
-                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="NotesList.htm">List Topics</a></span>
+                    
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
@@ -1073,12 +1071,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
               <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
-              ng-click="openFeedbackModal()">Feedback</a></span>
+            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="NotesList.htm">List Topics</a></span>
               </div>
             </div>
         </div>
-    </div><hr>
+ <hr>
               
               <!--experimental mobile UI not finished-->
              <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
@@ -1094,7 +1092,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         {{noteInfo.subject}}
     </h2>
     <div class="well" ng-show="addressMode" ng-cloak>
-        <h2 class="h4 text-secondary">Email Notification To (Subscribers):</h2>
+        <h3 class="h5 text-secondary">Email Notification To (Subscribers):</h3>
         <div>
           <tags-input ng-model="subscriberBuffer" placeholder="Enter users to send notification email to"
                       display-property="name" key-property="uid"
@@ -1106,17 +1104,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
         <div class="d-flex">
             <span class="me-auto">
-          <button class="btn btn-primary btn-raised btn-wide fs-6 btn-danger" type="button" ng-click="addressMode = false"
+          <button class="btn btn-raised btn-default btn-danger" type="button" ng-click="addressMode = false"
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
             </span>
             <span>
-          <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(false)"
+          <button class="btn btn-secondary btn-raised btn-wide" type="button" ng-click="postIt(false)"
                   title="Post this discussion but don't send any email">
           Post Without Email </button>
             </span>
             <span>
-          <button class="btn btn-primary btn-raised btn-wide fs-6" type="button" ng-click="postIt(true)"
+          <button class="btn btn-primary btn-raised btn-wide" type="button" ng-click="postIt(true)"
                   title="Post this discussion and send the email to selected users">
           Post &amp; Send Email </button>
             </span>
@@ -1145,19 +1143,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 <% } %>
 
-<div class="col-12">
+<div class="col-12 m-2">
 <hr>
     <div class="row d-flex">   
-        <span class="col-1 h6 ps-3">Labels:</span>
+        <span class="col-1 h5 ps-3">Labels:</span>
         <span class="col-5">
         <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
         </span>
-        <span class="col-2 h6">Last modified:</span>
+        <span class="col-2 h5">Last modified:</span>
         <span class="col-3">{{noteInfo.modTime|cdate}}</span>
     </div>
 <hr>
-    <div class="row ">
-    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="openAttachDocument()">Attachments:</span>
+    <div class="row ms-3">
+    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="openAttachDocument()">Attachments:</span>
     <span class="col-9" ng-dblclick="openAttachDocument()">
         <div ng-repeat="doc in attachedDocs" style="vertical-align: top">
             <span ng-show="doc.attType=='FILE'">
@@ -1180,7 +1178,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         
     </span>
     </div><hr>
-    <div class="row ">
+    <div class="row ms-3">
     <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="openAttachAction()">Action Items:</span>
     <span class="col-9">
           <table class="table">
@@ -1195,14 +1193,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               <td>
                 <span ng-repeat="person in goal.assignTo">
                   <span class="dropdown" >
-                    <ul class="navbar-btn p-0 list-inline">
+                    <ul class="nav-item p-0 list-inline">
                         <li class="nav-item dropdown" id="user" data-toggle="dropdown">
                             <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{person.name}} - {{person.uid}}">
                             <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-                                <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                                <li role="presentation" style="background-color:lightgrey">
+                                    <a class="dropdown-item" role="menuitem" 
                           tabindex="0" style="text-decoration: none;text-align:left">
                           {{person.name}}<br/>{{person.uid}}</a></li>
                       <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0"
@@ -1210,7 +1209,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                           <span class="fa fa-user"></span> Visit Profile</a></li>
                     </ul>
                 </li>
-            </ul>
+                    </ul>
         </span>
     </span>
               </td>
@@ -1227,47 +1226,54 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               </td>
           </tr>
           </table>
-    </span>
+    </span><hr>
     </div>
-    <hr>
-    <div class="row" ng-hide="editMeetingPart=='subscribers'">
+    
+    <div class="row ms-3" ng-hide="editMeetingPart=='subscribers'">
     <div class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="startSubscriberEdit()">Subscribers:</div>
     <div class="col-9">
+        <div class="d-flex">
         <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
-            <ul class="nav-item dropdown d-inline">
-                <li class="nav-item dropdown d-inline m-3" id="users" data-toggle="dropdown">
+            <span class="dropdown" >
+                <ul class="nav-item list-inline m-2">
+                <li class="nav-item dropdown" id="users" data-toggle="dropdown">
                     <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}" class="rounded-5" />
-                    <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="users">
-                        <li role="presentation" style="float:left"><a class="dropdown-item" role="menuitem"  tabindex="0" style="text-decoration: none;text-align:center"> {{player.name}}<br/>{{player.uid}}</a></li>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="users">
+                        <li role="presentation" 
+                        style="background-color:lightgrey">
+                        <a class="dropdown-item" role="menuitem"  tabindex="0" style="text-decoration: none;text-align:left"> {{player.name}}<br/>{{player.uid}}</a></li>
                         <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(player)">
                             <span class="fa fa-user"></span> Visit Profile</a></li>
                     </ul>
                 </li>
             </ul>
         </span>
-        <div ng-repeat="outcast in nonMembers">
-            <ul class="nav-item dropdown d-inline">
-                <li class="nav-item dropdown d-inline" id="outcast" data-toggle="dropdown">
+        </span>
+        </div>
+        <span ng-repeat="outcast in nonMembers">
+            <span class="dropdown" >
+                <ul class="nav-item list-inline m-2">
+                <li class="nav-item dropdown" id="outcast" data-toggle="dropdown">
                     <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" style="width:32px;height:32px" />
                     <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
-                        <li role="presentation" style="float: left;"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:center"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
-                        <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:left"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
                         <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
                         <span class="fa fa-user"></span> Add to Members</a></li>
                     </ul>
                 </li>
           {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
             </ul>
-        </div>
-    </div>
-    </div>
-    <hr>
+        </span>
 
-</div>
-<div class="well" ng-show="editMeetingPart=='subscribers'">
-        <h3 class="h4">Adjust Subscribers:</h3>
+        </span>
+    </div>
+    <hr></div>
+
+<div class="well mx-3" ng-show="editMeetingPart=='subscribers'">
+        <h3 class="h5">Adjust Subscribers:</h3>
         <div>
             <tags-input ng-model="subscriberBuffer" placeholder="Enter users to update about changes" display-property="name" key-property="uid" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()"  on-tag-removed="updatePlayers()"> 
                 <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
@@ -1275,25 +1281,23 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         </div>
         <div>
             <span class="d-grid justify-content-end">
-                <button class="btn btn-primary btn-raised fs-6"  type="button"  ng-click="saveSubscriberEdit()" title="Save this list of subscribers"> Save </button>
+                <button class="btn btn-primary btn-default btn-raised fs-6"  type="button"  ng-click="saveSubscriberEdit()" title="Save this list of subscribers"> Save </button>
             </span>
         </div>
 </div>
 
-<div class="row d-flex ps-5 my-3">
+<div class="row d-flex mx-2">
     <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
 
     </span> 
     <span class="dropdown" ng-show="noteInfo.draft">   
-        <button class="btn btn-primary btn-raised ms-auto" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
+        <button class="btn btn-primary btn-default btn-raised" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
     </span>
 </div>
-<hr>
-          <!--Create Comment/Proposal/Round Row-->
-          <div class="row row-md-cols-3">
 
-            <div class="d-flex col-sm-12 mb-3">
-                <button ng-click="openCommentCreator(item, 1)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+          <!--Create Comment/Proposal/Round Row-->
+          <div class="d-flex col-7 mx-3">
+                <button class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3" ng-click="openCommentCreator(item, 1)" >
                     Create New <i class="fa fa-comments-o"></i> Comment</button>
                 <button ng-click="openCommentCreator(item, 2)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
                     Create New <i class="fa fa-star-o"></i> Proposal</button>
@@ -1301,10 +1305,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                     Create New <i class="fa fa-question-circle"></i> Round</button>
 
             </div>
-      
+      </div>
             
-        </div> <hr/>
-        <div ng-repeat="cmt in getComments()">
+        </div> 
+        <div class="well mx-3" ng-repeat="cmt in getComments()">
 
             <%@ include file="/spring2/jsp/CommentView.jsp" %>
        

@@ -547,7 +547,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container override mx-2">
+<div class="container override mx-4">
+    <!--<div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse" id="collapseSecondaryMenu">
+            <div class="col-md-auto">
+
+                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
+          Email Prepared</a>
+        </span>
+
+        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
+            Email Sent</a>
+          </span>
+</div>
+        </div>
+    </div>
+    <hr>-->
     <div class="col-12">
             <div ng-show="emailInfo.state==1">
                 <form class="form-horizontal col-12">
@@ -572,20 +590,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                         <!--Meeting Participants-->
                         <div class="row col-12 my-2">
                             <div ng-show="meeting.participants">
-                                <label class="col-md-3 control-label h5">Meeting Participants:</label>
-                                <span class="col-md-9">
-                                    <button class="btn-comment ms-0 me-2 h6" ng-click="addMeetingInvitees()" title="Add all the people invited to the meeting">Add Meeting Invitees</button>
-                                    <button class="btn-comment mx-2 h6" ng-click="addMeetingAttendees()" title="Add all the people who attended the meeting">Add Meeting Attendees</button>
-                                    <button class="btn-comment ms-2 me-0 h6" ng-click="addMeetingNoShows()" title="Add all the people invited but did not show up">Add Meeting No-shows</button>                           
+                                <label class="col-md-2 control-label h5">Meeting Participants:</label>
+                                <span class="col-md-10">
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingInvitees()" title="Add all the people invited to the meeting">Add Meeting Invitees</button>
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingAttendees()" title="Add all the people who attended the meeting">Add Meeting Attendees</button>
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingNoShows()" title="Add all the people invited but did not show up">Add Meeting No-shows</button>                           
                                 </span>
                             </div>
                         </div>
                         <!--Topic Subscribers-->
                         <div class="row col-12 d-flex my-2">
                             <div ng-show="emailInfo.noteInfo.subscribers">
-                                <label class="col-md-3 control-label h5">Topic Subscribers:</label>
-                                <span class="col-md-9">
-                                        <button class="btn-comment my-2 h6" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
+                                <label class="col-md-2 control-label h5">Topic Subscribers:</label>
+                                <span class="col-md-10">
+                                        <button class="btn-comment btn-wide btn-raised" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
                                 </span>
                             </div>
                         </div>
@@ -625,7 +643,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                         <!--Attachments-->
                         <div class="row my-3 form-group d-flex" >
                             <label class="col-md-2 control-label h5 " for="intro">Attachments:</label>
-                            <span class="col-md-2 btn-comment btn-wide btn-sm p-1 ms-2" ng-click="openAttachDocument()">Attachments</span>
+                            <button class="btn-comment btn-default btn-raised" ng-click="openAttachDocument()">Attachments</button>
                             <div class="col-md-6">
                                 <div ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
                                     <div ng-repeat="fullDoc in [getFullDoc(docid)]">
@@ -658,11 +676,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             <hr/>
                         <label class="col-md-2 control-label h5">Meeting:</label>
                         <div class="col-md-10">
-                            <span class="col-md-2 btn-comment btn-wide btn-sm px-2">{{emailInfo.meetingInfo.name}}</span> </div>
+                            <span class="h6" style="cursor:default">{{emailInfo.meetingInfo.name}}</span> </div>
                             <div class="row my-3">
                                 <label class="col-md-2 control-label h5">Layout:</label>
                                 <div class="col-md-2"> 
-                            <select class="form-control"  ng-model="emailInfo.meetingLayout" ng-options="n for n in allLayoutNames"></select></div>
+                            <select class="form-control btn btn-comment btn-wide btn-raised" style="text-align: left;" ng-model="emailInfo.meetingLayout" ng-options="n for n in allLayoutNames"></select></div>
                         </div>
                         </div>
                         <!--Discussion-->

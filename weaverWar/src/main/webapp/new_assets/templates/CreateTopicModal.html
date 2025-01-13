@@ -6,7 +6,7 @@
     Create New Discussion Topic</h4>
   </div>
 
-<div class="modal-body fluid-container">
+<div class="modal-body fluid-container override">
     <div class="row my-2 form-group col-12 d-flex" title="The subject should describe the discussion in a few words">
       <span class="col-2 my-2">
   	    <label class="h6">Subject</label>
@@ -18,7 +18,7 @@
 
   <div class="row my-2 form-group col-12 d-flex">
     <span class="col-2 my-2">
-      <label class="h6 col-1 my-2">Briefly describe the topic of the discussion</label>
+      <label class="h6 my-2">Briefly describe the topic of the discussion</label>
     </span>
     <span class="col-10 my-2">
       <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="col-7 leafContent" style="max-height:200px;height:200px">
@@ -28,10 +28,10 @@
   <span class="instruction h6">
     <em><b>Note:</b> only describe the discussion briefly.  Don't start discussing it here.</em>
   </span>
-  <div class="modal-footer d-flex" >
+  <div class="modal-footer " >
     <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto">Cancel</button>
     
-    <button ng-click="ok()" class="btn btn-primary btn-raised">
+    <button class="btn btn-default btn-primary btn-raised" ng-click="ok()" >
             Create {{topic.phase}}</button>
   </div>
 </div>

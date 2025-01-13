@@ -131,10 +131,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm">
               Create Email</a>
           </span>
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a role="menuitem" class="nav-link" href="AdminSettings.htm">
+            Admin Settings</a>
+              </span>
     </div>
             </div>
-        </div>    
-    </div><hr>
+        </div>
+<hr>
 
     <div class="d-flex col-12"><div class="contentColumn">
         <div class="well">Filter <input ng-model="filter">

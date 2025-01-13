@@ -347,12 +347,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid col-12 override">
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
+<div class="container-fluid override mx-3">
+    <div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="DocsList.htm">
@@ -365,7 +364,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           </span>
         </div>
             </div>
-        </div>
+
         </div><hr>
     <div class="col-12 m-2">
             <div class="well" id="allthefolders" >

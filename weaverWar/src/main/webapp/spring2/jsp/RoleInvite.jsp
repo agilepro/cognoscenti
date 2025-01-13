@@ -157,21 +157,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% } else { %>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="fixed-width border-end border-1 border-secondary">
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="RoleManagement.htm">Manage Roles</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="RoleInvite.htm">Invite Users</a></span>
-              <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="MultiInvite.htm">Multi-Person Invite</a></span>
-            </div>
+    <div class="container-fluid override m-3">
+        
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
+
+              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+              href="MultiInvite.htm"><span class="fa fa-envelope"></span>&nbsp;Multi-Person Invite</a></span>
 
 
-
-
-            <div class="d-flex col-9">
+            <div class="d-flex col-12 m-3">
                 <div class="contentColumn">
                     <span class="h6"><i>Add people to the project by entering their email address and name.</i></span>
                     
@@ -203,13 +198,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                     <textarea class="form-control" style="height:200px" ng-model="message"></textarea></span>
                         </div>
                         <div class="d-flex my-3">
-                            <button ng-click="addressing=false" class="btn btn-danger btn-wide btn-flex h6 me-auto">Close</button>
-                            <button ng-click="inviteOne()" class="btn-comment btn-wide btn-flex h6">Send Invitation</button>
+                            <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
+                            <button ng-click="inviteOne()" class="btn btn-primary btn-raised btn-default ms-auto">Send Invitation</button>
                             
                     </div>
                 </div>
                 <div ng-hide="addressing">
-                    <button ng-click="addressing=true" class="btn btn-sm btn-primary btn-wide btn-raised">Open to Invite Another</button>
+                    <button ng-click="addressing=true" class="btn btn-primary btn-wide btn-raised">Open to Invite Another</button>
                 </div>
             </div>  
             <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
@@ -219,7 +214,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   
   <h2 class="h4 m-3">Previously Invited</h2>
 
-    <div><button class="btn btn-flex btn-secondary btn-raised m-3" ng-click="refresh()">Refresh List</button></div>
+    <div><button class="btn btn-default btn-secondary btn-raised m-3" ng-click="refresh()">Refresh List</button></div>
 
   
     <table class="table">

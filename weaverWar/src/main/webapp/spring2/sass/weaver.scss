@@ -295,6 +295,10 @@ a {
 .override a.btn  {
     text-decoration: none;
 }
+.btn.ng-binding    {
+    background-color: $primary-10;
+}
+
 .override .btn-raised {
 
     margin: 5px;
@@ -305,7 +309,19 @@ a {
         box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
     }
 }
+.override .btn-primary {
 
+    background-color: $primary;
+    color: #fefefe;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 1px;
+    &:hover {
+        background-color: $primary-80;
+        color: #fefefe;
+        cursor: pointer;
+    }
+}
 .override .btn-outline-primary {
 
     color: $primary;
@@ -334,9 +350,7 @@ a {
         cursor: pointer;
     }
 }
-.btn.ng-binding    {
-    background-color: $primary-10;
-}
+
 .override .btn-comment {
     background-color: $primary-20;
     color: $primary;

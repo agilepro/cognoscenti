@@ -213,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
 <% if (canUpdate) { %>
-                <button ng-click="updateRole(role)" class="btn btn-comment btn-secondary btn-raised  h6">Save</button>
+                <button ng-click="updateRole(role)" class="btn btn-default btn-primary btn-raised">Save</button>
 <% } %>
 
             </div>
@@ -245,8 +245,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             
             <% if (canUpdate) { %>
-                <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
-                <button ng-click="openResponsibilityModal()" class="btn btn-secondary btn-flex btn-wide btn-raised">
+                <div class="form-group ">
+                <button ng-click="openResponsibilityModal()" class="btn btn-secondary btn-wide btn-raised">
                     Create Responsibility
                 </button></div>
 <% } %>
@@ -276,7 +276,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
             <div class="row form-group col-12 d-flex m-2" ng-repeat="aterm in role.terms" >
                     <span class="actions col-1" title="Edit this term to sent time span and to make it the current term. Nominations and elections of members to the term of the role">
-                        <button type="button" name="edit" class=" btn btn-tiny btn-comment" 
+                        <button type="button" name="edit" class="btn btn-tiny btn-comment" 
                                 ng-click="goNominate(aterm)">
                             <span class="fa fa-edit fa-md"></span>
                         </button>
@@ -301,11 +301,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div ng-show="role.terms.length==0" class="guideVocal h6"><em>
                     There are no designated terms for this role.  Create one!</em><br/>
             </div>              
-    <div class="row form-group col-12 d-flex m-2">
+    <div class="form-group ">
 <% if (canUpdate) { %>
-    <div class="form-group d-flex col-11 m-2 justify-content-end">
-                <button ng-click="createTerm()" class="btn btn-secondary btn-flex btn-wide btn-raised">
-                    <span class="fa fa-plus"></span> Create Term</button>
+    <div class="form-group">
+                <button ng-click="createTerm()" class="btn btn-secondary btn-wide btn-raised">
+                    <span class="fa fa-plus"></span> Create New Term</button>
                 </div>
 <% } %>
             </div>

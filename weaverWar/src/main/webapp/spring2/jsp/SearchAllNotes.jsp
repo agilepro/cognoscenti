@@ -81,34 +81,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override">
-    <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-        <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-            <i class="fa fa-arrow-down"></i>
-        </button>
-        <div class="collapse" id="collapseSecondaryMenu">
-            <div class="col-md-auto">
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link">Clear Results</a></span>
-        </div>
-        </div>
-        </div>
-    </div><hr>
+<div class="container-fluid override mx-2">
 
-    <div class="d-flex col-12 m-2"><div class="contentColumn">
+    <div class="d-flex col-12 mx-3"><div class="contentColumn">
     <table>
         <tr >
-            <td class="gridTableColummHeader">Search For:</td>
+            <td class="gridTableColummHeader h6">Search For:</td>
             <td style="width:20px;"></td>
             <td><input ng-model="query.searchFilter" class="form-control" style="width:450px;"></td>
         </tr>
         <tr ><td height="10px"></td></tr>
         <tr >
-            <td class="gridTableColummHeader">Workspaces:</td>
+            <td class="gridTableColummHeader h6">Workspaces:</td>
             <td style="width:20px;"></td>
             <td>
               <div class="form-inline form-group" style="margin:0px">
-                  <select ng-model="searchScope" class="form-control" style="width:150px;">
+                  <select ng-model="searchScope" class="form-control btn btn-comment btn-wide btn-raised" style="text-align: left;">
                       <option value="This Workspace">This Workspace</option>
                       <option value="All Workspaces in Site">All Workspaces in Site</option>
                       <option value="All Sites">All Sites</option>
@@ -121,6 +109,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
             <td><button ng-click="doSearch()" class="btn btn-default btn-primary btn-raised">Search</button></td>
+            <td><span  type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link btn btn-default btn-raised btn-outline-primary">Clear Results</a></span></td>
         </tr>
     </table>
 

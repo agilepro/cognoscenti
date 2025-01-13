@@ -6,7 +6,7 @@
   <h5 class="modal-title" id="docDetailsModalLabel">
       Document Settings </h5></div>
       <div class="modal-body">
-        <div class="container-fluid">
+        <div class="container-fluid override">
           <div class="card col-md-12 align-top">
             <div class="card-body" >
   <div ng-show="editMode=='details'">
@@ -36,28 +36,28 @@
             <input ng-model="docInfo.url" class="form-control"     
                 placeholder="Enter url of the link"/>           
         </div>
-        <div class="form-group my-2">
+        <div class="form-group mb-3">
           <label for="labels" class="h6">Labels:</label>
-          <span class="nav-item dropdown d-inline">
-            <button class="specCaretBtn dropdown">
+          <span class="nav-item dropdown d-inline mb-0">
+            <button class="btn btn-tiny btn-comment p-0 ">
               <i class="fa fa-plus"></i></button>         
-                <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
-              style="width:320px;left:-130px;top:12px">
-                <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                <ul class="dropdown-menu mt-0 p-2" role="menu" aria-labelledby="selectLabel" 
+              style="width:320px;left:-130px;top:20px">
+                <li class="mb-0" role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                     {{rolex.name}}</button>
             </li>
             <div class="dropdown-divider" style="float:clear"></div>               
             <li role="presentation" style="float:right">
-              <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+              <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn btn-wide btn-comment">
                   Add/Remove Labels</button>
             </li>
           </ul>
         </span>
-
+  
      <span class="dropdown" ng-repeat="role in allLabels">
-       <button class="dropdown labelButton" ng-click="toggleLabel(role)"
+       <button class="dropdown btn btn-wide labelButton mb-0" ng-click="toggleLabel(role)"
           style="background-color:{{role.color}};"
           ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
      </span>
@@ -76,7 +76,7 @@
         </div>
       </div>
     <div class="col-12 row d-flex ms-0 my-3">
-        <label for="labels" class="h6 ps-0">Versions:</label>
+        <label for="labels" class="h5 ps-0">Versions:</label>
         <div class="container-fluid">
           <div class="row d-flex">
             <span class="col-1 h6">#</span>
@@ -99,22 +99,22 @@
             {{docInfo.purgeDate|cdate}}       
         </div>
         <div class="row d-flex justify-content-between">
-            <button class="ms-0 me-2 my-1 col-2 btn-secondary btn-wide btn-raised" ng-click="setPurge(0)">
+            <button class="btn btn-secondary btn-wide btn-raised" ng-click="setPurge(0)">
                 Keep Indefinitely</button>
-            <button class="my-1 mx-2 col-2 btn-comment btn-wide btn-raised" ng-click="setPurge(30)">
+            <button class="btn-comment btn-wide btn-raised" ng-click="setPurge(30)">
                 Delete in 1 Month</button>
-            <button class="my-1 mx-2 col-3 btn-comment btn-wide btn-raised" ng-click="setPurge(120)">
+            <button class="btn-comment btn-wide btn-raised" ng-click="setPurge(120)">
                 Delete in 4 Months</button>
-            <button class="my-1 ms-2 me-0 col-2 btn-comment btn-wide btn-raised" ng-click="setPurge(360)">
+            <button class="btn-comment btn-wide btn-raised" ng-click="setPurge(360)">
                 Delete in 1 Year</button>
         </div>
       </div>
   </div>
 </div></div>
 <div class="modal-footer d-flex">
-        <button class="btn btn-danger btn-raised me-auto"
+        <button class="btn btn-danger btn-default btn-raised me-auto"
         type="button" ng-click="cancel()">Close</button>
-        <button class="btn btn-primary btn-raised"
+        <button class="btn btn-primary btn-default btn-raised"
         type="button" ng-click="ok()">Save</button>
 
 </div>

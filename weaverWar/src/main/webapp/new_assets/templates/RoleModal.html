@@ -64,7 +64,7 @@
                     </span>
                 </div>
             </div>
-<!--            <div class="card d-flex" >
+<!--<div class="card d-flex" >
                 <div class="card-body">
                     <span class="h5">Advanced</span>
                 </div>
@@ -97,7 +97,7 @@
                         <button ng-click="unLink()" class="btn btn-raised btn-secondary me-3">Unlink</button>
                     </span>
                 </div>
-            </div>
+            </div>-->
         </div>
 
         <div ng-show="isNew || editMode=='main'">
@@ -129,10 +129,10 @@
             </span>
         </div>
     </div>
- -->
+
 </div>
 <div class="modal-footer">
-    <button class="me-auto btn btn-secondary" type="button" ng-click="cancel()">Exit</button><span class="h6" ng-hide="isNew">Clicking Exit will save your changes</span>
+    <button class="me-auto btn btn-secondary btn-default" type="button" ng-click="cancel()">Exit</button><span class="h6" ng-hide="isNew">Clicking Exit will save your changes</span>
     <button ng-click="createAndClose()" class="btn btn-primary btn-raised" ng-show="isNew">Create Role</button>
 </div>
 

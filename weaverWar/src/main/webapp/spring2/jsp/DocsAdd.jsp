@@ -74,7 +74,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% } else { %>
 
-
+    <div class="container-fluid override mx-3">
     <table>
 
     <tr>
@@ -82,31 +82,30 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </tr>
     <tr>
         <td class="px-5 py-1">
-            <button class="btn btn-primary btn-raised" onClick="location.href='DocsUpload.htm<%=folderPart%>'">Upload Files</button>
+            <button class="btn btn-primary btn-default btn-raised" onClick="location.href='DocsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
-        <td class="py-1">
-            <p>Take files from your local disk, and using your browser upload them to the workspace.</p>
+        <td class="py-1 h6">Take files from your local disk, and using your browser upload them to the workspace.</p>
         </td>
     </tr>
     <tr>
         <td class="px-5 py-1">
-            <button type="button" class="btn btn-primary btn-raised"
+            <button type="button" class="btn btn-primary btn-raised btn-default"
                 onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
         </td>
-        <td class="py-1"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
-               but instead will provide an easy way for other users to access the web page in their browser.</p></td>
+        <td class="py-1 h6">Link a web page to the workspace.   This will not download the web page as a attachment,
+               but instead will provide an easy way for other users to access the web page in their browser.</td>
     </tr>
     <tr>
         <td class="px-5 py-1">
-            <button type="button" class="btn btn-primary btn-raised"
+            <button type="button" class="btn btn-primary btn-raised btn-default"
                 onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
         </td>
-        <td class="py-1">
-            <p>You can either copy or move documents, discussions, action items, or meetings from another workspace to this one.
+        <td class="py-1 h6">You can either copy or move documents, discussions, action items, or meetings from another workspace to this one.
             </p>
         </td>
     </tr>
     </table>
+    </div>
     
 <% } %> 
 

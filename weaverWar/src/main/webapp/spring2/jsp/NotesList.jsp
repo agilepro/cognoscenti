@@ -338,28 +338,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid override m-2">
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
+<div class="container-fluid override mx-2">
+    <div class="col-md-auto second-menu d-flex">
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-bars"></i></button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
-                    <span class="second-menu-btn mx-2" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
+                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
                     </span>
 
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
                         <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
                     </span>
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" > Create PDF</a>
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" > Create PDF</a>
                     </span>
-                    <span class="second-menu-btn mx-2" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >Search All Topics </a>
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >Search All Topics </a>
                     </span>
                 </div>
             </div>
         </div>
-    </div><hr>
+<hr>
     <div class="d-flex col-12">
         <div class="contentColumn">
             <div class="container-fluid">    

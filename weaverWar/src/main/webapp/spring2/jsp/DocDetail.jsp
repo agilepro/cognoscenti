@@ -322,7 +322,7 @@ function copyTheLink() {
 
 <div class="col-12 mx-4">
     <div class="container-fluid override row">
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-6 col-sm-12 pe-4">
         <div class="well">
             <div class="row col-12">
                 <h2 class="h5 me-2"><b>{{docInfo.name}}</b></h2>
@@ -367,7 +367,7 @@ function copyTheLink() {
                         <a href="<%ar.write(permaLink); %>" target="_blank">
                         <img src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a>
                         <a href="WebFileShow.htm?aid=<% ar.writeURLData(aid); %>" target="_blank">
-                        <button class="btn btn-primary btn-raised pull-right">Web File</button>
+                        <button class="btn btn-primary btn-default btn-raised pull-right">Web File</button>
                         </a>
                     </div>
                     <div ng-hide="hasURL">
@@ -395,18 +395,18 @@ function copyTheLink() {
       a creating user of the site.
         </div>
         <div class="row d-flex border-top border-1 pt-3" ng-show="canUpdate">
-            <span class="col-3">
-                <button class="btn btn-comment btn-secondary btn-raised" ng-click="openDocDialog(docInfo)">Document Settings</button>
+            <span >
+                <button class="btn btn-comment btn-raised btn-wide" ng-click="openDocDialog(docInfo)">Document Settings</button>
             </span>
-            <span class="col-8 me-3">
+            <span class="m-3">
                 <p>Edit the document details, like name and description.  The name and description tell others what the purpose of the document is, and ultimately whether they want to access the document or not.</p>
             </span>
         </div>
         <div class="row d-flex border-top border-1 pt-3"  ng-show="isMember">
-            <span class="col-3">
-                <button class="btn btn-comment btn-secondary btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
+            <span >
+                <button class="btn btn-comment btn-default btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
             </span>
-            <span class="col-8 me-3">
+            <span class="m-3">
                 <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
             <span  ng-show="makeLink">
                 <div class="col-8 my-2">
@@ -424,16 +424,16 @@ function copyTheLink() {
             </span>
         </div>
         <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
-            <span class="col-3">
-                <button class="btn btn-comment btn-secondary btn-raised" ng-click="composeEmail()">Send by email</button></span>
-            <span class="col-8 me-3">
+            <span >
+                <button class="btn btn-comment btn-default btn-raised" ng-click="composeEmail()">Send by email</button></span>
+            <span class="m-3">
                 <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
             </span>
         </div>
         <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
-            <span class="col-3">
-                <a class="btn btn-secondary btn-raised" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
-            <span class="col-8 me-3">
+            <span>
+                <a class="btn btn-secondary btn-raised btn-default" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+            <span class="m-3">
                 <p>View the history of changes to this document.</p>
             </span>
         </div>

@@ -109,22 +109,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
-        
-        <button class="btn btn-secondary btn-comment btn-raised m-3 p-2" ng-click="openOriginal()">Open Original</button>
-        <button class="btn btn-secondary btn-comment btn-raised m-3 p-2" ng-click="sharable()">Sharable View</button>
+<div class="container-fluid override mx-4">
+    <span class="btn second-menu-btn btn-comment btn-default m-2" type="button" ng-click="openOriginal()">Open Original</span>
+        <span class="btn second-menu-btn btn-comment btn-default m-2" type="button" ng-click="sharable()">Sharable View</span>
         <span class="h6 ms-3">Show Hidden</span>
         <input type="checkbox" ng-model="showHidden"/> 
         <div><br/></div>
         <div><br/></div>
-        </div>
         <div class="d-flex col-9">
 			<div class="contentColumn">
 				<div class="container-fluid">
                 	<div class="generalContent">
-                        <div class="h3 text-secondary">{{attName}}</div>
+                        <div class="h4 text-secondary">{{attName}}</div>
             <div class="row" ng-repeat="art in articleSections" >
                 <span style="max-width: 600px"><div ng-bind-html="art.content|wiki" class="segmentBox"></div></span>
                 <span  style="max-width: 100px">§{{art.originPos}}
@@ -165,7 +161,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div ng-show="isAvailable">
            <div class="guideVocal">
                <p>A copy has been downloaded as shown above.</p>
-               <p>You can use <button class="btn btn-default btn-raised" ng-click="download()">Download Copy from Web</button> to refresh
+               <p>You can use <button class="btn btn-secondary btn-wide btn-raised" ng-click="download()">Download Copy from Web</button> to refresh
                it from the web.</p>
                <p><b>Be Careful:</b> any changes you have made hiding and moving sections will be lost.</p>
                <p>Do this only if you want to start over with a fresh, original copy.</p>

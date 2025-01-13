@@ -284,19 +284,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override">
-    <div class="row px-4">
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-                    <span class="second-menu-btn mx-2" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
-                </div>
-            </div>
-        </div>
-      </div><hr>
+<div class="container-fluid override mx-4">
+
+                    <span class="second-menu-btn m-2" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
+
+            
 
 
 

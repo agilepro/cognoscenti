@@ -1,30 +1,31 @@
 
 
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
+<div class="modal-item pt-3"></div>
+  <div class="modal-header bg-primary-subtle text-primary">
+    <h4 class="modal-title" id="editResponsibility">
     Edit Responsibility
-    </span>
+    </h4>
   </div>
-</div>
-<div class="modal-body">
-  <div class="col-sm-12 col-md-6">
-    <div class="form-group">
-        <label for="status">Key:</label>
-        {{resp.key}}
-    </div>
-    <div class="form-group">
-        <label for="status">Description:</label>
-        <textarea ng-model="resp.text" class="form-control editBoxStyle markDownEditor" placeholder="Enter description"></textarea>
-    </div>
-  </div>
-  <div class="col-sm-12 col-md-6">
 
+<div class="modal-body">
+  <div class="container-fluid override">
+    <div class="card col-md-12 align-top">
+        <div class="card-body override" >
+
+        <div class="container-fluid">
+        <div class="row d-flex my-3">
+          <label class="h6" for="status">Key:</label>
+        {{resp.key}}
+        </div>
+        <div class="row d-flex my-3">
+        <label class="h6 col-3" for="status">Description:</label>
+        <textarea ng-model="resp.text" class="col-10 form-control editBoxStyle markDownEditor" placeholder="Enter description"></textarea>
+    </div>
   </div>
-   
+
   <div style="clear:both"></div>
 </div>
 <div class="modal-footer">
-        <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left">Cancel</button>
+        <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto">Cancel</button>
         <button ng-click="saveAndClose()" class="btn btn-primary btn-raised">Save</button>
 </div>
