@@ -159,8 +159,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-
     <div class="container-fluid override">
+        <p>These settings are for user "<%=uProf.getName()%>".</p>
         <div class="d-flex col-12 m-2">
             <div class="col-8 ms-5">
                     <div class="row my-3" ng-repeat="key in propertyOrder">

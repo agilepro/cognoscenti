@@ -172,11 +172,17 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
           <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, true)" ><span class="fa fa-arrow-down"></span></span> &nbsp;
       </span>
-        <span class="col-3" ng-dblclick="openTaskAreaModal(ta)" >{{ta.name}} - {{ta.id}}</span>
+        <span class="col-3" ng-dblclick="openTaskAreaModal(ta)" >{{ta.name}}</span>
         <span class="col-2" title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">
-                <a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass.key}}">{{ass.name}}</a></div>
+                <span ng-show="ass.key">
+                    <a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass.key}}">{{ass.name}}</a>
                 </span>
+                <span ng-hide="ass.key" title="It appears that this user has never logged in">
+                    {{ass.name}} <i class="fa fa-warning"></i>
+                </span>
+            </div>
+        </span>
         <span class="col-2" title="Red-Yellow-Green assessment of status">
           <span>
             <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="ta.prospects=='bad'"
