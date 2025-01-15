@@ -567,6 +567,15 @@ app.filter('escape', function() {
                             <i class="fa fa-circle-o"></i> Normal: email in this workspace functions normally</span>
                     </span>
                 </div>
+                <div class="row my-2 border-bottom border-1">
+                    <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressGoalEmail')">Action Item Mail</span>
+                    <span class="col-8 mt-2">
+                        <span class="text-secondary" ng-show="workspaceConfig.suppressGoalEmail">
+                            <i class="fa fa-check-circle"></i> Suppress: Automatic email about work items will not be generated.</span>
+                        <span class="text-secondary" ng-hide="workspaceConfig.suppressGoalEmail">
+                            <i class="fa fa-circle-o"></i> Normal: Automatic email about work items will function normally.</span>
+                    </span>
+                </div>
             </div>
         </div>
         <div style="margin:75px"></div>

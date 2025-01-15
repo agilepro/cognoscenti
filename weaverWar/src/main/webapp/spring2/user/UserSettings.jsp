@@ -178,12 +178,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.updateServer(newProfile);
         $scope.editField='';
     }
-    
-    $scope.switchToOldUI = function() {
-        var newProfile = {};
-        newProfile.avoidOldUI = false;
-        $scope.updateServer(newProfile, true);
-    }
 
     
 });
@@ -402,21 +396,6 @@ if (ar.isLoggedIn()) { %>
             </span>
         </div>
     <% } %>
-<% } %>
-<%if (viewingSelf || ar.isSuperAdmin()){ %>
-        <div class="row-cols-3 d-flex ">
-            <span class="col-2 labelColumn ps-2">UI Mode:</span>
-            <span class="col-5 p-2 m-0">You are currently viewing the NEW user interface<br/>
-                <div class="m-0 p-0"><button class="btn btn-primary btn-raised btn-wide btn-sm py-1 my-3" ng-click="switchToOldUI()">Switch back to OLD UI</button></div></span>
-            <span class="col-5 p-0 m-0" ng-hide="helpUI" ng-click="helpUI=!helpUI">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
-            </span>
-            <span class="col-5 p-2 m-0" ng-show="helpUI" ng-click="helpUI=!helpUI">
-              <div class="well guideVocal thinnerGuide">
-                Click this to switch to the OLDER tried and true UI
-              </div>
-            </span>
-        </div>
 <% } %>
         <div class="row-cols-3 d-flex ">
             <span class="col-2 labelColumn ps-2">Last Login:</span>

@@ -539,6 +539,10 @@ public class NGWorkspace extends NGPage {
     }
 
 
+    public boolean getSuppressGoalEmail() {
+        return pageInfo.getAttributeBool("suppressGoalEmail");
+    }
+
     /**
      * Return the time of the next automated action.  If there are multiple
      * scheduled actions, this returns the time of the next one.
@@ -551,7 +555,7 @@ public class NGWorkspace extends NGPage {
         long yearFromNow = System.currentTimeMillis() + 31000000000L;
         long nextTime = yearFromNow;
 
-        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        ArrayList<ScheduledNotification> resList = new ArrayList<>();
         gatherUnsentScheduledNotification(resList, yearFromNow);
 
         ScheduledNotification first = null;
@@ -593,8 +597,10 @@ public class NGWorkspace extends NGPage {
         for (EmailGenerator eg : getAllEmailGenerators()) {
             eg.gatherUnsentScheduledNotification(this, resList, timeout);
         }
-        for (GoalRecord goal : getAllGoals()) {
-            goal.gatherUnsentScheduledNotification(this, resList, timeout);
+        if (!this.getSuppressGoalEmail()) {
+            for (GoalRecord goal : getAllGoals()) {
+                goal.gatherUnsentScheduledNotification(this, resList, timeout);
+            }
         }
         for (AttachmentRecord attach : this.getAllAttachments()) {
             attach.gatherUnsentScheduledNotification(this, resList, timeout);
@@ -1285,6 +1291,7 @@ public class NGWorkspace extends NGPage {
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
         pageInfo.extractAttributeBool(workspaceConfigInfo, "suppressEmail");
+        pageInfo.extractAttributeBool(workspaceConfigInfo, "suppressGoalEmail");
 
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
@@ -1330,6 +1337,7 @@ public class NGWorkspace extends NGPage {
             setWorkspaceMailId(newConfig.getString("projectMail"));
         }
         pageInfo.updateAttributeBool("suppressEmail", newConfig);
+        pageInfo.updateAttributeBool("suppressGoalEmail", newConfig);
 
         ProcessRecord process = getProcess();
         process.updateScalarString("goal", newConfig);

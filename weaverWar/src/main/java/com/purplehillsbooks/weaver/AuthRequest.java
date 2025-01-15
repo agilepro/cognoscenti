@@ -1371,16 +1371,9 @@ public class AuthRequest {
     public void invokeJSP(String JSPName) throws Exception {
         try {
             if (!JSPName.startsWith("/spring")) {
-                System.out.println("invokeJSP has been called with something OTHER than spring!!!");
-            } else {
-                UserProfile uProf = getUserProfile();
-                if (uProf == null || uProf.avoidOldUI) {
-                    JSPName = "/spring2" + JSPName.substring(7);
-                    System.out.println("Using NEW UI: " + JSPName);
-                } else {
-                    System.out.println("Using OLD UI: " + JSPName);
-                }
+                throw WeaverException.newBasic("invokeJSP has been called with something OTHER than spring!!!");
             }
+            JSPName = "/spring2" + JSPName.substring(7);
             nestingCount++;
             if (nestingCount > 10) {
                 throw WeaverException.newBasic("Nesting count for JSP has exceeded limit of 10 for %s", JSPName);

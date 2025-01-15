@@ -49,14 +49,6 @@ public class UserProfile implements UserRef
     private String timeZone = "America/Los_Angeles";
     private JSONObject wsSettings = new JSONObject();
     private boolean isFacilitator = false;
-    
-
-    // originally there was a field stored called useNewUI and we had a 
-    // period of time that people could switch.  Now we want to force 
-    // everyone to the new UI, and forget their settings, but we still
-    // want people to be able to go back to the old UI.  So we 
-    // invent a new field avoidOldUI in the profile record and for get the old one.
-    public boolean avoidOldUI = true;
 
     public UserProfile(String preferredEmail) throws Exception {
         userKey = IdGenerator.generateKey();
@@ -104,7 +96,6 @@ public class UserProfile implements UserRef
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
         isFacilitator = fullJO.optBoolean("isFacilitator", false);
-        avoidOldUI    = fullJO.optBoolean("avoidOldUI", true);
 
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
@@ -860,7 +851,6 @@ public class UserProfile implements UserRef
 
         jObj.put("wsSettings",  wsSettings);
         jObj.put("isFacilitator", isFacilitator);
-        jObj.put("avoidOldUI",  avoidOldUI);
         return jObj;
     }
 
@@ -909,9 +899,6 @@ public class UserProfile implements UserRef
         }
         if (input.has("isFacilitator")) {
             isFacilitator = input.getBoolean("isFacilitator");
-        }
-        if (input.has("avoidOldUI")) {
-            avoidOldUI = input.getBoolean("avoidOldUI");
         }
     }
 
