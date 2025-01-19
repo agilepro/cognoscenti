@@ -31,17 +31,25 @@
     for(NGPageIndex ngpi : projectsUserIsPartOf){
         NGWorkspace ngp = ngpi.getWorkspace();
         NGBook ngb = ngp.getSite();
+        JSONObject workspace = new JSONObject();
+        workspace.put("key", ngp.getKey());
+        workspace.put("siteKey", ngb.getKey());
+        workspace.put("updated", ngp.getLastModifyTime());
+        workspace.put("fullName", ngp.getFullName());
+        workspace.put("aim", ngp.getProcess().getDescription());
+        JSONArray roleList = new JSONArray();
+        workspace.put("roles", roleList);
+        
         for (NGRole ngr : ngp.getAllRoles()) {
             if (ngr.isExpandedPlayer(uProf,ngp)) {
                 JSONObject jo = new JSONObject();
-                jo.put("siteKey", ngb.getKey());
-                jo.put("key", ngp.getKey());
-                jo.put("updated", ngp.getLastModifyTime());
-                jo.put("fullName", ngp.getFullName());
                 jo.put("role", ngr.getName());
                 jo.put("desc", ngr.getDescription());
-                partProjects.put(jo);
+                roleList.put(jo);
            }
+        }
+        if (roleList.length()>0) {
+            partProjects.put(workspace);
         }
     }
 
@@ -64,21 +72,22 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.hideNote = false;
 
-    $scope.stopRole = function(prjrole) {
-        var conf = confirm('Confirm that you would like to withdraw from the '
-              +prjrole.role+' role of the '+prjrole.fullName+' workspace.');
+    $scope.stopRole = function(workspace, role) {
+        var conf = confirm('Confirm that you would like to withdraw from the\n   Role: '
+              +role.role+'\nof the\n   Workspace: '+workspace.fullName);
         if (conf) {
-            var postURL = "../removeMe.json?p="+encodeURIComponent(prjrole.key)
-                    +"&role="+encodeURIComponent(prjrole.role);
+            var postURL = "../removeMe.json?p="+encodeURIComponent(workspace.key)
+                    +"&role="+encodeURIComponent(role.role);
             $http.get(postURL)
             .success( function(data) {
+                console.log("REMOVED from role="+role.role+" of workspace="+workspace.fullName);
                 var shorter = [];
-                $scope.partProjects.forEach( function(item) {
-                    if (item.key != prjrole.key  || item.role != prjrole.role) {
+                workspace.roles.forEach( function(item) {
+                    if (item.role != role.role) {
                         shorter.push(item);
                     }
                 });
-                $scope.partProjects = shorter;
+                workspace.roles = shorter;
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
@@ -97,12 +106,19 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-<div class="d-flex col-9">
+<div class="d-flex">
     <div class="contentColumn">
         <div class="container-fluid">
             <div class="generalContent">
+          
 <div class="well ms-2 col-8" ng-hide="hideNote" ng-click="hideNote=true">
-    <span class="guideVocal">Please note: when you withdraw from a <b>'Members'</b> role of a workspace, you will stop receiving email when meetings are called, when discussions are create, and when comments are made. ALSO, you will no longer have any access to the workspace. Withdrawing from a Members role means you are effectively leaving the group that runs the workspace.</span>
+    <span class="guideVocal">
+    <p>The purpose of this page is to allow you to see all of the roles in all of the projects 
+    that you play.  It allows you an easy way to withdraw from those roles that you no longer 
+    want to play.  Removing yourself from all roles of a workspace, will remove you from the
+    workspace, and you will no longer get alerts or updates about that workspace.</p>
+    
+    Please note: when you withdraw from a <b>'Members'</b> role of a workspace, you will stop receiving email when meetings are called, when discussions are create, and when comments are made. ALSO, you will no longer have any access to the workspace. Withdrawing from a Members role means you are effectively leaving the group that runs the workspace.</span>
 </div>
 <div class="row-cols-3 d-flex m-2 border-bottom border-1 border-secondary border-opacity-25">
     <div class="col-xs-12 col-sm-6 col-md-3 padded">
@@ -115,17 +131,30 @@ app.controller('myCtrl', function($scope, $http) {
         <b>Description</b>
     </div>
 </div>
-<div class="row-cols-3 d-flex m-2 border-bottom border-1 border-secondary border-opacity-25" ng-repeat="prjrole in partProjects">
-        <div class="col-xs-12 col-sm-6 col-md-3 padded">
-            <b>{{prjrole.fullName}}</b><br/>
-            Updated: {{prjrole.updated|cdate}}
+<div class="row d-flex m-2 border-bottom border-1 border-secondary border-opacity-25" ng-repeat="prjrole in partProjects">
+        <div class="row padded"  style="margin-bottom:20px">
+            <div class="col-xs-12 col-md-6 padded">
+            <!-- for some reason the b or string tag causes a new line here, it shouldn't -->
+                <a href="../../t/{{prjrole.siteKey}}/{{prjrole.key}}/RoleManagement.htm">
+                    <i class="fa  fa-external-link"></i>
+                    <strong>{{prjrole.fullName}}</strong></a>
+                - Updated: {{prjrole.updated|cdate}}
+            </div>
+            <div class="col-xs-12 col-md-6 padded">
+                {{prjrole.aim}}
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-3 padded">
-            <b>{{prjrole.role}}</b> <br/>
-            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-wide ">Withdraw</button>
-        </div>
-        <div class="col-xs-12 col-md-6 padded">
-            {{prjrole.desc}}
+        <div class="row padded" ng-repeat="role in prjrole.roles"  style="margin-bottom:20px">
+            <div class="col-xs-12 col-sm-6 col-md-3 padded">
+                
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3 padded">
+                <strong>{{role.role}}</strong> <br/>
+                <button ng-click="stopRole(prjrole, role)" class="btn btn-danger btn-wide ">Withdraw</button>
+            </div>
+            <div class="col-xs-12 col-md-6 padded">
+                {{role.desc}}
+            </div>
         </div>
 </div>
             </div>
