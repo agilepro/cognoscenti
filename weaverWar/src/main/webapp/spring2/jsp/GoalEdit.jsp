@@ -927,9 +927,9 @@ function updateVal(){
         var isfreezed = '<%=ngp.isFrozen()%>';
         var flag=false;
         var emailflag=false;
-        var taskNameRequired = '<fmt:message key="nugen.process.taskname.required.error.text"/>';
-        var taskName = '<fmt:message key="nugen.process.taskname.textbox.text"/>';
-        var emailadd='<fmt:message key="nugen.process.emailaddress.textbox.text"/>'
+        var taskNameRequired = 'Action item name is required.';
+        var taskName = 'Enter an action item name';
+        var emailadd='Enter email address'
         var goToUrl  ='<%=ar.getRequestURL()%>'+'?taskId='+<%=taskId%>;
 
         function createProject(){

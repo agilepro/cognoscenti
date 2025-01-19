@@ -75,7 +75,13 @@ window.setMainPageTitle("Oops ... problem handling that request");
     </tr>
     </table>
     
-    <div class="guideVocal"><fmt:message key="nugen.common.error"/></div>
+    <div class="guideVocal">
+        Something went wrong trying to handle that request.
+        It might be something simple on the last page that you can go back and fix.  
+        Or it might be a problem with the server configuration that needs to be addressed 
+        by the administrator.
+        The following message might contain useful information about the problem.
+    </div>
     
     <ul>
         <%

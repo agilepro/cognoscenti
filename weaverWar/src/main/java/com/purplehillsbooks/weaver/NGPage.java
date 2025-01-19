@@ -51,7 +51,6 @@ public abstract class NGPage extends ContainerCommon {
     public static final String ACCESS_STATE_DELETED_STR = "Deleted";
 
     protected PageInfoRecord pageInfo;
-    private ReminderMgr reminderMgr;
     private ProcessRecord pageProcess;
 
     protected List<String> displayNames;
@@ -875,18 +874,6 @@ public abstract class NGPage extends ContainerCommon {
 
 
 
-
-
-    //Override
-    public ReminderMgr getReminderMgr()
-        throws Exception
-    {
-        if (reminderMgr==null)
-        {
-            reminderMgr = requireChild("reminders", ReminderMgr.class);
-        }
-        return reminderMgr;
-    }
 
 
     /**

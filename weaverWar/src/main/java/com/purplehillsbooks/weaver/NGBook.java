@@ -41,7 +41,6 @@ import com.purplehillsbooks.json.JSONObject;
  */
 public class NGBook extends ContainerCommon {
     public String key;
-    public ReminderMgr reminderMgr;
     // The following are the indices which are used by book finding and
     // reading. Initialized by scanAllBooks() method.
     private static Hashtable<String, NGBook> keyToSite = null;

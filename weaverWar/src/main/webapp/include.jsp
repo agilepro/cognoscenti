@@ -30,8 +30,6 @@
 %><%@page import="com.purplehillsbooks.weaver.NGWorkspace"
 %><%@page import="com.purplehillsbooks.weaver.ProcessRecord"
 %><%@page import="com.purplehillsbooks.weaver.ProfileRef"
-%><%@page import="com.purplehillsbooks.weaver.ReminderMgr"
-%><%@page import="com.purplehillsbooks.weaver.ReminderRecord"
 %><%@page import="com.purplehillsbooks.weaver.SectionDef"
 %><%@page import="com.purplehillsbooks.weaver.SectionFormat"
 %><%@page import="com.purplehillsbooks.weaver.SectionForNotes"

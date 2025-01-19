@@ -273,31 +273,6 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     /*
-     @RequestMapping(value = "/su/logUserComents.form", method = RequestMethod.POST)
-     public void logUserComents(@RequestParam int errorNo,HttpServletRequest request,
-             HttpServletResponse response)
-     throws Exception {
-
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             ar.assertLoggedIn("User must be logged in as a Super admin to see the error Log.");
-             String userComments=ar.defParam("comments", "");
-
-             String searchByDate=ar.reqParam("searchByDate");
-             long logFileDate = Long.parseLong(searchByDate);
-
-             String goURL=ar.reqParam("goURL");
-
-             ErrorLog eLog = ErrorLog.getLogForDate(logFileDate, ar.getCogInstance());
-             eLog.logUserComments(errorNo, logFileDate, userComments);
-             redirectBrowser(ar,goURL);
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.error.log.user.comment", null , ex);
-         }
-     }
-    */
-
     @RequestMapping(value = "/su/SiteMerge.htm", method = RequestMethod.GET)
     public void siteMerge(HttpServletRequest request, HttpServletResponse response)
             throws Exception {

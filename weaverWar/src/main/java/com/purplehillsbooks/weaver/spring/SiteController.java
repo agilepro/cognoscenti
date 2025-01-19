@@ -87,40 +87,6 @@ public class SiteController extends BaseController {
     }
 
 
-/*
-    @RequestMapping(value = "/{userKey}/accountRequests.form", method = RequestMethod.POST)
-    public void requestNewSite(@PathVariable String userKey, 
-                HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in to request a site.");
-
-            String action = ar.reqParam( "action" );
-
-            if(action.equals( "Submit" )){
-
-                JSONObject reqObj = new JSONObject();
-                reqObj.put("siteId", ar.reqParam("accountID").toLowerCase());
-                reqObj.put("siteName", ar.reqParam("accountName"));
-                reqObj.put("purpose", ar.defParam("accountDesc",""));
-                reqObj.put("requester", ar.getBestUserId());
-
-                HistoricActions ha = new HistoricActions(ar);
-                ha.createNewSiteRequest(reqObj);
-            }
-            else {
-                throw new Exception("Method requestNewSite does not understand the action: "+action);
-            }
-
-            redirectBrowser(ar, "userSites.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.new.account.request", null , ex);
-        }
-    }
-*/
-
     @RequestMapping(value = "/{userKey}/siteRequest.json", method = RequestMethod.POST)
     public void siteRequest(@PathVariable String userKey, 
             HttpServletRequest request, HttpServletResponse response) {

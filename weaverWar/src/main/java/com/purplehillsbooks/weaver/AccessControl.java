@@ -112,43 +112,6 @@ public class AccessControl {
     }
 
 
-    public static boolean canAccessReminder(AuthRequest ar, NGWorkspace ngw, ReminderRecord reminderRecord)
-    throws Exception {
-
-        //then, if user is logged in, and is a member, then can access
-        if (ar.isLoggedIn()) {
-            UserProfile user = ar.getUserProfile();
-            if (user!=null && ngw.primaryOrSecondaryPermission(user)) {
-                return true;
-            }
-        }
-
-        //then, check to see if there is any special condition in session
-        String resourceId = "reminder:"+reminderRecord.getId()+":"+ngw.getKey();
-        if (ar.hasSpecialSessionAccess(resourceId)) {
-            return true;
-        }
-
-        //now, check the query parameters, and if appropriate, set up the special access
-        //url must have "mnremider"  (magic number for remider)
-        String mndoc = ar.defParam("mnremider", null);
-        if (mndoc != null) {
-            String expectedMN = ngw.emailDependentMagicNumber(resourceId);
-            if (expectedMN.equals(mndoc)) {
-                ar.setSpecialSessionAccess(resourceId);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static String getAccessReminderParams(NGContainer ngc, ReminderRecord reminderRecord) throws Exception{
-        String resourceId = "reminder:"+reminderRecord.getId()+":"+ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
-        return "mnremider=" + encodedValue;
-    }
-
     public static boolean canAccessGoal(AuthRequest ar, NGWorkspace ngw, GoalRecord gr)
             throws Exception {
 

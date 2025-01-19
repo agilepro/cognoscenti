@@ -171,7 +171,7 @@ public class ServerInitializer extends TimerTask {
     }
 
     public synchronized void run() {
-        System.out.println("ServerInitializer started on thread: "+Thread.currentThread().getName() + " -- " + SectionUtil.currentTimestampString());
+        // System.out.println("ServerInitializer started on thread: "+Thread.currentThread().getName() + " -- " + SectionUtil.currentTimestampString());
         //any non-FAILED state, there is nothing to do, so exit quick as possible
         //this get hit every 30 seconds or so while running.
         if (serverInitState != STATE_FAILED) {

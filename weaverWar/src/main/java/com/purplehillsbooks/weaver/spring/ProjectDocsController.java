@@ -293,20 +293,6 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/reminders.htm", method = RequestMethod.GET)
-    public void remindersTab(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerWorkspaceRequired(ar, siteId, pageId);
-            showJSPMembers(ar, siteId, pageId, "reminders.jsp");
-        } catch (Exception ex) {
-            throw WeaverException.newWrap("Failed to open reminder page of workspace %s in site %s", ex, pageId,
-                    siteId);
-        }
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/docInfo.json", method = RequestMethod.GET)
     public void docInfo(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
