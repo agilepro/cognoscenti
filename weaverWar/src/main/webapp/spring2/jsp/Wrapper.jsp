@@ -492,7 +492,9 @@ function showLearningPath() {
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->
+      
     </div>
+    <div style="height:200px"></div>
 <!-- End mainContent -->
 </div>
 </div>

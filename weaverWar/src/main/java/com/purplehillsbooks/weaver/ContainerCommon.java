@@ -273,7 +273,7 @@ public abstract class ContainerCommon extends NGContainer
                         +"and feedback not available inside the company and to inform or influence key "
                         +"external institutions. ";
                 elegibility = "Expertise in and well-connected to a field important to the company. "
-                        +"Experienced. Able to think rationally at the most abstract level of the company�s work. "
+                        +"Experienced. Able to think rationally at the most abstract level of the company's work. "
                         +"Well-prepared. Forward thinking.";
             }
             role = createRole(roleName, desc);

@@ -5,7 +5,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthDummy;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -16,8 +15,6 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.ReminderMgr;
-import com.purplehillsbooks.weaver.ReminderRecord;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
@@ -304,13 +301,10 @@ public class DailyDigest {
                 numTasks = formatActionItems(clone, up, userCache);
                 userLog.put("tasks", numTasks);
 
-                //writeReminders will walk through a bunch of pages and all locks must be
+                //writeReminders used to walk through a bunch of pages and all locks must be
                 //cleared before entering it.  Clean up locks from containers processing.
                 NGPageIndex.clearLocksHeldByThisThread();
             }
-
-            int numReminders = writeReminders(clone, up);
-            userLog.put("reminders", numReminders);
 
             clone.write("</body></html>");
             clone.flush();
@@ -322,8 +316,7 @@ public class DailyDigest {
 
             if ((numberOfUpdates > 0) || numTasks > 0) {
                 String thisSubj = "Daily Digest - " + numberOfUpdates
-                        + " updates, " + numTasks + " tasks, "
-                        + numReminders + " reminders.";
+                        + " updates, " + numTasks + " tasks.";
 
                 MailInst msg = MailInst.genericEmail("$", "$", thisSubj, body.toString());
 
@@ -626,135 +619,6 @@ public class DailyDigest {
         ar.write("/");
         ar.writeURLData(actionItemObj.getString("projectKey"));
         ar.write("/GoalStatus.htm");
-    }
-
-    private static int writeReminders(AuthRequest ar, UserProfile up) throws Exception {
-
-        int noOfReminders = 0;
-
-        for (NGPageIndex ngpi : ar.getCogInstance().getWorkspacesUserIsIn(up)) {
-
-            noOfReminders = writeOneReminder(ar, up, ngpi, noOfReminders);
-
-        }
-        ar.write("\n </tbody>");
-        ar.write("\n </table>");
-        return noOfReminders;
-    }
-
-    private static int writeOneReminder(AuthRequest ar, UserProfile up, NGPageIndex ngpi, int noOfReminders)
-            throws Exception {
-
-        NGPageIndex.assertNoLocksOnThread();
-        if (!ngpi.isWorkspace()) {
-            return noOfReminders;
-        }
-        int count = 0;
-        NGWorkspace aPage = ngpi.getWorkspace();
-
-        ReminderMgr rMgr = aPage.getReminderMgr();
-        List<ReminderRecord> rVec = rMgr.getUserReminders(up);
-        for (ReminderRecord reminder : rVec) {
-            if ("yes".equals(reminder.getSendNotification())) {
-                if (noOfReminders == 0) {
-                    ar.write("<div style=\"margin-top:25px;margin-bottom:5px;\">");
-                    ar.write("<span style=\"font-size:24px;font-weight:bold;\">");
-                    ar.write("Reminders To Share Document</span>&nbsp;&nbsp;&nbsp;");
-
-                    ar.write("<a href=\"");
-                    ar.write(ar.baseURL);
-                    ar.write("v/");
-                    ar.writeURLData(up.getKey());
-                    ar.write("/UserActiveTasks.htm\">View Latest </a>");
-                    ar.write("(Below is list of reminders of documents which you are requested to upload.)</div>");
-                    ar.write("\n <table width=\"800\" class=\"Design8\">");
-                    ar.write("\n <thead> ");
-                    ar.write("\n <tr>");
-                    ar.write("\n <th></th> ");
-                    ar.write("\n <th>Document to upload</th> ");
-                    ar.write("\n <th>Requested By</th> ");
-                    ar.write("\n <th>Sent On</th>");
-                    ar.write("\n <th>Workspace</th>");
-                    ar.write("\n </tr> ");
-                    ar.write("\n </thead> ");
-                    ar.write("\n <tbody>");
-                }
-
-                ar.write("\n <tr");
-                if (count % 2 == 0) {
-                    ar.write(" class=\"Odd\"");
-                }
-                ar.write(" valign=\"top\">");
-
-                ar.write("\n <td>");
-                ar.write("<a href=\"");
-                writeReminderLink(ar, up, aPage, reminder);
-                ar.write("\" title=\"access details of reminder\">");
-                ar.write("<img src=\"");
-                ar.write(ar.baseURL);
-                ar.write("assets/iconUpload.png\" />");
-                ar.write("</a> ");
-                ar.write("</td>");
-
-                ar.write("\n <td>");
-
-                ar.write("<a href=\"");
-                writeReminderLink(ar, up, aPage, reminder);
-                ar.write("\" title=\"access details of reminder\">");
-                ar.writeHtml(reminder.getSubject());
-                ar.write("</a> ");
-
-                ar.write("\n </td>");
-
-                ar.write("\n <td>");
-                (AddressListEntry.findOrCreate(reminder.getModifiedBy()))
-                        .writeLink(ar);
-                // ar.write(reminder.getModifiedBy());
-                ar.write("\n </td>");
-
-                ar.write("\n <td>");
-                SectionUtil.nicePrintTime(ar, reminder.getModifiedDate(),
-                        ar.nowTime);
-                ar.write("\n </td>");
-
-                ar.write("\n <td>");
-                ar.write("<a href='");
-                ar.write(ar.baseURL);
-                ar.write("t/");
-                ar.writeURLData(ngpi.wsSiteKey);
-                ar.write("/");
-                ar.writeURLData(ngpi.containerKey);
-                ar.write("/reminders.htm' >");
-                ar.writeHtml(aPage.getFullName());
-                ar.write("</a>");
-                ar.write("\n </td>");
-
-                ar.write("\n </tr>");
-
-                noOfReminders++;
-            }
-        }
-
-        // clear any locks made in this handling
-        NGPageIndex.clearLocksHeldByThisThread();
-        return noOfReminders;
-    }
-
-
-
-    private static void writeReminderLink(AuthRequest ar, UserProfile up,
-            NGWorkspace aPage, ReminderRecord reminder) throws Exception {
-        ar.write(ar.baseURL);
-        ar.write("t/");
-        ar.writeURLData(aPage.getSiteKey());
-        ar.write("/");
-        ar.writeURLData(aPage.getKey());
-        ar.write("/remindAttachment.htm?rid=");
-        ar.writeURLData(reminder.getId());
-        ar.write("&");
-        ar.write(AccessControl.getAccessReminderParams(aPage, reminder));
-        ar.write("&emailId=");
-        ar.writeURLData(up.getPreferredEmail());
     }
 
 }

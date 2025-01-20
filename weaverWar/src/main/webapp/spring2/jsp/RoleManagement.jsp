@@ -374,6 +374,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="roleMembers">
                   <li role="presentation"><a class="dropdown-item" role="menuitem" 
+                      ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]">
+                      <span class="fa fa-list-ul"></span> List Mode </a></li>
+                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       ng-click="openRoleModal(role)">
                       <span class="fa fa-edit"></span> Edit All Players </a></li>
                   <li role="presentation"><a class="dropdown-item" role="menuitem" 

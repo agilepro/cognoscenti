@@ -314,11 +314,11 @@ public class MainTabsViewControler extends BaseController {
             ar.assertLoggedIn("Must be logged in modify role settings");
             String p = ar.reqParam("p");
             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
-            String role = ar.reqParam("role");
-            NGRole specRole = ngw.getRoleOrFail(role);
-            specRole.removePlayer(ar.getUserProfile().getAddressListEntry());
+            String roleName = ar.reqParam("role");
+            NGRole specRole = ngw.getRoleOrFail(roleName);
+            specRole.removePlayerCompletely(ar.getUserProfile());
             ngw.getSite().flushUserCache();
-            saveAndReleaseLock(ngw, ar, "user removed themself from role "+role);
+            saveAndReleaseLock(ngw, ar, "user removed themself from role "+roleName);
 
             JSONObject results = new JSONObject();
             results.put("result", "ok");
