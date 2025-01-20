@@ -487,8 +487,13 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <!-- -->
-<h1 class="px-3 page-name" id="mainPageTitle"></h1> 
+<div class="container-fluid my-4">
+<div class="row d-inline mx-3">
+    <span class="text-secondary"><i class="fa fa-info-circle fa-2x" aria-hidden="false"></i></span>
+    <span class="px-0">
 
+<h1 class="d-inline page-name" id="mainPageTitle"></h1> 
+</span></div></div>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->

@@ -286,7 +286,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <div class="container-fluid override mx-4">
 
-                    <span class="second-menu-btn m-2" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
+     <span class="btn second-menu-btn btn-wide" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
 
             
 

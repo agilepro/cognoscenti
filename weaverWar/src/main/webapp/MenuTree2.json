@@ -628,20 +628,8 @@
             "GoalEdit.jsp",
             "TaskAreas.jsp"
           ],
-          "href": "GoalList.htm",
-          "name": "Item View",
-          "title": "List the actions items in the simpler items view",
-          "readOnly": true
-        },
-        {
-          "use": [
-            "GoalStatus.jsp",
-            "GoalList.jsp",
-            "GoalEdit.jsp",
-            "TaskAreas.jsp"
-          ],
           "href": "GoalStatus.htm",
-          "name": "Status View",
+          "name": "Task List",
           "title": "List the actions items in a table",
           "readOnly": true
         },
@@ -655,7 +643,7 @@
           "href": "TaskAreas.htm",
           "name": "Task Areas",
           "title": "Manage task areas"
-        }
+        },
       ],
       "useOpts": [
         "GoalStatus.jsp",
@@ -675,6 +663,12 @@
       "title": "Lots of videos on YouTube to help you learn how to use Weaver.",
       "opts": [],
       "useOpts": []
+    },
+    {
+      "href": "GoalList.htm",
+      "name": "Item View",
+      "title": "List the actions items in the simpler items view",
+      "readOnly": true
     }
   ]
 }
