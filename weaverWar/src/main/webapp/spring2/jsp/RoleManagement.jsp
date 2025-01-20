@@ -393,16 +393,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
 <% } %>
             </td>
-            <td style="width:200px" ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
+            <td style="width:100px" ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
                 <!--<div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
                 <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>-->
             </td>
-            <td style="width:100px">
+            <td style="width: 200px;min-width: 200px;">
               <div ng-hide="roleDetailToggle[role.name]">
                 <span ng-repeat="player in role.players">
-                  <span class="dropdown" >
+                  <span class="nav-item dropdown" >
                     <span id="menu1" data-toggle="dropdown">
                     <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
@@ -410,19 +410,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                          title="{{player.name}} - {{player.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" class="dropdown-item"
+                          tabindex="-1" style="text-decoration: none">
                           {{player.name}}<br/>{{player.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="navigateToUser(player)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="openInviteSender(player)">
                           <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="openRoleModal(role)">
                           <span class="fa fa-edit"></span> Edit All Players </a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="removePlayer(role, player)">
                           <span class="fa fa-times"></span> Remove from Role </a></li>
                     </ul>
@@ -440,18 +440,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="playerRole">
                       <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          tabindex="-1" class="dropdown-item" style="text-decoration: none;text-align:center">
                           {{player.name}}<br/>{{player.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="navigateToUser(player)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="openInviteSender(player)">
                           <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="openRoleModal(role)">
                           <span class="fa fa-edit"></span> Edit All Players </a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" class="dropdown-item" tabindex="-1"
                           ng-click="removePlayer(role, player)">
                           <span class="fa fa-times"></span> Remove from Role </a></li>
                     </ul>

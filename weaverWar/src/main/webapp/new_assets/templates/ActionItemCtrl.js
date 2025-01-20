@@ -35,7 +35,10 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     $scope.setState = function (newState) {
         $scope.goal.state = newState;
     }
-
+    $scope.setState = function (newState) {
+        $scope.goalInfo.state = newState;
+        $scope.saveGoal();
+    }
     $scope.hasLabel = function (searchName) {
         if ($scope.goal.labelMap) {
             return $scope.goal.labelMap[searchName];

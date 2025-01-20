@@ -662,26 +662,25 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override m-2">
-        <span class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
+<div class="container-fluid override mx-3">
+    <div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
                     <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
             ng-click="isCreating=true">Create New Action Item</a>
           </span>
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items List View</a></span>
 
             <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
             
         </div>
     </div>
   </div><hr>
-      <div class="d-flex col-12 mx-5"><div class="contentColumn">
+      <div class="d-flex col-12"><div class="contentColumn">
         <div class="well" ng-show="isCreating">
             <table>
                <tr>
@@ -805,7 +804,7 @@ function addvalue() {
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      tabindex="-1" ng-click="" style="text-decoration: none;">
                       {{person.name}}<br/>{{person.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToUser(person)">
@@ -891,8 +890,9 @@ function addvalue() {
                      style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                  <li role="presentation" style="background-color:lightgrey">
+                    <a class="dropdown-item" role="menuitem" 
+                      tabindex="-1" ng-click="" style="text-decoration: none;">
                       {{person.name}}<br/>{{person.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToUser(person)">

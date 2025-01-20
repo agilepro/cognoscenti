@@ -125,12 +125,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override m-2">
-    <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
+<div class="container-fluid override mx-3">
+    <div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
             <div class="collapse" id="collapseSecondaryMenu">
                 <div class="col-md-auto">
 
@@ -139,13 +138,13 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         </span>
         <span class="btn second-menu-btn btn-wide" type="button">
             <a class="nav-link" role="menuitem" tabindex="-1"
-              href="GoalList.htm">Action Items View</a>
+              href="GoalList.htm">Action Items List View</a>
         </span>
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="GoalStatus.htm">Status List View</a></span>
                 </div>
             </div>    
-        </div>
+
     </div><hr>
 
     <div class="d-flex col-12 m-2">
