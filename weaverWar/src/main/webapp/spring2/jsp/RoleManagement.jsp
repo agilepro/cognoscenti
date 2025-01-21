@@ -434,8 +434,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
               <div ng-show="roleDetailToggle[role.name]"> 
                 <div ng-repeat="player in role.players"  style="height:40px">
-                  <span class="dropdown" >
-                    <span id="playerRole" data-toggle="dropdown">
+                  <span class="dropdown nav-item" >
+                    <span id="playerRole" data-bs-toggle="dropdown">
                     <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 

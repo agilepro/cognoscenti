@@ -828,10 +828,10 @@ function addvalue() {
             <!--Timeframe End-->
 
             <!--State Start-->
-                <div class="row d-flex my-2 pb-3 border-bottom border-1">
-                    <span class="col-4 d-inline"><label for="synopsis" class="d-inline h6 me-2">State: </label>
+                <div class="row d-flex my-2">
+                    <span class="col-12 d-flex"><label for="synopsis" class="d-inline h6">State: </label>
                     
-                        <ul class="dropdown btn btn-comment btn-wide btn-raised py-0 mt-3">
+                        <ul class="dropdown btn btn-comment btn-wide btn-raised py-0">
                             <li class="nav-item dropdown" type="button" id="changeStatus" data-toggle="dropdown">
                         Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -864,14 +864,16 @@ function addvalue() {
                             </li>
                         </ul>
                     </span>
-                    <span class="col-6 d-flex">
-                        <button class="btn btn-wide btn-comment btn-raised mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                </div>
+                    <div class="row d-flex my-2 pb-3  border-bottom border-1">
+                        <button class="btn-wide btn-comment btn-raised p-0mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
-                        <button class="btn btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
-                        <button class="btn btn-wide btn-comment btn-raised mx-1" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(5)" ng-show="goalInfo.state<5">
                         Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
-                    </span>
+
+                </div>
                 </div>
 
                 <!--status Start-->

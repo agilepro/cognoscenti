@@ -127,7 +127,7 @@
                 <span ng-show="goal.enddate<=1000000" ng-model="goal.enddate" datetime-picker> 
                     not set </span>
             </span> 
-            <span class="dropdown form-control instruction" 
+            <span class="dropdown form-control" 
                   ng-show="goal.state!=5"><em>
                 set end date after action item completed</em>
             </span>
@@ -140,25 +140,25 @@
           <span style="padding:10px;"><img ng-src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
           
           <ul class="dropdown btn btn-comment btn-wide py-0 mt-3">
-              <li class="nav-item dropdown" type="button" id="changeStatus" data-toggle="dropdown">
+              <li class="nav-item dropdown" type="button" id="changeStatus" data-bs-toggle="dropdown">
                 Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li role="presentation">
+                <li class="nav-item dropdown" role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
                         Mark <img src="../../../assets/goalstate/small1.gif"> Unstarted
                     </a>
                 </li>
-                <li role="presentation">
+                <li class="nav-item dropdown" role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
                         Mark <img src="../../../assets/goalstate/small2.gif"> Offered
                     </a>
                 </li>
-                <li role="presentation">
+                <li class="nav-item dropdown" role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
                         Mark <img src="../../../assets/goalstate/small3.gif"> Accepted
                     </a>
                 </li>
-                <li role="presentation">
+                <li class="nav-item dropdown" role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
                         Mark <img src="../../../assets/goalstate/small5.gif"> Completed
                     </a>

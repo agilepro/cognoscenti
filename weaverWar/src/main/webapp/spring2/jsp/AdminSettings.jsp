@@ -558,8 +558,8 @@ app.filter('escape', function() {
                     
                 </div>
                 <div class="row my-2 border-bottom border-1">
-                    <span ng-show="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Click to Reset Email Settings</span>
-                    <span ng-hide="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Click to Suppress Email</span>
+                    <span ng-show="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Reset Email Settings</span>
+                    <span ng-hide="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Suppress Email</span>
                     <span class="col-8 mt-2">
                         <span class="text-secondary" ng-show="workspaceConfig.suppressEmail">
                             <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>

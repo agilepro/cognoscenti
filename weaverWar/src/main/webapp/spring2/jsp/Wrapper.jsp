@@ -487,13 +487,40 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <!-- -->
-<div class="container-fluid my-4">
-<div class="row d-inline mx-3">
-    <!--<span class="text-secondary" ><i class="fa fa-info-circle fa-2x" aria-hidden="false"></i></span>-->
-    <span class="px-0">
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1> 
-    </span>
-</div></div>
+<div class="container-fluid override my-4">
+
+    <!--(remove comment when ready to show)
+    <div class="d-flex ms-3 align-items-center justify-content-between" id="menuContainer">
+    <div class="d-flex align-items-center" >
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfoMenu" aria-expanded="false" aria-controls="collapseInfoMenu"> <i class="pb-1 text-secondary fa fa-info-circle fa-lg" aria-hidden="false"></i></button>
+
+    -->
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    <!--(remove comment when ready to show)
+    </div>
+        <div class="collapse" id="collapseInfoMenu" data-bs-parent="#menuContainer">
+        <div class="card card-body p-0 border-0">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="dropdown-item">
+                        <a class="nav-link" ng-click="#" >item</a>
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span class="dropdown-item">
+                        <a class="nav-link" role="menuitem" tabindex="-1" href="#">item</a>
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span class="dropdown-item" >
+                        <a class="nav-link" role="menuitem" tabindex="-1" href="#">item</a>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        </div>    
+    </div>-->
+</div>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->

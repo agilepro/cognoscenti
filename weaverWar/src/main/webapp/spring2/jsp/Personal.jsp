@@ -159,10 +159,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
-    <div class="container-fluid override">
-        <p>These settings are for user "<%=uProf.getName()%>".</p>
+    <div class="container-fluid override mx-4">
+        <p>These settings are for user "<%=uProf.getName()%>":</p>
         <div class="d-flex col-12 m-2">
-            <div class="col-8 ms-5">
+            <div class="col-7 ms-3">
                     <div class="row my-3" ng-repeat="key in propertyOrder">
                         <span class="col-lg-3" >
                         <b>{{metadata[key].title}}:</b></span>
@@ -173,7 +173,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <span class="col-3" ng-hide="exposed[key]">
                         <button class="btn-sm" ng-click="exposed[key]=!exposed[key]">?</button>
                         </span>
-                        <span class="col mt-5" ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
+                        <span class="col-7-auto pe-3" ng-show="exposed[key]" ng-click="exposed[key]=!exposed[key]">
                         <div class="guideVocal">
                         {{metadata[key].help}}
                         </div>

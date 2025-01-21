@@ -308,13 +308,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     <div class="col-12">
 
-        <div class="row">
-            <span class="col-8 fs-5">Name ~ Description</span>
-            <span class="col-2 fs-5">Date</span>
-            <span class="col-2 fs-5">Size</span>
+        <div class="row mx-3">
+            <span class="col-7 h6">Name ~ Description</span>
+            <span class="col-2 h6">Date</span>
+            <span class="col-2 h6">Size</span>
         </div>
         <div class="row my-3" ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
-            <span class="col-6">
+            <span class="col-5">
                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
                     <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
@@ -350,18 +350,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
             </span>
             <span class="col-1">
-              <span class="dropdown" >
-                <span id="menu1" data-toggle="dropdown">
+              <span class="dropdown nav-item" >
+                <span id="user" data-bs-toggle="dropdown">
                 <img class="rounded-5" 
                      ng-src="<%=ar.retPath%>icon/{{rec.user.uid}}.jpg" 
-                     style="width:32px;height:32px" 
-                     title="{{rec.user.name}} - {{rec.user.uid}}">
+                     style="width:32px;height:32px" >
                 </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                      tabindex="-1" style="text-decoration: none;text-align:center">
+                <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                  <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                      tabindex="-1">
                       {{rec.user.name}}<br/>{{rec.user.uid}}</a></li>
-                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                  <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToCreator(rec.user)">
                       <span class="fa fa-user"></span> Visit Profile</a></li>
                 </ul>

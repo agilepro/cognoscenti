@@ -394,17 +394,18 @@ function copyTheLink() {
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
         </div>
-        <div class="row d-flex border-top border-1 pt-3" ng-show="canUpdate">
-            <span >
-                <button class="btn btn-comment btn-raised btn-wide" ng-click="openDocDialog(docInfo)">Document Settings</button>
+        <div class="row d-flex pt-0" ng-show="canUpdate">
+            <span>
+                <button class="btn-comment btn-raised btn-wide" ng-click="openDocDialog(docInfo)">Document Settings</button>
             </span>
             <span class="m-3">
                 <p>Edit the document details, like name and description.  The name and description tell others what the purpose of the document is, and ultimately whether they want to access the document or not.</p>
             </span>
+            <hr>
         </div>
-        <div class="row d-flex border-top border-1 pt-3"  ng-show="isMember">
+        <div class="row d-flex pt-0"  ng-show="isMember">
             <span >
-                <button class="btn btn-comment btn-default btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
+                <button class=" btn-comment btn-default btn-raised" ng-click="makeLink = !makeLink">Get a link</button>
             </span>
             <span class="m-3">
                 <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
@@ -422,42 +423,33 @@ function copyTheLink() {
                 </div>
             </span>
             </span>
+            <hr>
         </div>
-        <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
+        <div class="row d-flex pt-0" ng-show="isMember">
             <span >
-                <button class="btn btn-comment btn-default btn-raised" ng-click="composeEmail()">Send by email</button></span>
+                <button class=" btn-comment btn-default btn-raised" ng-click="composeEmail()">Send by email</button></span>
             <span class="m-3">
                 <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
             </span>
+            <hr>
         </div>
-        <div class="row d-flex border-top border-1 pt-3" ng-show="isMember">
+        <div class="row d-flex pt-0" ng-show="isMember">
             <span>
-                <a class="btn btn-secondary btn-raised btn-default" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+                <a class="btn btn-secondary btn-raised btn-default py-1" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
             <span class="m-3">
                 <p>View the history of changes to this document.</p>
             </span>
+            <hr>
         </div>
         <!--experimental mobile UI not ready in new UI-->
         <!--<div>
             <a href="DocView.wmf?docId={{docId}}" class="btn btn-default btn-raised btn-wide btn-secondary"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
         </div>-->
-        <hr>
-        <div ng-show="canAccess" class="well mt-2">
-            <span class="h5">Comments:</span>
-            <div class="container">
-                <span ng-repeat="cmt in docInfo.comments">
-            <%@ include file="/spring2/jsp/CommentView.jsp" %>
-                </span>
-            </div>
-            <div ng-hide="isCreatingComment" >
-                <button ng-click="openCommentCreator(null, 1)" class="btn btn-comment btn-wide btn-raised">
-                Create New <i class="fa fa-comments-o"></i> Comment</button>
-            </div>
         </div>
-        </div>
+        
 
-<div class="col-md-6 col-sm-12 px-3" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
-    <div class="well">
+<div class="col-md-6 col-sm-12 px-3" >
+    <div class="well" ng-hide="hideInfo" ng-dblclick="hideInfo=true">
         <span class="h5">Sharing</span>
                     <p>Documents can be shared directly from Weaver,internally to current members and externally to anyone in the world.</p>
 
@@ -509,7 +501,7 @@ function copyTheLink() {
     </div>
         
     
-    <div class="well mt-2" ng-show="canAccess">
+    <div class="well" ng-show="canAccess">
         <span class="h5">History</span>
 
             
@@ -542,7 +534,19 @@ function copyTheLink() {
         </span>
     </div>
 </div>
-        </div>
+<hr>
+        <div ng-show="canAccess" class="well mt-2">
+            <span class="h5">Comments:</span>
+            <div class="container">
+                <span ng-repeat="cmt in docInfo.comments">
+            <%@ include file="/spring2/jsp/CommentView.jsp" %>
+                </span>
+            </div>
+            <div ng-hide="isCreatingComment" >
+                <button ng-click="openCommentCreator(null, 1)" class="btn btn-comment btn-wide btn-raised">
+                Create New <i class="fa fa-comments-o"></i> Comment</button>
+            </div>
+        </div>        </div>
 </div>
 
 

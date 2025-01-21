@@ -285,7 +285,6 @@ a {
 .override button.btn  {
     position: relative;
     border-radius: 8px;
-    padding: .25rem .5rem;
     font-weight: 500;
     text-decoration: none;
     &:hover {
@@ -354,7 +353,6 @@ a {
     min-width: min-content;
     max-width: fit-content;
     text-wrap: nowrap;
-    padding: 1px, 2px;
     margin: 2px;
     font-size: .75rem;
     border: 1px solid $primary;
@@ -647,7 +645,48 @@ a {
     }
 }
 
+//navigation//
 
+.override .list-group {
+    width:fit-content;
+    max-width: max-content;
+    
+}
+.override #collapseInfoMenu {
+    max-width:fit-content;
+    position:absolute;
+    top: 175px;
+    left: 105px;
+    z-index: 1050;
+}
+
+#menuContainer.collapse.show .page-name {
+    margin-left:10px;
+    transition: margin-left 0.3s ease;
+}
+.override .list-group-item {
+    background-color: $primary-10;
+    color: $primary;
+    padding: 1px 8px ;
+    margin-bottom: 1px;
+    //margin: 6px 3px;
+    //border: $primary 1px solid;                                                       
+    //border-radius: 8px;
+    //box-shadow: #666 2px 2px 5px, inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075);
+    &:hover {                                                                                                               
+        box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
+        background-color: $primary-20;
+        color: $primary;                                                                                                                                                                                                            
+        border: $primary 1px solid;
+        cursor: pointer;
+    }
+}
+.override .list-group-item a {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
 
 .nav-item.dropdown:hover .dropdown-menu {
     display: block;
