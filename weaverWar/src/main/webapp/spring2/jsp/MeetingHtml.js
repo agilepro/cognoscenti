@@ -417,29 +417,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         $scope.putGetMeetingInfo(saveRecord);
     }
 
-    $scope.setItemTime = function (item, op) {
-        var nowTime = new Date().getTime() + $scope.timerCorrection;
-        if (item.timerRunning) {
-            item.timerElapsed = nowTime - item.timerStart;
-            item.timerStart = nowTime;
-        }
-        if ("incr" == op) {
-            item.timerElapsed = item.timerElapsed + 60000;
-        }
-        else if ("decr" == op) {
-            item.timerElapsed = item.timerElapsed - 60000;
-        }
-        else if ("floor" == op) {
-            item.timerElapsed = Math.floor(item.timerElapsed / 60000) * 60000;
-        }
-        else if ("ceil" == op) {
-            item.timerElapsed = Math.ceil(item.timerElapsed / 60000) * 60000;
-        }
-        else {
-            return; //skip the save
-        }
-        $scope.saveAgendaItem(item);
-    }
     $scope.calcTimes = function () {
         var totalTotal = 0;
         //get the time that it is on the server
@@ -993,6 +970,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         $scope.saveAgendaItemParts(item, ['proposed']);
     }
+    
 
     $scope.createMinutes = function () {
         if ($scope.meeting.state != 3) {
