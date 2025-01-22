@@ -43,7 +43,7 @@
 
 <!-- Side Bar -->
 
-    <nav class="sidebar">
+    <nav class="sidebar override">
         <div class="container-fluid min-vh-100 sidebar">
             <ul class="sidebar-nav list-unstyled py-2">
     <% 

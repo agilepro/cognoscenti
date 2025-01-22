@@ -662,26 +662,30 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-    <span class="btn second-menu-btn btn-wide" type="button">
-        <a class="nav-link" role="menuitem" tabindex="-1" 
+<div class="container-fluid override m-2">
+        <span class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+
+            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+
+                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
             ng-click="isCreating=true">Create New Action Item</a>
           </span>
-        <!--
-          <span class="btn second-menu-btn btn-wide" type="button">
-            <a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items List View</a></span>
-            -->
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
 
-            <span class="btn second-menu-btn btn-wide" type="button">
-                <a class="nav-link" role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
-            <hr>
- 
-      <div class="d-flex col-12"><div class="contentColumn">
-        <!-- Create new action item -->
+            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
+            
+        </div>
+    </div>
+  </div><hr>
+      <div class="d-flex col-12 mx-5"><div class="contentColumn">
         <div class="well" ng-show="isCreating">
             <table>
                <tr>
-                    <td class="gridTableColummHeader h6">New Synopsis:</td>
+                    <td class="gridTableColummHeader">New Synopsis:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
                         <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
@@ -689,7 +693,7 @@ function addvalue() {
                </tr>
                <tr><td style="height:10px"></td></tr>
                <tr>
-                    <td class="gridTableColummHeader h6">Assignee:</td>
+                    <td class="gridTableColummHeader">Assignee:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
                       <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
@@ -703,7 +707,7 @@ function addvalue() {
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader h6">Description:</td>
+                    <td class="gridTableColummHeader">Description:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
                         <textarea type="text" ng-model="newGoal.description" class="form-control"
@@ -712,7 +716,7 @@ function addvalue() {
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader h6">Due Date:</td>
+                    <td class="gridTableColummHeader">Due Date:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
                         <span datetime-picker ng-model="newRec.duedate"  
@@ -768,7 +772,7 @@ function addvalue() {
 
 <!--Main content-->
     <div class="container-fluid col-sm-12">
-        <!--<div class="row">
+        <div class="row">
             <span class="col-sm-1" ></span>
             <span class="col-sm-4 h6" ><b>Synopsis</b></span>
             <span class="col-sm-1 h6" ><b>Assigned</b></span>
@@ -788,8 +792,8 @@ function addvalue() {
 
             </span>
             <span class="col-sm-3 h6" title="A written summary of the current status"><b>Status</b></span>
-        </div>-->
-    <!--task area Header Row
+        </div>
+    <!--Header Row-->
         <div class="row py-2" ng-repeat="area in taskAreaList">
             <span class="col-sm-5 h6 py-2" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</span>
             <span class="col-sm-1 py-2">
@@ -801,7 +805,7 @@ function addvalue() {
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1" ng-click="" style="text-decoration: none;">
+                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
                       {{person.name}}<br/>{{person.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToUser(person)">
@@ -827,20 +831,14 @@ function addvalue() {
                  title="Green: Good shape" class="stoplight">
           </span>
             </span>
-            <span class="col-sm-3 py-2" ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}
+            <span class="col-sm-3 py-2" ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</span>
 
-            </span>-->
-
-
-
-    <div class="row m-0 px-0" ng-repeat="rec in findGoalsInArea(area.id)">
-        <span class="col-sm-1 " >
+            <div class="row m-0 px-0" ng-repeat="rec in findGoalsInArea(area.id)">
+                <span class="col-sm-1 border border-2 pt-2" >
             <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
                 <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsFolders" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="docFolderList">
-                        <li><a class="dropdown-item" role="menuitem"
-                            ng-click="openModalActionItem(rec, 'details')">Edit Action Item</a></li>
-                        <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="task{{rec.id}}.htm">View Details</a></li>
+                        <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="task{{rec.id}}.htm">Edit Action Item</a></li>
                         <li><a class="dropdown-item" role="menuitem" ng-click="swapItems(rec, -1)">Move Up</a></li>
                         <li><a class="dropdown-item" role="menuitem" ng-click="swapItems(rec, 1)">Move Down</a></li>
                         <li ng-show="rec.state<2">
@@ -873,131 +871,82 @@ function addvalue() {
                 <a href="task{{rec.id}}.htm">
                     <img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/small{{rec.state}}.gif" /></a>
             </span>
-        </span><!--column 1-->
-        <span class="col-sm-auto pt-2" style="max-width: 300px"
-        ng-dblclick="openModalActionItem(rec, 'details')" title="The synopsis (name) and description of the action item.">
-            <a class="clickable" 
-            href="#collapseActionItem{{rec.id}}" 
-            data-bs-toggle="collapse" 
-            role="button" 
-            aria-expanded="false" 
-            aria-controls="collapseActionItem{{rec.id}}">
-            <b>{{rec.synopsis}}</b>
-            </a>
-        </span><!--column 2-->
-        <span class="col-sm-auto taskOverview mx-2 fw-bold my-1" style="width: 300px">Assigned to:
-            <span class="col-sm-auto taskOverview mx-2">
-                <span ng-repeat="person in rec.assignTo">
-                    <span class="dropdown nav-item">
-                        <span id="user" data-bs-toggle="dropdown">
-                            <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
-                       style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
-                        </span>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                            <li role="presentation" style="background-color:lightgrey">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;">
-                        {{person.name}}<br/>{{person.uid}}</a></li>
-                            <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                        ng-click="navigateToUser(person)">
-                            <span class="fa fa-user"></span> Visit Profile</a></li>
-                        </ul>
-                    </span>
-              </span>
-            </span><!--assigned to-->
-            
-        </span><!--column 3-->
-                
-        <span class="col-sm-auto my-1" ng-dblclick="openModalActionItem(rec, 'status')" 
-            title="Dates the action item was started, due, or completed">
-            <span class="mx-2 " ng-show="rec.startdate>100" >
-                <span class="text-secondary"><b>start:</b> {{rec.startdate | cdate}}</span>
-            </span>
-            <span class="mx-2" ng-show="rec.duedate>100" >
-                <span class="text-secondary"><b>due:</b> {{rec.duedate | cdate}}</span> 
-            </span>
-
-            <span class="mx-2" ng-show="rec.enddate>100" ><span class="text-secondary"><b>
-            end:</b> {{rec.enddate | cdate}}</span>
-            </span>
-        </span><!--column 4-->
-                
-        
-        <div class="row col-12 collapse well" id="collapseActionItem{{rec.id}}">
-            
-            <span class="col-sm-auto" style="max-width: 300px"><span class="text-secondary"><b>Description:</b></span>
-                <div ng-show="showDescription" ng-bind-html="rec.html">
-                </div><!--description-->
-                <div class="taskOverview" ng-dblclick="openModalActionItem(rec, 'details')">
-                    Requested by:
-                     <span class="red" ng-repeat="ass in rec.requesters"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
-                </div>
-                
-                
-            </span>
-            <span class="col-sm-auto" style="max-width: 300px">                
-                <span ng-repeat="label in getGoalLabels(rec)">
-                    <button class="btn-label-small " style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                </span>
+                <span class="col-sm-4 border border-2 pt-2" ng-dblclick="openModalActionItem(rec, 'details')"
+           title="The synopsis (name) and description of the action item.">
+          <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></div>
+          <span ng-repeat="label in getGoalLabels(rec)">
+            <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
               {{label.name}}
-                    </button>
-                </span><!--labels--></span>
-            <span class="col-sm-2" ng-dblclick="openModalActionItem(rec, 'status')"
+            </button>
+          </span>
+          <div ng-show="showDescription" ng-bind-html="rec.html"></div>
+                </span>
+                <span class="col-sm-1 border border-2 pt-2" title="People assigned to complete this action item.">
+          <div>
+            <div ng-repeat="person in rec.assignTo">
+              <span class="dropdown nav-item">
+                <span id="user" data-toggle="dropdown">
+                <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                     style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      {{person.name}}<br/>{{person.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(person)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
+              </span>
+            </div>
+          </div>
+                </span>
+                <span class="col-sm-2 border border-2 pt-2" ng-dblclick="openModalActionItem(rec, 'status')"
             title="Dates the action item was started, due, or completed">
-                    
-                
-                <div class="taskToolBar">
-                    <div ng-show="rec.state<2">
-                        <a class="clickable me-2" title="Start & Offer the Activity" ng-click="makeState(rec, 2)">
-                            <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif" alt="accepted"  />
-                            <b>Start/Offer</b></a>
-                        </div>
-                    <div ng-show="rec.state==2">
-                        <a class="clickable me-2" title="Accept the activity" ng-click="makeState(rec, 3)">
-                            <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif" alt="accepted"  />
-                            <b>Mark Accepted</b></a>
-                        </div>
-                    <div ng-show="rec.state!=5">
-                        <a class="clickable me-2" title="Complete this activity" ng-click="makeState(rec, 5)">
-                            <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif" alt="completed"  />
-                            <b>Mark Completed</b></a>
-                        </div>
-                </div>
-            </span>
-                
-            <span class="col-sm-1">
-                    <span class="align-center" title="Give a Red-Yellow-Green indication of how it is going"
+          <div ng-show="rec.startdate>100" >
+            start: {{rec.startdate | cdate}}
+          </div>
+          <div ng-show="rec.duedate>100" >
+            due: {{rec.duedate | cdate}}
+          </div>
+          <div ng-show="rec.enddate>100" >
+            end: {{rec.enddate | cdate}}
+          </div>
+                </span>
+                <span class="col-sm-1 border border-2 pt-2 align-center" title="Give a Red-Yellow-Green indication of how it is going"
             ng-dblclick="openModalActionItem(rec, 'status')">
-                <div>
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
+          <span>
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
                  title="Red: In trouble" ng-click="setProspects(rec, 'bad', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
                  title="Red: In trouble" class="stoplight">
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
                  title="Yellow: Warning" ng-click="setProspects(rec, 'ok', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
                  title="Yellow: Warning" class="stoplight">
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
                  title="Green: Good shape" ng-click="setProspects(rec, 'good', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>new_assets/assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
+            <img src="<%=ar.retPath%>new_assets/assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
                  title="Green: Good shape" class="stoplight">
-                </div>
-            </span></span>
-            <span class="col-sm-auto align-top" style="max-width: 300px" ng-dblclick="openModalActionItem(rec, 'status')"
+          </span>
+                </span>
+                <span class="col-sm-3 border border-2 pt-2"  ng-dblclick="openModalActionItem(rec, 'status')"
              title="A textual description of the current status of the action item.">
-                
-            <div><span class="text-secondary"><b>{{rec.status}}</b></span></div>
-                <div ng-show="showChecklists" style="cursor:context-menu">
-                    <div ng-repeat="ci in rec.checkitems" >
-                        <span ng-click="toggleCheckItem($event,rec,ci.index)" style="cursor:pointer">
-                            <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
-                            <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>&nbsp; 
-                        </span>
-                            {{ci.name}}
-                    </div>
-                </div>
-            </span>
-        </div><!--column 2 collapse-->
-    </div>
-</div>
+          <div>{{rec.status}} &nbsp;</div>
+          <div ng-show="showChecklists" style="cursor:context-menu">
+              <div ng-repeat="ci in rec.checkitems" >
+                <span ng-click="toggleCheckItem($event,rec,ci.index)" style="cursor:pointer">
+                  <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                  <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                &nbsp; 
+                </span>
+                {{ci.name}}
+              </div>
+          </div>
+                </span>
+            </div>
+        </div>
     <!--table format from original jsp -->
     <!--
     <table>

@@ -385,6 +385,16 @@ a {
 
 }
 }
+/* Disable dropdown hover behavior */
+.override .dropdown:hover .dropdown-menu {
+    display: none;
+  }
+  
+.override .dropdown-toggle:focus + .dropdown-menu,
+  .dropdown-toggle:active + .dropdown-menu {
+    display: block;
+  }
+
 
 .override .btn-wide {
     width: fit-content;

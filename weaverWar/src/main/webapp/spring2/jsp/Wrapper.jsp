@@ -479,6 +479,12 @@ function showLearningPath() {
             document.getElementById("mainPageTitle").innerHTML = str;
             document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
         }
+
+        document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+  dropdown.addEventListener('mouseover', function (e) {
+    e.stopPropagation();
+  });
+});
         </script>
 <!-- -->
 <!-- -->
@@ -487,40 +493,29 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <!-- -->
-<div class="container-fluid override my-4">
+<div class="container-fluid override mx-4 d-inline-flex">
 
-    <!--(remove comment when ready to show)
-    <div class="d-flex ms-3 align-items-center justify-content-between" id="menuContainer">
-    <div class="d-flex align-items-center" >
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfoMenu" aria-expanded="false" aria-controls="collapseInfoMenu"> <i class="pb-1 text-secondary fa fa-info-circle fa-lg" aria-hidden="false"></i></button>
 
-    -->
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
-    <!--(remove comment when ready to show)
-    </div>
-        <div class="collapse" id="collapseInfoMenu" data-bs-parent="#menuContainer">
-        <div class="card card-body p-0 border-0">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <span class="dropdown-item">
-                        <a class="nav-link" ng-click="#" >item</a>
-                    </span>
-                </li>
-                <li class="list-group-item">
-                    <span class="dropdown-item">
-                        <a class="nav-link" role="menuitem" tabindex="-1" href="#">item</a>
-                    </span>
-                </li>
-                <li class="list-group-item">
-                    <span class="dropdown-item" >
-                        <a class="nav-link" role="menuitem" tabindex="-1" href="#">item</a>
-                    </span>
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" 
+        id="dropdownInfoMenu" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false" > 
+
+    </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                        <button class="dropdown-item" onclick="location.reload(true)" >Refresh</button>
                 </li>
             </ul>
-        </div>
-        </div>    
-    </div>-->
-</div>
+
+    </span>
+    <span >
+            <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+</span>
+ 
+    </div>
+
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->

@@ -272,6 +272,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
         newRec.universalid = "~new~";
+        newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo = newRec.assignList;
 
@@ -415,73 +416,26 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-    <span class="btn second-menu-btn btn-wide" type="button">
-        <a class="nav-link" role="menuitem" tabindex="-1" ng-click="isCreating=true">Create New Action Item</a>
+    <div class="container-fluid override m-2">
+            <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
+                <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                    <i class="fa fa-arrow-down"></i>
+                </button>
+                <div class="collapse" id="collapseSecondaryMenu">
+                    <div class="col-md-auto">
+    
+                        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
+                        ng-click="isCreating=true">Create New Action Item</a>
                         </span>
 
                         <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" 
               href="GoalStatus.htm">Status List View</a></span>
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="TaskAreas.htm">Manage Task Areas</a></span>
-              <hr>
-<div class="d-flex col-12 m-2"><div class="contentColumn">
-        <!-- Create new action item -->
-        <div class="well" ng-show="isCreating">
-            <table>
-               <tr>
-                    <td class="gridTableColummHeader h6">New Synopsis:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                    </td>
-               </tr>
-               <tr><td style="height:10px"></td></tr>
-               <tr>
-                    <td class="gridTableColummHeader h6">Assignee:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                      <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
-                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                          <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
-                      </tags-input>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader h6">Description:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <textarea type="text" ng-model="newGoal.description" class="form-control"
-                            style="width:450px;height:100px" placeholder="Details"></textarea>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader h6">Due Date:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <span datetime-picker ng-model="newRec.duedate"  
-                            class="form-control" style="max-width:300px; min-height: 25px;">
-                            {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                        </span> 
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td colspan="3">
-                        <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
-                        <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
-                        
-                    </td>
-                </tr>
-            </table>
+              
         </div>
-        <!--Filter-->
+      </div>
+    </div><hr>
+<div class="d-flex col-12 m-2"><div class="contentColumn">
     <div class="well" ng-show="!isCreating">
         Filter <input ng-model="filter"> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">
@@ -490,31 +444,82 @@ function addvalue() {
             Future</span> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
             Completed</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showRecent">
-            Recent</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="mineOnly">
-            Only Mine</span>
-            <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown nav-item mb-0">
-                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                           style="width:320px;left:-130px;margin-top:-2px;">
-                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                                 {{rolex.name}}</button>
-                         </li>
-                       </ul>
-            </span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showChecklists">
-            Show Checklists</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showDescription">
-            Show Description</span>
+        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+            <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+        </span>
+        <span class="dropdown nav-item mb-0">
+            <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                       style="width:320px;left:-130px;margin-top:-2px;">
+                     <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                         <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                             {{rolex.name}}</button>
+                     </li>
+                   </ul>
+        </span>
+    </div>
+
+
+    <div class="well generalSettings" ng-show="isCreating">
+        <table>
+           <tr>
+                <td class="gridTableColummHeader">New Synopsis:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                </td>
+           </tr>
+           <tr><td style="height:10px"></td></tr>
+           <tr>
+                <td class="gridTableColummHeader">Assignee:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                  <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
+                              display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
+                      <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
+                  </tags-input>
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader">Description:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <textarea type="text" ng-model="newGoal.description" class="form-control"
+                        style="width:450px;height:100px" placeholder="Details"></textarea>
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader">Due Date:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <span datetime-picker ng-model="newRec.duedate"  
+                        class="form-control" style="max-width:300px; min-height: 25px;">
+                        {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                    </span> 
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader"></td>
+                <td style="width:20px;"></td>
+                <td colspan="3">
+                    <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
+                    <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
+                    
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div style="height:20px;"></div>
+
+
 
     <div  id="searchresultdiv0">
     <div class="taskListArea">
@@ -522,12 +527,11 @@ function addvalue() {
             <div id="ActiveTask">
                 <div ng-repeat="rec in findGoals()" id="node1503" class="ui-state-default" style="background-color: #F8F8F8; margin-bottom: 5px;">
                     <span>
-                        <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
+                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
                     <li class="nav-item dropdown"> <a class=" dropdown-toggle" id="GoalList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="Actionlist">
                     <li><a class="dropdown-item" role="menuitem"
                       ng-click="openModalActionItem(rec, 'details')">Edit Action Item</a></li>
-                      <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="task{{rec.id}}.htm">View Details</a></li>
                       <li><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="swapItems(rec, -1)">Move Up</a></li>
                       <li><a class="dropdown-item" role="menuitem" tabindex="-1"
@@ -553,15 +557,15 @@ function addvalue() {
                   </li>
                         </ul>
                     </li>
-                        </ul>   
-                    </span>
+                </ul>   
+            </span>
             
-                    <span class="col-1 ms-3 fw-bold" style="cursor: pointer;"> 
+                <span class="col-1 ms-3 fw-bold" style="cursor: pointer;"> 
                     <a href="task{{rec.id}}.htm"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/small{{rec.state}}.gif" /></a>
-                    </span>
-                    <span class="col-4 ms-3 fw-bold" style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}                    
-                    </span>
-                    <!--labels-->
+                </span>
+                <span class="col-4 ms-3 fw-bold" style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}                    
+                </span>
+
                 <span ng-repeat="label in getGoalLabels(rec)">
                   <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
                   {{label.name}}
@@ -572,9 +576,6 @@ function addvalue() {
                    <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?key={{ass}}">{{getName(ass)}}</a>, </span>
 
                 </span>
-                <div ng-show="showDescription" ng-bind-html="rec.html"></div>
-
-                
                 <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">
                     <div class="taskOverview" ng-dblclick="openModalActionItem(rec, 'details')">
                         Requested by:
