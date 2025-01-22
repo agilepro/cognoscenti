@@ -409,13 +409,9 @@ function setUpCommentMethods($scope, $http, $modal) {
         <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
             <span class="h5">Round</span>
         </span>
-        <span ng-show="cmt.commentType==4" title="{{cmtStateName(cmt)}} Meeting">
-            <span class="h5">Meeting</span>
+        <span ng-show="cmt.commentType>=4" title="{{cmtStateName(cmt)}} Meeting">
+            <span class="h5">UNKNOWN COMMENT TYPE {{cmt.commentType}}</span>
         </span>
-        <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
-            <span class="h5">Minutes</span>                
-        </span> 
-        <span ng-show="cmt.commentType!=6"></span>
         <!--user profile dropdown-->
         <div class="col-1 m-0">
             <ul class="navbar-btn p-0 mt-2" ng-show="cmt.commentType!=4">
@@ -448,12 +444,9 @@ function setUpCommentMethods($scope, $http, $modal) {
                         <span ng-show="cmt.commentType==3" title="{{cmtStateName(cmt)}} Round">
                             <i class="fa fa-question-circle" style="font-size:130%"></i>
                         </span>
-                        <span ng-show="cmt.commentType==5" title="{{cmtStateName(cmt)}} Minutes">
-                            <i class="fa fa-file-code-o" style="font-size:130%"></i>
+                        <span ng-show="cmt.commentType>=4" title="{{cmtStateName(cmt)}} Minutes">
+                            <i class="fa fa-warning" style="font-size:130%"></i>
                         </span> 
-                        <span ng-show="cmt.commentType!=6">
-                            
-                        </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="commentList">
                     <li>
                         <a class="dropdown-item" role="menuitem" ng-click="openCommentEditor(null,cmt)">Edit {{commentTypeName(cmt)}}</a></li>

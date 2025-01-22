@@ -763,6 +763,7 @@ public class TopicRecord extends CommentContainer {
     public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject noteData = getJSONWithMarkdown(ngw);
         JSONArray comments = getAllComments(ngw);
+        /* DON'T add the meeting comments any more 
         for (MeetingRecord meet : getLinkedMeetings(ngw)) {
             JSONObject specialMeetingComment = new JSONObject();
             specialMeetingComment.put("emailSent", true);
@@ -773,6 +774,7 @@ public class TopicRecord extends CommentContainer {
             specialMeetingComment.put("commentType", 4);
             comments.put(specialMeetingComment);
         }
+        */
         noteData.put("comments", comments);
         return noteData;
     }

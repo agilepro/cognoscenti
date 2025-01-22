@@ -465,7 +465,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var res = [];
         if ($scope.noteInfo.comments) {
             $scope.noteInfo.comments.forEach( function(item) {
-                if (item.commentType != 6) {
+                if (item.commentType < 4) {
+                    // 4 is a meeting attachment from topic to meeting
+                    // 5 is minutes idea which is no longer used
                     res.push(item);
                 }
             });
