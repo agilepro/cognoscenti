@@ -34,9 +34,6 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     };
     $scope.setState = function (newState) {
         $scope.goal.state = newState;
-    }
-    $scope.setState = function (newState) {
-        $scope.goalInfo.state = newState;
         $scope.saveGoal();
     }
     $scope.hasLabel = function (searchName) {
@@ -44,10 +41,10 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
             return $scope.goal.labelMap[searchName];
         }
         return false;
-    }
+    };
     $scope.toggleLabel = function (label) {
         $scope.goal.labelMap[label.name] = !$scope.goal.labelMap[label.name];
-    }
+    };
     $scope.updatePlayers = function () {
         $scope.goal.assignTo = cleanUserList($scope.goal.assignTo);
     }

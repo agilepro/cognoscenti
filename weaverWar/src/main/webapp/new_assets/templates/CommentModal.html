@@ -68,7 +68,7 @@
                 <span class="navbar-text h6">Due Date:</span>
                   <span datetime-picker ng-model="cmt.dueDate"  
                       class="form-control" style="max-width:300px">
-                      {{cmt.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                      {{cmt.dueDate|cdate}}
                   </span> 
                 </div>
               </div>
@@ -91,7 +91,7 @@
             </div>
             <div class="row my-1">
               <div class="form-group form-horizontal">
-                <span ng-show="cmt.postTime>0">Email sent {{cmt.postTime|date: "dd-MMM-yyyy &nbsp; HH:mm"}}</span>
+                <span ng-show="cmt.postTime>0">Email sent {{cmt.postTime|cdate}}</span>
                  <span ng-show="cmt.postTime<=0">Email not sent.</span>
               </div>
             </div>

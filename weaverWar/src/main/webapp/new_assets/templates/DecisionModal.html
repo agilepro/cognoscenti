@@ -52,7 +52,7 @@
                 class="form-control col-3" >
                 <span ng-show="decision.timestamp>1000000" 
                       datetime-picker ng-model="decision.timestamp" > 
-                    {{decision.timestamp|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    {{decision.timestamp|cdate}} </span>
                 <span ng-show="decision.timestamp<=1000000" datetime-picker 
                       ng-model="decision.timestamp" > 
                     not set </span>
@@ -66,7 +66,7 @@
                 class="form-control col-3" >
               <span ng-show="decision.reviewDate>1000000" 
                       datetime-picker ng-model="decision.reviewDate" > 
-                    {{decision.reviewDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    {{decision.reviewDate|cdate}} </span>
               <span ng-show="decision.reviewDate<=1000000" datetime-picker 
                       ng-model="decision.reviewDate" > 
                     not set </span>

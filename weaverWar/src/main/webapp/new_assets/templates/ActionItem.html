@@ -101,7 +101,7 @@
             <span datetime-picker ng-model="goal.startdate" 
                 class="col-md-9 mt-3 form-control" style="max-width:370px">
                 <span ng-show="goal.startdate>1000000" datetime-picker ng-model="goal.startdate" > 
-                    {{goal.startdate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    {{goal.startdate|cdate}} </span>
                 <span ng-show="goal.startdate<=1000000" datetime-picker ng-model="goal.startdate" > 
                     not set </span>
             </span> 
@@ -112,23 +112,23 @@
             <span datetime-picker ng-model="goal.duedate" 
                 class=" col-md-9 my-3 form-control" style="max-width:370px">
                 <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > 
-                    {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    {{goal.duedate|cdate}} </span>
                 <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > 
                     not set </span>
             </span> 
         </div><!--due date set-->
         
         <div class="form-group d-flex">
-            <label for="enddate" class="col-md-3 h6">End Date:</label>
+            <label for="enddate" class="h6 col-md-3 mt-3">End Date:</label>
             <span datetime-picker ng-model="goal.enddate" 
-                class=" col-md-9 my-3 form-control" style="max-width:370px" ng-show="goal.state==5">
+                class=" col-md-9 my-3 form-control" style="max-width:370px" ng-show="goal.state>=5">
                 <span ng-show="goal.enddate>1000000" ng-model="goal.enddate" datetime-picker> 
-                    {{goal.enddate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    {{goal.enddate|cdate}} </span>
                 <span ng-show="goal.enddate<=1000000" ng-model="goal.enddate" datetime-picker> 
                     not set </span>
             </span> 
-            <span class="dropdown form-control" 
-                  ng-show="goal.state!=5"><em>
+            <span class="col-md-9 my-3 form-control" 
+                  ng-show="goal.state<5"><em>
                 set end date after action item completed</em>
             </span>
         </div><!--end date set-->
@@ -163,41 +163,15 @@
                         Mark <img src="../../../assets/goalstate/small5.gif"> Completed
                     </a>
                 </li>
-                <!--<li role="presentation">
+                <li role="presentation">
                     <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
                         Mark <img src="../../../assets/goalstate/small6.gif"> Skipped
                     </a>
-                </li>-->
+                </li>
               </ul>
               </li>
           </ul>
         </div>
-<!--
-        <div ng-show="goal.state==3 && goal.waitUntil<nowTime">
-          <div class="container ms-0 ps-0">
-            <div class="row ms-0 ps-0">
-              <span class="col-4 ms-0 ps-0">
-                <button ng-click="setWaitUntil()" class="btn-comment py-1" 
-                  ng-show="goal.waitUntil<nowTime">Pause Task Until</button>
-              </span>
-              <span datetime-picker ng-model="waitProxy" 
-              class="col-4 form-control py-1" style="max-width:150px">
-              {{waitProxy|date:"dd-MMM-yyyy"}}
-              </span>
-            </div>
-          </div>
-        </div>      
-        <div ng-show="goal.waitUntil>=nowTime">
-          <div class="container ms-0 mt-2 ps-0">
-            <span class="border border-2 p-2 h5">
-              Paused until  
-              {{goal.waitUntil|date:"dd-MMM-yyyy"}} 
-            </span>
-            <span class="col-1 ms-2">
-              <button ng-click="cancelWaitUntil()" class="btn-danger btn py-1" >Cancel</button>
-            </span>
-          </div>
-        </div>--> 
 
         <!--State end-->
 <div></div>
@@ -244,7 +218,7 @@
           <label for="synopsis" class="my-2 h5">Due Date:</label>
           <span datetime-picker ng-model="goal.duedate" 
                     class="fs-5 form-control d-inline border-0">
-                    <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|cdate}} </span>
                     <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
                 </span> 
                 <span style="padding:10px">

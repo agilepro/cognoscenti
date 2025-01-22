@@ -35,8 +35,8 @@
                 <button class="btn btn-primary btn-raised" style="float:right" ng-click="sim.stopEdit()">Close</button>
             </div>
             <div class="panel-body" ng-hide="sim.isEditing" ng-dblclick="openNotesDialog(sim.itemRef)">
-                <div ng-bind-html="sim.vHtml"></div>
-                <div ng-hide="sim.vHtml" class="ms-5 guideVocal opacity-75"><i>Double click to start editing</i></div>
+                <div ng-show="sim.vHtml" ng-bind-html="sim.vHtml" class="ms-5 comment-inner"></div>
+                <div ng-hide="sim.vHtml" class="ms-5 guideVocal opacity-75 comment-inner"><i>Double click to start editing</i></div>
                 <div>&nbsp;</div>
             </div>
 

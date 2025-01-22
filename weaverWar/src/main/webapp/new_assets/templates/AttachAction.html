@@ -92,7 +92,7 @@
                     <span class="col-10">
                         <span datetime-picker ng-model="newGoal.dueDate"  
                             class="form-control" style="max-width:300px; min-height:30px">
-                            {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                            {{newGoal.dueDate|cdate}}
                         </span> 
                     </span>
             </div>
