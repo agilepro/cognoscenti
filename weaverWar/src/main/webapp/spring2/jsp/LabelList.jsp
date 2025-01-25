@@ -332,7 +332,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
                         
     
-                        <div class="well">
+                        <!--<div class="well"> 
                             <span class="p-2 h5 my-3" id="attachDocumentLabel">
                             Create Custom Labels
                             </span>
@@ -360,7 +360,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <button class="btn btn-primary btn-raised btn-default float-end" ng-click="createLabel()">
                 Create</button>
                 </div>
-                        </div>
+                        </div>-->
                         <div class="container-fluid m-2">
                         <button class="btn btn-raised btn-primary btn-wide float-end" type="button" ng-click="openEditLabelsModal()"  aria-labelledby="createNewLabels">
                             Create or Delete Labels

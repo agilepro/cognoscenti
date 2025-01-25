@@ -298,6 +298,20 @@ a {
     background-color: $primary-10;
 }
 
+.override button.no-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    &:hover {
+        background: none;
+    }
+    
+}
+.override .no-btn .dropdown-toggle::after {
+    display: none;
+  }
+
 .override .btn-raised {
 
     margin: 5px;
@@ -379,8 +393,8 @@ a {
     box-shadow           : inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1); 
 
 &:hover {
-    background-color: #d9e3d9;
-    color: #034603;
+    color: #fff;
+    background-color: #034603;
     box-shadow: inset 1px 2px 0 rgba(255, 255, 255, 0.15), 0 3px 3px rgba(0, 0, 0, 0.075), inset 0 0 100px rgba(255, 255, 255, 0.1);
 
 }

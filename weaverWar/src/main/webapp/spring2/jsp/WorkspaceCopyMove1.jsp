@@ -62,23 +62,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Move/Copy Document/Topic/Action Item
-        </div>
-    </div>
+        <div class="container-fluid col-12 p-3">
+            <span class="h4">
+            Move or Copy Documents Discussions and Action Item</span>
+        
 
 
-    <div class="form-group">
-        <label for="toto">To copy/transfer to this workspace:</label>
-        <div class="form-control" id="toto" aria-describedby="emailHelp" placeholder="Name of the current workspace">
-            {{thisWorkspace.name}}</div>
+    <div class="row d-flex">
+        <label for="toto" class=" col-auto h5 m-3">To copy/transfer to this workspace:</label>
+        <span class="col-auto h5 m-3 text-secondary border border-2 rounded-2 px-2 pb-1" id="toto" aria-describedby="emailHelp" placeholder="Name of the current workspace">
+            {{thisWorkspace.name}}</span>
     </div>
     
-     <div class="form-group">
-        <label for="fromfrom">Select the workspace you want to copy from:</label>
-        <div id="fromfrom" aria-describedby="emailHelp" placeholder="Name of the current workspace">
-             <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-small btn-raised">{{ws.name}}</button></div>
+     <div class="row d-flex">
+        <label for="fromfrom" class="col-auto h5 m-3">Select the workspace you want to copy from:</label>
+        <div class="container-fluid mx-3" id="fromfrom" aria-describedby="emailHelp" placeholder="Name of the current workspace">
+             <button ng-repeat="ws in allWorkspaces" ng-click="selectWorkspace(ws)" class="btn btn-wide btn-comment btn-raised">{{ws.name}}</button></div>
     </div>
    
- </div>
+ </div></div>
+    </div>
 <!-- end addDocument.jsp -->

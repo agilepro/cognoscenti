@@ -638,81 +638,128 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override col-12">
 
-
+<!--temp remove
                     <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role  ="menuitem" tabindex="-1" href="GoalList.htm">List Action Items</a></span>
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startEdit('details')">Edit Details</a>
             </span>
 
-<hr>
+<hr>-->
 
 
-        <div class="container-fluid col-12 override"><!-- ng-hide="editGoalInfo">-->
+        <div class="container-fluid col-12 override m-3"><!-- ng-hide="editGoalInfo">-->
             
                 <!--State and Title start-->
-                <div class="row d-flex my-2" ng-click="startEdit('assignee')" 
-                title="Click here to update the status of this action item">
+                <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')" 
+                title="Double click here to update the status of this action item">
                     <span class="col-1">
-                        <span style="padding:10px;"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></span>
+                        <span class="no-btn" style="padding:10px;"><button class="dropdown-toggle no-btn" type="button" id="changeStatus" data-bs-toggle="dropdown"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></button>
+                            <ul class="dropdown-menu" aria-labelledby="changeState">
+                                <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
+                                    </a>
+                                </li>
+                                </ul></span>
                     </span>
                     <span class="col-10 h4">
-                        {{stateName[goalInfo.state]}} Synopsis:&nbsp;
-                        {{goal.synopsis}}
+                        {{stateName[goalInfo.state]}} Synopsis:&nbsp;{{goal.synopsis}}
                     </span>
                 </div>
 
                 <!--State and Title end-->
-
-
-            <div class="row d-flex" >
-                <!--Start left column-->
-                <div class="card px-1 col-6 align-top">
-                    <div class="card-body col-12 p-1" >
-                <!--Synopsis Start-->
-                <div class="row d-flex py-2 border-bottom border-1">
-                    <span class="col-3 clickable" ng-click="startEdit('details')" title="Click here to update the description of this action item">
-                        <label for="synopsis" class="h6">Synopsis:</label>
+            
+                <!--State Start-->
+            <div class="row d-flex my-2 py-2 border-bottom border-1"> 
+                    
+                    <span class="col-6 ">
+                        <button class="btn-wide btn-comment btn-raised mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
+                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
+                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(5)" ng-show="goalInfo.state<5">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
                     </span>
-                    <span class="col-9">
-                        <div><b>{{goalInfo.synopsis}}</b></div>
-                        <div ng-bind-html="goalInfo.description|wiki"></div>
+                    <!-- temp remove Select State button
+                    <span class="col-6 dropdown" >            
+                        <button class="dropdown-toggle btn btn-comment btn-wide btn-raised py-0" type="button" id="changeState" data-bs-toggle="dropdown">
+                        Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span></button>
+                            <ul class="dropdown-menu" aria-labelledby="changeState">
+                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
+                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
+                                </a>
+                            </li>
+                            </ul>
+                    </span>-->
+            </div>
+            <!--State End-->
+                <!--Assigned To Start-->
+                <div class="row d-flex my-2 py-2 border-bottom border-1" title="The action item can be assigned to any number of people who will receive reminders until it is completed." >
+                    <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit('assignee')" >Assigned To:
+
+                    </span>
+                    <span class="col-9 d-flex">
+                        <div class="mx-2" ng-repeat="player in goalInfo.assignTo" >
+                            <span class="dropdown nav-item">
+                                <span class="menu1" data-toggle="dropdown">
+                                <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" title="{{player.name}} - {{player.uid}}">
+                                </span>
+                                <ul class="dropdown-menu list-inline" role="menu" aria-labelledby="user">
+                                    <li role="presentation" style="background-color:lightgrey">
+                                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;">{{player.name}}<br/>{{player.uid}}
+                                                </a>
+                                            </li>
+                                            <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                                                ng-click="navigateToUser(player)">
+                                                    <span class="fa fa-user"></span> 
+                                                    Visit Profile
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                            </span>
+                        </div>
                     </span>
                 </div>
-                            <!--Synopsis End-->
-                    <!--Assigned To Start-->
-                    <div class="row d-flex py-2 border-bottom border-1" title="The action item can be assigned to any number of people who will receive reminders until it is completed." >
-                        <span class="col-3 clickable h6" ng-click="startEdit('assignee')" >Assigned To:
-    
-                        </span>
-                        <span class="col-9 d-flex">
-                            <div class="mx-2" ng-repeat="player in goalInfo.assignTo" >
-                                <span class="dropdown nav-item">
-                                    <span class="menu1" data-toggle="dropdown">
-                                    <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" title="{{player.name}} - {{player.uid}}">
-                                    </span>
-                                    <ul class="dropdown-menu list-inline" role="menu" aria-labelledby="user">
-                                        <li role="presentation" style="background-color:lightgrey">
-                                            <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;">{{player.name}}<br/>{{player.uid}}
-                                                    </a>
-                                                </li>
-                                                <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                                                    ng-click="navigateToUser(player)">
-                                                        <span class="fa fa-user"></span> 
-                                                        Visit Profile
-                                                    </a>
-                                                </li>
-                                            </ul>
-
-                                </span>
-                            </div>
-                        </span>
+                    <!--Assigned To End-->
+                    <!--Description Start-->
+                    <div class="row d-flex my-2 py-2 border-bottom border-1" title="Click here to update the description of this action item" >
+                        <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit('details')" >Description:</span>
+                        <span class="col-9 d-flex"><div ng-bind-html="goalInfo.description|wiki"></div></span>
                     </div>
-                        <!--Assigned To End-->
+                    <!--Description End-->
                     <!--checklist Start-->
-                <div class="row d-flex py-2 border-bottom border-1 clickable"  
+                <div class="row d-flex my-2 py-2 border-bottom border-1"  
                 title="Manage the check list of items to do for this action">
-                    <span class="col-3 clickable h6" ng-click="startEdit('status')" >Checklist:</span>
+                    <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit('status')" >Checklist:</span>
                     <span class="col-9">
                           
                         <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
@@ -726,10 +773,89 @@ function addvalue() {
                 </div>
                     <!--checklist End-->
 
+                    <!--status Start-->
+                <div class="row d-flex my-2 py-2 border-bottom border-1">
+                    <div class="form-group" title="status is a freeform text statement about your current progress on action item">
+                        <label for="synopsis" class="clickable h6 col-auto mx-2" ng-click="startEdit()">Status:</label>
+
+                    <!--R-Y-G Start-->
+                        
+                            
+                        <span class="col-2 h6" title="Red-Yellow-Green is a high-level status saying how things are going generally">
+                                <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'" title="In trouble" ng-click="changeRYG('bad')">
+                                <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'" title="In trouble">
+                                <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'" title="Warning" ng-click="changeRYG('ok')">
+                                <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'" title="Warning">
+                                <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'" title="Good shape" ng-click="changeRYG('good')">
+                                <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'" title="Good shape">
+                            </span>
+
+                    <!--R-Y-G End-->
+
+                        <!--<textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  -->
+                        <span ng-click="startEdit('status')" ><i class="clickable" placeholder="Enter text describing the current status"></i></span>
+                        <span class="col-9 mx-2" ng-show="goalInfo.status" >{{goalInfo.status}}
+                        </span>          
+                    </div>
+                </div>
+                    <!--status End-->
+                    <!--Timeframe Start-->
+            <div class="well m-2">    
+                <div class="row d-flex">
+
+                    <span class="col-auto clickable h5" ng-click="startEdit('details')" >
+                        <b>Timeframe:</b></span>
+                        <span class="d-flex clickable" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item">
+                            <span class="col-auto h6 mx-3" ng-show="goalInfo.duedate>0">   
+                                Due:   </span>
+                            <span class="col-2" ng-show="goalInfo.duedate>0">{{goalInfo.duedate|cdate}}  </span>
+                            <span class="col-auto h6 mx-3" ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
+                            Start:</span> 
+                            <span class="col-2" ng-show="goalInfo.startdate>0"> 
+                            {{goalInfo.startdate|cdate}}</span>
+                        
+                            <span class="col-auto h6 mx-3" ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">End:</span>
+                            
+                            <span class="col-2" ng-show="goalInfo.enddate>0">   
+                            {{goalInfo.enddate|cdate}}  </span>
+                        </span>
+                    </div>
+            </div>
+            <!--Timeframe End-->
+                    <!--Labels Start-->
+                <div class="row d-flex my-2 py-2 border-bottom border-3">
+                    <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit()" style="cursor: pointer;">Labels:</span>
+                    <!--<span class="nav-item dropdown d-inline">
+                      
+                      <button class="specCaretBtn dropdown">
+                        <i class="fa fa-plus"></i></button>         
+                          <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
+                        style="width:320px;left:-130px;top:15px">
+                          <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                          <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                          ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                              {{rolex.name}}</button>
+                      </li>
+                      <div class="dropdown-divider" style="float:clear"></div>               
+                      <li role="presentation" style="float:right">
+                        <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
+                            Add/Remove Labels</button>
+                      </li>
+                    </ul>
+                  </span>-->
+                    <span class="col-auto">
+                        <span class="dropdown m-0 p-0" ng-repeat="role in allLabels">
+                            <button class="btn-comment btn-wide btn-raised labelButton" ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                        </span>
+                    </span>
+
+                  </div>
+                <!--Labels End-->
+                    
                     <!--Attachments Start-->
-                <div class="row d-flex py-2 border-bottom border-1 clickable " >
-            <span class="col-3 h6 pt-1 my-0" ng-click="openAttachDocument()">Attachments:</span>
-            <span class="col-9 py-0 my-0" ng-click="openAttachDocument()">
+                <div class="row col-12 d-flex my-2 py-2 border-bottom border-1" >
+                    <span class="col-auto clickable h6 mx-2 pt-1" ng-click="openAttachDocument()">Attachments:</span>
+                    <span class="col-9 py-0 my-0" ng-click="openAttachDocument()">
                 <div ng-repeat="doc in fullDocList" style="vertical-align: top">
                   <span ng-show="doc.attType=='FILE'">
                       <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
@@ -754,8 +880,8 @@ function addvalue() {
                     <!--Attachments End-->
 
 <!--Linked Topics Start-->
-        <div class="row d-flex py-2 clickable ">
-            <span class="col-3 h6 pt-1 my-0" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</span>
+        <div class="row col-12 d-flex my-2 py-2 border-bottom border-1" >
+            <span class="col-auto clickable h6 mx-2 pt-1" title="On the discussion page, you can link action items, and those discussions will appear here">Linked Topics:</span>
             <span class="col-9 py-0 my-0" title="On the discussion page, you can link action items, and those discussions will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-comment btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
@@ -767,155 +893,11 @@ function addvalue() {
             </span>
         </div>
 <!--Linked Topics End-->
-                       </div> 
-                    </div>
-            <!--end of first column-->
-
-            <!--second column-->
-            <div class="card px-1 col-6 align-top override">
-                <div class="card-body col-12 p-1" >
-
-
-                <!--Labels Start-->
-                <div class="row pb-2 pt-5 form-group d-inline" ng-click="startEdit()" style="cursor: pointer;">
-                    <label for="labels" class="h6 d-inline" >Labels:</label>
-                    <!--<span class="nav-item dropdown d-inline">
-                      
-                      <button class="specCaretBtn dropdown">
-                        <i class="fa fa-plus"></i></button>         
-                          <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
-                        style="width:320px;left:-130px;top:15px">
-                          <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                          <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
-                          ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-                              {{rolex.name}}</button>
-                      </li>
-                      <div class="dropdown-divider" style="float:clear"></div>               
-                      <li role="presentation" style="float:right">
-                        <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
-                            Add/Remove Labels</button>
-                      </li>
-                    </ul>
-                  </span>-->
-         
-               <span class="dropdown m-0 p-0" ng-repeat="role in allLabels">
-                 <button class="btn-comment btn-wide btn-raised labelButton" ng-click="toggleLabel(role)"
-                    style="background-color:{{role.color}};"
-                    ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-               </span>
-                  </div>
-                <!--Labels End-->
-
-            <!--Timeframe Start-->
-            <div class="well m-3">    
-                <div class="row d-flex">
-
-                    <span class="col-3 clickable h6" ng-click="startEdit('details')" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item"><b>Timeframe:</b></span>
-                    <span class="d-flex col-9 clickable" >
-                        <span class="col-6" ng-show="goalInfo.duedate>0">   
-                            <h6>Due:</h6>   
-                            {{goalInfo.duedate|cdate}}  </span>
-                        <span class="col-6" ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
-                            <h6>Start:</h6> 
-                            {{goalInfo.startdate|cdate}}</span>
-                        </span>
-                        <div class="d-flex col-12 m-2" ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
-                            <span class="col-3"></span>
-                            <span class="col-6"><h6>End:</h6>   
-                            {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span></div>
-                </div>
-            </div>
-            <!--Timeframe End-->
-
-            <!--State Start-->
-                <div class="row d-flex my-2">
-                    <span class="col-12 d-flex"><label for="synopsis" class="d-inline h6">State: </label>
-                    
-                        <ul class="dropdown btn btn-comment btn-wide btn-raised py-0">
-                            <li class="nav-item dropdown" type="button" id="changeStatus" data-toggle="dropdown">
-                        Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
-                                  Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
-                              </a>
-                          </li>
-                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
-                                  Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
-                              </a>
-                          </li>
-                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
-                                  Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
-                              </a>
-                          </li>
-                          <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
-                                  Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
-                              </a>
-                          </li>
-                          <!--<li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                              <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
-                                  Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
-                              </a>
-                          </li>-->
-                            </ul>
-                            </li>
-                        </ul>
-                    </span>
-                </div>
-                    <div class="row d-flex my-2 pb-3  border-bottom border-1">
-                        <button class="btn-wide btn-comment btn-raised p-0mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">
-                        Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
-                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">
-                        Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
-                        <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(5)" ng-show="goalInfo.state<5">
-                        Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
-
-                </div>
-                </div>
-
-                <!--status Start-->
-                <div class="row col-12 my-2 py-2 border-bottom border-1">
-                    <div class="form-group" title="status is a freeform text statement about your current progress on action item">
-                        <label for="synopsis" class="clickable h6 col-2" ng-click="startEdit()">Status:</label>
-                        <!--<textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  --><span ng-click="startEdit('status')" ><i class="clickable" placeholder="Enter text describing the current status"></i></span>
-                        <span class="col-10" ng-show="goalInfo.status" >{{goalInfo.status}}
-                        </span>          
-                    </div>
-                </div>
-                    <!--status End-->
-
-                    <!--R-Y-G Start-->
-                <div class="row col-12 my-2 py-2 border-bottom border-1" title="Red-Yellow-Green is a high-level status saying how things are going generally">
-                    <span class="col-2 h6">R-Y-G:</span>
-                    <span class="col-10">
-                    <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
-                         title="In trouble" ng-click="changeRYG('bad')">
-                    <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
-                         title="In trouble">
-                    <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
-                         title="Warning" ng-click="changeRYG('ok')">
-                    <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
-                         title="Warning">
-                    <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
-                         title="Good shape" ng-click="changeRYG('good')">
-                    <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
-                         title="Good shape">
-                    </span>
-                </div>
-                    <!--R-Y-G End-->
-
-            <!--end of second column-->
-</div>
-            </div>
-            </div>
-                    <!--Linked Meetings Start-->
-        <div class="row d-flex mt-3 p-3 border border-2 rounded-2">
-            <span class="col-2 h5" title="On the meeting page, you can link action items, and those meetings will appear here">
+<!--Linked Meetings Start-->
+<div class="row col-12 d-flex my-2 py-2 border-bottom border-1" >
+    <span class="col-auto clickable h6 mx-2 pt-1" title="On the meeting page, you can link action items, and those meetings will appear here">
                 Linked Meetings:</span>
-            <span class="col-10" title="On the meeting page, you can link action items, and those meetings will appear here">
+            <span class="col-auto" title="On the meeting page, you can link action items, and those meetings will appear here">
                 <span ng-repeat="meet in linkedMeetings" class="btn btn-outline-secondary btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
@@ -926,17 +908,6 @@ function addvalue() {
             </span>
         </div>
 <!--Linked Meetings End-->
-
-
-        </div>
-       
-            
-
-
-
-
-
-
 
 <!--
 
@@ -983,7 +954,7 @@ function updateVal(){
                         </span>
                     </div>
                 </div>
-        </div>
+
 
 
 

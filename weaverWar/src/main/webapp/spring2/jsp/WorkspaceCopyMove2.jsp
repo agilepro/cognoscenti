@@ -159,58 +159,61 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Move/Copy Document/Topic/Action Item
-        </div>
-    </div>
+        <div class="container-fluid col-12 p-3 m-3">
+            <h3>
+            Move or Copy Documents, Discussions, and Action Item</h3>
 
-
-    <h3>{{fromWorkspace.name}} <i class="fa fa-arrow-circle-o-right"></i> {{thisWorkspace.name}}</h3>
-    <p>Select Artifacts to copy or move:</p>
-    <h3>Documents</h3>
-    <table class="table">
-    <tr>
-       <th>Document Name</th>
-       <th>Modified</th>
-       <th>Size</th>
-       <th></th>
-    </tr>
-    <tr ng-repeat="doc in allAttachments" ng-style="rowStyle(doc)">
-       <td>{{doc.name}}</td>
-       <td>{{doc.modifiedtime|cdate}}</td>
-       <td ng-show="doc.size>=0">{{doc.size|number}} bytes</td>
-       <td ng-hide="doc.size>=0">Web URL</td>
-       <td ng-hide="doc.hideThis">
-           <button class="btn btn-sm btn-raised" ng-click="copyDoc(doc)">Copy</button>
-           <button class="btn btn-sm btn-raised" ng-click="moveDoc(doc)">Move</button>
-       </td>
-       <td ng-show="doc.hideThis">
-           
-       </td>
-    </tr>
-    <tr>
-        <td colspan="3" class="linkWizardHeading"></td>
-    </tr>
-    </table>
+            <div class="container-fluid col-12 p-3">
+                <h4 class=" m-3">{{fromWorkspace.name}} <i class="fa fa-arrow-circle-o-right"></i> {{thisWorkspace.name}}</h4>
+    <h5 class="mx-4">Select Artifacts to copy or move:</h5>
     
-    <h3>Action Items</h3>
-    <table class="table">
-    <tr>
-       <th>Synopsis</th>
-       <th></th>
-    </tr>
-    <tr ng-repeat="goal in allActionItems" ng-style="rowStyle(goal)">
-       <td>{{goal.synopsis}}</td>
-       <td ng-hide="goal.hideThis">
-           <button class="btn btn-sm btn-raised" ng-click="moveActionItem(goal)">Move</button>
-       </td>
-       <td ng-show="goal.hideThis">
+    <hr>
+    <h4>Documents:</h4>
+    <div class="container-fluid">
+    <div class="row border-2 border-bottom">
+       <span class="col-4 h5">Document Name</span>
+       <span class="col-4 h5">Modified</span>
+       <span class="col-2 h5">Size</span>
+       <span class="col-2 h5"></span>
+    </div>
+    <div class="row border-1 border-bottom" ng-repeat="doc in allAttachments" ng-style="rowStyle(doc)">
+       <span class="col-4">{{doc.name}}</span>
+       <span class="col-4">{{doc.modifiedtime|cdate}}</span>
+       <span class="col-2" ng-show="doc.size>=0">{{doc.size|number}} bytes</span>
+       <span class="col-2" ng-hide="doc.size>=0">Web URL</span>
+       <span class="col-2" ng-hide="doc.hideThis">
+           <button class="btn btn-comment btn-wide btn-raised" ng-click="copyDoc(doc)">Copy</button>
+           <button class="btn btn-comment btn-wide btn-raised" ng-click="moveDoc(doc)">Move</button>
+       </span>
+       <span class="col-2" ng-show="doc.hideThis">
            
-       </td>
-    </tr>
-    <tr>
-        <td colspan="3" class="linkWizardHeading"></td>
-    </tr>
-    </table>
+       </span>
+    </div>
+    <div class="row">
+        <span class="col-3 linkWizardHeading"></span>
+    </div>
+    </div>
+    
+    <h4>Action Items</h4>
+    <div class="container-fluid">
+        <div class="row border-2 border-bottom">
+            <span class="col-4 h5">Synopsis</span>
+            <span class="col-2 h5"></span>
+        </div>
+
+    <div class="row border-1 border-bottom" ng-repeat="goal in allActionItems" ng-style="rowStyle(goal)">
+        <span class="col-10">{{goal.synopsis}}</span>
+       <span class="col-2" ng-hide="goal.hideThis">
+           <button class="btn btn-wide btn-comment btn-raised" ng-click="moveActionItem(goal)">Move</button>
+       </span>
+       <span class="col-2 h5" ng-show="goal.hideThis">
+           
+       </span>
+    </div>
+    <div class="row">
+        <td class="l col-3 inkWizardHeading"></td>
+    </div>
+    </div>
+</div>
 </div>
 <!-- end addDocument.jsp -->
