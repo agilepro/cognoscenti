@@ -110,35 +110,36 @@ app.controller('myCtrl', function($scope, $http) {
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
-
-        <div class="well ms-4">
+<div class="container-fluid override m-2">
+<div class="d-flex col-12"><div class="contentColumn">
+        <div class="well">
             Filter: <input ng-model="filter">
-            <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
-            <button ng-click="fetchEmailRecords(-20)" class="btn btn-default btn-raised">Previous</button>
-            <button ng-click="fetchEmailRecords(20)" class="btn btn-default btn-raised">Next</button>
-            <span style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
+            <button ng-click="fetchEmailRecords(0)" class="btn btn-comment btn-default btn-raised py-0">Refresh</button>
+            <button ng-click="fetchEmailRecords(-20)" class="btn btn-comment btn-default btn-raised py-0">Previous</button>
+            <button ng-click="fetchEmailRecords(20)" class="btn btn-comment btn-default btn-raised py-0">Next</button>
+            <span class="h6" style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
         </div>
-        <div style="height:20px;"></div>
-        <div class="container-fluid ms-4 col-12 my-2">
-            <div class="row border-1 border-bottom">
-                <span class="col-1 h6">#</span>
-                <span class="col-2 h6">From</span>
-                <span class="col-4 h6">Subject</span>
-                <span class="col-3 h6">Site/Workspace</span>
-                <span class="col-1 h6">Status</span>
-                <span class="col-1 h6">Send Date</span>
-            </div>
-            <div class="row border-1 border-bottom my-2 py-1" ng-repeat="rec in emailList">
-                <span class="col-1">{{offset+$index+1}}</span>
-                <span class="col-2">{{namePart(rec.From)}}</span>
-                <span class="col-4"><a href="EmailMsgU.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></span>
-                <span class="col-3">{{rec.Site}}/{{rec.Workspace}}</span>
-                <span class="col-1">{{rec.Status}}</span>
-                <span class="col-1">{{bestDate(rec) |cdate}}</span>
-            </div>
-        </div>
-
+        <table class="table ms-2" width="100%">
+            <tr class="gridTableHeader">
+            
+                <td width="10px">#</td>
+                <td width="20px">From</td>
+                <td width="300px">Subject</td>
+                <td width="50px">Site/Workspace</td>
+                <td width="50px">Status</td>
+                <td width="50px">Send Date</td>
+            </tr>
+            <tr ng-repeat="rec in emailList">
+                <td width="10px">{{offset+$index+1}}</td>
+                <td width="20px">{{namePart(rec.From)}}</td>
+                <td width="300px"><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
+                <td width="50px">{{rec.Site}}/{{rec.Workspace}}</td>
+                <td width="50px">{{rec.Status}}</td>
+                <td width="50px">{{bestDate(rec) |cdate}}</td>
+            </tr>
+        </table>
+</div></div>
 </div>
-
+</div>
 
 

@@ -186,37 +186,44 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div class="userPageContents" ng-cloak>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
-<div class="container-fluid">
-    <div class="row">
-      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
-                <a class="nav-link" ng-click="openSendEmail()" >
-                Send Email to this User</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
+<div class="container-fluid col-12 override m-3">
+    <div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+
+                    <span class="btn second-menu-btn btn-wide" type="button">
+                        <a class="nav-link" ng-click="openSendEmail()" >
+                        Send Email to this User</a></span>
+                    <span class="btn second-menu-btn btn-wide" type="button">
                 <a class="nav-link" href="UserHome.htm" >
                 Show Home</a></span>
         </div>
-        <div class="d-flex col-9">
-			<div class="contentColumn">
-				<div class="container-fluid">
-                	<div class="generalContent">
-<div class="table d-grid g-1">
+    </div>
+    </div>
+
+
+        <div class="container-fluid col-12 override m-3">
+            <div class="generalContent">
+<div class="container-fluid col-12">
     <div class="row d-flex" ng-show="userInfo.disabled">
-        <span class="col">Status:</span>
+        <span class="col-auto labelColumn">Status:</span>
         <span><span style="color:red">DISABLED</span></span>
     </div>
-    <div class="row-cols-3 d-flex ">
-        <span class="col-2  labelColumn ps-2" style="cursor: pointer;" ng-click="editField='name'">Full Name:</span>
-        <span class="col-5 p-0 m-0" ng-dblclick="editField='name'" style="cursor: pointer;">
+    <div class="row d-flex my-2">
+        <span class="col-2 labelColumn ps-2" style="cursor: pointer;" ng-click="editField='name'">Full Name:</span>
+        <span class="col-3 p-0 mx-3" ng-dblclick="editField='name'" style="cursor: pointer;">
             <div ng-hide="editField=='name'">{{userInfo.name}}</div>
             <div ng-show="editField=='name'">
                 <input class="form-control" ng-model="userInfo.name"/>
-                <button class="my-2 btn btn-primary btn-raised btn-wide btn-sm py-1" ng-click="saveChanges('name');editField=''">Save</button>
+                <button class="my-2 btn btn-primary btn-raised btn-wide py-0 float-end" ng-click="saveChanges('name');editField=''">Save</button>
             </div>
         </span>
-        <span class="col-5 p-0 m-0" ng-click="helpFullName=!helpFullName">
+        <span class="col-auto p-0 mx-3" ng-click="helpFullName=!helpFullName">
             <div ng-hide="helpFullName">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+                <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </div>
             <div class="well guideVocal thinnerGuide" ng-show="helpFullName">
                 The full name is what other people will see you as when you do things in Weaver.
@@ -228,9 +235,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
         </span>
     </div>
-    <div class="row-cols-3 d-flex">
+    <div class="row d-flex my-2">
             <span class="col-2  labelColumn ps-2" style="cursor: pointer;"  ng-click="goToIconEdit()">Icon:</span>
-            <span class="col-5 p-0 m-0" ng-dblclick="goToIconEdit()">
+            <span class="col-3 p-0 mx-3" ng-dblclick="goToIconEdit()">
                 <div>
                 <img src="<%ar.writeHtml(photoSrc);%>" width="100" height="100" alt="user photo" />
                 &nbsp; &nbsp;
@@ -239,9 +246,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <img src="<%ar.writeHtml(photoSrc);%>" class="rounded-5" style="width:32px;height:32px" alt="user photo" />
                 </div>
             </span>
-            <span class="col-5 p-0 m-0" ng-click="helpIcon=!helpIcon">
+            <span class="col-auto p-0 mx-3" ng-click="helpIcon=!helpIcon">
               <div ng-hide="helpIcon">
-                <button class="btn"><i class="fa fa-question-circle-o fa-md" aria-hidden="true"></i></button>
+                <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
               </div>
               <div class="well guideVocal thinnerGuide" ng-show="helpIcon">
                 The icon is an image of you that is used in lists of users.
@@ -252,18 +259,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </div>
             </span>
     </div>
-    <div class="row-cols-3 d-flex ">
+    <div class="row d-flex my-2 ">
             <span class="col-2  labelColumn ps-2" style="cursor: pointer;" ng-click="editField='description'">Description:</span>
-            <span class="col-5 p-0 m-0"  ng-dblclick="editField='description'">
+            <span class="col-3 p-0 mx-3"  ng-dblclick="editField='description'">
               <div ng-hide="editField=='description'"><div ng-bind-html="userInfo.description|wiki"></div></div>
               <div ng-show="editField=='description'">
                 <textarea class="form-control" ng-model="userInfo.description"></textarea>
-                <button class="my-2 btn btn-primary btn-raised btn-comment btn-sm" ng-click="saveChanges('description');editField=''">Save</button>
+                <button class="my-2 btn btn-primary btn-raised btn-wide py-0 float-end" ng-click="saveChanges('description');editField=''">Save</button>
               </div>
             </span>
-            <span class="col-5 p-0 m-0"  ng-click="helpDescription=!helpDescription">
+            <span class="col-auto p-0 mx-3"  ng-click="helpDescription=!helpDescription">
               <div ng-hide="helpDescription">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+                <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
               </div>
               <div class="well guideVocal thinnerGuide" ng-show="helpDescription">
                 Describe yourself for others to get to know you.
@@ -274,18 +281,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 <% //above this is public, below this only for people logged in
 if (ar.isLoggedIn()) { %>
-    <div class="row-cols-3 d-flex ">
+    <div class="row d-flex  my-2">
         <span class="col-2  labelColumn ps-2" style="cursor: pointer;" ng-click="editField='email'">Email Ids:</span>
-        <span class="col-5 p-0 m-0" ng-dblclick="editField='email'"  ng-hide="editField=='email'">
+        <span class="col-3 p-0 mx-3" ng-dblclick="editField='email'"  ng-hide="editField=='email'">
                 <div ng-repeat="email in userInfo.ids">
                     {{email}}
                 </div>
         </span>
-        <span class="col-5 p-0 m-0" ng-show="editField=='email'">
+        <span class="col-auto p-0 mx-3" ng-show="editField=='email'">
             <div ng-repeat="email in userInfo.ids">
-                <button class="btn btn-raised btn-comment"
+                <button class="btn btn-raised btn-comment py-0"
                             ng-show="email==userInfo.preferred">Preferred Email:</button>
-                <button class="btn btn-primary btn-raised" ng-click="makePreferred(email)" 
+                <button class="btn btn-comment btn-raised py-0 " ng-click="makePreferred(email)" 
                             ng-hide="email==userInfo.preferred">Make Preferred</button>
                     {{email}}
             </div>
@@ -297,14 +304,14 @@ if (ar.isLoggedIn()) { %>
                         <p>Enter an email address, a confirmation message will be sent. When you receive that, click the link to add the email address to your profile.</p>
                         <div class="d-flex">
                             
-                            <button class="btn btn-danger btn-comment btn-wide btn-sm btn-raised" ng-click="editField=''">Cancel</button>
-                            <button class="ms-auto btn btn-primary btn-raised btn-comment btn-wide btn-sm px-2" ng-click="requestEmail()">Request Confirmation Email</button>
+                            <button class="btn btn-danger btn-comment btn-wide btn-raised py-0" ng-click="editField=''">Cancel</button>
+                            <button class="ms-auto btn btn-primary btn-raised btn-comment btn-wide py-0" ng-click="requestEmail()">Request Confirmation Email</button>
                         </div>
                 </div>
             </div>
-            <span class="col-5 p-0 m-0" ng-click="helpEmail=!helpEmail">
+            <span ng-click="helpEmail=!helpEmail">
                 <div ng-hide="helpEmail">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+                    <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
                 </div>
                 <div class="well guideVocal thinnerGuide" ng-show="helpEmail">
                     <div>You can associate as many email addresses as you want. Email is only sent to the first email in the list, known as the preferred email address.  The other addresses are used only to identify artifacts you created when logged in as that email address.</div><br/>
@@ -313,21 +320,21 @@ if (ar.isLoggedIn()) { %>
             </span>
         </span>
     </div>
-    <div class="row-cols-3 d-flex ">
+    <div class="row d-flex my-2 ">
         <span class="col-2 labelColumn ps-2" style="cursor: pointer;" ng-click="goToEdit()">Time Zone:</span>
-        <span class="col-5 ps-1 m-0">{{userInfo.timeZone}} 
+        <span class="col-3 ps-1 mx-3">{{userInfo.timeZone}} 
         </span>
-        <span class="col-5 p-0 m-0" ng-hide="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
-            <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+        <span class="col-auto p-0 mx-3" ng-hide="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
+            <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
         </span>
-        <span class="col-5 p-0 m-0" ng-show="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
+        <span class="col-auto p-0 mx-3" ng-show="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
             <div class="well guideVocal thinnerGuide">The time zone setting is used when sending email so that you see the right date and time appropriate to your normal location.  <br/>All dates and times displayed in the browser will be in the timezone of that browser computer.  For email, however, we don't know what the timezone of the place where the email will be delivered, so you need to set it here.
             </div>
         </span>
     </div>
 
 <%if (viewingSelf){ %>
-        <div class="row d-flex " ng-show="browserZone!=userInfo.timeZone">
+        <div class="row d-flex my-2 " ng-show="browserZone!=userInfo.timeZone">
             <span>
                 <div style="color:red">
                 Note, your browser is set to '{{browserZone}}' 
@@ -341,9 +348,9 @@ if (ar.isLoggedIn()) { %>
             
         </div>
 <% } %>
-        <div class="row-cols-3 d-flex " >
+        <div class="row d-flex my-2 " >
             <span class="col-2 labelColumn ps-2" style="cursor: pointer;" ng-click="editField='notifyPeriod'">Notify Period:</span>
-            <span class="col-5 ps-1 m-0" ng-dblclick="editField='notifyPeriod'">
+            <span class="col-3 ps-1 mx-3" ng-dblclick="editField='notifyPeriod'">
               <div ng-hide="editField=='notifyPeriod'">
                 {{userInfo.notifyPeriod}} days
               </div>
@@ -351,12 +358,12 @@ if (ar.isLoggedIn()) { %>
                 <input type="radio" value="1"  ng-model="userInfo.notifyPeriod" /> Daily
                 <input type="radio" value="7"  ng-model="userInfo.notifyPeriod" /> Weekly
                 <input type="radio" value="30"  ng-model="userInfo.notifyPeriod" /> Monthly
-                <button class="my-2 btn btn-primary btn-raised btn-wide btn-sm" ng-click="saveChanges('notifyPeriod')">Save</button>
+                <button class="py-0 btn btn-primary btn-raised btn-wide" ng-click="saveChanges('notifyPeriod')">Save</button>
               </div>
             </span>
-            <span class="col-5 p-0 m-0" ng-click="helpNotifyPeriod=!helpNotifyPeriod">
+            <span class="col-auto p-0 mx-3" ng-click="helpNotifyPeriod=!helpNotifyPeriod">
                 <div ng-hide="helpNotifyPeriod">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+                    <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
                 </div>
             
                 <div class="well guideVocal thinnerGuide" ng-show="helpNotifyPeriod" >
@@ -368,20 +375,20 @@ if (ar.isLoggedIn()) { %>
 <%if (viewingSelf){ %>
     <%if (ar.isSuperAdmin()){ %>
 
-        <div class="row-cols-3 d-flex " >
+        <div class="row d-flex  my-2" >
             <span class="col-2 labelColumn ps-2" style="cursor: text;" >Facilitator</span>
-            <span class="col-5 ps-1 m-0">
+            <span class="col-3 ps-1 mx-3">
                 <div>
                   <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
                 </div>
                 <div>
-                  <a href="FacSettings.htm" ng-show="userCache.facilitator.isActive"><button class="my-2 btn btn-primary btn-raised btn-wide btn-sm py-1">Configure Settings</button></a>
+                  <a href="FacSettings.htm" ng-show="userCache.facilitator.isActive"><button class="btn btn-comment btn-raised btn-wide py-0">Configure Settings</button></a>
                 </div>
             </span>
-            <span class="col-5 p-0 m-0" ng-hide="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
-                <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+            <span class="col-auto p-0 mx-3" ng-hide="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+                <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </span>
-            <span class="col-5 ps-0 m-0" ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+            <span class="col-auto ps-0 mx-3" ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
               <div class="well guideVocal thinnerGuide">
                 This indicates that you are a facilitator, and would like to be contacted
                 by people looking for a facilitator.
@@ -389,33 +396,33 @@ if (ar.isLoggedIn()) { %>
             </span>
         </div>
 
-        <div class="row-cols-2 d-flex " >
-            <span class="col-2 labelColumn ps-2" >Super Admin</span>
-            <span class="col-5 p-2 m-0" style="background-color:rgb(255, 255, 134)">
+        <div class="row d-flex my-2 " >
+            <span class="col-2 labelColumn ps-2 " style="cursor: text;" >Super Admin</span>
+            <span class="col-3 p-2 mx-3 border border-1 rounded-3" style="background-color:rgb(255, 255, 134)">
                 You are a Super Admin
             </span>
         </div>
     <% } %>
 <% } %>
-        <div class="row-cols-3 d-flex ">
-            <span class="col-2 labelColumn ps-2">Last Login:</span>
-            <span class="col-5 p-2 m-0"><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </span>
-            <span class="col-5 p-2 m-0" ng-hide="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
-                <button class="btn" ><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+        <div class="row d-flex my-2 ">
+            <span class="col-2 labelColumn ps-2" style="cursor: text;">Last Login:</span>
+            <span class="col-3 p-2 mx-3"><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </span>
+            <span class="col-auto p-2 mx-3" ng-hide="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
+                <button class="no-btn" ><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </span>
-            <span class="col-5 p-2 m-0" ng-show="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
+            <span class="col-auto p-2 mx-3" ng-show="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
               <div class="well guideVocal thinnerGuide">
                 This just lets you know when you last logged in as a security measure to be aware if maybe someone else is logging in as you, and to let others know the last time you were active in the system.
               </div>
             </span>
         </div>
-        <div class="row-cols-3 d-flex ">
-            <span class="col-2 labelColumn ps-2">User Key:</span>
-            <span class="col-5 p-2 m-0">{{userInfo.key}}</span>
-            <span class="col-5 p-2 m-0" ng-hide="helpKey" ng-click="helpKey=!helpKey">
-                <button class="btn"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+        <div class="row d-flex my-2 ">
+            <span class="col-2 labelColumn ps-2" style="cursor: text;">User Key:</span>
+            <span class="col-3 p-2 mx-3">{{userInfo.key}}</span>
+            <span class="col-auto p-2 mx-3" ng-hide="helpKey" ng-click="helpKey=!helpKey">
+                <button class="no-btn"><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </span>
-            <span class="col-5 p-2 m-0" ng-show="helpKey" ng-click="helpKey=!helpKey">
+            <span class="col-auto p-2 mx-3" ng-show="helpKey" ng-click="helpKey=!helpKey">
               <div class="well guideVocal thinnerGuide">
                 This is the internal unique identifier of this user.
                 You can not change this, this is permanent in order 
@@ -430,10 +437,12 @@ if (ar.isLoggedIn()) { %>
     
 <%if (viewingSelf){ %>
     <hr/>
-    <div class="table" >
-        <div class="row-cols-2 d-flex ">
-            <span class="col-2 labelColumn ps-2">Password:</span>
-            <span class="col-5 p-2 m-0"><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></span>
+
+        <div class="generalContent">
+<div class="container-fluid">
+        <div class="row d-flex my-2 ">
+            <span class="col-2 labelColumn ps-2" style="cursor: text;">Password:</span>
+            <span class="col-5 p-2 mx-3"><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></span>
         </div>
     </div>
 <% } %>

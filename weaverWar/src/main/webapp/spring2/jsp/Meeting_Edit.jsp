@@ -196,8 +196,8 @@
             </div>
         <!--Button to create new action item-->
         <div class="container-fluid override">
-        <div class="row justify-content-center">      
-          <div type="button" class="btn btn-sm btn-outline-primary"><span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
+        <div class="row justify-content-center" ng-click="openAttachAction(item)">      
+          <div type="button" class="btn btn-wide btn-outline-primary"><span > Attach/Remove Action Items 
           </span>
         </div>
         </div>
@@ -241,13 +241,13 @@
                   {{fullDoc.name}}
                 </div>
               </div>
-              <div ng-hide="item.attList && item.attList.length>0" class="doubleClickHint">
+              <div ng-hide="item.attList && item.attList.length>0" >
               </div>
       <!-- Buttons to trigger Documents modals -->
       <div class="container-fluid override">
-      <div class="row justify-content-center"> 
-        <div type="button" class="btn btn-sm btn-outline-primary">
-          <span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
+      <div class="row justify-content-center" ng-click="openAttachDocument(item)"> 
+        <div type="button" class="btn btn-wide btn-outline-primary">
+          <span >  Attach/Upload Files</span>
         </div>
       </div>
       </div>
@@ -286,13 +286,13 @@
               <i class="fa fa-lightbulb-o fs-5" ></i>&nbsp;
             {{topic.subject}}</span>
           </div>
-            <div ng-hide="itemTopics(item).length>0" class="doubleClickHint">
+            <div ng-hide="itemTopics(item).length>0" >
           </div>
 <!-- Button trigger modal -->
           <div class="container-fluid override">
-  <div class="row justify-content-center ">      
-    <div type="button" class="btn btn-sm btn-outline-primary">
-      <span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
+  <div class="row justify-content-center " ng-click="openAttachTopics(item)">      
+    <div type="button" class="btn btn-wide btn-outline-primary">
+      <span > Attach/Remove Discussions 
     </span>
   </div>
   </div>

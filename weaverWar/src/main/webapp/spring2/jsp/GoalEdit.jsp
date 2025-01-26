@@ -151,6 +151,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.newPerson = "";
     $scope.selectedPersonShow = false;
     $scope.selectedPerson = "";
+    $scope.dropdownStates = {};
 
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in an action item of the project '<%ar.writeHtml(ngp.getFullName());%>'."
@@ -653,29 +654,33 @@ function addvalue() {
                 <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')" 
                 title="Double click here to update the status of this action item">
                     <span class="col-1">
-                        <span class="no-btn" style="padding:10px;"><button class="dropdown-toggle no-btn" type="button" id="changeStatus" data-bs-toggle="dropdown"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></button>
-                            <ul class="dropdown-menu" aria-labelledby="changeState">
+                        <span style="padding:10px;">
+                            <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['dropdown1']"
+                            aria-expanded="{{dropdownStates['status']}}"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></button>
+                            <ul class="dropdown-menu" ng-class="{'show': dropdownStates['status']}" role="menu"
+                            aria-labelledby="changeState">
                                 <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1); dropdownStates['status'] = false">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2);dropdownStates['status'] = false">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3);dropdownStates['status'] = false">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5);dropdownStates['status'] = false">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6);dropdownStates['status'] = false">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
                                     </a>
                                 </li>
-                                </ul></span>
+                            </ul>
+                        </span>
                     </span>
                     <span class="col-10 h4">
                         {{stateName[goalInfo.state]}} Synopsis:&nbsp;{{goal.synopsis}}
@@ -728,24 +733,34 @@ function addvalue() {
                     </span>
                     <span class="col-9 d-flex">
                         <div class="mx-2" ng-repeat="player in goalInfo.assignTo" >
-                            <span class="dropdown nav-item">
-                                <span class="menu1" data-toggle="dropdown">
-                                <img class="rounded-5" ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" title="{{player.name}} - {{player.uid}}">
-                                </span>
-                                <ul class="dropdown-menu list-inline" role="menu" aria-labelledby="user">
+                            <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
+                                aria-expanded="{{dropdownStates[player.uid]}}">
+                                <img 
+                                class="rounded-5" 
+                                ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" 
+                                title="{{player.name}} - {{player.uid}}"/>
+                                </button>
+                                <ul class="dropdown-menu list-inline" 
+                                ng-class="{'show': dropdownStates[player.uid]}" 
+                                role="menu" aria-labelledby="user">
                                     <li role="presentation" style="background-color:lightgrey">
-                                        <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="" style="text-decoration: none;">{{player.name}}<br/>{{player.uid}}
+                                        <a 
+                                        class="dropdown-item" 
+                                        role="menuitem" 
+                                        tabindex="-1" 
+                                        ng-click="" 
+                                        style="text-decoration: none;">{{player.name}}<br/>{{player.uid}}
                                                 </a>
                                             </li>
-                                            <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                                            <li role="presentation" style="cursor:pointer">
+                                                <a 
+                                                class="dropdown-item" role="menuitem" tabindex="-1"
                                                 ng-click="navigateToUser(player)">
                                                     <span class="fa fa-user"></span> 
                                                     Visit Profile
                                                 </a>
                                             </li>
-                                        </ul>
-
-                            </span>
+                                </ul>
                         </div>
                     </span>
                 </div>

@@ -45,7 +45,7 @@
 
     <nav class="sidebar override">
         <div class="container-fluid min-vh-100 sidebar">
-            <ul class="sidebar-nav list-unstyled py-2">
+            
     <% 
     for (JSONObject jo : fullMenu.getJSONObjectList()) {
         if (userIsReadOnly && !jo.has("readOnly")) {
@@ -53,10 +53,13 @@
             continue;
         }
     %>  
-            
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown p-1" role="button" data-bs-toggle="dropdown"<%
-                        if (jo.has("href")) {
+            <ul class="sidebar-nav list-unstyled py-2">
+                <li class="nav-item dropdown no-btn">
+                    <button 
+                        class="no-btn nav-link dropdown-toggle p-1" 
+                        role="button" 
+                        data-bs-toggle="dropdown"
+                        <% if (jo.has("href")) {
                             %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
                         }
                         if (jo.has("title")) {
@@ -74,17 +77,26 @@
                         }
 
                         
-                        %></a><%
+                        %>
+                    </button>
+                    
+                    <%
                         if (jo.has("opts")) {
                         JSONArray options = getOptions(jo, wrappedJSP);
                         if (options.length()>0) {
                         %>
+
                         <ul class="dropdown-menu bg-weaverbody ms-0">
 
                         <% for (JSONObject jo2 : options.getJSONObjectList()) { %>
                             <li>
-                                <a <% if (jo2.has("href")){ %> href="<% ar.writeHtml(jo2.getString("href")); %>" <% } %> 
-                                    <% if (jo2.has("ng-click")){ %> ng-click="<% ar.writeHtml(jo2.getString("ng-click")); %>" <% } %> 
+                                <a 
+                                <% if (jo2.has("href")){ %> 
+                                    href="<% ar.writeHtml(jo2.getString("href")); %>" 
+                                    <% } %> 
+                                    <% if (jo2.has("ng-click")) { %> 
+                                        ng-click="<% ar.writeHtml(jo2.getString("ng-click")); %>" 
+                                        <% } %> 
                                     class="dropdown-item">
                                     <%ar.writeHtml(jo2.getString("name")); %>
                                 </a>

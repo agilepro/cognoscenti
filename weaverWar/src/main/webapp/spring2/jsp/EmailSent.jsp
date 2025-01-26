@@ -141,29 +141,30 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div class="d-flex col-12"><div class="contentColumn">
         <div class="well">Filter <input ng-model="filter">
-<button ng-click="fetchEmailRecords(0)" class="btn btn-secondary btn-wide btn-raised">Refresh</button>
-            <button ng-click="fetchEmailRecords(-20)" class="btn btn-secondary btn-wide btn-raised">Previous</button>
-            <button ng-click="fetchEmailRecords(20)" class="btn btn-secondary btn-wide  btn-raised">Next</button>
+<button ng-click="fetchEmailRecords(0)" class="btn btn-comment btn-default btn-raised py-0">Refresh</button>
+            <button ng-click="fetchEmailRecords(-20)" class="btn btn-comment btn-default btn-raised py-0">Previous</button>
+            <button ng-click="fetchEmailRecords(20)" class="btn btn-comment btn-default  btn-raised py-0">Next</button>
             <span style="padding:5px">{{offset+1}} - {{offset+batch}}</span>
         </div>
-        <div class="container-fluid col-12 ms-3">
-            <div class="row d-flex border-bottom border-1 py-2">
-                <div class="col-1 me-0 h6">#</div>
-                <div class="col-2 ms-0 h6">From</div>
-                <div class="col-4 h6">Subject</div>
-                <div class="col-2 h6">Recipient</div>
-                <div class="col-1 ms-2 h6">Status</div>
-                <div class="col-1 h6 px-0">Send Date</div>
-            </div>
-            <div class="row d-flex border-bottom border-1 py-2" ng-repeat="rec in emailList">
-                <div class="col-1 me-0">{{offset+$index+1}}</div>
-                <div class="col-2 ms-0">{{namePart(rec.From)}}</div>
-                <div class="col-4"><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></div>
-                <div class="col-2">{{rec.Addressee}}</div>
-                <div class="col-1 ms-2">{{rec.Status}}</div>
-                <div class="col-1 px-0">{{bestDate(rec) |cdate}}</div>
-            </div>
-        </div>
+        <table class="table ms-2" width="100%">
+            <tr class="gridTableHeader">
+                <td width="10px">#</td>
+                <td width="20px">From</td>
+                <td width="300px">Subject</td>
+                <td width="50px">Recipient</td>
+                <td width="50px">Status</td>
+                <td width="50px">Send Date</td>
+            </tr>
+            <tr ng-repeat="rec in emailList">
+                <td width="10px">{{offset+$index+1}}</td>
+                
+                <td width="20px">{{namePart(rec.From)}}</td>
+                <td width="300px"><a href="EmailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
+                <td width="50px">{{rec.Addressee}}</td>
+                <td width="50px">{{rec.Status}}</td>
+                <td width="50px">{{bestDate(rec) |cdate}}</td>
+            </tr>
+        </table>
 
 </div>
 

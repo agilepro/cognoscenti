@@ -263,10 +263,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     
                     <div class="container-fluid override well">
                         <div class="col-md-auto second-menu">
-                            <span class="h5" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+                            <span class="h5" data-bs-toggle="collapse" data-bs-target="#collapseCurrentLabels" aria-expanded="false" aria-controls="collapseCurrentLabels">
                             Current Labels <i class="fa fa-arrow-down"></i>
                             </span>
-                            <div class="collapse" id="collapseSecondaryMenu">
+                            <div class="collapse" id="collapseCurrentLabels">
                                 <div class="card col-md-12 align-top">
                             <div class="card-body override" style="overflow-y: auto; max-height: fit-content; overflow-x: auto;">
                 
@@ -331,7 +331,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </div>
 
                         
-    
+    <!--removed stand lone create new label as it was not working and the "Create/Delete does"-->
                         <!--<div class="well"> 
                             <span class="p-2 h5 my-3" id="attachDocumentLabel">
                             Create Custom Labels

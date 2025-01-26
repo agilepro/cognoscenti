@@ -92,8 +92,8 @@
         <a 
         href="#" 
         class="nav-link dropdown-toggle text-weaverbody"  
-        id="navbarDropdownMenuLink" 
-        role="button" 
+        id="navbarHelpDropdown"
+        role="button"
         data-bs-toggle="dropdown" 
         aria-expanded="false"
         >
@@ -101,7 +101,7 @@
         Help</a
       >
         <ul class="dropdown-menu" aria-labelledby="navbarHelpDropdown">
-          <li><a class="dropdown-item" onClick="showLearningPath()">Show Learning Path</a></li>
+
           <li><a class="dropdown-item" href="<%=userRelPath%>LearningPath.htm">Learning Settings</a></li>
           <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html" target="Training">Training Videos</a></li>
         </ul>
@@ -119,7 +119,7 @@
               <i class="fa fa-plus" aria-hidden="true"></i>
               <span class="dropdown-toggle-label" translate>Add</span>
         </a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" aria-labelledby="navbarAddDropdown">
             <li><a class="dropdown-item" href="AddSomething.htm?start=meeting">Meeting</a></li>
             <li><a class="dropdown-item" href="NotesList.htm?start=create">Discussion</a></li>
             <li><a class="dropdown-item" href="DocsAdd.htm">Document</a></li>
@@ -211,7 +211,7 @@
 <% } %> 
           </ul>
         </li>
-      </ul>
+  </ul>
   </div>
   </div>
   </nav>

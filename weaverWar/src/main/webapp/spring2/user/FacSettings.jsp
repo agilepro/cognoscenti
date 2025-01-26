@@ -147,40 +147,40 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
     
-<div class="container-fluid">
-    <div class="row-cols-2 d-flex">
+<div class="container-fluid col-12 override m-3">
+    <div class="d-flex col-12 m-2">
             <span class="col-2 labelColumn ps-2" style="cursor: text;">Facilitator:</span>
-            <span class="col-1 p-0 m-0" >
+            <span class="col-auto p-0 mx-3" >
                 <div>
                   <input type="checkbox" ng-model="userCache.facilitator.isActive" ng-click="updateFacilitator()"/> 
                 </div>
             </span>
-            <span class="col-5 p-0 m-0" ng-hide="helpFacilitator">
-                <button class="btn" ng-click="helpFacilitator=!helpFacilitator"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+            <span class="col-auto p-0 mx-3" ng-hide="helpFacilitator">
+                <button class="no-btn" ng-click="helpFacilitator=!helpFacilitator"><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </span>
-            <span class="col-5 p-0 m-0"  ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+            <span class="col-5 p-0 mx-3"  ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
               <div class="guideVocal thinnerGuide">
                 This indicates that you are a facilitator, and would like to be contacted
                 by people looking for a facilitator.
               </div>
             </span>
         </div>
-        <div class="row-cols-3 d-flex " >
+        <div class="d-flex col-12 m-2">
             <span class="col-2 labelColumn ps-2" ng-click="showIntroEditor=true">Intro:</span>
-            <span class="col-3 p-2 m-0" ng-hide="showIntroEditor">
+            <span class="col-auto p-0 mx-3" ng-hide="showIntroEditor">
                 <div ng-bind-html="userCache.facilitator.intro|wiki"></div>
             </span>
-            <span class="col-3 p-2 m-0" ng-show="showIntroEditor">
+            <span class="col-5 p-2 mx-3" ng-show="showIntroEditor">
                 <div class="mce-tinymce" ng-model="userCache.facilitator.intro">
                   make an editor appear here.   
                   <button class="btn btn-primary btn-raised" 
                           ng-click="showIntroEditor=false">Save</button>
                 </div>
             </span>
-            <span class="col-5 p-2 m-0" ng-hide="helpFacilitator">
-                <button class="btn" ng-click="helpFacilitator=!helpFacilitator"><i class="fa fa-question-circle-o" aria-hidden="true"></i></button>
+            <span class="col-5 p-2 mx-3" ng-hide="helpFacilitatorIntro">
+                <button class="no-btn" ng-click="helpFacilitatorIntro=!helpFacilitatorIntro"><i class="fa fa-question-circle-o fa-lg" aria-hidden="true"></i></button>
             </span>
-            <span class="col-5 p-2 m-0" ng-show="helpFacilitator" ng-click="helpFacilitator=!helpFacilitator">
+            <span class="col-5 p-2 mx-3" ng-show="helpFacilitatorIntro" ng-click="helpFacilitatorIntro=!helpFacilitatorIntro">
               <div class="guideVocal thinnerGuide">
                 This is a long description with everything that you want prospective clients to know about you.
               </div>
