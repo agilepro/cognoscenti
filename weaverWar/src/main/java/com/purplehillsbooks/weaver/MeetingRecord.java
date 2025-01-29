@@ -842,13 +842,6 @@ public class MeetingRecord extends DOMFace {
             }
         }
 
-        //fix up the owner if needed .. schema migration
-        //TODO: remove after Dec 2015
-        String owner = getOwner();
-        if (hasSetMeetingInfo && (owner==null || owner.length()==0)) {
-            //set to the person currently saving the record.
-            setOwner(ar.getBestUserId());
-        }
         if (input.has("startTimer")) {
             startTimer( input.getString("startTimer"));
         }

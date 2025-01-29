@@ -1243,5 +1243,26 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/linkURLToProject.htm", method = RequestMethod.GET)
+    protected void getLinkURLToProjectForm(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw =  registerWorkspaceRequired(ar, siteId, pageId);
+
+            if (warnFrozenOrNotMember(ar, ngw)) {
+                return;
+            }
+
+            showJSPMembers(ar, siteId, pageId, "linkURLToProject.jsp");
+        }
+        catch(Exception e){
+            showDisplayException(ar, WeaverException.newWrap(
+                "Failed to open create link url to workspace page in workspace (%s) of site (%s).", 
+                e, pageId, siteId));
+        }
+    }
 
 }
