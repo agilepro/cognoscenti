@@ -505,7 +505,7 @@ function showLearningPath() {
     </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
                 <li>
-                        <button class="dropdown-item" onclick="location.reload(true)" >Refresh</button>
+                        <button class="dropdown-item" onclick="window.location.reload(true)" >Refresh</button>
                 </li>
             </ul>
 

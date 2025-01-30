@@ -916,12 +916,12 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             $scope.refreshStatus = "Refreshing is disabled by logic";
             return;
         }
-        if ($scope.meeting.state != 2) {
-            console.log("AUTOSAVE (Meeting) avoided because meeting not in running state");
-            $scope.refreshStatus = "No refresh because meeting is not being run";
+        if ($scope.meeting.state < 1 || $scope.meeting.state > 2) {
+            console.log("AUTOSAVE (Meeting) avoided because meeting in state = "+$scope.meeting.state);
+            $scope.refreshStatus = "No refresh because meeting is not being run"; 
             return;
         }
-        var currentTime = (new Date().getTime());
+        var currentTime = (new Date().getTime()); 
         var remainingSeconds = ($scope.bgActiveLimit - currentTime) / 1000;
         var secondsSinceLast = (currentTime - $scope.lastAutoSave) / 1000;
         if (remainingSeconds < 0) {
