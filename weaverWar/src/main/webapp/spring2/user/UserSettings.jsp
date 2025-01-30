@@ -343,7 +343,7 @@ if (ar.isLoggedIn()) { %>
                 <br/>
                 is above setting correct?
                 </div>
-                <div><button class="my-2 btn btn-primary btn-raised btn-wide btn-sm" ng-click="setTimeZone(browserZone)">Set Your Time Zone to {{browserZone}}</button></div>
+                <div><button class="my-2 btn btn-primary btn-raised btn-wide" ng-click="setTimeZone(browserZone)">Set Your Time Zone to {{browserZone}}</button></div>
             </span>
             
         </div>
