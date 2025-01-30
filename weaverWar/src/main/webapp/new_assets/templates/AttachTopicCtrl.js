@@ -39,7 +39,7 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     
     $scope.topicsOnItem = function() {
         var res = [];
-        return $scope.attachmentList.forEach( function(oneTopic) {
+        $scope.attachmentList.forEach( function(oneTopic) {
             if ($scope.itemHasTopic(oneTopic.universalid)) {
                 res.push(oneTopic);
             }

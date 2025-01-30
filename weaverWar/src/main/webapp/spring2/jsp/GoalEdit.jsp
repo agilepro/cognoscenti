@@ -651,9 +651,9 @@ function addvalue() {
         <div class="container-fluid col-12 override m-3"><!-- ng-hide="editGoalInfo">-->
             
                 <!--State and Title start-->
-                <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')" 
-                title="Double click here to update the status of this action item">
-                    <span class="col-1">
+                <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')">
+                    <span class="col-1"  
+                          title="This action item is in {{stateName[goalInfo.state]}} state">
                         <span style="padding:10px;">
                             <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['status']"
                             aria-expanded="{{dropdownStates['status']}}"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></button>
@@ -682,9 +682,9 @@ function addvalue() {
                             </ul>
                         </span>
                     </span>
-                    <span class="col-10 h4">
-                        {{stateName[goalInfo.state]}} Synopsis:&nbsp;
-                        {{goal.synopsis}}
+                    <span class="col-10 h4"  
+                        title="This is the synopsis of the action item">
+                        {{goalInfo.synopsis}}
                     </span>
                 </div>
 
