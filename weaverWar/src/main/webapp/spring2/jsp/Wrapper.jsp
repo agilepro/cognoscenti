@@ -493,7 +493,7 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <!-- -->
-<div class="container-fluid override mx-4 d-inline-flex">
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
 
 
     <span class="dropdown mt-1">

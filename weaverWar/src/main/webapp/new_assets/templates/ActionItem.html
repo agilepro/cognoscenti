@@ -16,7 +16,7 @@
     <div class="container-fluid col-12">
       <div class="row d-flex my-2 h5" ng-click="startEdit('assignee')" 
       title="Click here to update the status of this action item">
-          Edit Action Item
+          Edit Action Item:
                 
       </div>
       <div class="row d-flex">
@@ -27,32 +27,32 @@
           <label for="synopsis" class="d-inline h6">State: </label>
           <span style="padding:10px;"><img ng-src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
           
-          <ul class="dropdown btn btn-comment btn-wide py-0 mt-3">
-              <li class="nav-item dropdown" type="button" id="changeStatus" data-bs-toggle="dropdown">
+          <ul class="btn btn-comment btn-wide py-0 mt-3">
+              <li type="button" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['status']" aria-expanded="{{dropdownStates['status']}}">
                 Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <ul class="dropdown-menu" ng-class="{'show': dropdownStates['status']}" role="menu" aria-labelledby="changeState">
                 <li class="nav-item dropdown" role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1);dropdownStates['status'] = false">
                         Mark <img src="../../../assets/goalstate/small1.gif"> Unstarted
                     </a>
                 </li>
                 <li class="nav-item dropdown" role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
+                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2);dropdownStates['status'] = false">
                         Mark <img src="../../../assets/goalstate/small2.gif"> Offered
                     </a>
                 </li>
                 <li class="nav-item dropdown" role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
+                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3);dropdownStates['status'] = false">
                         Mark <img src="../../../assets/goalstate/small3.gif"> Accepted
                     </a>
                 </li>
                 <li class="nav-item dropdown" role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
+                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5);dropdownStates['status'] = false">
                         Mark <img src="../../../assets/goalstate/small5.gif"> Completed
                     </a>
                 </li>
                 <li role="presentation">
-                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
+                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6);dropdownStates['status'] = false">
                         Mark <img src="../../../assets/goalstate/small6.gif"> Skipped
                     </a>
                 </li>
@@ -93,13 +93,13 @@
           <!--Labels start-->
           <div class="row form-group d-inline">
             <label for="labels" class="h6 d-inline">Labels: </label>
-            <span class="nav-item dropdown mb-2">
-              <button class="btn btn-tiny btn-comment p-0 ">
+            <span class="mb-2">
+              <button class="btn btn-tiny btn-comment p-0" id="selectLabel" ng-click="dropdownStates['labels'] = !dropdownStates['labels']" aria-expanded="{{dropdownStates['labels']}}">
                 <i class="fa fa-plus"></i></button>         
-                  <ul class="dropdown-menu p-2" role="menu" aria-labelledby="selectLabel" 
-                style="width:320px;left:-130px;top:30px">
+                  <ul class="dropdown-menu p-2" role="menu" aria-labelledby="selectLabel" ng-class="{'show': dropdownStates['labels']}">
+
                   <li class="mb-0" role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
+                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex); dropdownStates['labels'] = false" class="btn btn-wide labelButton" 
                   ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                       {{rolex.name}}</button>
               </li>

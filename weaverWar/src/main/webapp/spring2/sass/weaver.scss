@@ -272,7 +272,7 @@ a {
 .override .btn  {
     position: relative;
     border-radius: 8px;
-    padding: .15rem .5rem;
+    padding: 0rem .5rem;
     font-weight: 500;
     text-decoration: none;
     &:hover {
@@ -536,7 +536,7 @@ a {
     }
     
     .btn-small {
-        padding: 0.25rem 0.5rem;
+        padding: 0.15rem 0.5rem;
         font-size: 0.875rem;
         font-weight: 400;
         line-height: 1.5;

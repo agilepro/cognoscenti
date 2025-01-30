@@ -655,7 +655,7 @@ function addvalue() {
                 title="Double click here to update the status of this action item">
                     <span class="col-1">
                         <span style="padding:10px;">
-                            <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['dropdown1']"
+                            <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['status']"
                             aria-expanded="{{dropdownStates['status']}}"><img ng-src="<%=ar.retPath%>new_assets/assets/goalstate/large{{goalInfo.state}}.gif"/></button>
                             <ul class="dropdown-menu" ng-class="{'show': dropdownStates['status']}" role="menu"
                             aria-labelledby="changeState">
@@ -683,7 +683,8 @@ function addvalue() {
                         </span>
                     </span>
                     <span class="col-10 h4">
-                        {{stateName[goalInfo.state]}} Synopsis:&nbsp;{{goal.synopsis}}
+                        {{stateName[goalInfo.state]}} Synopsis:&nbsp;
+                        {{goal.synopsis}}
                     </span>
                 </div>
 
@@ -820,7 +821,7 @@ function addvalue() {
 
                     <span class="col-auto clickable h5" ng-click="startEdit('details')" >
                         <b>Timeframe:</b></span>
-                        <span class="d-flex clickable" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item">
+                        <span class="d-flex clickable" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item" ng-click="startEdit('details')">
                             <span class="col-auto h6 mx-3" ng-show="goalInfo.duedate>0">   
                                 Due:   </span>
                             <span class="col-2" ng-show="goalInfo.duedate>0">{{goalInfo.duedate|cdate}}  </span>
