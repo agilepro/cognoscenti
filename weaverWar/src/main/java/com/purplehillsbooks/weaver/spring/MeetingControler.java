@@ -133,13 +133,6 @@ public class MeetingControler extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/meetingHtml.htm", method = RequestMethod.GET)
-    public void meetingHtmllowercase(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        meetingHtml(siteId, pageId, request, response);
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingHtml.htm", method = RequestMethod.GET)
     public void meetingHtml(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
