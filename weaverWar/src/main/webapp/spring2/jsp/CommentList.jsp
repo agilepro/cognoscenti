@@ -37,40 +37,6 @@
     JSONArray allLabels = ngw.getJSONLabels();
     boolean canComment = ar.canUpdateWorkspace();
 
-
-
-/* NOTES RECORD PROTOTYPE
-    $scope.comment = {
-      "choices": [],
-      "commentType": 1,
-      "containerID": "8505",
-      "containerName": "DSC03885.jpg",
-      "containerType": "A",
-      "decision": "",
-      "docList": [],
-      "dueDate": 1639946254880,
-      "emailPending": false,
-      "excludeSelf": false,
-      "html": "<p>\nThis is a comment on a document called  <b>DSC03885.jpg<\/b>\n<\/p>\n<p>\nThis is a picture of Devil's Postpile!\n<\/p>\n<p>\n \n<\/p>\n<p>\n \n<\/p>\n",
-      "includeInMinutes": false,
-      "newPhase": "",
-      "notify": [],
-      "outcome": "",
-      "poll": false,
-      "postTime": 1639341514618,
-      "replies": [],
-      "replyTo": 0,
-      "responses": [],
-      "state": 13,
-      "suppressEmail": false,
-      "time": 1639341464671,
-      "user": "kswenson@pobox.com",
-      "userKey": "j9iyux0nhu6mh9n2",
-      "userName": "Keith ॐ Swenson"
-    };
-
-*/
-
 %>
 
 <style>

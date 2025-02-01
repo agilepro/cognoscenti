@@ -219,10 +219,10 @@ console.log("SLAP CONFIGURATION:", SLAP);
           data-target="#"
           data-toggle="dropdown"
           aria-expanded="false"
-          title="User: Keith ♘ Swenson">
+          title="User: <% ar.writeHtml(userName); %>">
             <i class="fa fa-user" aria-hidden="true"></i>
             <span class="dropdown-toggle-label">
-              Keith ♘ Swenson
+              <% ar.writeHtml(userName); %>
             </span>
           </a>
           <ul class="dropdown-menu bg-weaverbody text-weaverdark">
