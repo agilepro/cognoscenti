@@ -208,12 +208,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
       </div>
       <div class="well" ng-hide="commentExists">
-        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom ">
+        <div class="row d-flex my-2 pt-1 pb-3 ">
           <span class="col-3">Status</span>
           <span class="col-6">A comment/round/proposal with id {{cid}} not found.  Probably it has been deleted.</span>
         </div>
       </div>
-      <div ng-show="commentExists" style="max-width:800px">
+      <div ng-show="commentExists">
         <div class="row d-flex" ng-repeat="cmt in getComments()">
           <%@ include file="CommentView.jsp"%>          
         </div>

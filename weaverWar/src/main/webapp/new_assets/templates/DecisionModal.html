@@ -1,11 +1,11 @@
 
-<div class="modal-item pt-3"></div>
+<div class="modal-item pt-3 override"></div>
   <div class="modal-header bg-primary-subtle text-primary">
     <h4 class="modal-title" id="attachDocumentLabel">
     Edit Decision
     </h4>
   </div>
-<div class="modal-body" ng-show="editMode=='decision'">
+<div class="modal-body override" ng-show="editMode=='decision'">
   <div class="container-fluid">
     <div class="row col-12">
     	<div ui-tinymce="tinymceOptions" ng-model="htmlEditing" 
@@ -40,16 +40,17 @@
       </div>
     </div>
 </div>
-<div class="card col-sm-12">
-  <div class="d-flex card-header bg-primary-subtle text-primary"><span class="h5">Decision Details</span></div>
-  <div class="card-body">
+<div class="card col-sm-12 override">
+  <div class="d-flex card-header bg-primary-subtle text-primary"><span class="h5">Decision Details</span>
+  </div>
+  <div class="card-body override">
     <div class="container-fluid">    
       <div class="row my-2">
-        <div class="col-md-6 col-sm-12">
-          <div class="form-group d-flex col-10">
-            <label for="startdate" class="col-3 control-label h6">Date Created:</label>
+        <div class="col-6">
+          <div class="form-group d-flex col-5">
+            <label for="startdate" class="col-auto control-label h6">Date Created: &nbsp;</label>
             <span datetime-picker ng-model="decision.timestamp" 
-                class="form-control col-3" >
+                class="form-control col-3 rounded-2" >
                 <span ng-show="decision.timestamp>1000000" 
                       datetime-picker ng-model="decision.timestamp" > 
                     {{decision.timestamp|cdate}} </span>
@@ -59,11 +60,11 @@
             </span> 
           </div>
         </div>
-        <div class="col-md-6 col-sm-12">
-          <div class="form-group d-flex col-10">
-            <label for="startdate" class="col-3 control-label h6">Review Date:</label>
+        <div class="col-6">
+          <div class="form-group d-flex col-5">
+            <label for="startdate" class="col-auto control-label h6">Review Date: &nbsp;</label>
             <span datetime-picker ng-model="decision.reviewDate" 
-                class="form-control col-3" >
+                class="form-control col-3 rounded-2" >
               <span ng-show="decision.reviewDate>1000000" 
                       datetime-picker ng-model="decision.reviewDate" > 
                     {{decision.reviewDate|cdate}} </span>
@@ -78,8 +79,8 @@
       <div class="row my-3 col-12 d-flex">
           <div class="form-group d-flex">
             <label for="startdate" class="col-3 control-label h6">Review Completed:</label>
-            <button class="btn btn-secondary btn-raised btn-wide col-3" ng-click="advanceReviewDate()">Advance by 1 year</button>
-            <button class="col-3 btn btn-danger btn-raised btn-wide ms-auto" ng-click="deleteDecision()" ng-hide="decision.deleteMe">DELETE DECISION</button>
+            <button class="btn btn-secondary btn-raised btn-flex px-2" ng-click="advanceReviewDate()">Advance by 1 year</button>
+            <button class="col-3 btn btn-danger btn-raised btn-flex ms-auto px-2" ng-click="deleteDecision()" ng-hide="decision.deleteMe">Delete Decision</button>
           </div>
         </div>
       </div>
@@ -91,12 +92,12 @@
         </div>
       </div>
 <hr>
-<div class="modal-footer d-flex">
-    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="cancel()">
+<div class="modal-footer override d-flex">
+    <button class="btn btn-danger btn-default btn-raised me-auto" type="button" ng-click="cancel()">
         Cancel</button>
-    <button ng-show="decision.num=='~new~'" class="btn btn-primary btn-raised"
+    <button ng-show="decision.num=='~new~'" class="btn btn-default btn-primary btn-raised"
         type="button" ng-click="ok()">Create</button>
-    <button ng-hide="decision.num=='~new~'" class="btn btn-primary btn-raised"
+    <button ng-hide="decision.num=='~new~'" class="btn btn-default btn-primary btn-raised"
         type="button" ng-click="ok()">Save</button>
     
 </div>

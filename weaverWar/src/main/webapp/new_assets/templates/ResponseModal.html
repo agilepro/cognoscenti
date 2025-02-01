@@ -1,9 +1,10 @@
 <html>
 <body>
 
-    <div class="modal-header bg-primary-subtle text-primary ">
-        <h5 class="modal-title pt-3" id="responseModalLabel">Response to Proposal</h5></div>
-<div class="modal-body">
+<div class="modal-item pt-3"></div>
+<div class="modal-header bg-primary-subtle text-primary">
+    <h4 class="modal-title" id="commentModalLabel">Response to Proposal</h4></div>
+<div class="modal-body override">
     <div class="leafContent">
         <div ng-bind-html="displayText" style="max-height:200px;overflow: auto"></div>
     </div>
@@ -12,19 +13,19 @@
              class="leafContent" style="min-height:200px;" ></div>
     </div>
 </div>
-<div class="modal-footer d-flex">
-    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-show="unsaved==0">
+<div class="modal-footer override d-flex">
+    <button class="btn btn-default btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-show="unsaved==0">
         Exit</button>
-    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-hide="unsaved==0">
+    <button class="btn btn-default btn-danger btn-raised me-auto" type="button" ng-click="saveAndExit()" ng-hide="unsaved==0">
         Save / Exit</button>
-    <button ng-click="saveComment()" class="btn btn-outline-secondary" 
+    <button ng-click="saveComment()" class="btn btn-default btn-outline-secondary" 
             ng-disabled="((!unsaved) && (saveDisabled))" 
             ng-show="autosaveEnabled">
         <i class="fa fa-floppy-o" aria-hidden="true"></i>
         <span ng-show="unsaved==0">All Saved.</span>
         <span ng-hide="unsaved==0">Autosave in {{secondsTillSave}} seconds.</span>
     </button>
-    <button ng-repeat="choice in choices" class="btn btn-comment btn-secondary btn-raised"
+    <button ng-repeat="choice in choices" class="btn btn-default btn-primary btn-raised"
         type="button" ng-click="saveAndExit(choice)">{{choice}}</button>
 </div>
 </body>

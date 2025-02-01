@@ -399,7 +399,7 @@ function setUpCommentMethods($scope, $http, $modal) {
 
 
 <div class="container-fluid override m-2">
-    <div class="row p-0 mb-2"><hr>
+    <div class="row p-0 mb-2">
         <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
             <span class="h5">Comment</span>
         </span>
@@ -433,7 +433,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             
             <div class="comment-outer {{stateClass(cmt)}}">
                 
-                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2">
+                <ul type="button" class="btn-tiny btn  m-2 pt-1">
                     <li class="dropdown nav-item" id="commentList" data-toggle="dropdown">
                         <span ng-show="cmt.commentType==1" title="{{cmtStateName(cmt)}} Comment">
                             <i class="fa fa-comments-o" style="font-size:130%"></i>
@@ -570,20 +570,20 @@ function setUpCommentMethods($scope, $http, $modal) {
       </div>
       <!--Round only buttons-->
       <div class="d-flex mt-2" ng-show="cmt.commentType==3">
-        <button class="btn btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
+        <button class="btn btn-danger btn-default btn-raised me-2" ng-click="deleteComment(cmt)" 
                 ng-show="cmt.state<=12">Delete</button>
-        <button class="btn btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
-        <button class="btn btn-wide btn-primary btn-raised ms-auto" ng-click="openDecisionEditor(cmt)"
+        <button class="btn btn-default btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
+        <button class="btn btn-default btn-primary btn-raised ms-auto" ng-click="openCommentEditor(null,cmt)"
                  ng-show="cmt.state==12">Close Round</button>
       </div>
       <!--Proposal only buttons-->
       <div class="d-flex mt-2" ng-show="cmt.commentType==2">
-        <button class="btn btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
+        <button class="btn btn-default btn-danger btn-raised me-2" ng-click="deleteComment(cmt)" 
                 ng-show="cmt.state<=12">Delete</button>
-        <button class="btn btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
-        <button class="btn btn-wide btn-primary btn-raised ms-auto" ng-click="createModifiedProposal(item,cmt)"
+        <button class="btn btn-default btn-secondary btn-raised me-2" ng-click="openCommentEditor(null,cmt)" ng-show="cmt.state<=12">Edit</button>
+        <button class="btn btn-primary btn-raised ms-auto px-2" ng-click="createModifiedProposal(item,cmt)"
                  ng-show="cmt.state==12">Make Modified Proposal</button>
-        <button class="btn btn-wide btn-primary btn-raised ms-2" ng-click="openDecisionEditor(cmt)"
+        <button class="btn btn-primary btn-raised ms-2 px-2" ng-click="openDecisionEditor(cmt)"
                  ng-show="cmt.state==12">Close with Decision</button>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">

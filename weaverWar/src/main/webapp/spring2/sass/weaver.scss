@@ -272,7 +272,7 @@ a {
 .override .btn  {
     position: relative;
     border-radius: 8px;
-    padding: 0rem .5rem;
+    padding: 0.025rem .5rem;
     font-weight: 500;
     text-decoration: none;
     &:hover {
@@ -419,8 +419,7 @@ a {
     width: auto;
     min-width: 75px;
     max-width: 150px;
-    background: inherit;
-    border-radius: 10px;
+    border-radius: 8px;
     flex-grow: 1;
     text-align: center;
 }
@@ -431,7 +430,7 @@ a {
     vertical-align: middle;
     flex-grow: 1;
     border: #4d2f5e 1px solid;
-    border-radius: 10px;
+    border-radius: 8px;
     &:hover {
         background-color: $secondary-20;
         color: $primary;
@@ -445,10 +444,15 @@ a {
     min-width: 30px;
     max-width: 30px;
     padding: 0px;
+    border: solid 1px;
+    border-radius: 5px;
+    background-color: #fff;
     &:hover {
         background-color: $secondary-20;
         color: $primary;
         cursor: pointer;
+        border: solid 1px;
+        border-radius: 5px;
     }
 }
 
@@ -967,11 +971,16 @@ foreignObject {
 }
 
 .comment-state-complete {
-    background-color: $secondary-20;
+    background-color: #eee;
+}
+.comment-state-active {
+    background-color: #cddacd;
+}
+.comment-state-draft {
+    background-color: #f1f1cb;
 }
 .comment-outer {
-    border: $secondary-60 solid 1px;
-    background-color: $secondary-10;
+    border: solid 1px;
     border-radius: 8px;
     margin-top: 5px;  
     cursor: pointer;
