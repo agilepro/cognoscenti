@@ -652,7 +652,7 @@ function addvalue() {
             
                 <!--State and Title start-->
                 <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')">
-                    <span class="col-1"  
+                    <span class="col-auto"  
                           title="This action item is in {{stateName[goalInfo.state]}} state">
                         <span style="padding:10px;">
                             <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['status']"
@@ -684,7 +684,7 @@ function addvalue() {
                     </span>
                     <span class="col-10 h4"  
                         title="This is the synopsis of the action item">
-                        {{goalInfo.synopsis}}
+                        {{stateName[goalInfo.state]}} &nbsp;<i class="fa fa-caret-right"></i> &nbsp;&nbsp;{{goalInfo.synopsis}}
                     </span>
                 </div>
 
@@ -914,7 +914,7 @@ function addvalue() {
     <span class="col-auto clickable h6 mx-2 pt-1" title="On the meeting page, you can link action items, and those meetings will appear here">
                 Linked Meetings:</span>
             <span class="col-auto" title="On the meeting page, you can link action items, and those meetings will appear here">
-                <span ng-repeat="meet in linkedMeetings" class="btn btn-outline-secondary btn-raised"  style="margin:4px;"
+                <span ng-repeat="meet in linkedMeetings" class="btn btn-outline-secondary btn-raised py-1"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                 </span>
@@ -1059,5 +1059,6 @@ function updateVal(){
 <script src="<%=ar.retPath%>new_assets/templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/InviteModal.js"></script>
+<script src="<%=ar.baseURL%>new_assets/templates/EditLabelsCtrl.js"></script>
 
 

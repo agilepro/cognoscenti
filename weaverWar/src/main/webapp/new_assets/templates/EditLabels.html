@@ -28,14 +28,14 @@
                     </span>
                 </div>
 
-                <div class="col-4">
-                    <ul class="dropdown btn btn-default" ng-show="label.isEdit || label.isNew">
-                        <li class="btn nav-item dropdown py-2 mb-0" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle p-2" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="col-4 override">
+                    <ul class="dropdown btn btn-default " ng-show="label.isEdit || label.isNew">
+                        <li class="btn btn-default nav-item dropdown border border-1" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{label.color}} </a>
                     
-                        <ul class="dropdown-menu pt-1" role="menu" aria-labelledby="EditLabels">
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="EditLabels">
                             <li role="presentation" ng-repeat="color in colors">
-                                <a class="dropdown-item p-3" style="background-color:{{color}};"
+                                <a class="dropdown-item" style="background-color:{{color}};"
                                 href="#"  ng-click="label.color=color">{{color}}</a></li>
                         </ul>
                     </li>
@@ -51,14 +51,15 @@
                         ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
                     </span>
                     <span ng-show="label.isEdit">
-                        <button class="btn btn-small btn-primary" ng-click="updateLabel(label)">Save</button>
+                        <button class="btn btn-wide btn-danger px-2" ng-click="deleteLabel(label)">Delete</button>
                     </span>
                     <span ng-show="label.isEdit">
-                        <button class="btn btn-small btn-danger" ng-click="deleteLabel(label)">Delete</button>
+                        <button class="btn btn-wide btn-primary px-2 float-end me-5" ng-click="updateLabel(label)">Save</button>
                     </span>
+                    
                     <span ng-hide="label.isEdit"></span>
                     <span ng-show="label.isNew">
-                        <button class="btn btn-secondary btn-small" ng-click="updateLabel(label)">Create</button>
+                        <button class="btn btn-secondary btn-wide px-2" ng-click="updateLabel(label)">Create</button>
                     </span>
                 </div>
             </div>
@@ -67,7 +68,7 @@
         </div>
     </div>
 </div>
-<div class="modal-header mt-2 bg-primary-subtle text-primary">
+<div class="mt-2 bg-primary-subtle text-primary px-3">
         <h5 class="modal-title" id="attachDocumentLabel">
   Create Custom Labels
         </h5>
@@ -103,9 +104,9 @@
         </div>
 
 <div class="modal-footer">
-    <button class="btn btn-danger btn-raised me-auto" type="button" ng-click="exitPopup()">
+    <button class="btn btn-default btn-danger btn-raised me-auto" type="button" ng-click="exitPopup()">
         Exit</button>
-    <button class="btn btn-primary btn-raised" ng-click="createLabel()">
+    <button class="btn btn-default btn-primary btn-raised" ng-click="createLabel()">
          Create</button>
 </div>
     </div>

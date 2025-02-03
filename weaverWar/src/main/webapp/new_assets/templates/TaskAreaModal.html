@@ -1,24 +1,26 @@
 <html>
 <body>
-
+<div class="modal-item pt-3"></div>
     <div class="modal-header bg-primary-subtle text-primary ">
-        <h5 class="modal-title pt-3" id="taskAreaLabel">
-    Edit Task Area ( id = {{taskArea.id}} )
-    </h5>
+        <h4 class="modal-title" id="taskAreaLabel">
+    Edit Task Area <span class="h5">( id = {{taskArea.id}} )</span>
+    </h4>
   </div>
 
-<div class="modal-body">
+<div class="modal-body ovreride">
      <div class="container-fluid">
-          <div class="row col-12">
-    <div class="form-group" 
-         title="Name appears in places where action items are grouped into areas.">
-      <label for="labels">Name:</label>
-      <input ng-model="taskArea.name" class="form-control" placeholder="Enter Displayed Name"/>
-    </div>
-    <div class="form-group" 
-         title="Simple Red-Yellow-Green assessment of the situation.">
-      <label for="labels">R-Y-G:</label>
-      <div>
+          <div class="row d-flex col-12 my-3">
+               <span class="col-auto" title="Name appears in places where action items are grouped into areas.">
+                    <label class="h6" for="labels">Name:</label></span>
+               <span class="col-8">
+                    <input ng-model="taskArea.name" class="form-control" placeholder="Enter Displayed Name"/>
+               </span>
+          </div>
+          <div class="row d-flex col-12 my-3">
+               <span class="col-auto" title="Simple Red-Yellow-Green assessment of the situation.">
+               <label class="h6" for="labels">R-Y-G:</label></span>
+               <span class="col-8">
+                    <div>
           <img src="../../../assets/goalstate/red_off.png" ng-hide="taskArea.prospects=='bad'"
                title="Red: In trouble" ng-click="changeProspect('bad')">
           <img src="../../../assets/goalstate/red_on.png"  ng-show="taskArea.prospects=='bad'"
@@ -31,33 +33,33 @@
                title="Green: Good shape" ng-click="changeProspect('good')">
           <img src="../../../assets/goalstate/green_on.png"  ng-show="taskArea.prospects=='good'"
                title="Green: Good shape">
-       </div>
-    </div>
-  </div>
-  <div class="col-sm-12 col-md-6">
-    <div class="form-group" 
-         title="Assignee is the person who is tracking status on items assigned to this area">
-      <label for="labels">Assignee:</label>
-      <tags-input ng-model="taskArea.assignees" placeholder="Enter user name or id" display-property="name" key-property="uid">
-          <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-      </tags-input>
-    </div>
-    
-    <div class="form-group" 
-         title="The status is text describing the current situation for all the actions in this area.">
-      <label for="labels">Status:</label>
-      <textarea ng-model="taskArea.status" class="form-control" placeholder="Current status"></textarea>
-    </div>
-  </div>
-  
-  <div style="clear:both"></div>
+                    </div>
+               </span>
+          </div>
+          <div class="row d-flex col-12 my-3">
+               <span class="col-auto" title="Assignee is the person who is tracking status on items assigned to this area">
+               <label class="h6" for="labels">Assignee:</label></span>
+               <span class="col-8">
+                    <tags-input ng-model="taskArea.assignees" placeholder="Enter user name or id" display-property="name" key-property="uid">
+                         <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                    </tags-input>
+               </span>
+          </div>
+          <div class="row d-flex col-12 my-3">
+               <span class="col-auto" title="The status is text describing the current situation for all the actions in this area.">
+                    <label class="h6" for="labels">Status:</label></span>
+               <span class="col-8">
+                    <textarea ng-model="taskArea.status" class="form-control" placeholder="Current status"></textarea>
+               </span>
+          </div>
+
 </div>
-<div class="modal-footer">
-    <button class="btn btn-warning btn-raised pull-left" ng-click="cancel()">
+<div class="modal-footer override">
+    <button class="btn btn-default btn-danger btn-raised me-auto" ng-click="cancel()">
         Cancel</button>
-    <button ng-show="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+    <button ng-show="id=='~new~'" class="btn btn-default btn-primary btn-raised" ng-click="ok()">
         Create</button>
-    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised" ng-click="ok()">
+    <button ng-hide="id=='~new~'" class="btn btn-default btn-primary btn-raised" ng-click="ok()">
         Save</button>
 </div>
 

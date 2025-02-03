@@ -409,6 +409,10 @@ a {
     display: block;
   }
 
+  .override .btn:active, .btn:first-child:active {
+    border: 0px;
+    border-image-width: 0px;
+}
 
 .override .btn-wide {
     width: fit-content;
