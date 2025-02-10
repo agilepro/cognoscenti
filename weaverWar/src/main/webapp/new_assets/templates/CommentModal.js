@@ -350,7 +350,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '../../new_assets/templates/AttachDocument.html?s=a',
+            templateUrl: '../../../new_assets/templates/AttachDocument.html?s=a',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {

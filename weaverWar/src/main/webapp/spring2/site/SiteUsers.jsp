@@ -173,21 +173,22 @@ app.filter('encode', function() {
         </div>        
     <div class="table">
         <div class="row col-12 my-3">
-         <span class="col-1"></span>
-         <span class="col-3 h6">Name <input type="text" ng-model="filter" style="height: 25px;"/></span>
+         <span class="col-1 h6">Filter by Name</span>
+         <span class="col-2 "> <input type="text" ng-model="filter" style="height: 25px;"/></span>
          <span class="col-3 h6">Primary Email</span>
          <span class="col-1 h6">Access</span>
          <span class="col-2 h6">Last Login</span>
          <span class="col-1 h6">Objects</span>
          <span class="col-1 h6">Workspaces</span>
         </div>
-        <div class="row col-12 my-3" ng-repeat="value in findUsers()" 
-          ng-click="visitUser(value.info.uid)"><hr>
-        <span class="col-1">
-            <img class="rounded-5 p-0" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
-                 style="width:32px;height:32px;cursor: pointer;" title="{{value.info.name}} - {{value.info.uid}}">
+        <div class="row col-12 my-3" ng-repeat="value in findUsers()" ><hr>
+        <span class="col-1 h6">&nbsp;Edit:
+            <img class="rounded-5 p-0" 
+          ng-click="visitUser(value.info.uid)" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
+                 style="width:32px;height:32px;cursor: pointer;" title="Edit User: {{value.info.name}} - {{value.info.uid}}">
         </span>
-        <span class="col-3">{{value.info.name}}</span>
+        <span class="col-2">{{value.info.name}}</span>
+
         <span class="col-3">{{value.info.uid}}</span>
         <span class="col-1">
             <span ng-show="value.readOnly">Observer</span>

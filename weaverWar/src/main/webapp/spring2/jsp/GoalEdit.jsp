@@ -683,8 +683,8 @@ function addvalue() {
                         </span>
                     </span>
                     <span class="col-10 h4"  
-                        title="This is the synopsis of the action item">
-                        {{stateName[goalInfo.state]}} &nbsp;<i class="fa fa-caret-right"></i> &nbsp;&nbsp;{{goalInfo.synopsis}}
+                        title="This is the synopsis of the action item"><span style="color:#755d82;">
+                        {{stateName[goalInfo.state]}} </span>&nbsp;<i class="fa fa-caret-right"></i> &nbsp;&nbsp;{{goalInfo.synopsis}}
                     </span>
                 </div>
 
@@ -693,39 +693,16 @@ function addvalue() {
                 <!--State Start-->
             <div class="row d-flex my-2 py-2 border-bottom border-1"> 
                     
-                    <span class="col-6 ">
+                    <span class="col-5 ">
                         <button class="btn-wide btn-comment btn-raised mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
                         <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
                         <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(5)" ng-show="goalInfo.state<5">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed</button>
                     </span>
-                    <!-- temp remove Select State button
-                    <span class="col-6 dropdown" >            
-                        <button class="dropdown-toggle btn btn-comment btn-wide btn-raised py-0" type="button" id="changeState" data-bs-toggle="dropdown">
-                        Select <i class="fa fa-arrow-circle-down"></i> State <span class="caret"></span></button>
-                            <ul class="dropdown-menu" aria-labelledby="changeState">
-                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small1.gif"> Unstarted
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small5.gif"> Completed
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown btn btn-wide py-0 px-2" role="presentation">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small6.gif"> Skipped
-                                </a>
-                            </li>
-                            </ul>
-                    </span>-->
-            </div>
+                    <span class="col-5 p-1">
+                        <span class="h5">Task Area:</span>
+                        <span class="h5" ng-show="allTaskAreas"> {{ta.name}} </span>
+                    </span>
+                                </div>
             <!--State End-->
                 <!--Assigned To Start-->
                 <div class="row d-flex my-2 py-2 border-bottom border-1" title="The action item can be assigned to any number of people who will receive reminders until it is completed." >
