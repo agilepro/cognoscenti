@@ -170,6 +170,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
           <span ng-click="openTaskAreaModal(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;
           <span ng-click="moveTaskArea(ta, true)" ><span class="fa fa-arrow-down"></span></span> &nbsp;
+          <span ng-click="deleteTaskArea(ta)" ><span class="fa fa-trash"></span></span>
       </span>
         <span class="col-3" ng-dblclick="openTaskAreaModal(ta)" >{{ta.name}}</span>
         <span class="col-2" title="Click on person name to see their profile information">
