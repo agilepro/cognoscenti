@@ -445,9 +445,15 @@ public class ProjectGoalController extends BaseController {
             ar.assertNotFrozen(ngw);
             JSONObject post = this.getPostedObject(ar);
             String areaId = post.getString("areaId");
-            boolean moveDown = post.getBoolean("moveDown");
-            ngw.moveTaskArea(areaId, moveDown);
-            ngw.saveFile(ar, "changed the order of task areas");
+            if (post.has("deleteTaskArea")) {
+                ngw.removeTaskArea(areaId);
+                ngw.saveFile(ar, "changed the order of task areas");
+            }
+            else {
+                boolean moveDown = post.getBoolean("moveDown");
+                ngw.moveTaskArea(areaId, moveDown);
+                ngw.saveFile(ar, "changed the order of task areas");
+            }
 
             JSONObject repo = new JSONObject();
             JSONArray shareList = new JSONArray();

@@ -888,6 +888,18 @@ public class NGWorkspace extends NGPage {
         }
         throw WeaverException.newBasic("Could not find a task area with the id=%s", id);
     }
+    public TaskArea removeTaskArea(String id) throws Exception {
+        JSONObject wkspc = getWorkspaceJSON();
+        JSONArray areas = wkspc.requireJSONArray("taskAreas");
+        JSONArray newAreas = new JSONArray();
+        for (JSONObject m : areas.getJSONObjectList()) {
+            if (!id.equals(m.getString("id"))) {
+                newAreas.put(m);
+            }
+        }
+        wkspc.put("taskAreas", newAreas);
+        return null;
+    }
 
 
 

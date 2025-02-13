@@ -84,6 +84,25 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             $scope.reportError(data);
         });
     }
+    $scope.deleteTaskArea = function(item) {
+        if (!confirm("Are you sure you want to delete task area "+item.name+"?")) {
+            return;
+        }
+        let postObject = {areaId: item.id, deleteTaskArea: true};
+        console.log("deleteTaskArea", postObject);
+        var getURL = "moveTaskArea.json";
+        $http.post(getURL, angular.toJson(postObject))
+        .success( function(data) {
+            console.log("received TaskAreas", data);
+            $scope.allTaskAreas = data.taskAreas;
+            $scope.loaded = true;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+        
+        
+    }
     
     $scope.getTaskAreas();
 
