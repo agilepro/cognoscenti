@@ -724,6 +724,9 @@ public class GoalRecord extends BaseRecord {
     public String getProspects() {
         return getScalar("prospects");
     }
+    public String getTaskArea() {
+        return getScalar("taskArea");
+    }
 
     /**
      * get the labels on a document -- only labels valid in the project,

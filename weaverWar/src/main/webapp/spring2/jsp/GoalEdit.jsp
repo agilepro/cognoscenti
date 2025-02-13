@@ -458,14 +458,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return res;
     }
+    $scope.getTaskArea = function() {
+                console.log("$scope.taskAreaList", $scope.taskAreaList);
+        for (val of $scope.taskAreaList) {
+                console.log("Trying", val);
+            if ($scope.goalInfo.taskArea === val.id) {
+                console.log("FOUND", val);
+                return val.name;
+            }
+        }
+        return "unknown";
+    }
     $scope.navigateToTopic = function(oneTopic) {
         window.location="noteZoom"+encodeURIComponent(oneTopic.id)+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
         window.location="MeetingHtml.htm?id="+encodeURIComponent(meet.id);
-    }
-    $scope.showUser = function(tag) {
-        //alert("gotcha:" + tag.name);
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
@@ -700,7 +708,7 @@ function addvalue() {
                     </span>
                     <span class="col-5 p-1">
                         <span class="h5">Task Area:</span>
-                        <span class="h5" ng-show="allTaskAreas"> {{ta.name}} </span>
+                        <span class="h5"><b>{{getTaskArea()}}</b></span>
                     </span>
                                 </div>
             <!--State End-->
