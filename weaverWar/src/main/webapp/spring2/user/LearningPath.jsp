@@ -54,7 +54,7 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-<div class="container  pull-left col-8 ms-4">
+<div class="container override pull-left col-8 ms-4">
     <div class="row well mb-3">
         <span class="h6 col-8 ms-3 guideVocal">
             These are your learning path steps.  As you close a learning path box on a 

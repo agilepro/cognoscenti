@@ -366,7 +366,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="row">
 <!-- COLUMN 1 -->
     <div class="col-md-4 col-sm-12">
@@ -377,7 +377,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body fs-6">
                 You do not play any role in this workspace.
                 <br/>
                 You do have some guest access to some things.
@@ -389,8 +389,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 %>
 <div class="card m-3">
     <div class="card-header">
-        <div class="d-flex" title="Discussions you can contribute to"><h2 class="h5 card-title">Discussions</h2>
-            <br/><p> you Subscribe to</p>
+        <div class="d-flex" title="Discussions you can contribute to"><h2 class="h5 card-title">Discussions you subscribe to</h2>
             <div class="ms-auto"></div>
         </div>
     </div>
@@ -419,7 +418,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 %>
 <div class="card m-3">
     <div class="card-header">
-        <div class="d-flex" title="Meetings you have access to"><h2 class="h5 card-title">Meetings you are Participant in</h2>
+        <div class="d-flex" title="Meetings you have access to"><h2 class="h5 card-title">Meetings you participate in</h2>
             <div class="ms-auto"></div>
         </div>
     </div>
@@ -453,13 +452,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div ng-hide="isRequested">
                 If you think you should be a member then please:  
             </div>
-            <button class="my-2 btn btn-primary btn-wide btn-sm btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
+            <button class="my-2 btn btn-primary btn-wide btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
         </div>
         <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
             <div>Enter a reason to join the workspace:</div>
             <textarea ng-model="enterRequest" class="form-control"></textarea>
-            <button class="btn btn-primary btn-raised" ng-click="roleChange()">Request Membership</button>
-            <button class="btn btn-warning btn-raised" ng-click="enterMode=false">Cancel</button>
+            <button class="btn btn-danger btn-raised" ng-click="enterMode=false">Cancel</button>
+            <button class="btn btn-primary btn-raised float-end" ng-click="roleChange()">Request Membership</button>
+            
         </div>
 </div>
     </div>

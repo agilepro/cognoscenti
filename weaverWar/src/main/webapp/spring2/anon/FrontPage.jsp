@@ -93,82 +93,81 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-  <div style="margin:25px">
+  <div class="container ms-5 col-sm-12">
     <h2>{{siteInfo.names[0]}} - {{workspaceConfig.allNames[0]}}</h2>
     
-    <p>This is a Weaver workspace where people come to agrement.</p>
+    <p class="fs-5"><em>This is a Weaver workspace where people come to agreement.</em></p>
     
-    <div>
+    <h3 class="mb-3">
         Please
         <button class="btn btn-primary btn-raised" onClick="SLAP.loginUserRedirect()">
             Login
         </button>
         to find out more.
-    </div>
+    </h3>
   </div>
 
 <!-- COLUMN 3 -->
-  <div class="col-lg-4 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+  <div class="container-fluid ms-5 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
 
-    <div class="panel panel-default" >
-      <div class="panel-heading headingfont">
-          <div style="float:left">Vision of Workspace</div>
-          <div style="float:right" title="Edit vision in this workspace">
+    <div class="panel panel-default col-12 ms-5" >
+      <div class="panel-heading headingfont d-flex">
+          <h4 class="col-auto">Vision of Workspace</h4>
+          <!--<span class="ms-auto" title="Edit vision in this workspace">
               <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
-          <div style="clear:both"></div>
+                  <i class="fa fa-info-circle"></i></a></span>-->
       </div>
       <div class="panel-body" >
           <a href="AdminSettings.htm">
-          <div ng-bind-html="workspaceConfig.vision|wiki"></div>
+          <div class="fs-5" ng-bind-html="workspaceConfig.vision|wiki"></div>
           </a>
       </div>
     </div>
   </div>
-  <div class="col-lg-4 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Mission of Workspace</div>
-          <div style="float:right" title="Edit mission in this workspace">
+  <div class="container-fluid ms-5 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+    <div class="panel panel-default col-12 ms-5">
+      <div class="panel-heading headingfont d-flex">
+          <h4 class="col-auto">Mission of Workspace</h4>
+        <!--<span class="ms-auto" title="Edit mission in this workspace">
               <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
-          <div style="clear:both"></div>
+                  <i class="fa fa-info-circle"></i></a></span>-->
+
       </div>
-      <div class="panel-body" >
+      <div class="panel-body " >
           <a href="AdminSettings.htm">
-          <div ng-bind-html="workspaceConfig.mission|wiki"></div>
+          <div class="fs-5" ng-bind-html="workspaceConfig.mission|wiki"></div>
           </a>
       </div>
     </div>
   </div>
-  <div class="col-lg-4 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Aim of Workspace</div>
-          <div style="float:right" title="Edit aim in this workspace">
+  <div class="container-fluid ms-5 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
+    <div class="panel panel-default col-12 ms-5">
+      <div class="panel-heading headingfont d-flex">
+          <h4 class="col-auto">Aim of Workspace</h4>
+        <!--<span class="ms-auto" title="Edit aim in this workspace">
               <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
-          <div style="clear:both"></div>
+                  <i class="fa fa-info-circle"></i></a></span>-->
+
       </div>
       <div class="panel-body" >
           <a href="AdminSettings.htm">
-          <div ng-bind-html="workspaceConfig.purpose|wiki"></div>
+          <div class="fs-5" ng-bind-html="workspaceConfig.purpose|wiki"></div>
           </a>
       </div>
     </div>
   </div>
-  <div class="col-lg-4 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
-    <div class="panel panel-default">
-      <div class="panel-heading headingfont">
-          <div style="float:left">Domain of Workspace</div>
-          <div style="float:right" title="Edit domain in this workspace">
+  <div class="container-fluid ms-5 col-md-6 col-sm-12" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+    <div class="panel panel-default col-12 ms-5">
+      <div class="panel-heading headingfont d-flex">
+          <h4 class="col-auto">Domain of Workspace</h4>
+        <!--<span class="ms-auto" title="Edit domain in this workspace">
               <a href="AdminSettings.htm">
-                  <i class="fa fa-info-circle"></i></a></div>
-          <div style="clear:both"></div>
+                  <i class="fa fa-info-circle"></i></a></span>-->
+
       </div>
       <div class="panel-body" >
           <a href="AdminSettings.htm">
-          <div ng-bind-html="workspaceConfig.domain|wiki"></div>
+          <div class="fs-5" ng-bind-html="workspaceConfig.domain|wiki"></div>
           </a>
       </div>
     </div>

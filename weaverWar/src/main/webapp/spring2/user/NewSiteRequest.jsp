@@ -248,7 +248,7 @@ function validateEmail(email) {
 
 
 
-  <div ng-show="phase==12" class="well" style="overflow: hidden">
+  <div ng-show="phase==12" class="well override" style="overflow: hidden">
 
     <p>A <i>site</i> is a place where you can create workspaces.
     You can have as many workspaces as you would like, one for each
@@ -264,21 +264,21 @@ function validateEmail(email) {
     about the group using the site.  You can change the name at any time.
     Just a few words, maybe 20 to 50 characters total.</p>
 
-    <div class="form-group">
+    <div class="form-group override">
         <label class="h6">
             Site Name
         </label>
         <input type="text" class="form-control" ng-model="newSite.siteName"/>
     </div>
 
-    <button class="btn btn-primary btn-raised" ng-click="next()" style="float:right"
+    <button class="override btn btn-primary btn-raised float-end my-3" ng-click="next()"
             ng-show="newSite.siteName.length>5">Next</button>
-    <button class="btn btn-default btn-raised" ng-click="alert('enter 6 or more letters into the name')" style="float:right"
+    <button class="btn btn-primary btn-raised float-end  my-3" ng-click="alert('enter 6 or more letters into the name')" 
             ng-show="newSite.siteName.length<=5">Next</button>
 
   </div>
 
-  <div ng-show="phase==13" class="well">
+  <div ng-show="phase==13" class="well override">
 
     <p><b>Step 3: </b> Please provide a key for the URL.</p>
 
@@ -293,13 +293,13 @@ function validateEmail(email) {
         <input type="text" class="form-control" ng-model="newSite.siteId"/>
     </div>
 
-    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" style="float:right"
+    <button class="btn btn-secondary btn-raised my-3" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised float-end  my-3" 
             ng-click="next()" ng-show="newSite.siteId.length>3">Next</button>
 
   </div>
 
-  <div ng-show="phase==14" class="well">
+  <div ng-show="phase==14" class="well override">
 
     <p><b>Step 4: </b> Describe the purpose of the site.</p>
 
@@ -313,16 +313,16 @@ function validateEmail(email) {
         <textarea class="form-control" ng-model="newSite.purpose"></textarea>
     </div>
 
-    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" style="float:right"
+    <button class="btn btn-secondary btn-raised my-3" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised my-3 float-end" 
             ng-click="next()"  ng-show="newSite.purpose.length>10">Next</button>
-    <button class="btn btn-default btn-raised" ng-click="alert('enter 9 or more letters into the description')" style="float:right"
+    <button class="btn btn-primary btn-raised my-3 float-end" ng-click="alert('enter 9 or more letters into the description')" 
             ng-show="newSite.purpose.length<=9">Next</button>
 
   </div>
 
 
-  <div ng-show="phase==15" class="well">
+  <div ng-show="phase==15" class="well override">
 
     <p><b>Step 5: </b> Enter 'Pre-approval Code' if you have one.</p>
 
@@ -341,13 +341,13 @@ function validateEmail(email) {
         <input type="text" class="form-control" ng-model="newSite.preapprove"/>
     </div>
 
-    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" style="float:right"
+    <button class="btn btn-secondary btn-raised my-3" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised my-3 float-end" 
             ng-click="next()">Next</button>
 
   </div>
 
-  <div ng-show="phase==16" class="well">
+  <div ng-show="phase==16" class="well override">
 
     <p><b>Step 6: </b> Are you a robot?</p>
 
@@ -363,37 +363,37 @@ function validateEmail(email) {
         <input type="text" class="form-control" ng-model="newSite.capcha"/>
     </div>
 
-    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" style="float:right"
+    <button class="btn btn-secondary btn-raised my-3" ng-click="prev()">Back</button>
+    <button class="bbtn btn-primary btn-raised my-3 float-end" 
             ng-click="next()"
             ng-show="newSite.capcha==='307'">Next</button>
  
 
   </div>
 
-  <div ng-show="phase==17" class="well"  style="overflow: hidden">
+  <div ng-show="phase==17" class="well override"  style="overflow: hidden">
     <p><b>Step 7: </b> Submit</p>
 
     <p>Review all the information above, and confirm correct.
        If you want to change a value click on it.
     </p>
     <div class="form-group">
-        <button class="btn btn-primary btn-raised" style="float:right"
+        <button class="btn btn-primary btn-raised my-3 float-end" 
             ng-click="submitItAll()">
             Request Site</button>
     </div>
 
   </div>
 
-  <div ng-show="phase==18" class="well">
+  <div ng-show="phase==18" class="well override">
     <p>Requesting site.</p>
   </div>
-  <div ng-show="phase==19" class="well">
+  <div ng-show="phase==19" class="well override">
     <p>The site has been requested, and an email sent to the
     administrator.  You will receive an email letting you know
     when it has been approved for use.</p>
   </div>
-  <div ng-show="phase==20" class="well">
+  <div ng-show="phase==20" class="well override">
     <p>Something went wrong with the request.
     Perhaps the information below will be helpful.</p>
 

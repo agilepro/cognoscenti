@@ -54,8 +54,8 @@
 
       
       <li class="nav-item dropdown"><a class="nav-link dropdown p-1" href="https://s06.circleweaver.com/TutorialList.html" title="Lots of videos on YouTube to help you learn how to use Weaver." target="_blank"><img src="<%=ar.retPath%>new_assets/assets/navicon/Training.png" > </a></li>
-
-      <li class="my-5 text-weaverbody">
+<div style="height:100px"></div>
+      <li class="my-5 text-weaverbody" data-bs-toggle="modal" data-bs-target="#accessModal">
         <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have limited access to some parts of this workspace" 
              class="accessIndicator"/>
       </li>
@@ -63,7 +63,34 @@
   </ul>
 
     </div>
-
+    <!-- Modal -->
+    <div class="modal fade" id="accessModal" tabindex="-1" aria-labelledby="accessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                
+                    <div class="modal-header bg-primary-subtle text-primary">
+                        <h5 class="modal-title" id="accessModalLabel">Guest Access</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6><img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png"
+                            title="You have guest access to this workspace" class="accessIndicator" /> = Guest access to
+                        this workspace.<br>If you would like to access this workspace, please contact
+                            your administrator.</h6><br>
+                        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png"
+                                title="You have observer access to this workspace" class="accessIndicator" /> = 
+                            Observer access to this workspace. <br>
+                            <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png"
+                            title="You have full edit access to this workspace" class="accessIndicator" /> = Full editing
+                        access to this workspace. <br>
+                        
+                    </div>
+                            <div class="modal-footer override">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+            </div>
+        </div>
+    </div>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>

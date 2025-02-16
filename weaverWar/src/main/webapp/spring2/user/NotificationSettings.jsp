@@ -111,7 +111,7 @@ app.controller('myCtrl', function($scope, $http) {
         <div class="container-fluid">
             <div class="generalContent">
           
-<div class="well ms-2 col-8" ng-hide="hideNote" ng-click="hideNote=true">
+<div class="well ms-2 col-8 override" ng-hide="hideNote" ng-click="hideNote=true">
     <span class="guideVocal">
     <p>The purpose of this page is to allow you to see all of the roles in all of the projects 
     that you play.  It allows you an easy way to withdraw from those roles that you no longer 

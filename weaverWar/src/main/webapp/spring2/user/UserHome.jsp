@@ -123,7 +123,7 @@ myApp.controller('myCtrl', function($scope, $http) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 <!-- MAIN CONTENT SECTION START -->
 
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="row col-12 d-flex">
 
 <!-- COLUMN 1 -->
@@ -273,7 +273,7 @@ myApp.controller('myCtrl', function($scope, $http) {
     </div>
 </div>
 <div class="row"><hr class="divider"> </div>
-<div class="row"> 
+<div class="row override"> 
     <div class="mx-5 col-md-10 d-flex align-items center">
 
         <a class="btn btn-primary btn-raised m-1" href="UserHome.htm?ref=<%=ar.nowTime%>" translate

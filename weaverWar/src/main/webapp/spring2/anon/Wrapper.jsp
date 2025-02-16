@@ -244,18 +244,19 @@ function setUpLearningMethods($scope, $modal, $http) {
 <body ng-app="myApp" ng-controller="myCtrl">
   
   
-<div class="bodyWrapper">
+<div class="bodyWrapper override">
 
 <!-- Begin mainContent -->
-<div class="main-content">
+
 <%@ include file="AnonNavBar.jsp" %>
 
     <!-- BEGIN Title and Breadcrump -->
-    <div class="col col-lg-12">
-      <ol class="title">
-          <!-- user is not logged in, don't display any breadcrumbs -->
-        <li class="page-name"><h1 id="mainPageTitle">Welcome to Weaver</h1></li>
-      </ol>
+    <div class="container-fluid override my-2">
+    <span><!-- user is not logged in, don't display any breadcrumbs -->
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+          
+        
     </div>
 
     <!-- Begin Template Content (compiled separately) -->

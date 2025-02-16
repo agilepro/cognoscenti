@@ -73,14 +73,14 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <!-- MAIN CONTENT SECTION START -->
-  <div class="userPageContents">
+  <div class="userPageContents override">
 
   <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-    <a class="btn-comment btn-raised m-4" href="NewSiteRequest.htm">Request New Site</a>
+    <a class="override btn btn-wide btn-primary mx-4" href="NewSiteRequest.htm">Request New Site</a>
     
-    <div class="generalContent my-4">
+    <div class="generalContent mx-3">
         <div class="col-12 table">
             <div class="row">
                 <span class="col-2 my-3 ms-3 h5 text-secondary">Site Name</span>
@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <span class="col-2 my-3 ms-3 text-secondary">{{rec.numTopics}}</span>
             </div>
         </div>
-<div class="container-fluid mx-3">
+<div class="container-fluid mx-3 override">
     <div class="guideVocal" ng-show="siteList.length==0">
         <p ng-show="reqNum>0">User <% uProf.writeLink(ar); %> has requested {{reqNum}} sites.</p>
         <p ng-show="reqNum==0"><b>User <% uProf.writeLink(ar); %> does not have any sites.</b></p>
@@ -108,7 +108,7 @@ app.controller('myCtrl', function($scope, $http) {
         Other site owners may give you permission to create workspaces in their sites.</p>
 
         <form name="createAccountForm" method="GET" action="NewSiteRequest.htm">
-            <input type="submit" class="btn btn-sm btn-comment btn-wide btn-primary"  Value="Request New Site">
+            <input type="submit" class="btn btn-wide btn-primary"  Value="Request New Site">
         </form>
         <br/>
         <p>Use this button to request a new site from the system administrator.</p>

@@ -165,7 +165,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               href="MultiInvite.htm"><span class="fa fa-envelope"></span>&nbsp;Multi-Person Invite</a></span>
 
-
+ 
             <div class="d-flex col-12 m-3">
                 <div class="contentColumn">
                     <span class="h6"><i>Add people to the project by entering their email address and name.</i></span>

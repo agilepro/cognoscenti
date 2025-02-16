@@ -78,7 +78,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <%@include file="ErrorPanel.jsp"%>
 
 
-<div class="container-fluid">
+<div class="container-fluid override">
     <div class="row col-7 ms-4 d-flex">
         <span class="h5">
     You are logged in as <%=user.getName()%> ( <%=user.getUniversalId()%> ).
@@ -134,20 +134,21 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
 
         <div ng-hide="enterMode || alternateEmailMode" class="well col-6">
-            <div ng-show="isRequested">
-                 You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/>
+            <div ng-show="isRequested" class="h6">
+                 You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/><br />
                  The status of that request is: <b>{{requestState}}</b>.
             </div>
             <div class="h6 my-3 " ng-hide="isRequested">
                 If you think you should be a member then please:
             </div>
-            <button class="btn btn-primary btn-comment btn-wide btn-sm btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
+            <button class="btn btn-primary btn-wide btn-raised pull-right" ng-click="takeStep()">Request Membership</button>
         </div>
         <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
             <div>Enter a reason to join the workspace:</div>
             <textarea ng-model="enterRequest" class="form-control"></textarea>
-            <button class="btn btn-primary btn-raised" ng-click="roleChange()">Request Membership</button>
-            <button class="btn btn-warning btn-raised" ng-click="enterMode=false">Cancel</button>
+                        <button class="btn btn-danger btn-raised" ng-click="enterMode=false">Cancel</button>
+                        <button class="btn btn-primary btn-raised float-end" ng-click="roleChange()">Request Membership</button>
+
         </div>
 </div>
 

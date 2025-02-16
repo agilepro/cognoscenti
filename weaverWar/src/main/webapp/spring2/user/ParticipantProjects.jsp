@@ -103,20 +103,23 @@ app.controller('myCtrl', function($scope, $http) {
             <span class="col-3 my-3">{{rec.changed|cdate}}</span>
         </div>
         </div>
-        <div class="container-fluid well col-8 ms-5 mt-4">
+        <div class="container-fluid override well col-8 ms-5 mt-4 pb-5">
     <div class="guideVocal" ng-show="noneFound">
-        User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one.
+        <span class="h5"> User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one.</span>
        <br/><br/>
-       When a user creates projects, they will be listed here.<br/>
+       <span class="h6 mx-3">When a user creates projects, they will be listed here.</span><br/>
        <br/>
-       In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
+    <span class="h6 mx-3">In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site."</span><br/>
        <br/>
-       Use <button class="btn btn-sm" onClick="location.href='userSites.htm'"><img src="<%=ar.retPath%>new_assets/assets/navicon/UserSiteAdmin.png" style="max-height:25px;max-width:25px"></button>
-       to view your sites. Or request a new site from the system administrator here: <form name="createAccountForm" method="GET" action="NewSiteRequest.htm">
-        <input type="submit" class="btn btn-sm btn-comment btn-wide btn-primary my-3"  Value="Request New Site">
-    </form>
+    <span class="h6 mx-3">Use <button class="no-btn" onClick="location.href='userSites.htm'"><img src="<%=ar.retPath%>new_assets/assets/navicon/UserSiteAdmin.png" style="max-height:35px;max-width:35px"></button>
+       to view your sites. Or request a new site from the system administrator here: 
+       </span>
+       <form name="createAccountForm" method="GET" action="NewSiteRequest.htm">
+        <input type="submit" class="btn btn-wide btn-primary my-3 float-end" Value="Request New Site">
+    </form><span class="fs-6 m-5">
        If approved you will be the owner of that new site,
-       and can create new projects within it.
+       and can create new projects within it.</span>
     </div>
 
+</div>
 </div>
