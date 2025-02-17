@@ -49,7 +49,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showInput = false;
     //this map tells whether to display the role in detail mode.   All roles
     //start in non-detailed mode
-    $scope.roleDetailToggle = {};
+    $scope.roleDetail = {toggle: false};
+    
     $scope.canUpdate = <%=canUpdate%>;
     
     AllPeople.clearCache($scope.siteInfo.key);
@@ -349,15 +350,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div class="container-fluid override mx-3">
     
 
-          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewSingleInvite">
+             <a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
 
-          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
+          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewInvite">
+            <a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
               <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite</a></span>
-          <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewRole"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewRole">
+            <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
               <span class="fa fa-plus-square"></span> &nbsp;Create New Role</a></span>
+          <input type="checkbox" ng-model="roleDetail.toggle"/> 
+          <span class="btn second-menu-btn btn-wide" type="button" ng-click="roleDetail.toggle=!roleDetail.toggle" aria-labelledby="togglelistmode">
+             
+              List Mode</span>
 
-<hr>
+<hr/>
 <% } %>
 
 <div class="d-flex col-12"><div class="contentColumn mx-3">
@@ -366,8 +374,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 <% } %>
     <div class="container-fluid">
         <div class="row" ng-repeat="role in allRoles">
+            <hr/>
             <span class="col-2 d-flex">
-                <span class="col-auto h6" ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]" ng-dblclick="openRoleModal(role)">
+                <span class="col-auto h6" ng-click="roleDetail.toggle=!roleDetail.toggle" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px;border-radius:5px">
                     {{role.name}}</div>
                 <!--<div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
@@ -383,8 +392,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <li role="presentation">
                         
                         <a class="dropdown-item" role="menuitem" 
-                      ng-click="roleDetailToggle[role.name]=!roleDetailToggle[role.name]; dropdownStates['menu'] = false">
-                      <span class="fa fa-list-ul"></span> List Mode </a></li>
+                      ng-click="roleDetail.toggle=!roleDetail.toggle; dropdownStates['menu'] = false">
+                      <span class="fa fa-list-ul"></span> List Mode</a></li>
                   <li role="presentation">
                     <a class="dropdown-item" role="menuitem" 
                       ng-click="openRoleModal(role); dropdownStates['menu'] = false;">
@@ -408,7 +417,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             
             </span>
             <span class="col-2">
-              <div ng-hide="roleDetailToggle[role.name]">
+              <div ng-hide="roleDetail.toggle">
                 <span ng-repeat="player in role.players" ng-mouseleave="dropdownStates[player.uid] = false">
                 <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
                     aria-expanded="{{dropdownStates[player.uid]}}">
@@ -439,7 +448,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </ul>
                   </span>
               </div>
-              <div ng-show="roleDetailToggle[role.name]"> 
+              <div ng-show="roleDetail.toggle"> 
                 <div ng-repeat="player in role.players" ng-mouseleave="dropdownStates[player.uid] = false" style="height:40px">
                 <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
                     aria-expanded="{{dropdownStates[player.uid]}}">
@@ -472,7 +481,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             
             </span>
             <span class="col-7"  ng-dblclick="openRoleModal(role)">
-              <div ng-hide="roleDetailToggle[role.name]"> 
+              <div ng-hide="roleDetail.toggle"> 
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     <div ng-bind-html="role.description|wiki"></div>
@@ -485,7 +494,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <div ng-bind-html="role.requirements|wiki"></div>
                 </div>
               </div>
-              <div ng-show="roleDetailToggle[role.name]"> 
+              <div ng-show="roleDetail.toggle"> 
                 <div ng-repeat="player in role.players" style="height:40px;vertical-align: middle">
                   {{player.uid}}
                 </div>
