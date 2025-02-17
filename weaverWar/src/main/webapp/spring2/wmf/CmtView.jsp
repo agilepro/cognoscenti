@@ -196,10 +196,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
     
-    <div class="topper">
+    <div class="topper mb-2">
     {{workspaceName}}
     </div>
-    <div class="grayBox">
+    <div class="grayBox mb-3">
         <div class="infoBox" ng-show="meetId">
         <a href="RunMeeting.wmf?meetId={{meeting.id}}">
           <span class="fa fa-gavel"></span> {{meeting.name}}</a>
@@ -215,30 +215,30 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div ng-show="editMode=='comment'">
         <div><textarea ng-model="textComment" class="textEditor"></textarea></div>
-        <div class="smallButton"  ng-click="saveComment()">
+        <div class="btn btn-primary btn-raised"  ng-click="saveComment()">
            Save Comment
         </div>
     </div>
  
     <div ng-show="editMode=='answer'">
         <div><textarea ng-model="textAnswer" class="textEditor"></textarea></div>
-        <div class="smallButton"  ng-click="saveAnswer('Save Response')" ng-show="comment.commentType!=2">
+        <div class="btn btn-primary btn-raised"  ng-click="saveAnswer('Save Response')" ng-show="comment.commentType!=2">
            Save Answer
         </div>
-        <div class="smallButton"  ng-click="saveAnswer('Consent')" ng-show="comment.commentType==2">
+        <div class="btn btn-secondary btn-raised"  ng-click="saveAnswer('Consent')" ng-show="comment.commentType==2">
            Consent
         </div>
-        <div class="smallButton"  ng-click="saveAnswer('Objection')" ng-show="comment.commentType==2">
+        <div class="btn btn-danger btn-raised"  ng-click="saveAnswer('Objection')" ng-show="comment.commentType==2">
            Objection
         </div>
     </div>   
     
     <div ng-hide="editMode">
-        <div class="smallButton"  ng-click="startEditComment()" 
+        <div class="btn btn-comment btn-raised" ng-click="startEditComment()" 
              ng-show="comment.user == currentUser()">
            Edit Comment
         </div>
-        <div class="smallButton"  ng-click="startEditAnswer()" 
+        <div class="btn btn-primary btn-raised" ng-click="startEditAnswer()" 
              ng-show="comment.commentType>1">
            Your Answer
         </div>  

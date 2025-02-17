@@ -32,6 +32,9 @@
     <% } %>
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-0">
         <div class="container-fluid override">
+
+
+          
           <!-- Logo Brand -->
           <a class="navbar-brand pb-2" href="<%=userRelPath%>UserHome.htm"
             title="Access your overall personal Weaver Home Page">
@@ -49,9 +52,9 @@
             </form>
           </div>
           <!-- end Search Bar -->
-          <!-- toggle button for mobile nav -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <!-- toggle button for mobile nav -->
+          <button class="navbar-toggler no-btn float-end" type="button" data-bs-toggle="collapse" data-bs-target="#topbar-nav"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <!-- end toggle button for mobile nav -->
@@ -59,7 +62,7 @@
           <div class="collapse navbar-collapse" id="topbar-nav">
             <ul class="navbar-nav ms-auto">
               <%if(ar.isSuperAdmin()){ %>
-                <li style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/EmailListnerSettings.htm'">
+                <li class="nav-item" style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/EmailListnerSettings.htm'">
                   <img src="<%=ar.retPath%>new_assets/bits/adminicon.png" style="max-height:50px;max-width:50px">
                 </li>
             </ul>
@@ -130,14 +133,13 @@
                       <% } else { %>
                         <li class="nav-item dropdown">
                           <a class="nav-link dropdown-toggle text-weaverbody" data-target="#" role="button"
-                            data-toggle="dropdown" aria-expanded="false" title="User: <% ar.writeHtml(userName); %>">
+                            data-bs-toggle="dropdown-toggle-label" aria-expanded="false" title="User: <% ar.writeHtml(userName); %>">
                             <i class="fa fa-user" aria-hidden="true"></i>
                             <span class="dropdown-toggle-label">
                               <% ar.writeHtml(userName); %>
                             </span>
                           </a>
-                          <ul class="dropdown-menu bg-weaverbody text-weaverdark"
-                            style="position:fixed; margin-left: -50px;">
+                          <ul class="dropdown-menu" aria-labelledby="navbarProfileDropdown">
                             <li><a class="dropdown-item" href="<%=userRelPath%>UserHome.htm">Home</a></li>
                             <li><a class="dropdown-item" href="<%=userRelPath%>UserSettings.htm">Profile</a></li>
                             <li><a class="dropdown-item" href="<%=userRelPath%>UserAlerts.htm">Updates</a></li>

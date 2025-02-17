@@ -142,12 +142,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
     
-    <div>
-        <div class="smallButton"  ng-click="downloadDocument(document)"
+    <div class="mt-3">
+        <div class="btn btn-primary btn-group-raised"  ng-click="downloadDocument(document)"
              ng-show="document.attType == 'FILE'">
            Download Document
         </div>
-        <div class="smallButton"  ng-click="downloadDocument(document)"
+        <div class="btn btn-secondary btn-raised"  ng-click="downloadDocument(document)"
              ng-show="document.attType != 'FILE'">
            Visit Link
         </div>  

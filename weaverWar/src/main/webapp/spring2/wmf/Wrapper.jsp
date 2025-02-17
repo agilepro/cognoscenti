@@ -52,8 +52,8 @@
           data-semver="4.3.0" data-require="font-awesome@*" />
     <link href="<%=ar.baseURL%>bits/WeaverMobileFirstStyle.css" rel="stylesheet">
     <!-- Bootstrap 5.0-->
-    <link rel="stylesheet" href="<%=ar.retPath%>css/bootstrap.min.css" />
-    <link rel="stylesheet" href="<%=ar.retPath%>css/weaver.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
 <script>
 
 
@@ -98,11 +98,14 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
  </script>
 
 </head>
-<body ng-app="myApp" ng-controller="myCtrl" >
+<body class="mobile-body override" ng-app="myApp" ng-controller="myCtrl" >
   
-  
+  <div class="bodyWrapper">
 
 
+    <!-- Begin AppBar -->
+    <%@ include file="AppBar.jsp" %>
+      <!-- End AppBar -->
 <!-- Begin mainContent -->
 <div class="main-content">
 
