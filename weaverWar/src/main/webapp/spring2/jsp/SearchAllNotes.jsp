@@ -88,7 +88,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr >
             <td class="gridTableColummHeader h6">Search For:</td>
             <td style="width:20px;"></td>
-            <td><input ng-model="query.searchFilter" class="form-control" style="width:450px;"></td>
+            <td><input ng-model="query.searchFilter" class="form-control" style="width:550px;"></td>
         </tr>
         <tr ><td height="10px"></td></tr>
         <tr >
@@ -108,8 +108,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr >
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
-            <td><button ng-click="doSearch()" class="btn btn-default btn-primary btn-raised">Search</button></td>
             <td><span  type="button" ng-click="clearResults()" aria-labelledby="clearResults"><a class="nav-link btn btn-default btn-raised btn-outline-primary">Clear Results</a></span></td>
+            <td><button ng-click="doSearch()" class="btn btn-default btn-primary btn-raised">Search</button></td>
+            
         </tr>
     </table>
 

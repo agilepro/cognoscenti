@@ -86,7 +86,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: "<%=ar.retPath%>templates/EmailModal.html<%=templateCacheDefeater%>",
+            templateUrl: "<%=ar.retPath%>new_assets/templates/EmailModal.html<%=templateCacheDefeater%>",
             controller: 'EmailModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -190,7 +190,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <h3>{{userInfo.name}}</h3>
 
-    <p>Timezone: {{userInfo.timeZone}}</p>
+    <h4>Timezone: {{userInfo.timeZone}}</h4>
 
     <div ng-show="isDisabled">
         Status: <span style="color:red">DISABLED</span>
@@ -198,14 +198,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <% if (isLoggedIn) { %>
-    <div>
+    <div class="override">
       <% if (viewingSelf) { %>
-      <a class="btn btn-default btn-raised" ng-click="goToEdit()" >
+      <a class="btn btn-default btn-raised btn-comment" ng-click="goToEdit()" >
                 Settings</a>
-      <a class="btn btn-default btn-raised" href="UserHome.htm" >
+      <a class="btn btn-default btn-raised btn-comment" href="UserHome.htm" >
                 Show Home</a>
       <% } %>
-      <a class="btn btn-default btn-raised" ng-click="openSendEmail()" >
+      <a class="btn btn-wide btn-raised btn-comment" ng-click="openSendEmail()" >
                 Send Email to this User</a>
       
     </div>

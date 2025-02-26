@@ -1,37 +1,15 @@
-<html>
-<body>
-<style>
-    .ta-editor.form-control.myform2-height  {
-        height: 200px;
-        min-height: 200px;
-    }
-    .spacey tr td {
-        padding:8px;
-    }
-    .clipping {
-        overflow: hidden;
-        text-overflow: clip; 
-        border-bottom:1px solid #EEEEEE;
-        border:1px solid gray;
-        height:200px;
-    }
-</style>
-<div class="modal-header qqTabHeader">
-  <div class="qqTabBand">
-    <span ng-click="selectedTab='Email'" 
-          ng-class="selectedTab=='Email'?'qqTabSelected':'qqTabUnselected'">
-    Email
-    </span>
-  </div>
+<div class="modal-item pt-3 "></div>
+<div class="modal-header bg-primary-subtle text-primary override">
+  <h4 class="modal-title">Send Email</h4>
 </div>
-<div class="modal-body" style="min-height:400px">
-    <div ng-show="selectedTab=='Email'">
-        <div class="form-group form-inline">
-          <label>To:</label>
+
+<div class="modal-body override ">
+        <div class="form-group form-inline h6">
+          <label >To:</label>
           {{userInfo.name}}
         </div>
-        <div class="form-group form-inline">
-          <label>Subject:</label>
+        <div class="form-group form-inline d-flex my-3">
+          <label class="h6 mt-2">Subject: &nbsp;</label>
           <input ng-model="subject" class="form-control" style="width:400px"/>
         </div>
         <div class="form-group form-inline">
@@ -39,11 +17,7 @@
              class="leafContent" style="min-height:400px;margin:20px" id="theOnlyEditor"></div>
         </div>
     </div>
+<div class="modal-footer override">
+      <button ng-click="cancel()" class="btn btn-danger btn-raised btn-default me-auto" >Cancel</button>
+      <button ng-click="sendEmail()" class="btn btn-primary btn-raised btn-default" >Send Email</button>
 </div>
-<div class="modal-footer">
-      <button ng-click="cancel()" class="btn btn-warning btn-raised pull-left" >Cancel</button>
-      <button ng-click="sendEmail()" class="btn btn-primary btn-raised" >Send Email</button>
-</div>
-</body>
-</html>
-

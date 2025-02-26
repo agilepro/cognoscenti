@@ -120,13 +120,19 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              href="SiteCreateWorkspace.htm" >Create New Workspace</a></span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              ng-click="garbageCollect()">Garbage Collect</a></span>
+<div class="container-fluid override mx-2">
+    <div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false"
+            aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i></button>
+            <div class="collapse" id="collapseSecondaryMenu">
+                <div class="col-md-auto">
+                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewWorkspace"><a class="nav-link"
+                        href="SiteCreateWorkspace.htm" >Create New Workspace</a></span>
+                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="garbageCollect()" aria-labelledby="collectGarbage"><a class="nav-link"
+                        >Garbage <i class="fa fa-trash"></i> Collect</a></span>
+                </div>
+            </div>
         </div>
 
     <div class="d-flex col-9">

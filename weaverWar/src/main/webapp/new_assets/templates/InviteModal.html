@@ -1,12 +1,9 @@
-<html>
-<body>
-
-<div class="modal-item">
-  <div class="modal-header bg-primary-subtle text-primary">
-    <h5 class="modal-title">
-    Invite User: {{message.userId}}</h5>
+<div class="modal-item pt-3 "></div>
+<div class="modal-header bg-primary-subtle text-primary override">
+    <h4 class="modal-title">
+    Invite User: {{message.userId}}</h4>
   </div>
-  <div class="modal-body" ng-show="dialogMode==1">
+  <div class="modal-body override" ng-show="dialogMode==1">
     <div class="container-fluid">
       <div class="row col-12">
     <textarea ng-model="message.msg" class="form-control visibleBox" style="height:200px"></textarea>
@@ -21,10 +18,8 @@
     <br/>
     . . . Successfully sent email to {{message.userId}}.
 </div>
-<div class="modal-footer d-flex">
-      <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto" ng-show="dialogMode==1">Don't Send Invite</button>
-      <button ng-click="ok()"     class="btn btn-primary btn-raised" ng-show="dialogMode==1">Send Invitation</button>
-      <button ng-click="done()"   class="btn btn-primary btn-raised" ng-show="dialogMode>1">Close Window</button>
+<div class="modal-footer override px-0">
+      <button ng-click="cancel()" class="btn btn-default btn-danger btn-raised me-auto ms-0" ng-show="dialogMode==1">Don't Send Invite</button>
+      <button ng-click="ok()"     class="btn btn-default btn-primary btn-raised" ng-show="dialogMode==1">Send Invitation</button>
+      <button ng-click="done()"   class="btn btn-default btn-primary btn-raised" ng-show="dialogMode>1">Close Window</button>
 </div></div>
-</body>
-</html>

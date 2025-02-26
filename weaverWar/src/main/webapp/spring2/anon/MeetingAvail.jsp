@@ -250,7 +250,7 @@ label {
       </tr>
 <% } %>
       <tr>
-        <td>Info</td>
+        <td>Information</td>
         <td>You can view the
             <a href="MeetPrint.htm?id={{meeting.id}}&tem={{meeting.notifyLayout}}&mnm=<%=mnm%>">Agenda</a> or the 
             <a href="MeetPrint.htm?id={{meeting.id}}&tem={{meeting.defaultLayout}}&mnm=<%=mnm%>">Minutes</a>
@@ -267,11 +267,11 @@ label {
 
 
 <% if (isScheduled) { %>
-    <div class="comment-outer comment-state-active"
+    <div class="comment-outer comment-state-active p-3"
          title="Shows whether you can attend or not.">
-      <div style="color:gray">Let everyone know your current situation</div>
+      <div class="fs-5 fw-bold">Let everyone know your current situation</div>
       
-      <div style="padding:20px" ng-hide="emailId">
+      <div class="p-3" ng-hide="emailId">
         
             <div>Please enter/verify your email address</div>
             <div><input class="form-control" ng-model="editEmailId" placeholder="Enter email"/></div>
@@ -281,23 +281,23 @@ label {
                 title="Save these verified values">Save & Continue</button></div>
       </div>
 
-      <div style="padding:20px" ng-show="emailId">
-         <label>Do you expect to attend at this time? </label>
+      <div class="p-3" ng-show="emailId">
+         <label class="fs-6 mb-2 fw-bold">Do you expect to attend at this time? </label>
          <div>
-           <select ng-model="canAttend" class="form-control" style="padding:0">
-                 <option>Unknown</option>
-                 <option>Yes</option>
-                 <option>Maybe</option>
-                 <option>No</option>
+           <select ng-model="canAttend" class="form-control px-2" >
+                 <option value="unknown">Unknown</option>
+                 <option value="yes">Yes</option>
+                 <option value="maybe">Maybe</option>
+                 <option value="no">No</option>
               </select>
          </div>
          <br/>
-         <label>Additional details others attendees should know:</label>
+         <label class="fs-6 mb-2 fw-bold">Additional details others attendees should know:</label>
          <div>
-           <textarea ng-model="userSituation" class="form-control" style="min-width:400px;min-height=200px"></textarea>
+           <textarea ng-model="userSituation" class="form-control" style="min-width:400px;min-height:100px"></textarea>
          </div>
-         <div ng-show="canAttend!=oldAttend || userSituation!=oldSituation">
-           <button ng-click="saveSituation()" class="btn btn-primary btn-raised">Save This</button>
+         <div class="mb-2 pb-2" ng-show="canAttend!=oldAttend || userSituation!=oldSituation"> <span ng-hide="savedAttendInfo">
+           <button ng-click="saveSituation()" class="btn btn-primary btn-raised float-end mt-2" title="Save your attendance details">Save This</button></span>
          <span ng-show="savedAttendInfo">
            <i>Thanks for updating.  Everyone appreciates you letting them know this.</i>
          </span>
@@ -306,16 +306,16 @@ label {
       
     </div>
 <% } else { %>
-    <div class="comment-outer comment-state-active" 
+    <div class="comment-outer comment-state-active p-3" 
          title="Shows what time slots people might be able to attend.">
-      <div >Indicate whether these times would be good for you</div>
-      <div style="padding:20px" ng-hide="emailId">
+      <div class="fs-5 fw-bold">Indicate whether these times would be good for you</div>
+      <div class="p-3"  ng-hide="emailId">
         
-            <div>Please enter/verify your email address</div>
+            <div class="fs-6 fw-bold">Please enter/verify your email address</div>
             <div><input class="form-control" ng-model="editEmailId" placeholder="Enter email"/></div>
-            <div>And your name</div>
+            <div class="fs-6 fw-bold">And your name</div>
             <div><input class="form-control" ng-model="userName" placeholder="Enter name"/></div>
-            <div><button class="btn btn-primary btn-raised" ng-click="saveAddresses()"
+            <div><button class="btn btn-primary btn-raised  float-end mt-2" ng-click="saveAddresses()"
                 title="Save these verified values">Save & Continue</button></div>
       </div>
       <div class="comment-inner" ng-show="emailId">

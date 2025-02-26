@@ -12,10 +12,10 @@
                     title="Add more people to the list below">
             <span class="fa fa-plus"></span> Add Participants </button>
         </span>
-        <span class="col-md-3 ms-auto me-3"><a class="btn btn-wide btn-comment btn-raised px-2 py-1" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a>
+        <span class="col-md-3 ms-auto me-3"><a class="btn btn-wide btn-comment btn-raised" href="SendNote.htm?meet={{meetId}}"> Send Email <i fa class="fa fa-envelope-o"></i> About Meeting</a>
           </span>
     </div>
-    <div class="well" ng-show="editMeetingPart=='participants'">
+    <div class="well override" ng-show="editMeetingPart=='participants'">
         <div>
             <tags-input ng-model="participantEditCopy" 
                         placeholder="Enter users to participate in the meeting"
@@ -27,18 +27,18 @@
             </tags-input>
         </div>
         <div>
-        <span class="dropdown d-flex">
-              <button class="btn btn-danger p-1 me-3" type="button" 
+        <span class="dropdown ">
+              <button class="btn btn-danger btn-default btn-raised" type="button" 
                     ng-click="editMeetingPart=''"
                     title="Ignore what has been put here and close box">
             Cancel 
               </button>
-              <button class="btn btn-comment btn-wide btn-secondary py-1 px-3 " ng-click="appendRolePlayers()" 
+              <button class="btn btn-secondary btn-wide btn-raised " ng-click="appendRolePlayers()" 
                     ng-hide="roleEqualsParticipants" 
                     title="Look at the workspace role, and suggest anyone not already a participant">
                 Show Everyone from {{meeting.targetRole}}
             </button>
-            <button class="btn btn-comment btn-primary p-1 ms-auto" 
+            <button class="btn btn-primary float-end btn-raised" 
                     ng-click="addParticipants()"
                     title="Add these people to the list of participants">
             <span class="fa fa-plus"></span> Add </button>
@@ -68,7 +68,7 @@
               </span>
               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                 <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                    tabindex="-1" style="text-decoration: none;text-align:center">
+                    tabindex="-1" style="text-decoration: none;">
                     {{pers.name}}<br/>{{pers.uid}}</a></li>
                 <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem"
                     ng-click="navigateToUser(pers)">

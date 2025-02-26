@@ -249,10 +249,10 @@ embeddedData.canUpdate = <%=canUpdate%>;
                     <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed" ng-dblclick="openAgenda(selectedItem)">
                         <div class="d-flex">
                             <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
-                            <span class="text-secondary align-center m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
+                            <span class="text-secondary m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
                             &nbsp;<span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
         <br/>
-                            <button class="btn btn-agenda" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
+                            <button class="btn" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
                             <span style="ms-auto" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
                         </div>
                     </div>

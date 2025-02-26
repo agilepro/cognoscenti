@@ -2165,7 +2165,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.timeRowStyle = function (time) {
         if (time.proposedTime == $scope.meeting.startTime) {
-            return { "background-color": "lightskyblue", "border": "2px solid blue" }
+            return { "background-color": "#cddacd", "border": "2px solid green", borderRadius: "5px" };
         }
         return {};
     }

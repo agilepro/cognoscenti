@@ -13,7 +13,7 @@
         </div>
         <div class="row ps-0">
             <span class="col-3 h5">{{browserZone}}</span>
-            <span class="col-7 h5">
+            <span class="col-5 h5">
               <div ng-show="meeting.startTime>0">
                 {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
               </div>
@@ -28,7 +28,7 @@
         </div>
         <div class="row" ng-hide="meeting.startTime<=0">
           <span class="col-3">
-             <button class="btn btn-short px-4" ng-click="getTimeZoneList()">Show Timezones</button><br/>
+             <button class="btn btn-default" ng-click="getTimeZoneList()">Show Timezones</button><br/>
           </span>
         </div>
         <div class="row" ng-repeat="val in allDates">
@@ -44,16 +44,12 @@
                   class="form-control">
               {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
             </span></div>
-            <span class="col-2 h6"> ({{browserZone}})</span><br/>
+            <span class="col-2 h6 my-2"> ({{browserZone}})</span><br/>
             <div class="row d-flex">
-              <span class="col-2 ms-0 ps-0">
-            <button class="btn btn-danger btn-raised" ng-click="editMeetingPart=null">Cancel</button></span>
-            <span class="col-8">
-            <button class="btn btn-wide btn-secondary btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button></span>
-            <span class="col-2">
+            <button class="btn btn-default btn-danger btn-raised" ng-click="editMeetingPart=null">Cancel</button>
+            <button class="btn btn-default btn-secondary btn-raised px-2" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
             
-            <button class="btn btn-primary btn-raised ms-auto" 
-                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button></span></div>
+            <button class="btn btn-default btn-primary btn-raised ms-auto" ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button></div>
         </div>
       </div>
       <hr/>
@@ -65,10 +61,9 @@
     <div class="container-fluid">
     <div class="row d-flex my-2 border-bottom border-1 border-secondary border-opacity-50">
       
-      <span class="col-2 h6">{{browserZone}}</span>
+      <span class="col-1 h6">{{browserZone}}</span>
       <span class="col-2 h6">Date and Time</span>
-      <span class="col-1 mb-1 mt-0" ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
-          style="text-align:center">
+      <span class="col-1 mb-1 mt-0 mx-2 text-center " ng-repeat="player in timeSlotResponders" title="{{player.name}}">
           <span class="nav-item dropdown" >
             <span id="menu1" data-toggle="dropdown">
             <img class="rounded-5" 
@@ -76,9 +71,9 @@
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}">
             </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="margin-top: -75px;">
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" >
               <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                  tabindex="-1" style="text-decoration: none;text-align:center">
+                  tabindex="-1" style="text-decoration: none">
                   {{player.name}}<br/>{{player.uid}}</a></li>
               <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                   ng-click="navigateToUser(player)">
@@ -88,9 +83,9 @@
       </span>
     </div>
     <div class="row d-flex my-2" ng-repeat="time in meeting.timeSlots" ng-style="timeRowStyle(time)">
-      <span class="col-2">
-        <span class="nav-item dropdown">
-            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
+      <span class="col-1 pt-2">
+        <span class="nav-item dropdown mt-2 justify-content-end">
+            <button class="dropdown-toggle specCaretBtn ms-3 mt-3" type="button"  d="menu"
                 data-toggle="dropdown"> <span class="caret"></span> </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
               <li role="presentation">
@@ -102,29 +97,33 @@
             </ul>
         </span>
       </span>
-      <span class="col-2">
-          <div class="text-left pt-0">
+      <span class="col-2 pt-1">
+          <div class="text-left h6 mt-2">
           {{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}
           <span ng-show="time.proposedTime == meeting.startTime" class="text-primary fa fa-check"></span>
           </div>
       </span>
-      <span class="col-1 text-center"  ng-repeat="resp in timeSlotResponders">
-         <span class="nav-item col-1 dropdown "  >select
-            <button class=" btn votingButton"  type="button"  d="menu" 
-                data-toggle="dropdown"> 
-                <span class="dropdown-item" ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
-                    <span class="fa fa-minus-circle"></span>
-                    <span class="fa fa-minus-circle"></span></span>
-                <span class="dropdown-item" ng-show="time.people[resp.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
-                    <span class="fa fa-question-circle"></span></span>
-                <span class="dropdown-item" ng-show="time.people[resp.uid]==3" title="No response given">
-                    <span class="text-secondary opacity-50 fa fa-question-circle"></span></span>
-                <span class="dropdown-item" ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
-                    <span class="fa fa-plus-circle"></span></span>
-                <span class="dropdown-item" ng-show="time.people[resp.uid]==5" title="good time for me" style="color:green;">
-                    <span class="fa fa-plus-circle"></span>
-                    <span class="fa fa-plus-circle"></span></span>
-                &nbsp;
+      <span class="col-1 text-center mx-2"  ng-repeat="resp in timeSlotResponders">
+         <span class="nav-item col-1 dropdown ">
+            <button class="no-btn votingButton" type="button" data-toggle="dropdown"> select
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
+                <span class="fa fa-minus-circle"></span>
+                <span class="fa fa-minus-circle"></span>
+              </span>
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
+                <span class="fa fa-question-circle"></span>
+              </span>
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==3" title="No response given">
+                <span class="text-secondary opacity-50 fa fa-question-circle"></span>
+              </span>
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
+                <span class="fa fa-plus-circle"></span>
+              </span>
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==5" title="good time for me" style="color:green;">
+                <span class="fa fa-plus-circle"></span>
+                <span class="fa fa-plus-circle"></span>
+              </span>
+              &nbsp;
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu" style="margin-top: -40px;">
               <li role="presentation">

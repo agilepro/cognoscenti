@@ -805,7 +805,7 @@ function addvalue() {
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      tabindex="-1" ng-click="" style="text-decoration: none;">
                       {{person.name}}<br/>{{person.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToUser(person)">
@@ -892,7 +892,7 @@ function addvalue() {
                 </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      tabindex="-1" ng-click="" style="text-decoration: none;">
                       {{person.name}}<br/>{{person.uid}}</a></li>
                   <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                       ng-click="navigateToUser(person)">
@@ -963,7 +963,7 @@ function addvalue() {
                   </span>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                        tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                        tabindex="-1" ng-click="" style="text-decoration: none;">
                         {{person.name}}<br/>{{person.uid}}</a></li>
                     <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
                         ng-click="navigateToUser(person)">
@@ -1060,7 +1060,7 @@ function addvalue() {
                   </span>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                        tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                        tabindex="-1" ng-click="" style="text-decoration: none;">
                         {{person.name}}<br/>{{person.uid}}</a></li>
                     <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                         ng-click="navigateToUser(person)">
