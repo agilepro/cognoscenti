@@ -634,37 +634,4 @@ public class ProjectGoalController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RulesList.jsp");
     }
     
-    /*
-    private static void addMembersInContacts(AuthRequest ar,
-            List<AddressListEntry> contactList) throws Exception {
-        UserPage up = ar.getUserPage();
-        if (contactList != null) {
-            NGRole role = up.getContactsRole();
-            for (AddressListEntry ale : contactList) {
-                role.addPlayerIfNotPresent(ale);
-            }
-            up.saveUserPage(ar, "Added contacts");
-        }
-    }
-
-    private static void updateUserContactAndSaveUserPage(AuthRequest ar,
-            String op, String emailIds) throws Exception {
-        UserPage up = ar.getUserPage();
-        if (emailIds.length() > 0) {
-            if (op.equals("Remove")) {
-                NGRole role = up.getContactsRole();
-                AddressListEntry ale = AddressListEntry
-                        .newEntryFromStorage(emailIds);
-                role.removePlayer(ale);
-                up.saveUserPage(ar, "removed user " + emailIds + " from role "
-                        + role.getName());
-            } else if (op.equals("Add")) {
-
-                List<AddressListEntry> contactList = AddressListEntry
-                        .parseEmailList(emailIds);
-                addMembersInContacts(ar, contactList);
-            }
-        }
-    }
-    */
 }
