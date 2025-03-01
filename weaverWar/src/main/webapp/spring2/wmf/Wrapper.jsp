@@ -91,6 +91,7 @@ myApp.filter('encode', function() {
 
 function reloadIfLoggedIn(info) {
     //nothingn to with slap at this time
+    console.log("SLAP CALLBACK:: ", info);
 }
 SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, reloadIfLoggedIn);
 

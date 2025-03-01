@@ -19,6 +19,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.workspaceName = "<% ar.writeJS(ngw.getFullName()); %>";
     $scope.meetId = "<% ar.writeJS(meetId); %>";
     $scope.meeting = {};
+    
+    $scope.reportError = function(data) {
+        console.log("ERROR: ", data);
+    }
 
     $scope.getMeetingInfo = function() {
         var postURL = "meetingRead.json?id="+$scope.meetId;
@@ -108,7 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     <div class="grayBox">
         <div class="infoBox">
-        <a href="RunMeeting.wmf?meetId={{meeting.id}}">
+        <a href="RunMeeting.wmf?meetId={{meetId}}">
           <span class="fa fa-gavel"></span> {{meeting.name}}</a>
         </div>
         <div class="infoBoxSm">
@@ -123,21 +127,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     <div ng-repeat="item in meeting.agenda">
       <div class="listItemStyle">
-        <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{item.id}}">
+        <a href="RunItem.wmf?meetId={{meetId}}&itemId={{item.id}}">
           <span class="fa fa-thumb-tack"></span> {{item.subject}}</a>
       </div>
 
       <div class="subItemStyle" ng-repeat="topic in item.topicList">
-        <a href="TopicView.wmf?meetId={{meeting.id}}&topicId={{topic.id}}">
+        <a href="TopicView.wmf?meetId={{meetId}}&topicId={{topic.id}}">
           <span class="fa fa-lightbulb-o"></span> {{topic.subject}}</a>
       </div>
       <div class="subItemStyle" ng-repeat="att in item.attList">
-        <a href="DocView.wmf?meetId={{meeting.id}}&docId={{att.id}}">
+        <a href="DocView.wmf?meetId={{meetId}}&docId={{att.id}}">
           <span class="fa fa-file-o"></span> 
           {{att.name}}</a>
       </div>
       <div class="subItemStyle" ng-repeat="comment in item.comments">
-        <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
+        <a href="CmtView.wmf?meetId={{meetId}}&cmtId={{comment.time}}">
           <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
       </div>
     </div>
@@ -148,12 +152,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     Reports:
     </div>
       <div class="listItemStyle" >
-        <a href="MeetPrint.htm?id={{meeting.id}}&tem=AgendaDetail.chtml">
-          <span class="fa {{getIcon(comment)}}"></span> Agenda Page</a>
+        <a href="MeetPrint.htm?id={{meetId}}&tem=AgendaDetail.chtml">
+          <span class="fa fa-file-o"></span> Agenda Page</a>
       </div>
       <div class="listItemStyle" >
-        <a href="MeetPrint.htm?id={{meeting.id}}&tem=MinutesDetails.chtml">
-          <span class="fa {{getIcon(comment)}}"></span> Minutes Page</a>
+        <a href="MeetPrint.htm?id={{meetId}}&tem=MinutesDetails.chtml">
+          <span class="fa fa-file-o"></span> Minutes Page</a>
       </div>      
     
 

@@ -1,4 +1,4 @@
-    <div class="mt-5"></div>
+  <div class="mt-5"></div>
     <div class="grayBox d-inline-flex p-3">
         
     <div class="btn btn-default btn-comment btn-raised" ng-show="meetId">
@@ -9,4 +9,12 @@
     </div>
     <div class="btn btn-default btn-comment btn-raised">
        <a href="https://s06.circleweaver.com/" class="text-decoration-none">Learn About Weaver</a>
-    </div></div>
+    </div>
+  </div>
+  
+  <!-- this is mainly for testing pages when logged out -->
+  <div  style="margin:50px">
+    <div class="btn btn-default btn-comment btn-raised">
+       <a onClick="SLAP.logoutUser()" class="text-decoration-none">Log Out</a>
+    </div>
+  </div>

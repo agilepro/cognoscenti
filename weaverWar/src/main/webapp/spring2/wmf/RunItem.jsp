@@ -25,6 +25,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.meeting = {};
     $scope.agendaItem = {};
 
+    $scope.reportError = function(data) {
+        console.log("ERROR: ", data);
+    }
+    
     $scope.getMeetingInfo = function() {
         var postURL = "meetingRead.json?id="+$scope.meetId;
         $http.get(postURL)

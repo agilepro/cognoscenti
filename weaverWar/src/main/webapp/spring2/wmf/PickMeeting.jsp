@@ -15,6 +15,11 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
 
+    
+    $scope.reportError = function(data) {
+        console.log("ERROR: ", data);
+    }
+    
     $scope.getMeetingList = function() {
         var postURL = "meetingList.json";
         $http.get(postURL)

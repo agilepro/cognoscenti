@@ -44,8 +44,12 @@ public class MobileFirstController extends BaseController {
         try {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, wsId);
             ar.setPageAccessLevels(ngw);
-
-            streamJSPMobileFirst(ar, pageName + ".jsp");
+            if (!ar.isLoggedIn()) {
+                streamJSPMobileFirst(ar, "Login.jsp");
+            }
+            else  {
+                streamJSPMobileFirst(ar, pageName + ".jsp");
+            }
         } catch (Exception e) {
             showDisplayException(ar, WeaverException.newWrap(
                     "Unable to serve up a mobile first page named %s",
