@@ -191,9 +191,9 @@ app.filter('encode', function() {
 
         <span class="col-3">{{value.info.uid}}</span>
         <span class="col-1">
-            <span ng-show="value.readOnly">Observer</span>
+            <span ng-show="value.readOnly">Unpaid</span>
             <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
-            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Update</b></span>
+            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Paid</b></span>
         </span>
         <span class="col-2"><span>{{value.info.lastLogin|cdate}}</span></span>
         <span class="col-1">{{value.count}}</span>
@@ -204,7 +204,7 @@ app.filter('encode', function() {
 </div>
 
     <div class="container-fluid well mx-3">
-        Set to 'Observer' all users except the 
+        Set to 'Unpaid' all users except the 
         <input ng-model="preserveCount"/> 
         users who most recently logged in.  
         <button class="btn btn-primary btn-raised" ng-click="demoteBatchUsers()">

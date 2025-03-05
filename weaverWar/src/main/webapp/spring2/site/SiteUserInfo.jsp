@@ -369,22 +369,22 @@ app.filter('encode', function() {
                 This user has never logged in, and will be counted as observer until they do.</div>
               <div class="my-2">
                 <span class="fs-6">
-                <b><em>Creator &nbsp;</em></b></span>
+                <b><em>Paid &nbsp;</em></b></span>
                 <button ng-click="changeAccess(true)" class="btn btn-comment btn-secondary btn-raised">
-                Make Observer</button>
+                Change to Unpaid</button>
               </div>
             </div>
             <div ng-show="userMapEntry.readOnly">
-              <div>Observer, cannot update the site</div>
+              <div>Unpaid User, cannot update the site</div>
               <div class="my-2">
                 <span class="fs-6">
-                <b><em>Observer &nbsp;</em></b></span>
+                <b><em>Unpaid &nbsp;</em></b></span>
                 <button ng-click="changeAccess(false)" class="btn btn-comment btn-secondary btn-raised">
-                Make Creator</button>
+                Change to Paid</button>
                 
               </div>
             </div>
-            <div class="fs-6 fw-medium"> Site Creator Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Site Observers: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
+            <div class="fs-6 fw-medium"> Paid Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Unpaid Users: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
         </span>
     </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" >

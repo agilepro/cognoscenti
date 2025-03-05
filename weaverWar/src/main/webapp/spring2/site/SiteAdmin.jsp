@@ -326,7 +326,7 @@ $scope.garbageCollect = function() {
                 <span class="col-1 numberColumn h6">Cost</span>
             </div>
             <div class="row" ng-click="toggleEditor('CreatorLimit')">
-                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Active Users:</span>
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Paid Users:</span>
                 <span class="col-1 numberColumn">
                     {{siteInfo.editUserLimit|number}}
                 </span>
@@ -348,7 +348,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
             <div class="row" ng-click="toggleEditor('CreatorLimit')">
-                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Observer Users:</span>
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Unpaid Users:</span>
                 <span class="col-1 numberColumn">
                     
                 </span>
@@ -493,7 +493,7 @@ $scope.garbageCollect = function() {
               </li>
             </ul>
           </li>
-          <li><b>Observer Users</b>
+          <li><b>Unpaid Users</b>
           <ul>
             <li><b>Current Usage</b>: 
               This is the number of observer users you actually have using your site

@@ -78,10 +78,10 @@
                         this workspace.<br>If you would like to access this workspace, please contact
                             your administrator.</h6><br>
                         <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png"
-                                title="You have observer access to this workspace" class="accessIndicator" /> = 
-                            Observer access to this workspace. <br>
+                                title="You have unpaid access to this workspace" class="accessIndicator" /> = 
+                            Unpaid access to this workspace. <br>
                             <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png"
-                            title="You have full edit access to this workspace" class="accessIndicator" /> = Full editing
+                            title="You have paid access to this workspace" class="accessIndicator" /> = Full paid
                         access to this workspace. <br>
                         
                     </div>

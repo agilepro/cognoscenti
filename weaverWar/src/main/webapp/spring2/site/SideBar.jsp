@@ -128,12 +128,12 @@ class="accessIndicator"/>
 <div class="modal-dialog">
   <div class="modal-content"><% if (userIsReadOnly) { %>
     <div class="modal-header bg-primary-subtle text-primary">
-      <h5 class="modal-title" id="accessModalLabel">Observer Only</h5>
+      <h5 class="modal-title" id="accessModalLabel">Unpaid Only</h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <h5><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Observer Access" 
-            class="accessIndicator"/>  =  You have observer access to this workspace. <br>If you would like to edit this workspace, please contact your administrator.</h5><br>
+        <h5><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Unpaid Access" 
+            class="accessIndicator"/>  =  You have unpaid access to this workspace. <br>If you would like to edit this workspace, please contact your administrator.</h5><br>
                     <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="Full Edit Access" 
             class="accessIndicator"/>  =  Full editing access to this workspace.<br><br>
             <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="Guest Access" 
@@ -147,8 +147,8 @@ class="accessIndicator"/>
           <div class="modal-body">
             <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="Full Edit Access" 
                 class="accessIndicator"/>  =  You have full editing access to this site.</b></h6><br>
-                            <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Observer Access" 
-                class="accessIndicator"/>  =  Observer access to this site. <br><br>
+                            <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Unpaid Access" 
+                class="accessIndicator"/>  =  Unpaid access to this site. <br><br>
                 <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="Guest Access" 
                 class="accessIndicator"/>  =  Guest access to this site. 
           </div>

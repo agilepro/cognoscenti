@@ -64,10 +64,10 @@
             accessStatus.put(aUser, "Site R/O");
         }
         else if (ngw.canUpdateWorkspace(aUserProf)) {
-            accessStatus.put(aUser, "Can Edit");
+            accessStatus.put(aUser, "Paid");
         }
         else if (ngw.canAccessWorkspace(aUserProf)) {
-            accessStatus.put(aUser, "Observer");
+            accessStatus.put(aUser, "Unpaid");
         }
         else {
             accessStatus.put(aUser, "No Access");

@@ -762,7 +762,7 @@ public class AuthRequest {
 
     public void assertNotReadOnly(String opDescription) throws Exception {
         if (isReadOnly()) {
-            throw WeaverException.newBasic("Observer; can not update anything. %s", opDescription);
+            throw WeaverException.newBasic("Unpaid User; can not update anything. %s", opDescription);
         }
     }
 
