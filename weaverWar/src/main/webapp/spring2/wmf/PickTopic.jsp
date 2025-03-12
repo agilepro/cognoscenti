@@ -49,13 +49,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <%=ngw.getFullName()%>
     </div>
     
-    <div class="instruction">
-    Choose a dicsussion topic from list below:
+    <div class="instruction ms-3">
+    Select a discussion topic:
     </div>
     
-    <div ng-repeat="topic in topics" style="margin:10px;" >
+    <div ng-repeat="topic in topics" class="my-3 border border-1 border-dark rounded btn-raised" >
       <div class="listItemStyle">
-        <a href="TopicView.wmf?topicId={{topic.id}}">
+        <a class="fs-6 bold text-wrap text-decoration-none ms-2" href="TopicView.wmf?topicId={{topic.id}}">
             <span class="fa fa-lightbulb-o"></span> {{topic.subject}}
         </a>
       </div>

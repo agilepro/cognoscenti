@@ -49,7 +49,7 @@
     
         <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="<%=ar.baseURL%>bits/WeaverMobileFirstStyle.css" rel="stylesheet">
+  
     <!-- Bootstrap 5.0-->
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />

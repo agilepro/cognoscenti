@@ -25,8 +25,9 @@
           <!-- Logo Brand -->
           
             <div class="bg-primary p-2 mx-3" >
+              <a href="Front.wmf" >
               <img class="d-inline-block mx-2" alt="Weaver Logo" src="<%=ar.retPath%>new_assets/bits/header-icon.png">
-<span class="fw-semibold fs-1 text-weaverbody">Weaver</span></div>
+<span class="fw-semibold fs-1 text-weaverbody">Weaver</span></a></div>
           <!-- Search Bar 
           <div class="row search">
             <form class="d-flex" role="search" action="searchAllNotes.htm">

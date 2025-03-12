@@ -18,7 +18,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.logMeIn = function() {
         console.log("go to home");
-        window.location.href = 'Home.wmf';
+        window.location.href = 'Front.wmf';
     }
 
 });
@@ -31,29 +31,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-<div>
+<div class="container">
 
     
-    <div style="margin:auto">
+    <div class="justify-content-center">
     <img src="<%=ar.retPath%>bits/big-weaver.png">
     </div>
     
-    <div class="big-weaver">
+    <h1 class="big-weaver text-center bold">
     Weaver
+    </h1>
+    <div class="text-center">
+    <h2>Meeting Facilitation Tool</h2>
+    </div>
+    <div class="well dropdown">
+        <label for="workspace" class="h5">Select Workspace:</label>
+    <select ng-model="workspace" class="form-control" style="border-radius: 5px;"><option><%=ngw.getFullName()%></option></select>
+
+    </div>
+    <h3>Select:</h3>
+    <div class="my-3 h5 ms-4">
+    <input type="checkbox" > Participant
     </div>
     
-    <select ng-model="workspace"><option><%=ngw.getFullName()%></option><select>
-    
-    <div>
-    <input type="checkbox"> Participant
-    </div>
-    
-    <div>
+    <div class="my-3 h5 ms-4">
     <input type="checkbox"> Administrative
     </div>
     
-    <div>
-    <button class="btn btn-primary" ng-click="logMeIn()">Login</button>
+    <div class="my-3" style="justify-content: center; display: flex;">
+    <button class="btn btn-primary btn-default btn-raised centered" ng-click="logMeIn()">Login</button>
     </div>
     
     

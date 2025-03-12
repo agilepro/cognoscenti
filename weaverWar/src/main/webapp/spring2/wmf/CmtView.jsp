@@ -141,11 +141,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "fa-comments-o";
     }
     $scope.getTypeString  = function(comment) {
-        if (comment.commentType==2) {
+        if (comment.commentType==1) {
+            return "Comment";
+        }
+        if (comment.commentType == 2) {
             return "Proposal";
         }
         if (comment.commentType==3) {
-            return "Question";
+            return "Round";
         }
         return "Comment";
     }
@@ -207,16 +210,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div class="infoBoxSm" ng-show="meetId">
         {{meeting.startTime|pdate}}
         </div>
-        <div class="infoBoxSm">
-        <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}
+        <div class="h6 text-center">
+        <span class="fa {{getIcon(comment)}}"></span> {{getTypeString(comment)}}
         </div>
     </div>
     
 
     <div ng-show="editMode=='comment'">
         <div><textarea ng-model="textComment" class="textEditor"></textarea></div>
-        <div class="btn btn-primary btn-raised"  ng-click="saveComment()">
-           Save Comment
+        <div class="btn btn-primary btn-raised float-end mb-4"  ng-click="saveComment()">
+           Save
         </div>
     </div>
  
@@ -235,9 +238,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     <div ng-hide="editMode">
         <div class="btn btn-comment btn-raised" ng-click="startEditComment()" 
-             ng-show="comment.user == currentUser()">
+             ng-show="comment.user == currentUser() && comment.commentType==1">
            Edit Comment
         </div>
+        <div class="btn btn-comment btn-raised" ng-click="startEditComment()" 
+        ng-show="comment.user == currentUser() && comment.commentType==2"> Edit
+            Proposal </div>
+            <div class="btn btn-comment btn-raised" ng-click="startEditComment()" 
+            ng-show="comment.user == currentUser() && comment.commentType==3"> Edit
+                Round </div>
         <div class="btn btn-primary btn-raised" ng-click="startEditAnswer()" 
              ng-show="comment.commentType>1">
            Your Answer
@@ -265,18 +274,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div> 
     
     
-    <div ng-show="comment.outcome">
-        <div class="instruction">
+    <div ng-show="comment.outcome" ng-hide="comment.commentType>3">
+        <div class="instruction" >
         Outcome:
         </div>
         <div ng-bind-html="comment.outcome | wiki" class="richTextBox"></div> 
     </div>
     
-    <div class="instruction">
-        Started: {{comment.time | cdate}}<br/>
-        Posted: {{comment.postTime | cdate}}<br/>
-        Due: {{comment.dueDate | cdate}}
-    </div>
+    <div class="h6 m-2">
+        <strong>Started:</strong> {{comment.time | cdate}}</div>
+    <div class="h6 m-2">
+        <strong>Posted:</strong> {{comment.postTime | cdate}}</div>
+    <div class="h6 m-2">
+        <strong>Due:</strong> {{comment.dueDate | cdate}}</div>
     
     <!-- Begin Template Footer -->
     <jsp:include page="WMFFooter.jsp" />

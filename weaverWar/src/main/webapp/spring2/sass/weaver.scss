@@ -1210,6 +1210,151 @@ foreignObject {
 
 }
 
+//WMF Custom Styles
+
+body.mobile-body {
+    background: #39134C 0% 0% no-repeat padding-box;
+}
+a {
+    text-decoration: underline;
+}
+.main-content {
+    min-height: 787px;
+    max-width: 100%;
+    margin: 0px 15px;
+    padding: 15px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 0px 0px 30px 30px;
+    opacity: 1;
+}
+.fullWidth {
+    width: 100%;
+}
+.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.big-weaver {
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) 90px/117px var(--unnamed-font-family-pt-sans);
+    color: var(--unnamed-color-662a79);
+    text-align: left;
+    font: normal normal bold 90px/117px PT Sans;
+    letter-spacing: 0px;
+    color: #662A79;
+    opacity: 1;
+}
+.topper {
+    text-align: left;
+    margin: 0px 10px 10px;
+    font: normal normal 600 28px/37px Segoe UI;
+    color: #672A79;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.instruction {
+    font: normal normal 600 1.25rem Segoe UI;
+    margin: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.infoBox {
+    text-align: center;
+    font: normal normal 600 20px Segoe UI;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.infoBoxSm {
+    text-align: center;
+    font: normal normal 600 14px Segoe UI;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+
+.richTextBox {
+    border: 1px #662A79 solid;
+    background-color: white;
+    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding:5px;
+    border-radius: 4px;
+}
+.listItemStyle {
+    font: normal normal 600 18px Segoe UI;
+    margin: 5px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.subItemStyle {
+    font: normal normal 300 16px Segoe UI;
+    margin: 5px;
+    margin-left: 25px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap
+}
+.grayBox {
+    width: 100%;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.bigButton {
+    text-align: center;
+    display: block;
+    margin-top:30px;
+    padding:5px;
+    border-radius:20px;
+    border:1px solid lightskyblue;
+    margin-left: auto;
+    margin-right: auto;
+    font: normal normal 300 20px Segoe UI;
+}
+.notFinished {
+    display: block;
+    margin-top:30px;
+    font-style: italic;
+    padding:20px;
+    color:red;
+    margin-left: auto;
+    margin-right: auto;
+    font: normal italic 200 18px Segoe UI;
+}
+
+.smallButton {
+    text-align: center;
+    display: inline-block;
+    margin:10px;
+    padding:5px 10px;
+    border-radius:18px;
+    border:1px solid lightskyblue;
+    background-color: lightskyblue;
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    font: normal normal 300 20px Segoe UI;
+    cursor: pointer;
+}
+.textEditor {
+    width:100%;
+    height:400px;
+}
+
 
 
 $vertical-align-classes: (

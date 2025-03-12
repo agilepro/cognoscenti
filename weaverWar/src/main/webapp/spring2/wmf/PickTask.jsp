@@ -43,13 +43,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <%=ngw.getFullName()%>
     </div>
     
-    <div class="instruction">
+    <div class="instruction ms-3">
     Choose a dicsussion topic from list below:
     </div>
     
-    <div ng-repeat="item in allActions" style="margin:10px;" >
+    <div ng-repeat="item in allActions" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
-        <a href="TaskView.wmf?taskId={{item.id}}">
+        <a class="fs-6 bold text-wrap text-decoration-none ms-2" href="TaskView.wmf?taskId={{item.id}}">
             <span class="fa fa-check-circle"></span> {{item.synopsis}}
         </a>
       </div>

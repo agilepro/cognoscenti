@@ -50,13 +50,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <%=ngw.getFullName()%>
     </div>
     
-    <div class="instruction">
-    Choose a document from list below:
+    <div class="instruction  ms-3">
+    Select a document:
     </div>
     
-    <div ng-repeat="doc in atts" style="margin:10px;" >
+    <div ng-repeat="doc in atts" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
-        <a href="DocView.wmf?docId={{doc.id}}">
+        <a class="fs-6 bold text-wrap text-decoration-none ms-2" href="DocView.wmf?docId={{doc.id}}">
             <span class="fa fa-file-o"></span> {{doc.name}}
         </a>
       </div>

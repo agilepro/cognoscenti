@@ -33,16 +33,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     {{workspaceName}}
     </div>
     <div class="grayBox">
-        <div class="infoBox"> Login </div>
-
-    </div>
-    
-    <div>
+        <div class="infoBox"> Log Into Site </div>
+<div class="h6 text-center" style="padding:10px">
     You will need to log in to see the information.
     </div>
-    <div  style="margin:50px">
-      <div class="btn btn-default btn-comment btn-raised">
-         <a onClick="SLAP.loginUserRedirect()" class="text-decoration-none">Go To Login</a>
+    </div>
+    
+    
+    <div style="justify-content: center; display: flex; padding: 20px;">
+      <div>
+         <a onClick="SLAP.loginUserRedirect()" class="btn btn-default btn-primary btn-raised">Go To Login</a>
       </div>
     </div>  
 

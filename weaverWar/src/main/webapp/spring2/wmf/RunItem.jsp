@@ -122,20 +122,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div class="infoBoxSm" ng-show="agendaItem.isSpacer">
         {{agendaItem.subject}}
         </div>
-        <div class="infoBoxSm" ng-hide="agendaItem.isSpacer">
-        {{agendaItem.number}} <span class="fa fa-thumb-tack"></span> {{agendaItem.subject}}
-        </div>
-        <div class="infoBoxSm">
-            <div style="float:left" ng-show="prevItem">
+        
+        <div class="d-flex justify-content-between">
+            <span class="float:left" style="margin-top: 10px; margin-left:5px;" ng-show="prevItem">
                 <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{prevItem}}">
-                    <span class="fa fa-arrow-circle-left"></span>
+                    <span class="fa fa-arrow-circle-left fa-2x"></span>
                 </a>
-            </div>
-            <div style="float:right" ng-show="nextItem">
-                <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{nextItem}}">
-                    <span class="fa fa-arrow-circle-right"></span>
+            </span>
+            <span class="h5 mt-3" ng-hide="agendaItem.isSpacer">
+        {{agendaItem.number}} <span class="fa fa-thumb-tack"></span> {{agendaItem.subject}}
+        </span>
+            <span class="float:right" style="margin-top: 10px; margin-right:5px;" ng-show="nextItem">
+                <a href="RunItem.wmf?meetId={{meeting.id}}&itemId={{nextItem}}" aria-label="Next Item">
+                    <span class="fa fa-arrow-circle-right fa-2x"></span>
                 </a>
-            </div>
+            </span>
         </div>
     </div>
     

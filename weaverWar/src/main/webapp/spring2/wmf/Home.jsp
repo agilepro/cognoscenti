@@ -6,7 +6,11 @@
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     
-
+    String currentUserId = "";
+    if (ar.isLoggedIn()) {
+        UserProfile uProf = ar.getUserProfile();
+        currentUserId = uProf.getUniversalId();
+    }
 
 %>
 

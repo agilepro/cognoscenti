@@ -44,21 +44,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <%=ngw.getFullName()%>
     </div>
     
-    <div class="instruction">
-    Choose a meeting from list below:
+    <div class="instruction ms-3">
+    Select a meeting:
     </div>
     
-    <div ng-repeat="meet in meetings" style="margin:10px;" >
+    <div ng-repeat="meet in meetings" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
-        <a href="RunMeeting.wmf?meetId={{meet.id}}">
-            <span class="fa fa-gavel"></span> {{meet.name}}
+        <a class="fs-5 bold text-wrap text-decoration-none ms-2" href="RunMeeting.wmf?meetId={{meet.id}}">
+            <span class="fa fa-gavel"></span>&nbsp;{{meet.name}}
         </a>
-      </div>
-      <div class="subItemStyle">
+      
+      <span class="bold fs-6 float-end lh-lg">
         {{meet.startTime|pdate}}
-      </div>
+      </span>
     </div>
-    
+    </div>
+
     
     <!-- Begin Template Footer -->
     <jsp:include page="WMFFooter.jsp" />
