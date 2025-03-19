@@ -133,11 +133,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     <div class="container-fluid override mx-5">
         <div class="col-md-auto second-menu">              
                     <div class="col-md-auto">
-                    <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
-                    <i class="fa  fa-arrow-circle-left"></i></a>
-                    <span class="h5 pt-2"><%=start%> - <%=endRecord%> </span>
-                    <a class="btn-comment btn-sm btn-secondary mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
-                    <i class="fa  fa-arrow-circle-right"></i></a>
+                    <a class="no-btn mx-2" href="History.htm?start=<%=start-size%>" title="Back 50 records">
+                    <i class="fa  fa-arrow-circle-left fa-2x"></i></a>
+                    <span class="h5 "><%=start%> - <%=endRecord%> </span>
+                    <a class="no-btn mx-2" href="History.htm?start=<%=start+size%>" title="Forward 50 records">
+                    <i class="fa  fa-arrow-circle-right fa-2x"></i></a>
                     </div>
                 </div>
             </div><hr>

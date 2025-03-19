@@ -335,6 +335,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     }
+
+    $scope.recountUsers = function () {
+        var activeCount = 0;
+        var inactiveCount = 0;
+        var keys = Object.keys($scope.siteUsers);
+        keys.forEach(function (key) {
+            if (!$scope.siteUsers[key].readOnly && $scope.siteUsers[key].lastAccess > 100000) {
+                activeCount++;
+            }
+            else {
+                inactiveCount++;
+            }
+        });
+        $scope.activeUserCount = activeCount;
+        $scope.readOnlyCount = inactiveCount;
+    }
     
 });
 
@@ -375,7 +391,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div class="container-fluid">
         <div class="row" ng-repeat="role in allRoles">
             <hr/>
-            <span class="col-2 d-flex">
+            <div class="row d-flex">
                 <span class="col-auto h6" ng-click="roleDetail.toggle=!roleDetail.toggle" ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px;border-radius:5px">
                     {{role.name}}</div>
@@ -383,17 +399,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>-->
                 </span> &nbsp;
 <% if (canUpdate) { %>
-              <span class="col-2 nav-item dropdown">
+              <span class="col-1 nav-item dropdown">
                 <button class="btn btn-comment btn-sm btn-raised dropdown-toggle specCaretBtn"
                         type="button" id="roleMembers" ng-click="dropdownStates['menu'] = !dropdownStates['menu']" aria-expanded="{{dropdownStates['menu']}}">
-                    </button>
+                </button>
                 <ul class="dropdown-menu" ng-class="{'show': dropdownStates['menu']}" role="menu" aria-labelledby="roleMembers">
                   
                     <li role="presentation">
                         
-                        <a class="dropdown-item" role="menuitem" 
+                        <li class="dropdown-item" role="menuitem" 
                       ng-click="roleDetail.toggle=!roleDetail.toggle; dropdownStates['menu'] = false">
-                      <span class="fa fa-list-ul"></span> List Mode</a></li>
+                      <span class="fa fa-list-ul"></span><span ng-show="roleDetail.toggle"> List Mode</span><span ng-hide="roleDetail.toggle"> Details Mode</span></li></li>
                   <li role="presentation">
                     <a class="dropdown-item" role="menuitem" 
                       ng-click="openRoleModal(role); dropdownStates['menu'] = false;">
@@ -415,9 +431,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </span>
 <% } %>
             
-            </span>
-            <span class="col-2">
-              <div ng-hide="roleDetail.toggle">
+            </div>
+            <div class="row py-3">
+              <span class="col-4" ng-show="roleDetail.toggle">
                 <span ng-repeat="player in role.players" ng-mouseleave="dropdownStates[player.uid] = false">
                 <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
                     aria-expanded="{{dropdownStates[player.uid]}}">
@@ -447,17 +463,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                           <span class="fa fa-times"></span> Remove from Role </a></li>
                     </ul>
                   </span>
-              </div>
-              <div ng-show="roleDetail.toggle"> 
-                <div ng-repeat="player in role.players" ng-mouseleave="dropdownStates[player.uid] = false" style="height:40px">
-                <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
+              </span>
+              <!--list view-->
+              <div class="col-12" ng-hide="roleDetail.toggle"> 
+                <div class="row d-flex" ng-repeat="player in role.players" ng-mouseleave="dropdownStates[player.uid] = false" style="height:40px">
+                    <span class="col-auto text-center">
+                    <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
                     aria-expanded="{{dropdownStates[player.uid]}}">
                     <img class="rounded-5" 
                          ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                          style="width:32px;height:32px" 
                          title="{{player.name}} - {{player.uid}}">
-                </button>
-                    <ul class="dropdown-menu" ng-class="{'show': dropdownStates[player.uid]}" role="menu" aria-labelledby="playerRole" ng-mouseenter="keepDropdownOpen(playerRole)"
+                    </button>
+                    <ul class="dropdown-menu mt-1" ng-class="{'show': dropdownStates[player.uid]}" role="menu" aria-labelledby="playerRole" ng-mouseenter="keepDropdownOpen(playerRole)"
       ng-mouseleave="dropdownStates[playerRole] = false">
                       <li role="presentation" style="font-weight: bold; font-style: italic;"><a role="menuitem" 
                           tabindex="-1" class="dropdown-item" style="text-decoration: none;">
@@ -475,13 +493,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                           ng-click="removePlayer(role, player)">
                           <span class="fa fa-times"></span> Remove from Role </a></li>
                     </ul>
+                    </span>
+                
+                    <span class="col-4 text-wrap">{{player.name}}</span>
+                    <span class="col-4 text-wrap">{{player.uid}}</span>
+                    <span class="col-2">last login: {{value.info.lastLogin|cdate}} </span>
                 </div>
-                  <span>{{player.name}}</span>
-                </div>
+
+              </div>
                             
-            </span>
-            <span class="col-7"  ng-dblclick="openRoleModal(role)">
-              <div ng-hide="roleDetail.toggle"> 
+
+            <span class="col-8"  ng-dblclick="openRoleModal(role)">
+              <div ng-show="roleDetail.toggle"> 
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     <div ng-bind-html="role.description|wiki"></div>
@@ -494,11 +517,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <div ng-bind-html="role.requirements|wiki"></div>
                 </div>
               </div>
-              <div ng-show="roleDetail.toggle"> 
-                <div ng-repeat="player in role.players" style="height:40px;vertical-align: middle">
-                  {{player.uid}}
-                </div>
-              </div>
+              
             </span>
         </div>
     </div>

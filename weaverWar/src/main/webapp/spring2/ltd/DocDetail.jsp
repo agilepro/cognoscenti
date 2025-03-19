@@ -402,7 +402,7 @@ function copyTheLink() {
             </div>
             <div class="col-8 my-2">
                 <input type="text" ng-model="generatedLink" id="generatedLink"/>
-                <button onClick="copyTheLink()" class="btn btn-sm btn-primary btn-raised">Copy to Clipboard</button>
+                <button onClick="copyTheLink()" class="btn btn-wide btn-primary btn-raised">Copy to Clipboard</button>
             </div>
         </span>
   </div>

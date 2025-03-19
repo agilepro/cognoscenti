@@ -349,7 +349,7 @@ ng-dblclick="openAgenda(selectedItem)">
 
 <link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
 
-            <div ng-show="meeting.agenda.length==0" class="guideVocal">This meeting does not have any agenda items.<br/> Use the <button class="btn btn-sm btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
+            <div ng-show="meeting.agenda.length==0" class="guideVocal">This meeting does not have any agenda items.<br/> Use the <button class="btn btn-wide btn-primary btn-raised" ng-click="createAgendaItem()">+ NEW</button> button in the left column to create an agenda item.
             </div>
         
 

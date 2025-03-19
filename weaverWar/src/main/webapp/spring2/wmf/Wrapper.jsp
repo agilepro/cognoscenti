@@ -57,7 +57,7 @@
 
 
 //Must initialize the app with all the right packages here, before the 
-//individual pages create the controlles
+//individual pages create the controls
 var myApp = angular.module('myApp', ['ui.bootstrap','ui.tinymce','ngSanitize']);
 
 myApp.filter('cdate', function() {

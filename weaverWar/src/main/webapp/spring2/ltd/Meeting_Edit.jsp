@@ -188,7 +188,7 @@
                 <!--Button to create new action item-->
                 <div class="container-fluid">
                 <div class="row justify-content-center">      
-                  <div type="button" class="btn btn-sm btn-outline-primary">
+                  <div type="button" class="btn btn-wide btn-outline-primary">
                     <span ng-click="openAttachAction(item)"> Attach/Remove Action Items 
                   </span>
                 </div>
@@ -231,7 +231,7 @@
               <!-- Buttons to trigger Documents modals -->
               <div class="container-fluid">
               <div class="row justify-content-center"> 
-                <div type="button" class="btn btn-sm btn-outline-primary">
+                <div type="button" class="btn btn-wide btn-outline-primary">
                   <span ng-click="openAttachDocument(item)">  Attach/Upload Files</span>
                 </div>
               </div>
@@ -271,7 +271,7 @@
         <!-- Button trigger modal -->
                   <div class="container-fluid">
           <div class="row justify-content-center ">      
-            <div type="button" class="btn btn-sm btn-outline-primary">
+            <div type="button" class="btn btn-wide btn-outline-primary">
               <span ng-click="openAttachTopics(item)"> Attach/Remove Discussions 
             </span>
           </div>

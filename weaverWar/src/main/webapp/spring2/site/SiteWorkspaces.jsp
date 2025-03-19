@@ -185,7 +185,7 @@ app.controller('myCtrl', function($scope, $http) {
        <p>
        Use the button
        <a href="SiteCreateWorkspace.htm">
-           <button class="btn btn-sm btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button></a>
+           <button class="btn btn-wide btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button></a>
        to create a new workspace.
        </p>
        <p>

@@ -245,14 +245,14 @@ $scope.garbageCollect = function() {
 
 
     <div class="d-flex col-9"><div class="contentColumn">
-      <div class="container-fluid">
+      <div class="container-fluid override">
         <div class="generalContent">
             <div class="spaceyTable">
                 <div class="row" ng-dblclick="toggleEditor('NewName')">
                     <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
                     <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
                         <input type="text" class="form-control mb-2" ng-model="newName">
-                        <button ng-click="addName(newName)" class="btn btn-sm btn-primary  btn-raised">Change Name</button>
+                        <button ng-click="addName(newName)" class="btn btn-wide btn-primary  btn-raised">Change Name</button>
                     </span>
                     <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
                         <b>{{newName}}</b>
@@ -270,7 +270,7 @@ $scope.garbageCollect = function() {
                     <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
                         <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
                         title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
+                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised">Save</button>
                     </span>
                     <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
                     <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
@@ -286,7 +286,7 @@ $scope.garbageCollect = function() {
                     <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
                         <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
                         title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised">Save</button>
+                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised">Save</button>
                     </span>
                     <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
                     <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
@@ -301,7 +301,7 @@ $scope.garbageCollect = function() {
                     <span class="col-6 dataColumn mb-2" ng-show="isEditing =='LabelColors'">
                         <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
                         title="A comma separated list of standard color names."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-sm btn-primary  btn-raised ">Save</button>
+                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised ">Save</button>
                     </span>
                     <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
                     <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
@@ -319,7 +319,7 @@ $scope.garbageCollect = function() {
             <div class="row">
                 <span class="col-2 "></span>
                 <span class="col-1 numberColumn h6">Your Limit</span>
-                <span class="col-1 numberColumn h6" >Set</span>
+                <span class="col-1 numberColumn h6 text-center" >Set</span>
                 <span class="col-1 numberColumn h6">Current Usage</span>
                 <span class="col-1 numberColumn h6">Gratis</span>
                 <span class="col-1 numberColumn h6">Charged</span>
@@ -331,8 +331,8 @@ $scope.garbageCollect = function() {
                     {{siteInfo.editUserLimit|number}}
                 </span>
                 <span class="col-1 numberColumn">
-                    <button class="specCaretBtn" ng-click="changePeople(1)">+</button>
-                    <button class="specCaretBtn" ng-click="changePeople(-1)">-</button>
+                    <button class="specCaretBtn" ng-click="changePeople(1)"><i class="fa fa-plus"></i></button>
+                    <button class="specCaretBtn" ng-click="changePeople(-1)"><i class="fa fa-minus"></i></button>
                 </span>
                 <span class="col-1 numberColumn">
                     {{actual.editUserCount}}
@@ -374,8 +374,8 @@ $scope.garbageCollect = function() {
                     {{siteInfo.workspaceLimit|number}}
                 </span>
                 <span class="col-1 numberColumn">
-                    <button class="specCaretBtn" ng-click="changeWS(1)">+</button>
-                    <button class="specCaretBtn" ng-click="changeWS(-1)">-</button>
+                    <button class="specCaretBtn" ng-click="changeWS(1)"><i class="fa fa-plus"></i></button>
+                    <button class="specCaretBtn" ng-click="changeWS(-1)"><i class="fa fa-minus"></i></button>
                 </span>
                 <span class="col-1 numberColumn">
                     {{actual.numActive}}

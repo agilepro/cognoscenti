@@ -775,10 +775,10 @@ a {
     padding:5px;
 }
 .votingButton {
-    max-width: fit-content;
+    max-height: 26px;
     padding:2px;
     margin:0px;
-    font-size: 130%;
+    font-size: 85%;
 }
 .buttonSpacerOff {
     border: 5px solid white;
@@ -1052,11 +1052,6 @@ foreignObject {
 }
 .spacydiv {
     padding:5px;
-}
-.votingButton {
-    padding:2px;
-    margin:0px;
-    font-size: 130%;
 }
 .buttonSpacerOff {
     border: 5px solid white;

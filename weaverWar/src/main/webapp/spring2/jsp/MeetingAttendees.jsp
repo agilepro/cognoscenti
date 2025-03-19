@@ -78,6 +78,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     }
     $scope.tzIndicator = txFmt;
 
+    $scope.currentPage = 0;
 
 
 
@@ -179,47 +180,56 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 
 <div class="container-fluid override">
 
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
+
                 <div class="col-md-auto">
 
-                    <span class="btn second-menu-btn btn-wide" type="button"ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" tabindex="-1"
-              title="Create a new meeting record"
-              href="MeetingCreate.htm" ><i class="fa fa-plus"></i> Create Meeting</a></span>
+                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic">
+                        <a class="nav-link" role="menuitem" tabindex="-1"
+                        title="Create a new meeting record"
+                        href="MeetingCreate.htm"><i class="fa fa-plus"></i> Create Meeting</a></span>
                 </div>
-            </div>
+
 
 </div><hr>
 
 
-<div class="container-fluid col-12">
-        <div class="row gridTableHeader m-2">
-            <span class="col-6 h5">Meeting</span>
-            <span class="col-4 h5">Date ({{browserZone}})</span>
-            <span class="col-2 h5" ng-repeat="user in foundUsers" class="centerCell"><img class="rounded-5" 
-                src="<%=ar.retPath%>icon/{{user.key}}.jpg" 
-                style="width:32px;height:32px" 
-                title="{{user.name}} - {{user.uid}}"></span>
-        </div>
-        <div class="row m-2" ng-repeat="rec in meetings">
-            <span class="col-6"><b><a title="Meeting Agenda" 
-                 href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
-                {{rec.name}}</a></b>
-            </span>
-            <span class="col-4">
-                <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
-                <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
-            </span>
-            <span class="col-2" ng-repeat="user in foundUsers" class="centerCell">
-                <span ng-show="attendeeMatrix[user.key][rec.id]"><i class="fa fa-check"></i></span>
-                <span ng-hide="attendeeMatrix[user.key][rec.id]" style="color:grey">.</span>
+<div class="container-fluid override">({{browserZone}})
+        <div class="row d-flex my-2 border-bottom border-1 border-secondary border-opacity-50">   
+            <span class="col-1 h6 text-wrap text-center mt-auto">User</span>
+            <span class="col-1 h6" ng-repeat="rec in meetings | limitTo:11 : currentPage * 11">
+                <div class="text-center text-wrap">
+                    <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
+                    <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
+                </div>
+                <div class="text-truncate"><b><a title="Meeting Agenda" href="MeetingHtml.htm?id={{rec.id}}&mode=Items">
+                            {{rec.name}}</a></b>
+                </div>
             </span>
         </div>
-    </div>
+        <div class="row d-flex my-2" ng-repeat="user in foundUsers" title="{{user.name}} - {{user.uid}}">
+            <span class="col-1 text-center" >
+                <img class="rounded-5 centered" ng-src="<%=ar.retPath%>icon/{{user.key}}.jpg" style="width:32px;height:32px"
+                title="{{user.name}} - {{user.uid}}">
+            </span>
+            <span class="col-1 text-center" ng-repeat="rec in meetings | limitTo:11 : currentPage * 11">
+                
+                    <span ng-show="attendeeMatrix[user.key][rec.id]" style="color:green;"><i class="fa fa-check"></i></span>
+                    <span ng-hide="attendeeMatrix[user.key][rec.id]" style="color:grey">.</span>
+                </span>
+
+        </div>
+<!-- Pagination Controls -->
+<div class="my-3">
+    <button class="btn btn-secondary me-2" ng-click="currentPage = currentPage - 1" ng-disabled="currentPage === 0">
+        Previous </button>
+    <button class="btn btn-primary" ng-click="currentPage = currentPage + 1"
+        ng-disabled="(currentPage + 1) * 10 >= meetings.length"> Next </button>
+</div>
+            
+
+        </div>
+        
+
 
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     There are no meetings in this workspace.

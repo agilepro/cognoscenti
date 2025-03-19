@@ -500,12 +500,12 @@ app.filter('minutes', function() {
         </a>
       </div>
       <div class="upRightOptions rightDivContent" style="z-index: 1001;">
-        <button class="btn btn-sm btn-warning btn-raised" ng-click="editMode('view')" ng-show="enableClick">
+        <button class="btn btn-wide btn-warning btn-raised" ng-click="editMode('view')" ng-show="enableClick">
                 Editing</button>
-        <button class="btn btn-sm btn-default btn-raised" ng-click="editMode('edit')" ng-hide="enableClick">
+        <button class="btn btn-wide btn-default btn-raised" ng-click="editMode('edit')" ng-hide="enableClick">
                 View Only</button>
         <span class="dropdown" style="float:right;">
-            <button class="btn btn-default btn-raised btn-sm dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised btn-wide dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                 Options: <span class="caret"></span></button>
             <ul class="dropdown-menu tighten" role="menu" aria-labelledby="menu1">
                 <li role="presentation"><a role="menuitem"

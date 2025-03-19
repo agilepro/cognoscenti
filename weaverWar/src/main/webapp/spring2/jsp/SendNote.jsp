@@ -689,7 +689,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                             <label class="col-md-2 control-label h5">Discussion Topic:</label>
                             <div class="col-md-10">
                                 <div class="togglebutton">
-                                <span class="col-md-2 btn-comment btn-wide btn-sm px-2 me-2">{{emailInfo.noteInfo.subject}}</span>
+                                <span class="col-md-2 btn btn-comment btn-wide px-2 me-2">{{emailInfo.noteInfo.subject}}</span>
                                 <label class="h6">
                                     <input type="checkbox" ng-model="emailInfo.includeBody"> Include text in email? &nbsp;
                                 </label>

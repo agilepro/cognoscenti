@@ -58,7 +58,7 @@
                 <div ng-hide="editSitch.uid==pers.uid">{{pers.situation}}</div>
                 <div ng-show="editSitch.uid==pers.uid">
                     <input class="form-control" ng-model="editSitch.situation"  style="width:400px; height: 25px;"/>
-                    <button ng-click="toggleEditSitch(pers)" class="btn btn-sm btn-primary btn-raised pull-right">Close</button>
+                    <button ng-click="toggleEditSitch(pers)" class="btn btn-default btn-danger btn-raised pull-right">Close</button>
                 </div>
             </span>
             <span class="col" title="Shows what the user selected during the time selection phase, if anything">
