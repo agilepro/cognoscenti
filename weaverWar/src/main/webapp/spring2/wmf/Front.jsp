@@ -27,13 +27,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div>
 
     
-    <div class="topper">
-    {{workspaceName}}
-    </div>
+    <h1 class="text-wrap">
+    {{workspaceName}}</h1> <h2>Front Page</h2>
+    
     <div class="grayBox mb-3">
-        <div class="infoBox my-4"> Workspace Front Page </div>
+        
 
-    </div>
+   
     
     <div class="fullWidth my-4">
         <a href="PickMeeting.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/Meeting.png" class="centered text-decoration-none">
@@ -57,11 +57,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     List Action Items
     </div>    </a>
 </div>
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
 
-</div>
+    </div>
+
 
 
 

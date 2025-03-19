@@ -18,7 +18,7 @@
 <!--TEMPLATE Reminder.chtml-->
 
 <p>From: <a href="{$from.url}">{$from.name|html}</a>, &nbsp; 
-Workspace: <a href="{$wsBaseURL}FrontPage.htm">{$wsName}</a>
+Workspace: <a href="{$wsBaseURL}Front.wmf">{$wsName}</a>
 </p>
 
 <p>You have been invited to upload a file so that it can 

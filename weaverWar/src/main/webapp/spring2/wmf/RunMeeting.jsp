@@ -163,14 +163,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <hr style="margin:20px;color:lightgray"/>
     
-    <div class="grayBox">    
+    <div class="grayBox p-2">    
     <table class="table">
-    <tr class="listItemStyle">
+    <tr class="h6">
         <td style="max-width:200px">Participant</td>
         <td>P</td>
         <td>A</td>
     </tr>
-    <tr ng-repeat="(key, person) in meeting.people" class="listItemStyle">
+    <tr ng-repeat="(key, person) in meeting.people" class="fs-6">
     <a href="RunMeeting.wmf?meetid={{person.id}}">
         <td>{{trimit(person.name, 25)}}</td>
         <td><input type="checkbox" ng-model="person.attended" ng-click="setAttended(person)"></td>
@@ -179,12 +179,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </tr>
     </table>
     </div>
-    
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
 
-</div>
 
 
 

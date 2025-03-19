@@ -167,11 +167,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
       </div>
     
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
-    
-</div>
+
 
 
 

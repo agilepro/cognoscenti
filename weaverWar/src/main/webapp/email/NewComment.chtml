@@ -8,7 +8,7 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
-Workspace: <a href="{$wsBaseURL}FrontPage.htm">{$wsName|onempty(No Name)|html}</a>
+Workspace: <a href="{$wsBaseURL}Front.wmf">{$wsName|onempty(No Name)|html}</a>
 Message: <a href="{$wsBaseURL}EmailMsg.htm?msg={$msgId}">View Online</a>
 <br/>
 About Item <a href="{$wsBaseURL}Reply.htm?msg={$emailLocator}">{$parentName|onempty(No Name)|html}</a>.

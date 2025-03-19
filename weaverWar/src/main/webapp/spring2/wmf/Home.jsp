@@ -1,4 +1,4 @@
-<%@page errorPage="/spring/jsp/error.jsp"
+<%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
 %><%
     String pageId    = ar.reqParam("pageId");
@@ -6,10 +6,13 @@
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     
+
+
     String currentUserId = "";
     if (ar.isLoggedIn()) {
         UserProfile uProf = ar.getUserProfile();
         currentUserId = uProf.getUniversalId();
+        String currentUserName = uProf.getName();
     }
 
 %>
@@ -38,40 +41,39 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     
     <div class="topper">
-    <%=ngw.getFullName()%>
+
+  User Home
     </div>
     
-    <div class="fullWidth">
-        <img src="<%=ar.retPath%>bits/agenda-icon.png" class="centered">
-        <div class="topper">
-        Create Agenda
-        </div>
+    <div class="fullWidth well py-2">
+        <a href="PickTask.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/ActionItems.png" class="left my-3"></a>
+        <span class="h4"> &nbsp;Action Items</span>
+
     </div>
     
     
-    <div class="fullWidth" ng-click="PickMeeting()">
-        <img src="<%=ar.retPath%>bits/meeting-icon-big.png" class="centered">
-        <div class="topper" ng-click="PickMeeting()">
-        Begin Meeting
-        </div>
+    <div class="fullWidth well py-2" ng-click="PickMeeting()">
+        <img src="<%=ar.retPath%>new_assets/assets/navicon/Meeting.png" class="left my-3">
+        <span class="h4" ng-click="PickMeeting()">
+        &nbsp;Select Meeting
+        </span>
     </div>
         
-    <div class="fullWidth">
-        <img src="<%=ar.retPath%>bits/meeting-icon-mid.png" class="centered">
-        <div class="topper">
-        Past Meetings
+
+    
+    <div class="fullWidth well py-2">
+        <a href="PickTopic.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/Topics.png" class="left my-3"></a>
+        <span class="h4">&nbsp;Select Discussion</span>
+    </div>
+
+    
+
+        <div class="fullWidth well py-2">
+            <a href="Front.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/Workspaces-UserHome.png" class="left my-3"></a>
+            <span class="h4">&nbsp;Workspace Home</span>
         </div>
     </div>
-    
-    <div class="fullWidth">
-        <img src="<%=ar.retPath%>bits/discussion-icon-mid.png" class="centered">
-        <div class="topper">
-        Discussions
-        </div>
-    </div>
-    
-    
-</div>
+
 
 
 

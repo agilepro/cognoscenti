@@ -8,7 +8,7 @@
 
 <p>Congratulations on creating the workspace(s): 
 {% loop in $site.workspaces as $workspace %}
-<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/FrontPage.htm">{$workspace.name}</a></b>
+<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/Front.wmf">{$workspace.name}</a></b>
 {% onEmpty %}
 (Actually this site does not have any workspaces.)
 {% endloop %}

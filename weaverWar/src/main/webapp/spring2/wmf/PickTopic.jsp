@@ -61,11 +61,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
     </div>
     
-    
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
-</div>
 
 
 

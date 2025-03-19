@@ -7,7 +7,7 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 <!--TEMPLATE NewResponse.chtml-->
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
-Workspace: <a href="{$wsBaseURL}FrontPage.htm">{$wsName|onempty(No Name)|html}</a>
+Workspace: <a href="{$wsBaseURL}Front.wmf">{$wsName|onempty(No Name)|html}</a>
 <br/>
 Response on topic <a href="{$commentURL}">{$parentName|onempty(No Name)|html}</a>
 </p>

@@ -38,11 +38,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     Show the Action Item Here
     </div>
     
-    
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
-</div>
+
 
 
 

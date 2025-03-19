@@ -175,7 +175,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   </tr>
   <tr>
     <td>Workspace</td>
-    <td><a href="FrontPage.htm">{{emailMsg.Workspace}}</a></td>
+    <td><a href="Front.wmf">{{emailMsg.Workspace}}</a></td>
   </tr>
   <tr>
     <td>CommentContainer</td>

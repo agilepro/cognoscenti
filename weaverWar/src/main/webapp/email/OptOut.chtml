@@ -13,11 +13,11 @@ This message was sent to {$optout.emailId|html}.
 {% elseif ($optout.roleName) %}
     You have received this message because you are a player of the 
     <b>{$optout.roleName|html}</b> role in the 
-    <a href="{$optout.wsBaseURL}FrontPage.htm">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
+    <a href="{$optout.wsBaseURL}Front.wmf">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
 {% elseif ($optout.topicName) %}
     You have received this message because you are subscribed to the topic 
     <b><a href="{$optout.topicURL}">{$optout.topicName|onempty(Unnamed)|html}</a></b> in the 
-    <a href="{$optout.wsBaseURL}FrontPage.htm">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
+    <a href="{$optout.wsBaseURL}Front.wmf">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
 {% endif %}
 {% if ($optout.leaveRole) %}
 You can <a href="{$optout.leaveRole}">withdraw from that role</a> if you no 

@@ -288,10 +288,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="h6 m-2">
         <strong>Due:</strong> {{comment.dueDate | cdate}}</div>
     
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
-</div>
+
 
 
 

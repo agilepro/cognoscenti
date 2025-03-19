@@ -112,9 +112,11 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
     <!-- Begin Template Content (compiled separately) -->
     <jsp:include page="<%=wrappedJSP%>" />
     <!-- End Template Content (compiled separately) -->
-</div>
 
-</body>
+    <!-- Begin Template Footer -->
+    <jsp:include page="WMFFooter.jsp" />
+    <!-- End Template Footer -->
+</div></div></body>
 </html>
 
 <!-- END Wrapper.jsp Layout-->

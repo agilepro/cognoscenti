@@ -1209,12 +1209,13 @@ foreignObject {
 
 body.mobile-body {
     background: #39134C 0% 0% no-repeat padding-box;
+    min-height: 100%;
 }
 a {
-    text-decoration: underline;
+    text-decoration: underline;
 }
 .main-content {
-    min-height: 787px;
+    min-height: 500px;
     max-width: 100%;
     margin: 0px 15px;
     padding: 15px;

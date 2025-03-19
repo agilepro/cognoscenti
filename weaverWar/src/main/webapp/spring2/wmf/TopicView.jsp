@@ -146,12 +146,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     <div ng-bind-html="topic.wiki | wiki" class="richTextBox"></div> 
     
-    <div class="instruction">
-    Links:
+    <div class="instruction" ng-show="topic.docList">
+    Attachment Links:
     </div>  
       <div class="subItemStyle" ng-repeat="att in topic.docList">
-        <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
-          <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
         <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
           <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
       </div>
@@ -163,11 +161,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
     
     
-    
-    <!-- Begin Template Footer -->
-    <jsp:include page="WMFFooter.jsp" />
-    <!-- End Template Footer -->
-</div>
 
 
 
