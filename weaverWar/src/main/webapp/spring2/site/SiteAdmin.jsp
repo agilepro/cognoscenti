@@ -630,11 +630,12 @@ $scope.garbageCollect = function() {
               Remember to run garbage collection to actually remove all the 
               old deleted documents.
               </li>
+            <li><b>Total Per Month</b>: This is the total charge you can expect to pay every month if you are using resources at the current level.
+          </li>
             </ul>
           </li>
-          <li><b>Total Per Month</b> This is the total charge you can expect to pay every month if you are using resources at the current level.
-          </li>
-            </ul></span>
+        </ul></span>
+
         </div>
 
 
