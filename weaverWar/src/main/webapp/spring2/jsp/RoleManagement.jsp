@@ -73,9 +73,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
     $scope.findLastLogin = function(user) {
-        console.log("USER", user);
         return $scope.siteUsers[user.key].lastAccess;
     }
+    function preferredRoleOrder() {
+        $scope.allRoles.sort( (a,b) => {
+           if (a.symbol === "MembersRole") {
+               return -1;
+           }
+           if (b.symbol === "MembersRole") {
+               return 1;
+           }
+           if (a.symbol === "StewardsRole") {
+               return -1;
+           }
+           if (b.symbol === "StewardsRole") {
+               return 1;
+           }
+           if (a.name < b.name) {
+              return -1;
+           }
+           if (a.name > b.name) {
+              return 1;
+           }
+           return 0;
+        });
+    }
+    preferredRoleOrder();
 
     $scope.cleanDuplicates = function(role) {
         var cleanList = [];
@@ -109,6 +132,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         $scope.allRoles = newRoles;
+        preferredRoleOrder();
     }
 
 
@@ -119,6 +143,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             console.log("GETALL: ", data);
             $scope.allRoles = data.roles;
+            preferredRoleOrder();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -200,6 +225,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     }
                 });
                 $scope.allRoles = newSet;
+                preferredRoleOrder();
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);

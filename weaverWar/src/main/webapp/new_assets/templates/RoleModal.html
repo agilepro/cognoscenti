@@ -10,10 +10,12 @@
 
 <div class="modal-body">
     <div class="container-fluid override">
+
         <div class="row col-12">
         <div ng-hide="isNew || editMode=='expert'" >
             
             <div class="row d-flex">
+                <div class="row col-12" style="color:red">{{errorMessage}}</div>
                 <div class="form-group d-flex col-12 m-2">
                     <label class="col-4 control-label h6">Color:</label>
                     <span class="nav-item dropdown d-inline col-4" style="position:relative">

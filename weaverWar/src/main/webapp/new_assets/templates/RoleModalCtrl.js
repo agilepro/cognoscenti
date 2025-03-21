@@ -12,10 +12,19 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.allRoles = [];
     $scope.roleDefinitions = [];
     $scope.roleToCopy = "";
+    
+    $scope.errorMessage = "";
 
 
     $scope.reportError = function (data) {
+        $scope.errorMessage = "";
         console.log("ERROR in RoleModel Dialog: ", data);
+        if (data.error.details) {
+            data.error.details.forEach( (det) => {
+                $scope.errorMessage = $scope.errorMessage + det.message + "  ";
+                console.log("MSG", det);
+            });
+        }
     }
 
     $scope.isNew = isNew;
@@ -51,6 +60,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         $http.post(postURL, postdata)
             .success(function (data) {
                 $scope.allRoles = data.roles;
+                $scope.errorMessage = "";
             })
             .error(function (data, status, headers, config) {
                 $scope.reportError(data);
@@ -82,12 +92,12 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.updateRole = function (role) {
         var postURL = "roleUpdate.json?op=Update";
         var postdata = angular.toJson(role);
-        $scope.showError = false;
         $http.post(postURL, postdata)
             .success(function (data) {
                 $scope.roleInfo = data;
                 $scope.parentScope.updateRoleList(data);
                 AllPeople.clearCache($scope.siteId);
+                $scope.errorMessage = "";
             })
             .error(function (data, status, headers, config) {
                 $scope.reportError(data);
@@ -158,6 +168,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
                 $scope.parentScope.cleanDuplicates(data);
                 $scope.roleInfo = data;
                 $scope.getCurrentTerm();
+                $scope.errorMessage = "";
             })
             .error(function (data, status, headers, config) {
                 $scope.reportError(data);
