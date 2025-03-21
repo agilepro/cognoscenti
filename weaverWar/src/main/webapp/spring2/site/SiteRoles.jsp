@@ -154,12 +154,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location = "<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.deleteRole = function(role) {
-        var key = role.name;
-        if (role.name == "Members" || role.name == "Administrators" ) {
+        var key = role.symbol;
+        if (key === "MembersRole" || key === "StewardsRole" ) {
             alert("The role "+role.name+" is required and can not be deleted.");
             return;
         }
-        var ok = confirm("Are you sure you want to delete: "+key);
+        var ok = confirm("Are you sure you want to delete: "+role.name);
         var postURL = "roleUpdate.json?op=Delete";
         var postdata = angular.toJson(role);
         $scope.showError=false;
@@ -187,9 +187,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
-    
-
-
     
     $scope.openRoleModal = function (role) {
         var isNew = false;

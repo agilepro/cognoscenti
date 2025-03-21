@@ -25,7 +25,7 @@
     JSONObject allMap = new JSONObject();
     List<AddressListEntry> allUsers = new ArrayList<>();
     
-    for (CustomRole aRole : ngw.getAllRoles()) {
+    for (WorkspaceRole aRole : ngw.getWorkspaceRoles()) {
         allRoles.put(aRole.getJSONDetail());
         JSONObject userMap = allMap.requireJSONObject(aRole.getName());
         
@@ -175,7 +175,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             return;
         }
         var key = role.name;
-        if (role.name == "Members" || role.name == "Administrators" ) {
+        if (role.name == "Members" || role.name == "Stewards" ) {
             alert("The role "+role.name+" is required and can not be deleted.");
             return;
         }

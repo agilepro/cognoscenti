@@ -1,6 +1,5 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@ include file="/include.jsp"
-%><%@page import="com.purplehillsbooks.weaver.CustomRole"
 %><%@page import="com.purplehillsbooks.weaver.RoleRequestRecord"
 %><%@page import="com.purplehillsbooks.weaver.SuperAdminLogFile"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
@@ -16,12 +15,13 @@
 
     UserProfile uProf = ar.getUserProfile();
     Date date = new Date(ar.getSuperAdminLogFile().getLastNotificationSentTime());
-    List<CustomRole> roles = ngw.getAllRoles();
+    
+    List<WorkspaceRole> roles = ngw.getWorkspaceRoles();
     
     SiteUsers siteUsers = site.getUserMap();
 
     JSONArray roleList = new JSONArray();
-    for (CustomRole crole : roles) {
+    for (WorkspaceRole crole : roles) {
         JSONObject jObj = crole.getJSON();
         jObj.put("player", crole.isPlayer(uProf));
         RoleRequestRecord rrr = ngw.getRoleRequestRecord(crole.getName(),uProf.getUniversalId());

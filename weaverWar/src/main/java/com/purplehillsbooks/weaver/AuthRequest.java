@@ -752,7 +752,7 @@ public class AuthRequest {
         }
         if (ngp instanceof NGBook) {
             NGBook site = ((NGBook) ngp);
-            return site.userReadOnly(user);
+            return site.isUnpaidUser(user);
         } else if (ngp instanceof NGWorkspace) {
             NGWorkspace workspace = ((NGWorkspace) ngp);
             return !workspace.canUpdateWorkspace(user);
@@ -1418,7 +1418,6 @@ public class AuthRequest {
                 throw WeaverException.newBasic("Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
-            String msg = reqParam("property_msg_key");
             rd.include(req, resp);
 
             // the JSP file may change the writer to be a writer for only the JSP

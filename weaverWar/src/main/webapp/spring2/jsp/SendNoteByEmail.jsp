@@ -68,7 +68,7 @@ Optional Parameters:
         subject = "Message from Workspace "+ngp.getFullName();
     }
 
-    List<CustomRole> roles = ngp.getAllRoles();
+    List<WorkspaceRole> roles = ngp.getWorkspaceRoles();
 
 %>
 <head>

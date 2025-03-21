@@ -10,7 +10,7 @@
     String termKey    = ar.reqParam("term");
     
     //page must work for both workspaces and for sites
-    NGContainer ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGWorkspace ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
 
@@ -20,7 +20,7 @@
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }    
     
-    CustomRole theRole = ngc.getRole(roleName);
+    WorkspaceRole theRole = ngc.getWorkspaceRole(roleName);
     JSONObject role = theRole.getJSONDetail();
 
 
@@ -186,7 +186,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.updateTerm = function(termObj) {
         var roleObj = {};
-        roleObj.name = $scope.role.name;
+        roleObj.symbol = $scope.role.symbol;
         roleObj.terms = [];
         roleObj.terms.push(termObj);
         $scope.updateRole(roleObj);
@@ -202,7 +202,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 });
             }
         });
-        var key = role.name;
+        var key = role.symbol;
         var postURL = "roleUpdate.json?op=Update";
         var postdata = angular.toJson(role);
         $scope.showError=false;

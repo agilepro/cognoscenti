@@ -23,7 +23,7 @@
 
     JSONArray allRoles = new JSONArray();
 
-    for (CustomRole aRole : ngw.getAllRoles()) {
+    for (WorkspaceRole aRole : ngw.getWorkspaceRoles()) {
         allRoles.put(aRole.getJSONDetail());
     }
 
@@ -91,10 +91,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     });
     
     $scope.updateRoleList = function(role) {
-        var key = role.name;
+        var key = role.symbol;
         var newRoles = [];
         $scope.allRoles.forEach( function (item) {
-            if (item.name==key) {
+            if (item.symbol==key) {
                 newRoles.push(role);
             }
             else {
@@ -123,7 +123,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("You are not able to update this role because you are an observer");
             return;
         }
-        var key = role.name;
+        var key = role.symbol;
         var postURL = "roleUpdate.json?op=Update";
         role.players.forEach( function(item) {
             if (!item.uid) {
@@ -174,8 +174,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("You are not able to delete this role because you are an observer");
             return;
         }
-        var key = role.name;
-        if (role.name == "Members" || role.name == "Administrators" ) {
+        var key = role.symbol;
+        if (role.symbol == "MembersRole" || role.symbol == "StewardsRole" ) {
             alert("The role "+role.name+" is required and can not be deleted.");
             return;
         }
@@ -188,7 +188,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             .success( function(data) {
                 var newSet = [];
                 $scope.allRoles.map( function(item) {
-                    if (item.name!=key) {
+                    if (item.symbol!=key) {
                         newSet.push(item);
                     }
                 });
@@ -295,7 +295,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         if (role.terms.length > 0) {
             var selTerm = role.terms[role.terms.length-1];
-            window.location = "RoleNomination.htm?role="+role.name+"&term="+selTerm.key;
+            window.location = "RoleNomination.htm?role="+role.symbol+"&term="+selTerm.key;
             return;
         }
         
@@ -324,7 +324,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             data.terms.forEach( function(aTerm) {
                 if (aTerm.termStart == proposeBegin) {
                     createdTerm = true;
-                    window.location = "RoleNomination.htm?role="+role.name+"&term="+aTerm.key;
+                    window.location = "RoleNomination.htm?role="+role.symbol+"&term="+aTerm.key;
                 }
             });
             if (!createdTerm) {
@@ -415,13 +415,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       ng-click="openRoleModal(role); dropdownStates['menu'] = false;">
                       <span class="fa fa-edit"></span> Edit All Players </a></li>
                   <li role="presentation"><a class="dropdown-item" role="menuitem" 
-                      href="RoleDefine.htm?role={{role.name}}">
+                      href="RoleDefine.htm?role={{role.symbol}}">
                       <span class="fa fa-street-view"></span> Define Role </a></li>
                   <li role="presentation"><a class="dropdown-item" role="menuitem" 
                       ng-click="goNomination(role); dropdownStates['menu'] = false;">
                       <span class="fa fa-flag-o"></span> Role Elections </a></li>
                   <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                      href="MultiInvite.htm?role={{role.name}}">
+                      href="MultiInvite.htm?role={{role.symbol}}">
                       <span class="fa fa-envelope-o"></span> Multi-Person Invite</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation"><a class="dropdown-item" role="menuitem" 

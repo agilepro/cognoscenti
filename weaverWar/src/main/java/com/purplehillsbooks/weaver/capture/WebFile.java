@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**

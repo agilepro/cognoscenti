@@ -46,6 +46,10 @@ import com.purplehillsbooks.weaver.util.StringCounter;
 * global ids.  The role
 */
 public interface NGRole extends NGLabel {
+    /**
+    * Symbol that all the users are saved under.  Not the same as the name.
+    */
+    public String getSymbol();
 
     /**
     * Display name of the role, suitable for display in user interface.

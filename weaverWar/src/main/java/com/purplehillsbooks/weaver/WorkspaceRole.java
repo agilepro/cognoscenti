@@ -34,40 +34,60 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
-* A custom role is defined by the users on a workspace, but
-* defining a name, and associated users with it.
-*
-* TODO: This class was designed around the idea that a role might contain
-* other roles symbolically.  This has never really worked out ...
-* it is too complicated for people to handle.  Should remove
-* this capability to make this code simpler to use.
+* workspace role has a special relationship to the role definitions
+* from the site, while roles from sites and user pages do not have that.
 */
-public class CustomRole extends DOMFace implements NGRole {
+public class WorkspaceRole extends CustomRole {
 
-    public CustomRole(Document doc, Element ele, DOMFace p) {
+    NGBook site;
+    RoleDefinition def;
+
+    // this is needed for the DomFace style create on the DOM
+    public WorkspaceRole(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
     }
 
+    public void setDef(NGBook newSite, RoleDefinition newDef) {
+        site = newSite;
+        def = newDef;
+    }
+
+    // performs the check that if the role is edit role, the user must be paid
+    private void assertPlayerAcceptible(AddressListEntry newMember) throws Exception {
+        if (def.canEdit) {
+            UserProfile uProf = newMember.getUserProfile();
+            if (site.isUnpaidUser(uProf)) {
+                throw WeaverException.newBasic(
+                    "Role (%s) is an update role, and can not be played by an unpaid user (%s)", 
+                    getName(), newMember.getEmail());
+            }
+        }
+    }
+
     public String getSymbol() {
-        return getScalar("rolename");
+        return def.symbol;
     }
     public String getName() {
-        return getSymbol();
+        return def.name;
     }
     public void setName(String name) {
-        if (name==null || name.length()==0) {
-            throw new RuntimeException("A role can not be set to have an empty name.");
-        }
-        setScalar("rolename", name);
+        throw new RuntimeException("setName not implemented on Workspace Roles");
     }
 
     public String getDescription() {
-        return getScalar("description");
+        return def.description;
     }
     public void setDescription(String desc) {
-        setScalar("description", desc);
+        throw new RuntimeException("setDescription not implemented on Workspace Roles");
     }
 
+    public String getRequirements() {
+        return def.eligibility;
+    }
+    public void setRequirements(String reqs) {
+        throw new RuntimeException("setRequirements(eligibility) not implemented on Workspace Roles");
+    }
+    
     /**
      * Each role in a workspace can be linked to a role in the Site.
      * These will be synchronized.  When the workspace is read, it will
@@ -122,43 +142,8 @@ public class CustomRole extends DOMFace implements NGRole {
     }
 
     public void addPlayer(AddressListEntry newMember) throws Exception {
-        RoleTerm term = getCurrentTerm();
-        if (term==null) {
-            addVectorValue("member", newMember.getStorageRepresentation());
-        }
-        else {
-            term.addPlayer(newMember);
-        }
-    }
-    public void removePlayer(AddressListEntry oldMember) throws Exception {
-        RoleTerm term = getCurrentTerm();
-        if (term==null) {
-            String whichId = oldMember.getStorageRepresentation();
-            UserProfile up = oldMember.getUserProfile();
-            if (up!=null) {
-                whichId = whichIDForUser(up);
-            }
-            removeVectorValue("member", whichId);
-        }
-        else {
-            term.removePlayer(oldMember);
-        }
-    }
-    public void removePlayerCompletely(UserRef user) throws Exception {
-        RoleTerm term = getCurrentTerm();
-        if (term!=null) {
-            term.removePlayerCompletely(user);
-        }
-        else {
-            List<String> oldPlayers = getVector("member");
-            List<String> newPlayers = new ArrayList<String>();
-            for (String memberID : oldPlayers) {
-                if (!user.hasAnyId(memberID)) {
-                    newPlayers.add(memberID);
-                }
-            }
-            this.setVector("member", newPlayers);
-        }
+        assertPlayerAcceptible(newMember);
+        super.addPlayer(newMember);
     }
 
     public void clear() {
@@ -193,14 +178,6 @@ public class CustomRole extends DOMFace implements NGRole {
     }
 
 
-    public String getRequirements()
-    {
-        return getScalar("reqs");
-    }
-    public void setRequirements(String reqs)
-    {
-        setScalar("reqs", reqs);
-    }
 
     public String getColor() {
         return getAttribute("color");
@@ -287,21 +264,6 @@ public class CustomRole extends DOMFace implements NGRole {
         }
     }
 
-    public void addPlayerIfNotPresent(AddressListEntry newMember) throws Exception {
-        for (AddressListEntry one : getDirectPlayers()) {
-            if (one.equals(newMember)) {
-                return;
-            }
-        }
-        addPlayer(newMember);
-    }
-
-    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
-        for (AddressListEntry ale : addressList) {
-            addPlayerIfNotPresent(ale);
-        }
-    }
-
 
 
     public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
@@ -366,7 +328,7 @@ public class CustomRole extends DOMFace implements NGRole {
         else {
             jObj.put("currentTerm", "");
         }
-        extractScalarString(jObj, "description");
+        jObj.put("description", getDescription());
         jObj.put("requirements", getRequirements());
         Set<String> uniquenessEnforcer = new HashSet<String>();
         JSONArray playerArray = new JSONArray();
@@ -387,7 +349,7 @@ public class CustomRole extends DOMFace implements NGRole {
         }
         jObj.put("players", playerArray);
         
-        //this does some special things for Members and Administrators
+        //this does some special things for Members and Stewards
         jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
 
         return jObj;
@@ -421,13 +383,8 @@ public class CustomRole extends DOMFace implements NGRole {
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
         updateAttributeString("linkedRole", roleInfo);
-        updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
-        
-        if (roleInfo.has("requirements")) {
-            //internal key is not same as external
-            setRequirements(roleInfo.getString("requirements"));
-        }
+
         if (roleInfo.has("players")) {
             clear();
             JSONArray playerArray = roleInfo.getJSONArray("players");
@@ -455,12 +412,13 @@ public class CustomRole extends DOMFace implements NGRole {
     }
     
     public boolean allowUpdateWorkspace() {
-        // custom role should not be used for any workspace role
-        // and so we never need to answer this question.
-        return false;
+        if (def == null) {
+            return false;
+        }
+        return def.canEdit;
     }
     public void setUpdateWorkspace(boolean allowed) {
-        throw new RuntimeException("It is never alowed to set the update workspace setting on a CustomRole: " + getSymbol());
+        throw new RuntimeException("RoleDefinition can not be set on the role object");
     }
 
 }

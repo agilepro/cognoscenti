@@ -46,7 +46,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     
     $scope.goNominate = function(aterm) {
-        window.location = "RoleNomination.htm?role="+$scope.role.name+"&term="+aterm.key;
+        window.location = "RoleNomination.htm?role="+$scope.role.symbol+"&term="+aterm.key;
     }
     $scope.deleteResponsibility = function(resp) {
         if (confirm("Are you sure you want to delete this responsibility?")) {
@@ -62,21 +62,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.updateResponsibility = function(resp) {
         var roleObj = {};
-        roleObj.name = $scope.role.name;
+        roleObj.symbol = $scope.role.symbol;
         roleObj.responsibilities = [];
         roleObj.responsibilities.push(resp);
         $scope.updateRole(roleObj);
     }
     $scope.updateTerm = function(term) {
         var roleObj = {};
-        roleObj.name = $scope.role.name;
+        roleObj.symbol = $scope.role.symbol;
         roleObj.currentTerm = $scope.role.currentTerm;
         roleObj.terms = [];
         roleObj.terms.push(term);
         $scope.updateRole(roleObj);
     }
     $scope.updateRole = function(role) {
-        var key = role.name;
+        var key = role.symbol;
         var postURL = "roleUpdate.json?op=Update";
         var postdata = angular.toJson(role);
         $scope.showError=false;
@@ -174,9 +174,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="row">
         <div class="col-md-6 col-sm-12">
             <div class="form-group d-flex col-11 m-2">
-                <label for="synopsis" class="col-md-3 control-label h5">Description: <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span></label>
+                <label for="synopsis" class="col-md-3 control-label h5">Description: 
+                <br/><span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span></label>
                 
-                <textarea ng-model="role.description" class=" form-control markDownEditor" placeholder="Enter description"></textarea>
+                <div>{{role.description}}</div>
             </div>
             <div class="guideVocal m-4" ng-show="descHelp" ng-click="descHelp=false">
                 The description is something for everyone to see to give a basic understanding of 
@@ -185,9 +186,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 succinct and explain in 3 sentences or less.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2">
-                <label for="synopsis" class="col-md-3 control-label h5">Eligibility: <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span></label>
+                <label for="synopsis" class="col-md-3 control-label h5">Eligibility: 
+                <br/><span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span></label>
                 
-                <textarea ng-model="role.requirements" class="form-control markDownEditor" placeholder="Enter requirements"></textarea>
+                <div>{{role.requirements}}</div>
             </div>
             <div class="guideVocal m-4" ng-show="eligHelp" ng-click="eligHelp=false">
                 The eligibility is a little more detail about what qualities one would expected
@@ -196,9 +198,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 of time before they can be considered for the roles.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2">
-                <label for="updateCheck" class="col-md-3 control-label h5">Can Update: <span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
+                <label for="updateCheck" class="col-md-3 control-label h5">Can Update: 
+                <br/><span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
                 
-                <input type="checkbox" id="updateCheck" ng-model="role.canUpdateWorkspace" class="checkbox-lg "/>
+                {{role.canUpdateWorkspace}}
             </div>
             <div class="guideVocal m-4" ng-show="updateHelp" ng-click="updateHelp=false">
                 This checkbox confers the ability for the players of this role to be able to 
@@ -212,13 +215,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 update and which users are observers, and that takes precidence.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
-<% if (canUpdate) { %>
-                <button ng-click="updateRole(role)" class="btn btn-default btn-primary btn-raised">Save</button>
-<% } %>
 
             </div>
 <hr>            <div class="form-group d-flex col-11 m-2">
-                <label for="synopsis" class="col-md-4 control-label h5">Responsibilities: <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span></label>
+                <label for="synopsis" class="col-md-4 control-label h5">Responsibilities: 
+                <br/><span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span></label>
                 <div class="form-group col-10 m-2">
                 <div class="row  align-middle" ng-repeat="aresp in role.responsibilities" >
                     <span class="actions col-1 m-0">

@@ -107,9 +107,11 @@
                     
     <div class="container-fluid" ng-show="isNew">
         <div class="row d-flex my-3">
-            <span class="col-2 gridTableColummHeader h6">Name:</span>
+            <span class="col-2 gridTableColummHeader h6">Pick Role:</span>
             <span class="col-10">
-               <input class="form-control" style="max-width:400px" ng-model="roleInfo.name">
+               <select  class="form-control" style="max-width:400px" ng-model="newSymbol">
+                 <option ng-repeat="item in roleDefinitions" value="{{item.symbol}}">{{item.name}}</option>
+               </select>
             </span>
         </div>
         <div class="row d-flex my-3">
@@ -119,7 +121,7 @@
                   The name should be short and should use only letters and numbers.</span>
             </span>
         </div>
-        <div class="row d-flex my-3">
+        <!--div class="row d-flex my-3">
             <span class="col-2 h6" >Copy From:</span>
             <span class="col-10">
                <select class="form-control" style="max-width:400px" ng-model="roleToCopy"
@@ -127,7 +129,7 @@
                    <option value="">-- choose to copy --</option>
                </select>
             </span>
-        </div>
+        </div-->
     </div>
 
 </div>

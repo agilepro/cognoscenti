@@ -296,7 +296,7 @@ public class MeetingRecord extends DOMFace {
         //oops, not even members exists.
         //set to the first role
         for (NGRole ngr2 : ngw.getAllRoles()) {
-            this.setTargetRole(ngr2.getName());
+            this.setTargetRole(ngr2.getSymbol());
             return;
         }
 

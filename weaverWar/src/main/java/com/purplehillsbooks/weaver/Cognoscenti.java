@@ -600,7 +600,11 @@ System.out.println("Weaver Server Object == Start the Server");
         for (File aProjPath : allWorkspaceFiles) {
             try {
                 NGWorkspace aProj = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
+                boolean changed = aProj.convertOldRoleDefinitions(this);
                 makeIndexForWorkspace(aProj);
+                if (changed) {
+                    aProj.save();
+                }
             }
             catch (Exception eig) {
                 reportUnparseableFile(aProjPath, eig);

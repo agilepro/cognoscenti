@@ -34,6 +34,9 @@ public abstract class RoleSpecialBase implements NGRole {
     RoleSpecialBase() {
     }
 
+    public String getSymbol() {
+        throw new RuntimeException("SpecialRoleBase does not implement getSymbol");
+    }
     public String getName() {
         throw new RuntimeException("SpecialRoleBase does not implement getName");
     }

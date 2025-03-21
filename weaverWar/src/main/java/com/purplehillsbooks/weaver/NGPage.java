@@ -121,16 +121,19 @@ public abstract class NGPage extends ContainerCommon {
         assertNoSectionWithThisName("Poll");
         assertNoSectionWithThisName("Geospatial");
 
-        //migrate the old forms of members and admins roles to the new form
-        //the old form was a "userlist" element, with "user" elements below that
-        //with permissions PM, M, PA, and A.  Move those to the real "roles"
-        //and eliminate the old userlist element.
-        NGRole newMemberRole = getRequiredRole("Members");
-        NGRole newAdminRole = getRequiredRole("Administrators");
+
 
         DOMFace userList = pageInfo.getChild("userlist", DOMFace.class);
-        if (userList!=null)
-        {
+        if (userList!=null) {
+            throw WeaverException.newBasic("DEPRECATED FUNCTION:  very old schema for holding users should not be used and is now eliminated");
+            /*
+            //migrate the old forms of members and admins roles to the new form
+            //the old form was a "userlist" element, with "user" elements below that
+            //with permissions PM, M, PA, and A.  Move those to the real "roles"
+            //and eliminate the old userlist element.
+            NGRole newMemberRole = getRequiredRole("Notify");
+            NGRole newAdminRole = getRequiredRole("Administrators");
+
             List<DOMFace> users = userList.getChildren("user", DOMFace.class);
             for (DOMFace ele : users) {
                 String id = ele.getAttribute("id");
@@ -147,15 +150,8 @@ public abstract class NGPage extends ContainerCommon {
             }
             //now get rid of all former evidence.
             pageInfo.removeChildElement(userList.getElement());
+            */
         }
-
-        //assure that other roles exist
-        getRequiredRole("Notify");
-        getRequiredRole("Facilitator");
-        getRequiredRole("Meeting Manager");
-        getRequiredRole("Operations Leader");
-        getRequiredRole("Representative");
-        getRequiredRole("External Expert");
 
         // this is the old name, the new name is Meeting Manager
         removeIfEmpty("Circle Administrator");
@@ -230,10 +226,10 @@ public abstract class NGPage extends ContainerCommon {
 
         //copy all of the roles - without the players
         for (NGRole role : template.getAllRoles()) {
-            String roleName = role.getName();
-            NGRole alreadyExisting = getRole(roleName);
+            String roleSymbol = role.getSymbol();
+            NGRole alreadyExisting = getRole(roleSymbol);
             if (alreadyExisting==null) {
-                createRole(roleName,role.getDescription());
+                createRole(roleSymbol,role.getDescription());
             }
         }
 
@@ -1279,7 +1275,7 @@ public abstract class NGPage extends ContainerCommon {
                 continue;
             }
             for (NGRole ngr : rolesPlayed) {
-                if (attachment.roleCanAccess(ngr.getName())) {
+                if (attachment.roleCanAccess(ngr.getSymbol())) {
                     aList.add(attachment);
                     break;
                 }

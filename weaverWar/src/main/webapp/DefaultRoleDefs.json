@@ -1,0 +1,51 @@
+{
+  "roleDefs": [
+    {
+      "symbol": "MembersRole",
+      "name": "Members",
+      "description": "Members participates in the meetings and activities of the workspace. They have the access and view the material stored in the workspace, along with basic capabilities to add comments and update assigned action items.",
+      "eligibility": "Members can be paid or unpaid users who are interested in participating in the circle.",
+      "canEdit": false,
+      "isWorkspaceDefault" : true
+    },
+    {
+      "symbol": "StewardsRole",
+      "name": "Stewards",
+      "description": "Stewards have all the capabilities of Members and also the ability to organize the meetings, facilitate them, make and keep meeting records, add/remove documents, add/update discussion topics, and other administration/maintenance actions on the workspace.",
+      "eligibility": "Must be a paid member and interested in helping to run the circle.",
+      "canEdit": true,
+      "canAdminister" : true,
+      "isWorkspaceDefault" : true
+    },
+    {
+      "symbol": "Meeting Manager",
+      "canEdit": true,
+      "description": "Personally handles or oversees: circle meeting venue, creating agendas, taking minutes in collaboration with facilitator, and keeping the records organized.",
+      "eligibility": "Must be a paid member familiar with electronic media. Organized. Articulate. Reliable. Takes initiative."
+    },
+    {
+      "symbol": "External Expert",
+      "canEdit": false,
+      "description": "Person from outside the company who has expertise about the company's environment, eg, regulatory, economic, social, technical, or ecology. Able to provide information and feedback not available inside the company and to inform or influence key external institutions.",
+      "eligibility": "Expertise in and well-connected to a field important to the company. Experienced. Able to think rationally at the most abstract level of the company's work. Well-prepared. Forward thinking."
+    },
+    {
+      "symbol": "Representative",
+      "canEdit": false,
+      "description": "Outside of circle meetings, guides the day-to-day operations by directing, coordinating, and conveying news, ideas, suggestions, needs, requests. Selected to role by higher (more abstract) circle.",
+      "eligibility": "Inspires respect. Good judgement. Effective interpersonal skills. Takes initiative. Can both hold the big picture and pay attention to details. Both a sense of humor and able to be firm."
+    },
+    {
+      "symbol": "Operations Leader",
+      "canEdit": false,
+      "description": "Outside of circle meetings, guides the day-to-day operations by directing, coordinating, and conveying news, ideas, suggestions, needs, requests. Selected to role by higher (more abstract) circle.",
+      "eligibility": "Inspires respect. Good judgement. Effective interpersonal skills. Takes initiative. Can both hold the big picture and pay attention to details. Both a sense of humor and able to be firm"
+    },
+    {
+      "symbol": "Facilitator",
+      "canEdit": true,
+      "description": "Selected by the circle members to lead circle meetings. Moves agenda forward, keeps everyone focused on the aim. Helps prepare the meeting agenda.",
+      "eligibility": "Must be a paid member with good judgement, integrity, who listens and empathizes effectively. Can hold the big picture of an issue. Articulate. Both a sense of humor and able to be firm."
+    }
+  ]
+}

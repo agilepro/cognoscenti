@@ -67,9 +67,6 @@ public class EmailListener extends TimerTask{
 
     public static Exception threadLastCheckException = null;
 
-    //expressed in milliseconds
-    private final static long EVERY_MINUTE = 1000*60;
-
     private static Session session = null;
 
     private File emailPropFile = null;

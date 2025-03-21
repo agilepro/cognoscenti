@@ -33,18 +33,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.EmailGenerator;
-import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailInst;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
-
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.mail.EmailGenerator;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 
 /**
 * NGWorkspace is a Container that represents a Workspace.
@@ -156,6 +155,190 @@ public class NGWorkspace extends NGPage {
         }
     }
 
+    @Override
+    public List<CustomRole> getAllRoles() throws Exception {
+        NGBook site = getSite();
+        List<CustomRole> roleList = new ArrayList<>();
+        for (CustomRole role : roleParent.getChildren("role", CustomRole.class)) {
+            RoleDefinition def = site.findRoleDef(role.getSymbol());
+            if (def != null) {
+                WorkspaceRole wsRole = new WorkspaceRole(role.fDoc, role.fEle, roleParent);
+                wsRole.setDef(site, def);
+                roleList.add(wsRole);
+            }
+            else {
+                roleList.add(role);
+            }
+        }
+        return roleList;
+    }
+    public List<WorkspaceRole> getWorkspaceRoles() throws Exception {
+        NGBook site = getSite();
+        List<WorkspaceRole> roleList = new ArrayList<>();
+        for (WorkspaceRole role : roleParent.getChildren("role", WorkspaceRole.class)) {
+            RoleDefinition def = site.findRoleDef(role.getScalar("rolename"));
+            if (def != null) {
+                // only add roles that are defined
+                role.setDef(site, def);
+                roleList.add(role);
+            }
+        }
+        return roleList;
+    }
+    public WorkspaceRole getWorkspaceRole(String symbol) throws Exception {
+        for (WorkspaceRole role : getWorkspaceRoles()) {
+            if (symbol.equals(role.getSymbol())) {
+                return role;
+            }
+        }
+        return null;
+    }
+    public WorkspaceRole createWorkspaceRole(RoleDefinition def) throws Exception {
+
+        // check to make sure it does not exist
+        NGRole existing = getRole(def.symbol);
+        if (existing!=null) {
+            throw WeaverException.newBasic("Can not create a new role, because there is already a role named '%s'", def.symbol);
+        }
+
+        WorkspaceRole newRole = roleParent.createChild("role", WorkspaceRole.class);
+        newRole.setScalar("rolename", def.symbol);
+        newRole.setDef(getSite(), def);
+        return newRole;
+    }
+
+    public WorkspaceRole getOrCreateRole(String symbol) throws Exception {
+        CustomRole role = getRole(symbol);
+        if (role != null && !(role instanceof WorkspaceRole)) {
+            throw WeaverException.newBasic("For some reason the role in a workspace is not a WorkspaceRole");
+        }
+        WorkspaceRole wsRole = (WorkspaceRole) role;
+        if (wsRole == null) {
+            NGBook site = this.getSite();
+            RoleDefinition def = site.findRoleDefOrFail(symbol);
+            wsRole = createWorkspaceRole(def);
+        }
+        return wsRole;
+    }
+
+    public CustomRole getOldRole(String roleSymbol) throws Exception {
+        for (CustomRole role : roleParent.getChildren("role", CustomRole.class)) {
+            if (roleSymbol.equals(role.getScalar("rolename"))) {
+                return role;
+            }
+        }
+        return null;
+    }
+    public void deleteOldRole(String roleSymbol) throws Exception {
+        CustomRole role = getOldRole(roleSymbol);
+        if (role!=null) {
+            roleParent.removeChild((DOMFace)role);
+        }
+    }
+
+    private boolean migrateRole(String roleSymbol, WorkspaceRole membersRole, 
+            WorkspaceRole stewardsRole) throws Exception {
+        NGBook site = this.getSite();
+        CustomRole oldRole = this.getOldRole(roleSymbol);
+        if (oldRole == null) {
+            // don't migrate if there is no role
+            return false;
+        }
+        System.out.println(String.format(
+            "CONVERTING Role %s in: %s", roleSymbol, this.getFilePath().getAbsolutePath()));
+
+
+        for (AddressListEntry ale : oldRole.getDirectPlayers()) {
+            UserProfile user = UserManager.getUserProfileByKey(ale.getKey());
+            if (user == null) {
+                // ignore nonexistent users for this conversion
+                continue;
+            }
+            if (site.isUnpaidUser(user)) {
+                membersRole.addPlayerIfNotPresent(ale);
+            }
+            else {
+                stewardsRole.addPlayerIfNotPresent(ale);
+            }
+        }
+
+        this.deleteOldRole(roleSymbol);
+        return true;
+    }
+
+
+    public boolean convertOldRoleDefinitions(Cognoscenti cog) throws Exception {
+        NGBook site = this.getSite();
+        RoleDefinitionFile roleDefFile = site.getAllRoleDefs(cog);
+
+        WorkspaceRole membersRole = this.getOrCreateRole("MembersRole");
+        WorkspaceRole stewardsRole = this.getOrCreateRole("StewardsRole");
+
+        boolean needUpgrade = migrateRole("Members", membersRole, stewardsRole);
+        if (migrateRole("Administrators", membersRole, stewardsRole)) {
+            needUpgrade = true;
+        }
+        // for notify we never upgrade them to stewards
+        if (migrateRole("Notify", membersRole, membersRole)) {
+            needUpgrade = true;
+        }
+        if (!needUpgrade) {
+            return false;
+        }
+
+        AddressListEntry creatorAddress = stewardsRole.getFirstPlayer();
+        if (creatorAddress == null) {
+            // what to do?  No administrators????   Add keith in there
+            creatorAddress = AddressListEntry.findByAnyId("weaver@purplehillsbooks.com");
+            stewardsRole.addPlayer(creatorAddress);
+        }
+        UserProfile creator = creatorAddress.getUserProfile();
+
+        // walk through the roles and reflect missing ones to the Site
+        boolean needSave = false;
+
+        for (CustomRole oldRole : roleParent.getChildren("role", CustomRole.class)) {
+            String symbol = oldRole.getSymbol();
+
+            if ("MembersRole".equals(symbol) || "StewardsRole".equals(symbol)) {
+                // don't muck with these two roles
+                continue;
+            }
+
+            // eliminate roles no longer needed, if empty, or only designated player
+            List<AddressListEntry> players = oldRole.getDirectPlayers();
+            if (players.size()==0) {
+                deleteOldRole(symbol);
+                continue;
+            }
+            if (players.size()==1 && oldRole.isPlayer(creator)) {
+                // get rid of all roles that just have a single player, and that is the player
+                // that created the workspace.  Old pattern was to place that person in all
+                // the roles, but we want to get rid of those now.
+                deleteOldRole(symbol);
+                continue;
+            }
+
+            // if you get here, the role has multiple people in it, or a non-creator in it, so then
+            // check if site list has a definition of this role, add it is needed.
+            RoleDefinition rd = site.findRoleDef(symbol);
+            if (rd == null) {
+                rd = roleDefFile.findOrCreateRoleDef(symbol);
+                rd.description = oldRole.getDescription();
+                rd.eligibility = oldRole.getRequirements();
+                rd.canEdit = oldRole.allowUpdateWorkspace();
+                rd.canAdminister = "Administrators".equals(symbol);
+                rd.isWorkspaceDefault = false;
+                needSave = true;
+            }
+        }
+        if (needSave) {
+            site.saveAllRoleDefs();
+        }
+        System.out.println("      done migrating roles");
+        return true;
+    }
+
 
     ///////////////// TOPICS //////////////////////
 
@@ -242,8 +425,8 @@ public class NGWorkspace extends NGPage {
         note.setId( localId );
         note.setUniversalId(getContainerUniversalId() + "@" + localId);
         NGRole subscribers = note.getSubscriberRole();
-        NGRole workspaceMembers = this.getPrimaryRole();
-        subscribers.addPlayersIfNotPresent(workspaceMembers.getExpandedPlayers(this));
+        NGRole stewards = this.getSecondaryRole();
+        subscribers.addPlayersIfNotPresent(stewards.getExpandedPlayers(this));
         return note;
     }
 
@@ -1370,11 +1553,17 @@ public class NGWorkspace extends NGPage {
 
     @Override
     public NGRole getPrimaryRole() throws Exception {
-        return getRequiredRole("Members");
+        return getOrCreateRole("StewardsRole");
     }
     @Override
     public NGRole getSecondaryRole() throws Exception {
-        return getRequiredRole("Administrators");
+        return getOrCreateRole("StewardsRole");
+    }
+
+    // prefer in workspace specific code to use this to get the list of 
+    // people who are able to modify the workspace
+    public NGRole getStewards() throws Exception {
+        return getOrCreateRole("StewardsRole");
     }
 
     public NGRole getMuteRole() throws Exception {
@@ -1394,7 +1583,7 @@ public class NGWorkspace extends NGPage {
     public boolean canUpdateWorkspace(UserProfile user) throws Exception {
         //The administrator can control which users are update users and
         //which users are read only.
-        if (getSite().userReadOnly(user)) {
+        if (getSite().isUnpaidUser(user)) {
             return false;
         }
         //now look through all the roles and see if this person plays any

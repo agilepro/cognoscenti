@@ -91,11 +91,11 @@ public class TestBuildSite implements TestSet {
         //test the default role settings
         NGRole prim =  testSite.getPrimaryRole();
         assertNotNull("testSite.getPrimaryRole", prim);
-        testString("primaryRole.getName test", prim.getName(), "Executives");
+        testString("primaryRole.getSymbol test", prim.getSymbol(), "Executives");
 
         NGRole sec =  testSite.getSecondaryRole();
         assertNotNull("testSite.getSecondaryRole", sec);
-        testString("secondaryRole.getName test", sec.getName(), "Owners");
+        testString("secondaryRole.getSymbol test", sec.getSymbol(), "Owners");
 
         //read the file again from disk
         testSite = NGBook.forceRereadSiteFile(siteKey, cog);
@@ -117,11 +117,11 @@ public class TestBuildSite implements TestSet {
         //test the default role settings
         prim =  testSite.getPrimaryRole();
         assertNotNull("testSite.getPrimaryRole", prim);
-        testString("primaryRole.getName test", prim.getName(), "Executives");
+        testString("primaryRole.getSymbol test", prim.getSymbol(), "Executives");
 
         sec =  testSite.getSecondaryRole();
         assertNotNull("testSite.getSecondaryRole", sec);
-        testString("secondaryRole.getName test", sec.getName(), "Owners");
+        testString("secondaryRole.getSymbol test", sec.getSymbol(), "Owners");
         return testSite;
     }
 

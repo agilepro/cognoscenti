@@ -38,10 +38,12 @@ import com.purplehillsbooks.weaver.NGContainer;
 import com.purplehillsbooks.weaver.NGLabel;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.RoleDefinitionFile;
 import com.purplehillsbooks.weaver.RoleInvitation;
 import com.purplehillsbooks.weaver.RoleRequestRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.WorkspaceRole;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -351,7 +353,7 @@ public class ProjectSettingController extends BaseController {
             roleId = personalInfo.getString("roleId");
 
             NGRole role = ngw.getRoleOrFail(roleId);
-            RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getName(),up.getUniversalId());
+            RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getSymbol(),up.getUniversalId());
 
 
             if ("Join".equals(op)) {
@@ -434,8 +436,8 @@ public class ProjectSettingController extends BaseController {
             + AccessControl.getAccessRoleRequestParams(ngw, roleRequestRecord);
 
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
-        OptOutAddr.appendUsersFromRole(ngw, ngw.getPrimaryRole().getName(), initialList);
-        OptOutAddr.appendUsersFromRole(ngw, ngw.getSecondaryRole().getName(), initialList);
+        OptOutAddr.appendUsersFromRole(ngw, ngw.getPrimaryRole().getSymbol(), initialList);
+        OptOutAddr.appendUsersFromRole(ngw, ngw.getSecondaryRole().getSymbol(), initialList);
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
@@ -548,8 +550,14 @@ public class ProjectSettingController extends BaseController {
 
             if ("Update".equals(op)) {
                 //OK to do this when frozen
-                String roleName = roleInfo.getString("name");
-                CustomRole role = ngc.getRoleOrFail(roleName);
+                String roleSymbol = roleInfo.optString("symbol", null);
+                if (roleSymbol == null) {
+                    // this is a little sloppy but some old code used the name
+                    // as unique identifier, so accomodate that
+                    roleSymbol = roleInfo.getString("name");
+                    System.out.println("ROLE SYMBOL WARNING: some web service needs to set the symbol of the role: "+roleSymbol);
+                }
+                CustomRole role = ngc.getRoleOrFail(roleSymbol);
                 String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
                 roleChanged = true;
@@ -559,7 +567,7 @@ public class ProjectSettingController extends BaseController {
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
                     String linkedRole = role.getLinkedRole();
-                    System.out.println("ROLE: "+roleName+", LinkedRole: "+linkedRole);
+                    System.out.println("ROLE: "+roleSymbol+", LinkedRole: "+linkedRole);
                     if (linkedRole!=null && linkedRole.length()>0) {
                         String actualName = "~"+linkedRole;
                         CustomRole siteRole = site.getRole(actualName);
@@ -587,14 +595,14 @@ public class ProjectSettingController extends BaseController {
             }
             else if ("Create".equals(op)) {
                 ar.assertNotFrozen(ngc);
-                CustomRole role = ngc.createRole(roleInfo.getString("name"), "");
+                CustomRole role = ngc.createRole(roleInfo.getString("symbol"), "");
                 role.updateFromJSON(roleInfo);
                 roleChanged = true;
                 repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
                 //OK to do this when frozen
-                ngc.deleteRole(roleInfo.getString("name"));
+                ngc.deleteRole(roleInfo.getString("symbol"));
                 roleChanged = true;
                 repo.put("success",  true);
             }
@@ -626,6 +634,24 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/roleDefinitions.json", method = RequestMethod.GET)
+    public void roleDefinitions(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGBook site = ngw.getSite();
+            RoleDefinitionFile rdf = site.getAllRoleDefs(ar.getCogInstance());
+            JSONObject res = new JSONObject();
+            res.put("defs",  rdf.getJSON());
+            sendJson(ar, res);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to get roleDefinitions from the workspace.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
     @RequestMapping(value = "/{siteId}/{pageId}/getAllLabels.json", method = RequestMethod.GET)
     public void getAllLabels(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -972,8 +998,8 @@ public class ProjectSettingController extends BaseController {
             //check that the role exists to avoid getting invitations for non existent roles.
             boolean found = false;
             String roleName = posted.getString("role");
-            for (CustomRole existingRole : ngw.getAllRoles()) {
-                if (roleName.equals(existingRole.getName())) {
+            for (WorkspaceRole existingRole : ngw.getWorkspaceRoles()) {
+                if (roleName.equals(existingRole.getName()) || roleName.equals(existingRole.getSymbol())) {
                     existingRole.addPlayerIfNotPresent(ale);
                     found = true;
                 }

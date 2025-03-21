@@ -30,7 +30,7 @@
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
-    for (CustomRole role : ngp.getAllRoles()) {
+    for (WorkspaceRole role : ngp.getWorkspaceRoles()) {
         allLabels.put( role.getJSON() );
     }
 

@@ -129,41 +129,40 @@ public abstract class ContainerCommon extends NGContainer
         return roleParent.getChildren("role", CustomRole.class);
     }
 
-    public CustomRole getRole(String roleName) throws Exception {
+    public CustomRole getRole(String roleSymbol) throws Exception {
         for (CustomRole role : getAllRoles()) {
-            if (roleName.equals(role.getName())) {
+            if (roleSymbol.equals(role.getSymbol())) {
                 return role;
             }
         }
         return null;
     }
 
-    public CustomRole getRoleOrFail(String roleName) throws Exception {
-        CustomRole ret = getRole(roleName);
-        if (ret==null)
-        {
-            throw WeaverException.newBasic("Unable to locate a role with name '%s' on '%s'.", roleName, getFullName());
+    public CustomRole getRoleOrFail(String roleSymbol) throws Exception {
+        CustomRole ret = getRole(roleSymbol);
+        if (ret==null) {
+            throw WeaverException.newBasic("Unable to locate a role with name '%s' on '%s'.", roleSymbol, getFullName());
         }
         return ret;
     }
 
-    public CustomRole createRole(String roleName, String description) throws Exception {
-        if (roleName==null || roleName.length()==0) {
+    public CustomRole createRole(String roleSymbol, String description) throws Exception {
+        if (roleSymbol==null || roleSymbol.length()==0) {
             throw WeaverException.newBasic("The name of a role can not be empty when creating the role.");
         }
 
-        NGRole existing = getRole(roleName);
+        NGRole existing = getRole(roleSymbol);
         if (existing!=null) {
-            throw WeaverException.newBasic("Can not create a new role, because there is already a role named '%s'", roleName);
+            throw WeaverException.newBasic("Can not create a new role, because there is already a role named '%s'", roleSymbol);
         }
         CustomRole newRole = roleParent.createChild("role", CustomRole.class);
-        newRole.setName(roleName);
+        newRole.setScalar("rolename", roleSymbol);
         newRole.setDescription(description);
         return newRole;
     }
 
-    public void deleteRole(String name) throws Exception {
-        NGRole role = getRole(name);
+    public void deleteRole(String roleSymbol) throws Exception {
+        NGRole role = getRole(roleSymbol);
         if (role!=null) {
             roleParent.removeChild((DOMFace)role);
         }
@@ -171,11 +170,11 @@ public abstract class ContainerCommon extends NGContainer
 
 
     /**
-    * just a shortcut for getRole(roleName).addPlayer(newMember)
+    * just a shortcut for getRole(roleSymbol).addPlayer(newMember)
     */
-    public void addPlayerToRole(String roleName,String newMember) throws Exception
+    public void addPlayerToRole(String roleSymbol,String newMember) throws Exception
     {
-        NGRole role= getRoleOrFail(roleName);
+        NGRole role= getRoleOrFail(roleSymbol);
         role.addPlayer(AddressListEntry.findOrCreate(newMember));
     }
 
@@ -213,70 +212,18 @@ public abstract class ContainerCommon extends NGContainer
     /**
     * get a role, and create it if not found.
     */
-    protected NGRole getRequiredRole(String roleName) throws Exception
+    protected NGRole getRequiredRole(String symbol) throws Exception
     {
-        NGRole role = getRole(roleName);
+        NGRole role = getRole(symbol);
         if (role==null)
         {
-            String desc = roleName+" of the workspace "+getFullName();
+            String desc = symbol+" of the workspace "+getFullName();
             String elegibility = "";
-            if ("Executives".equals(roleName)) {
+            if ("Executives".equals(symbol)) {
                 desc = "The role 'Executives' contains a list of people who are assigned to the site "
                 +"as a whole, and are automatically members of every workspace in that site.  ";
             }
-            else if ("Executives".equals(roleName)) {
-                desc = "The role 'Owners' contains a list of people who can modify the properties of the site properties.";
-            }
-            else if ("Members".equals(roleName)) {
-                desc = "Members of a workspace can see and edit any of the content in the workspace.  "
-                       +"Members can create, edit, and delete topics, can upload, download, and delete documents."
-                       +"Members can approve other people to become members or other roles.";
-            }
-            else if ("Administrators".equals(roleName)) {
-                desc = "Administrators have all the rights that Members have, but have additional ability "
-                       +"to manage the structure of the workspace, to add/remove roles, and to exercise greater "
-                       +"control over a workspace, such as renaming and deleting a workspace.";
-            }
-            else if ("Notify".equals(roleName)) {
-                desc = "People who are not members, but who receive email notifications anyway.";
-            }
-            else if ("Facilitator".equals(roleName)) {
-                desc = "Selected by the circle members to lead circle meetings. Moves agenda forward, "
-                        +"keeps everyone focused on the aim. Helps prepare the meeting agenda.";
-                elegibility = "Good judgement. Integrity. Listens and empathizes effectively. Can hold "
-                        +"the big picture of an issue. Articulate. Both a sense of humor and able to be firm.";
-            }
-            else if ("Meeting Manager".equals(roleName)) {
-                desc = "Personally handles or oversees: circle meeting venue, creating agendas, taking "
-                        +"minutes in collaboration with facilitator, and keeping the records organized.";
-                elegibility = "Familiar with electronic media. Organized. Articulate. Reliable. Takes initiative.";
-            }
-            else if ("Operations Leader".equals(roleName)) {
-                desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
-                        +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
-                        +"Selected to role by higher (more abstract) circle. ";
-                elegibility = "Inspires respect. Good judgement. Effective interpersonal skills. "
-                        +"Takes initiative. Can both hold the big picture and pay attention to details. "
-                        +"Both a sense of humor and able to be firm";
-            }
-            else if ("Representative".equals(roleName)) {
-                desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
-                        +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
-                        +"Selected to role by higher (more abstract) circle.";
-                elegibility = "Inspires respect. Good judgement. Effective interpersonal skills. "
-                        +"Takes initiative. Can both hold the big picture and pay attention to details. "
-                        +"Both a sense of humor and able to be firm.";
-            }
-            else if ("External Expert".equals(roleName)) {
-                desc = "Person from outside the company who has expertise about the company's environment, "
-                        +"eg, regulatory, economic, social, technical, or ecology. Able to provide information "
-                        +"and feedback not available inside the company and to inform or influence key "
-                        +"external institutions. ";
-                elegibility = "Expertise in and well-connected to a field important to the company. "
-                        +"Experienced. Able to think rationally at the most abstract level of the company's work. "
-                        +"Well-prepared. Forward thinking.";
-            }
-            role = createRole(roleName, desc);
+            role = createRole(symbol, desc);
             role.setRequirements(elegibility);
         }
         return role;

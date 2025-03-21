@@ -95,7 +95,7 @@ public class SiteUsers {
                 // a user without a profile can not update
                 continue;
             }
-            if (!isReadOnly(uProf)) {
+            if (!isUnpaid(uProf)) {
                 newMap.add(uProf.getKey());
             }
         }
@@ -117,7 +117,7 @@ public class SiteUsers {
         }
         return count;
     }
-    public int countReadOnlyUsers() throws Exception {
+    public int countUnpaidUsers() throws Exception {
         int count = 0;
         for (String key : kernel.keySet()) {
             JSONObject rec = kernel.getJSONObject(key);
@@ -128,17 +128,16 @@ public class SiteUsers {
         return count;
     }
     
-    public boolean isReadOnly(UserProfile uProf) throws Exception {
-        //UserProfile uProf = UserManager.lookupUserByAnyId(userKey);
+    public boolean isUnpaid(UserProfile uProf) throws Exception {
         if (uProf == null || !uProf.hasLoggedIn()) {
             return true;
         }
         JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
         return userInfo.optBoolean("readOnly", false);
     }
-    public void setReadOnly(UserProfile uProf, boolean readOnly) throws Exception {
+    public void setUnpaid(UserProfile uProf, boolean unpaid) throws Exception {
         JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
-        userInfo.put("readOnly", readOnly);
+        userInfo.put("readOnly", unpaid);
     }
     
     public void keepTheseUsers(List<UserProfile> allUsers) throws Exception {

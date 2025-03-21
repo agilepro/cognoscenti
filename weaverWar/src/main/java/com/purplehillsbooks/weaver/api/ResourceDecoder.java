@@ -196,7 +196,7 @@ public class ResourceDecoder {
             return true;
         }
         for (NGRole lRole : getLicensedRoles()) {
-            if (att.roleCanAccess(lRole.getName())) {
+            if (att.roleCanAccess(lRole.getSymbol())) {
                 return true;
             }
         }
@@ -208,7 +208,7 @@ public class ResourceDecoder {
             return true;
         }
         for (NGRole lRole : getLicensedRoles()) {
-            if (note.roleCanAccess(lRole.getName())) {
+            if (note.roleCanAccess(lRole.getSymbol())) {
                 return true;
             }
         }

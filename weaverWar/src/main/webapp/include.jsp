@@ -47,6 +47,7 @@
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="com.purplehillsbooks.weaver.WatchRecord"
 %><%@page import="com.purplehillsbooks.weaver.WikiConverter"
+%><%@page import="com.purplehillsbooks.weaver.WorkspaceRole"
 %><%@page import="com.purplehillsbooks.weaver.WorkspaceStats"
 %><%@page import="java.io.File"
 %><%@page import="java.io.FileInputStream"

@@ -53,6 +53,7 @@ public class NGBook extends ContainerCommon {
     private final NGRole ownerRole;
 
     private List<AddressListEntry> allUserList;
+    private RoleDefinitionFile roleDefinitionFile;
 
     //this is the file system folder where site exists
     //workspaces are underneath this folder
@@ -104,7 +105,7 @@ public class NGBook extends ContainerCommon {
         if (getWorkspaceLimit()<4) {
             setWorkspacelimit(4);
         }
-        
+        getAllRoleDefs(_cog);
     }
 
     private void assureNameExists() {
@@ -1164,20 +1165,20 @@ public class NGBook extends ContainerCommon {
         return siteInfoRec.getAttributeInt("readUserLimit");
     }
     
-    public boolean userReadOnly(String userId) throws Exception {
+    public boolean isUnpaidUser(String userId) throws Exception {
         if (userId==null || userId.length()==0) {
-            throw WeaverException.newBasic("userReadOnly requires a non-empty parameter");
+            throw WeaverException.newBasic("isUnpaidUser requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
         AddressListEntry ale = AddressListEntry.findOrCreate(userId);
-        return siteUsers.isReadOnly(ale.getUserProfile());
+        return siteUsers.isUnpaid(ale.getUserProfile());
     }
-    public boolean userReadOnly(UserProfile uProf) throws Exception {
+    public boolean isUnpaidUser(UserProfile uProf) throws Exception {
         if (uProf==null) {
-            throw WeaverException.newBasic("userReadOnly requires a non-empty parameter");
+            throw WeaverException.newBasic("isUnpaidUser requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
-        return siteUsers.isReadOnly(uProf);
+        return siteUsers.isUnpaid(uProf);
     }
     
     
@@ -1236,5 +1237,32 @@ public class NGBook extends ContainerCommon {
     public void saveLedger(Ledger ledger) throws Exception {
         File sitefolder = getFilePath().getParentFile();
         ledger.saveLedger(sitefolder);
+    }
+
+    public RoleDefinitionFile getAllRoleDefs(Cognoscenti _cog) throws Exception {
+        if (roleDefinitionFile == null) {
+            File sitefolder = getFilePath().getParentFile();
+            File roleDefFile = new File(sitefolder, "RoleDefs.json");
+            if (!roleDefFile.exists()) {
+                // when the site is created, it gets a set of defaults
+                // these will be saved on the first save after a change
+                roleDefFile = _cog.getConfig().getFileFromRoot("DefaultRoleDefs.json");
+            }
+            roleDefinitionFile = RoleDefinitionFile.loadRoleDefs(roleDefFile);
+        }
+        return roleDefinitionFile;
+    }
+    public void saveAllRoleDefs() throws Exception {
+        if (roleDefinitionFile != null) {
+            File sitefolder = getFilePath().getParentFile();
+            File roleDefFile = new File(sitefolder, "RoleDefs.json");
+            roleDefinitionFile.saveRoleDefs(roleDefFile);
+        }
+    }
+    public RoleDefinition findRoleDef(String symbol) {
+        return roleDefinitionFile.findRoleDef(symbol);
+    }
+    public RoleDefinition findRoleDefOrFail(String symbol) throws Exception {
+        return roleDefinitionFile.findRoleDefOrFail(symbol);
     }
 }

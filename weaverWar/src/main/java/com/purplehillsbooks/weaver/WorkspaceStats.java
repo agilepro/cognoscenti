@@ -104,7 +104,7 @@ public class WorkspaceStats {
         }
 
         //count all the users in all roles
-        for (CustomRole role : ngw.getAllRoles()) {
+        for (WorkspaceRole role : ngw.getWorkspaceRoles()) {
             for (AddressListEntry ale: role.getExpandedPlayers(ngw)) {
                 anythingPerUser.increment(ale.getUniversalId());
             }
@@ -183,7 +183,7 @@ public class WorkspaceStats {
             if (uProf == null) {
                 readUserCount++;
             }
-            else if (userMap.isReadOnly(uProf)) {
+            else if (userMap.isUnpaid(uProf)) {
                 readUserCount++;
             }
             else {
