@@ -380,18 +380,21 @@ app.filter('escape', function() {
 
             <div class="container m-2 override">
                 <div class="row my-2 border-bottom border-1" >
-                    <span ng-click="setEdit('name')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Workspace Name:</span>
-                    <span class="col-6 mt-2" ng-hide="isEditing=='name'" ng-click="setEdit('name')">
-                        <h2 class="h5 bold $primary">{{workspaceConfig.allNames[0]}}</h2>
+                    <span ng-click="setEdit('name')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2 text-start pb-2" title="click to change workspace name">Workspace Name:</span>
+
+                    <span class="col-6 mt-2" ng-hide="isEditing=='name'" >
+                        <span class="h5 bold text-secondary">{{workspaceConfig.allNames[0]}}</span>
                     </span>
-                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='name'">
-                        <input type="text" class="form-control"  ng-model="newName"/>
+                    <span class="col-8 mt-2 form-inline form-group " ng-show="isEditing=='name'">
+                        <input type="text" class="form-control rounded-2"  ng-model="newName"/>
                         <span class="d-flex">
-                        <button class="m-2 btn btn-danger btn-raised" ng-click="setEdit('')">Cancel</button>
-                        <button class="my-2 btn btn-primary btn-raised ms-auto" ng-click="addWorkspaceName(newName)">Change Name</button>
+                            <button class="m-2 btn btn-danger btn-raised" ng-click="setEdit('')">Cancel</button>
+                            <button class="my-2 btn btn-secondary btn-raised ms-auto" ng-click="addWorkspaceName(newName)">Change Name</button>
                         </span>
                     </span>
                 </div>
+
+                
                 <div class="row my-2 border-bottom border-1">
                     <span ng-click="setEdit('vision')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Vision:</span>
                     <span class="col-8 mt-2" ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">

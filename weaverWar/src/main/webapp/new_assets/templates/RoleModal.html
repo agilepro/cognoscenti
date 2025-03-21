@@ -2,20 +2,20 @@
 <div class="modal-item pt-3"></div>
 <div class="modal-header bg-primary-subtle text-primary">
     <span ng-click="editMode='main'">
-        <span class="modal-title h5" id="EditRole" ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
-        <span class="modal-title h5" id="creatNew" ng-show="isNew">Create Role</span>
+        <h4 class="modal-title" id="EditRole" ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</h4>
+        <h4 class="modal-title" id="creatNew" ng-show="isNew">Create Role</h4>
     </span>
 
 </div>
 
 <div class="modal-body">
     <div class="container-fluid override">
-
         <div class="row col-12">
         <div ng-hide="isNew || editMode=='expert'" >
             
             <div class="row d-flex">
-                <div class="row col-12" style="color:red">{{errorMessage}}</div>
+                <div class="row col-12 fs-5 m-3 text-red-emphasis fw-semibold"  >{{errorMessage}}</div>
+                
                 <div class="form-group d-flex col-12 m-2">
                     <label class="col-4 control-label h6">Color:</label>
                     <span class="nav-item dropdown d-inline col-4" style="position:relative">
@@ -109,8 +109,8 @@
                     
     <div class="container-fluid" ng-show="isNew">
         <div class="row d-flex my-3">
-            <span class="col-2 gridTableColummHeader h6">Pick Role:</span>
-            <span class="col-10">
+            <span class="col-3 gridTableColummHeader h5">Pick a Role:</span>
+            <span class="col-9">
                <select  class="form-control" style="max-width:400px" ng-model="newSymbol">
                  <option ng-repeat="item in roleDefinitions" value="{{item.symbol}}">{{item.name}}</option>
                </select>
@@ -118,9 +118,8 @@
         </div>
         <div class="row d-flex my-3">
             <span class="col-12">
-               <span class="instruction">First create the role, then add member to it.  
-                  Role names can not be changed.  Copy a role to change its name.
-                  The name should be short and should use only letters and numbers.</span>
+               <span class="fs-6 fw-semibold ms-5">First create the role, then add members to it.  
+                  Role names can not be changed.  </span>
             </span>
         </div>
         <!--div class="row d-flex my-3">
@@ -137,6 +136,6 @@
 </div>
 <div class="modal-footer">
     <button class="me-auto btn btn-secondary btn-default" type="button" ng-click="cancel()">Exit</button><span class="h6" ng-hide="isNew">Clicking Exit will save your changes</span>
-    <button ng-click="createAndClose()" class="btn btn-primary btn-raised" ng-show="isNew">Create Role</button>
+    <button ng-click="createAndClose()" class="btn btn-primary btn-default btn-raised" ng-show="isNew">Create Role</button>
 </div>
 

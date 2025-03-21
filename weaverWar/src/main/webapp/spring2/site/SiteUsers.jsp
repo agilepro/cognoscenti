@@ -182,9 +182,9 @@ app.filter('encode', function() {
          <span class="col-1 h6">Workspaces</span>
         </div>
         <div class="row col-12 my-3" ng-repeat="value in findUsers()" ><hr>
-        <span class="col-1 h6">&nbsp;Edit:
+        <span class="col-1 h6" ng-click="visitUser(value.info.uid)" >Edit:&nbsp;
             <img class="rounded-5 p-0" 
-          ng-click="visitUser(value.info.uid)" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
+         src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
                  style="width:32px;height:32px;cursor: pointer;" title="Edit User: {{value.info.name}} - {{value.info.uid}}">
         </span>
         <span class="col-2">{{value.info.name}}</span>

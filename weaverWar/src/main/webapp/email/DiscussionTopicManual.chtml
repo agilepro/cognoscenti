@@ -1,7 +1,10 @@
 <html><!--TEMPLATE DiscussionTopicManual.chtml-->
 
 <body>
-<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<style>
+    ul {list-style-type:none;}
+        </style>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;list-style-type:none;">
 
 <p><b>Note From:</b>
    <a href="{$baseURL}v/{$sender.key|url}/PersonShow.htm" 
@@ -15,13 +18,13 @@
 
 {% if ($meeting) %}
 <hr/>
-<p><b>Meeting:</b> <a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a>
+<h6><b>Meeting:</b> <a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a>
     ( 
      <a href="{$meeting.agendaUrl}">Agenda</a>,
      <a href="{$meeting.minutesUrl}">Minutes</a>,
      <a href="{$workspaceUrl}meetingTime{$meeting.id}.ics">Save to Calendar</a> )
 
-</p>
+</h6>
 
 {% if ($meeting.isScheduled) %} 
 <p><b>Date / Time: </b> {$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</p>

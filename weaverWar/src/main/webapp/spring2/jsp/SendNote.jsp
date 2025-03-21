@@ -764,7 +764,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                 <div class="row form-group d-flex">
                     <div class="my-2">
                     <h4>Preview Email for a specific recipient:</h4></div>
-                    <label class="col-md-2 control-label h5 ms-5">For Recipient: </label>
+                    <label class="col-md-2 control-label h5 ms-5">For Selected Recipient: </label>
                     <div class="col-md-6">
                         <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
                     </div>

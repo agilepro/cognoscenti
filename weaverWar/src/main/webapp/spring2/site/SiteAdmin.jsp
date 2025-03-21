@@ -208,115 +208,139 @@ $scope.garbageCollect = function() {
         $scope.reportError(data);
     });
 }
-
+    $scope.cancelProjectConfig = function () {
+        $scope.generateTheHtmlValues();
+        var postURL = "updateProjectInfo.json";
+        var postdata = "{}";
+        $scope.showError = false;
+        $http.post(postURL, postdata)
+            .success(function (data) {
+                $scope.workspaceConfig = data;
+                $scope.generateTheHtmlValues();
+                $scope.editInfo = false;
+            })
+            .error(function (data, status, headers, config) {
+                $scope.reportError(data);
+            });
+    };
 
 });
+    app.filter('escape', function () {
+        return window.encodeURIComponent;
+    });
 </script>
-
-
-<style>
-.numberColumn {
-    width:100px;
-    text-align: right;
-}
-</style>
 
 
 <div ng-cloak>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-      <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">New Workspace</a></span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteStats.htm">Site Statistics</a></span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              href="SiteLedger.htm">Site Charges</a></span>
+<div class="container-fluid override mx-3">
+        <span class="btn second-menu-btn btn-wide " type="button" aria-labelledby="createNewWorkspace">
+            <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}"><span class="fa fa-plus-square"></span> &nbsp;Create New Workspace</a></span>
+
+        <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="siteStats">
+            <a class="nav-link" role="menuitem" href="SiteStats.htm"><span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Charges</a></span>
 <% if (ar.isSuperAdmin()) { %>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="TemplateEdit.htm">Template Edit</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
-<% } %>
-      </div>
+          <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" 
+              href="TemplateEdit.htm"><span class="fa fa-user-secret"></span> &nbsp;Template Edit</a></span>
+            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span> &nbsp;Super Admin</a></span>
+<hr class="mx-3">
+</div>
 
+    
+        
+        <% } %>
 
-    <div class="d-flex col-9"><div class="contentColumn">
-      <div class="container-fluid override">
-        <div class="generalContent">
-            <div class="spaceyTable">
-                <div class="row" ng-dblclick="toggleEditor('NewName')">
-                    <span class="col-2 labelColumn" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
-                    <span class="col-2 dataColumn" ng-show="isEditing =='NewName'">
-                        <input type="text" class="form-control mb-2" ng-model="newName">
-                        <button ng-click="addName(newName)" class="btn btn-wide btn-primary  btn-raised">Change Name</button>
-                    </span>
-                    <span class="col-2 dataColumn" ng-hide="isEditing =='NewName'">
-                        <b>{{newName}}</b>
-                    </span>
-                    <span class="col-2 helpColumn" ng-hide="isEditing =='NewName'"></span>
-                    <span ng-show="isEditing =='NewName'" class="helpColumn guideVocal">
+    <div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-5">
+        <div class="row my-2 border-bottom border-1 pb-2">
+            <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
+                    
+                <span class="col-9 mt-2" ng-hide="isEditing =='NewName'">
+                        <span class="h5 bold text-primary">{{newName}}</span>
+                </span>
+                <span class="col-9 mt-2 form-inline form-group " ng-show="isEditing =='NewName'">
+                        <input type="text" class="rounded-2 form-control mb-2" ng-model="newName">
+                        <span class="helpColumn" >
+                            <span ng-show="isEditing =='NewName'" class=" guideVocal">
                         If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
-                    </span>
-                </div>
-                <div class="row"  >
-                    <span class="col-2 labelColumn" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:</span>
-                    <span class="col-6 dataColumn" ng-hide="isEditing =='SiteDescription'">
-                        {{siteInfo.description}}
-                    </span>
-                    <span class="col-6 dataColumn" ng-show="isEditing =='SiteDescription'">
-                        <textarea  class="form-control markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
+                        </span></span>
+                        <span class="d-flex">
+                            <button ng-click="addName(newName)" class="btn btn-default btn-primary  btn-raised ms-auto">Change Name</button>
+                        </span>
+                        
+                </span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2" >
+                <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:
+
+                </span>
+
+                <span class="col-9 mt-2" ng-hide="isEditing =='SiteDescription'"><span class="fs-6  text-primary">
+                        {{siteInfo.description}}</span>
+                </span>
+                    <span class="col-9 mt-2 form-inline form-group " ng-show="isEditing =='SiteDescription'">
+                        <textarea  class="form-control rounded-2 markDownEditor mb-2" rows="4" ng-model="siteInfo.description"
                         title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised">Save</button>
-                    </span>
-                    <span class="col-2 helpColumn" ng-hide="isEditing =='SiteDescription'"></span>
-                    <span class="col-2 helpColumn guideVocal" ng-show="isEditing =='SiteDescription'" >
+                        <span class="helpColumn" >
+                            <span ng-show="isEditing =='SiteDescription'" class=" guideVocal">
                         The description of the site appears in lists of sites to help others know what the 
                         purpose of the site is.
+                            </span>
+                        </span>
+                        <span class="d-flex">
+                        <button ng-click="saveSiteInfo()" class="btn btn-default btn-primary  btn-raised ms-auto">Save</button>
                     </span>
-                </div>
-                <div class="row" >
-                    <span class="col-2 labelColumn" ng-click="toggleEditor('SiteMessage')">Site Message:</span>
-                    <span class="col-6 dataColumn" ng-hide="isEditing =='SiteMessage'">
-                        {{siteInfo.siteMsg}}
                     </span>
-                    <span class="col-6 dataColumn" ng-show="isEditing =='SiteMessage'">
-                        <textarea  class="form-control mb-2" rows="2" ng-model="siteInfo.siteMsg"
-                        title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised">Save</button>
-                    </span>
-                    <span ng-hide="isEditing =='SiteMessage'" class="col-2 helpColumn"></span>
-                    <div ng-show="isEditing =='SiteMessage'" class="col-2 helpColumn guideVocal">
-                        Set a message and it will show on every page of every workspace in the site.</div>
-                </div>
-                <div class="row" ng-dblclick="toggleEditor('LabelColors')">
-                    <span class="col-2 labelColumn" ng-click="toggleEditor('LabelColors')">Label Colors:</span>
-                    <span class="col-6 dataColumn" ng-hide="isEditing =='LabelColors'">
-                        <textarea disabled class="form-control mb-2 col-5" rows="2" ng-model="colorList"
-                        title="A comma separated list of standard color names."></textarea>
-                    </span>
-                    <span class="col-6 dataColumn mb-2" ng-show="isEditing =='LabelColors'">
-                        <textarea  class="form-control mb-2"  rows="2" ng-model="colorList"
-                        title="A comma separated list of standard color names."></textarea>
-                        <button ng-click="saveSiteInfo()" class="btn btn-wide btn-primary  btn-raised ">Save</button>
-                    </span>
-                    <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
-                    <span ng-show="isEditing =='LabelColors'" class="col-2 helpColumn guideVocal">
-                        Use web standard color names to create the set of colors that you can set on labels.
-                    </span>
-                </div>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2" >
+                    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('SiteMessage')">Site Message:</span>
 
+                    <span class="col-9 mt-2" ng-hide="isEditing =='SiteMessage'"><span class="fs-6  text-primary">
+                        {{siteInfo.siteMsg}}</span>
+                    </span>
+                    <span class="col-9 mt-2 form-inline form-group " ng-show="isEditing =='SiteMessage'">
+                        <textarea  class="form-control rounded-2 mb-2" rows="2" ng-model="siteInfo.siteMsg"
+                        title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
+                        <span class="helpColumn" >
+                            <span ng-show="isEditing =='SiteMessage'" class=" guideVocal">
+                        Set a message and it will show on every page of every workspace in the site.</span>
+                        </span>
+                        <span class="d-flex">
+                        <button ng-click="saveSiteInfo()" class="btn btn-default btn-primary  btn-raised ms-auto">Save</button></span>
+                    </span>
 
         </div>
+        <div class="row my-2" ng-dblclick="toggleEditor('LabelColors')">
+                    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('LabelColors')">Label Colors:</span>
+                    <span class="col-9 mt-2" ng-hide="isEditing =='LabelColors'">
+                        <textarea disabled class="form-control rounded-2 mb-2" rows="2" ng-model="colorList"
+                        title="A comma separated list of standard color names."></textarea>
+                    </span>
+                    <span class="col-9 mt-2 form-inline form-group" ng-show="isEditing =='LabelColors'">
+                        <textarea  class="form-control rounded-2 mb-2"  rows="2" ng-model="colorList"
+                        title="A comma separated list of standard color names."></textarea>
+                        <span class="helpColumn">
+                            <span ng-show="isEditing =='LabelColors'" class=" guideVocal"> Use web standard color names to create the set of
+                                colors that you can set on labels.</span>
+                        </span>
+                        <span class="d-flex">
+                        <button ng-click="saveSiteInfo()" class="btn btn-default btn-primary  btn-raised ms-auto">Save</button></span>
+                        
+                    </span>
+                    <span ng-hide="isEditing =='LabelColors'" class="col-2 helpColumn"></span>
+                    
+        </div>
+    </div>
+    <div class="container-fluid m-1 override">
+        <div class="row">
+            <span class="h4">Site Budget:</span>
+        </div>
         
-        <div style="height:100px"></div>
-        <span class="h5">Budget Usage</span>
-        
-        <div class="spaceyTable">
-            <div class="row">
+        <div>
+            <div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 "></span>
                 <span class="col-1 numberColumn h6">Your Limit</span>
                 <span class="col-1 numberColumn h6 text-center" >Set</span>
@@ -325,12 +349,12 @@ $scope.garbageCollect = function() {
                 <span class="col-1 numberColumn h6">Charged</span>
                 <span class="col-1 numberColumn h6">Cost</span>
             </div>
-            <div class="row" ng-click="toggleEditor('CreatorLimit')">
+            <div class="row border-bottom border-1 border-light-subtle py-2" ng-click="toggleEditor('CreatorLimit')">
                 <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Paid Users:</span>
                 <span class="col-1 numberColumn">
                     {{siteInfo.editUserLimit|number}}
                 </span>
-                <span class="col-1 numberColumn">
+                <span class="col-1 center-block">`
                     <button class="specCaretBtn" ng-click="changePeople(1)"><i class="fa fa-plus"></i></button>
                     <button class="specCaretBtn" ng-click="changePeople(-1)"><i class="fa fa-minus"></i></button>
                 </span>
@@ -347,7 +371,7 @@ $scope.garbageCollect = function() {
                     $ {{costs.editUserCount|number: '0'}}
                 </span>
             </div>
-            <div class="row" ng-click="toggleEditor('CreatorLimit')">
+            <div class="row border-bottom border-1 border-light-subtle py-2" ng-click="toggleEditor('CreatorLimit')">
                 <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Unpaid Users:</span>
                 <span class="col-1 numberColumn">
                     
@@ -368,12 +392,12 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
 
-            <div class="row">
+            <div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 h6">Active Workspaces:</span>
                 <span class="col-1 numberColumn">
                     {{siteInfo.workspaceLimit|number}}
                 </span>
-                <span class="col-1 numberColumn">
+                <span class="col-1 center-block">
                     <button class="specCaretBtn" ng-click="changeWS(1)"><i class="fa fa-plus"></i></button>
                     <button class="specCaretBtn" ng-click="changeWS(-1)"><i class="fa fa-minus"></i></button>
                 </span>
@@ -391,7 +415,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
 
-            <div class="row">
+            <div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 h6">Frozen Workspaces:</span>
                 <span class="col-1 numberColumn">
                     
@@ -412,7 +436,7 @@ $scope.garbageCollect = function() {
                     $ {{costs.numFrozen|number: '0'}}
                 </span>
             </div>
-            <div class="row">
+            <div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 h6">Document MB:</span>
                 <span class="col-1 numberColumn">
                     
@@ -434,7 +458,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
             <hr/>
-            <div class="row">
+            <div class="row py-2">
                 <span class="col-2 h6">Total per Month:</span>
                 <span class="col-1 numberColumn">
                     
@@ -457,12 +481,31 @@ $scope.garbageCollect = function() {
             </div>
 
             <hr/>
-        <div class="row col-10 justify-content-end my-3 well">
-        <p>Here is a detailed explanation of the fields above: </p>
+            <div class="row d-flex my-3">
+                <span class="col-sm-12 col-md-6 pe-3">
+                    <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resources that your site is using.</p>
+                    <button ng-click="recalcStats()" class="btn btn-primary btn-wide float-end me-2">Recalculate Current Usage</button>
+                </span>
+                <span class="col-sm-12 col-md-6">
+                        <p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a
+                            period of time. In order to actually cause the files to be deleted use the Garbage Collect function. This will
+                            actually free up space on the server, and reduce the amount of resources you are using.</p><button
+                            class="btn btn-primary btn-default float-end me-2" ng-click="garbageCollect()">Garbage Collect</button>
+                </span>
+                    </div>
+        </div> <!-- Closing the row div that was missing -->
+    </div>
+    <div class="container-fluid well px-4">
+        <div class="row">
+            <h5>Here is a detailed explanation of the fields above: </h5>
+        </div>
+        <div class="row d-flex">
+
+        <span class="col-sm-12 col-md-6 col-lg-4">
         <ul>
           <li><b>Active Users</b>
-          <ul>
-            <li><b>Your Limit</b>: 
+            <ul>
+                <li><b>Your Limit</b>: 
               As the administrator, you declare what limits you want to place on 
               the number of active users for your site.
               You are charged only for what you actually use, but this limit helps
@@ -472,29 +515,26 @@ $scope.garbageCollect = function() {
               and raise this limit for more active users to be added.  Please note,
               lowering this limit does not automatically remove users who are already
               entered as active users.  You will need to remove users manually.
-              </li>
-              <li><b>Set</b>: 
-              Use these controls to raise and lower your limit for the site.
-              </li>
-              <li><b>Current Usage</b>: 
+                </li>
+                <li><b>Set</b>: Use these controls to raise and lower your limit for the site.
+                </li>
+                <li><b>Current Usage</b>: 
               This is the number of active users you actually have using your site
               across all the workspaces.  This is also known as the count of 
-              <b>paid users</b> as the basis for other calculations.
-              </li>
-              <li><b>Gratis</b>: 
-              This is the number of active users that are being provided to you 
+                <b>paid users</b> as the basis for other calculations.
+                </li>
+                <li><b>Gratis</b>: Use this control to declare the number of active users that are being provided to you 
               for free from Circle Weaver Tech.
-              </li>
-              <li><b>Charged</b>: 
+                </li>
+                <li><b>Charged</b>: 
               This is the number of active users that you actually need to pay for.
-              </li>
-              <li><b>Cost</b>: 
-              This is the monthly charge at $1 per user.
-              </li>
+                </li>
+                <li><b>Cost</b>: Use this control to declare the monthly charge at $1 per user.
+                </li>
             </ul>
           </li>
           <li><b>Unpaid Users</b>
-          <ul>
+            <ul>
             <li><b>Current Usage</b>: 
               This is the number of observer users you actually have using your site
               across all the workspaces.  
@@ -513,13 +553,16 @@ $scope.garbageCollect = function() {
               </li>
             </ul>
           </li>
-          <li><b>Active Workspaces</b>
+        </ul></span>
+        <span class="col-sm-12 col-md-6 col-lg-4">
           <ul>
-            <li><b>Your Limit</b>: 
+            <li><b>Active Workspaces</b>
+                <ul>
+                    <li><b>Your Limit</b>: 
               As the administrator, you declare what limits you want for your site.
               You are charged only for what you actually use, but this limit helps
               you control how many workspaces can be added.
-              The system will not allow any new unfrozen workspaces to be addeed 
+              The system will not allow any new unfrozen workspaces to be added 
               once your workspace limit is reached.  
               To add more unfrozen workspaces, a site administrator will need to come 
               and raise this limit.  
@@ -562,6 +605,10 @@ $scope.garbageCollect = function() {
               </li>
             </ul>
           </li>
+        </ul>
+        </span>
+        <span class="col-sm-12 col-md-6 col-lg-4">
+            <ul>
           <li><b>Document Megabytes</b>
           <ul>
               <li><b>Current Usage</b>: 
@@ -587,21 +634,14 @@ $scope.garbageCollect = function() {
           </li>
           <li><b>Total Per Month</b> This is the total charge you can expect to pay every month if you are using resources at the current level.
           </li>
+            </ul></span>
         </div>
-        
-        <div class="row col-10 justify-content-end my-3 well">
-        <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resourceses that your site is using.</p><button ng-click="recalcStats()" class="col-2 btn btn-primary btn-wide">Recalculate Current Usage</button></div>
-        
-        <div class="row col-10 justify-content-end my-3 well">
-            <p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time. In order to actually cause the files to be deleted use the Garbage Collect function. This will actually free up space on the server, and reduce the amount of resources you are using.</p><button  class="col-2 btn btn-primary btn-wide" ng-click="garbageCollect()">Garbage Collect</button></div>
-        
-        
-        
-        
-        <div style="height:300px"></div>
-        <hr/>
+
+
         
         <% if (ar.isSuperAdmin()) { %>
+            <div style="height:300px"></div>
+        <hr/>
         <div class="h5">Super Admin Only</div>
         <table class="spaceyTable">
             <tr ng-dblclick="toggleEditor('Flags')">
@@ -631,5 +671,5 @@ $scope.garbageCollect = function() {
         </table>
         <% } %>
     </div>
-    <div style="height:400px"></div>
 </div>
+

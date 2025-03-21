@@ -12,7 +12,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.allRoles = [];
     $scope.roleDefinitions = [];
     $scope.roleToCopy = "";
-    
+
     $scope.errorMessage = "";
 
 
