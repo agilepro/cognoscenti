@@ -20,7 +20,8 @@
     if ("$".equals(pageId)) {
         frontPageResource = "SiteWorkspaces.htm";
     }
-
+    SiteUsers siteUsers = site.getUserMap();
+    
     JSONArray allRoles = new JSONArray();
 
     for (WorkspaceRole aRole : ngw.getWorkspaceRoles()) {
@@ -45,6 +46,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Roles");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
+    $scope.siteUsers = <%siteUsers.getJson().write(out,2,4);%>;
+        console.log("siteUsers", $scope.siteUsers);
     $scope.isFrozen = <%= ngw.isFrozen() %>;
     $scope.showInput = false;
     //this map tells whether to display the role in detail mode.   All roles
@@ -69,6 +72,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
 
+    $scope.findLastLogin = function(user) {
+        console.log("USER", user);
+        return $scope.siteUsers[user.key].lastAccess;
+    }
 
     $scope.cleanDuplicates = function(role) {
         var cleanList = [];
@@ -497,7 +504,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 
                     <span class="col-4 text-wrap">{{player.name}}</span>
                     <span class="col-4 text-wrap">{{player.uid}}</span>
-                    <span class="col-2">last login: {{value.info.lastLogin|cdate}} </span>
+                    <div class="col-2">{{findLastLogin(player)|cdate}} </div>
                 </div>
 
               </div>

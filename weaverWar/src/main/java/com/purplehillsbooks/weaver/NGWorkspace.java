@@ -309,6 +309,8 @@ public class NGWorkspace extends NGPage {
             List<AddressListEntry> players = oldRole.getDirectPlayers();
             if (players.size()==0) {
                 deleteOldRole(symbol);
+                System.out.println(String.format(
+                    "DELETING EMPTY Role %s in: %s", symbol, this.getFilePath().getAbsolutePath()));
                 continue;
             }
             if (players.size()==1 && oldRole.isPlayer(creator)) {
@@ -316,6 +318,8 @@ public class NGWorkspace extends NGPage {
                 // that created the workspace.  Old pattern was to place that person in all
                 // the roles, but we want to get rid of those now.
                 deleteOldRole(symbol);
+                System.out.println(String.format(
+                    "DELETING SINGLE MEMBER Role %s in: %s", symbol, this.getFilePath().getAbsolutePath()));
                 continue;
             }
 
