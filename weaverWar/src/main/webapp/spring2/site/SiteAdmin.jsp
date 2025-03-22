@@ -123,8 +123,8 @@ $scope.removeName = function(oldName) {
     });
 }
 $scope.addName = function(newName) {
-    $scope.removeName(newName);
-    $scope.siteInfo.names.splice(0, 0, newName);
+    $scope.siteInfo.names = [newName];
+    $scope.saveSiteInfo();
 }
 
 $scope.saveSiteInfo = function() {
