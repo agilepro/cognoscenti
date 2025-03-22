@@ -157,6 +157,7 @@ public abstract class NGPage extends ContainerCommon {
         removeIfEmpty("Circle Administrator");
 
         //refresh the roles from the site if linked
+        /* 
         for (CustomRole aRole : this.getAllRoles()) {
             String linkedRole = aRole.getLinkedRole();
             if (linkedRole!=null && linkedRole.length()>0) {
@@ -169,6 +170,7 @@ public abstract class NGPage extends ContainerCommon {
                 }
             }
         }
+        */
 
 
         //eliminate old meetings that were just backlog containers

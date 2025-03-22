@@ -563,7 +563,7 @@ public class ProjectSettingController extends BaseController {
                 roleChanged = true;
                 if (ngc instanceof NGWorkspace) {
                     
-
+                    /* LINKED ROLES disabled
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
                     String linkedRole = role.getLinkedRole();
@@ -590,6 +590,7 @@ public class ProjectSettingController extends BaseController {
                         //state of the site role to this role.
                         role.updateFromJSON(siteRole.getJSON());
                     }
+                    */
                 }
                 repo = role.getJSONDetail();
             }

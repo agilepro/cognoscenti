@@ -256,9 +256,13 @@ public class NGWorkspace extends NGPage {
             }
             if (site.isUnpaidUser(user)) {
                 membersRole.addPlayerIfNotPresent(ale);
+                System.out.println(String.format(
+                    "    User (%s) --> MembersRole", ale.getEmail()));
             }
             else {
                 stewardsRole.addPlayerIfNotPresent(ale);
+                System.out.println(String.format(
+                    "    User (%s) --> StewardsRole", ale.getEmail()));
             }
         }
 
@@ -310,7 +314,7 @@ public class NGWorkspace extends NGPage {
             if (players.size()==0) {
                 deleteOldRole(symbol);
                 System.out.println(String.format(
-                    "DELETING EMPTY Role %s in: %s", symbol, this.getFilePath().getAbsolutePath()));
+                    "    (%s) Role deleted because EMPTY", symbol));
                 continue;
             }
             if (players.size()==1 && oldRole.isPlayer(creator)) {
@@ -319,7 +323,7 @@ public class NGWorkspace extends NGPage {
                 // the roles, but we want to get rid of those now.
                 deleteOldRole(symbol);
                 System.out.println(String.format(
-                    "DELETING SINGLE MEMBER Role %s in: %s", symbol, this.getFilePath().getAbsolutePath()));
+                    "    (%s) Role deleted because ONLY CREATOR", symbol));
                 continue;
             }
 
@@ -339,7 +343,7 @@ public class NGWorkspace extends NGPage {
         if (needSave) {
             site.saveAllRoleDefs();
         }
-        System.out.println("      done migrating roles");
+        System.out.println("      = = = = = = = = = = = = ");
         return true;
     }
 
