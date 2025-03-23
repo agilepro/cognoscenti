@@ -120,24 +120,20 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-2">
-    <div class="col-md-auto second-menu d-flex">
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false"
-            aria-controls="collapseSecondaryMenu">
-            <i class="fa fa-bars"></i></button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewWorkspace"><a class="nav-link"
-                        href="SiteCreateWorkspace.htm" >Create New Workspace</a></span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="garbageCollect()" aria-labelledby="collectGarbage"><a class="nav-link"
-                        >Garbage <i class="fa fa-trash"></i> Collect</a></span>
-                </div>
-            </div>
-        </div>
+<div class="container-fluid override mx-3">
+        <span class="btn second-menu-btn btn-wide " type="button" aria-labelledby="createNewWorkspace">
+            <a class="nav-link" role="menuitem" href="SiteCreateWorkspace.htm" >
+                <span class="fa fa-plus-square"></span> &nbsp;Create New Workspace</a>
+            </span>
 
-    <div class="d-flex col-9">
-        <div class="contentColumn">
-                <div class="col-12 well ms-3">Filter <input ng-model="filter"></div>
+                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="garbageCollect()" aria-labelledby="collectGarbage"><a class="nav-link"
+                        ><i class="fa fa-trash"></i> &nbsp;Garbage  Collect</a>
+                    </span>
+<hr class="mx-3">
+</div>
+
+<div class="container-fluid override border-1 border-dark-subtle rounded-2 px-5">
+    <div class="col-12 well ms-3 h6">Filter: <input ng-model="filter"></div>
         <div class="row d-flex border-bottom border-1 ms-3">
             <span class="col-1 m-3"></span>
             <span class="col-4 h6">Workspace</span>
@@ -163,8 +159,8 @@ app.controller('myCtrl', function($scope, $http) {
                    <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
             </span>
-            <span class="col-2">{{rec.changed|cdate}}</span>
-            <span class="col-4"><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a>
+            <span class="col-2 my-3 ">{{rec.changed|cdate}}</span>
+            <span class="col-4 my-3 "><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/FrontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a>
             </span>
         </div>
     </div>

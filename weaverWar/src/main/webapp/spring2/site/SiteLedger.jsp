@@ -80,67 +80,73 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-      	<div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteAdmin.htm">Site Admin</a></span>
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteUsers.htm">User List</a></span>
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              href="SiteStats.htm">Site Statistics</a></span>
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              href="SiteLedger.htm">Site Ledger</a></span>
-          	<span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-              ng-click="recalcStats()">Recalculate</a></span>
-              <% if (ar.isSuperAdmin()) { %>
-                <span class="btn btn-warning btn-comment btn-raised m-3 pb-2 pt-0" type="button" ><a class="nav-link" role="menuitem"
-                    href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
-                <% } %>
-            </div>
+<div class="container-fluid override mx-3">
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            href="SiteUsers.htm"><span class="fa fa-users"></span> &nbsp;User List</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            href="SiteStats.htm"><span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            ng-click="recalcStats()"><span class="fa fa-refresh"></span> &nbsp;Recalculate</a></span>
+    <% if (ar.isSuperAdmin()) { %>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+                href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span>
+                &nbsp;Super Admin</a></span>
+        <% } %>
+            <hr class="mx-3">
+</div>
 
-            <div class="d-flex col-9">
-                <div class="contentColumn">
-                    <div class="container-fluid">
-                        <div class="generalContent">
+<div class="container-fluid override border-1 border-dark-subtle rounded-2 px-5">
+    <div class="col-12 well ms-1">
+        <div class="h5">Monthly Summary</div>
 
-    <div class="h5">Monthly Summary</div>
-    <table class="table">
-    <tr>
-        <td>Year / Month</td>
-        <td>Plan</td>
-        <td></td>
-        <td>Charge</td>
-        <td>Payment</td>
-        <td>Balance</td>
-    </tr>
-    <tbody ng-repeat="month in ledgerInfo">
-      <tr>
-        <td><b>{{month.year}} / {{(month.month + "").padStart(2 ,"0")}}</b></td>
-        <td>{{month.plan}}</td>
-        <td>(charge)</td>
-        <td>{{0.0001+month.chargeAmt | currency: '$'}}</td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr ng-repeat="pay in month.payments">
-        <td></td>
-        <td></td>
-        <td>{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</td>
-        <td></td>
-        <td>{{pay.amount | currency: '$'}}</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td>(balance)</td>
-        <td></td>
-        <td></td>
-        <td>{{month.balance | currency: '$' }}</td>
-      </tr>
-    </tbody>
-    </table>
+    
+    <div class="container-fluid col-12">
+    <div class="row my-2 border-bottom border-1 pb-2">
+        <span class="col-3">Year / Month</span>
+        <span class="col-3">Plan</span>
+        <span class="col-2"></span>
+        <span class="col-1">Charge</span>
+        <span class="col-1">Payment</span>
+        <span class="col-2">Balance</span>
+    </div>
+    <div class="row my-2 border-bottom border-1 pb-2" ng-repeat="month in ledgerInfo">
+      <span class="col-3">
+        <b>{{month.year}} / {{(month.month + "").padStart(2 ,"0")}}</b>
+      </span>
+      <span class="col-3">
+        {{month.plan}}
+      </span>
+      <span class="col-2">(charge)</span>
+      <span class="col-1">
+        {{0.0001+month.chargeAmt | currency: '$'}}
+      </span>
+      <span class="col-1">
+        
+      </span>
+      <span class="col-2">
+      </span>
+    </div>
+    <div class="row my-2 border-bottom border-1 pb-2" ng-repeat="pay in month.payments">
+            <span class="col-3">
+            </span>
+                <span class="col-3">
+                </span>
+
+      <span class="col-3">{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</span>
+      <span class="col-3">{{pay.amount | currency: '$'}}</span>
+    
+      </div>
+    <div class="row my-2 border-bottom border-1 pb-2">
+      <span class="col-3"></span>
+      <span class="col-3"></span>
+      <span class="col-2">(balance)</span>
+      <span class="col-1"></span>
+      <span class="col-1"></span>
+      <span class="col-2">{{month.balance | currency: '$' }}</span>
+    </div>
+</div>
 
 <script src="../../../jscript/AllPeople.js"></script>
 

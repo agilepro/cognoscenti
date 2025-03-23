@@ -93,6 +93,7 @@
     <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/jquery.min.js"></script>
+      <script src="<%=ar.baseURL%>spring2\node_modules\@popperjs\core\dist\umd\popper.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
     <link
@@ -117,7 +118,7 @@
           data-semver="4.3.0" data-require="font-awesome@*" />
       <link href="<%=ar.retPath%>new_assets/assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-  <!-- Bootstrap 5.0-->
+  <!-- Bootstrap 5.3.3-->
 
     <!-- Date and Time Picker -->
 

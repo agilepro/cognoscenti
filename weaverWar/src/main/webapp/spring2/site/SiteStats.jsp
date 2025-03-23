@@ -102,154 +102,155 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-   <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-             href="SiteAdmin.htm">Site Admin</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-             href="SiteUsers.htm">User List</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" 
-             href="SiteStats.htm">Site Statistics</a></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-             href="SiteLedger.htm">Site Ledger</a></span>
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem"
-              ng-click="recalcStats()">Recalculate</a></span>
-          <% if (ar.isSuperAdmin()) { %>
-          <span class="btn btn-warning btn-comment btn-raised m-3 pb-2 pt-0" type="button" ><a class="nav-link" role="menuitem"
-              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">Super Admin</a></span>
-          <% } %>
-          </div>
-    		<div class="d-flex col-9">
-            <div class="contentColumn">
-               <div class="container-fluid">
-                      <div class="generalContent">
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4"></span>
-           <span class="col-2 h6">Entire Site</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Last Change:</span>
-           <span class="col-2">{{siteInfo.changed|cdate}}</span>
-           </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Full Users:</span>
-           <span class="col-2">{{siteStats.editUserCount}}</span>
-           </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Observers:</span>
-           <span class="col-2">{{siteStats.readUserCount}}</span>
-           </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Emails / Month:</span>
-           <span class="col-2"></span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Size of Documents:</span>
-           <span class="col-2">{{siteStats.sizeDocuments|number}}</span>
-           </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Active Workspaces:</span>
-           <span class="col-2">{{siteStats.numActive}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Frozen Workspaces:</span>
-           <span class="col-2">{{siteStats.numFrozen}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Workspaces:</span>
-           <span class="col-2">{{stats.numWorkspaces}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Users:</span>
-           <span class="col-2">{{stats.numUsers}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Discussions:</span>
-           <span class="col-2">{{stats.numTopics}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Meetings:</span>
-           <span class="col-2">{{stats.numMeetings}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Decisions:</span>
-           <span class="col-2">{{stats.numDecisions}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Comments:</span>
-           <span class="col-2">{{stats.numComments}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Proposals:</span>
-           <span class="col-2">{{stats.numProposals}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Number of Files:</span>
-           <span class="col-2">{{stats.numDocs}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Last WS Change:</span>
-           <span class="col-2">{{stats.recentChange|cdate}}</span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-2">
-           <span class="col-4 h6">Size of Old Versions:</span>
-           <span class="col-2">{{stats.sizeArchives|number}} bytes</span>
-        </div>
+<div class="container-fluid override mx-3">
+   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteUsers.htm"><span class="fa fa-users"></span> &nbsp;User List</a></span>
 
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-         <span class="col-2"></span>
-         <span class="col-6 h6">User Link</span>
-         <span class="col-2 h6">Amount</span>
+   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
+   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" ng-click="recalcStats()"><span class="fa fa-refresh"></span> &nbsp;Recalculate</a></span>
+   <% if (ar.isSuperAdmin()) { %>
+   <span class="btn second-menu-btn btn-wide" type="button" ><a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span> &nbsp;Super Admin</a></span>
+   <% } %>
+   <hr class="mx-3">
+   </div>
+   <div class="row d-flex mx-2">
+    	<div class="col-5 container-fluid override border-1 border-dark-subtle rounded-2 well px-5" style="height: fit-content;">
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5"></span>
+           <span class="col-7 h6">Entire Site</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Last Change:</span>
+           <span class="col-5">{{siteInfo.changed|cdate}}</span>
+           </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Full Users:</span>
+           <span class="col-5">{{siteStats.editUserCount}}</span>
+           </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Observers:</span>
+           <span class="col-5">{{siteStats.readUserCount}}</span>
+           </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Emails / Month:</span>
+           <span class="col-5"></span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Size of Documents:</span>
+           <span class="col-5">{{siteStats.sizeDocuments|number}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Active Workspaces:</span>
+           <span class="col-5">{{siteStats.numActive}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Frozen Workspaces:</span>
+           <span class="col-5">{{siteStats.numFrozen}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Workspaces:</span>
+           <span class="col-5">{{stats.numWorkspaces}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Users:</span>
+           <span class="col-5">{{stats.numUsers}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Discussions:</span>
+           <span class="col-5">{{stats.numTopics}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Meetings:</span>
+           <span class="col-5">{{stats.numMeetings}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Decisions:</span>
+           <span class="col-5">{{stats.numDecisions}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Comments:</span>
+           <span class="col-5">{{stats.numComments}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Proposals:</span>
+           <span class="col-5">{{stats.numProposals}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Number of Files:</span>
+           <span class="col-5">{{stats.numDocs}}</span>
+        </div>
+        <div class="row my-2 border-bottom border-1 pb-2">
+           <span class="col-5 h6">Last WS Change:</span>
+           <span class="col-5">{{stats.recentChange|cdate}}</span>
+        </div>
+        <div class="row my-2">
+           <span class="col-5 h6">Size of Old Versions:</span>
+           <span class="col-5">{{stats.sizeArchives|number}} bytes</span>
+        </div>
       </div>
+      <div class="col-6 container-fluid override">
+         <div class="container border-1 border-dark-subtle rounded-2 well px-5 me-2">  
+         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+            <span class="col-3"></span>
+            <span class="col-6 h6">User Link</span>
+            <span class="col-2 h6 centered">Amount</span>
+         </div>
 
          <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.topicsPerUser">
-            <span class="col-2 h6">Discussions:</span>
-            <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+            <span class="col-3 h6">Discussions:</span>
+            <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
             <span class="col-2">{{value}}</span>
          </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.docsPerUser">
-           <span class="col-2 h6">Files:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Files:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.commentsPerUser">
-           <span class="col-2 h6">Comments:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Comments:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.meetingsPerUser">
-           <span class="col-2 h6">Meetings:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Meetings:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.proposalsPerUser">
-           <span class="col-2 h6">Proposals:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Proposals:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.responsesPerUser">
-           <span class="col-2 h6">Responses:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Responses:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.unrespondedPerUser">
-           <span class="col-2 h6">Unresponded:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
+           <span class="col-3 h6">Unresponded:</span>
+           <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:</span>
            <span class="col-2">{{value}}</span>
         </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.anythingPerUser">
-           <span class="col-2 h6">All Users:</span>
-           <span class="col-6"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </span>
-           <span class="col-2"></span>
-        </div>
-        <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.historyPerType">
-           <span class="col-2 h6">History:</span>
-           <span class="col-6">{{key}}:</span>
-           <span>{{value}}</span>
-        </div>
+         </div>
+         <div class="container border-1 border-dark-subtle rounded-2 well px-5 me-2">
+<!-- Do we need a list of users?
+            <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.anythingPerUser">
+         <span class="col-3 h6">All Users:</span>
+         <span class="col-7"><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </span>
+         <span class="col-2"></span>
+            </div>-->
+            <div class="row-cols-3 d-flex my-2 border-bottom border-1">
+               <span class="col-3"></span>
+               <span class="col-6 h6">User Link</span>
+               <span class="col-2 h6 centered">Amount</span>
+            </div>
+            <div class="row-cols-3 d-flex my-2 border-bottom border-1" ng-repeat="(key, value) in stats.historyPerType">
+         <span class="col-3 h6">History:</span>
+         <span class="col-7">{{key}}:</span>
+         <span>{{value}}</span>
+         </div>
       </div>
-    </div>
+      </div>
+   </div>   
 </div>
-
 <script src="../../../jscript/AllPeople.js"></script>

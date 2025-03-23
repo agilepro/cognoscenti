@@ -241,7 +241,7 @@ $scope.garbageCollect = function() {
 
         <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="siteStats">
             <a class="nav-link" role="menuitem" href="SiteStats.htm"><span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Charges</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
 <% if (ar.isSuperAdmin()) { %>
           <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" 
               href="TemplateEdit.htm"><span class="fa fa-user-secret"></span> &nbsp;Template Edit</a></span>
@@ -254,8 +254,8 @@ $scope.garbageCollect = function() {
         
         <% } %>
 
-    <div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-5">
-        <div class="row my-2 border-bottom border-1 pb-2">
+    <div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-5 mx-2">
+        <div class="row my-2 border-bottom border-1 pb-2 ">
             <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
                     
                 <span class="col-9 mt-2" ng-hide="isEditing =='NewName'">
@@ -334,13 +334,13 @@ $scope.garbageCollect = function() {
                     
         </div>
     </div>
-    <div class="container-fluid m-1 override">
+    <div class="container-fluid override mx-5">
         <div class="row">
             <span class="h4">Site Budget:</span>
         </div>
         
         <div>
-            <div class="row border-bottom border-1 border-light-subtle py-2">
+            <div class="row col-12 border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 "></span>
                 <span class="col-1 numberColumn h6">Your Limit</span>
                 <span class="col-1 numberColumn h6 text-center" >Set</span>
@@ -481,12 +481,12 @@ $scope.garbageCollect = function() {
             </div>
 
             <hr/>
-            <div class="row d-flex my-3">
-                <span class="col-sm-12 col-md-6 pe-3">
+            <div class="row d-flex my-3 mx-2">
+                <span class="col-sm-12 col-md-6 pe-3 border-1 border-light-subtle border-start">
                     <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resources that your site is using.</p>
                     <button ng-click="recalcStats()" class="btn btn-primary btn-wide float-end me-2">Recalculate Current Usage</button>
                 </span>
-                <span class="col-sm-12 col-md-6">
+                <span class="col-sm-12 col-md-6 border-1 border-light-subtle border-start">
                         <p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a
                             period of time. In order to actually cause the files to be deleted use the Garbage Collect function. This will
                             actually free up space on the server, and reduce the amount of resources you are using.</p><button
@@ -495,7 +495,7 @@ $scope.garbageCollect = function() {
                     </div>
         </div> <!-- Closing the row div that was missing -->
     </div>
-    <div class="container-fluid well px-4">
+    <div class="container-fluid well px-4 mx-5">
         <div class="row">
             <h5>Here is a detailed explanation of the fields above: </h5>
         </div>

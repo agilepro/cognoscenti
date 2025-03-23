@@ -180,7 +180,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 <div>
 
 <div ng-show="siteInfo.siteMsg">
-    <div class="siteMsg">{{siteInfo.siteMsg}}</div>
+
 </div>
 
 
@@ -188,40 +188,32 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
 
-<style>
-.spacey td {
-    padding:5px;
-}
-.form-group {
-    margin-top:25px;
-}
-</style>
-<div class="container" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
-
-    <div class="form-group">
-        <label ng-click="showNameHelp=!showNameHelp">
+<div class="container-fluid mx-0" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
+<div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-4  mx-0">
+    <div class="form-group fs-5 d-flex py-2">
+        <label class="form-label col-3" ng-click="showNameHelp=!showNameHelp">
             New Workspace Name &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
-        <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
+        <input type="text" class="form-control rounded-2" ng-model="newWorkspace.newName"/>
     </div>
-    <div>
-        <label>
+    <div class="form-group fs-5 d-flex py-2">
+        <label class="form-label col-3" >
             URL Address:
         </label>
         &nbsp; {{getURLAddress()}}
     </div>
-    <div class="guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
+    <div class="form-group py-2 guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
         Pick a short clear name that would be useful to people that don't already know
         about the group using the workspace.  You can change the <b>display name</b> at any time.
-        <br/>
-        The first name you pick will set the <b>URL address</b> for the workspace.  
-        That will be permanent; the URL can not be changed later.
+        <br/>***<br/>
+        <p class="override text-secondary-emphasis">Note: The first name you pick will set the <b>URL address</b> for the workspace.  
+        That will be permanent; the URL can not be changed later.</p>
     </div>
-    <div class="form-group">
-        <label ng-click="showPurposeHelp=!showPurposeHelp">
+    <div class="form-group fs-5 d-flex py-2">
+        <label class="form-label col-3" ng-click="showPurposeHelp=!showPurposeHelp">
             Workspace Aim &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
-        <textarea class="form-control" ng-model="newWorkspace.purpose"></textarea>
+        <textarea class="form-control rounded-2" ng-model="newWorkspace.purpose"></textarea>
     </div>
     <div class="guideVocal" ng-show="showPurposeHelp" ng-click="showPurposeHelp=!showPurposeHelp">
         Describe in a sentence or two the <b>aim</b> (or purpose) of the workspace in a way that
@@ -232,8 +224,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         This description will be available to the public if the workspace
         ever appears in a public list of workspaces.
     </div>
-    <div class="form-group">
-        <label ng-click="showFrozenHelp=!showFrozenHelp">
+    <div class="form-group fs-5 d-flex py-2">
+        <label class="form-label col-3" ng-click="showFrozenHelp=!showFrozenHelp">
             Frozen Workspace &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
         <div>
@@ -245,18 +237,18 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     <div class="guideVocal" ng-show="showFrozenHelp" ng-click="showFrozenHelp=!showFrozenHelp">
         Workspaces can be active, frozen or deleted.  Only active workspaces can 
         support organizational work.
-        <br/><br/>
+        <br/>
         This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces according
         to the current payment plan.
-        <br/><br/>       
+        <br/>       
         You are allowed unlimited frozen workspaces to represent an accurate organizational hierarchy.
-        <br/><br/>
+        <br/>***<br/>
         If you find you can only create a frozen workspace, go ahead and create it frozen, and then 
         go to the other projects and sort out which ones need to be active, or change your plan
         to allow for more.
     </div>
-    <div class="form-group">
-        <label ng-click="showMembersHelp=!showMembersHelp">
+    <div class="form-group fs-5 d-flex py-2">
+        <label class="form-label col-3" ng-click="showMembersHelp=!showMembersHelp">
             Initial Members &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
           <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace"
@@ -267,17 +259,17 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
     </div>
-    <div class="guideVocal" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">
+    <div class="guideVocal mb-2" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">
         Members are allowed to access the workspace.
         You can enter their email address if they have not accessed the system before.
         If not novices, type three letters to get a list of known users that match.
-        Later, you can add and remove members whenever needed.<br/>
+        Later, you can add and remove members whenever needed.<br/>***
         <br/>
         After the workspace is created go to each <b>novice</b> user and send them an
         invitation to join.
     </div>
-    <div class="form-group" ng-show="newWorkspace.parentName">
-        <label ng-click="showParentHelp=!showParentHelp">
+    <div class="form-group fs-5 d-flex py-2" ng-show="newWorkspace.parentName">
+        <label class="form-label col-3" ng-click="showParentHelp=!showParentHelp">
             Initial Parent &nbsp; <i class="fa fa- fa-question-circle-o"></i>  
         </label>
         <div>
@@ -295,8 +287,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 
 
-    <div class="form-group">
-        <button class="btn btn-primary btn-raised ms-auto" ng-click="createNewWorkspace()">
+    <div class="form-group pb-5">
+        <button class="btn btn-primary btn-default btn-raised float-end" ng-click="createNewWorkspace()">
             Create Workspace</button>
     </div>
 

@@ -38,6 +38,7 @@
     <title><% ar.writeHtml(title); %></title>
     <script src="<%=ar.baseURL%>jscript/angular.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
+    <script src="<%=ar.baseURL%>spring2\node_modules\@popperjs\core\dist\umd\popper.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
@@ -50,7 +51,7 @@
         <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
   
-    <!-- Bootstrap 5.0-->
+    <!-- Bootstrap 5.3.3-->
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
 <script>

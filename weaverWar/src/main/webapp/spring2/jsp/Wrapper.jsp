@@ -209,6 +209,7 @@
     <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>spring2\node_modules\@popperjs\core\dist\umd\popper.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
     
@@ -242,7 +243,7 @@
     <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
     <script>  moment().format(); </script>
     
-    <!-- Bootstrap 5.0-->
+    <!-- Bootstrap 5.3.3-->
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
     
@@ -385,22 +386,8 @@ function showLearningPath() {
 
     <!-- Begin mainContent -->
     <div class="col-10 col-lg-11 main-content override">
-        <button class="btn-wide btn-comment btn my-3" style="float:right" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" title="Learn more about this page and how to use it"
-        >Open Learning Path</button>
 
-        <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
-          <div class="offcanvas-header">
-            <h2 id="offcanvasTopLabel">Learning Path</h2>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            <%@ include file="WrapLearning.jsp" %>
-          </div>
-        </div>
-      
-      <script>
-      console.log("loaded the LEARNING module");
-      </script> 
+
 
       <!-- BEGIN Title and Breadcrumb -->
       <nav aria-label="Breadcrumb">
@@ -428,7 +415,24 @@ function showLearningPath() {
       }
       </script>
       
+        <!--Learning Path Button-->
+        <button class="btn-wide btn-comment btn my-3 float-end" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" title="Learn more about this page and how to use it"
+        >Open Learning Path</button>
 
+        <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+          <div class="offcanvas-header">
+            <h2 id="offcanvasTopLabel">Learning Path</h2>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <%@ include file="WrapLearning.jsp" %>
+          </div>
+        </div>
+      
+      <script>
+      console.log("loaded the LEARNING module");
+      </script> 
+<!--end learning path-->
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
 
@@ -474,18 +478,7 @@ function showLearningPath() {
       </script>
       
 
-      <script>
-        function setMainPageTitle(str) {
-            document.getElementById("mainPageTitle").innerHTML = str;
-            document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
-        }
 
-        document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-  dropdown.addEventListener('mouseover', function (e) {
-    e.stopPropagation();
-  });
-});
-        </script>
 <!-- -->
 <!-- -->
 <!-- -->

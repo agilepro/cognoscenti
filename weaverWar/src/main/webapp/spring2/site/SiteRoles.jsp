@@ -273,29 +273,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid">
-    <div class="row d-flex">
-        <div class="col-md-3 fixed-width border-end border-1 border-secondary">
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
-                <a class="nav-link" role="menuitem" tabindex="-1" href="SiteRoles.htm">
-                    <span class="fa fa-group"></span> Manage Roles
-                </a>
-            </span>
-            <span role="presentation" class="divider"></span>
-            <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button">
-                <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
-                    <span class="fa fa-plus-square"></span> Create New Role
-                </a>
-            </span>
+<div class="container-fluid override mx-3">
+
+    <span class="btn second-menu-btn btn-wide" type="button">
+        <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+            <span class="fa fa-plus-square"></span> Create New Role
+        </a>
+    </span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span
+                class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteStats.htm"><span
+                class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span
+                class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
+    <hr class="mx-3">
+</div>
+
+<div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-3 mx-4">
+    <div class="row d-flex my-2 border-1 border-dark-subtle">
+        <div ng-hide="addUserPanel">
+            <p class="mx-2 fs-5"><em>Add people to the project by double-clicking on any row below and entering their email address in the pop up prompt.</em></p>
         </div>
+    </div>
+</div>
 
-
-        <div class="d-flex col-9">
-            <div class="contentColumn">
-                <div class="container-fluid">
-                    <div class="generalContent">
-                        <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
-        <div class="row d-flex" ng-repeat="role in allRoles">
+<div class="container-fluid override px-3 mx-4">
+        <div class="row d-flex my-3 border-bottom border-dark-subtle border-1" ng-repeat="role in allRoles">
             <span class="col-1 nav-item dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button" id="roleMembers" data-toggle="dropdown">
                 </button>
@@ -309,7 +312,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </ul>
             </span>
             <span class="col-2" ng-dblclick="openRoleModal(role)">
-                <div class="h6" style="color:black;background-color:{{role.color}};padding:5px">{{role.name}}</div>
+                <div class="h6 p-2 rounded-2" style="color:black;background-color:{{role.color}};">{{role.name}}</div>
             </span>
             <span class="col-3 p-0">
                 <span ng-repeat="player in role.players">
@@ -331,7 +334,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </span>
             </span>
 
-            <span class="col-5" ng-dblclick="openRoleModal(role)">
+            <span class="col-5 pb-3" ng-dblclick="openRoleModal(role)">
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     {{role.description}}
@@ -346,9 +349,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </span>
         </div>
     </div>
-</div>
-
-
 </div>
 <script src="<%=ar.retPath%>new_assets/templates/RoleModalCtrl.js"></script>
 

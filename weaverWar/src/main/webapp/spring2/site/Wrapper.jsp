@@ -175,6 +175,7 @@
     <script src="<%=ar.baseURL%>new_assets/jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/jquery-3.6.0.min.js"></script>
+    <script src="<%=ar.baseURL%>spring2\node_modules\@popperjs\core\dist\umd\popper.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/bootstrap.min.js"></script>
     <script src="<%=ar.baseURL%>new_assets/jscript/slap.js"></script>
 
@@ -205,7 +206,8 @@
     <script src="<%=ar.retPath%>new_assets/bits/moment.js"></script>
     <script>  moment().format(); </script>
 
-    <!-- Bootstrap 5.0-->
+    <!-- Bootstrap 5.3.3-->
+     
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
 
@@ -252,7 +254,7 @@ myApp.filter('wiki', function() {
 
 </head>
 <body ng-app="myApp" ng-controller="myCtrl">
-  <div class="bodyWrapper">
+  <div class="bodyWrapper override">
 
 <!-- Begin AppBar -->
 <%@ include file="AppBar.jsp" %>
@@ -270,7 +272,7 @@ myApp.filter('wiki', function() {
 
     <!-- Begin mainContent -->
     
-    <div class="col-10 col-lg-11 main-content">
+    <div class="col-10 col-lg-11 main-content override">
 
       <!-- BEGIN Title and Breadcrumb -->
         <nav aria-label="Breadcrumb">
@@ -303,10 +305,16 @@ myApp.filter('wiki', function() {
           document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }
+      document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+            dropdown.addEventListener('mouseover', function (e) {
+                e.stopPropagation();
+            });
+        });
       </script>
     
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
+
       <script>
       var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
       function displayWelcomeMessagexx(info) {
@@ -343,7 +351,20 @@ myApp.filter('wiki', function() {
 
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
-<h1 class="px-3 page-name" id="mainPageTitle"></h1>
+<div style="height: 20px"></div>
+    <div class="container-fluid override mb-4 mx-3 d-inline-flex">
+        <span class="dropdown mt-1">
+            <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                    <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                </li>
+            </ul>
+        </span>
+        <span>
+<h1 class="d-inline page-name" id="mainPageTitle"></h1></span></div>
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />
       <!-- End Template Content (compiled separately) -->

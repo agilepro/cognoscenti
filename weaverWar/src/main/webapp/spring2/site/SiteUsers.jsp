@@ -155,49 +155,67 @@ app.filter('encode', function() {
 <div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
+<div class="container-fluid override mx-3">
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteStats.htm"><span
+                    class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
+                <span class="btn second-menu-btn btn-wide" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="SiteRoles.htm">
+                        <span class="fa fa-group"></span> Manage Roles </a>
+                </span>
+    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+            ng-click="recalcStats()"><span class="fa fa-refresh"></span> &nbsp;Recalculate</a></span>
+    <% if (ar.isSuperAdmin()) { %>
+        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
+                href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span>
+                &nbsp;Super Admin</a></span>
+        <% } %>
+            <hr class="mx-3">
+</div>
 
-
-    <div class="container-fluid well mx-3">
-        <div class="row col-12 d-flex">
+    <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-3 mx-3">
+        <div class="row my-2 well mx-3 ">
             <div ng-hide="addUserPanel">
-            <p class="h6 guideVocal">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.</p>
+            <p class="h4">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.</p>
             <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
-                <p ><b>Site has too many active users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
+                <p class="mx-2" ><b>Site has too many active users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
             </div>
             <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
-                <p ><b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an observer. You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.
+                <p  class="mx-2"><b>Site has too many observers.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an observer. You will not be able to add any new email addresses to the site until you reduce the number of observers or raise the limit set by the Site Administrator.</p>
                     <hr/>
-                To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.</p>
+                <p class="mx-2 fs-5"><em>To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.</em></p>
             </div>
             </div>
-        </div>        
-    <div class="table">
-        <div class="row col-12 my-3">
-         <span class="col-1 h6">Filter by Name</span>
-         <span class="col-2 "> <input type="text" ng-model="filter" style="height: 25px;"/></span>
-         <span class="col-3 h6">Primary Email</span>
-         <span class="col-1 h6">Access</span>
-         <span class="col-2 h6">Last Login</span>
-         <span class="col-1 h6">Objects</span>
-         <span class="col-1 h6">Workspaces</span>
         </div>
-        <div class="row col-12 my-3" ng-repeat="value in findUsers()" ><hr>
-        <span class="col-1 h6" ng-click="visitUser(value.info.uid)" >Edit:&nbsp;
-            <img class="rounded-5 p-0" 
-         src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" 
-                 style="width:32px;height:32px;cursor: pointer;" title="Edit User: {{value.info.name}} - {{value.info.uid}}">
-        </span>
-        <span class="col-2">{{value.info.name}}</span>
+    </div>        
+    <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-5 ms-3">
+        <div class="row d-flex my-3 border-1 border-dark-subtle ">
+            <div class="col-1 h6">Filter by Name</div>
+            <div class="col-3"><input type="text" ng-model="filter"/></div>
+            <div class="col-4 h6">Primary Email</div>
+            <div class="col-1 h6">Access</div>
+            <div class="col-1 h6">Last Login</div>
+            <div class="col-1 h6">Objects</div>
+            <div class="col-1 h6">Workspaces</div>
+        </div>
+        <div class="row my-3" ng-repeat="value in findUsers()" ><hr>
+            <div class="col-1 h6" ng-click="visitUser(value.info.uid)" >Edit:<br>
+            <img class="rounded-5 p-0" src="<%=ar.retPath%>icon/{{value.info.key}}.jpg" style="width:32px;height:32px;cursor: pointer;" title="Edit User: {{value.info.name}} - {{value.info.uid}}">
+        </div>
+        <div class="col-3 mt-3 h6">{{value.info.name}}</div>
 
-        <span class="col-3">{{value.info.uid}}</span>
-        <span class="col-1">
+        <div class="col-4  mt-3">{{value.info.uid}}</div>
+        <div class="col-1  mt-3">
             <span ng-show="value.readOnly">Unpaid</span>
             <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
             <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Paid</b></span>
-        </span>
-        <span class="col-2"><span>{{value.info.lastLogin|cdate}}</span></span>
-        <span class="col-1">{{value.count}}</span>
-        <span class="col-1">{{value.wscount}}</span>
+        </div>
+        <div class="col-1  mt-3"><span>{{value.info.lastLogin|cdate}}</span></div>
+        <div class="col-1  mt-3">{{value.count}}</div>
+        <div class="col-1  mt-3">{{value.wscount}}</div>
         
     </div>
     </div>
