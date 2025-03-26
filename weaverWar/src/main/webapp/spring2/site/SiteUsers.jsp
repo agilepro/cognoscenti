@@ -179,9 +179,9 @@ app.filter('encode', function() {
     <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-3 mx-3">
         <div class="row my-2 well mx-3 ">
             <div ng-hide="addUserPanel">
-            <p class="h4">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} active users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} inactive users.</p>
+            <p class="h4">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} paid users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} unpaid users.</p>
             <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
-                <p class="mx-2" ><b>Site has too many active users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
+                <p class="mx-2" ><b>Site has too many paid users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
             </div>
             <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
                 <p  class="mx-2"><b>Site has too many unpaid users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an unpaid user. You will not be able to add any new email addresses to the site until you reduce the number of unpaid users or raise the limit set by the Site Administrator.</p>

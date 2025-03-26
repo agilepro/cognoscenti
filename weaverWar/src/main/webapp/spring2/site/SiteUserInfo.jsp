@@ -24,7 +24,7 @@
     SiteUsers userMap = site.getUserMap();
     JSONObject userMapEntry = userMap.getJson().requireJSONObject(userKey);
     int editUserCount = userMap.countUpdateUsers();
-    int readUserCount = userMap.countReadOnlyUsers();
+    int readUserCount = userMap.countUnpaidUsers();
 
     JSONObject wsMap = new JSONObject();
     List<NGPageIndex> allWorkspaces = ar.getCogInstance().getNonDelWorkspacesInSite(siteId);
@@ -36,7 +36,7 @@
         JSONObject roleInfo = new JSONObject();
         workspaceInfo.put("roles", roleInfo);
         for (CustomRole ngr : ngw.getAllRoles()) {
-            roleInfo.put(ngr.getName(), ngr.isPlayer(ale));
+            roleInfo.put(ngr.getSymbol(), ngr.isPlayer(ale));
         }
     }
     

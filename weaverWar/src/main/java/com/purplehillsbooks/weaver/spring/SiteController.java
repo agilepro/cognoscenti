@@ -349,7 +349,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            Exception ee = new Exception("Unable to assureUserProfile in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -377,7 +377,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            Exception ee = new Exception("Unable to updateUserProfile in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -407,7 +407,7 @@ public class SiteController extends BaseController {
 
             NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspace);
             NGWorkspace ngw = ngpi.getWorkspace();
-            CustomRole roleObj = ngw.getRole(roleName);
+            CustomRole roleObj = ngw.getRoleOrFail(roleName);
             
             boolean isPresent = roleObj.isExpandedPlayer(user, ngw);
 
@@ -447,7 +447,7 @@ public class SiteController extends BaseController {
             }
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            Exception ee = new Exception("Unable to manageUserRoles in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
