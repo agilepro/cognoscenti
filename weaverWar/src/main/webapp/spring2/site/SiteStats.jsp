@@ -128,7 +128,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
            <span class="col-5">{{siteStats.editUserCount}}</span>
            </div>
         <div class="row my-2 border-bottom border-1 pb-2">
-           <span class="col-5 h6">Observers:</span>
+           <span class="col-5 h6">Unpaid Users:</span>
            <span class="col-5">{{siteStats.readUserCount}}</span>
            </div>
         <div class="row my-2 border-bottom border-1 pb-2">

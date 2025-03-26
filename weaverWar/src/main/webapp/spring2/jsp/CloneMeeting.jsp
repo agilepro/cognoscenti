@@ -212,12 +212,12 @@ function GetFirstHundredNoHtml(input) {
 
 <div class="guideVocal" style="margin-top:80px">
     <p>You are not allowed to create a meeting in this workspace, because
-    you are an observer.  You can access documents, but you can 
+    you have read-only access.  You can access documents, but you can 
     not add them or update them.</p>
     
     <p>If you wish to add or update meetings, speak to the administrator of this 
-    workspace / site and have your membership level changed to an
-    active user.</p>
+    workspace / site and have your membership level changed to a
+    paid user.</p>
 </div>
 
 <% } else if (ngw.isFrozen()) { %>

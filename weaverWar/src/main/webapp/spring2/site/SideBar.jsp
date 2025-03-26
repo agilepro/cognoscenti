@@ -89,7 +89,7 @@
             <ul class="dropdown-menu bg-weaverbody ms-0"><%
                 for (JSONObject jo2 : options.getJSONObjectList()) { 
                     if (userIsReadOnly && !jo2.has("readOnly")) {
-                        //skip anything not marked for observer when user is readonly.
+                        //skip anything not marked for unpaid user when user is readonly.
                         continue;
                     }
                     %>

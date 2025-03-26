@@ -151,7 +151,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.changeAccess = function(makeReadOnly) {
         if (makeReadOnly && $scope.readUserCount >= $scope.siteSettings.readUserLimit) {
-            alert("You have too many observers: "
+            alert("You have too many unpaid users: "
             +$scope.editUserCount
             +". You are allowed only "
             +$scope.siteSettings.editUserLimit
@@ -163,7 +163,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             +$scope.editUserCount
             +" but can aonly have "
             +$scope.siteSettings.editUserLimit
-            +" in your payment plan.  You will probably need to remove some update users or change them to observers before you can change this user");
+            +" in your payment plan.  You will probably need to remove some update users or change them to unpaid users before you can change this user");
             return;
         }
         $scope.userMapEntry.readOnly = makeReadOnly;
@@ -366,7 +366,7 @@ app.filter('encode', function() {
             <div ng-hide="userMapEntry.readOnly">
               <div>Allowed to update in this site.</div>
               <div ng-show="userMapEntry.lastAccess < 1000000">
-                This user has never logged in, and will be counted as observer until they do.</div>
+                This user has never logged in, and will be counted as unpaid user until they do.</div>
               <div class="my-2">
                 <span class="fs-6">
                 <b><em>Paid &nbsp;</em></b></span>

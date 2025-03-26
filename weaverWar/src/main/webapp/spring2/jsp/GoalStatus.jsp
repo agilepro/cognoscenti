@@ -229,7 +229,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };    
     $scope.swapItems = function(item, amt) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         let movingUp = (amt<0);
@@ -279,7 +279,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.saveGoal = function(goal) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         var postURL = "updateGoal.json?gid="+goal.id;
@@ -303,7 +303,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.saveArea = function(area) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         var postURL = "taskArea"+area.id+".json";
@@ -319,7 +319,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.saveGoals = function(goalList) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         var postURL = "updateMultiGoal.json";
@@ -351,7 +351,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.makeState = function(rec, newState) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         var newRec = {};
@@ -456,7 +456,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.setProspects = function(goal, newVal, $event) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         goal.prospects = newVal;
@@ -465,7 +465,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.setProspectArea = function(area, newVal, $event) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         area.prospects = newVal;
@@ -475,7 +475,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.openModalActionItem = function (goal, startMode) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         if ($scope.isFrozen) {
@@ -576,7 +576,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.toggleCheckItem = function($event,item, changeIndex) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         item.checkitems.forEach( function(item) {
@@ -603,7 +603,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.openTaskAreaEditor = function (ta) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an observer");
+            alert("Unable to update action item because you are an unpaid user");
             return;
         }
         if ($scope.isFrozen) {

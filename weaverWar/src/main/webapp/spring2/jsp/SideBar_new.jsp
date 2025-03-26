@@ -144,7 +144,7 @@
               <div class="modal-body">
                 <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
     class="accessIndicator"/>  =  You have full editing access to this workspace.</b></h6><br>
-                <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have observer access to this workspace" 
+                <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have read only access to this workspace" 
     class="accessIndicator"/>  =  Unpaid access to this workspace. 
     <br><br>
                 <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have guest access to this workspace" 

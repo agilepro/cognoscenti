@@ -309,7 +309,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     $scope.createDecision = function(newDecision) {
         /*
         if (!$scope.canUpdate) {
-            alert("Unable to update discussion because you are an observer");
+            alert("Unable to update discussion because you are an unpaid user");
             return;
         }
         */

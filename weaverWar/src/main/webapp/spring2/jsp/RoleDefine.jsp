@@ -209,10 +209,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 A person in any role will be able to see the workspace. 
                 Any person in a role checked like this will be able 
                 to modify resources in the workspace.   
-                People who are not in any update role, but in another role, will have observer access.   
+                People who are not in any update role, but in another role, will have read only access.   
                 Please note:
-                the administrator at the site level can set which users are allowed to have
-                update and which users are observers, and that takes precidence.
+                the administrator at the site level can set which users are paid and which users are unpaid, and that takes precidence.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
 

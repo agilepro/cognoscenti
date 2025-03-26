@@ -726,7 +726,7 @@ public class AuthRequest {
     }
 
     /**
-     * Identifies if the current logged in user is an observer
+     * Identifies if the current logged in user is an unpaid
      * user in the current workspace. If anything is wrong, like
      * the user is not logged in or the workspace not set then
      * it presumes the most restrictive: true.

@@ -378,7 +378,7 @@ function copyTheLink() {
       <span ng-show="canAccess">You can access this document because you received a special link allowing non-members to access the document.</span>
   </div>
   <div ng-show="isMember && readonly">
-      You are an observer of this site.  
+      You are an unpaid user of this site.  
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
   </div>

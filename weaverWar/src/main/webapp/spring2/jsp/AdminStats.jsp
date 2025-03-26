@@ -400,7 +400,7 @@ app.filter('escape', function() {
            <span class="col-2">{{siteInfo.editUserLimit}}</span>
         </div>
         <div class="row-cols-3 d-flex my-2 border-bottom border-1">
-           <span class="col-4 h6">Observers:</span>
+           <span class="col-4 h6">Unpaid Users:</span>
            <span class="col-2">{{stats.readUserCount}}</span>
            <span class="col-2">{{siteStats.readUserCount}}</span>
            <span class="col-2">{{siteInfo.viewUserLimit}}</span>

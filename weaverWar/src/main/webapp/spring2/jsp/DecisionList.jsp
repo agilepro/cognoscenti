@@ -124,7 +124,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to create a new decision because you are an observer");
+            alert("You are not able to create a new decision because you are an unpaid user");
             return;
         }
         var newDec = {num:"~new~",universalid:"~new~",timestamp:new Date().getTime(),labelMap:{}}
@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.saveDecision = function(newRec) {
         if (!$scope.canUpdate) {
-            alert("You are not able to save a new decision because you are an observer");
+            alert("You are not able to save a new decision because you are an unpaid user");
             return;
         }
         var isPreserved = (!newRec.deleteMe)
@@ -213,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to edit decisions because you are an observer");
+            alert("You are not able to edit decisions because you are an unpaid user");
             return;
         }
         var modalInstance = $modal.open({
@@ -258,7 +258,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to change due dates on decisions because you are an observer");
+            alert("You are not able to change due dates on decisions because you are an unpaid user");
             return;
         }
         var oneYear = 365*24*60*60*1000;

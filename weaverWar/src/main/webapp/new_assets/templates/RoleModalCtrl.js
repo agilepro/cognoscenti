@@ -204,7 +204,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
             return "WRITEABLE";
         }
         else {
-            return "OBSERVER";
+            return "READ-ONLY";
         }
     }
 });

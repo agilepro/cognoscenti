@@ -390,7 +390,7 @@ function copyTheLink() {
       be deleted soon.
         </div>
         <div ng-hide="canUpdate">
-      You are an observer of this site.
+      You are an unpaid user of this site.
       If you wish to update this document, ask the site administrator to make you
       a creating user of the site.
         </div>

@@ -218,7 +218,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.toggleNoteDel = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this discussion because you are an observer");
+            alert("You are not able to update this discussion because you are an unpaid user");
             return;
         }        newRec = {};
         newRec.id = rec.id;
@@ -229,7 +229,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.updateNote = function(rec) {
 
         if (!$scope.canUpdate) {
-            alert("You are not able to update this discussion because you are an observer");
+            alert("You are not able to update this discussion because you are an unpaid user");
             return;
         }
         var postURL = "updateNote.json?nid="+rec.id;
@@ -258,7 +258,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openTopicCreator = function() {
         
         if (!$scope.canUpdate) {
-            alert("You are not able to create a discussion because you are an observer");
+            alert("You are not able to create a discussion because you are an unpaid user");
             return;
         }
         if ($scope.workspaceInfo.frozen) {

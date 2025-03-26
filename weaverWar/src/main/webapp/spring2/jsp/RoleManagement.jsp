@@ -152,7 +152,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.updateRole = function(role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are an observer");
+            alert("You are not able to update this role because you are an unpaid user");
             return;
         }
         var key = role.symbol;
@@ -178,7 +178,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.removePlayer = function(role, player) {
         if (!$scope.canUpdate) {
-            alert("You are not able to remove player from this role because you are an observer");
+            alert("You are not able to remove player from this role because you are an unpaid user");
             return;
         }
         var newPlayers = [];
@@ -203,7 +203,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.deleteRole = function(role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to delete this role because you are an observer");
+            alert("You are not able to delete this role because you are an unpaid user");
             return;
         }
         var key = role.symbol;
@@ -247,7 +247,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are an observer");
+            alert("You are not able to update this role because you are an unpaid user");
             return;
         }
 
@@ -283,7 +283,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.openRoleModal = function (role) {
         if (!$scope.canUpdate) {
-            alert("You are not able to edit this role because you are an observer");
+            alert("You are not able to edit this role because you are an unpaid user");
             return;
         }
         var isNew = false;
@@ -320,7 +320,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to update this role because you are an observer");
+            alert("You are not able to update this role because you are an unpaid user");
             return;
         }
         if (!role.terms) {

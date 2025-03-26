@@ -385,7 +385,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.savePendingEdits = function (parts) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!parts) {
@@ -507,7 +507,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.changeMeetingState = function (newState) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if ($scope.meeting.state == newState) {
@@ -528,7 +528,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.changeGoalState = function (goal, newState) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         goal.prospects = newState;
@@ -540,7 +540,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     };
     $scope.savePartialMeeting = function (fieldList) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var saveRecord = {};
@@ -558,7 +558,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.saveAgendaItem = function (agendaItem) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var saveRecord = {};
@@ -568,7 +568,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     };
     $scope.saveAgendaItemParts = function (agendaItem, fieldList) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         agendaItem.presenters = [];
@@ -600,7 +600,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         var promise;
         if (readyToSave) {
             if (!embeddedData.canUpdate) {
-                alert("Unable to update meeting because you are an observer");
+                alert("Unable to update meeting because you are an unpaid user");
                 return;
             }
             if (readyToSave.participants) {
@@ -837,7 +837,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.createAgendaItem = function () {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var newAgenda = {
@@ -872,7 +872,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.saveGoal = function (goal) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you arean observer");
+            alert("Unable to update meeting because you arean unpaid user");
             return;
         }
         var postURL = "updateGoal.json?gid=" + goal.id;
@@ -993,7 +993,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     };
     $scope.postMinutes = function () {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!$scope.meeting.minutesId) {
@@ -1177,7 +1177,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.addAttendee = function () {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!$scope.newAttendee) {
@@ -1190,7 +1190,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.removeAttendee = function (person) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var promise = $scope.refreshMeetingPromise();
@@ -1250,7 +1250,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.removeParticipant = function (pers) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if ($scope.meeting.people[pers.key]) {
@@ -1267,7 +1267,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.addParticipants = function () {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
@@ -1288,7 +1288,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.deleteItem = function (item) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!confirm("Are you sure you want to delete agenda item: " + item.subject)) {
@@ -1319,7 +1319,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openModalActionItem = function (item, goal, start) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!item || !item.id) {
@@ -1396,7 +1396,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.toggleCheckItem = function ($event, item, changeIndex) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         item.checkitems.forEach(function (item) {
@@ -1478,7 +1478,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.moveItem = function (item, amt) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var thisPos = item.position;
@@ -1593,7 +1593,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.openAttachDocument = function (item) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!item || !item.id) {
@@ -1636,7 +1636,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openAttachTopics = function (item) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!item || !item.id) {
@@ -1680,7 +1680,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openAttachAction = function (item) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!item || !item.id) {
@@ -1746,7 +1746,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openAgenda = function (agendaItem, display) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!agendaItem || !agendaItem.id) {
@@ -1857,7 +1857,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.openEditor = function () {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         $scope.extendBackgroundTime();
@@ -1875,7 +1875,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
 
     $scope.createTime = function (fieldName, newTime) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         //first, ignore new duplicate values
@@ -1924,7 +1924,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     }
     $scope.removeTime = function (time) {
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         var hasSetting = false;
@@ -2084,7 +2084,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
 
         if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are an observer");
+            alert("Unable to update meeting because you are an unpaid user");
             return;
         }
         if (!agendaItem || !agendaItem.id) {

@@ -354,7 +354,7 @@ $scope.garbageCollect = function() {
                 <span class="col-1 numberColumn">
                     {{siteInfo.editUserLimit|number}}
                 </span>
-                <span class="col-1 center-block">`
+                <span class="col-1 center-block">
                     <button class="specCaretBtn" ng-click="changePeople(1)"><i class="fa fa-plus"></i></button>
                     <button class="specCaretBtn" ng-click="changePeople(-1)"><i class="fa fa-minus"></i></button>
                 </span>
@@ -503,50 +503,52 @@ $scope.garbageCollect = function() {
 
         <span class="col-sm-12 col-md-6 col-lg-4">
         <ul>
-          <li><b>Active Users</b>
+          <li><b>Paid Users</b>
             <ul>
                 <li><b>Your Limit</b>: 
               As the administrator, you declare what limits you want to place on 
-              the number of active users for your site.
+              the number of paid users for your site.
               You are charged only for what you actually use, but this limit helps
               you control how many users can be added.
-              The system will not allow any workspace to add an active user once 
+              The system will not allow any workspace to add an paid user once 
               your user limit is reached.  A site administrator will need to come 
-              and raise this limit for more active users to be added.  Please note,
+              and raise this limit for more paid users to be added.  Please note,
               lowering this limit does not automatically remove users who are already
-              entered as active users.  You will need to remove users manually.
+              entered as paid users.  You will need to remove users manually.
                 </li>
                 <li><b>Set</b>: Use these controls to raise and lower your limit for the site.
                 </li>
                 <li><b>Current Usage</b>: 
-              This is the number of active users you actually have using your site
+              This is the number of paid users you actually have using your site
               across all the workspaces.  This is also known as the count of 
                 <b>paid users</b> as the basis for other calculations.
                 </li>
-                <li><b>Gratis</b>: Use this control to declare the number of active users that are being provided to you 
+                <li><b>Gratis</b>: This is the number of paid users that are being provided to you 
               for free from Circle Weaver Tech.
                 </li>
                 <li><b>Charged</b>: 
-              This is the number of active users that you actually need to pay for.
+              This is the number of paid users that you actually need to pay for.
                 </li>
-                <li><b>Cost</b>: Use this control to declare the monthly charge at $1 per user.
+                <li><b>Cost</b>: This is the monthly charge at $1 per paid user.
                 </li>
             </ul>
           </li>
           <li><b>Unpaid Users</b>
             <ul>
             <li><b>Current Usage</b>: 
-              This is the number of observer users you actually have using your site
+              This is the number of unpaid users you actually have using your site
               across all the workspaces.  
               </li>
               <li><b>Gratis</b>: 
-              This is the number of observer users that you can use for free.
-              You are allowed 20 observer users for every paid user.
+              This is the number of unpaid users that you can use for free.
+              You are allowed 20 free unpaid users for every paid user.
               If you have more than that, a charge of $0.05 per month is made 
-              for each observer over the limit.
+              for each unpaid user over the limit.
               </li>
               <li><b>Charged</b>: 
-              This is the number of active users that you actually need to pay for.
+              This is the number of unpaid users that you actually need to pay for.
+              For most teams 20 unpaid users for every paid user is enough, so this 
+              only effects workspaces with an unusually large number of unpaid users.
               </li>
               <li><b>Cost</b>: 
               This is the monthly charge at $0.05 per user.  Most normal sites will see a zero charge in this spot.

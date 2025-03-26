@@ -67,13 +67,15 @@ public interface NGRole extends NGLabel {
     /**
     * Each role specifies whether the person is allowed to edit the contents 
     * of the workspace or not.   This is a least-permission mode, that is, 
-    * if not specifically allowed, then the user becomes an observer.  
+    * if not specifically allowed, then the user becomes an read only
+    * for this particular workspace.  
     * The user need be in only one role that allows edit, and they get 
-    * edit capability.   They are an observer if none of their roles
-    * allows edit.   Also note: there is a global setting by the administrator
-    * that specifies a user as a read-only user for the entire site, and that
-    * takes precidence.   Someone marked by admin as an observer can never edit 
-    * anything on the site.
+    * edit capability.   They are read-only if none of their roles
+    * allows edit.   
+    * Also note: there is a global setting by the administrator
+    * that specifies a user as a unpaid user for the entire site, and that
+    * takes precidence.   Someone marked by admin as an unpaid can never edit 
+    * anything on the site, can never play a role that allows update.
     */
     public boolean allowUpdateWorkspace();
     public void setUpdateWorkspace(boolean alllowed);
