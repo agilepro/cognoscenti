@@ -24,18 +24,18 @@
                         placeholder="Enter Label Name">
                     </span>
                     <span ng-hide="label.isEdit || label.isNew">
-                        <button class="h6 btn btn-wide labelButton" style="background-color:{{label.color}};" placeholder="Enter Label Name">{{label.name}}</button>
+                        <button class="h6 btn btn-wide labelButton" style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }" placeholder="Enter Label Name">{{label.name}}</button>
                     </span>
                 </div>
 
                 <div class="col-4 override">
                     <ul class="dropdown btn btn-default " ng-show="label.isEdit || label.isNew">
-                        <li class="btn btn-default nav-item dropdown border border-1" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle" id="LabelcolorList" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="btn btn-wide nav-item dropdown border border-1" type="button" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}};"><a class="dropdown-toggle" id="LabelcolorList" role="button" ng-style="{ color: getContrastColor(label.color) }" data-bs-toggle="dropdown" aria-expanded="false">
                         {{label.color}} </a>
                     
                         <ul class="dropdown-menu" role="menu" aria-labelledby="EditLabels">
                             <li role="presentation" ng-repeat="color in colors">
-                                <a class="dropdown-item" style="background-color:{{color}};"
+                                <a class="dropdown-item" style="background-color:{{color}}" ng-style="{ color: getContrastColor(label.color) }" 
                                 href="#"  ng-click="label.color=color">{{color}}</a></li>
                         </ul>
                     </li>

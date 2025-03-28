@@ -206,6 +206,15 @@ a {
         margin-top: 0;
         margin-left: $dropdown-margin-left;
     }
+
+    ul.dropdown-menu {
+        &:hover {
+           display: none !important;
+        }
+    }
+    ul.dropdown-menu.show {
+        display: block !important;
+    }
 }
 .user-dropdown-menu {
     min-width: 160px;
@@ -614,10 +623,15 @@ a {
 //labels//
 .override .labelButton {
     overflow: hidden;
+    background-color: $primary;
     box-shadow: #cccccc 2px 2px 5px;
     border: $primary 1px solid;
     border-radius: 8px;
     margin: 5px;
+    &:hover {
+        background-color: $primary-80;
+        cursor: pointer;
+    }
 }
 
 .override .labelButtonAdd {

@@ -90,4 +90,25 @@ app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, 
             });
     };
 
+    $scope.getContrastColor = function (color) {
+
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
+
 });

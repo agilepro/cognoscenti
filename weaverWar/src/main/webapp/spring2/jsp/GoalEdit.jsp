@@ -638,6 +638,26 @@ function addvalue() {
         document.getElementById("projectname").value=projectNameTitle;
     }
 }
+    $scope.getContrastColor = function (color) {
+
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 
 </script>
 
@@ -844,9 +864,9 @@ function addvalue() {
                       </li>
                     </ul>
                   </span>-->
-                    <span class="col-auto">
+                    <span class="col-auto ">
                         <span class="dropdown m-0 p-0" ng-repeat="role in allLabels">
-                            <button class="btn-comment btn-wide btn-raised labelButton" ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                            <button class="btn btn-wide" ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)" ng-style="{ color: getContrastColor(role.color) }">{{role.name}} <i class="fa fa-close"></i></button>
                         </span>
                     </span>
 

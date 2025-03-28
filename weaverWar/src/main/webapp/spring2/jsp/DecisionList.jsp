@@ -275,6 +275,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.startCreating();
         $scope.startMode="nothing";
     }
+
+    $scope.getContrastColor = function (color) {
+
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 });
 
 
@@ -297,8 +318,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <span ng-repeat="role in allLabelFilters()">
-            <button class="btn labelButton" type="button" id="menu2"
-               style="background-color:{{role.color}};"
+            <button class="btn btn-wide labelButton" type="button" id="menu2"
+               style="background-color:{{role.color}}; color: {{getContrastColor(role.color)}}  ;" 
                ng-show="hasLabel(role.name)" 
                ng-click="toggleLabel(role)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>
@@ -310,8 +331,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                    style="width:320px;left:-130px">
                  <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                     <button ng-click="toggleLabel(rolex)" class="labelButton" 
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                     <button ng-click="toggleLabel(rolex)" class="btn btn-wide" 
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }">
                          {{rolex.name}}</button>
                  </li>
                </ul>
@@ -349,7 +370,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <div class="taskOverview">
                             <i>{{rec.timestamp|cdate}}</i>
                             <span class="mx-1" ng-repeat="label in getGoalLabels(rec)">
-                              <button class="labelButton btn btn-wide" style="background-color:{{label.color}};color:black;" 
+                              <button class="labelButton btn btn-wide" style="background-color:{{label.color}}; color: {{getContrastColor(label.color)}};" 
                                      ng-click="toggleLabel(label)">
                                   {{label.name}}
                               </button>

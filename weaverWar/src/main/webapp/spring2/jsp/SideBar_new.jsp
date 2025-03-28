@@ -86,7 +86,8 @@
                         if (options.length()>0) {
                         %>
 
-                        <ul class="dropdown-menu bg-weaverbody ms-0">
+                        <ul class="dropdown-menu bg-weaverbody ms-0 d-none" 
+                            aria-labelledby="navbarDropdown">
 
                         <% for (JSONObject jo2 : options.getJSONObjectList()) { %>
                             <li>

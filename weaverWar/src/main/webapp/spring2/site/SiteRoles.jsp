@@ -275,11 +275,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <div class="container-fluid override mx-3">
 
-    <span class="btn second-menu-btn btn-wide" type="button">
-        <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
-            <span class="fa fa-plus-square"></span> Create New Role
-        </a>
-    </span>
+
     <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span
                 class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
     <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteStats.htm"><span

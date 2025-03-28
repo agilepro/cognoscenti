@@ -98,8 +98,8 @@
                   <ul class="dropdown-menu p-2" role="menu" aria-labelledby="selectLabel" ng-class="{'show': dropdownStates['labels']}">
 
                   <li class="mb-0" role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex); dropdownStates['labels'] = false" class="btn btn-wide labelButton" 
-                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                  <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex); dropdownStates['labels'] = false" class="btn btn-wide labelButton mx-1" 
+                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}; color: {{getContrastColor(rolex.color)}}">
                       {{rolex.name}}</button>
               </li>
               <div class="dropdown-divider" style="float:clear"></div>               
@@ -112,7 +112,7 @@
     
             <span class="dropdown m-0 p-0" ng-repeat="role in allLabels">
               <button class="btn btn-wide labelButton" ng-click="toggleLabel(role)"
-            style="background-color:{{role.color}};"
+            style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }"
             ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i>
               </button>
             </span>

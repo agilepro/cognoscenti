@@ -645,7 +645,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.openModalActionItem($scope.newGoal,'details')
         $scope.startMode="nothing";
     }
+    $scope.getContrastColor = function (color) {
 
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 });
 
 function addvalue() {
@@ -751,15 +770,15 @@ function addvalue() {
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="mineOnly">
             Only Mine</span>
             <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             </span>
             <span class="dropdown nav-item mb-0">
                 <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                            style="width:320px;left:-130px;margin-top:-2px;">
                          <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }">
                                  {{rolex.name}}</button>
                          </li>
                        </ul>
@@ -876,7 +895,7 @@ function addvalue() {
            title="The synopsis (name) and description of the action item.">
           <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></div>
           <span ng-repeat="label in getGoalLabels(rec)">
-            <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+            <button class="labelButton" style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }" ng-click="toggleLabel(label)">
               {{label.name}}
             </button>
           </span>
