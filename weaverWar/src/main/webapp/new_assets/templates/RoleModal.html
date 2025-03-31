@@ -20,10 +20,10 @@
                     <label class="col-4 control-label h6">Color:</label>
                     <span class="nav-item dropdown d-inline col-4" style="position:relative">
                         <button class="btn btn-raised dropdown dropdown-toggle" type="button"
-                        id="menu3" data-toggle="dropdown" style="background-color:{{roleInfo.color}};">{{roleInfo.color}} <span class="caret"></span></button>
+                        id="menu3" data-toggle="dropdown" style="background-color:{{roleInfo.color}};" ng-style="{ color: getContrastColor(roleInfo.color) }">{{roleInfo.color}} <span class="caret"></span></button>
                         <ul class="dropdown-menu mt-0 p-2" role="menu" aria-labelledby="menu3" style="width:320px;height:max-content;">
                     <li role="presentation" ng-repeat="color in colors">
-                        <a  class="btn btn-wide labelButton m-1 p-1" role="menuitem" style="background-color:{{color}};float:left;"
+                        <a  class="btn btn-wide labelButton m-1 p-1" role="menuitem" style="background-color:{{color}};float:left; color: {{getContrastColor(color)}};"
                         ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
                         </ul>
                     </span>

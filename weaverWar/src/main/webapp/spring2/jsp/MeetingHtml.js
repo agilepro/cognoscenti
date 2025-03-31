@@ -1992,17 +1992,17 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.labelButtonClass = function (state, item) {
         if ("Items" == $scope.displayMode && item) {
             if (item.id == $scope.selectedItem.id) {
-                return "btn btn-default btn-raised btn-success labelButton";
+                return "btn btn-default btn-raised btn-success";
             }
             else {
-                return "btn btn-default btn-raised btn-outline-primary labelButton";
+                return "btn btn-default btn-raised btn-outline-primary";
             }
         }
         if (state == $scope.displayMode) {
-            return "btn btn-default btn-raised btn-success labelButton";
+            return "btn btn-default btn-raised btn-success";
         }
         else {
-            return "btn btn-default btn-raised btn-outline-primary labelButton";
+            return "btn btn-default btn-raised btn-outline-primary";
         }
     }
     $scope.setSelectedItem = function (item) {

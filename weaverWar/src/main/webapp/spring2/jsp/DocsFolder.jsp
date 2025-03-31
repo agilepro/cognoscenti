@@ -310,10 +310,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.getDocumentList();
     
     $scope.openDocDialog = function (doc) {
-        
+
         var docsDialogInstance = $modal.open({
             animation: true,
-            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
+            templateUrl: "<%= ar.retPath%>new_assets/templates/DocumentDetail2.html<%=templateCacheDefeater%>",
             controller: 'DocumentDetailsCtrl',
             size: 'lg',
             backdrop: "static",
@@ -321,10 +321,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 docId: function () {
                     return doc.id;
                 },
-                allLabels: function() {
+                allLabels: function () {
                     return $scope.allLabels;
                 },
-                wsUrl: function() {
+                siteInfo: function () {
+                    return $scope.siteInfo;
+                },
+                wsUrl: function () {
                     return $scope.wsUrl;
                 }
             }
@@ -338,7 +341,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             //cancel action - nothing really to do
         });
     };
-    
+    $scope.getContrastColor = function (color) {
+
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 });
 
 </script>
@@ -380,7 +402,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <span ng-click="trimFolderPath($index+1)">
                         <img src="<%=ar.retPath%>assets/iconFolder.gif">
                         <img src="<%=ar.retPath%>assets/images/collapseIcon.gif">
-                        <button class="labelButton" style="background-color:{{folder.color}};">{{folder.name}}
+                        <button class="labelButton" style="background-color:{{folder.color}};" ng-style="{ color: getContrastColor(folder.color) }">{{folder.name}}
                         </button>
                     </span>
                 </div>
@@ -388,7 +410,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <span class="folderLine" style="cursor:pointer" ng-repeat="folder in getAvailableFolders()">
                         <span ng-click="addFolderPath(folder)">
                     <button class="labelButton"
-                        style="background-color:{{folder.color}};">{{folder.name}}
+                        style="background-color:{{folder.color}};" ng-style="{ color: getContrastColor(folder.color) }">{{folder.name}}
                     </button>
                         </span>
                     </span>
@@ -431,7 +453,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
                 ~ {{rec.description}}
                 <span ng-repeat="label in getAllLabels(rec)"><button class="labelButton"
-                    style="background-color:{{label.color}};">{{label.name}}
+                    style="background-color:{{label.color}}; color:{{getContrastColor(label.color)}};" ng-click="toggleLabel(label)">{{label.name}}
                     </button>
                 </span>
             </td>

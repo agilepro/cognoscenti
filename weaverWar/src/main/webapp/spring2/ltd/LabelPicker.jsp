@@ -1,6 +1,6 @@
       <span class="dropdown" ng-repeat="role in allLabels">
         <button class="dropdown-toggle labelButton"
-           style="background-color:{{role.color}};"
+           style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }"
            ng-show="hasLabel(role.name)">{{role.name}}</i></button>
       </span>
 

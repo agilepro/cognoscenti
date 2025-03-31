@@ -351,7 +351,10 @@ myApp.filter('wiki', function() {
 
       SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
+<!--replace line below with learning path if appropriate-->
 <div style="height: 20px"></div>
+
+
     <div class="container-fluid override mb-4 mx-3 d-inline-flex">
         <span class="dropdown mt-1">
             <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"

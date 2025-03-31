@@ -170,6 +170,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               return 0;
         });
     };
+
+    $scope.getContrastColor = function (color) {
+
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 });
 
 
@@ -255,7 +276,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <row>
                             <span style="padding:15px">
                                 <div ng-repeat="lab in newLabelsCreated">
-                                <button style="background-color:{{lab.color}};" class="btn btn-wide labelButton">{{lab.name}}</button>
+                                <button style="background-color:{{lab.color}};" ng-style="color:{{getContrastColor(lab.color)}};" class="btn btn-wide labelButton">{{lab.name}}</button>
                                 </div>
                             </span>
                         </row>
@@ -283,13 +304,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                         placeholder="Enter Label Name">
                                     </span>
                                     <span ng-hide="label.isEdit || label.isNew">
-                                        <button class="h6 btn btn-wide labelButton" style="background-color:{{label.color}};"  placeholder="Enter Label Name">{{label.name}}</button>
+                                        <button class="h6 btn btn-wide labelButton" style="background-color:{{label.color}}; color:{{getContrastColor(label.color)}};"  placeholder="Enter Label Name">{{label.name}}</button>
                                     </span>
                                 </div>
                 
                                 <div class="col-4">
                                     <ul class="btn btn-default" ng-show="label.isEdit || label.isNew">
-                                        <li class="btn nav-item py-2 mb-0" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}}; cursor:default">
+                                        <li class="btn nav-item py-2 mb-0" id="EditLabels" data-toggle="dropdown" style="background-color:{{label.color}}; color:{{getContrastColor(label.color)}}; cursor:default">
                                             
                                             <span class=" p-2" id="LabelcolorList" data-bs-toggle="dropdown" aria-expanded="false">
                                         {{label.color}} </span>

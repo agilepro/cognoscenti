@@ -254,7 +254,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.getAllLabels();
+    $scope.getContrastColor = function (color) {
 
+        const tempEl = document.createElement("div");
+        tempEl.style.color = color;
+        document.body.appendChild(tempEl);
+        const computedColor = window.getComputedStyle(tempEl).color;
+        document.body.removeChild(tempEl);
+
+        const match = computedColor.match(/\d+/g);
+
+        if (!match) {
+            console.error("Failed to parse color: ", computedColor);
+            return "#39134C";
+        }
+        const [r, g, b] = match.map(Number);
+
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+        return (yiq >= 128) ? '#39134C' : '#ebe7ed';
+    };
 });
 
 </script>
@@ -285,18 +304,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
       </div><hr>
 
 
-      <div class="d-flex col-12 m-2"><div class="contentColumn">
+      <div class="d-flex col-12 mx-2"><div class="contentColumn">
             <div class="well">Filter <input ng-model="filter"> &nbsp;
-                <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
-            <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                <span class="dropdown" ng-repeat="role in allLabelFilters()">
+            <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}}; margin-bottom: -2px;" ng-style="{ color: getContrastColor(role.color) }"  ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
         </span>
-        <span class="dropdown nav-item mb-0">
+        <span class="dropdown nav-item">
             <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                       style="width:320px;left:-130px;margin-top:-2px;">
+                       style="width:320px;left:-130px;margin-top:-4px;">
                      <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
                          <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}; color: {{getContrastColor(rolex.color)}}" >
                              {{rolex.name}}</button>
                      </li>
                    </ul>
@@ -341,7 +360,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <span ng-repeat="label in getLabelsForDoc(rec)">
                     <button class="labelButton" 
                         ng-click="toggleLabel(label)"
-                        style="background-color:{{label.color}};">{{label.name}}
+                        style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }">{{label.name}}
                     </button>
                 </span>
             
