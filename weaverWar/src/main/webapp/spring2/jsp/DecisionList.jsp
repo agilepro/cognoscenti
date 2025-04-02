@@ -313,7 +313,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Decision List</h1>
     </span>
 </div>
 <div ng-cloak>

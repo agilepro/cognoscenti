@@ -60,7 +60,7 @@
         if (ar.isSuperAdmin(aUserProf.getKey())) {
             accessStatus.put(aUser, "Super");
         }
-        else if (site.userReadOnly(aUser)) {
+        else if (site.isUnpaidUser(aUser)) {
             accessStatus.put(aUser, "Site R/O");
         }
         else if (ngw.canUpdateWorkspace(aUserProf)) {

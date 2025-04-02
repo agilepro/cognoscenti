@@ -13,7 +13,6 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Search Workspaces");
     $scope.results = [];
     $scope.query = {
         searchFilter: "<% ar.writeJS(searchText); %>",
@@ -89,7 +88,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name">Search Workspaces</h1>
     </span>
 </div>
 

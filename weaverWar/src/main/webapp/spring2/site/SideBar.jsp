@@ -42,13 +42,7 @@
     }
     fullMenu.addAll(allMenu.getJSONArray("allModes"));
     
-    boolean userIsReadOnly = false;
-    if (site!=null) {
-        userIsReadOnly = ar.isReadOnly(); 
-    }
-    else if (ngp!=null) {
-        //userIsReadOnly = ngp.getSite().userReadOnly(ar.getBestUserId());
-    }
+    boolean userIsReadOnly = ar.isReadOnly();
 %>
 
 <!-- Side Bar -->

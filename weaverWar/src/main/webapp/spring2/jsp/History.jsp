@@ -73,7 +73,6 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("History Stream");
     $scope.allHistory = <%allHistory.write(out,2,4);%>;
     $scope.filter = "";
     
@@ -136,7 +135,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">History Stream</h1>
     </span>
 </div>
 <!-- MAIN CONTENT SECTION START -->

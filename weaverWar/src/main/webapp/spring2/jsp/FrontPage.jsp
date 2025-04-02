@@ -216,8 +216,7 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Workspace Front Page");
+    setUpLearningMethods($scope, $modal, $http);All Comments List
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceConfig = <%ngp.getConfigJSON().write(out,2,4);%>;
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
@@ -444,7 +443,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Workspace Front Page</h1>
     </span>
 </div>
 <!-- MAIN CONTENT SECTION START -->

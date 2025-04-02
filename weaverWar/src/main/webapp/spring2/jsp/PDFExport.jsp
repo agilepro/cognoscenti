@@ -35,7 +35,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 
 <script>
-    window.setMainPageTitle("Print Workspace to PDF");
 
     function unSelect(type){
         var obj = document.getElementById(type);
@@ -70,6 +69,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 <!-- MAIN CONTENT SECTION START -->
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name">Print Workspace to PDF</h1>
+    </span>
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>

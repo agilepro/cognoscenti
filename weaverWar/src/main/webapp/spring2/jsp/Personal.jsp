@@ -195,7 +195,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     <div>AR Update = <%=ar.canUpdateWorkspace()%></div>
     <div>Workspace Update = <%=ngw.canUpdateWorkspace(uProf)%></div>
-    <div>Site Read Only = <%=site.userReadOnly(uProf.getUniversalId())%></div>
+    <div>Site Read Only = <%=site.isUnpaidUser(uProf.getUniversalId())%></div>
     <div>Site Read Only = <%=siteUsers.isReadOnly(uProf)%></div>
     
                 </div>

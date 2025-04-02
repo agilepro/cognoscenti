@@ -55,7 +55,6 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("All Comments List");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     
@@ -176,7 +175,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">All Comments List</h1>
     </span>
 </div>
 <div ng-cloak>
