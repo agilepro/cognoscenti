@@ -79,35 +79,6 @@ public class EmailContext {
             return attach.getEmailURL(ar, ngw);
         }
     }
-    /*
-    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId, MailInst msg) throws Exception {
-        if (discussionTopic!=null) {
-            return ar.getResourceURL(ngw,  "Reply.htm?msgId="+msg.getCreateDate()+"&topicId="+discussionTopic.getId()+"&commentId="+commentId)+"&" 
-                    + AccessControl.getAccessTopicParams(ngw, discussionTopic);
-        }
-        else if (meet!=null) {
-            return ar.getResourceURL(ngw,  "Reply.htm?msgId="+msg.getCreateDate()+"&meetId="+meet.getId()
-                    +"&agendaId="+agenda.getId()
-                    +"&commentId="+commentId)+"&"
-                    + AccessControl.getAccessMeetParams(ngw, meet);
-        }
-        else {
-            return ar.getResourceURL(ngw,  "Reply.htm?msgId="+msg.getCreateDate());
-        }
-    }
-    
-    public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId, MailInst msg) throws Exception {
-        if (discussionTopic!=null) {
-            return discussionTopic.getUnsubURL(ar, ngw, commentId);
-        }
-        else if (meet!=null) {
-            return meet.getUnsubURL(ar, ngw, commentId);
-        }
-        else {
-            return attach.getUnsubURL(ar, ngw, commentId);
-        }
-    }
-    */
     
     
     /*

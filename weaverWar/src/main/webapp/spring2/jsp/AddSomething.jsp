@@ -171,10 +171,6 @@ table tr td {
                 but instead will provide an easy way for other users to access the web page in their browser.</p>
                 
                 <p><button type="button" class="btn btn-primary btn-raised"
-                    onClick="location.href='DocLinkGoogle.htm<%=folderPart%>'">Attach Google Doc</button>
-                    Access documents from Google Drive </p>
-                
-                <p><button type="button" class="btn btn-primary btn-raised"
                     onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
                     You can either copy or move documents, discussions, action items, or meetings from another workspace to this one.</p> 
                                 

@@ -605,13 +605,8 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
 
-        String msgLocator = ar.defParam("msg", null);
+        String msgLocator = ar.reqParam("msg");
         System.out.println("Reply.htm - got message locator=" + msgLocator);
-        if (msgLocator == null) {
-            // preserve old behavior just in case
-            specialReplyOld(siteId, pageId, request, response);
-            return;
-        }
 
         long msgId = MailInst.getCreateDateFromLocator(msgLocator);
         if (msgId == 0) {
@@ -682,40 +677,6 @@ public class ProjectDocsController extends BaseController {
         ar.setParam("pageId", pageId);
         ar.setParam("siteId", siteId);
         showJSPDepending(ar, ngw, "../anon/Reply.jsp", true);
-    }
-
-    public void specialReplyOld(@PathVariable String siteId,
-            @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-
-        String topicId = ar.defParam("topicId", null);
-        String commentId = ar.defParam("commentId", null);
-        String meetId = ar.defParam("meetId", null);
-        String agendaId = ar.defParam("agendaId", null);
-        String emailId = ar.defParam("emailId", null);
-
-        boolean specialAccess = false;
-        if (meetId != null) {
-            MeetingRecord meet = ngw.findMeeting(meetId);
-            meet.findAgendaItem(agendaId);
-            specialAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
-        } else if (topicId != null) {
-            TopicRecord note = ngw.getNoteOrFail(topicId);
-            // normally the permission comes from a license in the URL for anonymous access
-            specialAccess = AccessControl.canAccessTopic(ar, ngw, note);
-        } else {
-            throw WeaverException.newBasic("specialReplyOld called without noteID or topicId");
-        }
-        ar.setParam("topicId", topicId);
-        ar.setParam("meetId", meetId);
-        ar.setParam("agendaId", agendaId);
-        ar.setParam("emailId", emailId);
-        ar.setParam("commentId", commentId);
-        ar.setParam("pageId", pageId);
-        ar.setParam("siteId", siteId);
-        showJSPDepending(ar, ngw, "ReplyOld.jsp", specialAccess);
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)

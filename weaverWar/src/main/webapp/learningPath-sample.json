@@ -53,7 +53,6 @@
     "done": true,
     "mode": "standard"
   }],
-  "DocLinkGoogle.jsp": [],
   "DocsAdd.jsp": [{
     "description": "Workspace members can share documents with each other in a safe and secure way. Each workspace has a set of documents which remain as long as you want them to.\n\nA document can be:\n* a file that you upload from your computer - workspace members can download to see\n** Click __(Upload File)__ to add a file document to the workspace\n* a URL link to a web page - workspace members can navigate the link (if they have access to the destination)\n** Click on __(Link URL)__ to add a web link style document\n** The __(Copy/Move From Workspace)__ button is an especially important tool for sites that have more than one workspace. For example, if the workspace in a site that corresponds to units in an organizational hierarchy, the workspaces at the bottom of the hierarchy may want to have copies of general policy documents from the top workspace in the hierarchy in their workspace's document system. Or, peer workspaces may want to have copies of documents originated by other workspaces. This button lets you obtain copies of those materials.",
     "done": true,
