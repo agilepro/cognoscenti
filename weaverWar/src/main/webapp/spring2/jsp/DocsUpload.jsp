@@ -190,27 +190,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 });
 </script>
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a role="menuitem" tabindex="-1" class="nav-link"
+                        href="DocsUpload.htm">Clear</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="docsList">
+                    <a role="menuitem" tabindex="-1"
+                        class="nav-link" href="DocsList.htm">List Document</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid  override">
     <div class="row px-4">
-        <div class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-        <div class="col-md-auto second-menu">
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-
-                    <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" tabindex="-1" class="nav-link" href="DocsUpload.htm" >Clear</a></span>
-        <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="docsList"><a role="menuitem" tabindex="-1" class="nav-link" href="DocsList.htm" >List Document</a></span>
-        </div>
-            </div>
-        </div>
-        <hr>
         <div class="col-12">
                 <div class="form-group d-flex">
                     <label class="col-md-2 control-label h6">Drop Here:</label>

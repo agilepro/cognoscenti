@@ -1086,38 +1086,42 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 </script>
 <script src="../../new_assets/jscript/AllPeople.js"></script>
 
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="sendNoteByMail()">Send Topic By Email</a></span>
+                <span class="dropdown-item" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
+                        ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
+                <span class="dropdown-item" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem"
+                        tabindex="-1" ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="NotesList.htm">List Topics</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
+
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid override mx-2">
-    <div class="col-md-auto second-menu d-flex">
-            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-bars"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-
-                    
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              ng-click="sendNoteByMail()">Send Topic By Email</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
-              ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem" tabindex="-1"
-              ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="NotesList.htm">List Topics</a></span>
-              </div>
-            </div>
-        </div>
- <hr>
-              
+                 
               <!--experimental mobile UI not finished-->
              <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
               title="Access the new mobile UI in development"

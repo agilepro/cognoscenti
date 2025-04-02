@@ -662,18 +662,31 @@ function addvalue() {
 </script>
 
 <script src="../../../jscript/AllPeople.js"></script>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="GoalList.htm">List Action Items</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="startEdit('details')">Edit Details</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
-
-<!--temp remove
-                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role  ="menuitem" tabindex="-1" href="GoalList.htm">List Action Items</a></span>
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" ng-click="startEdit('details')">Edit Details</a>
-            </span>
-
-<hr>-->
 
 
         <div class="container-fluid col-12 override m-3"><!-- ng-hide="editGoalInfo">-->

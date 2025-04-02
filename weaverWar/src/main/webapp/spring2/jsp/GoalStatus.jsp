@@ -676,31 +676,36 @@ function addvalue() {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="isCreating=true">Create New Action Item</a>
+                </span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem"
+                        href="TaskAreas.htm">Manage Task Areas</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
+
 <div ng-cloak>
 
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid override m-2">
-        <span class="col-md-auto second-menu"><span class="h5"> Additional Actions</span>
-
-            <button class="specCaretBtn m-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-arrow-down"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-
-                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" 
-            ng-click="isCreating=true">Create New Action Item</a>
-          </span>
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items View</a></span>
-
-            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1" href="TaskAreas.htm">Manage Task Areas</a></span>
-            
-        </div>
-    </div>
-  </div><hr>
-      <div class="d-flex col-12 mx-5"><div class="contentColumn">
+    <div class="d-flex col-12 mx-5">
+        <div class="contentColumn">
         <div class="well" ng-show="isCreating">
             <table>
                <tr>

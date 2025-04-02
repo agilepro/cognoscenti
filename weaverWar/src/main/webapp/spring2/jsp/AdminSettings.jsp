@@ -331,255 +331,258 @@ app.filter('escape', function() {
 
 
 <!-- MAIN CONTENT SECTION START -->
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a role="menuitem" class="nav-link" tabindex="-1"
+                        href="LabelList.htm"> Labels &amp; Folders</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="roleRequest">
+                    <a role="menuitem" class="nav-link" tabindex="-1" href="RoleRequest.htm">Role Requests</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="emailPrepared">
+                    <a role="menuitem" class="nav-link" href="EmailCreated.htm">Email Prepared</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="EmailSent">
+                    <a role="menuitem" class="nav-link" href="EmailSent.htm">Email Sent</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="WorkspaceStats">
+                    <a role="menuitem" class="nav-link" href="AdminStats.htm"> Workspace Statistics</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="createChildWorkspace">
+                    <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">Create Child
+                        Workspace</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="createSiblingWorkspace">
+                    <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">Create
+                        Sibling Workspace</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
 <% if (ar.isAdmin()) { %>
-    <div class="container-fluid override mx-2">
-            <div class="col-md-auto second-menu d-flex">
-                    <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <div class="collapse" id="collapseSecondaryMenu">
-                        <div class="col-md-auto">
-        
-                            <span class="btn second-menu-btn btn-wide" type="button"><a role="menuitem" class="nav-link" tabindex="-1" href="LabelList.htm">
-                    Labels &amp; Folders</a>
-                      </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a  role="menuitem" class="nav-link" tabindex="-1" href="RoleRequest.htm">
-              Role Requests</a>
-                </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a  role="menuitem" class="nav-link" href="EmailCreated.htm">
-              Email Prepared</a>
-                </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a  role="menuitem" class="nav-link" href="EmailSent.htm">
-              Email Sent</a>
-                </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a role="menuitem" class="nav-link" href="AdminStats.htm">
-                    Workspace Statistics</a>
-                      </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
-              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
-              Create Child Workspace</a>
-                </span>
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
-              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
-              Create Sibling Workspace</a>
-                </span>
-                </div>
-                </div>
-                </div>
-                </div>
-                </div>
-        <hr class="mx-3">
-    <div class="d-flex col-12">
-        <div class="contentColumn mx-5">
+
+<hr class="mx-3">
+<div class="d-flex col-12">
+    <div class="contentColumn mx-5">
 <% } %>
 
 
-            <div class="container m-2 override">
-                <div class="row my-2 border-bottom border-1" >
-                    <span ng-click="setEdit('name')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2 text-start pb-2" title="click to change workspace name">Workspace Name:</span>
+        <div class="container m-2 override">
+            <div class="row my-2 border-bottom border-1" >
+                <span ng-click="setEdit('name')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2 text-start pb-2" title="click to change workspace name">Workspace Name:</span>
 
-                    <span class="col-6 mt-2" ng-hide="isEditing=='name'" >
-                        <span class="h5 bold text-secondary">{{workspaceConfig.allNames[0]}}</span>
+                <span class="col-6 mt-2" ng-hide="isEditing=='name'" >
+                    <span class="h5 bold text-secondary">{{workspaceConfig.allNames[0]}}</span>
+                </span>
+                <span class="col-8 mt-2 form-inline form-group " ng-show="isEditing=='name'">
+                    <input type="text" class="form-control rounded-2"  ng-model="newName"/>
+                    <span class="d-flex">
+                        <button class="m-2 btn btn-danger btn-raised" ng-click="setEdit('')">Cancel</button>
+                        <button class="my-2 btn btn-secondary btn-raised ms-auto" ng-click="addWorkspaceName(newName)">Change Name</button>
                     </span>
-                    <span class="col-8 mt-2 form-inline form-group " ng-show="isEditing=='name'">
-                        <input type="text" class="form-control rounded-2"  ng-model="newName"/>
-                        <span class="d-flex">
-                            <button class="m-2 btn btn-danger btn-raised" ng-click="setEdit('')">Cancel</button>
-                            <button class="my-2 btn btn-secondary btn-raised ms-auto" ng-click="addWorkspaceName(newName)">Change Name</button>
-                        </span>
-                    </span>
-                </div>
+                </span>
+            </div>
 
-                
-                <div class="row my-2 border-bottom border-1">
-                    <span ng-click="setEdit('vision')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Vision:</span>
-                    <span class="col-8 mt-2" ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
-                        <div ng-bind-html="visionHtml"></div>
-                        <div ng-hide="visionHtml" class="clicker"></div>
-                        <span ng-click="toggleFrontPage('showVisionOnFrontPage')" class="labelCheck">
-                            <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
-                            <i class="fa fa-check-circle"></i> Show vision on Front Page</span>
-                            <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showVisionOnFrontPage">
-                            <i class="fa fa-circle-o"></i> Don't show vision on Front Page
-                            </span>
+            
+            <div class="row my-2 border-bottom border-1">
+                <span ng-click="setEdit('vision')" class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Vision:</span>
+                <span class="col-8 mt-2" ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
+                    <div ng-bind-html="visionHtml"></div>
+                    <div ng-hide="visionHtml" class="clicker"></div>
+                    <span ng-click="toggleFrontPage('showVisionOnFrontPage')" class="labelCheck">
+                        <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showVisionOnFrontPage">
+                        <i class="fa fa-check-circle"></i> Show vision on Front Page</span>
+                        <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showVisionOnFrontPage">
+                        <i class="fa fa-circle-o"></i> Don't show vision on Front Page
                         </span>
                     </span>
-                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='vision'">
-                        <textarea class="form-control  markDownEditor"  placeholder="Enter a vision statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.vision" rows="14" cols="80">
-                        </textarea>
-                        <span class="d-flex">
-                        <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
-                        <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised ms-auto">Save</button>
-                        
-                        </span>
-                    </span>
-                        
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('mission')">Mission:</span>
-                    <span class="col-8 mt-2" ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
-                        <div ng-bind-html="missionHtml"></div>
-                        <div ng-hide="missionHtml" class="clicker"></div>
-                        <span ng-click="toggleFrontPage('showMissionOnFrontPage')" class="labelCheck">
-                            <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
-                                <i class="fa fa-check-circle"></i> Show mission on Front Page</span>
-                            <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showMissionOnFrontPage">
-                                <i class="fa fa-circle-o"></i> Don't show mission on Front Page</span>
-                        </span>
-                    </span>
-                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='mission'">
-                        <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a mission statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea> 
-                        <span class="d-flex">
-                        <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
-                        <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised ms-auto">Save</button> 
-                        </span>
-                    </span>
-                </div>
-                <div class="row my-2 border-bottom border-1" >
-                    <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('purpose')" >Aim:</span>
-                    <span class="col-8 mt-2" ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
-                        <div ng-bind-html="purposeHtml"></div>
-                        <div ng-hide="purposeHtml" class="clicker"></div>
-                        <span ng-click="toggleFrontPage('showAimOnFrontPage')" class="labelCheck">
-                            <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
-                            <i class="fa fa-check-circle"></i> Show aim on Front Page</span>
-                            <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showAimOnFrontPage">
-                            <i class="fa fa-circle-o"></i> Don't show aim on Front Page</span>
-                        </span>
-                    </span>
-                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='purpose'">
-                        <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
-                        <span class="d-flex">
-                        <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
-                        <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised ms-auto">Save</button>
-                    </span>
-                        
-                    </span>
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('domain')" >Domain:</span>
-                    <span class="col-8 mt-2" ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
-                        <div ng-bind-html="domainHtml"></div>
-                        <div ng-hide="domainHtml" class="clicker"></div>
-                        <span ng-click="toggleFrontPage('showDomainOnFrontPage')" class="labelCheck">
-                            <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
-                            <i class="fa fa-check-circle"></i> Show domain on Front Page</span>
-                            <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showDomainOnFrontPage">
-                            <i class="fa fa-circle-o"></i> Don't show domain on Front Page</span>
-                        </span>
-                    </span>
-                    <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='domain'">
-                        <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a domain statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
-                        <span class="d-flex">
-                        <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">
-                        Cancel</button> 
-                        <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised ms-auto">Save</button></span>
-                        
-                    </span>
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span ng-click="setEdit('frozen')" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Workspace State:</span>
-                    <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
-                        <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
-                        <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
-                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
-                    </span>
-                    <span class="col-8" ng-show="isEditing=='frozen'">
-                        <div ng-hide="workspaceConfig.frozen">
-                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen', true)"
-                            class="btn btn-primary btn-raised">
-                            Freeze Workspace</button><br/>
-                            Use this <b>Freeze</b> to change an active workspace into a frozen workspace where nothing can be changed.  Frozen workspaces do not count toward your quota of workspace in the site.
-                        </div>
-                        <div ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
-                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen', true)"
-                            class="btn btn-primary btn-raised">
-                            Unfreeze Workspace</button><br/>
-                            Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
-                            You are only allowed a certain number of active workspaces in a site depending upon 
-                            your playment plan.  
-                            <br/>
-                            If you already have the maximum number of active workspaces, you will not be able to 
-                            unfreeze this workspace, until you freeze or delete another active one.
-                        </div>
-                        <div ng-hide="workspaceConfig.deleted">
-                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted', true)"
-                            class="btn btn-primary btn-raised" >
-                            Delete Workspace</button><br/>
-                            Use <b>Delete</b> option to delete a workspace.  
-                            The workspace will actually remain around until the 
-                            <b>Garbage Collect</b> operation is run at the site level.
-                            After garbage collection the workspace will be permanently gone,
-                            and no information can be retrieved.
-                        </div>
-                        <div ng-show="workspaceConfig.deleted">
-                        <button ng-click="undeleteWorkspace()"
-                            class="btn btn-primary btn-raised" >
-                            Undelete Workspace</button><br/>
-                            If you didn't really want to delete the workspace, 
-                            use this <b>Undelete</b> to cancel the delete, 
-                            and return the workspace to a frozen state.
-                        </div>
-                        <div>
-                            <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
-                            Cancel</button><br/>
-                            Use <b>Cancel</b> to close this option without changing the workspace state.
-                        </div>
-                    </span>
+                </span>
+                <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='vision'">
+                    <textarea class="form-control  markDownEditor"  placeholder="Enter a vision statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.vision" rows="14" cols="80">
+                    </textarea>
+                    <span class="d-flex">
+                    <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
+                    <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised ms-auto">Save</button>
                     
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span ng-click="setEdit('parentKey');backupParent=parentWorkspace" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Parent Circle:</span>
-                    <span class="col-8 mt-2" ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
-                        <div>{{parentWorkspace.name}}</div>
-                        <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </span>
-                    <span class="col-10 mt-2" ng-show="isEditing=='parentKey'">
-                            <div class="row my-2">
-                                <span>Filter: </span>
-                                <span class="my-2"><input ng-model="parentFilter" class="form-control">{{parentFilter}}</span>
-                            </div>
-                            <div class="row " >
-                                <span class="col-12 d-block">
-                                    <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="m-2 py-0 btn-comment btn-wide">
-                            {{ws.name}}</button></span>
+                </span>
+                    
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('mission')">Mission:</span>
+                <span class="col-8 mt-2" ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
+                    <div ng-bind-html="missionHtml"></div>
+                    <div ng-hide="missionHtml" class="clicker"></div>
+                    <span ng-click="toggleFrontPage('showMissionOnFrontPage')" class="labelCheck">
+                        <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showMissionOnFrontPage">
+                            <i class="fa fa-check-circle"></i> Show mission on Front Page</span>
+                        <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showMissionOnFrontPage">
+                            <i class="fa fa-circle-o"></i> Don't show mission on Front Page</span>
+                    </span>
+                </span>
+                <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='mission'">
+                    <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a mission statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea> 
+                    <span class="d-flex">
+                    <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
+                    <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised ms-auto">Save</button> 
+                    </span>
+                </span>
+            </div>
+            <div class="row my-2 border-bottom border-1" >
+                <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('purpose')" >Aim:</span>
+                <span class="col-8 mt-2" ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
+                    <div ng-bind-html="purposeHtml"></div>
+                    <div ng-hide="purposeHtml" class="clicker"></div>
+                    <span ng-click="toggleFrontPage('showAimOnFrontPage')" class="labelCheck">
+                        <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showAimOnFrontPage">
+                        <i class="fa fa-check-circle"></i> Show aim on Front Page</span>
+                        <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showAimOnFrontPage">
+                        <i class="fa fa-circle-o"></i> Don't show aim on Front Page</span>
+                    </span>
+                </span>
+                <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='purpose'">
+                    <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
+                    <span class="d-flex">
+                    <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">Cancel</button>
+                    <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised ms-auto">Save</button>
+                </span>
+                    
+                </span>
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="setEdit('domain')" >Domain:</span>
+                <span class="col-8 mt-2" ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
+                    <div ng-bind-html="domainHtml"></div>
+                    <div ng-hide="domainHtml" class="clicker"></div>
+                    <span ng-click="toggleFrontPage('showDomainOnFrontPage')" class="labelCheck">
+                        <span class="text-secondary" ng-show="workspaceConfig.wsSettings.showDomainOnFrontPage">
+                        <i class="fa fa-check-circle"></i> Show domain on Front Page</span>
+                        <span class="text-secondary" ng-hide="workspaceConfig.wsSettings.showDomainOnFrontPage">
+                        <i class="fa fa-circle-o"></i> Don't show domain on Front Page</span>
+                    </span>
+                </span>
+                <span class="col-8 mt-2 form-inline form-group" ng-show="isEditing=='domain'">
+                    <textarea class="form-control editBoxStyle markDownEditor" placeholder="Enter a domain statement for the circle working in this  workspace, if any" ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
+                    <span class="d-flex">
+                    <button ng-click="saveOneField('frozen')" class="btn btn-danger btn-raised">
+                    Cancel</button> 
+                    <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised ms-auto">Save</button></span>
+                    
+                </span>
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span ng-click="setEdit('frozen')" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Workspace State:</span>
+                <span class="col-8 mt-3 bold" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
+                    <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
+                    <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
+                    <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available for use including updating contents.</span>
+                </span>
+                <span class="col-8" ng-show="isEditing=='frozen'">
+                    <div ng-hide="workspaceConfig.frozen">
+                    <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen', true)"
+                        class="btn btn-primary btn-raised">
+                        Freeze Workspace</button><br/>
+                        Use this <b>Freeze</b> to change an active workspace into a frozen workspace where nothing can be changed.  Frozen workspaces do not count toward your quota of workspace in the site.
+                    </div>
+                    <div ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
+                    <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen', true)"
+                        class="btn btn-primary btn-raised">
+                        Unfreeze Workspace</button><br/>
+                        Use <b>Unfreeze</b> to change workspace to be active so that things in the workspace can be changed.
+                        You are only allowed a certain number of active workspaces in a site depending upon 
+                        your playment plan.  
+                        <br/>
+                        If you already have the maximum number of active workspaces, you will not be able to 
+                        unfreeze this workspace, until you freeze or delete another active one.
+                    </div>
+                    <div ng-hide="workspaceConfig.deleted">
+                    <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted', true)"
+                        class="btn btn-primary btn-raised" >
+                        Delete Workspace</button><br/>
+                        Use <b>Delete</b> option to delete a workspace.  
+                        The workspace will actually remain around until the 
+                        <b>Garbage Collect</b> operation is run at the site level.
+                        After garbage collection the workspace will be permanently gone,
+                        and no information can be retrieved.
+                    </div>
+                    <div ng-show="workspaceConfig.deleted">
+                    <button ng-click="undeleteWorkspace()"
+                        class="btn btn-primary btn-raised" >
+                        Undelete Workspace</button><br/>
+                        If you didn't really want to delete the workspace, 
+                        use this <b>Undelete</b> to cancel the delete, 
+                        and return the workspace to a frozen state.
+                    </div>
+                    <div>
+                        <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
+                        Cancel</button><br/>
+                        Use <b>Cancel</b> to close this option without changing the workspace state.
+                    </div>
+                </span>
+                
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span ng-click="setEdit('parentKey');backupParent=parentWorkspace" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left">Parent Circle:</span>
+                <span class="col-8 mt-2" ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
+                    <div>{{parentWorkspace.name}}</div>
+                    <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
+                </span>
+                <span class="col-10 mt-2" ng-show="isEditing=='parentKey'">
+                        <div class="row my-2">
+                            <span>Filter: </span>
+                            <span class="my-2"><input ng-model="parentFilter" class="form-control">{{parentFilter}}</span>
                         </div>
                         <div class="row " >
-                            <span class="col-12 d-flex">
-                            <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
-                                class="btn btn-danger btn-raised btn-wide">
-                            Cancel</button>
-                            <button ng-click="deleteParentKey()" 
-                                class="btn btn-primary btn-wide btn-raised ms-auto">
-                            Remove Parent</button></span>
-                        </div>
-                    </span>
-                    
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span ng-show="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Reset Email Settings</span>
-                    <span ng-hide="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Suppress Email</span>
-                    <span class="col-8 mt-2">
-                        <span class="text-secondary" ng-show="workspaceConfig.suppressEmail">
-                            <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>
-                        <span class="text-secondary" ng-hide="workspaceConfig.suppressEmail">
-                            <i class="fa fa-circle-o"></i> Normal: email in this workspace functions normally</span>
-                    </span>
-                </div>
-                <div class="row my-2 border-bottom border-1">
-                    <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressGoalEmail')">Action Item Mail</span>
-                    <span class="col-8 mt-2">
-                        <span class="text-secondary" ng-show="workspaceConfig.suppressGoalEmail">
-                            <i class="fa fa-check-circle"></i> Suppress: Automatic email about work items will not be generated.</span>
-                        <span class="text-secondary" ng-hide="workspaceConfig.suppressGoalEmail">
-                            <i class="fa fa-circle-o"></i> Normal: Automatic email about work items will function normally.</span>
-                    </span>
-                </div>
+                            <span class="col-12 d-block">
+                                <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="m-2 py-0 btn-comment btn-wide">
+                        {{ws.name}}</button></span>
+                    </div>
+                    <div class="row " >
+                        <span class="col-12 d-flex">
+                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
+                            class="btn btn-danger btn-raised btn-wide">
+                        Cancel</button>
+                        <button ng-click="deleteParentKey()" 
+                            class="btn btn-primary btn-wide btn-raised ms-auto">
+                        Remove Parent</button></span>
+                    </div>
+                </span>
+                
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span ng-show="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Reset Email Settings</span>
+                <span ng-hide="workspaceConfig.suppressEmail" class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressEmail')">Suppress Email</span>
+                <span class="col-8 mt-2">
+                    <span class="text-secondary" ng-show="workspaceConfig.suppressEmail">
+                        <i class="fa fa-check-circle"></i> Suppress: email generated in this workspace will be saved to the database, but will not actually be sent as email.</span>
+                    <span class="text-secondary" ng-hide="workspaceConfig.suppressEmail">
+                        <i class="fa fa-circle-o"></i> Normal: email in this workspace functions normally</span>
+                </span>
+            </div>
+            <div class="row my-2 border-bottom border-1">
+                <span class="col-2 bold fixed-width-md labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="toggleBool('suppressGoalEmail')">Action Item Mail</span>
+                <span class="col-8 mt-2">
+                    <span class="text-secondary" ng-show="workspaceConfig.suppressGoalEmail">
+                        <i class="fa fa-check-circle"></i> Suppress: Automatic email about work items will not be generated.</span>
+                    <span class="text-secondary" ng-hide="workspaceConfig.suppressGoalEmail">
+                        <i class="fa fa-circle-o"></i> Normal: Automatic email about work items will function normally.</span>
+                </span>
             </div>
         </div>
-        <div style="margin:75px"></div>
-
+    </div>
+    <div style="margin:75px"></div>
+</div>

@@ -198,7 +198,44 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a role="menuitem" class="nav-link" href="AdminSettings.htm"> Admin Settings</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="RoleRequest.htm"> Role Requests</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailCreated.htm"> Email Prepared</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm"> Email Sent</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="AdminStats.htm"> Workspace Statistics</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem"
+                        href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}"> Create Child Workspace</a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem"
+                        href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}"> Create Sibling Workspace</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 <!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
 
@@ -207,40 +244,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
         <div class="container-fluid override mx-2">
-            <div class="col-md-auto second-menu d-flex">
-                <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <div class="collapse" id="collapseSecondaryMenu">
-                    <div class="col-md-auto">
-        
-                        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a role="menuitem" class="nav-link" href="AdminSettings.htm">
-                            Admin Settings</a>
-                              </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="RoleRequest.htm">
-                  Role Requests</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailCreated.htm">
-                  Email Prepared</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
-                  Email Sent</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="AdminStats.htm">
-                        Workspace Statistics</a>
-                          </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
-                  href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
-                  Create Child Workspace</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" 
-                  href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
-                  Create Sibling Workspace</a>
-                    </span>
-        
-                </div>
-            </div>
-            </div><hr>
             <div class="row col-12 m-2">
                 <div class="contentColumn">
                     <h2 class="text-secondary fs-3">Edit Labels</h2>

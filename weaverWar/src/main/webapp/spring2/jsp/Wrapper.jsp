@@ -487,27 +487,22 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <div class="container-fluid override mb-4 mx-3 d-inline-flex">
-
-
     <span class="dropdown mt-1">
         <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" 
         id="dropdownInfoMenu" 
         data-bs-toggle="dropdown" 
         aria-expanded="false" > 
-
-    </button>
+        </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
                 <li>
-                        <button class="dropdown-item" onclick="window.location.reload(true)" >Refresh</button>
+                    <button class="dropdown-item" onclick="window.location.reload(true)" >Refresh</button>
                 </li>
             </ul>
-
     </span>
     <span >
-            <h1 class="d-inline page-name" id="mainPageTitle"></h1>
-</span>
- 
-    </div>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />

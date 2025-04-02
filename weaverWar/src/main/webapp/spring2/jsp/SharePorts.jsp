@@ -131,18 +131,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-<div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem"
+                        tabindex="-1" ng-click="openSharePortEditor(newSharePort)">Create New Share Port</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid">
-  <div class="row">
-        <div class="col-md-auto fixed-width border-end border-1 border-secondary">
-          <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              ng-click="openSharePortEditor(newSharePort)">Create New Share Port</a></span>
-        </div>
-        </div>
-        <div class="d-flex col-9">
+        <div class="d-flex col-12">
           <div class="contentColumn">
             <div class="container-fluid">
               <div class="generalContent">

@@ -146,7 +146,26 @@ function parseList(inText) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+                        <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -164,55 +183,47 @@ function parseList(inText) {
 <% } else { %>
 
     <div class="container-fluid override m-3">
-        
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-        href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
+        <div class="d-flex col-12 m-3">
+            <div class="contentColumn">
+                <span class="h6"><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></span>
 
-        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
-            <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
-
-
-            <div class="d-flex col-12 m-3">
-                <div class="contentColumn">
-                    <span class="h6"><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></span>
-
-                    <div class="well col-12 m-2" ng-hide="isFrozen">
-                        <div ng-show="addressing">
-                            <div class="row d-flex my-3">
-                                <span class="col-2">
-                                <label class="h6">Email Addresses</label></span>
-                                <span class="col-10"><textarea class="form-control" ng-model="emailList" 
-             placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea></span>
-        </div>
-        <div class="row d-flex my-3">
-            <span class="col-2">
-            <label class="h6">Role</label></span>
-            <span class="col-10">
-            <select class="form-control" ng-model="newRole"
-                    ng-options="r for r in allRoles"></select>
-            </span>
-        </div>
-        <div class="row d-flex my-3">
-            <span class="col-2">
-            <label class="h6">Message</label></span>
-            <span class="col-10"><textarea class="form-control" style="height:200px" ng-model="message"
-            placeholder="Enter a message to send to all invited people"></textarea></span>
-        </div>
-        
-        <div class="d-flex my-3">
-            <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
-            <button ng-click="blastIt()" class="btn btn-primary btn-raised btn-default ms-auto" 
-                    ng-show="emailList">Send Invitations</button>
-            
-        </div>
-    </div>
-    <div  ng-hide="addressing">
-       <button class="btn btn-primary btn-wide btn-raised" ng-click="addressing=true">Open to Send More</button>
-    </div>
-    </div>  
-  <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
-     You can't invite anyone because this workspace is frozen or deleted.
-  </div> 
+                <div class="well col-12 m-2" ng-hide="isFrozen">
+                    <div ng-show="addressing">
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                            <label class="h6">Email Addresses</label></span>
+                            <span class="col-10">
+                                <textarea class="form-control" ng-model="emailList" placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea>
+                            </span>
+                        </div>
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                            <label class="h6">Role</label></span>
+                            <span class="col-10">
+                            <select class="form-control" ng-model="newRole"
+                                    ng-options="r for r in allRoles"></select>
+                            </span>
+                        </div>
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                            <label class="h6">Message</label></span>
+                            <span class="col-10"><textarea class="form-control" style="height:200px" ng-model="message"
+                            placeholder="Enter a message to send to all invited people"></textarea></span>
+                        </div>
+                        <div class="d-flex my-3">
+                            <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
+                            <button ng-click="blastIt()" class="btn btn-primary btn-raised btn-default ms-auto" 
+                                    ng-show="emailList">Send Invitations</button>
+                            
+                        </div>
+                    </div>
+                    <div ng-hide="addressing">
+                        <button class="btn btn-primary btn-wide btn-raised" ng-click="addressing=true">Open to Send More</button>
+                    </div>
+                </div>  
+                <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
+                You can't invite anyone because this workspace is frozen or deleted.
+                </div> 
     
  
 <% } %> 

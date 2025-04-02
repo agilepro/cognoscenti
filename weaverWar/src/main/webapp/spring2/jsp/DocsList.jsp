@@ -277,39 +277,51 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 });
 
 </script>
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" href="DocsFolder.htm">Show
+                        Folders</a>
+                    </span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link"
+                        href="DocsAdd.htm">
+                        <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="sendEmail">
+                    <a class="nav-link" href="SendNote.htm">
+                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="SharePorts">
+                    <a class="nav-link" href="SharePorts.htm">Share Ports</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid override mx-2">
-    <div class="col-md-auto second-menu d-flex">
-            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-bars"></i>
-            </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-                    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" href="DocsFolder.htm">Show Folders</a></span>
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="addDocument"><a class="nav-link" href="DocsAdd.htm">
-                        <img src="<%= ar.retPath%>assets/iconUpload.png" width="15" height="13" alt="" /> Add Document</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm">
-                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="SharePorts"><a class="nav-link" href="SharePorts.htm">Share Ports</a>
-                    </span>
-                    
-                </div>
-            </div>
-      </div><hr>
+    
 
 
       <div class="d-flex col-12 mx-2"><div class="contentColumn">
-            <div class="well">Filter <input ng-model="filter"> &nbsp;
-                <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}}; margin-bottom: -2px;" ng-style="{ color: getContrastColor(role.color) }"  ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-        </span>
-        <span class="dropdown nav-item">
+        <div class="well">Filter <input ng-model="filter"> &nbsp;
+            <span class="dropdown" ng-repeat="role in allLabelFilters()">
+                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}}; margin-bottom: -2px;" ng-style="{ color: getContrastColor(role.color) }"  ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+            </span>
+            <span class="dropdown nav-item">
             <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
                        style="width:320px;left:-130px;margin-top:-4px;">

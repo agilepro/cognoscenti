@@ -354,29 +354,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-<div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
+                    aria-labelledby="createNewTopic"><a class="nav-link">Create New Topic</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="sendEmail"><a class="nav-link"
+                        href="SendNote.htm">
+                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createPDF"><a class="nav-link"
+                        href="PDFExport.htm"> Create PDF</a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createPDF"><a class="nav-link"
+                        href="searchAllNotes.htm">Search All Topics </a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
 <%@include file="ErrorPanel.jsp"%>
 <div class="container-fluid override mx-2">
-    <div class="col-md-auto second-menu d-flex">
-            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-                <i class="fa fa-bars"></i></button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" >Create New Topic</a>
-                    </span>
-
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="sendEmail"><a class="nav-link" href="SendNote.htm" >
-                        <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="15" height="13" alt="" /> Send Email</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createPDF"><a class="nav-link" href="PDFExport.htm" > Create PDF</a>
-                    </span>
-                    <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createPDF"><a class="nav-link" href="searchAllNotes.htm" >Search All Topics </a>
-                    </span>
-                </div>
-            </div>
-        </div>
-<hr>
+    
     <div class="d-flex col-12">
         <div class="contentColumn">
             <div class="container-fluid">    

@@ -420,7 +420,7 @@ function setUpCommentMethods($scope, $http, $modal) {
                     
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                     <li role="presentation" style="background-color:lightgrey">
-                        <a class="dropdown-item" role="menuitem" tabindex="-1" style="text-decoration: none;text-align:center">{{cmt.userName}}<br/>{{cmt.user}}</a></li>
+                        <a class="dropdown-item" role="menuitem" tabindex="-1" style="text-decoration: none;text-align:left">{{cmt.userName}}<br/>{{cmt.user}}</a></li>
                     <li role="presentation" style="cursor:pointer">
                         <a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToCommentor(cmt)">
                     <span class="fa fa-user"></span> Visit Profile </a></li>

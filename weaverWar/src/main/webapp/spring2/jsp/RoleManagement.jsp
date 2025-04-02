@@ -389,7 +389,39 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewSingleInvite">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+                        <span class="fa fa-envelope"></span> &nbsp;Invite Users
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewInvite">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
+                        <span class="fa fa-envelope">
+                        </span> &nbsp;Multi-Person Invite
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewRole">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+                        <span class="fa fa-plus-square"></span> &nbsp;Create New Role
+                    </a>
+                </span>
+                
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+        
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
@@ -397,31 +429,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <% if (canUpdate) { %>
     <div class="container-fluid override mx-3">
-    
 
-          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewSingleInvite">
-             <a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
-              <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
-
-          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewInvite">
-            <a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
-              <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite</a></span>
-          <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="createNewRole">
-            <a class="nav-link" role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
-              <span class="fa fa-plus-square"></span> &nbsp;Create New Role</a></span>
-          <input type="checkbox" ng-model="roleDetail.toggle"/> 
-          <span class="btn second-menu-btn btn-wide" type="button" ng-click="roleDetail.toggle=!roleDetail.toggle" aria-labelledby="togglelistmode">
-             
-              Details Mode</span>
 
 <hr/>
 <% } %>
 
 <div class="d-flex col-12"><div class="contentColumn mx-3">
     
-<% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p>
+<% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p><input type="checkbox" ng-model="roleDetail.toggle" />
+        <span class="dropdown-item" type="button" ng-click="roleDetail.toggle=!roleDetail.toggle"
+            aria-labelledby="togglelistmode"> Details Mode</span>
 <% } %>
     <div class="container-fluid">
+        
         <div class="row" ng-repeat="role in allRoles">
             <hr/>
             <div class="row d-flex">

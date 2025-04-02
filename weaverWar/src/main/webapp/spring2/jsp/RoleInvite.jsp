@@ -140,7 +140,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-<div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
+                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
+                        href="MultiInvite.htm"><span class="fa fa-envelope"></span>&nbsp;Multi-Person Invite</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+    </span>
+</div>
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -157,50 +175,42 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <% } else { %>
 
-    <div class="container-fluid override m-3">
-        
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
-
-              <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              href="MultiInvite.htm"><span class="fa fa-envelope"></span>&nbsp;Multi-Person Invite</a></span>
-
- 
-            <div class="d-flex col-12 m-3">
-                <div class="contentColumn">
-                    <span class="h6"><i>Add people to the project by entering their email address and name.</i></span>
-                    
-                    <div class="well col-12 m-2" ng-hide="isFrozen">
-                        <div ng-show="addressing">
-                            <div class="row d-flex my-3">
-                                <span class="col-2">
-                                    <label class="h6">Email Address</label>
-                                </span>
-                                <span class="col-10"><input class="form-control" ng-model="newEmail"/>
-                                </span>
-                            </div>
-                            <div class="row d-flex my-3">
-                                <span class="col-2">
-                                <label class="h6">Full Name</label></span>
-                                <span class="col-10"><input class="form-control" ng-model="newName"/>
-                                </span>
-                            </div>
-                            <div class="row d-flex my-3">
-                                <span class="col-2">
-                                    <label class="h6">Role</label></span>
-                                <span class="col-10">
-                                    <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select></span>
-                            </div>
-                            <div class="row d-flex my-3">
-                                <span class="col-2">
-                                    <label class="h6">Message</label></span>
-                                <span class="col-10">
-                                    <textarea class="form-control" style="height:200px" ng-model="message"></textarea></span>
+    <div class="container-fluid override m-3"> 
+        <div class="d-flex col-12 m-3">
+            <div class="contentColumn">
+                <span class="h6"><i>Add people to the project by entering their email address and name.</i></span>
+                
+                <div class="well col-12 m-2" ng-hide="isFrozen">
+                    <div ng-show="addressing">
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                                <label class="h6">Email Address</label>
+                            </span>
+                            <span class="col-10"><input class="form-control" ng-model="newEmail"/>
+                            </span>
                         </div>
-                        <div class="d-flex my-3">
-                            <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
-                            <button ng-click="inviteOne()" class="btn btn-primary btn-raised btn-default ms-auto">Send Invitation</button>
-                            
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                            <label class="h6">Full Name</label></span>
+                            <span class="col-10"><input class="form-control" ng-model="newName"/>
+                            </span>
+                        </div>
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                                <label class="h6">Role</label></span>
+                            <span class="col-10">
+                                <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select></span>
+                        </div>
+                        <div class="row d-flex my-3">
+                            <span class="col-2">
+                                <label class="h6">Message</label></span>
+                            <span class="col-10">
+                                <textarea class="form-control" style="height:200px" ng-model="message"></textarea></span>
+                    </div>
+                    <div class="d-flex my-3">
+                        <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
+                        <button ng-click="inviteOne()" class="btn btn-primary btn-raised btn-default ms-auto">Send Invitation</button>
+                        
                     </div>
                 </div>
                 <div ng-hide="addressing">
