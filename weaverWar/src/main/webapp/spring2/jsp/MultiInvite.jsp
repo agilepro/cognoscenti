@@ -163,7 +163,7 @@ function parseList(inText) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Multi-Person Invite</h1>
     </span>
 </div>
 

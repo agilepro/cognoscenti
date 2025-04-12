@@ -101,7 +101,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 </script>
 
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a role="menuitem" tabindex="-1" class="nav-link" href="DocsUpload.htm">
+                        Clear</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="docsList">
+                    <a role="menuitem" tabindex="-1" class="nav-link" href="DocsList.htm">
+                        List View</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle">Documents - Link URL</h1>
+    </span>
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>

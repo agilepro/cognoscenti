@@ -307,8 +307,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button" ng-click="startCreating()" aria-labelledby="createNewTopic"><a class="nav-link">Create New Decision</a></span>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button" ng-click="startCreating()" 
+                    aria-labelledby="createNewTopic">
+                    <a class="nav-link">Create New Decision</a></span>
             </li>
         </ul>
     </span>

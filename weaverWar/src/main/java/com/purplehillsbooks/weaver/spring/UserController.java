@@ -274,12 +274,7 @@ public class UserController extends BaseController {
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngw, roleRequestRecord);
 
             if(!canAccessPage){
-                if (ar.isLoggedIn()) {
-                    streamJSP(ar, "WarningNotMember.jsp");
-                }
-                else {
-                    showDisplayWarning(ar, "In order to see this section, you need to be logged in.");
-                }
+                showDisplayWarning(ar, "In order to see this section, you need to be logged in, and a member of the workspace.");
                 return;
             }
 

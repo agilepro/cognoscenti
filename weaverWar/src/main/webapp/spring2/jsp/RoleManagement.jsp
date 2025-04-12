@@ -404,8 +404,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </span>
                 <span class="dropdown-item" type="button" aria-labelledby="createNewInvite">
                     <a class="nav-link" role="menuitem" tabindex="-1" href="MultiInvite.htm">
-                        <span class="fa fa-envelope">
-                        </span> &nbsp;Multi-Person Invite
+                        <span class="fa fa-envelope"></span> &nbsp;Multi-Person Invite
                     </a>
                 </span>
                 <span class="dropdown-item" type="button" aria-labelledby="createNewRole">
@@ -413,12 +412,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         <span class="fa fa-plus-square"></span> &nbsp;Create New Role
                     </a>
                 </span>
-                
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Roles</h1>
     </span>
         
 </div>
@@ -426,64 +424,51 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-
-<% if (canUpdate) { %>
-    <div class="container-fluid override mx-3">
-
-
-<hr/>
-<% } %>
-
-<div class="d-flex col-12"><div class="contentColumn mx-3">
-    
-<% if (canUpdate) { %>    <p><i>Add people to the project by double clicking on any row below and entering their email address at in the pop up prompt.</i></p><input type="checkbox" ng-model="roleDetail.toggle" />
-        <span class="dropdown-item" type="button" ng-click="roleDetail.toggle=!roleDetail.toggle"
-            aria-labelledby="togglelistmode"> Details Mode</span>
-<% } %>
-    <div class="container-fluid">
-        
+<div class="container-fluid override mx-3">
+  <div class="d-flex col-12">
+    <div class="contentColumn mx-3">
+      <div class="container-fluid">
         <div class="row" ng-repeat="role in allRoles">
             <hr/>
-            <div class="row d-flex">
-                <span class="col-auto h6" ng-click="roleDetail.toggle=!roleDetail.toggle" ng-dblclick="openRoleModal(role)">
-                <div style="color:black;background-color:{{role.color}};padding:5px;border-radius:5px">
-                    {{role.name}}</div>
-                <!--<div ng-show="role.canUpdateWorkspace" class="updateStyle">CAN EDIT</div>
-                <div ng-hide="role.canUpdateWorkspace" class="updateStyle">OBSERVER</div>-->
-                </span> &nbsp;
+            <div class="row">
+                <span ng-dblclick="openRoleModal(role)">
+                    <span style="color:black;background-color:{{role.color}};padding:5px;border-radius:5px"
+                        ng-click="roleDetail.toggle=!roleDetail.toggle">
+                        {{role.name}}</span>
+                
+                &nbsp;
 <% if (canUpdate) { %>
-              <span class="col-1 nav-item dropdown">
-                <button class="btn btn-comment btn-sm btn-raised dropdown-toggle specCaretBtn"
+                <span class="col-1 nav-item dropdown">
+                    <button class="btn btn-comment btn-sm btn-raised dropdown-toggle specCaretBtn"
                         type="button" id="roleMembers" ng-click="dropdownStates['menu'] = !dropdownStates['menu']" aria-expanded="{{dropdownStates['menu']}}">
-                </button>
-                <ul class="dropdown-menu" ng-class="{'show': dropdownStates['menu']}" role="menu" aria-labelledby="roleMembers">
-                  
-                    <li role="presentation">
-                        
-                        <li class="dropdown-item" role="menuitem" 
-                      ng-click="roleDetail.toggle=!roleDetail.toggle; dropdownStates['menu'] = false">
-                      <span class="fa fa-list-ul"></span><span ng-show="roleDetail.toggle"> List Mode</span><span ng-hide="roleDetail.toggle"> Details Mode</span></li></li>
-                  <li role="presentation">
-                    <a class="dropdown-item" role="menuitem" 
-                      ng-click="openRoleModal(role); dropdownStates['menu'] = false;">
-                      <span class="fa fa-edit"></span> Edit All Players </a></li>
-                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
-                      href="RoleDefine.htm?role={{role.symbol}}">
-                      <span class="fa fa-street-view"></span> Define Role </a></li>
-                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
-                      ng-click="goNomination(role); dropdownStates['menu'] = false;">
-                      <span class="fa fa-flag-o"></span> Role Elections </a></li>
-                  <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                      href="MultiInvite.htm?role={{role.symbol}}">
-                      <span class="fa fa-envelope-o"></span> Multi-Person Invite</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a class="dropdown-item" role="menuitem" 
-                      ng-click="deleteRole(role); dropdownStates['menu'] = false;">
-                      <span class="fa fa-times"></span> Delete Role</a></li>
-                </ul>
-              </span>
+                    </button>
+                        <ul class="dropdown-menu" ng-class="{'show': dropdownStates['menu']}" role="menu" aria-labelledby="roleMembers">
+                            <li class="dropdown-item" role="menuitem" 
+                            ng-click="roleDetail.toggle=!roleDetail.toggle; dropdownStates['menu'] = false">
+                            <span class="fa fa-list-ul"></span><span ng-show="roleDetail.toggle"> List Mode</span><span ng-hide="roleDetail.toggle"> Details Mode</span></li></li>
+                        <li role="presentation">
+                            <a class="dropdown-item" role="menuitem" 
+                            ng-click="openRoleModal(role); dropdownStates['menu'] = false;">
+                            <span class="fa fa-edit"></span> Edit All Players </a></li>
+                        <li role="presentation"><a class="dropdown-item" role="menuitem" 
+                            href="RoleDefine.htm?role={{role.symbol}}">
+                            <span class="fa fa-street-view"></span> Define Role </a></li>
+                        <li role="presentation"><a class="dropdown-item" role="menuitem" 
+                            ng-click="goNomination(role); dropdownStates['menu'] = false;">
+                            <span class="fa fa-flag-o"></span> Role Elections </a></li>
+                        <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                            href="MultiInvite.htm?role={{role.symbol}}">
+                            <span class="fa fa-envelope-o"></span> Multi-Person Invite</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation"><a class="dropdown-item" role="menuitem" 
+                            ng-click="deleteRole(role); dropdownStates['menu'] = false;">
+                            <span class="fa fa-times"></span> Delete Role</a></li>
+                        </ul>
+                    </span> &nbsp; &nbsp;
 <% } %>
-            
+                    <span ng-show="role.canUpdateWorkspace">(Can Update)</span>
+                    <span ng-hide="role.canUpdateWorkspace">(Read only)</span>
+                </span> 
             </div>
             <div class="row py-3">
               <span class="col-4" ng-show="roleDetail.toggle">

@@ -33,7 +33,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Transfer from Workspace");
+    window.setMainPageTitle("Transfer Step 1");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
     $scope.thisWorkspace = <%thisWorkspace.write(out,2,4);%>;
@@ -56,8 +56,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 </script>
 
-
-<div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle">Transfer Step 1</h1>
+    </span>
+</div>
+<div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 

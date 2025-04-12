@@ -371,24 +371,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" href="DocsList.htm"> Show Without Labels/Folders</a></span>
+                    <a class="nav-link" role="menuitem" href="DocsList.htm">
+                        List View</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="addDocs">
-                    <a class="nav-link" role="menuitem"
-                tabindex="-1" href="DocsAdd.htm?folder={{folderPathList()}}">
-                        <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document
-                    </a>
-                </span>
-                <span class="dropdown-item" type="button" aria-labelledby="sendEmail"><a class="nav-link" role="menuitem"
-                tabindex="-1" href="SendNote.htm">
-                    <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
-                </span>
+                    <a class="nav-link" role="menuitem" tabindex="-1" 
+                        href="DocsAdd.htm?folder={{folderPathList()}}">
+                        Add Document</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="sendEmail">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="SendNote.htm">
+                        Send Email</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Documents - Folder View</h1>
     </span>
 </div>
 <div ng-cloak>

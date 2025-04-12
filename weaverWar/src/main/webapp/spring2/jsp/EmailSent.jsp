@@ -118,23 +118,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
-                    aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailCreated.htm"> Email
-                        Prepared</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
-                    aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="SendNote.htm"> Create
-                        Email</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
-                    aria-labelledby="createNewTopic"><a role="menuitem" class="nav-link" href="AdminSettings.htm"> Admin
-                        Settings</a>
-                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
+                    <a class="nav-link" role="menuitem" href="EmailCreated.htm">
+                        Email Prepared</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
+                    <a class="nav-link" role="menuitem" href="EmailSent.htm">
+                        Email Sent</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
+                    <a class="nav-link " role="menuitem" href="SendNote.htm">
+                        Create Email</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
+                    <a role="menuitem" class="nav-link" href="AdminSettings.htm">
+                        Admin Settings</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Email Sent</h1>
     </span>
 </div>
 <!-- MAIN CONTENT SECTION START -->

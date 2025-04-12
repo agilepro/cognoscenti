@@ -216,7 +216,8 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    setUpLearningMethods($scope, $modal, $http);All Comments List
+    setUpLearningMethods($scope, $modal, $http);
+    window.setMainPageTitle("Workspace Front Page");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceConfig = <%ngp.getConfigJSON().write(out,2,4);%>;
     $scope.topHistory = <%topHistory.write(out,2,4);%>;

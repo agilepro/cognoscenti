@@ -73,6 +73,7 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     setUpLearningMethods($scope, $modal, $http);
+    window.setMainPageTitle("History");
     $scope.allHistory = <%allHistory.write(out,2,4);%>;
     $scope.filter = "";
     

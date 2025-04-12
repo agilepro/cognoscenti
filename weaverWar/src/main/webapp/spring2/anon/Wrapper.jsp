@@ -250,7 +250,7 @@ function setUpLearningMethods($scope, $modal, $http) {
 
 <%@ include file="AnonNavBar.jsp" %>
 
-    <!-- BEGIN Title and Breadcrump -->
+    <!-- BEGIN Title and Breadcrumb -->
     <div class="container-fluid override my-2">
     <span><!-- user is not logged in, don't display any breadcrumbs -->
         <h1 class="d-inline page-name" id="mainPageTitle"></h1>

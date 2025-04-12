@@ -37,7 +37,7 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Task Areas & Work Groupings");
+    window.setMainPageTitle("Task Areas");
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.loaded = false;
     $scope.allTaskAreas  = [];
@@ -147,20 +147,24 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" ng-click="openTaskAreaModal({id:'~new~'})">Create New Task Area</a>
+                    <a class="nav-link" ng-click="openTaskAreaModal({id:'~new~'})">
+                        Create New Task Area</a>
                 </span>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">Action Items List View</a>
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="GoalList.htm">
+                        List View</a>
                 </span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="GoalStatus.htm">Status List View</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="GoalStatus.htm">
+                        Status View</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Task Areas &amp; Work Groupings</h1>
     </span>
 </div>
 

@@ -88,19 +88,6 @@ public class MeetingControler extends BaseController {
                 streamJSP(ar, "MeetingFull.jsp");
                 return;
             }
-            String roleName = meet.getTargetRole();
-            NGRole role = ngw.getRole(roleName);
-            if (role != null) {
-                UserProfile user = ar.getUserProfile();
-                if (user != null) {
-                    if (!role.isPlayer(user)) {
-                        ar.req.setAttribute("roleName", roleName);
-                        ar.req.setAttribute("objectName", "Meeting");
-                        streamJSP(ar, "WarningNotTargetRole.jsp");
-                        return;
-                    }
-                }
-            }
 
             streamJSP(ar, "MeetingFull.jsp");
         } catch (Exception e) {
@@ -286,7 +273,7 @@ public class MeetingControler extends BaseController {
         try {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             if (ngw.isFrozen()) {
-                streamJSP(ar, "WarningFrozen.jsp");
+                showDisplayWarning(ar, "This workspace is frozen and can not be modified");
                 return;
             }
 
@@ -312,7 +299,7 @@ public class MeetingControler extends BaseController {
         try {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             if (ngw.isFrozen()) {
-                streamJSP(ar, "WarningFrozen.jsp");
+                showDisplayWarning(ar, "This workspace is frozen and can not be modified");
                 return;
             }
             showJSPMembers(ar, siteId, pageId, "MeetingCreate.jsp");

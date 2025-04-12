@@ -341,9 +341,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         
         //recalculate non-members
         var members = getRolePlayers("Members");
+        var stewards = getRolePlayers("Stewards");
         var newNonMembers = [];
         $scope.noteInfo.subscribers.forEach( function(subber) {
-            if (!members[subber.key]) {
+            if (!members[subber.key] && !stewards[subber.key]) {
                 newNonMembers.push(subber);
             }
         });
@@ -1094,25 +1095,37 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        ng-click="startEdit()" target="_blank">Edit This Topic</a></span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        ng-click="sendNoteByMail()">Send Topic By Email</a></span>
-                <span class="dropdown-item" type="button" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
-                        ng-click="changeSubscription(true)">Subscribe to this Topic</a></span>
-                <span class="dropdown-item" type="button" ng-show="isSubscriber"><a class="nav-link" role="menuitem"
-                        tabindex="-1" ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="NotesList.htm">List Topics</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="startEdit()">
+                        Edit This Topic</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">
+                        PDF with Comments</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">
+                        PDF without Comments</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="sendNoteByMail()">
+                        Send Topic By Email</a></span>
+                <span class="dropdown-item" type="button" ng-hide="isSubscriber">
+                    <a class="nav-link" role="menuitem" tabindex="-1" 
+                        ng-click="changeSubscription(true)">
+                        Subscribe to this Topic</a></span>
+                <span class="dropdown-item" type="button" ng-show="isSubscriber">
+                    <a class="nav-link" role="menuitem" tabindex="-1" 
+                        ng-click="changeSubscription(false)">
+                        Unsubscribe from this Topic</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="NotesList.htm">
+                        List Topics</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Discussion Topic</h1>
     </span>
 </div>
 

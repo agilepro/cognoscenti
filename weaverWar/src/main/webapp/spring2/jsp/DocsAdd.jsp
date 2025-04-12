@@ -48,12 +48,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" href="DocsList.htm">
+                        List View</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Add Document Methods</h1>
     </span>
 </div>
 
@@ -66,12 +70,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <div class="guideVocal" style="margin-top:80px">
     You are not allowed to add a document to the workspace, because
-    you are an unpaid user.  You can access documents, but you can 
-    not add them or update them.
+    you are not in a role that allows update.  
+    You can access documents, but you can not add them or update them.
     
-    If you wish to add a document, speak to the administrator of this 
-    workspace / site and have your membership level changed to an
-    active user.
+    If you wish to add a document, speak to the owner of this 
+    workspace / site and have your membership level changed to a
+    paid user in a role that allows update.
 </div>
 
 <% } else if (ngw.isFrozen()) { %>

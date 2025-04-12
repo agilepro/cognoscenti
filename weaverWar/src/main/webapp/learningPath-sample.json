@@ -241,11 +241,6 @@
     "done": true,
     "mode": "standard"
   }],
-  "Warning.jsp": [{
-    "description": "Oops, something went wrong. This page is displayed when the link you clicked on no longer makes sense, because maybe an item was deleted or renamed or otherwise not available. \n\nThere are details displayed below that might make sense to you. You might be able to go back to the last screen, refresh, and try again. Or the problem might be something that can be addressed by the administrator of your workspace or site.",
-    "done": false,
-    "mode": "standard"
-  }],
   "WorkspaceCopyMove1.jsp": [],
   "WorkspaceCopyMove2.jsp": [{
     "description": "This page lets you copy or move documents from any workspace in your Weaver Site to any other workspace in the Site. Just click on any workspace in the From list and chose a document to copy or move from that workspace to the \"To\" workspace.",

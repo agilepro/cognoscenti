@@ -155,7 +155,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 
 
-
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" 
+            type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle">Workspace Personal Settings</h1>
+    </span>
+</div>
 <div>
 
 <%@include file="ErrorPanel.jsp"%>
@@ -196,7 +212,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div>AR Update = <%=ar.canUpdateWorkspace()%></div>
     <div>Workspace Update = <%=ngw.canUpdateWorkspace(uProf)%></div>
     <div>Site Read Only = <%=site.isUnpaidUser(uProf.getUniversalId())%></div>
-    <div>Site Read Only = <%=siteUsers.isReadOnly(uProf)%></div>
+    <div>Site Read Only = <%=siteUsers.isUnpaid(uProf)%></div>
     
                 </div>
             </div>

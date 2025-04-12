@@ -321,12 +321,20 @@ function copyTheLink() {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button" aria-labelledby="createPDF" 
+                    ng-show="docInfo.attType!='URL'">
+                    <a class="nav-link" href="DocsRevise.htm?aid={{docId}}">
+                        Document Versions</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="DocsList.htm">
+                        List View</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Document - Access</h1>
     </span>
 </div>
 <div ng-cloak>
@@ -415,7 +423,7 @@ function copyTheLink() {
             <span class="m-3">
                 <p>Edit the document details, like name and description.  The name and description tell others what the purpose of the document is, and ultimately whether they want to access the document or not.</p>
             </span>
-            <hr>
+            <hr/>
         </div>
         <div class="row d-flex pt-0"  ng-show="isMember">
             <span >
@@ -437,29 +445,32 @@ function copyTheLink() {
                 </div>
             </span>
             </span>
-            <hr>
+            <hr/>
         </div>
         <div class="row d-flex pt-0" ng-show="isMember">
             <span >
-                <button class=" btn-comment btn-default btn-raised" ng-click="composeEmail()">Send by email</button></span>
+                <button class=" btn-comment btn-default btn-raised" ng-click="composeEmail()">
+                    Send by email</button></span>
             <span class="m-3">
-                <p>Compose an email with a number of links in it so that recipients can access this document safely, securely, and without cluttering email, or exceeding any email size limits.</p>
+                <p>Compose an email with a number of links in it so that recipients can access 
+                    this document safely, securely, and without cluttering email, or exceeding 
+                    any email size limits.</p>
             </span>
-            <hr>
+            <hr/>
         </div>
-        <div class="row d-flex pt-0" ng-show="isMember">
+        <div class="row d-flex pt-0" ng-show="isMember && docInfo.attType!='URL'">
             <span>
-                <a class="btn btn-secondary btn-raised btn-default py-1" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{docId}}" >Versions</a></span>
+                <a class="btn btn-secondary btn-raised btn-default py-1" role="menuitem" tabindex="-1" 
+                    href="DocsRevise.htm?aid={{docId}}" >
+                    Versions</a></span>
             <span class="m-3">
-                <p>View the history of changes to this document.</p>
-            </span>
-            <hr>
+                <p>View the history of changes to this uploaded document.</p></span>
+            <hr/>
         </div>
-        <!--experimental mobile UI not ready in new UI-->
-        <!--<div>
+        <div>
             <a href="DocView.wmf?docId={{docId}}" class="btn btn-default btn-raised btn-wide btn-secondary"><i class="fa fa-bolt"></i> Experimental Mobile UI</a>
-        </div>-->
         </div>
+    </div>
         
 
 <div class="col-md-6 col-sm-12 px-3" >
