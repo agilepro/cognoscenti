@@ -13,6 +13,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
+    window.setMainPageTitle("Search");
     $scope.results = [];
     $scope.query = {
         searchFilter: "<% ar.writeJS(searchText); %>",

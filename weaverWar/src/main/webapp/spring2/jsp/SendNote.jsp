@@ -5,24 +5,7 @@
 %><%!
     String pageTitle="Compose EMail";
 %><%
-/*
-Required parameters:  
 
-    1. pageId  : This is the id of a Workspace and used to retrieve NGWorkspace.
-
-Optional Parameters:
-
-    1. eGenId       : This is the id of a Email Generator.  If omitted a NEW one is created.
-    2. intro        : This is the introductory comment in email.
-    3. subject      : Set subject of email.
-    4. noteId       : This is Topic id which can be included in the email as body contents
-    5. att          : The id of an attachement to automatically include
-    6. meet         : The id of a meeting to automatically include
-
-    6. exclude      : This is used to check if responders are excluded or not.
-    7. tempmem      : Used to provide temprary membership.
-    9. attach{docid}: This optional parameter is used to get list of earlier selected document.
-*/
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
@@ -554,7 +537,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Create Email</h1>
     </span>
 </div>
 

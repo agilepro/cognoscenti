@@ -112,44 +112,53 @@
     %> 
     <div style="height:100px"></div>
         <span class="my-5 text-weaverbody" data-bs-toggle="modal" data-bs-target="#accessModal">  <% if (userIsReadOnly || isFrozen) { %>
-        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have unpaid access to this workspace" 
-        class="accessIndicator"/>
+        <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" 
+            title="You have read-only access to this workspace" 
+            class="accessIndicator"/>
     <% } else { %>
-        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have paid user access to this workspace" 
-    class="accessIndicator"/>
+        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" 
+            title="You have update access to this workspace" 
+            class="accessIndicator"/>
     <% } %></span>
     <!-- Modal -->
 <div class="modal fade" id="accessModal" tabindex="-1" aria-labelledby="accessModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content"><% if (userIsReadOnly || isFrozen) { %>
         <div class="modal-header bg-primary-subtle text-primary">
-          <h5 class="modal-title" id="accessModalLabel">Unpaid Only</h5>
+          <h5 class="modal-title" id="accessModalLabel">Read Only</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <h6><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have unpaid access to this workspace" 
-    class="accessIndicator"/>  =  You have unpaid access to this workspace. <br>If you would like to edit this workspace, please contact your administrator.</h6><br>
-            <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
-    class="accessIndicator"/>  =  Full editing access to this workspace.
-    <br><br>
-                <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have guest access to this workspace" 
-                class="accessIndicator"/>  =  Guest access to this workspace. 
+            <h6><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" 
+                    title="You have read-only access to this workspace" 
+                    class="accessIndicator"/>  =  You have read-only access to this workspace. <br>
+                    To edit this workspace you must be placed into a role with update access.</h6><br>
+            <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png"
+                title="You have full edit access to this workspace" 
+                class="accessIndicator"/>  =  Full update access to this workspace.
+                <br><br>
+                <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" 
+                    title="You have guest access to this workspace" 
+                    class="accessIndicator"/>  =  Guest access to this workspace. 
                 
               </div>
         
         <% } else { %>
             <div class="modal-header bg-primary-subtle text-primary">
-                <h5 class="modal-title" id="accessModalLabel">Full Edit Access</h5>
+                <h5 class="modal-title" id="accessModalLabel">Full Update Access</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="You have full edit access to this workspace" 
-    class="accessIndicator"/>  =  You have full editing access to this workspace.</b></h6><br>
-                <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="You have read only access to this workspace" 
-    class="accessIndicator"/>  =  Unpaid access to this workspace. 
-    <br><br>
-                <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="You have guest access to this workspace" 
-                class="accessIndicator"/>  =  Guest access to this workspace. 
+                <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" 
+                    title="You have full update access to this workspace" 
+                    class="accessIndicator"/>  =  You have full update access to this workspace.</b></h6><br>
+                <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" 
+                    title="You have read only access to this workspace" 
+                    class="accessIndicator"/>  =  Read only access to this workspace. 
+                <br><br>
+                <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" 
+                    title="You have guest access to this workspace" 
+                    class="accessIndicator"/>  =  Guest access to this workspace. 
               </div>
               <% } %>
         <div class="modal-footer">

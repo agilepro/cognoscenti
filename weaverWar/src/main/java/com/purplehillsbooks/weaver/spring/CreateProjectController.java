@@ -87,7 +87,7 @@ public class CreateProjectController extends BaseController {
                 //do the members if any specified
                 JSONArray members  = newConfig.getJSONArray("members");
                 if (members!=null) {
-                    NGRole memberRole = newWorkspace.getRole("Members");
+                    NGRole memberRole = newWorkspace.getRequiredRole("MembersRole");
                     for (int i=0; i<members.length(); i++) {
                         JSONObject memberObj = members.getJSONObject(i);
                         String memberAddress = memberObj.getString("uid");

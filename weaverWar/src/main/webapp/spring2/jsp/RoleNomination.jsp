@@ -285,7 +285,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Nominate Role: {{role.name}}</h1>
     </span>
 </div>
 

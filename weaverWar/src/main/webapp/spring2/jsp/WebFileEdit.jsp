@@ -209,6 +209,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </style>
 
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button" aria-labelledby="createPDF">
+                    <a class="nav-link" ng-click="saveComments()">
+                        Save Comments</a></span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle">Compressed Web File</h1>
+    </span>
+</div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>

@@ -211,12 +211,13 @@ embeddedData.canUpdate = <%=canUpdate%>;
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">{{meeting.name}}</h1>
     </span>
 </div>
 <div ng-cloak>

@@ -25,6 +25,7 @@ Required parameter:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
+    window.setMainPageTitle("Print PDF");
     $scope.idontknow = "";
 
     $scope.createPdf = function() {

@@ -193,18 +193,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" tabindex="-1" href="DocsList.htm">List Documents</a>
-                </span>
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{docId}}">
+                        Document Access</a></span>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" tabindex="-1" href="DocDetail.htm?aid={{docId}}">Access Document</a>
-                </span>
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="DocsList.htm">
+                        List View</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Document - Versions</h1>
     </span>
 </div>
 
@@ -213,21 +214,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container-fluid override mx-3">
-    <div class="col-md-auto second-menu d-flex">
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-            <i class="fa fa-bars"></i>
-        </button>
-            <div class="collapse" id="collapseSecondaryMenu">
-                <div class="col-md-auto">
-
-                    
-                </div>
-            </div>
-        </div>
-    <hr>
-
-
-    
     
         <div class="d-flex col-12">
             <div class="container-fluid">

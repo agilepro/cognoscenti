@@ -138,14 +138,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem"
-                        tabindex="-1" ng-click="openSharePortEditor(newSharePort)">Create New Share Port</a></span>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" 
+                        ng-click="openSharePortEditor(newSharePort)">
+                        Create New Share Port</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Share Ports</h1>
     </span>
 </div>
 
@@ -203,7 +206,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 </div>
 
-<script src="<%=ar.retPath%>templates/SharePortModal.js"></script>
+<script src="<%=ar.retPath%>new_assets/templates/SharePortModal.js"></script>
 
 
 

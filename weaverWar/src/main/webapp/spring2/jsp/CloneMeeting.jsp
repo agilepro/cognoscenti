@@ -214,7 +214,7 @@ function GetFirstHundredNoHtml(input) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Clone Meeting</h1>
     </span>
 </div>
 <div ng-cloak>

@@ -82,7 +82,7 @@ Required parameters:
     }
 
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    
+
     LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
     String docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
@@ -92,7 +92,7 @@ Required parameters:
         taskAreaList.put(ta.getMinJSON());
     }
     taskAreaList.put(new JSONObject().put("name", "Unspecified"));
-    
+
 
 /*** PROTOTYPE
 
@@ -156,16 +156,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in an action item of the project '<%ar.writeHtml(ngp.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
-                    +" participate directly with the others through the site.";    
-    
+                    +" participate directly with the others through the site.";
+
     $scope.tagEntry = [];
     $scope.updateTagEntry = function() {
         var newList = [];
         $scope.goalInfo.assignTo.forEach( function(item) {
            var nix = {};
-           nix.name = item.name; 
-           nix.uid  = item.uid; 
-           nix.key  = item.key; 
+           nix.name = item.name;
+           nix.uid  = item.uid;
+           nix.key  = item.key;
            newList.push(nix)
         });
         $scope.tagEntry = newList;
@@ -241,14 +241,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.tagEntry.forEach( function(item) {
             var nix = {};
             if (item.uid) {
-                nix.name = item.name; 
-                nix.uid  = item.uid; 
+                nix.name = item.name;
+                nix.uid  = item.uid;
                 nix.key  = item.key;
             }
             else {
-                nix.name = item.name; 
+                nix.name = item.name;
                 nix.uid  = item.name;
-            }    
+            }
            newList.push(nix)
         });
         var hasChanged = ($scope.goalInfo.assignTo.length != newList.length);
@@ -261,7 +261,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return $scope.tagEntry.length;
     }, function() {
         $scope.copyTagsToRecord();
-    });    
+    });
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.goalInfo.siteKey);
     }
@@ -269,7 +269,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
         $scope.selectedPerson = tag;
     }
-    
+
     $scope.editGoalInfo = false;
     $scope.showCreateSubProject = false;
 
@@ -302,7 +302,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     else {
                         list.push( {name: item, checked:false, index: idx} );
                         idx++;
-                    } 
+                    }
                 }
             });
         }
@@ -370,8 +370,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.constructCheckItems();
         $scope.refreshHistory();
     }
-    
-    
+
+
     $scope.saveAccomplishment = function() {
         if (!$scope.canUpdate) {
             alert("Unable to update meeting because you are an unpaid user");
@@ -397,7 +397,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.updatePlayers = function() {
         $scope.tagEntry = cleanUserList($scope.tagEntry);
-    }    
+    }
     $scope.removePerson = function(person) {
         if (!$scope.canUpdate) {
             alert("Unable to update meeting because you are an unpaid user");
@@ -589,8 +589,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.refreshActionItem();
         });
     };
-    
-    
+
+
     $scope.openModalActionItem = function (startMode) {
         if (!$scope.canUpdate) {
             alert("Unable to update meeting because you are an unpaid user");
@@ -630,7 +630,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.refreshActionItem();
-    
+
 });
 
 function addvalue() {
@@ -662,6 +662,7 @@ function addvalue() {
 </script>
 
 <script src="../../../jscript/AllPeople.js"></script>
+
 <div class="container-fluid override mb-4 mx-3 d-inline-flex">
     <span class="dropdown mt-1">
         <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
@@ -669,31 +670,33 @@ function addvalue() {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="GoalList.htm">List Action Items</a></span>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        ng-click="startEdit('details')">Edit Details</a>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        href="GoalList.htm">
+                        List Action Items</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        ng-click="startEdit('details')">
+                        Edit Details</a>
                 </span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Action Item - Details</h1>
     </span>
 </div>
-
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
-
-
         <div class="container-fluid col-12 override m-3"><!-- ng-hide="editGoalInfo">-->
-            
+
                 <!--State and Title start-->
                 <div class="row d-flex my-2" ng-dblclick="startEdit('assignee')">
-                    <span class="col-auto"  
+                    <span class="col-auto"
                           title="This action item is in {{stateName[goalInfo.state]}} state">
                         <span style="padding:10px;">
                             <button class="no-btn" id="changeStatus" ng-click="dropdownStates['status'] = !dropdownStates['status']"
@@ -723,17 +726,17 @@ function addvalue() {
                             </ul>
                         </span>
                     </span>
-                    <span class="col-10 h4"  
+                    <span class="col-10 h4"
                         title="This is the synopsis of the action item"><span style="color:#755d82;">
                         {{stateName[goalInfo.state]}} </span>&nbsp;<i class="fa fa-caret-right"></i> &nbsp;&nbsp;{{goalInfo.synopsis}}
                     </span>
                 </div>
 
                 <!--State and Title end-->
-            
+
                 <!--State Start-->
-            <div class="row d-flex my-2 py-2 border-bottom border-1"> 
-                    
+            <div class="row d-flex my-2 py-2 border-bottom border-1">
+
                     <span class="col-5 ">
                         <button class="btn-wide btn-comment btn-raised mx-1" ng-click="setState(2)" ng-show="goalInfo.state<2">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small2.gif"> Offered</button>
                         <button class=" btn-wide btn-comment btn-raised mx-1" ng-click="setState(3)" ng-show="goalInfo.state<3">Mark <img src="<%=ar.retPath%>new_assets/assets/goalstate/small3.gif"> Accepted</button>
@@ -754,28 +757,28 @@ function addvalue() {
                         <div class="mx-2" ng-repeat="player in goalInfo.assignTo" >
                             <button class="no-btn" ng-click="dropdownStates[player.uid] = !dropdownStates[player.uid]"
                                 aria-expanded="{{dropdownStates[player.uid]}}">
-                                <img 
-                                class="rounded-5" 
-                                ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px" 
+                                <img
+                                class="rounded-5"
+                                ng-src="<%=ar.retPath%>icon/{{player.key}}.jpg" style="width:32px;height:32px"
                                 title="{{player.name}} - {{player.uid}}"/>
                                 </button>
-                                <ul class="dropdown-menu list-inline" 
-                                ng-class="{'show': dropdownStates[player.uid]}" 
+                                <ul class="dropdown-menu list-inline"
+                                ng-class="{'show': dropdownStates[player.uid]}"
                                 role="menu" aria-labelledby="user">
                                     <li role="presentation" style="background-color:lightgrey">
-                                        <a 
-                                        class="dropdown-item" 
-                                        role="menuitem" 
-                                        tabindex="-1" 
-                                        ng-click="" 
+                                        <a
+                                        class="dropdown-item"
+                                        role="menuitem"
+                                        tabindex="-1"
+                                        ng-click=""
                                         style="text-decoration: none;">{{player.name}}<br/>{{player.uid}}
                                                 </a>
                                             </li>
                                             <li role="presentation" style="cursor:pointer">
-                                                <a 
+                                                <a
                                                 class="dropdown-item" role="menuitem" tabindex="-1"
                                                 ng-click="navigateToUser(player)">
-                                                    <span class="fa fa-user"></span> 
+                                                    <span class="fa fa-user"></span>
                                                     Visit Profile
                                                 </a>
                                             </li>
@@ -791,11 +794,11 @@ function addvalue() {
                     </div>
                     <!--Description End-->
                     <!--checklist Start-->
-                <div class="row d-flex my-2 py-2 border-bottom border-1"  
+                <div class="row d-flex my-2 py-2 border-bottom border-1"
                 title="Manage the check list of items to do for this action">
                     <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit('status')" >Checklist:</span>
                     <span class="col-9">
-                          
+
                         <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
                             <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
                             <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
@@ -813,8 +816,8 @@ function addvalue() {
                         <label for="synopsis" class="clickable h6 col-auto mx-2" ng-click="startEdit()">Status:</label>
 
                     <!--R-Y-G Start-->
-                        
-                            
+
+
                         <span class="col-2 h6" title="Red-Yellow-Green is a high-level status saying how things are going generally">
                                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'" title="In trouble" ng-click="changeRYG('bad')">
                                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'" title="In trouble">
@@ -829,28 +832,28 @@ function addvalue() {
                         <!--<textarea ng-hide="goalInfo.status" ng-model="goal.status" class="form-control"  placeholder="Enter text describing the current status" ></textarea>  -->
                         <span ng-click="startEdit('status')" ><i class="clickable" placeholder="Enter text describing the current status"></i></span>
                         <span class="col-9 mx-2" ng-show="goalInfo.status" >{{goalInfo.status}}
-                        </span>          
+                        </span>
                     </div>
                 </div>
                     <!--status End-->
                     <!--Timeframe Start-->
-            <div class="well m-2">    
+            <div class="well m-2">
                 <div class="row d-flex">
 
                     <span class="col-auto clickable h5" ng-click="startEdit('details')" >
                         <b>Timeframe:</b></span>
                         <span class="d-flex clickable" ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0" title="Click here to update the dates of this action item" ng-click="startEdit('details')">
-                            <span class="col-auto h6 mx-3" ng-show="goalInfo.duedate>0">   
+                            <span class="col-auto h6 mx-3" ng-show="goalInfo.duedate>0">
                                 Due:   </span>
                             <span class="col-2" ng-show="goalInfo.duedate>0">{{goalInfo.duedate|cdate}}  </span>
-                            <span class="col-auto h6 mx-3" ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
-                            Start:</span> 
-                            <span class="col-2" ng-show="goalInfo.startdate>0"> 
+                            <span class="col-auto h6 mx-3" ng-show="goalInfo.startdate>0" ng-click="startEdit('details')">
+                            Start:</span>
+                            <span class="col-2" ng-show="goalInfo.startdate>0">
                             {{goalInfo.startdate|cdate}}</span>
-                        
+
                             <span class="col-auto h6 mx-3" ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">End:</span>
-                            
-                            <span class="col-2" ng-show="goalInfo.enddate>0">   
+
+                            <span class="col-2" ng-show="goalInfo.enddate>0">
                             {{goalInfo.enddate|cdate}}  </span>
                         </span>
                     </div>
@@ -860,17 +863,17 @@ function addvalue() {
                 <div class="row d-flex my-2 py-2 border-bottom border-3">
                     <span class="col-auto clickable h6 mx-2 pt-1" ng-click="startEdit()" style="cursor: pointer;">Labels:</span>
                     <!--<span class="nav-item dropdown d-inline">
-                      
+
                       <button class="specCaretBtn dropdown">
-                        <i class="fa fa-plus"></i></button>         
-                          <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel" 
+                        <i class="fa fa-plus"></i></button>
+                          <ul class="dropdown-menu mb-0 p-2" role="menu" aria-labelledby="selectLabel"
                         style="width:320px;left:-130px;top:15px">
                           <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                          <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton" 
+                          <button role="menuitem" tabindex="0" ng-click="toggleLabel(rolex)" class="labelButton"
                           ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                               {{rolex.name}}</button>
                       </li>
-                      <div class="dropdown-divider" style="float:clear"></div>               
+                      <div class="dropdown-divider" style="float:clear"></div>
                       <li role="presentation" style="float:right">
                         <button role="menuitem" ng-click="openEditLabelsModal()" class="labelButtonAdd btn-comment h6 ">
                             Add/Remove Labels</button>
@@ -885,7 +888,7 @@ function addvalue() {
 
                   </div>
                 <!--Labels End-->
-                    
+
                     <!--Attachments Start-->
                 <div class="row col-12 d-flex my-2 py-2 border-bottom border-1" >
                     <span class="col-auto clickable h6 mx-2 pt-1" ng-click="openAttachDocument()">Attachments:</span>
@@ -910,7 +913,7 @@ function addvalue() {
                 </div>
             </span>
         </div>
-       
+
                     <!--Attachments End-->
 
 <!--Linked Topics Start-->
@@ -965,17 +968,17 @@ function updateVal(){
   flag=true;
 }
 </script>
-    
-    
+
+
         <!-- ========================================================================= -->
         <div class="container-fluid col-12 m-2" >
             <div class="mx-3 h5 my-3">History &amp; Accomplishments
-        </div>               
+        </div>
                     <div class="row col-12 ms-5 my-2 py-2" ng-repeat="rec in allHist">
                         <span class="col-1 projectStreamIcons" >
                             <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.responsible.key}}.jpg"
                                  alt="" width="50" height="50" /></span>
-                        <span class="col-10 projectStreamText">  
+                        <span class="col-10 projectStreamText">
                             {{rec.time|cdate}} -
                             <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/UserSettings.htm" title="access the profile of this user, if one exists">
                              <span class="red">{{rec.responsible.name}}</span>

@@ -338,38 +338,41 @@ app.filter('escape', function() {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button"><a role="menuitem" class="nav-link" tabindex="-1"
-                        href="LabelList.htm"> Labels &amp; Folders</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="roleRequest">
-                    <a role="menuitem" class="nav-link" tabindex="-1" href="RoleRequest.htm">Role Requests</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="emailPrepared">
-                    <a role="menuitem" class="nav-link" href="EmailCreated.htm">Email Prepared</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="EmailSent">
-                    <a role="menuitem" class="nav-link" href="EmailSent.htm">Email Sent</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="WorkspaceStats">
-                    <a role="menuitem" class="nav-link" href="AdminStats.htm"> Workspace Statistics</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="createChildWorkspace">
-                    <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">Create Child
-                        Workspace</a>
-                </span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()" aria-labelledby="createSiblingWorkspace">
-                    <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">Create
-                        Sibling Workspace</a>
-                </span>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
+                <span class="dropdown-item" type="button">
+                    <a role="menuitem" class="nav-link" tabindex="-1" href="LabelList.htm">
+                        Admin Settings</a></span>
+                <span class="dropdown-item" type="button">
+                    <a role="menuitem" class="nav-link" tabindex="-1" href="LabelList.htm">
+                        Labels &amp; Folders</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="roleRequest">
+                    <a role="menuitem" class="nav-link" tabindex="-1" href="RoleRequest.htm">
+                        Role Requests</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="emailPrepared">
+                    <a role="menuitem" class="nav-link" href="EmailCreated.htm">
+                        Email Prepared</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="EmailSent">
+                    <a role="menuitem" class="nav-link" href="EmailSent.htm">
+                        Email Sent</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="WorkspaceStats">
+                    <a role="menuitem" class="nav-link" href="AdminStats.htm">
+                        Workspace Statistics</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="createChildWorkspace">
+                    <a class="nav-link" role="menuitem" 
+                        href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
+                        Create Child Workspace</a></span>
+                <span class="dropdown-item" type="button" aria-labelledby="createSiblingWorkspace">
+                    <a class="nav-link" role="menuitem" 
+                        href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
+                        Create Sibling Workspace</a></span>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Workspace Administration</h1>
     </span>
 </div>
-<div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 

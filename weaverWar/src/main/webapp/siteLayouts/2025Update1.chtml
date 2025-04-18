@@ -1,0 +1,51 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE 2025Update1.chtml-->
+<h1>Hello from the Weaver Team!</h1> 
+
+<p>Dear Weaver Site Owner,</p>
+
+<p>This note marks a long awaited moment for Circle Weaver! After many years of effort by a small volunteer group, we are ready to move to market! Here are several developments:<p>
+
+<ul>
+<li>Today we are releasing many new beta-tested user interface improvements including a new mobile interface allowing Weaver to work on phones.</li>
+
+<li>New Role Structure - from now the only standard roles for workspaces will be Members and Stewards. Members can participate in meetings using the comment boxes, update their action items, participate in discussions, and open stored documents. Some members will also be Stewards who can do all functions such as set up meetings, take meeting notes, store decisions, send emails, set up new workspaces, etc. You will still be able to assign your own additional roles.</li>
+
+<li>Payments - we will begin asking for small payments so that Weaver can keep running and developing indefinitely. 
+  <ul>
+  <li>To support small organizations there will be no charge for one workspace with one steward and four additional users. You can freeze additional workspaces that can be activated after the active workspace is frozen. </li>
+  <li>Each additional workspace will cost $2 per month. Each additional steward will cost $1 per month. This includes enough storage for a typical organization.</li>
+  <li>If you've been a regular Weaver user, thank you for bearing with us! If you want to continue using your current configuration, ask us about a grant in which we will donate a certain number of paid users to your organization.</li>
+  </ul>
+</li>
+<li>Training -
+  <ul>
+  <li>We plan to offer a series of webinars for Circle Weaver users (and potential users) on how to improve their internal communication system. The webinar will review how to have great meetings supported by Circle Weaver features.</li>
+  <li>The first webinar will be on Thursday, May 15 at 3:00pm UTC/GMT. <a href="http://circleweaver.com">Click here to register.</a></li>
+  </ul>
+</li>
+</ul>
+
+<p>Warm regards, </p>
+<p>The Circle Weaver Development Team </p>
+
+
+<p>We have added some new videos to the 
+<a href="https://s06.circleweaver.com/TutorialList.html">Weaver training channel</a>. 
+</p>
+
+
+<p>You can access the site at any time using one of the following links:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the site owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteRoles.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+
+<div class="tm"></div>
+</div>
+</body></html>

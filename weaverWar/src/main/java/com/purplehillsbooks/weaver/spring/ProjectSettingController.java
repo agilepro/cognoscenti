@@ -80,7 +80,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
         if (ngw.isFrozen()) {
-            streamJSP(ar, "WarningFrozen.jsp");
+            showDisplayWarning(ar, "This workspace is frozen and can not be modified");
             return;
         }
         showJSPMembers(ar, siteId, pageId, "AddSomething.jsp");

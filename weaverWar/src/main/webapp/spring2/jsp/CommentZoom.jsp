@@ -11,18 +11,18 @@
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertLoggedIn("Comment page designed for people logged in");
-    
+
     NGBook ngb = ngw.getSite();
-    
+
     JSONObject siteInfo = ngb.getConfigJSON();
     siteInfo.put("frozen", ngb.isFrozen());
-    
+
     CommentRecord selectedComment = ngw.getCommentOrNull(cid);
     JSONObject comment = new JSONObject();
     if (selectedComment!=null) {
         comment = selectedComment.getJSONWithDocs(ngw);
     }
-    
+
     JSONObject workspaceInfo = ngw.getConfigJSON();
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
 
@@ -31,7 +31,7 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
-    
+
     UserProfile up = ar.getUserProfile();
     String currentUser = up.getUniversalId();
     String currentUserName = up.getName();
@@ -59,13 +59,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Comment Detail");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
-    
+
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.comment = <%comment.write(out,2,4);%>;
-    
+
     $scope.containerTypeName = "Discussion Topic";
     $scope.containerTypeNumber = 4;
     if ($scope.comment.containerType == "A") {
@@ -76,8 +76,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.containerTypeName = "Meeting";
         $scope.containerTypeNumber = 7;
     }
-        
-    
+
+
     $scope.commentExists = <%=selectedComment!=null%>;
     $scope.canComment = <%=canComment%>;
     $scope.cid = <%= cid %>;
@@ -115,7 +115,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.defaultProposalAssignees = function() {
         return [];
     }
-    
+
     $scope.tuneNewComment = function(newComment) {
         newComment.containerType = $scope.comment.containerType;
         newComment.containerID = $scope.comment.containerID;
@@ -134,8 +134,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         refreshCommentList();
     }
     setUpCommentMethods($scope, $http, $modal);
-    
-    
+
+
     $scope.deleteComment = function(cmt) {
         var newCmt = {};
         newCmt.time = $scope.cid;
@@ -151,7 +151,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
-    
+
     $scope.allowCommentEmail = function() {
         return true;
     }
@@ -180,22 +180,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    Refresh</button>
             </li>
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Comment Detail</h1>
     </span>
 </div>
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-
-    
-     
-     
-   
 
     <div style="height:20px;"></div>
     <div class="container override mx-md-3 col-md-12">
@@ -229,7 +225,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
       <div ng-show="commentExists">
         <div class="row d-flex" ng-repeat="cmt in getComments()">
-          <%@ include file="CommentView.jsp"%>          
+          <%@ include file="CommentView.jsp"%>
         </div>
       </div>
 
@@ -241,6 +237,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script src="<%=ar.retPath%>new_assets/jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>new_assets/jscript/TextMerger.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/CommentModal.js"></script>
-<script src="<%=ar.retPath%>new_assets/templates/ResponseModal.js"></script>  
+<script src="<%=ar.retPath%>new_assets/templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>new_assets/templates/DecisionModal.js"></script>

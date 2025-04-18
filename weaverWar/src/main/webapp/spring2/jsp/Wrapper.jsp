@@ -289,7 +289,7 @@ myApp.filter('wiki', function() {
   };
 });
 
-console.log("LOADING WRAP LEARNING");
+
 function setUpLearningMethods($scope, $modal, $http) {
     console.log("setUpLearningMethods for <%=loggedKey%>");
     $scope.learningModes = <% learningModes.write(out, 2, 2); %>;
@@ -410,7 +410,7 @@ function showLearningPath() {
       <!-- END Breadcrumb -->
       <script>
       function setMainPageTitle(str) {
-          document.getElementById("mainPageTitle").innerHTML = str;
+          // document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
       }
       </script>
@@ -486,7 +486,7 @@ function showLearningPath() {
 <!-- -->
 <!-- -->
 <!-- -->
-<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+<!--div class="container-fluid override mb-4 mx-3 d-inline-flex">
     <span class="dropdown mt-1">
         <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" 
         id="dropdownInfoMenu" 
@@ -495,14 +495,14 @@ function showLearningPath() {
         </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
                 <li>
-                    <button class="dropdown-item" onclick="window.location.reload(true)" >Refresh</button>
+                    <button class="dropdown-item" onclick="window.location.reload(true)" >BOGUS Refresh</button>
                 </li>
             </ul>
     </span>
     <span >
         <h1 class="d-inline page-name" id="mainPageTitle"></h1>
     </span>
-</div>
+</div-->
 
       <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=wrappedJSP%>" />

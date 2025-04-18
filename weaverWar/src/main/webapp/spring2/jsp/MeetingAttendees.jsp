@@ -171,6 +171,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
 });
 </script>
 
+<!-- MAIN CONTENT SECTION START -->
 <div class="container-fluid override mb-4 mx-3 d-inline-flex">
     <span class="dropdown mt-1">
         <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
@@ -188,11 +189,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Meeting Attendee Matrix</h1>
     </span>
 </div>
 
-<!-- MAIN CONTENT SECTION START -->
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>

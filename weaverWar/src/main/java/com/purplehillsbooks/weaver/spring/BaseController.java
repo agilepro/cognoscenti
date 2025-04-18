@@ -250,7 +250,7 @@ public class BaseController {
             frozen = ((NGWorkspace)ngc).getSite().isFrozen();
         }
         if (frozen) {
-            streamJSP(ar, "WarningFrozen.jsp");
+            showDisplayWarning(ar, "This workspace is frozen and can not be modified");
             return true;
         }
         return false;
@@ -508,22 +508,6 @@ public class BaseController {
                 "Unable to prepare JSP view of %s for site (%s)", ex, jspName, siteId));
         }
     }
-
-
-/*
-    public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
-        try{
-            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
-            if (warnFrozenOrNotMember(ar, ngc)){
-                return;
-            }
-            streamJSP(ar, jspName);
-        }
-        catch(Exception ex){
-            throw WeaverException.newWrap("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
-        }
-    }
-*/
 
 
 

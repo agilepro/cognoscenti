@@ -24,7 +24,7 @@ WCACHE.putObj("<%ar.writeJS(siteInfoURL);%>", <%site.getConfigJSON().write(out,2
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Meetings");
+    window.setMainPageTitle("Meeting List");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
     $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
@@ -174,7 +174,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle"></h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Meeting List</h1>
     </span>
 </div>
 

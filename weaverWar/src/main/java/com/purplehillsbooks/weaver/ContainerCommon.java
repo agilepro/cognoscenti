@@ -212,11 +212,9 @@ public abstract class ContainerCommon extends NGContainer
     /**
     * get a role, and create it if not found.
     */
-    protected NGRole getRequiredRole(String symbol) throws Exception
-    {
+    public NGRole getRequiredRole(String symbol) throws Exception {
         NGRole role = getRole(symbol);
-        if (role==null)
-        {
+        if (role==null) {
             String desc = symbol+" of the workspace "+getFullName();
             String elegibility = "";
             if ("Executives".equals(symbol)) {
