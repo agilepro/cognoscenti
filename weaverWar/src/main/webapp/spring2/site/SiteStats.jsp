@@ -46,7 +46,6 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
-    window.setMainPageTitle("Site Statistics");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
@@ -102,17 +101,42 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
-   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteUsers.htm"><span class="fa fa-users"></span> &nbsp;User List</a></span>
-
-   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
-   <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" ng-click="recalcStats()"><span class="fa fa-refresh"></span> &nbsp;Recalculate</a></span>
-   <% if (ar.isSuperAdmin()) { %>
-   <span class="btn second-menu-btn btn-wide" type="button" ><a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span> &nbsp;Super Admin</a></span>
-   <% } %>
-   <hr class="mx-3">
-   </div>
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+   <span class="dropdown mt-1">
+      <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+         data-bs-toggle="dropdown" aria-expanded="false">
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+         <li>
+            <button class="dropdown-item" onclick="window.location.reload(true)"><span class="fa fa-refresh"></span>
+               &nbsp;Refresh</button>
+            <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm">
+                  <span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+            <span class="dropdown-item" type="button">
+               <a class="nav-link" role="menuitem" href="SiteUsers.htm">
+                  <span class="fa fa-users"></span> &nbsp;User List </a>
+            </span>
+            <span class="dropdown-item" type="button">
+               <a class="nav-link" role="menuitem" href="SiteLedger.htm">
+                  <span class="fa fa-money"></span> &nbsp;Site Ledger </a>
+            </span>
+            <span class="dropdown-item" type="button">
+               <a class="nav-link" role="menuitem" ng-click="recalcStats()">
+                  <span class="fa fa-refresh"></span> &nbsp;Recalculate </a>
+            </span>
+            <% if (ar.isSuperAdmin()) { %>
+               <span class="dropdown-item" type="button">
+                  <a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">
+                     <span class="fa fa-user-secret"></span> &nbsp;Super Admin </a>
+               </span>
+               <% } %>
+         </li>
+      </ul>
+   </span>
+   <span>
+      <h1 class="d-inline page-name">Site Statistics</h1>
+   </span>
+</div>
    <div class="row d-flex mx-2">
     	<div class="col-5 container-fluid override border-1 border-dark-subtle rounded-2 well px-5" style="height: fit-content;">
         <div class="row my-2 border-bottom border-1 pb-2">

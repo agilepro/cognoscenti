@@ -19,7 +19,6 @@ WorkspaceStats wStats = site.getRecentStats();
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-window.setMainPageTitle("Site Administration");
 $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
 $scope.siteStats = <%site.getStatsJSON(cog).write(out,2,4);%>;
 $scope.newName = $scope.siteInfo.names[0];
@@ -229,49 +228,81 @@ $scope.garbageCollect = function() {
         return window.encodeURIComponent;
     });
 </script>
-
-
+    <div class="container-fluid override mb-4 mx-3 d-inline-flex">
+        <span class="dropdown mt-1">
+            <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                    <button class="dropdown-item" onclick="window.location.reload(true)"><span class="fa fa-refresh"></span> &nbsp;Refresh</button>
+                    <span class="dropdown-item" type="button" aria-labelledby="createNewWorkspace">
+                        <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
+                            <span class="fa fa-plus-square"></span> &nbsp;Create New Workspace
+                        </a>
+                    </span>
+                    <span class="dropdown-item" type="button" aria-labelledby="siteStats">
+                        <a class="nav-link" role="menuitem" href="SiteStats.htm">
+                            <span class="fa fa-line-chart">
+                            </span> &nbsp;Site
+                            Statistics
+                        </a>
+                    </span>
+                    <span class="dropdown-item" type="button" aria-labelledby="siteLedger">
+                        <a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger
+                        </a>
+                    </span>
+                    <% if (ar.isSuperAdmin()) { %>
+                        <span class="dropdown-item" type="button">
+                            <a class="nav-link" role="menuitem" href="TemplateEdit.htm">
+                                <span class="fa fa-user-secret">
+                                </span> &nbsp;Template Edit
+                            </a>
+                        </span>
+                        <span class="dropdown-item" type="button" aria-labelledby="siteDetails">
+                            <a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">
+                                <span class="fa fa-user-secret">
+                                </span> &nbsp;Super
+                                Admin
+                            </a>
+                        </span>
+                    </li>
+                </ul>
+            </span>
+            <span>
+                <h1 class="d-inline page-name">Site Administration</h1>
+            </span>
+        </div>
 <div ng-cloak>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-        <span class="btn second-menu-btn btn-wide " type="button" aria-labelledby="createNewWorkspace">
-            <a class="nav-link" role="menuitem" href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}"><span class="fa fa-plus-square"></span> &nbsp;Create New Workspace</a></span>
-
-        <span class="btn second-menu-btn btn-wide" type="button" aria-labelledby="siteStats">
-            <a class="nav-link" role="menuitem" href="SiteStats.htm"><span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
-<% if (ar.isSuperAdmin()) { %>
-          <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" 
-              href="TemplateEdit.htm"><span class="fa fa-user-secret"></span> &nbsp;Template Edit</a></span>
-            <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-              href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span> &nbsp;Super Admin</a></span>
-<hr class="mx-3">
-</div>
 
     
         
-        <% } %>
+  
 
-    <div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-5 mx-2">
+        <div class="d-flex col-12">
+            <div class="contentColumn mx-5">
+    <% } %>
+    <div class="container-fluid override mx-2">
         <div class="row my-2 border-bottom border-1 pb-2 ">
-            <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
+            <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start" ng-click="toggleEditor('NewName')" title="click to change site name">Site Name:</span>
                     
                 <span class="col-9 mt-2" ng-hide="isEditing =='NewName'">
-                        <span class="h5 bold text-primary">{{newName}}</span>
+                    <span class="h5 bold text-primary">{{newName}}</span>
                 </span>
-                <span class="col-9 mt-2 form-inline form-group " ng-show="isEditing =='NewName'">
-                        <input type="text" class="rounded-2 form-control mb-2" ng-model="newName">
-                        <span class="helpColumn" >
-                            <span ng-show="isEditing =='NewName'" class=" guideVocal">
-                        If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
-                        </span></span>
-                        <span class="d-flex">
-                            <button ng-click="addName(newName)" class="btn btn-default btn-primary  btn-raised ms-auto">Change Name</button>
-                        </span>
-                        
-                </span>
+                <span class="col-9 mt-2" ng-show="isEditing =='NewName'">
+                    <input type="text" class="rounded-2 form-control" ng-model="newName">
+                    <span class="d-flex" >
+                        <span ng-show="isEditing =='NewName'" class=" guideVocal">
+                    If you change the display name of a site, it will display with the new name wherever the site is listed, but the key to access the site (in the URL) will not change.
+                    </span></span>
+                    <span class="d-flex">
+                        <button ng-click="addName(newName)" class="my-2 btn btn-primary btn-raised ms-auto">Change Name</button>
+                    </span>
+                    
+            </span>
         </div>
         <div class="row my-2 border-bottom border-1 pb-2" >
                 <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start pb-2" ng-click="toggleEditor('SiteDescription')" title="click to change site description">Site Description:
@@ -334,13 +365,13 @@ $scope.garbageCollect = function() {
                     
         </div>
     </div>
-    <div class="container-fluid override mx-5">
+    <div class="container-fluid override">
         <div class="row">
             <span class="h4">Site Budget:</span>
         </div>
         
         <div>
-            <div class="row col-12 border-bottom border-1 border-light-subtle py-2">
+            <div class="row col-12 py-2">
                 <span class="col-2 "></span>
                 <span class="col-1 numberColumn h6">Your Limit</span>
                 <span class="col-1 numberColumn h6 text-center" >Set</span>
@@ -481,12 +512,12 @@ $scope.garbageCollect = function() {
             </div>
 
             <hr/>
-            <div class="row d-flex my-3 mx-2">
-                <span class="col-sm-12 col-md-6 pe-3 border-1 border-light-subtle border-start">
+            <div class="row d-flex my-3">
+                <span class="col-sm-12 col-md-6 pe-3">
                     <p>Statistics are calculated on a regular bases approximately every day. If you have made a change, by removing or adding things, you can recalculate the resources that your site is using.</p>
                     <button ng-click="recalcStats()" class="btn btn-primary btn-wide float-end me-2">Recalculate Current Usage</button>
                 </span>
-                <span class="col-sm-12 col-md-6 border-1 border-light-subtle border-start">
+                <span class="col-sm-12 col-md-6 border-1 border-light-subtle border-start ps-4">
                         <p>In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a
                             period of time. In order to actually cause the files to be deleted use the Garbage Collect function. This will
                             actually free up space on the server, and reduce the amount of resources you are using.</p><button
@@ -495,7 +526,7 @@ $scope.garbageCollect = function() {
                     </div>
         </div> <!-- Closing the row div that was missing -->
     </div>
-    <div class="container-fluid well px-4 mx-5">
+    <div class="container-fluid well px-4">
         <div class="row">
             <h5>Here is a detailed explanation of the fields above: </h5>
         </div>

@@ -12,7 +12,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Search Workspaces");
+    
     $scope.results = [];
     $scope.query = {
         searchFilter: "<% ar.writeJS(searchText); %>",
@@ -76,20 +76,28 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <!-- MAIN CONTENT SECTION START -->
-<div>
+    <div class="container-fluid override mb-4 mx-3 d-inline-flex">
+        <span class="dropdown mt-1">
+            <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                    <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                    <span class="dropdown-item" type="button">
+                        <a role="menuitem" tabindex="-1" ng-click="clearResults()">Clear Results</a>
+                    </span>
+                </li>
+            </ul>
+        </span>
+        <span>
+            <h1 class="d-inline page-name" id="mainPageTitle">Search Workspaces</h1>
+        </span>
+    </div>
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Options: <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="clearResults()">Clear Results</a></li>
-        </ul>
-      </span>
-    </div>
+<div class="container-fluid override mx-3">
 
     <table>
         <tr >

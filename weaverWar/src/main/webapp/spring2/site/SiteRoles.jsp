@@ -34,7 +34,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
-    window.setMainPageTitle("Roles for Site");
+    
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.showInput = false;
@@ -273,16 +273,39 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    <span class="fa fa-refresh"></span>
+                    &nbsp;Refresh
+                </button>
 
-
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span
-                class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteStats.htm"><span
-                class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem" href="SiteLedger.htm"><span
-                class="fa fa-money"></span> &nbsp;Site Ledger</a></span>
-    <hr class="mx-3">
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" href="SiteAdmin.htm">
+                        <span class="fa fa-cogs"></span> &nbsp; Site Admin
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" href="SiteStats.htm">
+                        <span class="fa fa-line-chart"></span> &nbsp;Site Statistics
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" href="SiteLedger.htm">
+                        <span class="fa fa-money"></span> &nbsp;Site Ledger
+                    </a>
+                </span>
+            </li>
+        </ul>
+    </span>
+            <span>
+                <h1 class="d-inline page-name">Roles for Site</h1>
+            </span>
 </div>
 
 <div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-3 mx-4">

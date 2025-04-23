@@ -20,7 +20,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
-    window.setMainPageTitle("Site Ledger");
+
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
     $scope.ledgerInfo = <%ledgerInfo.write(out,2,4);%>;
@@ -76,29 +76,52 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     padding: 4px;
 }
 </style>
-<div>
+    <div class="container-fluid override mb-4 mx-3 d-inline-flex">
+        <span class="dropdown mt-1">
+            <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                    <button class="dropdown-item" onclick="window.location.reload(true)"><span class="fa fa-refresh"></span> &nbsp;Refresh</button>
+                    <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm">
+                        <span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
+                    <span class="dropdown-item" type="button">
+                        <a class="nav-link" role="menuitem" href="SiteUsers.htm">
+                            <span class="fa fa-users"></span> &nbsp;User List
+                        </a>
+                    </span>
+                    <span class="dropdown-item" type="button">
+                        <a class="nav-link" role="menuitem" href="SiteStats.htm">
+                            <span class="fa fa-line-chart"></span> &nbsp;Site Statistics
+                        </a>
+                    </span>
+                    <span class="dropdown-item" type="button">
+                        <a class="nav-link" role="menuitem" ng-click="recalcStats()">
+                            <span class="fa fa-refresh"></span> &nbsp;Recalculate
+                        </a>
+                    </span>
+                    <% if (ar.isSuperAdmin()) { %>
+                    <span class="dropdown-item" type="button">
+                        <a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">
+                            <span class="fa fa-user-secret"></span> &nbsp;Super Admin
+                        </a>
+                    </span>
+                        <% } %>
+                </li>
+            </ul>
+        </span>
+        <span>
+            <h1 class="d-inline page-name">Site Ledger</h1>
+        </span>
+    </div>
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-            href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp; Site Admin</a></span>
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-            href="SiteUsers.htm"><span class="fa fa-users"></span> &nbsp;User List</a></span>
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-            href="SiteStats.htm"><span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
-    <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-            ng-click="recalcStats()"><span class="fa fa-refresh"></span> &nbsp;Recalculate</a></span>
-    <% if (ar.isSuperAdmin()) { %>
-        <span class="btn second-menu-btn btn-wide" type="button"><a class="nav-link" role="menuitem"
-                href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span>
-                &nbsp;Super Admin</a></span>
-        <% } %>
-            <hr class="mx-3">
-</div>
+
 
 <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-5">
-    <div class="col-12 well ms-1">
+    <div class="col-12 ms-1">
         <div class="h5">Monthly Summary</div>
 
     

@@ -39,13 +39,16 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         }
         if ($scope.editSitch.uid == pers.uid) {
             //just close it
-            $scope.editSitch = {};
+ //           $scope.editSitch = {};
         }
+    
         else {
             $scope.editSitch = { expect: pers.expect, situation: pers.situation, uid: pers.uid };
         }
     }
-
+    $scope.stopEditSitch = function (pers) {
+        $scope.editSitch = {};
+    };
 
     var templateCacheDefeater = embeddedData.templateCacheDefeater;
 

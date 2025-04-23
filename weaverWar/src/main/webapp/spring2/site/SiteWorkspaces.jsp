@@ -45,7 +45,6 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Workspaces in Site");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
@@ -120,16 +119,32 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="../jsp/ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-3">
-        <span class="btn second-menu-btn btn-wide " type="button" aria-labelledby="createNewWorkspace">
-            <a class="nav-link" role="menuitem" href="SiteCreateWorkspace.htm" >
-                <span class="fa fa-plus-square"></span> &nbsp;Create New Workspace</a>
-            </span>
-
-                    <span class="btn second-menu-btn btn-wide" type="button" ng-click="garbageCollect()" aria-labelledby="collectGarbage"><a class="nav-link"
-                        ><i class="fa fa-trash"></i> &nbsp;Garbage  Collect</a>
-                    </span>
-<hr class="mx-3">
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">
+                    <span class="fa fa-refresh"></span> &nbsp;Refresh
+                </button>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" href="SiteCreateWorkspace.htm" >
+                        <span class="fa fa-plus-square">
+                        </span> &nbsp;Create New Workspace
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="garbageCollect()" aria-labelledby="collectGarbage">
+                    <a class="nav-link">
+                        <i class="fa fa-trash"></i> &nbsp;Garbage  Collect</a>
+                </span>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle">Workspaces in Site</h1>
+    </span>
 </div>
 
 <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-5">

@@ -101,7 +101,6 @@ tagsInputWorkspacePicker  ={
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $modal) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
@@ -339,7 +338,7 @@ app.filter('escape', function() {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">
-                    Refresh</button>
+                    <span class="fa fa-refresh"></span> &nbsp;Refresh</button>
                 <span class="dropdown-item" type="button">
                     <a role="menuitem" class="nav-link" tabindex="-1" href="LabelList.htm">
                         Admin Settings</a></span>

@@ -94,7 +94,6 @@ Required parameter:
 <script>
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
-    window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
     $scope.selectedTemplate = "";
     $scope.newWorkspace = <% newWorkspace.write(ar.w,2,4); %>;
@@ -177,7 +176,34 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 </script>
 <script src="<%=ar.retPath%>jscript/AllPeople.js"></script>
 
-<div>
+    <div class="container-fluid override mb-4 mx-3 d-inline-flex">
+        <span class="dropdown mt-1">
+            <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+                data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+                <li>
+                    <button class="dropdown-item" onclick="window.location.reload(true)"><span class="fa fa-refresh"></span> &nbsp;Refresh</button>
+                    <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" href="SiteAdmin.htm"><span class="fa fa-cogs"></span> &nbsp;Site Admin</a></span>
+                    <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" href="SiteUsers.htm"><span class="fa fa-users"></span> &nbsp;User List</a></span>
+                    <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" href="SiteStats.htm">
+                        <span class="fa fa-line-chart"></span> &nbsp;Site Statistics</a></span>
+                        <span class="dropdown-item" type="button" aria-labelledby="siteLedger">
+                            <a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger </a>
+                        </span>
+
+                    <% if (ar.isSuperAdmin()) { %>
+                        <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem"
+                                href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>"><span class="fa fa-user-secret"></span> &nbsp;Super
+                                Admin</a></span>
+                        <% } %>
+                </li>
+            </ul>
+        </span>
+        <span>
+            <h1 class="d-inline page-name">Create New Workspace</h1>
+        </span>
+    </div>
 
 <div ng-show="siteInfo.siteMsg">
 
@@ -189,106 +215,103 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 
 <div class="container-fluid mx-0" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
-<div class="container-fluid override border-1 border-dark-subtle rounded-2 well px-4  mx-0">
+    
+<div class="container-fluid override mx-2">
     <div class="form-group fs-5 d-flex py-2">
-        <label class="form-label col-3" ng-click="showNameHelp=!showNameHelp">
-            New Workspace Name &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start">
+            New Workspace Name 
         </label>
-        <input type="text" class="form-control rounded-2" ng-model="newWorkspace.newName"/>
+        <span class="col-9 mt-2">
+            <input type="text" class="form-control rounded-2" ng-model="newWorkspace.newName" placeholder="Enter a name for this new workspace"/>
+            <span class="d-flex">
+            <span class="guideVocal" >Pick a short clear name that would be useful to people that don't already know about the group using the workspace. You can change the <b>display name</b> at any time. </span>
+            
+            </span>
+        </span>
     </div>
-    <div class="form-group fs-5 d-flex py-2">
-        <label class="form-label col-3" >
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2">
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start">
             URL Address:
         </label>
-        &nbsp; {{getURLAddress()}}
+        <span class="col-9 mt-2">
+            <span class="d-flex">
+            &nbsp; {{getURLAddress()}}</span>
+            <span class="guideVocal text-secondary-emphasis col-5">Note: The first name you pick will set the <b>URL address</b> for
+            the workspace. That will be permanent; the URL can not be changed later.</span>
+        </span>
     </div>
     <div class="form-group py-2 guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
-        Pick a short clear name that would be useful to people that don't already know
-        about the group using the workspace.  You can change the <b>display name</b> at any time.
-        <br/>***<br/>
-        <p class="override text-secondary-emphasis">Note: The first name you pick will set the <b>URL address</b> for the workspace.  
-        That will be permanent; the URL can not be changed later.</p>
+        
     </div>
-    <div class="form-group fs-5 d-flex py-2">
-        <label class="form-label col-3" ng-click="showPurposeHelp=!showPurposeHelp">
-            Workspace Aim &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2">
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start" ng-click="showPurposeHelp=!showPurposeHelp">
+            Workspace Aim
         </label>
-        <textarea class="form-control rounded-2" ng-model="newWorkspace.purpose"></textarea>
+        <span class="col-9 mt-2">
+            <textarea class="form-control rounded-2" ng-model="newWorkspace.purpose" placeholder="Describe the aim of the workspace"></textarea>
+            <span class="d-flex">
+                <span class="guideVocal">Describe in a sentence or two the <b>aim</b> (or purpose) of the workspace in a way that people who are not yet part of the workspace will understand, and to help them know whether they should or should not be part of that workspace. This description will be available to the public if the workspace ever appears in a public list of workspaces.</span>
+            </span>
+        </span>
     </div>
-    <div class="guideVocal" ng-show="showPurposeHelp" ng-click="showPurposeHelp=!showPurposeHelp">
-        Describe in a sentence or two the <b>aim</b> (or purpose) of the workspace in a way that
-        people who are not yet part of the workspace will understand,
-        and to help them know whether they should or should not be
-        part of that workspace. 
-        <br/>
-        This description will be available to the public if the workspace
-        ever appears in a public list of workspaces.
-    </div>
-    <div class="form-group fs-5 d-flex py-2">
-        <label class="form-label col-3" ng-click="showFrozenHelp=!showFrozenHelp">
-            Frozen Workspace &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+    
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2">
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start" ng-click="showFrozenHelp=!showFrozenHelp">
+            Frozen Workspace
         </label>
-        <div>
+        <div class="col-9">
             <input type="checkbox" ng-model="newWorkspace.frozen"/> Frozen
             <% if (onlyAllowFrozen) { %> (only frozen allowed, already 
-                <%=workspaceLimit%><% if (surplusWorkspaces) {%>+<%}%> active workspaces) <% } %>
+                <%=workspaceLimit%><% if (surplusWorkspaces) {%>+<%}%> active workspaces) <% } %><br/>
+            <span class="d-flex">
+                <span class="guideVocal">A frozen workspace is one that is not active.  It can be used to represent a workspace that is no longer active, or to represent a workspace that is not yet active.  You can create as many frozen workspaces as you like, but only <b><%=workspaceLimit%> </b>active workspaces.</span>
+            </span>
         </div>
     </div>
-    <div class="guideVocal" ng-show="showFrozenHelp" ng-click="showFrozenHelp=!showFrozenHelp">
-        Workspaces can be active, frozen or deleted.  Only active workspaces can 
-        support organizational work.
-        <br/>
-        This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces according
-        to the current payment plan.
-        <br/>       
-        You are allowed unlimited frozen workspaces to represent an accurate organizational hierarchy.
-        <br/>***<br/>
-        If you find you can only create a frozen workspace, go ahead and create it frozen, and then 
-        go to the other projects and sort out which ones need to be active, or change your plan
-        to allow for more.
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2">
+        <div class="col-1 fixed-width-md"></div>
+        <div class="container well guideVocal m-3 col-9"> Workspaces can be active, frozen or deleted. Only active workspaces can support
+        organizational work. <br /> This site is limited to <b> {{siteInfo.workspaceLimit}} </b> active workspaces according
+        to the current payment plan. <br /> You are allowed unlimited frozen workspaces to represent an accurate
+        organizational hierarchy. <br />***<br /> If you find you can only create a frozen workspace, go ahead and create it
+        frozen, and then go to the other projects and sort out which ones need to be active, or change your plan to allow
+        for more. </div>
     </div>
-    <div class="form-group fs-5 d-flex py-2">
-        <label class="form-label col-3" ng-click="showMembersHelp=!showMembersHelp">
-            Initial Members &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2">
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start" >
+            Initial Members
         </label>
-          <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace"
-                      display-property="name" key-property="uid"
-                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                      on-tag-added="updatePlayers()"
-                      on-tag-removed="updatePlayers()">
-              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-          </tags-input>
+        <span class="col-9">
+            <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace" display-property="name" key-property="uid" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()" on-tag-removed="updatePlayers()" class="rounded-2">
+                <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+            </tags-input>
+            <span class="d-flex">
+                <span class="guideVocal">Members are allowed to access the workspace. You can enter their email address if they have not accessed the system
+                before. If not novices, type three letters to get a list of known users that match. Later, you can add and remove
+                members whenever needed.<br />*** <br /> After the workspace is created go to each <b>novice</b> user and send them an
+                invitation to join.</span>
+            </span>
+        </span>
     </div>
-    <div class="guideVocal mb-2" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">
-        Members are allowed to access the workspace.
-        You can enter their email address if they have not accessed the system before.
-        If not novices, type three letters to get a list of known users that match.
-        Later, you can add and remove members whenever needed.<br/>***
-        <br/>
-        After the workspace is created go to each <b>novice</b> user and send them an
-        invitation to join.
-    </div>
-    <div class="form-group fs-5 d-flex py-2" ng-show="newWorkspace.parentName">
-        <label class="form-label col-3" ng-click="showParentHelp=!showParentHelp">
-            Initial Parent &nbsp; <i class="fa fa- fa-question-circle-o"></i>  
+    <div class="form-group fs-5 d-flex border-bottom border-1 py-2" ng-show="newWorkspace.parentName">
+        <label class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start" ng-click="showParentHelp=!showParentHelp">
+            Initial Parent  
         </label>
-        <div>
-            <input class="form-control" disabled ng-model="newWorkspace.parentName"/>
-        </div>
+        <span class="col-9 mt-2 form-inline form-group">
+            <input class="form-control rounded-2 mt-2" disabled ng-model="newWorkspace.parentName"/>
+            <span class="d-flex">
+                <span class="guideVocal">Workspaces can be arranged into a tree, with child workspaces nested below parent workspaces. <br /> To change the
+                structure of the tree, this parent can be changed at any time after the workspace is created.</span>
+            </span>
+        </span>
     </div>
-    <div class="guideVocal" ng-show="showParentHelp" ng-click="showParentHelp=!showParentHelp">
-        Workspaces can be arranged into a tree, with child workspaces nested
-        below parent workspaces.  
-        <br/>
-        To change the structure of the tree, this parent can be changed at any time after 
-        the workspace is created.
-    </div>
+
 
 
 
 
     <div class="form-group pb-5">
-        <button class="btn btn-primary btn-default btn-raised float-end" ng-click="createNewWorkspace()">
+        <button class="btn btn-primary btn-default btn-raised" ng-click="createNewWorkspace()">
             Create Workspace</button>
     </div>
 
@@ -305,9 +328,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 </div>
 <div class="container my-2">
     <div class="guideVocal">
-        <p>
-       If you would like some guidance in how to create a workspace, and how sites and workspaces work,
-       please check the tutorial on the discussion of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
+        <p>If you would like some guidance in how to create a workspace, and how sites and workspaces work, please check the tutorial on the discussion of <a href="https://s06.circleweaver.com/Tutorial02.html">Sites &amp; Workspaces</a>
        for a complete walk through on how to do this.
        </p>
        <p>

@@ -71,9 +71,9 @@
                 <ul class="navbar-nav pe-3">
                   <!-- Drop Down help -->
                   <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle text-weaverbody" id="navbarHelpDropdown" role="button"
+                    <button class="nav-link dropdown-toggle text-weaverbody" id="navbarHelpDropdown" role="button"
                       data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa fa-question-circle" aria-hidden="true"></i> Help</a>
+                      <i class="fa fa-question-circle" aria-hidden="true"></i> Help</button>
                     <ul class="dropdown-menu" aria-labelledby="navbarHelpDropdown">
                       <li><a class="dropdown-item" href="<%=userRelPath%>LearningPath.htm">Learning Settings</a></li>
                       <li><a class="dropdown-item" href="https://s06.circleweaver.com/TutorialList.html"
@@ -82,11 +82,11 @@
                   </li>
                   <!-- Drop Down Add -->
                   <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle text-weaverbody" id="navbarAddDropdown" role="button"
+                    <button class="nav-link dropdown-toggle text-weaverbody" id="navbarAddDropdown" role="button"
                       data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="fa fa-plus" aria-hidden="true"></i>
                       <span class="dropdown-toggle-label" translate>Add</span>
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" aria-labelledby="navbarAddDropdown">
                       <li><a class="dropdown-item" href="AddSomething.htm?start=meeting">Meeting</a></li>
                       <li><a class="dropdown-item" href="NotesList.htm?start=create">Discussion</a></li>
@@ -99,11 +99,11 @@
                   </li>
                   <!-- Drop Down Workspace -->
                   <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle text-weaverbody" id="navbarWorkspaceDropdown"
-                      role="button" data-bs-toggle="dropdown-toggle-label ng-scope" aria-expanded="false">
+                    <button class="nav-link dropdown-toggle text-weaverbody" id="navbarWorkspaceDropdown"
+                      role="button" data-bs-toggle="dropdown-toggle-label" aria-expanded="false">
                       <i class="fa fa-circle-o" aria-hidden="true"></i>
                       <span class="dropdown-toggle-label" translate>Workspaces</span>
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" aria-labelledby="navbarWorkspacesDropdown">
                       <span class="dropdown-item">
                         <% List<RUElement> recent = ar.getSession().recentlyVisited; for (RUElement rue : recent) {

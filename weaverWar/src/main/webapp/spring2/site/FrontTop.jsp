@@ -118,7 +118,7 @@ public void layout( List<NGPageIndex> allContainers, int point[], String parent,
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Site Map for <%ar.writeJS(ngb.getFullName());%>");
+
     $scope.children   = <%container.write(out,2,4);%>;
     $scope.filter = "";
 
@@ -198,7 +198,9 @@ app.controller('myCtrl', function($scope, $http) {
           margin:6px
       }
     </style>
-
+            <span>
+                <h1 class="d-inline page-name">Site Map for <%ar.writeJS(ngb.getFullName());%></h1>
+            </span>
     <% if (!hasNull) { %>
     <div class="guideVocal">
     <p><b>Note</b> there is no workspace in this site that has an empty parent to serve as the root of the tree.   

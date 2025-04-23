@@ -301,7 +301,7 @@ a {
 //buttons//
 .override button  {
     border-radius: 8px;
-    border-color: $primary;
+    //border-color: $primary;
 }
 .override .btn  {
     position: relative;
@@ -624,8 +624,8 @@ a {
 .override .labelButton {
     overflow: hidden;
     background-color: $primary;
-    box-shadow: #cccccc 2px 2px 5px;
-    border: $primary 1px solid;
+    //box-shadow: #cccccc 2px 2px 5px;
+    //border: $primary 1px solid;
     border-radius: 8px;
     margin: 5px;
     &:hover {
