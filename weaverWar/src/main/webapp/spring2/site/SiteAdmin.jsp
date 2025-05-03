@@ -252,6 +252,11 @@ $scope.garbageCollect = function() {
                         <a class="nav-link" role="menuitem" href="SiteLedger.htm"><span class="fa fa-money"></span> &nbsp;Site Ledger
                         </a>
                     </span>
+                        <span class="dropdown-item" type="button">
+                            <a class="nav-link" role="menuitem" href="SiteUsers.htm">
+                                <span class="fa fa-users"></span> &nbsp;User List 
+                            </a>
+                        </span>
                     <% if (ar.isSuperAdmin()) { %>
                         <span class="dropdown-item" type="button">
                             <a class="nav-link" role="menuitem" href="TemplateEdit.htm">
@@ -537,8 +542,7 @@ $scope.garbageCollect = function() {
               once your workspace limit is reached.  
               To add more unfrozen workspaces, a site administrator will need to come 
               and raise this limit.  -->
-              Please note, lowering this limit does not automatically remove workspaces that already exist.  You will need to remove workspaces, or change them
-              to frozen, manually to lower the actual charge.
+              <br><em><b>Please note,</b> lowering this limit does not automatically remove workspaces that already exist.  You will need to remove or freeze them manually to lower the actual charge.</em>
               </li>
               <li><b>Set</b>: 
               Use these controls to raise and lower your limit for the site.
@@ -550,19 +554,20 @@ $scope.garbageCollect = function() {
               </li>
               <li><b>Gratis</b>: 
               This is the number of active workspaces that are being provided to you 
-              for free from Circle Weaver Tech. Each Workspace comes with one additional steward and 20 additional members for free.
+              for free from Circle Weaver Tech. 
               </li>
               <li><b>Charged</b>: 
               This is the number of workspaces that you actually need to pay for.
               </li>
               <li><b>Cost</b>: 
-              This is the monthly charge at $3 per workspace.
+              This is the monthly charge at $2 per workspace.
               </li>
             </ul>
           </li>
-          <!--
+
           <li><b>Frozen Workspaces</b>
           <ul>
+            <p>Frozen workspaces are workspaces that are not currently being used. You can freeze and unfreeze workspaces as you see fit.</p>
               <li><b>Current Usage</b>: 
               This is the number of frozen workspaces you actually have in your site.
               </li>
@@ -570,46 +575,41 @@ $scope.garbageCollect = function() {
               You are allowed 4 free frozen workspaces for every paid workspace.
               </li>
               <li><b>Charged</b>: 
-              This is the number of frozen workspaces that you actually need to pay for, if any.
+              This is the number of frozen workspaces that above the gratis limit that you actually need to pay for, if any.
               </li>
               <li><b>Cost</b>: 
-              This is the monthly charge at $0.50 per frozen workspace.
+              This is the monthly charge at $0.50 per frozen workspace for any above the gratis limit.
               </li>
             </ul>
-          </li>-->
+          </li>
             </ul>
         </span>
 
         <span class="col-sm-12 col-md-6 col-lg-4">
             <ul>
-                <li><b>Stewards</b>
+                <li><b> Paid Users (Stewards)</b>
                     <ul>
                         <li><b>Your Limit</b>: As the administrator, you declare what limits you want to place on the number of
-                            <b>stewards</b> for your site. You are charged only for what you actually use, but this limit helps
-                            you control how many can be added. One free steward is provided for each added workspace. The system will not allow any workspace to add more once
-                            your steward limit is reached. A site administrator will need to come and raise this limit for more
-                            stewards to be added. Please note, lowering this limit does not automatically remove stewards who
-                            are already entered as stewards. You will need to remove stewards manually. </li>
+                            <b>paid users</b> or stewards for your site. You are charged only for what you actually use, but this limit helps
+                            you control how many can be added. The system will not allow any workspace to add more once
+                            your limit is reached. A site administrator will need to come and raise this limit for more
+                            paid users to be added. 
+                            <br><em><b>Please note,</b> lowering this limit does not automatically remove stewards who are <b>paid users</b> in your site. You will need to manually change their access to <b>unpaid user</b> and they can remain members of the site.</em> </li>
                         <li><b>Set</b>: Use these controls to raise and lower your limit for the site. </li>
-                        <li><b>Current Usage</b>: This is the number of stewards you actually have using your site across all
-                            the workspaces. This is also known as the count of stewards as the basis for other calculations.
+                        <li><b>Current Usage</b>: This is the number of stewards, or paid users, you actually have using your site across all the workspaces. This is also known as the count of paid users as the basis for other calculations.
                         </li>
                         <li><b>Gratis</b>: This is the number of stewards that are being provided to you for free from Circle
                             Weaver Tech. </li>
-                        <li><b>Charged</b>: This is the number of additional stewards that you actually need to pay for. </li>
+                        <li><b>Charged</b>: This is the number of additional paid users that you actually need to pay for. </li>
                         <li><b>Cost</b>: This is the monthly charge at $1 per steward. </li>
                     </ul>
                 </li>
-                <li><b>Members</b>
+                <li><b>Unpaid Users (Members)</b>
                     <ul>
                         <li><b>Current Usage</b>: This is the number of <b>members</b> you actually have using your site across
                             all the workspaces. </li>
-                        <li><b>Gratis</b>: This is the number of members that you can use for free. You are allowed 20 free
-                            members for every paid workspace. If you have more than that, a charge of $0.05 per month is made for
-                            each member over the limit. </li>
-                        <li><b>Charged</b>: This is the number of members that you actually need to pay for. For most teams 20
-                            free members for every paid workspace is enough, so this only affects workspaces with an unusually large
-                            number of members. </li>
+                        <li><b>Gratis</b>: This is the number of unpaid users that you can be members of your site for free. You are allowed 20 unpaid users for every paid user. If you have more than that, a charge of $0.05 per month is made for each member over the limit. </li>
+                        <li><b>Charged</b>: This is the number of users that you actually need to pay for. For most teams 20 free unpaid users for every paid user is enough, so this only affects workspaces with an unusually large number of users. </li>
                         <li><b>Cost</b>: This is the monthly charge at $0.05 per member. Most normal sites will see a zero
                             charge in this spot. </li>
                     </ul>

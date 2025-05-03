@@ -40,13 +40,13 @@
 .footer-menu li.nav-item {
   font-weight: 400;
   align-items: center;
-  color      : #ecece8;
+  color      : #ffffff;
 }
 
 .footer-menu li.nav-item.active a {
   font-weight: 400;
   align-items: center;
-  color      : #ecece8;
+  color      : #ffffff;
 }
 
 #menu-toggle {
