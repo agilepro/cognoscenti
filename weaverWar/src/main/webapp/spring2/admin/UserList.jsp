@@ -78,20 +78,49 @@ app.controller('myCtrl', function($scope, $http) {
     }
     
     $scope.sortUsersStr = function(fieldname) {
-        $scope.allUsers.sort( function(a,b) {
-            if (a[fieldname]) {
-                return a[fieldname].localeCompare(b[fieldname])
-            }
-            return -1;
-        });
-    }
-    $scope.sortUsersNum = function(fieldname) {
-        $scope.allUsers.sort( function(a,b) {
-            if (a[fieldname]>b[fieldname]) {
+        if (fieldname === $scope.currentOrder) {
+            console.log("sorting up "+fieldname);
+            $scope.allUsers.sort( function(a,b) {
+                if (a[fieldname]) {
+                    return -(a[fieldname].localeCompare(b[fieldname]))
+                }
                 return 1;
-            }
-            return -1;
-        });
+            });
+            $scope.currentOrder = "";
+        }
+        else {
+            console.log("sorting down "+fieldname);
+            $scope.allUsers.sort( function(a,b) {
+                if (a[fieldname]) {
+                    return a[fieldname].localeCompare(b[fieldname])
+                }
+                return -1;
+            });
+            $scope.currentOrder = fieldname;
+        }
+    }
+    $scope.currentOrder = "";
+    $scope.sortUsersNum = function(fieldname) {
+        if (fieldname === $scope.currentOrder) {
+            console.log("sorting up "+fieldname);
+            $scope.allUsers.sort( function(a,b) {
+                if (a[fieldname]>b[fieldname]) {
+                    return -1;
+                }
+                return 1;
+            });
+            $scope.currentOrder = "";
+        }
+        else {
+            console.log("sorting down "+fieldname);
+            $scope.allUsers.sort( function(a,b) {
+                if (a[fieldname]>b[fieldname]) {
+                    return 1;
+                }
+                return -1;
+            });
+            $scope.currentOrder = fieldname;
+        }
     }
 
 });
@@ -130,7 +159,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tbody>
                 <tr ng-repeat="rec in getUsers() | limitTo: 1000">
                     <td><a href="../../v/FindPerson.htm?key={{rec.key}}">{{rec.name}}</a></td>
-                    <td>{{rec.lastLogin | date}}</td>
+                    <td>{{rec.lastLogin | cdate}}</td>
                     <td><span ng-repeat="id in rec.ids">{{id}}<br/></span></td>
                     <td>
                         <button ng-hide="rec.disabled" style="background-color:lightgreen" ng-click="toggleDisabled(rec)">Disable</span>

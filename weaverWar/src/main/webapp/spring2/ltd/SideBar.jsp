@@ -74,20 +74,22 @@
                     </div>
                     <div class="modal-body">
                         <h6><img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png"
-                            title="You have guest access to this workspace" class="accessIndicator" /> = Guest access to
-                        this workspace.<br>If you would like to access this workspace, please contact
-                            your administrator.</h6><br>
+                            title="You have limited access to this workspace" 
+                            class="accessIndicator" /> = Limited access to this workspace.<br/>
+                                 If you would like to access this workspace, please contact
+                                 your administrator.
+                        </h6><br/>
                         <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png"
-                                title="You have unpaid access to this workspace" class="accessIndicator" /> = 
+                                title="You have read-only access to this workspace" 
+                                class="accessIndicator" /> = 
                             Unpaid access to this workspace. <br>
-                            <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png"
-                            title="You have paid access to this workspace" class="accessIndicator" /> = Full paid
-                        access to this workspace. <br>
-                        
+                        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png"
+                            title="You have full update access to this workspace" 
+                            class="accessIndicator" /> = Full update access to this workspace. <br/>
                     </div>
-                            <div class="modal-footer override">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
+                    <div class="modal-footer override">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
             </div>
         </div>
     </div>

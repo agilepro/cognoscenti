@@ -128,48 +128,56 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     <div class="container-fluid col-12">
     <div class="row my-2 border-bottom border-1 pb-2">
         <span class="col-3">Year / Month</span>
-        <span class="col-3">Plan</span>
         <span class="col-2"></span>
         <span class="col-1">Charge</span>
         <span class="col-1">Payment</span>
         <span class="col-2">Balance</span>
     </div>
     <div class="row my-2 border-bottom border-1 pb-2" ng-repeat="month in ledgerInfo">
-      <span class="col-3">
-        <b>{{month.year}} / {{(month.month + "").padStart(2 ,"0")}}</b>
-      </span>
-      <span class="col-3">
-        {{month.plan}}
-      </span>
-      <span class="col-2">(charge)</span>
-      <span class="col-1">
-        {{0.0001+month.chargeAmt | currency: '$'}}
-      </span>
-      <span class="col-1">
+        <div class="row">
+          <span class="col-3">
+            <b>{{month.year}} / {{(month.month + "").padStart(2 ,"0")}}</b>
+          </span>
+          <span class="col-2">(charge)</span>
+          <span class="col-1">
+            {{0.0001+month.chargeAmt | currency: '$'}}
+          </span>
+          <span class="col-1">
+          </span>
+          <span class="col-2">
+          </span>
+        </div>
+        <div class="row my-2 " ng-repeat="pay in month.payments">
+          <span class="col-3">{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</span>
+          <span class="col-2">(payment)</span>
+          <span class="col-1"></span>
+          <span class="col-1">{{pay.amount | currency: '$'}}</span>
         
-      </span>
-      <span class="col-2">
-      </span>
-    </div>
-    <div class="row my-2 border-bottom border-1 pb-2" ng-repeat="pay in month.payments">
-            <span class="col-3">
-            </span>
-                <span class="col-3">
-                </span>
-
-      <span class="col-3">{{pay.year}} / {{(pay.month + "").padStart(2 ,"0")}} / {{(pay.day + "").padStart(2 ,"0")}}</span>
-      <span class="col-3">{{pay.amount | currency: '$'}}</span>
-    
-      </div>
-    <div class="row my-2 border-bottom border-1 pb-2">
-      <span class="col-3"></span>
-      <span class="col-3"></span>
-      <span class="col-2">(balance)</span>
-      <span class="col-1"></span>
-      <span class="col-1"></span>
-      <span class="col-2">{{month.balance | currency: '$' }}</span>
+        </div>
+        <div class="row border-bottom border-1 pb-2">
+          <span class="col-3">
+          </span>
+          <span class="col-2">(balance)</span>
+          <span class="col-1">
+          </span>
+          <span class="col-1">
+          </span>
+          <span class="col-2">
+            {{0.0001+month.balance | currency: '$'}}
+          </span>
+        </div>
     </div>
 </div>
+
+<p>
+Charges accrue monthly depending upon the number of paid users and paid workspaces that you have at the time, and these charges will increase the balance.  You can make a payment at any time, and you will receive credit for the amount you pay, which will naturally reduce the balance.  If you pay more than your balance, the amount will stay in the account, and will offset future charges.
+</p>
+<p>
+After many years of uncharges services, we started in November of 2024 to charge sites using the standard formula.  This may have caught some people off guard with people on the role they didn't need and maybe didn't want to pay for.  Change the unnecessary users to unpaid, and change the unneeded workspaces to frozen, and then write us an email explaining the situation, and we will reduce the charges to the proper amount.  
+</p>
+<p>
+If you have been an early adopter who helped with the beta program, and submitted a review of how it worked, ask us about a special deal to reduce charges.  We appreciate the help we have received from many people, and consider you part of the foundation of the project.
+</p>
 
 <script src="../../../jscript/AllPeople.js"></script>
 

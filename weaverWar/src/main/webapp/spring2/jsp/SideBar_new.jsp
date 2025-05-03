@@ -138,8 +138,8 @@
                 class="accessIndicator"/>  =  Full update access to this workspace.
                 <br><br>
                 <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" 
-                    title="You have guest access to this workspace" 
-                    class="accessIndicator"/>  =  Guest access to this workspace. 
+                    title="You have read only access to this workspace" 
+                    class="accessIndicator"/>  =  Read only access to this workspace. 
                 
               </div>
         
@@ -153,12 +153,12 @@
                     title="You have full update access to this workspace" 
                     class="accessIndicator"/>  =  You have full update access to this workspace.</b></h6><br>
                 <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" 
-                    title="You have read only access to this workspace" 
+                    title="You have read-only access to this workspace" 
                     class="accessIndicator"/>  =  Read only access to this workspace. 
                 <br><br>
                 <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" 
-                    title="You have guest access to this workspace" 
-                    class="accessIndicator"/>  =  Guest access to this workspace. 
+                    title="You have limited access to this workspace" 
+                    class="accessIndicator"/>  =  Limited access to this workspace. 
               </div>
               <% } %>
         <div class="modal-footer">
