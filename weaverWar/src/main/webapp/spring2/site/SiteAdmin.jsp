@@ -380,8 +380,21 @@ $scope.garbageCollect = function() {
                 <span class="col-1 numberColumn h6">Charged</span>
                 <span class="col-1 numberColumn h6">Cost</span>
             </div>
+            <div class="row border-bottom border-1 border-light-subtle py-2">
+                <span class="col-2 h6">Workspaces:</span>
+                <span class="col-1 numberColumn"> {{siteInfo.workspaceLimit|number}} </span>
+                <span class="col-1 center-block">
+                    <button class="specCaretBtn" ng-click="changeWS(1)"><i class="fa fa-plus"></i></button>
+                    <button class="specCaretBtn" ng-click="changeWS(-1)"><i class="fa fa-minus"></i></button>
+                </span>
+                <span class="col-1 numberColumn"> {{actual.numActive}} </span>
+                <span class="col-1 numberColumn"> {{comp.workspaceGratis}} </span>
+                <span class="col-1 numberColumn"> {{overflow.numActive}} </span>
+                <span class="col-1 numberColumn"> $ {{costs.numActive|number: '0'}} </span>
+            </div>
+
             <div class="row border-bottom border-1 border-light-subtle py-2" ng-click="toggleEditor('CreatorLimit')">
-                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Paid Users:</span>
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Stewards:</span>
                 <span class="col-1 numberColumn">
                     {{siteInfo.editUserLimit|number}}
                 </span>
@@ -403,7 +416,7 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
             <div class="row border-bottom border-1 border-light-subtle py-2" ng-click="toggleEditor('CreatorLimit')">
-                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Unpaid Users:</span>
+                <span class="col-2 h6" ng-click="toggleEditor('CreatorLimit')">Members:</span>
                 <span class="col-1 numberColumn">
                     
                 </span>
@@ -423,30 +436,9 @@ $scope.garbageCollect = function() {
                 </span>
             </div>
 
-            <div class="row border-bottom border-1 border-light-subtle py-2">
-                <span class="col-2 h6">Active Workspaces:</span>
-                <span class="col-1 numberColumn">
-                    {{siteInfo.workspaceLimit|number}}
-                </span>
-                <span class="col-1 center-block">
-                    <button class="specCaretBtn" ng-click="changeWS(1)"><i class="fa fa-plus"></i></button>
-                    <button class="specCaretBtn" ng-click="changeWS(-1)"><i class="fa fa-minus"></i></button>
-                </span>
-                <span class="col-1 numberColumn">
-                    {{actual.numActive}}
-                </span>
-                <span class="col-1 numberColumn">
-                    {{comp.workspaceGratis}}
-                </span>
-                <span class="col-1 numberColumn">
-                    {{overflow.numActive}}
-                </span>
-                <span class="col-1 numberColumn">
-                    $ {{costs.numActive|number: '0'}}
-                </span>
-            </div>
 
-            <div class="row border-bottom border-1 border-light-subtle py-2">
+
+            <!--<div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 h6">Frozen Workspaces:</span>
                 <span class="col-1 numberColumn">
                     
@@ -466,7 +458,7 @@ $scope.garbageCollect = function() {
                 <span class="col-1 numberColumn" ng-show="costs.numFrozen>0">
                     $ {{costs.numFrozen|number: '0'}}
                 </span>
-            </div>
+            </div>-->
             <div class="row border-bottom border-1 border-light-subtle py-2">
                 <span class="col-2 h6">Document MB:</span>
                 <span class="col-1 numberColumn">
@@ -532,73 +524,19 @@ $scope.garbageCollect = function() {
         </div>
         <div class="row d-flex">
 
+       
         <span class="col-sm-12 col-md-6 col-lg-4">
-        <ul>
-          <li><b>Paid Users</b>
             <ul>
-                <li><b>Your Limit</b>: 
-              As the administrator, you declare what limits you want to place on 
-              the number of paid users for your site.
-              You are charged only for what you actually use, but this limit helps
-              you control how many users can be added.
-              The system will not allow any workspace to add an paid user once 
-              your user limit is reached.  A site administrator will need to come 
-              and raise this limit for more paid users to be added.  Please note,
-              lowering this limit does not automatically remove users who are already
-              entered as paid users.  You will need to remove users manually.
-                </li>
-                <li><b>Set</b>: Use these controls to raise and lower your limit for the site.
-                </li>
-                <li><b>Current Usage</b>: 
-              This is the number of paid users you actually have using your site
-              across all the workspaces.  This is also known as the count of 
-                <b>paid users</b> as the basis for other calculations.
-                </li>
-                <li><b>Gratis</b>: This is the number of paid users that are being provided to you 
-              for free from Circle Weaver Tech.
-                </li>
-                <li><b>Charged</b>: 
-              This is the number of paid users that you actually need to pay for.
-                </li>
-                <li><b>Cost</b>: This is the monthly charge at $1 per paid user.
-                </li>
-            </ul>
-          </li>
-          <li><b>Unpaid Users</b>
-            <ul>
-            <li><b>Current Usage</b>: 
-              This is the number of unpaid users you actually have using your site
-              across all the workspaces.  
-              </li>
-              <li><b>Gratis</b>: 
-              This is the number of unpaid users that you can use for free.
-              You are allowed 20 free unpaid users for every paid user.
-              If you have more than that, a charge of $0.05 per month is made 
-              for each unpaid user over the limit.
-              </li>
-              <li><b>Charged</b>: 
-              This is the number of unpaid users that you actually need to pay for.
-              For most teams 20 unpaid users for every paid user is enough, so this 
-              only effects workspaces with an unusually large number of unpaid users.
-              </li>
-              <li><b>Cost</b>: 
-              This is the monthly charge at $0.05 per user.  Most normal sites will see a zero charge in this spot.
-              </li>
-            </ul>
-          </li>
-        </ul></span>
-        <span class="col-sm-12 col-md-6 col-lg-4">
-          <ul>
-            <li><b>Active Workspaces</b>
+            <li><b>Workspaces</b>
                 <ul>
                     <li><b>Your Limit</b>: 
               As the administrator, you declare what limits you want for your site.
               You are charged only for what you actually use, but this limit helps
               you control how many workspaces can be added.
-              The system will not allow any new unfrozen workspaces to be added 
+              <!--The system will not allow any new unfrozen workspaces to be added 
               once your workspace limit is reached.  
               To add more unfrozen workspaces, a site administrator will need to come 
-              and raise this limit.  
+              and raise this limit.  -->
               Please note, lowering this limit does not automatically remove workspaces that already exist.  You will need to remove workspaces, or change them
               to frozen, manually to lower the actual charge.
               </li>
@@ -612,16 +550,17 @@ $scope.garbageCollect = function() {
               </li>
               <li><b>Gratis</b>: 
               This is the number of active workspaces that are being provided to you 
-              for free from Circle Weaver Tech.
+              for free from Circle Weaver Tech. Each Workspace comes with one additional steward and 20 additional members for free.
               </li>
               <li><b>Charged</b>: 
-              This is the number of active workspaces that you actually need to pay for.
+              This is the number of workspaces that you actually need to pay for.
               </li>
               <li><b>Cost</b>: 
-              This is the monthly charge at $2 per workspace.
+              This is the monthly charge at $3 per workspace.
               </li>
             </ul>
           </li>
+          <!--
           <li><b>Frozen Workspaces</b>
           <ul>
               <li><b>Current Usage</b>: 
@@ -637,8 +576,45 @@ $scope.garbageCollect = function() {
               This is the monthly charge at $0.50 per frozen workspace.
               </li>
             </ul>
-          </li>
-        </ul>
+          </li>-->
+            </ul>
+        </span>
+
+        <span class="col-sm-12 col-md-6 col-lg-4">
+            <ul>
+                <li><b>Stewards</b>
+                    <ul>
+                        <li><b>Your Limit</b>: As the administrator, you declare what limits you want to place on the number of
+                            <b>stewards</b> for your site. You are charged only for what you actually use, but this limit helps
+                            you control how many can be added. One free steward is provided for each added workspace. The system will not allow any workspace to add more once
+                            your steward limit is reached. A site administrator will need to come and raise this limit for more
+                            stewards to be added. Please note, lowering this limit does not automatically remove stewards who
+                            are already entered as stewards. You will need to remove stewards manually. </li>
+                        <li><b>Set</b>: Use these controls to raise and lower your limit for the site. </li>
+                        <li><b>Current Usage</b>: This is the number of stewards you actually have using your site across all
+                            the workspaces. This is also known as the count of stewards as the basis for other calculations.
+                        </li>
+                        <li><b>Gratis</b>: This is the number of stewards that are being provided to you for free from Circle
+                            Weaver Tech. </li>
+                        <li><b>Charged</b>: This is the number of additional stewards that you actually need to pay for. </li>
+                        <li><b>Cost</b>: This is the monthly charge at $1 per steward. </li>
+                    </ul>
+                </li>
+                <li><b>Members</b>
+                    <ul>
+                        <li><b>Current Usage</b>: This is the number of <b>members</b> you actually have using your site across
+                            all the workspaces. </li>
+                        <li><b>Gratis</b>: This is the number of members that you can use for free. You are allowed 20 free
+                            members for every paid workspace. If you have more than that, a charge of $0.05 per month is made for
+                            each member over the limit. </li>
+                        <li><b>Charged</b>: This is the number of members that you actually need to pay for. For most teams 20
+                            free members for every paid workspace is enough, so this only affects workspaces with an unusually large
+                            number of members. </li>
+                        <li><b>Cost</b>: This is the monthly charge at $0.05 per member. Most normal sites will see a zero
+                            charge in this spot. </li>
+                    </ul>
+                </li>
+            </ul>
         </span>
         <span class="col-sm-12 col-md-6 col-lg-4">
             <ul>
