@@ -229,33 +229,9 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary"><!--Meeting Setting Panel-->
-            <!--Setup Accordion - not needed for guest access-->
-<!--
-            <div class="accordion" id="accordionSetup">
-                <div class="accordion-item">
-                    <div class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            <h3 class="h5 mb-0">Setup Tools</h3>
-                        </button>
-                    </div>
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionSetup">
-                        <div class="accordion-body">
-                            <div class="justify-content-between"> 
-                                <span class="btn btn-setup btn-flex">
-                                <button ng-click="changeMeetingMode('General')"  ng-class="labelButtonClass('General')" >Settings</button></span>
-                                <span class="btn btn-setup btn-flex">
-                                    <button ng-click="changeMeetingMode('Overview')"  ng-class="labelButtonClass('Overview')" >Overview</button></span>
-                                <span class="btn btn-setup btn-flex">
-                                <button ng-click="changeMeetingMode('Attendance')" ng-class="labelButtonClass('Attendance')" >Participants</button></span>
-                                <span class="btn btn-setup btn-flex">
-                                <button ng-click="changeMeetingMode('Time')" ng-class="labelButtonClass('Time')" >Start Time</button></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
--->
+        <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary">
+            <!--Meeting Setting Panel-->
+
 <hr/>
 <!--Agenda Panel-->
 <div style="height: 0.5rem">&nbsp;</div>

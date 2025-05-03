@@ -7,8 +7,8 @@
     UserProfile uProf=ar.getUserProfile();
     
     String filter = ar.defParam("filter", "");
-    int showMonth = 10;
-    int showYear = 2024;
+    int showMonth = DOMFace.safeConvertInt(ar.defParam("month", "01"));
+    int showYear = DOMFace.safeConvertInt(ar.defParam("year", "2025"));
     
     Cognoscenti cog = Cognoscenti.getInstance(request);
     List<AddressListEntry> allEmail = new ArrayList<AddressListEntry>();

@@ -380,7 +380,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="card-body fs-6">
                 You do not play any role in this workspace.
                 <br/>
-                You do have some guest access to some things.
+                You do have some limited access to some things.
             </div>
         </div>
 

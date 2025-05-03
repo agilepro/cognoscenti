@@ -1221,7 +1221,7 @@ public class AuthRequest {
     }
 
     /**
-     * Get a required parameter. If the parameter i not found, generate an error
+     * Get a required parameter. If the parameter is not found, generate an error
      * message for that. When a page contains a link to another page, it should
      * have all of the require parameters in it. If a parameter is missing, then
      * it is a basic programming error that should be caught and fixed before
