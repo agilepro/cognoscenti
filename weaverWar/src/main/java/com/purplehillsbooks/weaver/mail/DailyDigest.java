@@ -64,15 +64,15 @@ public class DailyDigest {
             // events created AFTER this time, but before the end of this routine are
             // not lost during the processing.
             long processingStartTime = System.currentTimeMillis();
-            long threeYearsAgo = processingStartTime - (3L*365L*24L*3600L*1000L);
+            long oneYearAgo = processingStartTime - (365L*24L*3600L*1000L);
 
             debugWriter.write("</li>\n<li>Email being sent at: ");
             SectionUtil.nicePrintDateAndTime(debugWriter, processingStartTime);
             debugWriter.write("</li>\n<li>Disabling users who have not accessed since: ");
-            SectionUtil.nicePrintDateAndTime(debugWriter, threeYearsAgo);
+            SectionUtil.nicePrintDateAndTime(debugWriter, oneYearAgo);
             debugWriter.write("</li>");
             logFile.put("CurrentSend", processingStartTime);
-            logFile.put("UserDisableLimit", threeYearsAgo);
+            logFile.put("UserDisableLimit", oneYearAgo);
 
 
             // loop thru all the profiles to send out the email.
@@ -88,13 +88,16 @@ public class DailyDigest {
                     //skip all disabled users
                     continue;
                 }
-                if (up.getLastLogin() > 0 && up.getLastLogin() < threeYearsAgo) {
-                    //automatically disable users who have not logged in in three years
-                    //TODO: what should be do if they have NEVER logged in?
-                    debugWriter.write("\n<li>User automatically disabled after three years no access: "+up.getUniversalId()+"</li>");
-                    System.out.println("DAILYDIGEST: User automatically disabled after three years no access: "+up.getUniversalId());
-                    up.setDisabled(true);
-                    userObject.put("conclusion", "Disabled Now");
+                if (up.getLastLogin() <= 0) {
+                    //don't send digest to anyone who has never logged in
+                    debugWriter.write("\n<li>No email because user inactive never logged in: "+up.getUniversalId()+"</li>");
+                    userObject.put("conclusion", "User Never Logged In");
+                    continue;
+                }
+                if (up.getLastLogin() < oneYearAgo) {
+                    //don't send digest to anyone not logged in for a year
+                    debugWriter.write("\n<li>No email because user inactive for a year: "+up.getUniversalId()+"</li>");
+                    userObject.put("conclusion", "User Inactive for 1 Year");
                     continue;
                 }
 
@@ -136,6 +139,14 @@ public class DailyDigest {
                 HTMLWriter.writeHtml(debugEvidence, up.getUniversalId());
                 debugEvidence.write("</li>");
                 userLog.put("conclusion", "No Email Address");
+                return;
+            }
+            long oneYearAgo = System.currentTimeMillis() - 365*24*60*60*1000;
+            if (up.getLastLogin() < oneYearAgo) {
+                debugEvidence.write("\n<li>User has not logged in for a year: ");
+                HTMLWriter.writeHtml(debugEvidence, up.getUniversalId());
+                debugEvidence.write("</li>");
+                userLog.put("conclusion", "Has not been active for a year");
                 return;
             }
 
