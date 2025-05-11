@@ -185,13 +185,13 @@ app.filter('encode', function() {
                         <span class="fa fa-refresh"></span> &nbsp;Recalculate
                     </a>
                 </span>
-    <% if (ar.isSuperAdmin()) { %>
+<% if (ar.isSuperAdmin()) { %>
                 <span class="dropdown-item" type="button">
                     <a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">
                         <span class="fa fa-user-secret"></span>&nbsp;Super Admin
                     </a>
                 </span>
-        <% } %>
+<% } %>
         </li>
         </ul>
     </span>
@@ -203,13 +203,22 @@ app.filter('encode', function() {
     <div class="container-fluid override border-1 border-dark-subtle rounded-2 px-3 mx-3">
         <div class="row my-2 well mx-3 ">
             <div ng-hide="addUserPanel">
-            <p class="h4">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} paid users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} unpaid users.</p>
+            <p class="h4">This site has {{activeUserCount}} / {{siteSettings.editUserLimit}} full users who can update, and {{readOnlyCount}} / {{siteSettings.viewUserLimit}} basic users.</p>
             <div ng-show="activeUserCount>siteSettings.editUserLimit" class="guideVocal"> 
-                <p class="mx-2" ><b>Site has too many paid users.</b>  You have set a budget of  {{siteSettings.editUserLimit}} users in the site who have edit access to the site, and you have {{activeUserCount}}.  You will not be able to add any new update users to the site until you reduce the number of active edit users or you change your budget amount.</p>
+                <p class="mx-2" ><b>Site has too many full users.</b>  
+                    You have set a budget of  {{siteSettings.editUserLimit}} users 
+                    who have full access to the site, and you have {{activeUserCount}}.  
+                    You will not be able to add any new full users to the site until 
+                    the users limit is raised by the Site Owner, 
+                    or the number of full users is reduced.</p>
             </div>
             <div ng-show="readOnlyCount>siteSettings.viewUserLimit" class="guideVocal">
-                <p  class="mx-2"><b>Site has too many unpaid users.</b>  You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>Any user who has never logged in to the site directly is considered an unpaid user. You will not be able to add any new email addresses to the site until you reduce the number of unpaid users or raise the limit set by the Site Administrator.</p>
-                    <hr/>
+                <p  class="mx-2"><b>Site has too many basic users.</b>  
+                    You are allowed {{siteSettings.viewUserLimit}} and you have {{readOnlyCount}}.<br/>
+                    Any user who has never logged in to the site directly is considered an basic user. 
+                    You will not be able to add any new email addresses to the site until 
+                    the users limit is raised by the Site Owner.</p>
+                <hr/>
                 <p class="mx-2 fs-5"><em>To remove a user from this list, click on the user, and use the option to 'Completely Remove This User' at the very bottom of the page.</em></p>
             </div>
             </div>
@@ -233,9 +242,9 @@ app.filter('encode', function() {
 
         <div class="col-4  mt-3">{{value.info.uid}}</div>
         <div class="col-1  mt-3">
-            <span ng-show="value.readOnly">Unpaid</span>
+            <span ng-show="value.readOnly">Basic User</span>
             <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
-            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Paid</b></span>
+            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Full User</b></span>
         </div>
         <div class="col-1  mt-3"><span>{{value.info.lastLogin|cdate}}</span></div>
         <div class="col-1  mt-3">{{value.count}}</div>
@@ -245,24 +254,29 @@ app.filter('encode', function() {
     </div>
 </div>
 
-    <div class="container-fluid well mx-3">
-        Set to 'Unpaid' all users except the 
-        <input ng-model="preserveCount"/> 
-        users who most recently logged in.  
-        <button class="btn btn-primary btn-raised" ng-click="demoteBatchUsers()">
-            Demote Users</button>
-    </div>
+<div class="container-fluid well mx-3">
+    Set to 'Basic' all users except the 
+    <input ng-model="preserveCount"/> 
+    users who have most recently logged in.  
+    <button class="btn btn-primary btn-raised" ng-click="demoteBatchUsers()">
+        Demote Users</button>
+</div>
 
 <div class="container-fluid d-flex">
     <div class="row d-flex col-12 my-3">
         <span class="col-md-6 col-sm-12 my-3">
-            <p class="guideVocal h6">Statistics are calculated on a regular bases approximately every day.  If you have made a change, by removing or adding things, you can recalculate the resources that your site is using.</p>
-                <button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
+            <p class="guideVocal h6">Statistics are calculated on a regular bases approximately every day.  
+                If you have made a change, by removing or adding things, you can recalculate the resources 
+                that your site is using.</p>
+            <button class="btn btn-primary btn-raised" ng-click="recalcStats()">Recalculate</button>
         </span>
 
         <span class="col-md-6 col-sm-12 my-3">
-            <p class="guideVocal h6">In normal use of the site, deleting a resource only marks it as deleted, and the resource can be recovered for a period of time. <br>In order to actually cause the files to be deleted use the Garbage Collect function.  This will actually free up space on the server, and reduce the amount of resources you are using.</p>
-                <button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
+            <p class="guideVocal h6">In normal use of the site, deleting a resource only marks it as deleted, 
+                and the resource can be recovered for a period of time. <br>In order to actually cause the 
+                files to be deleted use the Garbage Collect function.  This will actually free up space on the server, 
+                and reduce the amount of resources you are using.</p>
+            <button class="btn btn-primary btn-raised" ng-click="garbageCollect()">Garbage Collect</button>
         </span>
 
     </div>

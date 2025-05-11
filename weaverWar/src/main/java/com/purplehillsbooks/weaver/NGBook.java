@@ -47,7 +47,7 @@ public class NGBook extends ContainerCommon {
     private static List<NGBook> allSites = null;
 
     private List<String> existingIds = null;
-    private List<String> displayNames;
+    private String displayName;
     private final SiteInfoRecord siteInfoRec;
     private final NGRole executiveRole;
     private final NGRole ownerRole;
@@ -64,7 +64,7 @@ public class NGBook extends ContainerCommon {
         super(theFile, newDoc);
         cog = _cog;
         siteInfoRec = requireChild("bookInfo", SiteInfoRecord.class);
-        displayNames = siteInfoRec.getSiteNames();
+        displayName = siteInfoRec.getSiteName();
         assureNameExists();
 
         String fileName = theFile.getName();
@@ -109,13 +109,8 @@ public class NGBook extends ContainerCommon {
     }
 
     private void assureNameExists() {
-        if (displayNames.size()==0) {
-            String possibleName = getScalar("name");
-            if (possibleName==null || possibleName.length()==0) {
-                possibleName = key;
-            }
-            displayNames.add(possibleName);
-            //TODO: should this be stored back in file at this point?
+        if (displayName == null || displayName.length()==0) {
+            displayName = key;
         }
     }
     private void assureColorsExist() {
@@ -320,10 +315,8 @@ public class NGBook extends ContainerCommon {
         Document newDoc = readOrCreateFile(theFile, "book");
         NGBook newSite = new NGBook(theFile, newDoc, cog);
 
-        // set default values
-        List<String> nameSet = new ArrayList<String>();
-        nameSet.add(name);
-        newSite.setContainerNames(nameSet);
+        // set default value
+        newSite.setContainerName(name);
 
         registerSite(newSite);
         return newSite;
@@ -436,7 +429,7 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public String getFullName() {
-        return displayNames.get(0);
+        return displayName;
     }
 
 
@@ -506,24 +499,22 @@ public class NGBook extends ContainerCommon {
     }
 
     @Override
-    public List<String> getContainerNames() {
-        return displayNames;
+    public String getContainerName() {
+        return displayName;
     }
 
 
-    private void setContainerNames(List<String> newNames) {
-        if (newNames==null) {
-            throw new RuntimeException("setSiteNames was passed a null string array");
+    private void setContainerName(String newName) {
+        if (newName==null) {
+            throw new RuntimeException("setContainerName was passed a null string");
         }
-        if (newNames.size()<1) {
-            throw new RuntimeException("setSiteNames was passed a zero length string array");
+        newName = newName.trim();
+        if (newName.length()<1) {
+            throw new RuntimeException("setContainerName was passed a zero length string");
         }
-        siteInfoRec.setSiteNames(newNames);
-        displayNames = siteInfoRec.getSiteNames();
+        siteInfoRec.setSiteName(newName);
+        displayName = siteInfoRec.getSiteName();
         assureNameExists();
-
-        //schema migration ... clean this out if it exists at this point
-        setScalar("name", null);
     }
 
 
@@ -922,7 +913,13 @@ public class NGBook extends ContainerCommon {
         
         JSONObject jo = new JSONObject();
         jo.put("key", this.getKey());
-        jo.put("names", constructJSONArray(getContainerNames()));
+
+        // there used to be multiple name, but now there is only one
+        // but the client side has not been switched
+        JSONArray nameArray = new JSONArray();
+        nameArray.put(getContainerName());
+        jo.put("names", nameArray);
+
         jo.put("rootFolder", this.getSiteRootFolder());
         this.extractScalarString(jo, "description");
         jo.put("showExperimental", getShowExperimental());
@@ -962,7 +959,7 @@ public class NGBook extends ContainerCommon {
     public void updateConfigJSON(JSONObject jo) throws Exception {
         this.updateScalarString("description", jo);
         if (jo.has("names")) {
-            setContainerNames( constructVector(jo.getJSONArray("names")));
+            setContainerName( jo.getJSONArray("names").getString(0));
         }
         siteInfoRec.updateAttributeBool("showExperimental", jo);
         if (jo.has("isDeleted")) {

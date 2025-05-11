@@ -64,27 +64,20 @@ public class SiteInfoRecord extends DOMFace {
         setScalar("synopsis", newVal);
     }
 
-    public List<String> getSiteNames() {
+    public String getSiteName() {
         List<String> vc = getVector("bookName");
-        List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
             String aName = chl.trim();
             if (aName.length() > 0) {
-                vccleaned.add(aName);
+                return aName;
             }
         }
-        return vccleaned;
+        return "(Site has no Name)";
     }
 
-    public void setSiteNames(List<String> newNames) {
+    public void setSiteName(String newName) {
         DOMUtils.removeAllNamedChild(fEle, "bookName");
-        for (int i = 0; i < newNames.size(); i++) {
-            String aName = newNames.get(i).trim();
-            // only save names that are non-null
-            if (aName.length() > 0) {
-                addVectorValue("bookName", aName);
-            }
-        }
+        addVectorValue("bookName", newName);
     }
 
     public boolean isDeleted() {

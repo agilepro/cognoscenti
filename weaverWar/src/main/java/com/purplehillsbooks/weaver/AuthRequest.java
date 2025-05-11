@@ -615,7 +615,7 @@ public class AuthRequest {
                         + URLEncoder.encode(getRequestURL(), "UTF-8");
                 resp.sendRedirect(configDest);
             }
-            throw WeaverException.newWrap("Server is not initialized", cog.lastFailureMsg);
+            throw WeaverException.newWrap("Server is not initialized", cog.initializer.lastFailureMsg);
         }
 
         if (isLoggedIn()) {
@@ -659,9 +659,7 @@ public class AuthRequest {
 
         // check the container rules on who can update
         NGWorkspace ngw = (NGWorkspace) ngp;
-        if (!ngw.canUpdateWorkspace(user)) {
-            throw WeaverException.newBasic("User is not in an update role for the workspace. %s", opDescription);
-        }
+        ngw.assertUpdateWorkspace(user, opDescription);
     }
 
     public void assertAccessWorkspace(String opDescription) throws Exception {
@@ -726,7 +724,7 @@ public class AuthRequest {
     }
 
     /**
-     * Identifies if the current logged in user is an unpaid
+     * Identifies if the current logged in user is a basic (unpaid)
      * user in the current workspace. If anything is wrong, like
      * the user is not logged in or the workspace not set then
      * it presumes the most restrictive: true.
@@ -761,8 +759,26 @@ public class AuthRequest {
     }
 
     public void assertNotReadOnly(String opDescription) throws Exception {
+        if (!isLoggedIn()) {
+            throw WeaverException.newBasic("You are not logged in and can not update information. %s", opDescription);
+        }
+        if (isSuperAdmin()) {
+            return;
+        }
+        if (ngp == null) {
+            throw WeaverException.newBasic("Program logic error workspace not set. %s", opDescription);
+        }
+        if (ngp instanceof NGBook) {
+            NGBook site = ((NGBook) ngp);
+            if (site.isUnpaidUser(user)) {
+                throw WeaverException.newBasic("As a basic user you can not update site. %s", opDescription);
+            }
+        } else if (ngp instanceof NGWorkspace) {
+            NGWorkspace ngw = ((NGWorkspace) ngp);
+            ngw.assertUpdateWorkspace(user, opDescription);
+        }
         if (isReadOnly()) {
-            throw WeaverException.newBasic("Unpaid User; can not update anything. %s", opDescription);
+            throw WeaverException.newBasic("With read only access you can not update workspace. %s", opDescription);
         }
     }
 

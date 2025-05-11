@@ -170,13 +170,23 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 </div>
 
 <p>
-Charges accrue monthly depending upon the number of paid users and paid workspaces that you have at the time, and these charges will increase the balance.  You can make a payment at any time, and you will receive credit for the amount you pay, which will naturally reduce the balance.  If you pay more than your balance, the amount will stay in the account, and will offset future charges.
+Charges accrue monthly depending upon the number of full (paid) users and paid workspaces
+ that you have at the time, and these charges will increase the balance.  
+ You can make a payment at any time, and you will receive credit for the amount you pay, 
+ which will naturally reduce the balance.  If you pay more than your balance, 
+ the amount will stay in the account, and will offset future charges.
 </p>
 <p>
-After many years of uncharges services, we started in November of 2024 to charge sites using the standard formula.  This may have caught some people off guard with people on the role they didn't need and maybe didn't want to pay for.  Change the unnecessary users to unpaid, and change the unneeded workspaces to frozen, and then write us an email explaining the situation, and we will reduce the charges to the proper amount.  
+After many years of uncharges services, we started in November of 2024 to charge sites 
+using the standard formula.  This may have caught some people off guard with people on 
+the role they didn't need and maybe didn't want to pay for.  Change the unnecessary users 
+to basic, and change the unneeded workspaces to frozen, and then write us an email 
+explaining the situation, and we will reduce the charges to the proper amount.  
 </p>
 <p>
-If you have been an early adopter who helped with the beta program, and submitted a review of how it worked, ask us about a special deal to reduce charges.  We appreciate the help we have received from many people, and consider you part of the foundation of the project.
+If you have been an early adopter who helped with the beta program, and submitted a review 
+of how it worked, ask us about a special deal to reduce charges.  We appreciate the help 
+we have received from many people, and consider you part of the foundation of the project.
 </p>
 
 <script src="../../../jscript/AllPeople.js"></script>

@@ -23,8 +23,6 @@
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
 
-    List<String> names = ngw.getContainerNames();
-
     String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getWSByCombinedKey(parentKey);
     JSONObject parentWorkspace = new JSONObject();
@@ -248,27 +246,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $modal) {
             $scope.workspaceConfig = data;
             $scope.editName = false;
             $scope.setEdit('');
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-    $scope.deleteWorkspaceName = function(name) {
-        if ($scope.workspaceConfig.allNames.length<2) {
-            alert("Can not delete the only name from a workspace.");
-            return;
-        }
-        if (!confirm("Are you sure you want to permanently delete the name "+name+"?")) {
-            return;
-        }
-        var obj = {};
-        obj.oldName = name;
-        var postURL = "deleteWorkspaceName.json";
-        var postdata = angular.toJson(obj);
-        $scope.showError=false;
-        $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.workspaceConfig = data;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

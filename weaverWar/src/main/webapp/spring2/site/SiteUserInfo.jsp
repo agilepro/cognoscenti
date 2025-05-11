@@ -150,7 +150,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.changeAccess = function(makeReadOnly) {
         if (makeReadOnly && $scope.readUserCount >= $scope.siteSettings.readUserLimit) {
-            alert("You have too many unpaid users: "
+            alert("You have too many basic users: "
             +$scope.editUserCount
             +". You are allowed only "
             +$scope.siteSettings.editUserLimit
@@ -162,7 +162,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             +$scope.editUserCount
             +" but can aonly have "
             +$scope.siteSettings.editUserLimit
-            +" in your payment plan.  You will probably need to remove some update users or change them to unpaid users before you can change this user");
+            +" in your payment plan.  You will probably need to remove some update users or change them to basic users before you can change this user");
             return;
         }
         $scope.userMapEntry.readOnly = makeReadOnly;
@@ -347,12 +347,12 @@ app.filter('encode', function() {
                         <span class="fa fa-group"></span> Manage Roles </a>
                 </span>
 
-                <% if (ar.isSuperAdmin()) { %>
+<% if (ar.isSuperAdmin()) { %>
                     <span class="dropdown-item" type="button">
                         <a class="nav-link" role="menuitem" href="../../../v/su/SiteDetails.htm?siteKey=<%=siteId%>">
                             <span class="fa fa-user-secret"></span>&nbsp;Super Admin </a>
                     </span>
-                    <% } %>
+<% } %>
             </li>
         </ul>
     </span>
@@ -397,25 +397,25 @@ app.filter('encode', function() {
             <div ng-hide="userMapEntry.readOnly">
               <div>Allowed to update in this site.</div>
               <div ng-show="userMapEntry.lastAccess < 1000000">
-                This user has never logged in, and will be counted as unpaid user until they do.</div>
+                This user has never logged in, and will be counted as basic user until they do.</div>
               <div class="my-2">
                 <span class="fs-6">
-                <b><em>Paid &nbsp;</em></b></span>
+                <b><em>Full User &nbsp;</em></b></span>
                 <button ng-click="changeAccess(true)" class="btn btn-comment btn-secondary btn-raised">
-                Change to Unpaid</button>
+                Change to Basic User</button>
               </div>
             </div>
             <div ng-show="userMapEntry.readOnly">
-              <div>Unpaid User, cannot update the site</div>
+              <div>Basic User, cannot update the site</div>
               <div class="my-2">
                 <span class="fs-6">
-                <b><em>Unpaid &nbsp;</em></b></span>
+                <b><em>Basic User &nbsp;</em></b></span>
                 <button ng-click="changeAccess(false)" class="btn btn-comment btn-secondary btn-raised">
-                Change to Paid</button>
+                Change to Full User</button>
                 
               </div>
             </div>
-            <div class="fs-6 fw-medium"> Paid Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Unpaid Users: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
+            <div class="fs-6 fw-medium"> Full Users: ({{editUserCount}} / {{siteSettings.editUserLimit}}), Basic Users: ({{readUserCount}} / {{siteSettings.viewUserLimit}}) </div>
         </span>
     </div>
       <div class="row col-10 d-flex my-2 align-items-baseline" >

@@ -185,9 +185,7 @@ public class CreateProjectController extends BaseController {
         pageKey = site.genUniqueWSKeyInSite(pageKey);
 
         NGWorkspace newWorkspace = site.createWorkspaceByKey(ar, pageKey);
-        List<String> nameSet = new ArrayList<String>();
-        nameSet.add(workspaceName);
-        newWorkspace.setPageNames(nameSet);
+        newWorkspace.setNewName(workspaceName);
 
         newWorkspace.setSite(site);
 

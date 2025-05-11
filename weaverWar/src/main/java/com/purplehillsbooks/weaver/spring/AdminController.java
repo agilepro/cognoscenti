@@ -26,6 +26,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGWorkspace;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,29 +94,16 @@ public class AdminController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+
+
+    // this can be deleted
     @RequestMapping(value = "/{siteId}/{pageId}/deleteWorkspaceName.json", method = RequestMethod.POST)
     public void deleteWorkspaceName(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-            ar.setPageAccessLevels(ngw);
-            ar.assertAdmin("Must be an admin to change workspace info.");
-            
-            //NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
-            //      of a frozen workspace needs to be changed to differentiate from newer workspaces.
-            
-            JSONObject newData = getPostedObject(ar);
-
-            String oldName = newData.getString("oldName");
-            ngw.deleteOldName(oldName);
-
-            //note: this save does not set the "last changed" metadata
-            //configuration changes are not content changes and should not
-            //appear as being updated.
-            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
-            JSONObject repo = ngw.getConfigJSON();
-            sendJson(ar, repo);
+            throw WeaverException.newBasic("deleteWorkspaceName is no longer implemented, no longer needed");
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to save new name.", ex);

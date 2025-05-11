@@ -62,7 +62,7 @@ public class RestServlet extends jakarta.servlet.http.HttpServlet {
         try {
             NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
-                throw WeaverException.newWrap("not initialized", ar.getCogInstance().lastFailureMsg);
+                throw WeaverException.newWrap("not initialized", ar.getCogInstance().initializer.lastFailureMsg);
             }
 
             RestHandler rh = new RestHandler(ar);

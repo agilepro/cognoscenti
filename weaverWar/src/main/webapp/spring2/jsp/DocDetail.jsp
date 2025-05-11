@@ -412,9 +412,9 @@ function copyTheLink() {
       be deleted soon.
         </div>
         <div ng-hide="canUpdate">
-      You are an unpaid user of this site.
-      If you wish to update this document, ask the site administrator to make you
-      a creating user of the site.
+            You are not playing an update role of this workspace.
+            If you wish to update this document, ask a workspace steward 
+            to do it, or to put you into an update role.
         </div>
         <div class="row d-flex pt-0" ng-show="canUpdate">
             <span>

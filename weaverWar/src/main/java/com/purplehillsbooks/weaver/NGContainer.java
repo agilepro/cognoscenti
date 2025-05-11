@@ -93,7 +93,7 @@ public abstract class NGContainer extends DOMFile
 
     public abstract long getLastModifyTime()throws Exception;
 
-    public abstract List<String> getContainerNames();
+    public abstract String getContainerName();
 
 
     /**

@@ -107,29 +107,22 @@ public class PageInfoRecord extends DOMFace
     }
 
 
-    List<String> getPageNames() {
+    String getPageName() {
         List<String> vc = getVector("pageName");
-        List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
             String aName = chl.trim();
             if (aName.length() > 0) {
-                vccleaned.add(aName);
+                // return the first name found, ignore any others
+                return aName;
             }
         }
-
-        return vccleaned;
+        return "(Workspace does not have a name)";
     }
 
-    public void setPageNames(List<String> newNames) {
-        //TODO: this can be replaced with setVectorValue
+    public void setPageName(String newName) {
+        // this is needed to remove the multiple values that might have been there before
         DOMUtils.removeAllNamedChild(fEle, "pageName");
-        for (int i=0; i<newNames.size(); i++) {
-            String aName = newNames.get(i).trim();
-            //only save names that are non-null
-            if (aName.length()>0) {
-                addVectorValue("pageName", aName);
-            }
-        }
+        DOMUtils.setChildValue(fDoc, fEle, "pageName", newName);
     }
 
     /**

@@ -36,11 +36,11 @@ public class RoleDefinition {
     public String eligibility;
 
     // can edit give priviledges to edit within a workspace
-    // and can only be filled by paid users.
+    // and can only be filled by full(paid) users.
     public boolean canEdit = false;
 
     // special priviledges for administration
-    // can only be filled by paid users.
+    // can only be filled by full(paid) users.
     public boolean canAdminister = false;
 
     // whether this is created by default in a workspace

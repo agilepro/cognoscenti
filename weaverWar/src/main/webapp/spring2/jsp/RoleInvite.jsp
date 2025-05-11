@@ -166,11 +166,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <div class="guideVocal" style="margin-top:80px">
     You are not allowed to invite people to the workspace, because
-    you are an unpaid user.  
+    you are not playing an update role in the workspace.  
     
-    If you wish to invite people, speak to the administrator of this 
-    workspace / site and have your membership level changed to an
-    active user.
+    If you wish to invite people, speak to a steward of this 
+    workspace to be added to an update role.
 </div>
 
 <% } else { %>

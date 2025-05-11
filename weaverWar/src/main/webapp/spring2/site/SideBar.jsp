@@ -127,10 +127,11 @@ class="accessIndicator"/>
     </div>
     <div class="modal-body">
         <h5><img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Unpaid Access" 
-            class="accessIndicator"/>  =  You have unpaid access to this workspace. <br>If you would like to edit this workspace, please contact your administrator.</h5><br>
-                    <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="Full Edit Access" 
+              class="accessIndicator"/>  =  You have read-only access to this site. <br>
+              If you would like to update this workspace, please have a steward add you to an update role.</h5><br>
+        <img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="Full Edit Access" 
             class="accessIndicator"/>  =  Full editing access to this workspace.<br><br>
-            <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="Guest Access" 
+        <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="Guest Access" 
             class="accessIndicator"/>  =  Guest access to this site. 
     </div>
     <% } else { %>
@@ -140,7 +141,7 @@ class="accessIndicator"/>
           </div>
           <div class="modal-body">
             <h6><b><img src="<%=ar.retPath%>new_assets/assets/Site-Writable.png" title="Full Edit Access" 
-                class="accessIndicator"/>  =  You have full editing access to this site.</b></h6><br>
+                class="accessIndicator"/>  =  You have full update access to this site.</b></h6><br>
                             <img src="<%=ar.retPath%>new_assets/assets/ReadIndicator.png" title="Unpaid Access" 
                 class="accessIndicator"/>  =  Unpaid access to this site. <br><br>
                 <img src="<%=ar.retPath%>new_assets/assets/LimitIndicator.png" title="Guest Access" 

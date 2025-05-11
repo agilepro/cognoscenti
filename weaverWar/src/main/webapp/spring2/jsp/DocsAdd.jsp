@@ -74,8 +74,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     You can access documents, but you can not add them or update them.
     
     If you wish to add a document, speak to the owner of this 
-    workspace / site and have your membership level changed to a
-    paid user in a role that allows update.
+    workspace to be added to a role that can update the workspace.
 </div>
 
 <% } else if (ngw.isFrozen()) { %>

@@ -1499,9 +1499,10 @@ public class NGWorkspace extends NGPage {
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
 
-        //returns all the names for this page
-        List<String> nameSet = getPageNames();
-        workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
+        //returns all the names for this page, there is only one but must pass an array
+        JSONArray nameArray = new JSONArray();
+        nameArray.put(this.getFullName());
+        workspaceConfigInfo.put("allNames", nameArray);
 
         ProcessRecord process = getProcess();
         workspaceConfigInfo.put("goal", process.getSynopsis());
@@ -1580,7 +1581,25 @@ public class NGWorkspace extends NGPage {
 
 
 
-
+    public void assertUpdateWorkspace(UserProfile user, String op) throws Exception {
+        //The administrator can control which users are update users and
+        //which users are read only.
+        if (getSite().isUnpaidUser(user)) {
+            throw WeaverException.newBasic(
+                "As a basic user of the site, you are not able to update workspace. %s", op);
+        }
+        //now look through all the roles and see if this person plays any
+        //that allow update
+        for (NGRole role : this.getAllRoles()) {
+            if (role.allowUpdateWorkspace()) {
+                if (role.isExpandedPlayer(user, this)) {
+                    return;
+                }
+            }
+        }
+        throw WeaverException.newBasic(
+            "You are not a player of any role that is able to update workspace. %s", op);
+    }
 
     /**
      * This gives a definitive response of whether this workspace can be updated

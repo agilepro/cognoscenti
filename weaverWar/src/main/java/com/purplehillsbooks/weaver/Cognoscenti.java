@@ -30,10 +30,10 @@ import com.purplehillsbooks.weaver.spring.BaseController;
  */
 public class Cognoscenti {
 
-    public ServerInitializer initializer = null;
+    public ServerInitializer initializer = new ServerInitializer(this);
     public static Cognoscenti cog = null;
 
-    public Exception lastFailureMsg = null;
+    // public Exception lastFailureMsg = null;
     public boolean isInitialized = false;
     public boolean initializingNow = false;
     //TODO: get rid of this static variable
@@ -104,13 +104,6 @@ System.out.println("Weaver Server Object == Start the Server");
         ServletContext sc = config.getServletContext();
         cog = Cognoscenti.getInstance(sc);
 
-        if (cog.initializer != null) {
-            //report this, but otherwise ignore it.  Not bad enough to throw exception.
-            System.out.println("Somthing wrong, the server is being initialized when it already has an initializer!");
-        }
-
-        cog.initializer = new ServerInitializer(cog);
-
         //call it directly to initialize (without waiting 30 seconds) if possible
         cog.initializer.run();
     }
@@ -130,13 +123,13 @@ System.out.println("Weaver Server Object == Start the Server");
      * should be handled.
      */
     public boolean isRunning() {
-        return (initializer!=null && initializer.serverInitState == ServerInitializer.STATE_RUNNING);
+        return (initializer.serverInitState == ServerInitializer.STATE_RUNNING);
     }
     public boolean isPaused() {
-        return (initializer!=null && initializer.serverInitState == ServerInitializer.STATE_PAUSED);
+        return (initializer.serverInitState == ServerInitializer.STATE_PAUSED);
     }
     public boolean isFailed() {
-        return (initializer!=null && initializer.serverInitState == ServerInitializer.STATE_FAILED);
+        return (initializer.serverInitState == ServerInitializer.STATE_FAILED);
     }
     public void pauseServer() {
         initializer.pauseServer();
@@ -245,7 +238,7 @@ System.out.println("Weaver Server Object == Start the Server");
             isInitialized = true;
         }
         catch (Exception e) {
-            lastFailureMsg = e;
+            initializer.lastFailureMsg = e;
             throw e;
         }
         finally {
@@ -290,8 +283,8 @@ System.out.println("Weaver Server Object == Start the Server");
      */
     public void assertInitialized() throws Exception {
         if (!isInitialized()) {
-            if (lastFailureMsg != null) {
-                throw WeaverException.newWrap("Weaver server has not initialized correctly", lastFailureMsg);
+            if (initializer.lastFailureMsg != null) {
+                throw WeaverException.newWrap("Weaver server has not initialized correctly", initializer.lastFailureMsg);
             }
             throw WeaverException.newBasic("Weaver server has never been initialized");
         }
@@ -772,8 +765,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
     public void reinitializeServer(ServletConfig config) {
         clearAllStaticVariables();
-        initializer = null;
-        lastFailureMsg = null;
+        initializer.initializeState();
         isInitialized = false;
         initializingNow = false;
         startTheServer(config);

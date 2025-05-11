@@ -73,8 +73,8 @@ public interface NGRole extends NGLabel {
     * edit capability.   They are read-only if none of their roles
     * allows edit.   
     * Also note: there is a global setting by the administrator
-    * that specifies a user as a unpaid user for the entire site, and that
-    * takes precidence.   Someone marked by admin as an unpaid can never edit 
+    * that specifies a user as a basic user for the entire site, and that
+    * takes precidence.   Someone marked by admin as an basic can never edit 
     * anything on the site, can never play a role that allows update.
     */
     public boolean allowUpdateWorkspace();

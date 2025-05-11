@@ -114,7 +114,7 @@ public class ServerInitializer extends TimerTask {
     public long lastInitAttemptTime = 0;
 
     private Timer timerForOtherTasks = null;
-    private Timer timerForInit = null;
+    private static Timer timerForInit = new Timer("Initialization Timer", true);
 
 
     /**
@@ -123,10 +123,12 @@ public class ServerInitializer extends TimerTask {
      */
     public ServerInitializer(Cognoscenti _cog) {
         cog = _cog;
-        serverInitState = STATE_FAILED;
-
-        timerForInit = new Timer("Initialization Timer", true);
         timerForInit.scheduleAtFixedRate(this, 30000, 30000);
+        initializeState();
+    }
+
+    public void initializeState() {
+        serverInitState = STATE_FAILED;
     }
 
     /**

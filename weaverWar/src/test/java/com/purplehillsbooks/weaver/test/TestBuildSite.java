@@ -81,7 +81,7 @@ public class TestBuildSite implements TestSet {
         //default value testing
         testString("getDescription default should be empty string", testSite.getDescription(), "");
 
-        testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
+        testString("getContainerName default", testSite.getContainerName(), siteName);
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);
         testBoolean("isDeleted default should be false", testSite.isDeleted(), false);
         testBoolean("isFrozen default should be false", testSite.isFrozen(), false);
@@ -107,7 +107,7 @@ public class TestBuildSite implements TestSet {
         //default value testing
         testString("getDescription default should be empty string", testSite.getDescription(), "");
 
-        testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
+        testString("getContainerName default", testSite.getContainerName(), siteName);
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);
         testBoolean("isDeleted default should be false", testSite.isDeleted(), false);
         testBoolean("isFrozen default should be false", testSite.isFrozen(), false);

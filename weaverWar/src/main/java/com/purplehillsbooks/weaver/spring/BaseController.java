@@ -187,7 +187,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp==null) {
-            throw WeaverException.newBasic("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
+            throw WeaverException.newBasic("Program Logic Error: the method warnNoAccess was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
             //super admin is automatically a member of every group, no need to check further

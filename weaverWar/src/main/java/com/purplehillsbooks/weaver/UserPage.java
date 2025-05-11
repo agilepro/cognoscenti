@@ -151,9 +151,8 @@ public class UserPage extends ContainerCommon
     public long getLastModifyTime()throws Exception {
         return userInfo.getModTime();
     }
-    public List<String> getContainerNames()
-    {
-        throw new RuntimeException("getContainerNames not implemented on UserPage");
+    public String getContainerName() {
+        return this.getFullName();
     }
 
 

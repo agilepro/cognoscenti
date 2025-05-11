@@ -227,6 +227,9 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
         if (ex!=null) {
             jo.put("exception", JSONException.convertToJSON(ex, ""));
         }
+        else {
+            jo.put("exception", "No exception recorded.");
+        }
 
         jo.put("serverState", cog.initializer.getServerStateString());
         jo.put("go", req.getParameter("go"));

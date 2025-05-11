@@ -307,12 +307,10 @@ function setUpCommentMethods($scope, $http, $modal) {
     }
     
     $scope.createDecision = function(newDecision) {
-        /*
         if (!$scope.canUpdate) {
-            alert("Unable to update discussion because you are an unpaid user");
+            alert("Unable to update discussion because you are not playing an update role");
             return;
         }
-        */
         $scope.cancelBackgroundTime();
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");

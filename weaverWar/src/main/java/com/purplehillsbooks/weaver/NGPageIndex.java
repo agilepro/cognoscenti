@@ -733,18 +733,9 @@ public class NGPageIndex {
         term.targetLeaves.add(this);
         nameTermsTmp.add(term);
 
-        List<String> containerNames = container.getContainerNames();
-        if (containerNames.size() > 0) {
-            // picks the first name as the nicest, official, name
-            containerName = containerNames.get(0);
-        }
-        for (int i = 0; i < containerNames.size(); i++) {
-            String name = containerNames.get(i);
-            term = NGTerm.findTerm(name);
-            if (term == null) {
-                // this is not a good name, ignore it
-                continue;
-            }
+        containerName = container.getContainerName();
+        term = NGTerm.findTerm(containerName);
+        if (term != null) {
             if (!nameTermsTmp.contains(term)) {
                 if (isInVector(term.targetLeaves)) {
                     throw WeaverException.newBasic("Here is the duplication problem, targetLeaves already has a reference to this key, but 'this' does not know about it.");

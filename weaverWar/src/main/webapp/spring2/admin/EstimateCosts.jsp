@@ -295,8 +295,8 @@ app.controller('myCtrl', function($scope, $http) {
                         <input ng-model="rec.chargeThisMonth"/>
                         </td>
                     <td class="rightColumn">
-                        Paid {{rec.stats.editUserCount}}<br/>
-                        Unpaid {{rec.stats.readUserCount}}<br/>
+                        Full {{rec.stats.editUserCount}}<br/>
+                        Basic {{rec.stats.readUserCount}}<br/>
                         Gratis {{rec.editUserGratis}}<br/>
                         $ {{(rec.stats.editUserCount-rec.editUserGratis)*costCreator|number:2}}</td>
                     <td class="rightColumn">

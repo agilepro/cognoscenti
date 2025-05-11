@@ -221,6 +221,11 @@ public abstract class ContainerCommon extends NGContainer
                 desc = "The role 'Executives' contains a list of people who are assigned to the site "
                 +"as a whole, and are automatically members of every workspace in that site.  ";
             }
+            if ("Owners".equals(symbol)) {
+                desc = "The role 'Owners' contains one or more people who take full responsibility "
+                +"for the site as a whole both administratively and financially.  The site owner(s) "
+                +"can add and remove anything from any workspace and ultimately decides when to terminate the site.";
+            }
             role = createRole(symbol, desc);
             role.setRequirements(elegibility);
         }

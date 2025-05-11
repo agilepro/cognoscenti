@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.getDocumentInfo();
     $scope.openDocDialog = function (doc) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role");
             return;
         }
         var docsDialogInstance = $modal.open({

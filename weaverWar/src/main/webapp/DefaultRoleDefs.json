@@ -4,7 +4,7 @@
       "symbol": "MembersRole",
       "name": "Members",
       "description": "Members participates in the meetings and activities of the workspace. They have the access and view the material stored in the workspace, along with basic capabilities to add comments and update assigned action items.",
-      "eligibility": "Members can be paid or unpaid users who are interested in participating in the circle.",
+      "eligibility": "Members can be full or basic users who are interested in participating in the circle.",
       "canEdit": false,
       "isWorkspaceDefault" : true
     },
@@ -12,7 +12,7 @@
       "symbol": "StewardsRole",
       "name": "Stewards",
       "description": "Stewards have all the capabilities of Members and also the ability to organize the meetings, facilitate them, make and keep meeting records, add/remove documents, add/update discussion topics, and other administration/maintenance actions on the workspace.",
-      "eligibility": "Must be a paid member and interested in helping to run the circle.",
+      "eligibility": "Must be a full user and interested in helping to run the circle.",
       "canEdit": true,
       "canAdminister" : true,
       "isWorkspaceDefault" : true
@@ -21,7 +21,7 @@
       "symbol": "Meeting Manager",
       "canEdit": true,
       "description": "Personally handles or oversees: circle meeting venue, creating agendas, taking minutes in collaboration with facilitator, and keeping the records organized.",
-      "eligibility": "Must be a paid member familiar with electronic media. Organized. Articulate. Reliable. Takes initiative."
+      "eligibility": "Must be a full user familiar with electronic media. Organized. Articulate. Reliable. Takes initiative."
     },
     {
       "symbol": "External Expert",
@@ -45,7 +45,7 @@
       "symbol": "Facilitator",
       "canEdit": true,
       "description": "Selected by the circle members to lead circle meetings. Moves agenda forward, keeps everyone focused on the aim. Helps prepare the meeting agenda.",
-      "eligibility": "Must be a paid member with good judgement, integrity, who listens and empathizes effectively. Can hold the big picture of an issue. Articulate. Both a sense of humor and able to be firm."
+      "eligibility": "Must be a full user with good judgement, integrity, who listens and empathizes effectively. Can hold the big picture of an issue. Articulate. Both a sense of humor and able to be firm."
     }
   ]
 }

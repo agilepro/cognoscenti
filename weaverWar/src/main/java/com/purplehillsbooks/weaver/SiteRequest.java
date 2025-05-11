@@ -53,15 +53,6 @@ public class SiteRequest {
         sr.put("purpose", descr.trim());
     }
 
-    /*
-    public String getAdminComment() throws Exception {
-        return sr.getString("adminComment");
-    }
-    public void setAdminComment(String descr) throws Exception {
-        sr.put("adminComment", descr.trim());
-    }
-    */
-
     public String getSiteId() throws Exception {
         return sr.getString("siteId");
     }

@@ -225,7 +225,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 to modify resources in the workspace.   
                 People who are not in any update role, but in another role, will have read only access.   
                 Please note:
-                the administrator at the site level can set which users are paid and which users are unpaid, and that takes precidence.
+                the owner of the site can set which users are full and which users are basic, 
+                and basic users can never play any role that can update a workspace.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2 justify-content-end">
 

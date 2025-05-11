@@ -52,13 +52,13 @@ public class WorkspaceRole extends CustomRole {
         def = newDef;
     }
 
-    // performs the check that if the role is edit role, the user must be paid
+    // performs the check that if the role is edit role, the user must be full(paid)
     private void assertPlayerAcceptible(AddressListEntry newMember) throws Exception {
         if (def.canEdit) {
             UserProfile uProf = newMember.getUserProfile();
             if (site.isUnpaidUser(uProf)) {
                 throw WeaverException.newBasic(
-                    "Role (%s) is an update role, and can not be played by an unpaid user (%s)", 
+                    "Role (%s) is an update role, and can not be played by a basic user (%s)", 
                     getName(), newMember.getEmail());
             }
         }

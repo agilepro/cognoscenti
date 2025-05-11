@@ -215,7 +215,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.makeState = function(rec, newState) {
         if (!$scope.canUpdate) {
-            alert("Unable to update action item because you are an unpaid user");
+            alert("Unable to update action item because you are not playing an update role");
             return;
         }
         var newRec = {};
@@ -310,7 +310,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.toggleCheckItem = function(changeIndex) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         $scope.checkitems.forEach( function(item) {
@@ -333,7 +333,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.constructCheckItems();
     $scope.saveGoal = function() {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
@@ -374,7 +374,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.saveAccomplishment = function() {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         $scope.goalInfo.newAccomplishment = $scope.newAccomplishment;
@@ -382,7 +382,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.addPerson = function() {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         var player = $scope.newPerson;
@@ -400,7 +400,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.removePerson = function(person) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         var res = $scope.goalInfo.assignTo.filter( function(one) {
@@ -431,7 +431,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.changeRYG = function(newRAG) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         $scope.goalInfo.prospects = newRAG;
@@ -515,7 +515,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.unattachDocFromItem = function(docId) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
         var newList = [];
@@ -529,7 +529,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.openAttachDocument = function () {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
 
@@ -559,7 +559,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.openInviteSender = function (player) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
 
@@ -593,7 +593,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.openModalActionItem = function (startMode) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are an unpaid user");
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
 

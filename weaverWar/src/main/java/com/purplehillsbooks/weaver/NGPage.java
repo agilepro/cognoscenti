@@ -53,7 +53,7 @@ public abstract class NGPage extends ContainerCommon {
     protected PageInfoRecord pageInfo;
     private ProcessRecord pageProcess;
 
-    protected List<String> displayNames;
+    protected String displayName;
     protected List<NGSection> sectionElements = null;
     private NGBook prjSite;
     protected List<String> existingIds = null;
@@ -81,7 +81,7 @@ public abstract class NGPage extends ContainerCommon {
 
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
-        displayNames = pageInfo.getPageNames();
+        displayName = pageInfo.getPageName();
 
         prjSite = site;
         pageInfo.setSiteKey(site.getKey());
@@ -558,57 +558,12 @@ public abstract class NGPage extends ContainerCommon {
      */
     @Override
     public String getFullName() {
-        if (displayNames == null) {
-            return "Uninitialized (displayNames is null)";
-        }
-        if (displayNames.size() == 0) {
-            return "Uninitialized (displayNames contains zero items)";
-        }
-        return displayNames.get(0);
-    }
-
-    public List<String> getPageNames() {
-        return displayNames;
-    }
-
-    public void setPageNames(List<String> newNames) {
-        pageInfo.setPageNames(newNames);
-        displayNames = pageInfo.getPageNames();
+        return displayName;
     }
 
     public void setNewName(String newName) {
-        List<String> nameSet = new ArrayList<String>();
-
-        //there used to be a set of names because this was supposed to ack like a wiki
-        //and we wanted to preserve name-links that were old.
-        //However, there are no name-links today, so there is nothing to preserve.
-        //It is confusing to have to delete the OLD names, so changed this function
-        //to simply replace the entire list of names, with the single new name.
-
-        nameSet.add(newName);
-        setPageNames(nameSet);
-    }
-    public void deleteOldName(String oldName) {
-        List<String> nameSet = getPageNames();
-
-        //there used to be a set of names because this was supposed to ack like a wiki
-        //and we wanted to preserve name-links that were old.
-        //However, there are no name-links today, so there is nothing to preserve.
-        //It is confusing to have to delete the OLD names, so changed this function
-        //to simply replace the entire list of names, with the single new name.
-        //
-        //This function need consider only the first name, and if the name to delete
-        //is not that name, just delete all except the first.
-        //If there is NO names, then just make the one to delete be the only name.
-        //This function should be deprecated.
-
-        if (nameSet.size()>1) {
-            String firstName = nameSet.get(0);
-            setNewName(firstName);
-        }
-        else {
-            setNewName(oldName);
-        }
+        pageInfo.setPageName(newName);
+        displayName = pageInfo.getPageName();
     }
 
 
@@ -617,12 +572,6 @@ public abstract class NGPage extends ContainerCommon {
             sec.findLinks(v);
         }
     }
-
-    /*
-    public void findTags(List<String> v) throws Exception {
-        //Tags not implemented any more
-    }
-    */
 
 
     @Override
@@ -932,8 +881,8 @@ public abstract class NGPage extends ContainerCommon {
 
 
     @Override
-    public List<String> getContainerNames(){
-        return getPageNames();
+    public String getContainerName(){
+        return displayName;
     }
 
 
