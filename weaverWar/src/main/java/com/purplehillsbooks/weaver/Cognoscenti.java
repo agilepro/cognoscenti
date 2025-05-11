@@ -238,6 +238,7 @@ System.out.println("Weaver Server Object == Start the Server");
             isInitialized = true;
         }
         catch (Exception e) {
+            initializer.serverInitState = ServerInitializer.STATE_FAILED;
             initializer.lastFailureMsg = e;
             throw e;
         }

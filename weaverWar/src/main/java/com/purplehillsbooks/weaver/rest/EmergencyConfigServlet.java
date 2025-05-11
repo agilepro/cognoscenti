@@ -228,7 +228,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
             jo.put("exception", JSONException.convertToJSON(ex, ""));
         }
         else {
-            jo.put("exception", "No exception recorded.");
+            jo.put("exception", JSONException.convertToJSON(new Exception("No exception recorded."), ""));
         }
 
         jo.put("serverState", cog.initializer.getServerStateString());
@@ -240,6 +240,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
         pathTest(jo, cog, "libFolder");
         pathTest(jo, cog, "userFolder");
 
+        System.out.println("INIT ERROR PAGE PARAMETERS:\n "+jo.toString(2));
         return new TemplateJSONRetriever(jo);
     }
     private void paramTest(JSONObject jo, Cognoscenti cog, String paramName) throws Exception {

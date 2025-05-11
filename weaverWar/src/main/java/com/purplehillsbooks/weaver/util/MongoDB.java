@@ -1,6 +1,7 @@
 package com.purplehillsbooks.weaver.util;
 
 import org.bson.Document;
+import org.springframework.instrument.classloading.WeavingTransformer;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
@@ -13,6 +14,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * Isolate the arcane Mongo specific classes here if possible
@@ -72,31 +74,39 @@ public class MongoDB {
         return querySortRecords(query, sort, 0, limit);
     }
     public JSONArray querySortRecords(JSONObject query, JSONObject sort, int skip, int batchSize) throws Exception {
-        String queryString = query.toString(0);
-        long startTime = System.currentTimeMillis();
+        try {
+            String queryString = query.toString(0);
+            long startTime = System.currentTimeMillis();
 
-        Document dq = Document.parse(queryString);
-        FindIterable<Document> resultSet = emaildb.find(dq);
-        if (sort!=null) {
-            resultSet.sort(Document.parse(sort.toString(0)));
+            Document dq = Document.parse(queryString);
+            FindIterable<Document> resultSet = emaildb.find(dq);
+            if (sort!=null) {
+                resultSet.sort(Document.parse(sort.toString(0)));
+            }
+            resultSet.skip(skip);
+            MongoCursor<Document> cursor = resultSet.iterator();
+            try {
+                JSONArray ja = new JSONArray();
+                int count = 0;
+                while (cursor.hasNext() && count < batchSize) {
+                    Document d = cursor.next();
+                    JSONObject jo = new JSONObject(new JSONTokener(d.toJson()));
+                    ja.put(jo);
+                    count++;
+                }
+                long ms = System.currentTimeMillis()-startTime;
+                if (count>0) {
+                    System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);
+                }
+                return ja;
+            }
+            finally {
+                cursor.close();
+            }
         }
-        resultSet.skip(skip);
-        MongoCursor<Document> cursor = resultSet.iterator();
-
-        JSONArray ja = new JSONArray();
-        int count = 0;
-        while (cursor.hasNext() && count < batchSize) {
-            Document d = cursor.next();
-            JSONObject jo = new JSONObject(new JSONTokener(d.toJson()));
-            ja.put(jo);
-            count++;
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to read Mongo DB query (%s)", e, query.toString(2));
         }
-        long ms = System.currentTimeMillis()-startTime;
-        if (count>0) {
-            System.out.println("MONGO: "+count+" records ("+ms+"ms) from: "+queryString);
-        }
-        cursor.close();
-        return ja;
     }
 
     public void createRecord(JSONObject emailRecord) throws Exception {
