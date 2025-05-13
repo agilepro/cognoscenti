@@ -18,13 +18,13 @@
 
 {% if ($meeting) %}
 <hr/>
-<h6><b>Meeting:</b> <a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a>
+<p><b>Meeting:</b> <a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a><br>
     ( 
      <a href="{$meeting.agendaUrl}">Agenda</a>,
      <a href="{$meeting.minutesUrl}">Minutes</a>,
      <a href="{$workspaceUrl}meetingTime{$meeting.id}.ics">Save to Calendar</a> )
 
-</h6>
+</p>
 
 {% if ($meeting.isScheduled) %} 
 <p><b>Date / Time: </b> {$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</p>
