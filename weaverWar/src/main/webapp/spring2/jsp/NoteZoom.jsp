@@ -2,13 +2,7 @@
 %><%@ include file="/include.jsp"
 %><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicenseForUser"
-%><%/*
-Required parameter:
-
-    1. pageId : This is the id of a Workspace and used to retrieve NGWorkspace.
-    2. topicId: This is id of note (TopicRecord).
-
-*/
+%><%
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
@@ -38,7 +32,10 @@ Required parameter:
 
     String topicId = ar.reqParam("topicId");
     TopicRecord note = ngw.getNoteOrFail(topicId);
-    int topicNumericId = DOMFace.safeConvertInt(topicId);
+    
+    String topicPrivateUrl = ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topicId+".htm");
+    String magicNumber = AccessControl.getAccessTopicParams(ngw, note);
+    String topicPublicUrl = ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topicId+".htm?"+magicNumber);
 
     if (!AccessControl.canAccessTopic(ar, ngw, note)) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
@@ -92,6 +89,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.nonMembers = [];
     $scope.addressMode = false;
     $scope.canUpdate = <%=canUpdate%>;
+    $scope.topicPrivateUrl = "<%ar.writeJS(topicPrivateUrl);%>";
+    $scope.topicPublicUrl = "<%ar.writeJS(topicPublicUrl);%>";
 
     $scope.currentTime = (new Date()).getTime();
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
@@ -1055,6 +1054,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var saveRec = {subscribers: $scope.subscriberBuffer, universalid: $scope.noteInfo.universalid};
         $scope.savePartial(saveRec);
     }
+    $scope.toggleEditPart = function(section) {
+        if ($scope.editMeetingPart===section) {
+            $scope.editMeetingPart = "bogus";
+        }
+        else {
+            $scope.editMeetingPart = section;
+        }
+    }
     
     
     initializeLabelPicker($scope, $http, $modal);    
@@ -1082,8 +1089,30 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.getAllLabels();
         });
     };
+    
+    $scope.generateLink = function(typeOfLink) {
+        if (typeOfLink === "Public") {
+            $scope.generatedLink = $scope.topicPublicUrl;
+        }
+        else {
+            $scope.generatedLink = $scope.topicPrivateUrl;
+        }
+    }
+    $scope.linkScope = "Private";
+    $scope.generateLink("Private");
+
 });
 
+function copyTheLink() {
+  /* Get the text field */
+  var copyText = document.getElementById("generatedLink");
+
+  /* Select the text field */
+  copyText.select();
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+}
 </script>
 <script src="../../new_assets/jscript/AllPeople.js"></script>
 
@@ -1201,16 +1230,30 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <% } %>
 
 <div class="col-12 m-2">
-<hr>
-    <div class="row d-flex">   
-        <span class="col-1 h5 ps-3">Labels:</span>
-        <span class="col-5">
-        <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+<hr/>
+
+    <div class="row ms-3">
+        <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left" >
+            Last modified:</span>
+        <span class="col-9">
+            {{noteInfo.modTime|cdate}}
         </span>
-        <span class="col-2 h5">Last modified:</span>
-        <span class="col-3">{{noteInfo.modTime|cdate}}</span>
     </div>
-<hr>
+    <div class="row ms-3">
+        <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left"
+            ng-click="toggleEditPart('Labels')">
+            Labels:</span>
+        <span class="col-9" ng-hide="editMeetingPart=='Labels'">
+            <ul><li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                 <button role="menuitem" tabindex="0" class="btn btn-wide labelButton" 
+                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}" ng-style="{ color: getContrastColor(rolex.color) }">
+                     {{rolex.name}}</button>
+             </li></ul>
+        </span>
+        <span class="col-9" ng-show="editMeetingPart=='Labels'">
+            <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
+        </span>
+    </div><hr/>
     <div class="row ms-3">
     <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="openAttachDocument()">Attachments:</span>
     <span class="col-9" ng-dblclick="openAttachDocument()">
@@ -1290,10 +1333,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <div class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="startSubscriberEdit()">Subscribers:</div>
     <div class="col-9">
         <div class="d-flex">
-        <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
+          <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}">
             <span class="dropdown" >
                 <ul class="nav-item list-inline m-2">
-                <li class="nav-item dropdown" id="users" data-toggle="dropdown">
+                  <li class="nav-item dropdown" id="users" data-toggle="dropdown">
                     <img src="<%=ar.retPath%>icon/{{player.key}}.jpg" 
                  style="width:32px;height:32px" 
                  title="{{player.name}} - {{player.uid}}" class="rounded-5" />
@@ -1304,10 +1347,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                         <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0" ng-click="navigateToUser(player)">
                             <span class="fa fa-user"></span> Visit Profile</a></li>
                     </ul>
-                </li>
-            </ul>
-        </span>
-        </span>
+                  </li>
+                </ul>
+            </span>
+          </span>
         </div>
         <span ng-repeat="outcast in nonMembers">
             <span class="dropdown" >
@@ -1329,40 +1372,67 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
     <hr></div>
 
-<div class="well mx-3" ng-show="editMeetingPart=='subscribers'">
+    <div class="well mx-3" ng-show="editMeetingPart=='subscribers'">
         <h3 class="h5">Adjust Subscribers:</h3>
         <div>
-            <tags-input ng-model="subscriberBuffer" placeholder="Enter users to update about changes" display-property="name" key-property="uid" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()"  on-tag-removed="updatePlayers()"> 
+            <tags-input ng-model="subscriberBuffer" placeholder="Enter users to update about changes" 
+                display-property="name" key-property="uid" replace-spaces-with-dashes="false" 
+                add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()"  
+                on-tag-removed="updatePlayers()"> 
                 <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
             </tags-input>
         </div>
         <div>
             <span class="d-grid justify-content-end">
-                <button class="btn btn-primary btn-default btn-raised fs-6"  type="button"  ng-click="saveSubscriberEdit()" title="Save this list of subscribers"> Save </button>
+                <button class="btn btn-primary btn-default btn-raised fs-6"  type="button"  ng-click="saveSubscriberEdit()" 
+                        title="Save this list of subscribers"> Save </button>
             </span>
         </div>
+    </div>
+
+    <div class="row d-flex mx-2">
+        <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
+
+        </span> 
+        <span class="dropdown" ng-show="noteInfo.draft">   
+            <button class="btn btn-primary btn-default btn-raised" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
+        </span>
+    </div>
+
+    <div class="row ms-3">
+        <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left"
+            ng-click="toggleEditPart('makeLink')">
+            Get Link:</span>
+        <span class="col-9">
+            <p ng-hide="editMeetingPart=='makeLink'">Generate a link that works the way you want.  You can make a <b>private</b> link that will allow only the current members of this workspace to see the topic.  Or you can make a <b>public</b> link that makes the topic available to anyone in the world with the link.  Your choice.</p>
+            <span  ng-show="editMeetingPart=='makeLink'">
+                <div class="col-8 my-2">
+                    <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink('Private')"> <b>Private</b> - topic can be accessed only by workspace members.
+                </div>
+                <div class="col-8 my-2">
+                    <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink('Public')">
+                    <b>Public</b> - topic can be accessed by anyone on the Internet.
+                </div>
+                <div class="col-8 my-2">
+                    <input type="text" ng-model="generatedLink" id="generatedLink"/>
+                    <button onClick="copyTheLink()" class="btn btn-primary btn-raised">Copy to Clipboard</button>
+                </div>
+            </span>
+
+        </span>
+    </div><hr/>
+    
+    <!--Create Comment/Proposal/Round Row-->
+    <div class="d-flex col-7 mx-3">
+        <button class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3" ng-click="openCommentCreator(item, 1)" >
+            Create New <i class="fa fa-comments-o"></i> Comment</button>
+        <button ng-click="openCommentCreator(item, 2)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+            Create New <i class="fa fa-star-o"></i> Proposal</button>
+        <button ng-click="openCommentCreator(item, 3)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
+            Create New <i class="fa fa-question-circle"></i> Round</button>
+
+    </div>
 </div>
-
-<div class="row d-flex mx-2">
-    <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
-
-    </span> 
-    <span class="dropdown" ng-show="noteInfo.draft">   
-        <button class="btn btn-primary btn-default btn-raised" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
-    </span>
-</div>
-
-          <!--Create Comment/Proposal/Round Row-->
-          <div class="d-flex col-7 mx-3">
-                <button class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3" ng-click="openCommentCreator(item, 1)" >
-                    Create New <i class="fa fa-comments-o"></i> Comment</button>
-                <button ng-click="openCommentCreator(item, 2)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
-                    Create New <i class="fa fa-star-o"></i> Proposal</button>
-                <button ng-click="openCommentCreator(item, 3)" class="btn btn-comment btn-wide btn-raised px-3 mx-2 my-3">
-                    Create New <i class="fa fa-question-circle"></i> Round</button>
-
-            </div>
-      </div>
             
         </div> 
         <div class="well mx-3" ng-repeat="cmt in getComments()">

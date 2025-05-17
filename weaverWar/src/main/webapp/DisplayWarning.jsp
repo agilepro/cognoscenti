@@ -311,7 +311,7 @@ console.log("SLAP CONFIGURATION:", SLAP);
           <% } %>
           <tr>
             <td class="header-column">
-                Admins: 
+                Stewards: 
             </td>
             <td>
                 <% if (ws != null) {
