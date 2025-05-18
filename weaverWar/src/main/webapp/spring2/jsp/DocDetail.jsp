@@ -431,19 +431,19 @@ function copyTheLink() {
             </span>
             <span class="m-3">
                 <p ng-hide="makeLink">Generate a link that works the way you want.  You can make a private link that will allow only the current members of this workspace to download.  Or you can make a public link that makes the document available to anyone in the world with the link.  Your choice.</p>
-            <span  ng-show="makeLink">
-                <div class="col-8 my-2">
-                    <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()"> <b>Private</b> - document can be accessed only by workspace members.
-                </div>
-                <div class="col-8 my-2">
-                    <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()">
-                    <b>Public</b> - document can be accessed by anyone on the Internet.
-                </div>
-                <div class="col-8 my-2">
-                    <input type="text" ng-model="generatedLink" id="generatedLink"/>
-                    <button onClick="copyTheLink()" class="btn btn-primary btn-raised">Copy to Clipboard</button>
-                </div>
-            </span>
+                <span  ng-show="makeLink">
+                    <div class="col-8 my-2">
+                        <input type="radio" ng-model="linkScope" value="Private" ng-click="generateLink()"> <b>Private</b> - document can be accessed only by workspace members.
+                    </div>
+                    <div class="col-8 my-2">
+                        <input type="radio" ng-model="linkScope" value="Public" ng-click="generateLink()">
+                        <b>Public</b> - document can be accessed by anyone on the Internet.
+                    </div>
+                    <div class="col-8 my-2">
+                        <input type="text" ng-model="generatedLink" id="generatedLink"/>
+                        <button onClick="copyTheLink()" class="btn btn-primary btn-raised">Copy to Clipboard</button>
+                    </div>
+                </span>
             </span>
             <hr/>
         </div>
