@@ -250,22 +250,27 @@ function setUpLearningMethods($scope, $modal, $http) {
 
 <%@ include file="AnonNavBar.jsp" %>
 
+<div class="container-fluid px-0" ng-cloak>
+    <div class="row">
     <!-- BEGIN Title and Breadcrumb -->
-    <div class="container-fluid override my-2">
-    <span><!-- user is not logged in, don't display any breadcrumbs -->
+    <!--<div class="container-fluid override my-2">
+    <span>
+        
+        user is not logged in, don't display any breadcrumbs 
+
         <h1 class="d-inline page-name" id="mainPageTitle"></h1>
-    </span>
+    </span>-->
           
         
-    </div>
+    <div class="col-10 col-lg-11 main-content override">
 
     <!-- Begin Template Content (compiled separately) -->
     <jsp:include page="<%=wrappedJSP%>" />
     <!-- End Template Content (compiled separately) -->
-</div>
+
 <!-- End mainContent -->
 
-</div>
+
 <!-- End body wrapper -->
 
 <script>

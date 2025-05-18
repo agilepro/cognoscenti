@@ -431,38 +431,42 @@ function reloadIfLoggedIn() {
 </script>
 
 
-<div class="bodyWrapper"  style="margin:50px">
+<div class="bodyWrapper" >
+
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
+    <!-- user is not logged in, don't display any breadcrumbs -->
+    <span class="dropdown mt-1">
+        <button class="btn btn-outline-secondary btn-tiny dropdown-toggle" type="button" id="dropdownInfoMenu"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
+            <li>
+                <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+                <% if (!ar.isLoggedIn()) {%> <button class="dropdown-item" ng-click="goToDiscussion()" title="Link to the full discussion with all the options">Login</button>
+                <% } else {%> <button class="dropdown-item" ng-click="goToDiscussion()" title="Link to the full discussion with all the options">Go To Full Discussion</button>
+                                <% } %>
+            </li>
+        </ul>
+    </span>
+    <span>
+        <h1 class="d-inline page-name" id="mainPageTitle" ><%ar.writeJS(originalSubject);%></h1>
+    </span>
+</div>
 
 
-<style>
-.spacey tr td {
-    padding: 5px 5px;
-}
-.mainAboutObject {
-    background-color: #F0D7F7;
-}
 
-</style>
-
-
-<div style="max-width:800px;scroll-margin-top:50px">
+<div style="max-width:800px;" class="ms-5">
     
-    <div>
-<% if (!ar.isLoggedIn()) {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Login</button>
-<% } else {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
-                title="Link to the full discussion with all the options">Go To Full Discussion</button>
-<% } %>
-    </div>
-    <div class="comment-outer mainAboutObject">
-        <div class="comment-inner">
+    
+    <div class="comment-outer mainAboutObject p-2">
+        <div class="comment-inner p-2">
             <div ng-bind-html="originalWiki|wiki"></div>
         </div>
+    </div>
+    <div class="m-2">
         <div ng-show="attachments">
-          <div><b>Attachments</b></div>
-          <div ng-repeat="doc in attachments"  style="vertical-align: top">
+          <span class="h5"><b>Attachments:</b></span>
+          <div ng-repeat="doc in attachments"  >
               <span ng-show="doc.attType=='FILE'">
                   <span ng-click="navigateToDoc(doc)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                   &nbsp;
@@ -478,20 +482,20 @@ function reloadIfLoggedIn() {
         </div>
     </div>
     
-    <div class="page-name">
-        <h1 id="mainPageTitle"
+    <div class="page-name ms-0">
+        <h2 id="mainPageTitle"
             title="This is the title of the discussion and comment thread">
             Comments
-        </h1>
+        </h2>
     </div>
 
     <div ng-repeat="cmt in otherComments">
-      <div class="comment-outer">
+      <div class="comment-outer p-2">
         <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - <a href="../../FindPerson.htm?uid={{cmt.userKey}}">{{cmt.userName}}</a></div>
-        <div class="comment-inner">
+        <div class="comment-inner p-2">
           <div ng-bind-html="cmt.body|wiki"></div>
         </div>
-        <table ng-show="cmt.responses" class="spacey">
+        <table ng-show="cmt.responses" class="mt-3">
           <tr ng-repeat="resp in cmt.responses" ng-show="resp.body">
             <td><b>{{resp.choice}}</b></td>
             <td><i>{{resp.userName}}</i></td>
@@ -519,51 +523,56 @@ function reloadIfLoggedIn() {
     
     
     <div id="Comment" style="scroll-margin-top:80px;scroll-padding-top:80px"></div>
-    <div ng_show="focusComment.body">
-        <h1>{{commentTypeName}} from email:</h1>
+    <div ng_show="focusComment.body" class="m-3">
+        <h3>{{commentTypeName}} from email:</h3>
 
-        <div class="comment-outer comment-state-active">
-          <div>{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - <a href="../../FindPerson.htm?uid={{focusComment.userKey}}">{{focusComment.userName}}</a></div>
-          <div ng-show="focusComment.commentType>=2"><h3>The {{commentTypeName}}:</h3></div>
-          <div class="comment-inner">
-            <div ng-bind-html="focusComment.body|wiki"></div>
-          </div>
-          <table ng-show="focusComment.responses" class="spacey" style="width:100%">
-            <tr ng-show="focusComment.commentType>=2 && !makingResponse">
-                <td colSpan="3"><h3>{{responseTypeName}}s so far:</h3></td></tr>
-            <tr ng-repeat="resp in focusComment.responses" ng-show="!makingResponse">
-              <td><b>{{resp.choice}}</b></td>
-              <td><i>{{resp.userName}}</i></td>
-              <td><div ng-bind-html="resp.body|wiki" class="comment-inner"></div></td> 
-            </tr>
-            <tr ng-show="focusComment.commentType>=2 && !makingResponse"><td></td><td></td><td>
-              <button ng-click="startResponse()" class="btn btn-primary btn-raised">Create / update your {{responseTypeName}}</button></td></tr>
-            <tr ng-show="makingResponse && mustGetId"><td colSpan="3">
-                <div class="comment-outer" style="padding:25px;width:600px">
-                
-                    <div>Please enter/verify your email address</div>
-                    <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
-                    <div>And your name</div>
-                    <div><input class="form-control" ng-model="userName" placeholder="Enter name"/></div>
-                    <div><button class="btn btn-primary btn-raised" ng-click="saveAddresses()"
-                        title="Save these verified values">Save & Continue</button></div>
+        <div class="comment-outer p-2 comment-state-active">
+            <div class="fs-5 mb-2">{{focusComment.time|date:'MMM dd, yyyy - HH:mm'}} - 
+                <a href="../../FindPerson.htm?uid={{focusComment.userKey}}">{{focusComment.userName}}</a>
+            </div>
+            <div ng-show="focusComment.commentType>=2">
+                <h3>The {{commentTypeName}}:</h3>
+            </div>
+            <div class="comment-inner p-2">
+                <div ng-bind-html="focusComment.body|wiki"></div>
+            </div>
+            <table ng-show="focusComment.responses" class="mt-3" style="width:95%">
+                <tr ng-show="focusComment.commentType>=2 && !makingResponse">
+                    <td colSpan="3"><h3>{{responseTypeName}}s so far:</h3></td></tr>
+                <tr ng-repeat="resp in focusComment.responses" ng-show="!makingResponse">
+                <td><b>{{resp.choice}}</b></td>
+                <td><i>{{resp.userName}}</i></td>
+                <td><div ng-bind-html="resp.body|wiki" class="comment-inner p-2"></div></td> 
+                </tr>
+                <tr ng-show="focusComment.commentType>=2 && !makingResponse"><td></td><td></td><td>
+                <button ng-click="startResponse()" class="btn btn-primary btn-raised float-end">Create / update your {{responseTypeName}}</button></td></tr>
+                <tr ng-show="makingResponse && mustGetId"><td colSpan="3">
+                    <div class="comment-outer" style="padding:25px;width:600px">
+                    
+                        <div>Please enter/verify your email address</div>
+                        <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
+                        <div>And your name</div>
+                        <div><input class="form-control" ng-model="userName" placeholder="Enter name"/></div>
+                        <div><button class="btn btn-primary btn-raised" ng-click="saveAddresses()"
+                            title="Save these verified values">Save & Continue</button></div>
+                    </div>
+                </td></tr>
+                <tr ng-show="makingResponse && !mustGetId"><td colSpan="3">
+                <div><h3>Your {{responseTypeName}}:</h3></div>       
+                <div ui-tinymce="tinymceOptions" ng-model="myResponse"
+                    class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
+                <div ng-show="focusComment.commentType==2">
+                    <button ng-click="saveResponse('Consent')" class="btn btn-primary btn-raised">Consent</button>
+                    <button ng-click="saveResponse('Objection')" class="btn btn-primary btn-raised">Objection</button>
+                    <button ng-click="cancelResponse()" class="btn btn-danger btn-raised btn-default">Cancel</button>
                 </div>
-            </td></tr>
-            <tr ng-show="makingResponse && !mustGetId"><td colSpan="3">
-              <div><h3>Your {{responseTypeName}}:</h3></div>       
-              <div ui-tinymce="tinymceOptions" ng-model="myResponse"
-                 class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
-              <div ng-show="focusComment.commentType==2">
-                  <button ng-click="saveResponse('Consent')" class="btn btn-primary btn-raised">Consent</button>
-                  <button ng-click="saveResponse('Objection')" class="btn btn-primary btn-raised">Objection</button>
-                  <button ng-click="cancelResponse()" class="btn btn-warning btn-raised">Cancel</button>
-              </div>
-              <div ng-show="focusComment.commentType==3">
-                  <button ng-click="saveResponse()" class="btn btn-primary btn-raised">Save</button>
-                  <button ng-click="cancelResponse()" class="btn btn-warning btn-raised">Cancel</button>
-              </div>
-            </td></tr>
-          </table>
+                <div ng-show="focusComment.commentType==3">
+                    
+                    <button ng-click="cancelResponse()" class="btn btn-danger btn-raised btn-default">Cancel</button>
+                    <button ng-click="saveResponse()" class="btn btn-primary btn-raised btn-default float-end">Save</button>
+                </div>
+                </td></tr>
+            </table>
 
           <div ng-show="focusComment.outcome"><h3>The Outcome:</h3></div>
           <div class="comment-inner" ng-show="focusComment.outcome">
@@ -588,7 +597,7 @@ function reloadIfLoggedIn() {
  
   <div ng-show="showReplyBox">
     <div ng-show="showReplyBox && mustGetId">
-        <div class="comment-outer comment-state-active" style="padding:25px;min-height:460px">
+        <div class="comment-outer comment-state-active p-3" style="min-height:460px">
         
             <div>Please enter/verify your email address</div>
             <div><input class="form-control" ng-model="emailId" placeholder="Enter email"/></div>
@@ -602,46 +611,47 @@ function reloadIfLoggedIn() {
         <div ng-hide="sentAlready" class="comment-outer comment-state-active" style="min-height:460px">
             <h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
-                 class="leafContent" style="height:250px;" id="theOnlyEditor"></div>
+                 class="leafContent" style="height:250px;" id="theOnlyEditor">
+            </div>
             <div>
-                <button class="btn btn-default btn-raised" ng-click="saveIt()"
-                        title="Send the comment into the discussion">Save Draft</button>
-                <button class="btn btn-primary btn-raised" ng-click="sendIt()"
-                        title="Send the comment into the discussion">Send</button>
+                <button class="btn btn-default btn-raised" ng-click="saveIt()" title="Send the comment into the discussion">Save Draft
+                </button>
+                <button class="btn btn-primary btn-raised" ng-click="sendIt()" title="Send the comment into the discussion">Send
+                </button>
             </div>
         </div>
     </div>
   </div>
     
-    <div style="margin:50px"  style="broder:2px solid red"></div>
+    <div style="margin:25px"  style="border:2px solid red"></div>
     
     
     
-    <div ng-hide="makingResponse">
+    <div ng-hide="makingResponse" class="ms-5">
     <% if (!ar.isLoggedIn()) {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+            <button class="btn btn-primary btn-raised btn-default" ng-click="goToDiscussion()"
                 title="Link to the full discussion with all the options">Login</button>
     <% } else {%>
-            For more options <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
+            <button class="btn btn-primary btn-raised" ng-click="goToDiscussion()"
                 title="Link to the full discussion with all the options">Go To Full Discussion</button>
     <% } %>
     </div>   
     
-    <table class="table" style="width:100%;max-width:800px">
+    <table class="mx-5 my-4 well p-4 rounded-3" style="width:100%;max-width:800px">
         <tr ng-show="topicSubject">
-            <td>Discussion Topic</td>
+            <td class="px-3 py-2"><b>Discussion Topic</b></td>
             <td>{{topicSubject}}</td>
         </tr>
         <tr ng-show="meetingTitle">
-            <td>Meeting</td>
+            <td class="px-3 py-2"><b>Meeting</b></td>
             <td>{{meetingTitle}}</td>
         </tr>
         <tr ng-show="agendaItem">
-            <td>Agenda Item</td>
+            <td class="px-3 py-2"><b>Agenda Item</b></td>
             <td>{{agendaItem}}</td>
         </tr>
         <tr >
-            <td>Subscribers</td>
+            <td class="px-3 py-2"><b>Subscribers</b></td>
             <td>
                 The following people will receive email if you reply:
                 <ul>
@@ -650,13 +660,13 @@ function reloadIfLoggedIn() {
             </td>
         </tr>
         <tr ng-show="topicSubject && isLoggedIn">
-            <td>Your Subscription</td>
+            <td class="px-3 py-2"><b>Your Subscription</b></td>
             <td>
-              <div ng-show="isSubscriber">
+                <div ng-show="isSubscriber">
                 <div>You are currently subscribed to this discussion
                 <b>{{topicSubject}}</b>.</div>
                 <button ng-click="changeSubscription(false)" 
-                        class="btn btn-default btn-raised"
+                        class="btn btn-comment btn-default btn-raised my-2"
                         title="Click to remove yourself from the list and stop getting notifications from this discussion">
                         Unsubscribe</button>
                 <div>
@@ -664,24 +674,24 @@ function reloadIfLoggedIn() {
                     when a new comment is added to the discussion.  Unsubscribe if
                     you no longer want to see comments on this discussion.
                 </div>
-              </div>
-              <div ng-hide="isSubscriber">
-                <div>You are NOT subscribed to this discussion
-                <b>{{topicSubject}}</b>.</div>
-                <button ng-click="changeSubscription(true)" 
-                        class="btn btn-default btn-raised"
-                        title="Click to remove add yourself to the list and start getting notifications from this discussion">
-                        Subscribe</button>
-                <div>
-                    If you subscribe, you will receive email
-                    every time a new comment is added to the discussion.  
-                    Subscribe if you want to see comments on this discussion.
                 </div>
-              </div>
+                <div ng-hide="isSubscriber">
+                    <div>You are NOT subscribed to this discussion
+                    <b>{{topicSubject}}</b>.</div>
+                    <button ng-click="changeSubscription(true)" 
+                            class="btn btn-default btn-raised"
+                            title="Click to remove add yourself to the list and start getting notifications from this discussion">
+                            Subscribe</button>
+                    <div>
+                        If you subscribe, you will receive email
+                        every time a new comment is added to the discussion.  
+                        Subscribe if you want to see comments on this discussion.
+                    </div>
+                </div>
             </td>
         </tr>
         <tr ng-show="agendaItem">
-            <td>Your Participation</td>
+            <td class="px-3 py-2"><b>Your Participation</b></td>
             <td>
               <div ng-show="isSubscriber">
                 <div>You are currently a participant of the meeting
@@ -699,25 +709,31 @@ function reloadIfLoggedIn() {
             </td>
         </tr>
         <tr>
-            <td>Count</td>
+            <td class="px-3 py-2"><b>Count</b></td>
             <td>{{comments.length}} comments</td>
         </tr>
         <tr>
-            <td id="Unsub">Contributors</td>
+            <td id="Unsub" class="px-3 py-2"><b>Contributors</b></td>
             <td id="Unsub"><span ng-repeat="(user,cnt) in userCounts">{{user}} {{cnt}},  &nbsp;</span></td>
         </tr>
         <tr>
-            <td>Reply as</td>
+            <td class="px-3 py-2"><b>Reply as</b></td>
             <td>{{emailId}}
               <span ng-hide="emailId==linkedEmailId">(You used a hyperlink from {{linkedEmailId}})</span>
+              </td>
+        </tr>
+        <tr>
 <% if (!ar.isLoggedIn()) {%>
-              <br/>
-              <button ng-click="forgetMe()" class="btn btn-default btn-raised">Wait!  That is not me!</button>
+              <td>
+              </td>
+              <td class="p-2" colSpan="2">
+              <button ng-click="forgetMe()" class="btn btn-wide btn-danger btn-raised float-end">Wait!  That is not me!</button>
 <% } %>
             </td>
+            
         </tr>
     </table>
 
     </div>
-  </div>
+
   
