@@ -1132,7 +1132,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.navigateToTopic = function (topicId) {
         var topicRecord = $scope.findTopicRecord(topicId);
         if (topicRecord) {
-            window.open("noteZoom" + topicRecord.id + ".htm", "_blank");
+            window.open("NoteZoom" + topicRecord.id + ".htm", "_blank");
         }
         else {
             alert("Sorry, can't seem to find a discussion topic with the id: " + topicId);

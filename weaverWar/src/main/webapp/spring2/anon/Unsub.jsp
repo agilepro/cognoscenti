@@ -113,7 +113,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveIt();
     }
     $scope.goToDiscussion = function() {
-        var url = "../../noteZoom"+$scope.topicInfo.id+".htm";
+        var url = "../../NoteZoom"+$scope.topicInfo.id+".htm";
         window.location = url;
     }
 

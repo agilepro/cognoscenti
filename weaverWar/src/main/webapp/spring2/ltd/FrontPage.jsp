@@ -399,7 +399,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     for (TopicRecord topicRec : ltdTopics) {
 %>
             <div class="clipping">
-              <a href="noteZoom<%=topicRec.getId()%>.htm">
+              <a href="NoteZoom<%=topicRec.getId()%>.htm">
                 <i class="fa fa-lightbulb-o"></i> <%ar.writeHtml( topicRec.getSubject() );%>
                 </a>
             </div>

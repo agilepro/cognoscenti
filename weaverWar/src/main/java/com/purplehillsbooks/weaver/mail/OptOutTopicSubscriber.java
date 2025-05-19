@@ -65,7 +65,7 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         writeSentToMsg(clone);
         clone.write("\n You have received this message because you are subscribed to the topic <b><a href=\"");
         clone.write(clone.baseURL);
-        clone.write("noteZoom"+topic.getId()+".htm\">");
+        clone.write("NoteZoom"+topic.getId()+".htm\">");
         clone.writeHtml(topic.getSubject());
         clone.write("</a></b> in the '");
         ngc.writeContainerLink(clone, 100);
@@ -79,7 +79,7 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngw = ngpi.getWorkspace();
         jo.put("topicName",  topic.getSubject());
-        jo.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, "noteZoom"+topic.getId()+".htm"));
+        jo.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topic.getId()+".htm"));
         jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);
         return jo;

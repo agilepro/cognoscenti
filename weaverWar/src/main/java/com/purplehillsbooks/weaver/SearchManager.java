@@ -284,7 +284,7 @@ public class SearchManager {
                     doc.add(new Field("MODTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
                     doc.add(new Field("ITEMID", note.getId(), TextField.TYPE_STORED));
                     doc.add(new Field("ITEMNAME", max50(itemName), TextField.TYPE_STORED));
-                    doc.add(new Field("LINK", "noteZoom"+note.getId()+".htm", TextField.TYPE_STORED));
+                    doc.add(new Field("LINK", "NoteZoom"+note.getId()+".htm", TextField.TYPE_STORED));
                     
 
                     //first add the subject, then add the text of the note, then all the comments

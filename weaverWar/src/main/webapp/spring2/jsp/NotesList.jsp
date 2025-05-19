@@ -291,7 +291,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.showError=false;
             $http.post(postURL ,postdata)
             .success( function(data) {
-                window.location = "noteZoom"+data.id+".htm";
+                window.location = "NoteZoom"+data.id+".htm";
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
@@ -415,7 +415,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                 <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
                                     <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
+                                            <li><a class="dropdown-item" href="NoteZoom{{rec.id}}.htm">Full Details</a></li>
                                             <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
                                             <li ng-hide="rec.deleted">
                                                 <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
@@ -427,7 +427,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                 <span style="color:#220011;">
                                     <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
 
-                                    <a href="noteZoom{{rec.id}}.htm" style="color:black;">
+                                    <a href="NoteZoom{{rec.id}}.htm" style="color:black;">
                                     <b>{{rec.subject}}</b>
                                     ({{rec.modUser.name}})
                                     {{rec.modTime|cdate}}

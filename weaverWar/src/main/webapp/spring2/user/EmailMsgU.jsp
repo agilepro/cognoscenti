@@ -27,7 +27,7 @@
             CommentContainer cc = ngw.findContainerByKey(containerKey);
             if (cc!=null) {
                 if (cc instanceof TopicRecord) {
-                    containerUrl = "noteZoom"+((TopicRecord)cc).getId()+".htm";
+                    containerUrl = "NoteZoom"+((TopicRecord)cc).getId()+".htm";
                     aboutName = ((TopicRecord)cc).getSubject();
                     aboutType = "Topic";
                 }

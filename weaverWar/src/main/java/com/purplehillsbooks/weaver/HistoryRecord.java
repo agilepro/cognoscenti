@@ -873,7 +873,7 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngw, "DocDetail.htm?aid="+objectKey);
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            return ar.getResourceURL(ngw, "noteZoom"+objectKey+".htm");
+            return ar.getResourceURL(ngw, "NoteZoom"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             return ar.getResourceURL(ngw, "MeetingHtml.htm?id=")+objectKey;

@@ -1377,7 +1377,7 @@ public class AuthRequest {
     }
 
     public String getResourceURL(NGContainer ngp, TopicRecord note) throws Exception {
-        return getResourceURL(ngp, "noteZoom" + note.getId() + ".htm");
+        return getResourceURL(ngp, "NoteZoom" + note.getId() + ".htm");
     }
 
     /**
