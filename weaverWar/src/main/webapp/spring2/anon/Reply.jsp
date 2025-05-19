@@ -608,15 +608,15 @@ function reloadIfLoggedIn() {
         </div>
     </div>
     <div ng-show="showReplyBox && !mustGetId">
-        <div ng-hide="sentAlready" class="comment-outer comment-state-active" style="min-height:460px">
-            <h2 id="QuickReply" style="scroll-margin-top:80px;scroll-padding-top:80px">Quick&nbsp;Reply:</h2>
+        <div ng-hide="sentAlready" class="comment-outer p-2 comment-state-active ms-5 my-3"  style="max-width:800px;" >
+            <h3 id="QuickReply" class="h3">Quick&nbsp;Reply:</h3>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html2"
                  class="leafContent" style="height:250px;" id="theOnlyEditor">
             </div>
             <div>
-                <button class="btn btn-default btn-raised" ng-click="saveIt()" title="Send the comment into the discussion">Save Draft
+                <button class="btn btn-default btn-raised btn-comment" ng-click="saveIt()" title="Send the comment into the discussion">Save Draft
                 </button>
-                <button class="btn btn-primary btn-raised" ng-click="sendIt()" title="Send the comment into the discussion">Send
+                <button class="btn btn-primary btn-raised btn-default float-end" ng-click="sendIt()" title="Send the comment into the discussion">Send
                 </button>
             </div>
         </div>
