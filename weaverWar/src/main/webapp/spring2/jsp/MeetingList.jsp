@@ -182,14 +182,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <div ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="row override">
-    <div class="d-flex col-12 mb-2">
-        <!--
-        <button class="btn btn-wide btn-comment btn-raised ms-auto"><i class="fa fa-bolt"></i> &nbsp; Experimental Mobile UI</button>-->
-    </div>
-</div>
 
     <div class="container-fluid override col-12 ms-4">
+        <div class="well">
+            <span>
+                <button class="btn btn-wide btn-secondary btn-raised " ng-click="createMeeting()">Create New Meeting</button>
+            </span>
+        </div>
         <div class="row my-2 border-1 border-bottom gridTableHeader">
             <span class="col-1 h6" >Actions</span>
             <span class="col-1 h6" >Agenda</span>
@@ -241,7 +240,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% if (userCanUpdate) { %>
     <div class="row ms-4 override">
         <div class="d-flex col-2 m-2">
-            <button class="btn btn-wide btn-comment btn-raised " ng-click="createMeeting()">Create New Meeting</button>
+            
         </div>
     </div>
 <% } %>

@@ -384,145 +384,143 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="container-fluid override mx-2">
-    
-    <div class="d-flex col-12">
-        <div class="contentColumn">
-            <div class="container-fluid">    
-                <div class="generalContent">
-                    <div class="well">Filter <input ng-model="filter"> &nbsp;
-                        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-                        </span>
-                        <span class="dropdown nav-item mb-0">
-                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                           style="width:320px;left:-130px;margin-top:-2px;">
-                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }" >
-                                 {{rolex.name}}</button>
-                         </li>
-                       </ul>
-                        </span> &nbsp;
-                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
-                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
-                    </div>
-                    <div class="col-12">
-                        <div class="my-3" ng-repeat="rec in getRows()">
-                        <div class="{{getTopicStyle(rec)}}">
-                            <div id="headline" >
-                                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
-                                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
-                                            <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
-                                            <li ng-hide="rec.deleted">
-                                                <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
-                                            <li ng-show="rec.deleted"><a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
-                                            </li>
-                                        </ul>
+<div class="container-fluid override col-12 ms-4">
+    <div class="generalContent">
+        <div class="well">
+            <span class="btn btn-wide btn-secondary btn-raised me-4" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic">
+                <a>Create New Topic</a>
+            </span>&nbsp;&nbsp;
+            <span class="float-end"><b>Filter:</b> <input ng-model="filter"> &nbsp;
+                <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+                    <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                </span>
+                <span class="dropdown nav-item mb-0">
+                    <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1"  style="width:320px;left:-130px;margin-top:-2px;">
+                        <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                            <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn labelButton"  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }" > {{rolex.name}}</button>
+                        </li>
+                    </ul>
+                </span>
+                &nbsp;
+                <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+                <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+            </span>
+        </div>
+        <div class="col-12">
+            <div class="my-3" ng-repeat="rec in getRows()">
+                <div class="{{getTopicStyle(rec)}}">
+                    <div id="headline" >
+                        <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                            <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
+                                    <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
+                                    <li ng-hide="rec.deleted">
+                                        <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
+                                    <li ng-show="rec.deleted"><a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
                                     </li>
                                 </ul>
-                                <span style="color:#220011;">
-                                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
+                            </li>
+                        </ul>
+                        <span style="color:#220011;">
+                            <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
 
-                                    <a href="noteZoom{{rec.id}}.htm" style="color:black;">
-                                    <b>{{rec.subject}}</b>
-                                    ({{rec.modUser.name}})
-                                    {{rec.modTime|cdate}}
-                                    </a> &nbsp;
+                            <a href="noteZoom{{rec.id}}.htm" style="color:black;">
+                            <b>{{rec.subject}}</b>
+                            ({{rec.modUser.name}})
+                            {{rec.modTime|cdate}}
+                            </a> &nbsp;
 
-                    <span ng-repeat="label in getNoteLabels(rec)">
-                      <button class="btn labelButton" style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }" ng-click="toggleLabel(label)"
-                              title="click to filter/unfilter all discussions by this label">
-                      {{label.name}}
-                      </button>
+            <span ng-repeat="label in getNoteLabels(rec)">
+                <button class="btn labelButton" style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }" ng-click="toggleLabel(label)"
+                        title="click to filter/unfilter all discussions by this label">
+                {{label.name}}
+                </button>
+            </span>
+            </span>
+            &nbsp;
+            <a class="text-primary fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
+                title="close the info"></a>
+            <a class="text-secondary fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
+                title="info of this discussion"></a>
+            <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
+        </div>
+        <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
+            <div>
+            <div class="infoRow">
+                <span class="h6">Last Update by:</span> 
+                <span>
+                <span class="nav-item dropdown">
+                    <span id="menu_1" data-toggle="dropdown">
+                    <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.modUser.key}}.jpg" 
+                            style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
                     </span>
-                  </span>
-                  &nbsp;
-                  <a class="text-primary fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
-                     title="close the info"></a>
-                  <a class="text-secondary fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
-                     title="info of this discussion"></a>
-                   <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
-                </div>
-                <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
-                    <div>
-                    <div class="infoRow">
-                      <span class="h6">Last Update by:</span> 
-                      <span>
-                        <span class="nav-item dropdown">
-                            <span id="menu_1" data-toggle="dropdown">
-                            <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.modUser.key}}.jpg" 
-                                 style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
-                            </span>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                                  tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
-                                  {{rec.modUser.name}}<br/>{{rec.modUser.uid}}</a></li>
-                              <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                                  ng-click="navigateToUser(rec.modUser)">
-                                  <span class="fa fa-user"></span> Visit Profile</a></li>
-                            </ul>
-                        </span>
-                        {{rec.modUser.name}}
-                      </span>
-                    </div>
-                    <div class="infoRow">
-                      <span class="h6">Last Modified:</span>
-                      <td>{{rec.modTime|date:"MMM dd, yyyy 'at' HH:mm:ss"}}</td>
-                    </div>
-                    <div class="infoRow">
-                      <span class="h6">Discussion Phase:</span>
-                      <span>{{rec.discussionPhase}}</span>
-                    </div>
-                    <div class="infoRow">
-                      <span class="h6">Subscribers:</span>
-                      <span>
-                        <span ng-repeat="person in rec.subscribers">
-                          <span class="nav-item dropdown">
-                            <span id="menu_2" data-toggle="dropdown">
-                            <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
-                                 style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
-                            </span>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                                  tabindex="0" ng-click="" style="text-decoration: none;text-align:center">
-                                  {{person.name}}<br/>{{person.uid}}</a></li>
-                              <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0"
-                                  ng-click="navigateToUser(person)">
-                                  <span class="fa fa-user"></span> Visit Profile</a></li>
-                            </ul>
-                          </span>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="infoRow">
-                      <span class="h6">Responses:</span>
-                      <span>Needed: {{rec.responsesNeeded}},  Made: {{rec.responsesMade}}</span>
-                    </div>
-                </div>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                            tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                            {{rec.modUser.name}}<br/>{{rec.modUser.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                            ng-click="navigateToUser(rec.modUser)">
+                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                </span>
+                {{rec.modUser.name}}
+                </span>
+            </div>
+            <div class="infoRow">
+                <span class="h6">Last Modified:</span>
+                <td>{{rec.modTime|date:"MMM dd, yyyy 'at' HH:mm:ss"}}</td>
+            </div>
+            <div class="infoRow">
+                <span class="h6">Discussion Phase:</span>
+                <span>{{rec.discussionPhase}}</span>
+            </div>
+            <div class="infoRow">
+                <span class="h6">Subscribers:</span>
+                <span>
+                <span ng-repeat="person in rec.subscribers">
+                    <span class="nav-item dropdown">
+                    <span id="menu_2" data-toggle="dropdown">
+                    <img class="rounded-5" src="<%=ar.retPath%>icon/{{person.key}}.jpg" 
+                            style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                            tabindex="0" ng-click="" style="text-decoration: none;text-align:center">
+                            {{person.name}}<br/>{{person.uid}}</a></li>
+                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="0"
+                            ng-click="navigateToUser(person)">
+                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                    </span>
+                </span>
+                </span>
+            </div>
+            <div class="infoRow">
+                <span class="h6">Responses:</span>
+                <span>Needed: {{rec.responsesNeeded}},  Made: {{rec.responsesMade}}</span>
+            </div>
+        </div>
+        </div>
                 </div>
             </div>
-                        </div>
-                    </div>
+        </div>
 
-        
-    <div class="instruction" ng-show="!initialFetchDone" style="margin-top:80px">
-    Fetching discussions . . .
+
+        <div class="instruction" ng-show="!initialFetchDone" style="margin-top:80px">
+        Fetching discussions . . .
+        </div>
+        <div class="guideVocal" ng-show="notes.length==0 && initialFetchDone" style="margin-top:80px">
+        You have no discussions in this workspace yet.
+        You can add them using a option from the pull-down in the upper right of this page.
+        </div>
+        <div class="guideVocal" ng-show="notes.length>0 && initialFetchDone && lastDisplayedSetSize==0" style="margin-top:80px">
+        None of the {{notes.length}} discussions match the filter conditions you have chosen.
+        </div>
+
+        <div style="height:200px"></div>
+
     </div>
-    <div class="guideVocal" ng-show="notes.length==0 && initialFetchDone" style="margin-top:80px">
-    You have no discussions in this workspace yet.
-    You can add them using a option from the pull-down in the upper right of this page.
-    </div>
-    <div class="guideVocal" ng-show="notes.length>0 && initialFetchDone && lastDisplayedSetSize==0" style="margin-top:80px">
-    None of the {{notes.length}} discussions match the filter conditions you have chosen.
-    </div>
-    
-    
-       
 </div>
-<div style="height:200px"></div>
-
 <script src="<%=ar.retPath%>new_assets/templates/CreateTopicModal.js"></script>

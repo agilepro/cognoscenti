@@ -309,111 +309,108 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-2">
-    
-
-
-      <div class="d-flex col-12 mx-2"><div class="contentColumn">
-        <div class="well">Filter <input ng-model="filter"> &nbsp;
-            <span class="dropdown" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}}; margin-bottom: -2px;" ng-style="{ color: getContrastColor(role.color) }"  ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown nav-item">
-            <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                       style="width:320px;left:-130px;margin-top:-4px;">
-                     <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                         <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}; color: {{getContrastColor(rolex.color)}}" >
-                             {{rolex.name}}</button>
+<div class="container-fluid override col-12 ms-4">
+    <div class="generalContent">
+        <div class="well">
+            <span class="btn btn-wide btn-secondary btn-raised me-4" type="button">
+                <a class="btn-secondary text-decoration-none border-0" href="DocsAdd.htm"> Add Document</a></span>
+            <span class="float-end"><b>Filter</b> <input ng-model="filter"> &nbsp;
+                <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+                    <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}}; margin-bottom: -2px;" ng-style="{ color: getContrastColor(role.color) }"  ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                </span>
+            <span class="dropdown nav-item mb-0">
+                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1"  style="width:320px;left:-130px;margin-top:-4px;">
+                    <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                        <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}; color: {{getContrastColor(rolex.color)}}" >{{rolex.name}}</button>
                      </li>
                    </ul>
-        </span> &nbsp;
-        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
-        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+                </span>
+            &nbsp;
+                <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+                <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+            </span>
+        </div>
+
+        <div class="col-12">
+
+            <div class="row mx-3">
+                <span class="col-7 h6">Name ~ Description</span>
+                <span class="col-2 h6">Date</span>
+                <span class="col-2 h6">Size</span>
             </div>
+            <div class="row my-3" ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
+                <span class="col-5">
+                    <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
+                        <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
+                                <li><a class="dropdown-item" role="menuitem" tabindex="0" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
+                                <li ng-show="rec.attType=='FILE'">
+                                    <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
+                                <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
+                                <hr>
+                                <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
+                                    <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
+                                <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <span style="text-align: center">
+                    <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
+                    <span class="fa fa-external-link"></span></span>
+                    <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
+                    <span class="fa fa-download"></span></span>
+                    </span>
 
-    <div class="col-12">
-
-        <div class="row mx-3">
-            <span class="col-7 h6">Name ~ Description</span>
-            <span class="col-2 h6">Date</span>
-            <span class="col-2 h6">Size</span>
-        </div>
-        <div class="row my-3" ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
-            <span class="col-5">
-                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  >
-                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="docsList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="docsList">
-                            <li><a class="dropdown-item" role="menuitem" tabindex="0" href="DocDetail.htm?aid={{rec.id}}">Access Document</a></li>
-                            <li ng-show="rec.attType=='FILE'">
-                                <a class="dropdown-item" role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
-                            <hr>
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
-                                <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <span style="text-align: center">
-                <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
-                <span class="fa fa-external-link"></span></span>
-                <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
-                <span class="fa fa-download"></span></span>
-                </span>
-
-                <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
-                <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
-                <span ng-repeat="label in getLabelsForDoc(rec)">
-                    <button class="labelButton" 
-                        ng-click="toggleLabel(label)"
-                        style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }">{{label.name}}
-                    </button>
-                </span>
-            
-              <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
-              </div>
-            </span>
-            <span class="col-1">
-              <span class="dropdown nav-item" >
-                <span id="user" data-bs-toggle="dropdown">
-                <img class="rounded-5" 
-                     ng-src="<%=ar.retPath%>icon/{{rec.user.uid}}.jpg" 
-                     style="width:32px;height:32px" >
-                </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-                  <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
-                      tabindex="-1">
-                      {{rec.user.name}}<br/>{{rec.user.uid}}</a></li>
-                  <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
-                      ng-click="navigateToCreator(rec.user)">
-                      <span class="fa fa-user"></span> Visit Profile</a></li>
-                </ul>
-              </span>
-            </span>
-            <span class="col-1" style="text-align: center" ng-click="openDocDialog(rec)">
-                <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-                <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-            </span>
-            <span class="col-2" ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</span>
-            <span class="col-2" ng-click="openDocDialog(rec)"><span ng-show="rec.size>0">{{rec.size|number}}</span></span>
-        </div>
-    </div>
-    
-    
-    <div class="guideVocal" ng-show="dataArrived && atts.length==0" style="margin-top:80px">
-    You have no attached documents in this workspace yet.
-    You can add them using a option from the pull-down in the upper right of this page.
-    They can be uploaded from your workstation, or linked from the web.
-    </div>
-    
-    
+                    <b><a href="DocDetail.htm?aid={{rec.id}}" title="{{rec.name}}">{{rec.name}}</a></b>
+                    <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
+                    <span ng-repeat="label in getLabelsForDoc(rec)">
+                        <button class="labelButton" 
+                            ng-click="toggleLabel(label)"
+                            style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }">{{label.name}}
+                        </button>
+                    </span>
+                
+                <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
                 </div>
+                </span>
+                <span class="col-1">
+                <span class="dropdown nav-item" >
+                    <span id="user" data-bs-toggle="dropdown">
+                    <img class="rounded-5" 
+                        ng-src="<%=ar.retPath%>icon/{{rec.user.uid}}.jpg" 
+                        style="width:32px;height:32px" >
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+                    <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 
+                        tabindex="-1">
+                        {{rec.user.name}}<br/>{{rec.user.uid}}</a></li>
+                    <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1"
+                        ng-click="navigateToCreator(rec.user)">
+                        <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                </span>
+                </span>
+                <span class="col-1" style="text-align: center" ng-click="openDocDialog(rec)">
+                    <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                    <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                </span>
+                <span class="col-2" ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</span>
+                <span class="col-2" ng-click="openDocDialog(rec)"><span ng-show="rec.size>0">{{rec.size|number}}</span></span>
             </div>
         </div>
+        
+        
+        <div class="guideVocal" ng-show="dataArrived && atts.length==0" style="margin-top:80px">
+        You have no attached documents in this workspace yet.
+        You can add them using a option from the pull-down in the upper right of this page.
+        They can be uploaded from your workstation, or linked from the web.
+        </div>
     </div>
+            </div>
+        </div>
+
 
 <!--have to make room for menu on bottom line-->
 <div style="height:300px"></div>

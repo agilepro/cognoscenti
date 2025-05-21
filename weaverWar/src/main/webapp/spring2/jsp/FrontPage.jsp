@@ -745,13 +745,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         </div>
         <div class="card m-3">
-            <div class="card-header">
-                <h2 class="h5 card-title" title="View and manage the roles in this workspace">Members
-                    <div style="float:right" >
+            <div class="card-header d-flex">
+                <h2 class="h5 card-title" title="Stewards are able to make edits to the workspace">Stewards of the Workspace</h2>
+                    <div class="float-end ms-auto">
                         <a href="RoleManagement.htm">
-                        <i class="fa fa-users"></i></a>
+                        <i title="View and manage the roles in this workspace" class="fa fa-users"></i></a>
                     </div>
-                </h2>
+                
             </div>
             <div class="card-body">
                 <div class="spacytable">
