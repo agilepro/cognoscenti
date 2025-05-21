@@ -262,7 +262,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             return "MeetingHtml.htm?id="+meetingId+"&mode=Items&ai="+agendaItem;
         }
         else if (cmt.containerType=="T") {
-            return "noteZoom"+cmt.containerID+".htm"
+            return "NoteZoom"+cmt.containerID+".htm"
         }
         else if (cmt.containerType=="A") {
             return "DocDetail.htm?aid="+cmt.containerID;

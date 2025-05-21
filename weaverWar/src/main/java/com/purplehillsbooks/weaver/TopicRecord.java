@@ -880,7 +880,7 @@ public class TopicRecord extends CommentContainer {
      * Needed for the EmailContext interface
      */
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw, "noteZoom" + this.getId() + ".htm?")
+        return ar.getResourceURL(ngw, "NoteZoom" + this.getId() + ".htm?")
                 + AccessControl.getAccessTopicParams(ngw, this);
     }
 

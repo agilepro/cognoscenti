@@ -1244,11 +1244,11 @@ function copyTheLink() {
             ng-click="toggleEditPart('Labels')">
             Labels:</span>
         <span class="col-9" ng-hide="editMeetingPart=='Labels'">
-            <ul><li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                 <button role="menuitem" tabindex="0" class="btn btn-wide labelButton" 
-                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}" ng-style="{ color: getContrastColor(rolex.color) }">
-                     {{rolex.name}}</button>
-             </li></ul>
+            <span class="dropdown mt-0" ng-repeat="role in allLabels">
+              <button class="btn btn-wide labelButton"
+                style="background-color:{{role.color}}; color: {{getContrastColor(role.color)}};"
+                ng-show="hasLabel(role.name)" >{{role.name}}</i></button>
+            </span>
         </span>
         <span class="col-9" ng-show="editMeetingPart=='Labels'">
             <%@ include file="/spring2/jsp/LabelPicker.jsp" %>

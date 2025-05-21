@@ -298,6 +298,23 @@ a {
     height:fit-content;
     
 }
+.override .offcanvas.offcanvas-end, .offcanvas.offcanvas-start{
+    width: fit-content;
+    max-width: 100%;
+    height: fit-content;
+    margin-top: 0px;
+    margin-left: 0px;
+    padding: 0px;
+}
+
+.override .offcanvas.offcanvas-start{
+    width: fit-content;
+    max-width: 100%;
+    height: fit-content;
+    margin-top: 0px;
+    margin-left: 0px;
+    padding: 0px;
+}
 //buttons//
 .override button  {
     border-radius: 8px;
@@ -898,9 +915,11 @@ a {
 .clickable:hover {
     cursor:pointer;
     background-color:#DDEEFF;
+
 }
 .clickable {
     cursor:pointer;
+    padding: 3px 5px;
 }
 .custom-modal-window-top {
     margin-top: 100px;
@@ -1116,6 +1135,14 @@ foreignObject {
     border-color: #20082c !important;
     cursor: pointer;
 }
+.form-control-override {
+    background-color: $primary-10 !important;
+    padding: 3px 5px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    border: none !important;
+}
+
 .timers {
     border: $secondary solid 1px;
     min-width: 350px;

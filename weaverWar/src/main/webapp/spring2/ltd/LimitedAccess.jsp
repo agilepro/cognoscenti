@@ -97,7 +97,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 %>
 
         <span class="h5 my-3" >
-            <span ><i class="fa fa-arrow-circle-right"></i> <a href="noteZoom<%=topicRec.getId()%>.htm">
+            <span ><i class="fa fa-arrow-circle-right"></i> <a href="NoteZoom<%=topicRec.getId()%>.htm">
         <%ar.writeHtml( topicRec.getSubject() );%>
         </a></span>
         </span>

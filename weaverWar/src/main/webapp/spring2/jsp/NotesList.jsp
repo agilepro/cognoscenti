@@ -291,7 +291,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.showError=false;
             $http.post(postURL ,postdata)
             .success( function(data) {
-                window.location = "noteZoom"+data.id+".htm";
+                window.location = "NoteZoom"+data.id+".htm";
             })
             .error( function(data, status, headers, config) {
                 $scope.reportError(data);
@@ -384,6 +384,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <%@include file="ErrorPanel.jsp"%>
+<<<<<<< HEAD
 <div class="container-fluid override col-12 ms-4">
     <div class="generalContent">
         <div class="well">
@@ -455,6 +456,62 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <span id="menu_1" data-toggle="dropdown">
                     <img class="rounded-5" src="<%=ar.retPath%>icon/{{rec.modUser.key}}.jpg" 
                             style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
+=======
+<div class="container-fluid override mx-2">
+    
+    <div class="d-flex col-12">
+        <div class="contentColumn">
+            <div class="container-fluid">    
+                <div class="generalContent">
+                    <div class="well">Filter <input ng-model="filter"> &nbsp;
+                        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                        </span>
+                        <span class="dropdown nav-item mb-0">
+                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                           style="width:320px;left:-130px;margin-top:-2px;">
+                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }" >
+                                 {{rolex.name}}</button>
+                         </li>
+                       </ul>
+                        </span> &nbsp;
+                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+                        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
+                    </div>
+                    <div class="col-12">
+                        <div class="my-3" ng-repeat="rec in getRows()">
+                        <div class="{{getTopicStyle(rec)}}">
+                            <div id="headline" >
+                                <ul type="button" class="btn-tiny btn btn-outline-secondary m-2"  > 
+                                    <li class="nav-item dropdown"><a class=" dropdown-toggle" id="ForumList" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="caret"></span> </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="NoteZoom{{rec.id}}.htm">Full Details</a></li>
+                                            <li><a class="dropdown-item" ng-click="sendNoteByMail(rec)">Send Email</a></li>
+                                            <li ng-hide="rec.deleted">
+                                                <a class="dropdown-item" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
+                                            <li ng-show="rec.deleted"><a class="dropdown-item" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <span style="color:#220011;">
+                                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
+
+                                    <a href="NoteZoom{{rec.id}}.htm" style="color:black;">
+                                    <b>{{rec.subject}}</b>
+                                    ({{rec.modUser.name}})
+                                    {{rec.modTime|cdate}}
+                                    </a> &nbsp;
+
+                    <span ng-repeat="label in getNoteLabels(rec)">
+                      <button class="btn labelButton" style="background-color:{{label.color}};" ng-style="{ color: getContrastColor(label.color) }" ng-click="toggleLabel(label)"
+                              title="click to filter/unfilter all discussions by this label">
+                      {{label.name}}
+                      </button>
+>>>>>>> 169d7c5b7bbf350b758ef906dd9da2e2c8482138
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                         <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem" 

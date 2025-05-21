@@ -470,7 +470,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return "unknown";
     }
     $scope.navigateToTopic = function(oneTopic) {
-        window.location="noteZoom"+encodeURIComponent(oneTopic.id)+".htm";
+        window.location="NoteZoom"+encodeURIComponent(oneTopic.id)+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
         window.location="MeetingHtml.htm?id="+encodeURIComponent(meet.id);

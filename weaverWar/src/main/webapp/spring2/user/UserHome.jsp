@@ -205,7 +205,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           </div>
           <div class="card-body">
                <div ng-repeat="item in userCache.draftTopics | limitTo: 10" class="clipping">
-                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/noteZoom{{item.id}}.htm">{{fixNull(item.subject)}}</a>
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/NoteZoom{{item.id}}.htm">{{fixNull(item.subject)}}</a>
                </div>
           </div>
        </div>

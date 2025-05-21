@@ -116,7 +116,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr ng-repeat="rec in userCache.draftTopics">
                 <td></td>
                 <td >
-                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/noteZoom{{rec.id}}.htm">{{rec.subject}}</a>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/NoteZoom{{rec.id}}.htm">{{rec.subject}}</a>
                 </td>
                 <td>
                     <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/FrontPage.htm">{{rec.workspaceName}}</a>

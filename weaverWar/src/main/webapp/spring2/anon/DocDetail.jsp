@@ -126,7 +126,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="task"+act.id+".htm";
     }
     $scope.navigateToTopic = function(topic) {
-        window.location="noteZoom"+topic.id+".htm";
+        window.location="NoteZoom"+topic.id+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
         window.location="MeetingHtml.htm?id="+meet.id;

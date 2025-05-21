@@ -75,7 +75,7 @@ public class UserCache {
                 magicNumbers.put(actionItem.getId(), AccessControl.getAccessGoalParams(ngw, actionItem));
             }
             for (TopicRecord aTopic : ngw.getAllDiscussionTopics()) {
-                String address = "noteZoom"+aTopic.getId()+".htm";
+                String address = "NoteZoom"+aTopic.getId()+".htm";
 
                 //if this note is a draft and if owned by this user or recently
                 //modified by this user then

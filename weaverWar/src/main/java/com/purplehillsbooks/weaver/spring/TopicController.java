@@ -54,8 +54,8 @@ public class TopicController extends BaseController {
         showJSPDepending(ar, ngw, "NotesList.jsp", false);
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{topicId}.htm", method = RequestMethod.GET)
-    public void displayOneLeaflet(@PathVariable String topicId, @PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/NoteZoom{topicId}.htm", method = RequestMethod.GET)
+    public void NoteZoom(@PathVariable String topicId, @PathVariable String pageId,
            @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
            throws Exception {
        try{
@@ -75,7 +75,15 @@ public class TopicController extends BaseController {
        catch(Exception ex) {
            throw WeaverException.newWrap("Failed to open topic page %s in the workspace %s in site %s.", ex, topicId, pageId, siteId);
        }
-   }
+    }
+
+    // compatibility so many old places !!
+    @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{topicId}.htm", method = RequestMethod.GET)
+    public void displayOneLeaflet(@PathVariable String topicId, @PathVariable String pageId,
+           @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
+           throws Exception {
+       NoteZoom(topicId, pageId, siteId, request, response);
+    }
 
 
     /////////////////////////// DATA //////////////////////////////////////////

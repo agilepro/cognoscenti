@@ -708,97 +708,110 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override m-2">
-    <div class="d-flex col-12 mx-5">
-        <div class="contentColumn">
-        <div class="well" ng-show="isCreating">
-            <table>
-               <tr>
-                    <td class="gridTableColummHeader">New Synopsis:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                    </td>
-               </tr>
-               <tr><td style="height:10px"></td></tr>
-               <tr>
-                    <td class="gridTableColummHeader">Assignee:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                      <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
-                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                          <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
-                      </tags-input>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader">Description:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <textarea type="text" ng-model="newGoal.description" class="form-control"
-                            style="width:450px;height:100px" placeholder="Details"></textarea>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader">Due Date:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <span datetime-picker ng-model="newRec.duedate"  
-                            class="form-control" style="max-width:300px; min-height: 25px;">
-                            {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                        </span> 
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td colspan="3">
-                        <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
-                        <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
-                        
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <!--Filter-->
-    <div class="well" ng-show="!isCreating">
-        Filter <input ng-model="filter"> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">
-            Active</span> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showFuture">
-            Future</span> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
-            Completed</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showRecent">
-            Recent</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="mineOnly">
-            Only Mine</span>
-            <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
-                <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            </span>
-            <span class="dropdown nav-item mb-0">
-                <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-                           style="width:320px;left:-130px;margin-top:-2px;">
-                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
-                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }">
-                                 {{rolex.name}}</button>
-                         </li>
-                       </ul>
-            </span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showChecklists">
-            Show Checklists</span>
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showDescription">
-            Show Description</span>
-    </div>
+<div class="container-fluid override col-12 ms-4">
+    <div class="generalContent">
 
+        <!--Filter-->
+            <div class="well" ng-show="!isCreating">
+                <span class="btn btn-wide btn-secondary btn-raised me-4" type="button"><a type="button" role="menuitem" tabindex="-1" ng-click="isCreating=true"> Create New Action Item</a>
+                </span>
+                <span class="float-end">
+                    <span>
+                        <b>Filter:</b> 
+                        <input ng-model="filter"> &nbsp;
+                        <span class="dropdown mb-0" ng-repeat="role in allLabelFilters()">
+                            <button class="labelButton " ng-click="toggleLabel(role)" style="background-color:{{role.color}};" ng-style="{ color: getContrastColor(role.color) }" ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                        </span>
+                        <span class="dropdown nav-item mb-0">
+                            <button class="specCaretBtn dropdown" type="button" id="menu2" data-toggle="dropdown" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                                style="width:320px;left:-130px;margin-top:-2px;">
+                                <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                                    <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-wide labelButton" 
+                                    ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};" ng-style="{ color: getContrastColor(rolex.color) }">
+                                        {{rolex.name}}</button>
+                                </li>
+                            </ul>
+                        </span>
+                        &nbsp;
+                        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">
+                            Active</span> &nbsp;
+                        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showFuture">
+                            Future</span> &nbsp;
+                        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
+                            Completed</span>&nbsp;
+                        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showRecent">
+                            Recent</span>&nbsp;
+                        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="mineOnly">
+                            Only Mine</span>
+                    </span>
+                </span>
+                    
+                <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showChecklists">
+                    Show Checklists</span>&nbsp;
+                <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showDescription">
+                    Show Description</span>
+            </div>
+            <div class="well generalSettings" ng-show="isCreating">
+                <table>
+                    <tr>
+                        <td class="gridTableColummHeader"><b>New Synopsis:</b></td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader"><b>Assignee:</b></td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id" display-property="name"
+                                key-property="uid" on-tag-clicked="showUser($tag)" replace-spaces-with-dashes="false"
+                                add-on-space="true" add-on-comma="true" on-tag-added="updatePlayers()"
+                                on-tag-removed="updatePlayers()"> <auto-complete source="getPeople($query)"
+                                    min-length="1"></auto-complete>
+                            </tags-input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader"><b>Description:</b></td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <textarea type="text" ng-model="newGoal.description" class="form-control"
+                                style="width:450px;height:100px" placeholder="Details"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader"><b>Due Date:</b></td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <span datetime-picker ng-model="newRec.duedate" class="form-control"
+                                style="max-width:300px; min-height: 25px;"> {{newRec.duedate|date:"dd-MMM-yyyy '&nbsp; at &nbsp;'
+                                HH:mm '&nbsp; GMT'Z"}} </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:10px"></td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader"></td>
+                        <td style="width:20px;"></td>
+                        <td colspan="3">
+                            <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
+                            <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 <!--Main content-->
     <div class="container-fluid col-sm-12">
         <div class="row">
