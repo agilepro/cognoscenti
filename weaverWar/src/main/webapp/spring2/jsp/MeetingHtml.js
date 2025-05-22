@@ -33,20 +33,15 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.editSitch = {};
 
     $scope.toggleEditSitch = function (pers) {
-        if ($scope.editSitch.uid) {
-            let tempSitch = { expect: $scope.editSitch.expect, situation: $scope.editSitch.situation, uid: $scope.editSitch.uid };
-            $scope.saveSituation(tempSitch);
-        }
-        if ($scope.editSitch.uid == pers.uid) {
-            //just close it
- //           $scope.editSitch = {};
-        }
-    
-        else {
+        console.log("starting SITCH: ", pers);
+        if ($scope.editSitch.uid != pers.uid) {
             $scope.editSitch = { expect: pers.expect, situation: pers.situation, uid: pers.uid };
         }
     }
     $scope.stopEditSitch = function (pers) {
+        //must do a save here
+        console.log("SAVING SITCH: ", pers);
+        $scope.saveSituation(pers);
         $scope.editSitch = {};
     };
 
@@ -72,8 +67,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
     $scope.onTimeSet = function (newDate) {
         $scope.meeting.startTime = newDate.getTime();
     }
-
-
 
     $scope.newAssignee = "";
     $scope.newAttendee = "";
@@ -2032,6 +2025,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             saveRecord.attended_add = person.key;
         }
         $scope.putGetMeetingInfo(saveRecord);
+        person.attended = !person.attended;
     }
     $scope.changeMeetingMode = function (newMode) {
         $scope.selectedItem = {};

@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.util.NameCounter;
 
-import com.purplehillsbooks.json.JSONObject;
-
 public class WorkspaceStats {
 
     public int numTopics     = 0;  //notes
@@ -241,7 +239,7 @@ public class WorkspaceStats {
         anythingPerUser.addAllCounts(other.anythingPerUser);
         historyPerType.addAllCounts(other.historyPerType);
     }
-
+/* 
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("numTopics",     numTopics);
@@ -300,5 +298,5 @@ public class WorkspaceStats {
         res.historyPerType.fromJSON(jo, "historyPerType");
         return res;
     }
-
+*/
 }

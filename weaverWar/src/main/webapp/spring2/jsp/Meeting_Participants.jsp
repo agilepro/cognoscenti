@@ -79,7 +79,7 @@
               </ul>
             </span>
         </span>
-        <span class="col-2" style="overflow:hidden;white-space:nowrap" title="Click on these to record whether the user attended or not">
+        <span class="col-2" style="overflow:hidden;white-space:nowrap">
           {{pers.name}}
         </span>
         <span class="col-1 text-center" ng-click="toggleAttend(pers)" title="Click on these to record whether the user attended or not">
@@ -88,22 +88,21 @@
           <span ng-hide="pers.attended"   title="indicates that the user did not attend meeting">
               <span class="text-secondary opacity-50 fa fa-question-circle"></span></span>
         </span>
-        <span class="col-2 text-center" ng-click="toggleEditSitch(pers)" title="Double-click to edit">
-            <div class="pt-0 btn border-opacity-10 border-1 rounded-2 text-center" ng-hide="editSitch.uid==pers.uid">{{pers.expect}}</div>
+        <span class="col-2 text-center" title="Double-click to edit">
+            <div class="pt-0 btn border-opacity-10 border-1 rounded-2 text-center" ng-hide="editSitch.uid==pers.uid" ng-click="toggleEditSitch(pers)" >{{pers.expect}}</div>
             <div class="pt-0 btn border-opacity-10 border-1 rounded-2 text-center" ng-show="editSitch.uid==pers.uid">
-                <select ng-model="editSitch.expect" class="form-control p-1 btn-wide border-opacity-10 rounded-2" >
+                <select ng-model="pers.expect" class="form-control p-1 btn-wide border-opacity-10 rounded-2" >
                    <option>Unknown</option>
                    <option>Yes</option>
                    <option>Maybe</option>
                    <option>No</option>
                 </select>
-                
             </div>
         </span>
-        <span class="col-2 text-left"  ng-dblclick="toggleEditSitch(pers)" title="Shows the user explanation of whether they will attend or not">
-            <div ng-hide="editSitch.uid==pers.uid">{{pers.situation}}</div>
+        <span class="col-2 text-left"  title="Shows the user explanation of whether they will attend or not">
+            <div ng-hide="editSitch.uid==pers.uid" ng-click="toggleEditSitch(pers)">{{pers.situation}}</div>
             <div  ng-show="editSitch.uid==pers.uid">
-                <input class="form-control border-opacity-10 rounded-2" ng-model="editSitch.situation"  style="width: 200px; height: 34px; background-color: #fefefe;"/>
+                <input class="form-control border-opacity-10 rounded-2" ng-model="pers.situation"  style="width: 200px; height: 34px; background-color: #fefefe;"/>
                 <button ng-click="stopEditSitch(pers)" class="btn btn-default btn-primary btn-raised">Close</button>
             </div>
         </span>

@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * An site is a collection of pages. This allows a collection of pages to share
@@ -881,17 +882,20 @@ public class NGBook extends ContainerCommon {
     
     public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
         WorkspaceStats ws = getRecentStats();
-        return ws.getJSON();
+        String buffer = JsonUtil.convertToJsonString(ws);
+        return new JSONObject(buffer);
     }
 
     public WorkspaceStats getStatsFile() throws Exception {
-        JSONObject jo = JSONObject.readFromFile(getStatsFilePath());
-        return WorkspaceStats.fromJSON(jo);
+        //JSONObject jo = JSONObject.readFromFile(getStatsFilePath());
+        //return WorkspaceStats.fromJSON(jo);
+        return JsonUtil.loadJsonFile(getStatsFilePath(), WorkspaceStats.class);
     }
 
     public void saveStatsFile(WorkspaceStats stats) throws Exception {
-        JSONObject jo = stats.getJSON();
-        jo.writeToFile(getStatsFilePath());
+        //JSONObject jo = stats.getJSON();
+        //jo.writeToFile(getStatsFilePath());
+        JsonUtil.saveJsonFile(getStatsFilePath(), stats);
     }
 
     public boolean isMoved() {

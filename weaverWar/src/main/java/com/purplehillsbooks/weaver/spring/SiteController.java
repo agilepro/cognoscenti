@@ -31,6 +31,7 @@ import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.CustomRole;
+import com.purplehillsbooks.weaver.JsonUtil;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
@@ -529,7 +530,7 @@ public class SiteController extends BaseController {
 
             JSONObject result = new JSONObject();
             result.put("siteId",  siteId);
-            result.put("stats", ws.getJSON());
+            result.put("stats", new JSONObject(JsonUtil.convertToJsonString(ws)));
             sendJson(ar, result);
         }
         catch(Exception ex){

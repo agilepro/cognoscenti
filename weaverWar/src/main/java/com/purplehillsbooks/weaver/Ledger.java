@@ -44,37 +44,9 @@ public class Ledger {
     public List<LedgerCharge> charges = new ArrayList<>();
     public List<LedgerPayment> payments = new ArrayList<>();
     
-    @SuppressWarnings("deprecation")
     public static Ledger readLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
-        try {
-            // disable is deprecated, but not clear what the replacement is
-            // except for using a builder which seems like pointless
-            mapper.disable(MapperFeature.AUTO_DETECT_CREATORS,
-                    MapperFeature.AUTO_DETECT_GETTERS,
-                    MapperFeature.AUTO_DETECT_IS_GETTERS);
-            mapper.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-            mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-            mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.setSerializationInclusion(Include.NON_NULL);
-            
-            if (ledgerFilePath.exists()) {
-                Ledger ledger = mapper.readValue(ledgerFilePath, Ledger.class);
-                ledger.sortAndCleanPlans();
-                return ledger;
-            }
-            else {
-                Ledger ledger = new Ledger();
-                return ledger;
-            }
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Failure reading ledger file: %s", 
-                    e,  ledgerFilePath.getAbsolutePath());
-        }
+        return JsonUtil.loadJsonFile(ledgerFilePath, Ledger.class);
     }
     public void saveLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");

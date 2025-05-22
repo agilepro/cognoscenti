@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.DOMFace;
+import com.purplehillsbooks.weaver.JsonUtil;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGContainer;
 import com.purplehillsbooks.weaver.NGPageIndex;
@@ -667,17 +668,17 @@ public class BaseController {
     protected static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
         releaseLock();
 
+        // System.out.println("DEBUG JSON = = = = = = = = = = = = " + jo.toString(2)
+        //    + "= = = = = = = = = = = = " + JsonUtil.convertToJsonString(jo)
+        //    + "= = = = = = = = = = = = END END END");
+
+
         //this has no effect since getWriter has already been called
         ar.resp.setContentType("application/json");
 
         jo.put("serverTime", System.currentTimeMillis());
         testLatencyDelay();
-        if (indentJson) {
-            jo.write(ar.w, 2, 2);
-        }
-        else {
-            jo.write(ar.w, 0, 0);
-        }
+        JsonUtil.writeJson(ar.w, jo);
         ar.flush();
     }
 
