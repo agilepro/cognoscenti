@@ -384,7 +384,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <%@include file="ErrorPanel.jsp"%>
-<<<<<<< HEAD
+
 <div class="container-fluid override col-12 ms-4">
     <div class="generalContent">
         <div class="well">
