@@ -49,7 +49,8 @@ Required parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-    window.setMainPageTitle("Meeting Availability:");
+    console.log("STARTING UP");
+    // window.setMainPageTitle("Meeting Availability:");
     $scope.meeting = {};
     $scope.emailId = "<% ar.writeJS(emailId); %>";
     $scope.canAttend = "<% ar.writeJS(canAttend); %>";
@@ -225,7 +226,9 @@ label {
 }
 </style>
 
-
+<h2 id="mainPageTitle" title="This is the title of the discussion and comment thread">
+            Comments
+</h2>
 
 <div class="bodyWrapper"  style="margin:50px;max-width:800px">
 

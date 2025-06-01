@@ -164,8 +164,8 @@ function reloadIfLoggedIn(info) {
 SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, reloadIfLoggedIn);
 
 function setMainPageTitle(str) {
-    document.getElementById("mainPageTitle").innerHTML = str;
-    document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
+    // document.getElementById("mainPageTitle").innerHTML = str;
+    // document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
 }
 
 function setUpLearningMethods($scope, $modal, $http) {
