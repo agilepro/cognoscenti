@@ -410,7 +410,6 @@ function showLearningPath() {
       <!-- END Breadcrumb -->
       <script>
       function setMainPageTitle(str) {
-          // document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngw!=null) { ar.writeJS(ngw.getFullName()); }%>";
       }
       </script>

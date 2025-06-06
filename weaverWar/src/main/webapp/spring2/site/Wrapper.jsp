@@ -302,7 +302,6 @@ myApp.filter('wiki', function() {
         </nav><!--END Breadcrumb-->
       <script>
       function setMainPageTitle(str) {
-          document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }
       document.querySelectorAll('.dropdown').forEach(function (dropdown) {

@@ -8,11 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
@@ -38,28 +33,17 @@ public class Ledger {
     public static final String PLAN_TYPE_UNLIMITED      = "Unlimited";
 
     public static final int LAST_POSSIBLE_YEAR = getYear(System.currentTimeMillis()) + 1;
-    
-    private static final ObjectMapper mapper = new ObjectMapper();
         
     public List<LedgerCharge> charges = new ArrayList<>();
     public List<LedgerPayment> payments = new ArrayList<>();
     
     public static Ledger readLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
-        return JsonUtil.loadJsonFile(ledgerFilePath, Ledger.class);
+        return JsonUtil.loadOrCreateJsonFile(ledgerFilePath, Ledger.class);
     }
     public void saveLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
-        File ledgerTempPath = new File(folder, "ledger_TEMP.json");
-        if (ledgerTempPath.exists()) {
-            ledgerTempPath.delete();
-        }
-
-        mapper.writeValue(ledgerTempPath, this);
-        if (ledgerFilePath.exists()) {
-            ledgerFilePath.delete();
-        }
-        ledgerTempPath.renameTo(ledgerFilePath);
+        JsonUtil.saveJsonFile(ledgerFilePath, this);
     }
 
     private Ledger() {

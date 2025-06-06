@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.util.NameCounter;
 
 public class WorkspaceStats {
@@ -239,7 +240,7 @@ public class WorkspaceStats {
         anythingPerUser.addAllCounts(other.anythingPerUser);
         historyPerType.addAllCounts(other.historyPerType);
     }
-/* 
+
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("numTopics",     numTopics);
@@ -269,7 +270,7 @@ public class WorkspaceStats {
         jo.put("historyPerType",     historyPerType.getJSON());
         return jo;
     }
-
+/* 
     public static WorkspaceStats fromJSON(JSONObject jo) throws Exception {
         WorkspaceStats res = new WorkspaceStats();
         res.numTopics = jo.getInt("numTopics");

@@ -165,7 +165,6 @@ myApp.filter('wiki', function() {
   };
 });
 function setMainPageTitle(str) {
-  document.getElementById("mainPageTitle").innerHTML = str;
   document.title = str;
 }
 var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;

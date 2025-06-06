@@ -337,7 +337,6 @@ function setUpLearningMethods($scope, $modal, $http) {
       </nav>
       <script>
       function setMainPageTitle(str) {
-          document.getElementById("mainPageTitle").innerHTML = str;
           document.title = str + " - <%if (ngp!=null) { ar.writeJS(ngp.getFullName()); }%>";
       }
       </script>
