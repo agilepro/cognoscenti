@@ -30,7 +30,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.hasResults = false;
-    $scope.isSearching = true;
+    $scope.isSearching = false;
     $scope.actualSearch = "";
 
     $scope.doSearch = function() {
@@ -57,6 +57,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.isSearching = true;
         $http.post(postURL ,postdata)
         .success( function(data) {
+            console.log("SEARCH RESULTS: ", data);
             $scope.results = data;
             $scope.hasResults = ($scope.results.length>0);
             $scope.isSearching = false;
@@ -130,7 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:60px"></div>
 
-    <table class="table" width="100%">
+    <table class="table" width="100%" ng-show="hasResults">
         <tr class="gridTableHeader">
             <td width="200px">Site/Workspace</td>
             <td width="200px">Topic</td>
@@ -141,18 +142,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td><a href="<%=ar.retPath%>{{row.noteLink}}">{{row.noteSubject}}</a></td>
             <td>{{row.modTime |cdate}}</td>
         </tr>
-        <tr ng-hide="hasResults">
-           <td colspan="5">
-           <div class="guideVocal" ng-hide="isSearching"> 
-             Did not find any results for search string: {{actualSearch}}
-           </div>
-           <div class="guideVocal" ng-hide="isSearching"> 
-             <img src="../../../assets/ajax-loading.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
-           </div>
-           </td>
+        <tr ng-show="results.length==0">
+            <td colspan="5">Did not find any results for search string: {{actualSearch}}</td>
         </tr>
     </table>
-
+    <div ng-hide="hasResults">
+       <div class="guideVocal" ng-hide="isSearching && !actualSearch"> 
+         Enter something to search for
+       </div>
+       <div class="guideVocal" ng-hide="isSearching"> 
+         Did not find any results for search string: {{actualSearch}}
+       </div>
+       <div class="guideVocal" ng-show="isSearching"> 
+         <img src="../../../new_assets/search-spinner.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
+       </div>
+    </div>
     </div>
 
 <!-- MAIN CONTENT SECTION END -->

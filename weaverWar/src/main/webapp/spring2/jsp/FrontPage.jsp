@@ -427,6 +427,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "normalMode";
     }
+    $scope.goToMobileUi = function() {
+        window.location.assign("Front.wmf");
+    }
 
 });
 
@@ -440,6 +443,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+            </li>
+            <li>
+                <button class="dropdown-item" ng-click="goToMobileUi()">
+                    Mobile UI</button>
             </li>
         </ul>
     </span>

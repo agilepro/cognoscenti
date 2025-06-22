@@ -300,6 +300,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     setUpCommentMethods($scope, $http, $modal);
     $scope.setDocumentData(<% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>);
 
+    $scope.goToMobileUi = function() {
+        let dest = "DocView.wmf?docId="+$scope.docId;
+        console.log("NAV TO: "+dest);
+        window.location.assign(dest);
+    }
 });
 
 function copyTheLink() {
@@ -321,8 +326,6 @@ function copyTheLink() {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
-                <button class="dropdown-item" onclick="window.location.reload(true)">
-                    Refresh</button>
                 <span class="dropdown-item" type="button" aria-labelledby="createPDF" 
                     ng-show="docInfo.attType!='URL'">
                     <a class="nav-link" href="DocsRevise.htm?aid={{docId}}">
@@ -330,6 +333,9 @@ function copyTheLink() {
                 <span class="dropdown-item" type="button">
                     <a class="nav-link" role="menuitem" tabindex="-1" href="DocsList.htm">
                         List View</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="goToMobileUi()">
+                        Mobile UI</a></span>
             </li>
         </ul>
     </span>

@@ -2201,6 +2201,11 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         });
         return res;
     }
+    $scope.goToMobileUi = function() {
+        let dest = "RunMeeting.wmf?meetId="+$scope.meetId;
+        console.log("NAV TO: "+dest);
+        window.location.assign(dest);
+    }
 
 });
 

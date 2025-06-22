@@ -69,6 +69,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }    
     function setTopicData(data) {
         $scope.topic = data;
+        console.log("TOPIC: ", $scope.topic);
     }
     
 
@@ -142,24 +143,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     
     <div class="instruction">
-    Description:
+        Description:
     </div>
     <div ng-bind-html="topic.wiki | wiki" class="richTextBox"></div> 
     
-    <div class="instruction" ng-show="topic.docList">
-    Attachment Links:
-    </div>  
-      <div class="subItemStyle" ng-repeat="att in topic.docList">
-        <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
-          <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
-      </div>
-      <div class="subItemStyle" ng-repeat="comment in topic.comments">
-        <div ng-show="comment.body">
-          <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
-            <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
+    <div ng-show="topic.docList.length>0">
+        <div class="instruction" >Attachment Links: </div>
+        <div class="subItemStyle" ng-repeat="att in topic.docList">
+            <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
+              <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
         </div>
-      </div>
-    
+    </div> 
+    <div ng-show="topic.comments.length>0">
+        <div class="instruction" >Comments: </div>
+        <div class="subItemStyle" ng-repeat="comment in topic.comments">
+            <div ng-show="comment.body">
+              <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
+                <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
+            </div>
+        </div>
+    </div>
     
 
 

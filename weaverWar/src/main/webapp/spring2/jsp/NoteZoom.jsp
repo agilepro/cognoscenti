@@ -1112,6 +1112,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.linkScope = "Private";
     $scope.generateLink("Private");
 
+    $scope.goToMobileUi = function() {
+        let dest = "TopicView.wmf?topicId="+$scope.topicId;
+        console.log("NAV TO: "+dest);
+        window.location.assign(dest);
+    }
 });
 
 function copyTheLink() {
@@ -1161,6 +1166,9 @@ function copyTheLink() {
                 <span class="dropdown-item" type="button">
                     <a class="nav-link" role="menuitem" tabindex="-1" href="NotesList.htm">
                         List Topics</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="goToMobileUi()">
+                        Mobile UI</a></span>
             </li>
         </ul>
     </span>

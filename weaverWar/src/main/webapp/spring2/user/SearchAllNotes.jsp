@@ -89,7 +89,7 @@ app.controller('myCtrl', function($scope, $http) {
     <table class="table" width="100%" ng-show="actualSearch">
         <tr class="gridTableHeader">
             <td width="200px">Site/Workspace</td>
-            <td width="200px">Topic</td>
+            <td width="200px">Location</td>
             <td width="100px">Updated</td>
         </tr>
         <tr ng-repeat="row in results">
@@ -103,7 +103,7 @@ app.controller('myCtrl', function($scope, $http) {
              Did not find any results for search string: {{actualSearch}}
            </div>
            <div class="guideVocal" ng-show="isSearching"> 
-             <img src="../../../assets/ajax-loading.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
+             <img src="../../../new_assets/search-spinner.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
            </div>
            </td>
         </tr>

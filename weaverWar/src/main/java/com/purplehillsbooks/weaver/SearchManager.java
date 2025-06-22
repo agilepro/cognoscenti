@@ -442,14 +442,12 @@ public class SearchManager {
         //rebuild the parts of the index that have changed
         initializeIndex();
         
-        System.out.println("SearchManager - actually performing a search for ("+queryStr+") "+relationship);
         List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
         if (!ar.isLoggedIn()) {
             return vec;   //bomb out without searching for anything
         }
 
         boolean onlyOwner  = ("owner".equals(relationship));
-        //boolean onlyMember = ("member".equals(relationship));
         boolean onlyOne    = ("one".equals(relationship));
 
         DirectoryReader ireader = DirectoryReader.open(directoryStore);
@@ -464,8 +462,9 @@ public class SearchManager {
 
         UserProfile up = ar.getUserProfile();
 
-        for (int i = 0; i < hits.length; i++)
-        {
+        System.out.println("SearchManager - Searching "+query
+            +" Site: "+siteId+", workspace: "+workspaceId);
+        for (int i = 0; i < hits.length; i++) {
             Document hitDoc = isearcher.doc(hits[i].doc);
             String containerType = hitDoc.get("containerType");
             String key = hitDoc.get("PAGEKEY");
@@ -478,24 +477,29 @@ public class SearchManager {
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {
                 if (!siteId.equals(siteKey)) {
+                    System.out.println("    stripped result from wrong site: "+siteKey);
                     continue;
                 }
             }
             //if restricted to one workspace, check that first as well
             if (onlyOne && workspaceId!=null) {
                 if (!workspaceId.equals(key)) {
+                    System.out.println("    stripped result from wrong workspace: "+key);
                     continue;
                 }
             }
 
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
-            if (!ngw.primaryOrSecondaryPermission(up)) {
+            if (!ngw.canAccessWorkspace(up)) {
+                System.out.println("    stripped result from workspace user not able to access.");
                 continue;   //don't include anything else if not a member
             }
             
             String linkAddr = ar.getResourceURL(ngw, link);
             if (onlyOwner) {
+                System.out.println("SearchManager: found a case of `owner` searching, not sure why");
                 if (!ngw.secondaryPermission(up)) {
+                    System.out.println("    stripped because not owner.");
                     continue;
                 }
             }
@@ -513,7 +517,8 @@ public class SearchManager {
         }
 
         ireader.close();
-        System.out.println("SearchManager - finished serching: "+(System.currentTimeMillis()-startTime)+" ms");
+        System.out.println("SearchManager - Found "+vec.size()
+            +" items in "+(System.currentTimeMillis()-startTime)+" ms");
         return vec;
     }
 
