@@ -159,6 +159,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.createMeeting = function() {
         window.location = "MeetingCreate.htm";
     }
+    $scope.goToMobileUi = function() {
+        window.location.assign("PickMeeting.wmf");
+    }
 });
 </script>
 
@@ -170,6 +173,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
+            </li>
+            <li>
+                <button class="dropdown-item" ng-click="goToMobileUi()">
+                    Mobile UI</button>
             </li>
         </ul>
     </span>

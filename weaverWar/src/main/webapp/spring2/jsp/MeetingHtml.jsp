@@ -214,6 +214,10 @@ embeddedData.canUpdate = <%=canUpdate%>;
                 <button class="dropdown-item" onclick="window.location.reload(true)">
                     Refresh</button>
             </li>
+            <li>
+                <button class="dropdown-item" ng-click="goToMobileUi()">
+                    Mobile UI</button>
+            </li>
         </ul>
     </span>
     <span>

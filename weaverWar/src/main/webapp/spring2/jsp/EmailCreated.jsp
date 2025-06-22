@@ -110,7 +110,13 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
         });
         return res;
     }
-
+    $scope.createEmail = function() {
+        if (!<%=ar.canUpdateWorkspace()%>) {
+            alert("You can't create an email because you are not a player of an update role in this workspace.");
+            return;
+        }
+        window.location="SendNote.htm";
+    }
 });
 
 </script>
@@ -130,7 +136,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
                     <a class="nav-link" role="menuitem" href="EmailSent.htm">
                         Email Sent</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
-                    <a class="nav-link " role="menuitem" href="SendNote.htm">
+                    <a class="nav-link " role="menuitem" ng-click="createEmail()">
                         Create Email</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="createNewTopic">
                     <a role="menuitem" class="nav-link" href="AdminSettings.htm">

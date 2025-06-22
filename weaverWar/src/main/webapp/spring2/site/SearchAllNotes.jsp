@@ -145,7 +145,7 @@ app.controller('myCtrl', function($scope, $http) {
              Did not find any results for search string: {{actualSearch}}
            </div>
            <div class="guideVocal" ng-show="isSearching"> 
-             <img src="../../../assets/ajax-loading.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
+             <img src="../../../new_assets/search-spinner.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
            </div>
            </td>
         </tr>

@@ -46,7 +46,7 @@
     }
 
 </style>
-<script src="../../new_assets/jscript/AllPeople.js"></script>
+<script src="../../../new_assets/jscript/AllPeople.js"></script>
 
 
 <script type="text/javascript">
