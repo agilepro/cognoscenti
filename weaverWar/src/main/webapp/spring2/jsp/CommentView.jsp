@@ -8,7 +8,7 @@ function setUpCommentMethods($scope, $http, $modal) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
-        if (!<%=ar.canUpdateWorkspace()%>) {
+        if (!<%=ar.canAccessWorkspace()%>) {
             alert("You must be a member of workspace to make a comment.");
             return;
         }
@@ -308,7 +308,7 @@ function setUpCommentMethods($scope, $http, $modal) {
     
     $scope.createDecision = function(newDecision) {
         if (!$scope.canUpdate) {
-            alert("Unable to update discussion because you are not playing an update role");
+            alert("Unable to update discussion because you are not playing an update role in this workspace");
             return;
         }
         $scope.cancelBackgroundTime();

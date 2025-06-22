@@ -544,83 +544,85 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container override mx-4">
+    <!--<div class="col-md-auto second-menu d-flex">
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse" id="collapseSecondaryMenu">
+            <div class="col-md-auto">
+
+                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
+          Email Prepared</a>
+        </span>
+
+        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
+            Email Sent</a>
+          </span>
+</div>
+        </div>
+    </div>
+    <hr>-->
     <div class="col-12">
             <div ng-show="emailInfo.state==1">
                 <form class="form-horizontal col-12">
                     <fieldset>
-                        <div class="row d-flex col-12 my-2">
+
+                        <!--Send To DISPLAY -->
+                        <div class="row d-flex col-12 my-2"  ng-hide="showAddressingOptions" ng-click="showAddressingOptions=true">
                             <label class="col-md-2 control-label h5" for="alsoalsoTo">Send To:</label>
-                            <span class="col-md-10" ng-repeat="player in recipientList track by meeting.participants">
-                                <button class="btn-comment btn-wide btn-raised" ng-model="emailInfo.alsoTo" ng-click="showAddressing=!showAddressing"
-                                    ng-show="meeting.participants" title="{{player.name}} - {{player.uid}}"> {{player.name}} 
-                                </button>
-                            </span>
+                            <div class="col-md-10">
+                                <button class="btn-comment btn-default btn-raised"  ng-repeat="oneAddress in emailInfo.alsoTo"> {{oneAddress.name}} </button> 
+                            </div>
                         </div>
-                        
-                        <!--Start of address editing-->
-                        <section class="well pb-5" ng-show="showAddressing">
+                        <!--Send To EDIT -->
+                        <div class="row d-flex col-12 my-2"  ng-show="showAddressingOptions">
+                            <label class="col-md-2 control-label h5" for="alsoalsoTo">Send To:</label>
+                            <div class="col-md-10">
+                                <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="cleanUpAlsoTo()" on-tag-removed="cleanUpAlsoTo()"> 
+                                    <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                                </tags-input>
+                            </div>
+                        </div>
+                        <div class="row d-flex m-3" ng-show="showAddressingOptions">
+                            <label class="col-md-2 control-label h5">Role Players of:</label>
+                            <div class="col-md-10 well d-flex flex-wrap">
+                                <div ng-repeat="role in allRoles" > <button class="btn-comment btn-wide mx-2 h6" ng-click="addPlayers(role)">
+                                <span class="h5">{{role.name}}</span></button>
+                            </div>
+                        </div>
+                        </div>
+                        <!--Meeting Participants-->
+                        <div class="row col-12 my-2"  ng-show="meeting.participants && showAddressingOptions">
+                            <div>
+                                <label class="col-md-2 control-label h5">Meeting Participants:</label>
+                                <span class="col-md-10">
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingInvitees()" title="Add all the people invited to the meeting">Add Meeting Invitees</button>
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingAttendees()" title="Add all the people who attended the meeting">Add Meeting Attendees</button>
+                                    <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingNoShows()" title="Add all the people invited but did not show up">Add Meeting No-shows</button>                           
+                                </span>
+                            </div>
+                        </div>
+                        <!--Topic Subscribers-->
+                        <div class="row col-12 d-flex my-2">
+                            <div ng-show="emailInfo.noteInfo.subscribers">
+                                <label class="col-md-2 control-label h5">Topic Subscribers:</label>
+                                <span class="col-md-10">
+                                        <button class="btn-comment btn-wide btn-raised" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
+                                </span>
+                            </div>
+                        </div>
+                        <!--Clear-->
+                        <div class="row d-flex col-12 my-2"   ng-show="showAddressingOptions">
                             <div class="form-group d-flex">
-                                <label class="col-md-2 control-label h5">Roles:</label>
-                                <div class="col-md-10">
-                                    <div class="form-inline flex-wrap">
-                                        <button class="btn-comment btn-wide btn-raised" ng-click="showAddressingOptions=!showAddressingOptions">
-                                        Invite by Role</button>
-                                    </div>
-                                </div>
+                                <label class="col-md-2 control-label h5">Clear:</label>
+                                <span class="col-md-10">
+                                        <button class="btn-comment btn-wide btn-raised" ng-click="emailInfo.alsoTo = []" title="Add all the people invited to the meeting">Clear Addressees</button>
+                                </span>
                             </div>
-                            <div class="row d-flex m-3" ng-show="showAddressingOptions">
-                                <div class="col-md-2 control-label h6">Add Players of:</div>
-                                <div class="col-md-10 d-flex flex-wrap">
-                                    <div ng-repeat="role in allRoles" > <button class="btn-comment btn-wide mx-2 h6" ng-click="addPlayers(role)">
-                                    <span class="h6">{{role.name}}</span></button>
-                                </div>
-                            </div>
-                            </div>
-                            <!--Meeting Participants-->
-                            <div class="row col-12 my-2">
-                                <div ng-show="meeting.participants">
-                                    <label class="col-md-2 control-label h5">Meeting Participants:</label>
-                                    <span class="col-md-10">
-                                        <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingInvitees()" title="Add all the people invited to the meeting">Add Meeting Invitees</button>
-                                        <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingAttendees()" title="Add all the people who attended the meeting">Add Meeting Attendees</button>
-                                        <button class="btn-comment btn-wide btn-raised" ng-click="addMeetingNoShows()" title="Add all the people invited but did not show up">Add Meeting No-shows</button>                           
-                                    </span>
-                                </div>
-                            </div>
-                            <!--Topic Subscribers-->
-                            <div class="row col-12 d-flex my-2">
-                                <div ng-show="emailInfo.noteInfo.subscribers">
-                                    <label class="col-md-2 control-label h5">Topic Subscribers:</label>
-                                    <span class="col-md-10">
-                                            <button class="btn-comment btn-wide btn-raised" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <!--Clear-->
-                            <div class="row d-flex col-12 my-2">
-                                <div class="form-group d-flex">
-                                    <label class="col-md-2 control-label h5">Clear:</label>
-                                    <span class="col-md-10">
-                                            <button class="btn-comment btn-wide btn-raised" ng-click="emailInfo.alsoTo = []" title="Remove all the people invited to the meeting">Clear Addressees</button>
-                                    </span>
-                                </div>
-                            </div>
-                        
-                            <!--Send To-->
-                            <div class="row d-flex col-12 my-2">
-                                <label class="col-md-2 control-label h5" for="alsoalsoTo">Send To:</label>
-                                <div class="col-md-10">
-                                    <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="cleanUpAlsoTo()" on-tag-removed="cleanUpAlsoTo()"> 
-                                        <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                                    </tags-input>
-                                </div>
-                            </div>
-                            <button class="btn-secondary btn-wide btn-raised float-end mb-3" ng-click="showAddressing=!showAddressing" title="Close address editing">Addressing Complete</button>
-                        <!--End of address editing-->
-                        </section>
-
-
-
+                            
+                            <button class="btn-comment btn-wide btn-raised" ng-click="showAddressingOptions=false" title="close the addressing mode">Done Addressing</button>
+                            <div style="height:200px"></div>
+                        </div>
                         <!--Subject-->
                         <div class="row form-group d-flex my-2">
                             <label class="col-md-2 control-label h5 " for="subject">Subject:</label>

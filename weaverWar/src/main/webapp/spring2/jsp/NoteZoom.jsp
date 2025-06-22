@@ -1046,6 +1046,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.startSubscriberEdit = function() {
+        if (!$scope.canUpdate) {
+            alert("Unable to update discussion because you are not playing an update role in the workspace");
+            return;
+        }
         $scope.editMeetingPart='subscribers';
         $scope.subscriberBuffer = $scope.noteInfo.subscribers;
     }
@@ -1054,13 +1058,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var saveRec = {subscribers: $scope.subscriberBuffer, universalid: $scope.noteInfo.universalid};
         $scope.savePartial(saveRec);
     }
-    $scope.toggleEditPart = function(section) {
+    $scope.toggleReadOnlyPart = function(section) {
         if ($scope.editMeetingPart===section) {
             $scope.editMeetingPart = "bogus";
         }
         else {
             $scope.editMeetingPart = section;
         }
+    }
+    $scope.toggleEditPart = function(section) {
+        if (!$scope.canUpdate) {
+            alert("Unable to update discussion because you are not playing an update role in the workspace");
+            return;
+        }
+        toggleReadOnlyPart(section);
     }
     
     
@@ -1401,7 +1412,7 @@ function copyTheLink() {
 
     <div class="row ms-3">
         <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left"
-            ng-click="toggleEditPart('makeLink')">
+            ng-click="toggleReadOnlyPart('makeLink')">
             Get Link:</span>
         <span class="col-9">
             <p ng-hide="editMeetingPart=='makeLink'">Generate a link that works the way you want.  You can make a <b>private</b> link that will allow only the current members of this workspace to see the topic.  Or you can make a <b>public</b> link that makes the topic available to anyone in the world with the link.  Your choice.</p>

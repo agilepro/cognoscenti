@@ -413,7 +413,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return res;
     }
-    $scope.createNewGoal = function() {
+    
+    $scope.startCreateNewActionItem = function() {
+        if (!$scope.canUpdate) {
+            alert("Sorry, you are not playing a role that allows update, so you can't create an action item.");
+            return;
+        }
+        $scope.isCreating = true;
+    }
+    $scope.createNewActionItem = function() {
+        if (!$scope.canUpdate) {
+            alert("Sorry, you are not playing a role that allows update, so you can't create an action item.");
+            return;
+        }
+        alert("dddd.");
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
         newRec.universalid = "~new~";
@@ -686,7 +699,7 @@ function addvalue() {
                 <button class="dropdown-item" onclick="window.location.reload(true)">
                     Refresh</button>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="isCreating=true">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="startCreateNewActionItem()">
                         Create New Action Item</a>
                 </span>
                 <span class="dropdown-item" type="button">
@@ -713,7 +726,7 @@ function addvalue() {
 
         <!--Filter-->
             <div class="well" ng-show="!isCreating">
-                <span class="btn btn-wide btn-secondary btn-raised me-4" type="button"><a type="button" role="menuitem" tabindex="-1" ng-click="isCreating=true"> Create New Action Item</a>
+                <span class="btn btn-wide btn-secondary btn-raised me-4" type="button"><a type="button" role="menuitem" tabindex="-1" ng-click="startCreateNewActionItem()"> Create New Action Item</a>
                 </span>
                 <span class="float-end">
                     <span>
@@ -807,7 +820,7 @@ function addvalue() {
                         <td style="width:20px;"></td>
                         <td colspan="3">
                             <button class="btn btn-danger btn-default" ng-click="isCreating=false">Cancel</button>
-                            <button class="btn btn-primary btn-wide ms-5" ng-click="createNewGoal()">Create New Action Item</button>
+                            <button class="btn btn-primary btn-wide ms-5" ng-click="createNewActionItem()">Create New Action Item</button>
                         </td>
                     </tr>
                 </table>

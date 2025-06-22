@@ -442,7 +442,10 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
+            ar.assertUpdateWorkspace(
+                "Update access needed to change the Task Areas.");
             JSONObject post = this.getPostedObject(ar);
             String areaId = post.getString("areaId");
             if (post.has("deleteTaskArea")) {
@@ -478,6 +481,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             TaskArea ta = null;
             boolean needSave = false;
             if ("~new~".equals(id)) {
@@ -490,8 +494,10 @@ public class ProjectGoalController extends BaseController {
                 ta = ngw.findTaskAreaOrFail(id);
             }
             if ("POST".equalsIgnoreCase(request.getMethod())) {
-                JSONObject postBody = this.getPostedObject(ar);
                 ar.assertNotFrozen(ngw);
+                ar.assertUpdateWorkspace(
+                    "Update access needed to change the Task Areas.");
+                JSONObject postBody = this.getPostedObject(ar);
                 ta.updateFromJSON(postBody);
                 needSave = true;
             }

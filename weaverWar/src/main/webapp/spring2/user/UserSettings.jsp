@@ -298,7 +298,7 @@ if (ar.isLoggedIn()) { %>
             </div>
             <div ng-show="editField=='email'" class="form-group">
                 <div class="well" style="max-width:500px">
-                        <span class="h5">Add an email address to your profile</span>
+                        <span class="h5">Add an email address for "<%=uProf.getName()%>"</span>
                         <p>If you use multiple email addresses, you can add as many as you like to your profile.  We just need to confirm your email address before it will be added.</p>
                         <input type="text" ng-model="newEmail" class="form-control" style="width:300px">
                         <p>Enter an email address, a confirmation message will be sent. When you receive that, click the link to add the email address to your profile.</p>

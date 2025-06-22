@@ -54,7 +54,7 @@
                     <td style="width:20px;"></td>
                     <td colspan="2" style="padding:15px;">
                        <div>
-                          <pre>{{errorTrace}}</pre>
+                          <pre>{{errorTrace|json}}</pre>
                        </div>
                     </td>
                 </tr>

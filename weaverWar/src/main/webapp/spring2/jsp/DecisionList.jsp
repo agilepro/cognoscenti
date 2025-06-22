@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.saveDecision = function(newRec) {
         if (!$scope.canUpdate) {
-            alert("You are not able to save a new decision because you are not playing an update role");
+            alert("You are not able to save a new decision because you are not playing an update role in this workspace");
             return;
         }
         var isPreserved = (!newRec.deleteMe)
@@ -213,7 +213,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to edit decisions because you are not playing an update role");
+            alert("You are not able to edit decisions because you are not playing an update role in this workspace");
             return;
         }
         var modalInstance = $modal.open({
@@ -258,7 +258,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         if (!$scope.canUpdate) {
-            alert("You are not able to change due dates on decisions because you are not playing an update role");
+            alert("You are not able to change due dates on decisions because you are not playing an update role in this workspace");
             return;
         }
         var oneYear = 365*24*60*60*1000;

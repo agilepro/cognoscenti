@@ -267,8 +267,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.updatePlayers = function() {
         $scope.newGoal.assignList = cleanUserList($scope.newGoal.assignList);
-    }    
+    }
+    
+    $scope.startCreateNewActionItem = function() {
+        if (!$scope.canUpdate) {
+            alert("Sorry, you are not playing a role that allows update, so you can't create an action item.");
+            return;
+        }
+        $scope.isCreating = true;
+    }
     $scope.createNewGoal = function() {
+        if (!$scope.canUpdate) {
+            alert("Sorry, you are not playing a role that allows update, so you can't create an action item.");
+            return;
+        }
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
         newRec.universalid = "~new~";
@@ -440,7 +452,7 @@ function addvalue() {
                 <button class="dropdown-item" onclick="window.location.reload(true)">
                     Refresh</button>
                 <span class="dropdown-item" type="button">
-                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="isCreating=true">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="startCreateNewActionItem()">
                         Create New Action Item</a></span>
                 <span class="dropdown-item" type="button">
                     <a class="nav-link" role="menuitem" href="GoalStatus.htm">

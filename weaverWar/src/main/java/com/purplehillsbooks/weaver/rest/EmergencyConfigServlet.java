@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.Writer;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 import com.purplehillsbooks.temps.TemplateJSONRetriever;
 import com.purplehillsbooks.temps.TemplateStreamer;
 
@@ -108,7 +110,20 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         try {
+            ServletContext sc = req.getServletContext();
+            String path = req.getPathInfo();
+            System.out.println("EMERGENCY INIT: requested URL: "+path);
             resp = new HttpServletResponseWithoutBug(resp);
+
+            // let the css and png file simply served.
+            if (!path.contains("htm")) {
+                File filePath = new File(sc.getRealPath("init" + path));
+                java.io.OutputStream os = resp.getOutputStream();
+                System.out.println("EMERGENCY INIT: serving file "+filePath.getAbsolutePath());
+                StreamHelper.copyFileToOutput(filePath, os);
+                return;
+            }
+
             String cmd = req.getParameter("cmd");
             if (cmd!=null && "admin".equals(cmd)) {
                 //need to restrict this to logged in person who is an admin.....

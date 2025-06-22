@@ -1586,7 +1586,7 @@ public class NGWorkspace extends NGPage {
         //which users are read only.
         if (getSite().isUnpaidUser(user)) {
             throw WeaverException.newBasic(
-                "As a basic user of the site, you are not able to update workspace. %s", op);
+                "(%s) is a basic user of the site and not able to update workspace. %s", user.getName(), op);
         }
         //now look through all the roles and see if this person plays any
         //that allow update
@@ -1598,7 +1598,7 @@ public class NGWorkspace extends NGPage {
             }
         }
         throw WeaverException.newBasic(
-            "You are not a player of any role that is able to update workspace. %s", op);
+            "(%s) is not a player of any update role for this workspace. %s", user.getName(), op);
     }
 
     /**
