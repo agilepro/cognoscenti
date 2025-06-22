@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.getDocumentInfo();
     $scope.openDocDialog = function (doc) {
         if (!$scope.canUpdate) {
-            alert("Unable to update meeting because you are not playing an update role");
+            alert("Unable to update document because you are not playing an update role in this workspace.");
             return;
         }
         var docsDialogInstance = $modal.open({

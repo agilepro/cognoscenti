@@ -6,7 +6,7 @@
     String pageTitle="Compose EMail";
 %><%
 
-    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    // set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
@@ -143,54 +143,6 @@
                     + "/summary.json?lic="+lfu.getId();
     }
 
-/* PROTOTYPE
-
-    $scope.emailInfo = {
-      "alsoTo": [{"uid":"foo@example.com","name":"Mr. Foo"}],
-      "attachFiles": false,
-      "docList": [],
-      "excludeResponders": false,
-      "id": "~new~",
-      "includeBody": false,
-      "intro": "Sending this note to let you know about a recent update to this web page has information that is relevant to you.  Follow the link to see the most recent version.",
-      "makeMembers": false,
-      "noteInfo": {
-        "comments": [
-          {
-            "content": "xxx",
-            "time": 1435356818486,
-            "user": "kswenson@example.com"
-          },
-          {
-            "content": "yyy",
-            "time": 1435356822441,
-            "user": "kswenson@example.com"
-          }
-        ],
-        "deleted": false,
-        "docList": ["EZIGICMWG@facility-1-wellness-circle@8170"],
-        "draft": false,
-        "html": "<p>xxx<\/p>\n",
-        "id": "3896",
-        "labelMap": {
-          "Members": true,
-          "NO Game": true
-        },
-        "modTime": 1435356792085,
-        "modUser": {
-          "name": "Keith Swenson",
-          "uid": "kswenson@example.com"
-        },
-        "pin": 0,
-        "public": true,
-        "subject": "public topic",
-        "universalid": "FLVQAPMWG@facility-1-wellness-circle@3896"
-      },
-      "roleNames": ["Members"],
-      "subject": "public topic"
-    };
-
-    */
 %>
 
 <script type="text/javascript">
@@ -544,24 +496,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 <%@include file="ErrorPanel.jsp"%>
 
 <div class="container override mx-4">
-    <!--<div class="col-md-auto second-menu d-flex">
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseSecondaryMenu" aria-expanded="false" aria-controls="collapseSecondaryMenu">
-            <i class="fa fa-bars"></i>
-        </button>
-        <div class="collapse" id="collapseSecondaryMenu">
-            <div class="col-md-auto">
 
-                <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link " role="menuitem" href="EmailCreated.htm">
-          Email Prepared</a>
-        </span>
-
-        <span class="btn second-menu-btn btn-wide" type="button" ng-click="openTopicCreator()" aria-labelledby="createNewTopic"><a class="nav-link" role="menuitem" href="EmailSent.htm">
-            Email Sent</a>
-          </span>
-</div>
-        </div>
-    </div>
-    <hr>-->
     <div class="col-12">
             <div ng-show="emailInfo.state==1">
                 <form class="form-horizontal col-12">
