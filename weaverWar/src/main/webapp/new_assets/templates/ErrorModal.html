@@ -1,0 +1,25 @@
+<html>
+    <!-- Bootstrap 5.3.3-->
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=ar.retPath%>new_assets/css/weaver.min.css" />
+<body>
+    <div class="modal-item pt-3"></div>
+    <div class="modal-header bg-primary-subtle text-primary">
+        <h4 class="modal-title" id="attachDocumentLabel"> Error</h4>
+    </div>
+    <div class="modal-body fluid-container override">
+        <div class="row my-2 form-group col-12 d-flex"
+            title="The subject should describe the discussion in a few words">
+            <span class="col-2 my-2">
+                <label class="h6">We are sorry, you have run into an error. Either you are not authorized to access this page, or something has gone wrong. Please contact your site administrator.</label>
+            </span>
+            
+        </div>
+        <div class="modal-footer ">
+            <button ng-click="cancel()" class="btn btn-danger btn-raised me-auto">Cancel</button>
+            <button class="btn btn-default btn-primary btn-raised" ng-click="ok()"> Close Window</button>
+        </div>
+    </div>
+</body>
+
+</html>
