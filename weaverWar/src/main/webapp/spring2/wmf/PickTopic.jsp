@@ -16,6 +16,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.topicFilter = "";
+    $scope.topics = [];
 
     $scope.sortTopics = function() {
         $scope.topics.sort( function(a,b) {

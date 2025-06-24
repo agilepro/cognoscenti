@@ -148,10 +148,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div ng-bind-html="topic.wiki | wiki" class="richTextBox"></div> 
     
     <div ng-show="topic.docList.length>0">
-        <div class="instruction" >Attachment Links: </div>
-        <div class="subItemStyle" ng-repeat="att in topic.docList">
-            <a href="DocView.wmf?meetId={{meeting.id}}&docId={{getNid(att)}}">
-              <span class="fa fa-file-o"></span> {{getNid(att)}}</a>
+        <div class="instruction" >Attached Documents: </div>
+        <div class="subItemStyle" ng-repeat="att in topic.attachedDocs">
+            <a href="DocView.wmf?meetId={{meeting.id}}&docId={{att.id}}">
+              <span class="fa fa-file-o"></span> {{att.name}}</a>
         </div>
     </div> 
     <div ng-show="topic.comments.length>0">
