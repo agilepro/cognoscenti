@@ -14,6 +14,10 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
+    
+    $scope.taskFilter = "";
+    $scope.allActions = [];
+    
     $scope.reportError = function(data) {
         console.log("ERROR: ", data);
     }
@@ -31,6 +35,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.retrieveActionList();
 
+    $scope.filteredTasks = function() {
+        let res = [];
+        $scope.allActions.forEach( function(item) {
+            if (item.synopsis.indexOf($scope.taskFilter) >= 0 || item.description.indexOf($scope.taskFilter) >= 0) {
+                res.push(item);
+            }
+        } );
+        return res;
+    }
 });
 
 </script>
@@ -44,10 +57,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     
     <div class="instruction ms-3">
-    Choose a dicsussion topic from list below:
+    Filter Tasks: <input ng-model="taskFilter"></input>
     </div>
     
-    <div ng-repeat="item in allActions" class="my-3 border border-1 border-dark rounded btn-raised">
+    <div ng-repeat="item in filteredTasks()" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
         <a class="fs-6 bold text-wrap text-decoration-none ms-2" href="TaskView.wmf?taskId={{item.id}}">
             <span class="fa fa-check-circle"></span> {{item.synopsis}}

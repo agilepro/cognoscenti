@@ -26,6 +26,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.PickMeeting = function() {
         window.location.href = 'PickMeeting.wmf';
     }
+    $scope.PickTask = function() {
+        window.location.href = 'PickTask.wmf';
+    }
+    $scope.PickTopic = function() {
+        window.location.href = 'PickTopic.wmf';
+    }
 
 });
 
@@ -45,8 +51,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   User Home
     </div>
     
-    <div class="fullWidth well py-2">
-        <a href="PickTask.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/ActionItems.png" class="left my-3"></a>
+    <div class="fullWidth well py-2" ng-click="PickTask()">
+        <img src="<%=ar.retPath%>new_assets/assets/navicon/ActionItems.png" class="left my-3">
         <span class="h4"> &nbsp;Action Items</span>
 
     </div>
@@ -54,15 +60,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     <div class="fullWidth well py-2" ng-click="PickMeeting()">
         <img src="<%=ar.retPath%>new_assets/assets/navicon/Meeting.png" class="left my-3">
-        <span class="h4" ng-click="PickMeeting()">
+        <span class="h4">
         &nbsp;Select Meeting
         </span>
     </div>
         
 
     
-    <div class="fullWidth well py-2">
-        <a href="PickTopic.wmf"><img src="<%=ar.retPath%>new_assets/assets/navicon/Topics.png" class="left my-3"></a>
+    <div class="fullWidth well py-2" ng-click="PickTopic()">
+        <img src="<%=ar.retPath%>new_assets/assets/navicon/Topics.png" class="left my-3">
         <span class="h4">&nbsp;Select Discussion</span>
     </div>
 
