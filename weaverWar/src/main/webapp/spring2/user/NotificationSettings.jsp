@@ -118,7 +118,7 @@ app.controller('myCtrl', function($scope, $http) {
     want to play.  Removing yourself from all roles of a workspace, will remove you from the
     workspace, and you will no longer get alerts or updates about that workspace.</p>
     
-    Please note: when you withdraw from a <b>'Members'</b> role of a workspace, you will stop receiving email when meetings are called, when discussions are create, and when comments are made. ALSO, you will no longer have any access to the workspace. Withdrawing from a Members role means you are effectively leaving the group that runs the workspace.</span>
+    Please note: when you withdraw from a <b>'Members'</b> role of a workspace, you will stop receiving email when meetings are called, when discussions are created, and when comments are made. ALSO, you will no longer have any access to the workspace. Withdrawing from a Members role means you are effectively leaving the group that runs the workspace.</span>
 </div>
 <div class="row-cols-3 d-flex m-2 border-bottom border-1 border-secondary border-opacity-25">
     <div class="col-xs-12 col-sm-6 col-md-3 padded">
