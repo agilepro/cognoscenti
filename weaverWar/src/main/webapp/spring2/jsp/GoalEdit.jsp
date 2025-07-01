@@ -508,7 +508,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(doc) {
-        window.location="SendNote.htm?att="+doc.id;
+        window.location="EmailCompose.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;

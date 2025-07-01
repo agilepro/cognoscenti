@@ -483,7 +483,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="SendNote.htm?att="+doc.id;
+        window.location="EmailCompose.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;
@@ -673,7 +673,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
-        window.location = "SendNote.htm?noteId="+$scope.topicId;
+        window.location = "EmailCompose.htm?noteId="+$scope.topicId;
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";

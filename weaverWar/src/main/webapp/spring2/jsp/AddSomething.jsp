@@ -75,7 +75,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location = "DecisionList.htm?start=create";
     }
     $scope.createEmail = function() {
-        window.location = "SendNote.htm";
+        window.location = "EmailCompose.htm";
     }
     
 });

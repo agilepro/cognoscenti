@@ -52,6 +52,10 @@
     }
 
     JSONArray allGoals     = ngw.getJSONGoals();
+    JSONArray allRoles = new JSONArray();
+    for (NGRole role : ngw.getAllRoles()) {
+        allRoles.put( role.getJSON() );
+    }
 
     String docSpaceURL = "";
     if (uProf!=null) {
@@ -80,6 +84,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.topicId = "<%=topicId%>";
+    $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.allDocs = [];
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -368,16 +373,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("You are not able to update this role because this workspace is frozen");
             return;
         }
-        else {
-            alert("updating now");
-        }
         var postURL = "roleUpdate.json?op=Update";
-        var roleData = {name: "Members", addPlayers: []};
+        var roleData = {name: "MembersRole", addPlayers: []};
         roleData.addPlayers.push(newMember);
         console.log("ADD MEMBER", roleData);
         var postdata = angular.toJson(roleData);
         $scope.showError=false;
-        alert("calling post");
         $http.post(postURL ,postdata)
         .success( function(data) {
             console.log("ADD MEMBER RESULT", data);
@@ -386,8 +387,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
-        
-        alert("post finished");
     }
     function refreshLabels() {
         if ($scope.isFrozen) {
@@ -674,12 +673,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         if (!doc.id) {
             console.log("DOCID", doc);
             alert("doc id is missing");
+            return;
         }
         window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="SendNote.htm?att="+doc.id;
+        window.location="EmailCompose.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;
@@ -1040,7 +1040,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("This discussion has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
-        window.location = "SendNote.htm?noteId="+$scope.topicId;
+        window.location = "EmailCompose.htm?noteId="+$scope.topicId;
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
@@ -1071,7 +1071,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("Unable to update discussion because you are not playing an update role in the workspace");
             return;
         }
-        toggleReadOnlyPart(section);
+        $scope.toggleReadOnlyPart(section);
     }
     
     
@@ -1114,8 +1114,29 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.goToMobileUi = function() {
         let dest = "TopicView.wmf?topicId="+$scope.topicId;
-        console.log("NAV TO: "+dest);
         window.location.assign(dest);
+    }
+    $scope.addPlayers = function(role) {
+        if (!role) {
+            return;
+        }
+        let subList = [];
+        role.players.forEach( function(player) {
+            let found = false;
+            $scope.noteInfo.subscribers.forEach( function(alreadyThere) {
+                if (alreadyThere.key === player.key) {
+                    found = true;
+                } else if (alreadyThere.uid === player.uid) {
+                    found = true;
+                }
+            });
+            if (!found) {
+                $scope.noteInfo.subscribers.push(player);
+            }
+        });
+    }
+    $scope.clearSubscribers = function() {
+        $scope.noteInfo.subscribers.length = 0;
     }
 });
 
@@ -1196,35 +1217,7 @@ function copyTheLink() {
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </h2>
-    <div class="well" ng-show="addressMode" ng-cloak>
-        <h3 class="h5 text-secondary">Email Notification To (Subscribers):</h3>
-        <div>
-          <tags-input ng-model="subscriberBuffer" placeholder="Enter users to send notification email to"
-                      display-property="name" key-property="uid"
-                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                      on-tag-added="updatePlayers()" 
-                      on-tag-removed="updatePlayers()">
-              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-          </tags-input>
-        </div>
-        <div class="d-flex">
-            <span class="me-auto">
-          <button class="btn btn-raised btn-default btn-danger" type="button" ng-click="addressMode = false"
-                  title="Cancel and leave this in draft mode.">
-          Cancel </button>
-            </span>
-            <span>
-          <button class="btn btn-secondary btn-raised btn-wide" type="button" ng-click="postIt(false)"
-                  title="Post this discussion but don't send any email">
-          Post Without Email </button>
-            </span>
-            <span>
-          <button class="btn btn-primary btn-raised btn-wide" type="button" ng-click="postIt(true)"
-                  title="Post this discussion and send the email to selected users">
-          Post &amp; Send Email </button>
-            </span>
-        </div>
-    </div>
+
     
     <div class="col-12" ng-hide="isEditing" >
         <div class="leafContent" ng-dblclick="startEdit()">
@@ -1256,6 +1249,13 @@ function copyTheLink() {
             Last modified:</span>
         <span class="col-9">
             {{noteInfo.modTime|cdate}}
+            <button class="btn btn-primary btn-default btn-raised" ng-click="postIt(true)" 
+                    title="Send this topic description by email with a link back to this page">
+                Send Topic By Email</button>
+            <button class="btn btn-primary btn-default btn-raised" ng-click="postIt(false)" 
+                    title="Send this topic description by email with a link back to this page"
+                    ng-show="noteInfo.draft">
+                Change Draft to Published</button>
         </span>
     </div>
     <div class="row ms-3">
@@ -1371,27 +1371,32 @@ function copyTheLink() {
             </span>
           </span>
         </div>
-        <span ng-repeat="outcast in nonMembers">
-            <span class="dropdown" >
-                <ul class="nav-item list-inline m-2">
-                <li class="nav-item dropdown" id="outcast" data-toggle="dropdown">
-                    <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" style="width:32px;height:32px" />
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
-                        <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:left"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
-                        <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">                            <span class="fa fa-user"></span> Visit Profile</a></li>
-                        <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
-                        <span class="fa fa-user"></span> Add to Members</a></li>
-                    </ul>
-                </li>
-          {{outcast.name}} ({{outcast.uid}}) is not a member of the workspace.
-            </ul>
-        </span>
-
-        </span>
+        <div ng-show="nonMembers.length>0">
+          <div>Warning: The following subscribers have no access to the rest of workspace:</div>
+          
+          <div class="d-flex" >
+            <span ng-repeat="outcast in nonMembers">
+                <span class="dropdown" >
+                  <ul class="nav-item list-inline m-2">
+                    <li class="nav-item dropdown" id="outcast" data-toggle="dropdown">
+                        <img src="<%=ar.retPath%>icon/{{outcast.key}}.jpg" title="{{outcast.name}} - {{outcast.uid}}" class="rounded-5" style="width:32px;height:32px" />
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="outcast">
+                            <li role="presentation" style="background-color:lightgrey"><a class="dropdown-item" role="menuitem"  tabindex="-1" style="text-decoration: none;text-align:left"> {{outcast.name}}<br/>{{outcast.uid}}</a></li>
+                            <li role="presentation" style="cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="navigateToUser(outcast)">
+                            <span class="fa fa-user"></span> Visit Profile</a></li>
+                            <li role="presentation" style="float: left;cursor:pointer"><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="addMember(outcast)">
+                            <span class="fa fa-user"></span> Add to Members</a></li>
+                        </ul>
+                    </li>
+                  </ul>
+                </span>
+            </span>
+          </div>
+        </div>
     </div>
     <hr></div>
 
-    <div class="well mx-3" ng-show="editMeetingPart=='subscribers'">
+    <div class="well" ng-show="editMeetingPart=='subscribers'">
         <h3 class="h5">Adjust Subscribers:</h3>
         <div>
             <tags-input ng-model="subscriberBuffer" placeholder="Enter users to update about changes" 
@@ -1407,15 +1412,21 @@ function copyTheLink() {
                         title="Save this list of subscribers"> Save </button>
             </span>
         </div>
-    </div>
-
-    <div class="row d-flex mx-2">
-        <span class="ms-5 nav-item dropdown" ng-hide="noteInfo.draft">
-
-        </span> 
-        <span class="dropdown" ng-show="noteInfo.draft">   
-            <button class="btn btn-primary btn-default btn-raised" ng-click="startSend()" title="Post this discussion to take it out of Draft mode and allow others to see it">Post Topic </button>
-        </span>
+        <div>
+          Add Role Players: 
+          <button class="btn btn-primary btn-default btn-raised fs-6"  type="button"  
+                ng-repeat="role in allRoles"  ng-click="addPlayers(role)" 
+                title="Add role players to subscribers"> {{role.name}} </button>
+        </div>
+        <div>
+          Remove All Subscribers: 
+          <button class="btn btn-primary btn-default btn-raised fs-6"  type="button"  
+                ng-click="clearSubscribers()" 
+                title="Remove all the current subscribers"> Clear All </button>
+        </div>
+        
+        
+        
     </div>
 
     <div class="row ms-3">

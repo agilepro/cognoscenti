@@ -381,7 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         href="DocsAdd.htm?folder={{folderPathList()}}">
                         Add Document</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="sendEmail">
-                    <a class="nav-link" role="menuitem" tabindex="-1" href="SendNote.htm">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="EmailCompose.htm">
                         Send Email</a></span>
             </li>
         </ul>
@@ -446,7 +446,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Document Settings</a></li>
                             <hr>
                             <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
-                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
+                            <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="EmailCompose.htm?att={{rec.id}}">Send Document By Email</a></li>
                         </ul>
                     </li>
                 </ul>

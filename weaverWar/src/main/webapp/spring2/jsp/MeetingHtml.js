@@ -330,7 +330,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         $scope.savePartialMeeting(['state', 'sendEmailNow', 'participants']);
         $scope.addressMode = false;
         if (sendEmail) {
-            document.location = "SendNote.htm?meet=" + $scope.meetId;
+            document.location = "EmailCompose.htm?meet=" + $scope.meetId;
         }
     }
     $scope.loadPersonList = function (query) {
@@ -1567,7 +1567,7 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         window.open("DocDetail.htm?aid=" + docId, "_blank");
     }
     $scope.sendDocByEmail = function (docId) {
-        window.open("SendNote.htm?att=" + docId, "_blank");
+        window.open("EmailCompose.htm?att=" + docId, "_blank");
     }
     $scope.downloadDocument = function (doc) {
         if (doc.attType == 'URL') {

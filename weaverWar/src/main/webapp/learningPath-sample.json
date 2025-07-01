@@ -226,7 +226,7 @@
     "done": true,
     "mode": "standard"
   }],
-  "SendNote.jsp": [{
+  "EmailCompose.jsp": [{
     "description": "This page allows you to compose an email message and send it.\n\nEmail can be addressed to anyone with an email address. The user interface makes it easy to find and pick people within this workspace.\n\nMake the subject appropriate so that people will understand whether they need to read the message or not.\n\nThe \"introduction\" is going to be in the body of the message.\n\nTry clicking __Save and Preview__ to get a rendered preview of the message at the bottom of the page. Every time you click it will be updated. Once saved you can leave and come back later to send.\n\nBe sure to click \"__Send__\" to make it actually go. The composed email remains in the workspace as a record of what was composed, and there you will also find copies of the actual emails that were sent.",
     "done": true,
     "mode": "standard"

@@ -12,7 +12,7 @@
                     title="Add more people to the list below">
             <span class="fa fa-plus"></span> Add Participants </button>
         </span>
-        <span class="col-md-3 float-end"><a class="btn btn-wide btn-comment btn-raised" href="SendNote.htm?meet={{meetId}}"> Send Email <i class="fa fa-envelope-o"></i> About Meeting</a>
+        <span class="col-md-3 float-end"><a class="btn btn-wide btn-comment btn-raised" href="EmailCompose.htm?meet={{meetId}}"> Send Email <i class="fa fa-envelope-o"></i> About Meeting</a>
           </span>
     </div>
     <div class="well override" ng-show="editMeetingPart=='participants'">

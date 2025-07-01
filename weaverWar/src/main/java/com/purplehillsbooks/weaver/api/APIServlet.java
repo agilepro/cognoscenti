@@ -356,7 +356,7 @@ public class APIServlet extends jakarta.servlet.http.HttpServlet {
                 throw WeaverException.newBasic("The license (%s) does not have full member access which is needed in order to create a new topic.", 
                         resDec.licenseId);
             }
-            TopicRecord newNote = resDec.workspace.createNote();
+            TopicRecord newNote = resDec.workspace.createTopic();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
             newNote.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.workspace, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,

@@ -214,7 +214,7 @@ public class ProjectSettingController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/SendNote.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/EmailCompose.htm", method = RequestMethod.GET)
     public void sendNote(
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -228,7 +228,7 @@ public class ProjectSettingController extends BaseController {
                 return;
             }
         }
-        showJSPMembers(ar, siteId, pageId, "SendNote.jsp");
+        showJSPMembers(ar, siteId, pageId, "EmailCompose.jsp");
     }
 
 

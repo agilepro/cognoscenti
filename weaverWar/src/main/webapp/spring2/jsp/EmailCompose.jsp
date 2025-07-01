@@ -200,7 +200,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                 return;
             }
             if ($scope.isNew) {
-                window.location = "SendNote.htm?id="+data.id;
+                window.location = "EmailCompose.htm?id="+data.id;
             }
             $scope.emailInfo = data;
             console.log("Got Email Object", data);
@@ -421,7 +421,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         window.location="DocDetail.htm?aid="+docId;
     }
     $scope.sendDocByEmail = function(docId) {
-        window.location="SendNote.htm?att="+docId;
+        window.location="EmailCompose.htm?att="+docId;
     }
     $scope.downloadDocument = function(doc) {
         if (doc.attType=='URL') {
@@ -505,7 +505,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                         <div class="row d-flex col-12 my-2"  ng-hide="showAddressingOptions" ng-click="showAddressingOptions=true">
                             <label class="col-md-2 control-label h5" for="alsoalsoTo">Send To:</label>
                             <div class="col-md-10">
-                                <button class="btn-comment btn-default btn-raised"  ng-repeat="oneAddress in emailInfo.alsoTo"> {{oneAddress.name}} </button> 
+                                <button class="btn-comment btn-default btn-raised"  style="white-space: nowrap" ng-repeat="oneAddress in emailInfo.alsoTo"> {{oneAddress.name}} </button> 
                             </div>
                         </div>
                         <!--Send To EDIT -->
@@ -519,7 +519,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                                 </div>
                             </div>
                             <div class="row d-flex mt-3 ms-2" ng-show="showAddressingOptions">
-                                <label class="col-md-2 control-label h6">Invite by Roles:</label>
+                                <label class="col-md-2 control-label h6">Invite Role Players:</label>
                                 <div class="col-md-10 d-flex flex-wrap">
                                     <div ng-repeat="role in allRoles" > 
                                         <button class="btn-comment btn-wide btn-raised" ng-click="addPlayers(role)">
@@ -538,11 +538,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                                 </span>
                             </div>
                             <!--Topic Subscribers-->
-                            <div class="row col-12 d-flex my-2">
+                            <div class="row col-12 d-flex m-2">
                                 <div ng-show="emailInfo.noteInfo.subscribers">
-                                    <label class="col-md-2 control-label h5">Topic Subscribers:</label>
+                                    <label class="col-md-2 control-label h6">Topic Subscribers:</label>
                                     <span class="col-md-10">
-                                            <button class="btn-comment btn-wide btn-raised" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers</button>
+                                            <button class="btn-comment btn-wide btn-raised" ng-click="addTopicSubscribers()" title="Add all the people invited to the meeting">Add All Subscribers of Attached Topic</button>
                                     </span>
                                 </div>
                             </div>

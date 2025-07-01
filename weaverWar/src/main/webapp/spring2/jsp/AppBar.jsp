@@ -93,7 +93,7 @@
                       <li><a class="dropdown-item" href="DocsAdd.htm">Document</a></li>
                       <li><a class="dropdown-item" href="GoalStatus.htm?start=create">Action Item</a></li>
                       <li><a class="dropdown-item" href="DecisionList.htm?start=create">Decision</a></li>
-                      <li><a class="dropdown-item" href="SendNote.htm">Email</a></li>
+                      <li><a class="dropdown-item" href="EmailCompose.htm">Email</a></li>
                       <li><a class="dropdown-item" href="AddSomething.htm">Something Else</a></li>
                     </ul>
                   </li>

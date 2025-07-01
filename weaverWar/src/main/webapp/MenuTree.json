@@ -114,7 +114,7 @@
         },
         {
           "use": ["MeetingHtml.jsp"],
-          "href":"SendNote.htm?meet={{meetId}}",
+          "href":"EmailCompose.htm?meet={{meetId}}",
           "name":"Send Email",
           "title":"Send email about this particular meeting"
         },
@@ -155,7 +155,7 @@
         },
         {
           "use": ["NoteZoom.jsp"],
-          "href":"SendNote.htm?noteId={{topicId}}",
+          "href":"EmailCompose.htm?noteId={{topicId}}",
           "name":"Send Email",
           "title":"Send an email about this discussion topic"
         },
@@ -217,7 +217,7 @@
         },
         {
           "use": ["DocDetail.jsp", "DocsRevise.jsp"],
-          "href":"SendNote.htm?att={{docId}}",
+          "href":"EmailCompose.htm?att={{docId}}",
           "name":"Send Email",
           "title":"Send email with this document attached"
         }
@@ -285,19 +285,19 @@
       "opts": [
         {
           "use": ["EmailCreated.jsp", "EmailSent.jsp"],
-          "href":"SendNote.htm",
+          "href":"EmailCompose.htm",
           "name":"Create",
           "title":"Create a new email message to send"
         },
         {
-          "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
+          "use": ["EmailCreated.jsp", "EmailSent.jsp", "EmailCompose.jsp"],
           "href":"EmailSent.htm",
           "name":"Sent",
           "title":"Create a new email message to send",
           "readOnly": true
         }
       ],
-      "useOpts": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
+      "useOpts": ["EmailCreated.jsp", "EmailSent.jsp", "EmailCompose.jsp"],
       "readOnly": true,
       "icon": "Email.png"
     },
