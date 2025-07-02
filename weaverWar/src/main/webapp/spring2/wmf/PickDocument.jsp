@@ -14,7 +14,9 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-
+    $scope.atts = [];
+    $scope.docFilter = "";
+    
     $scope.sortDocs = function() {
         $scope.atts.sort( function(a,b) {
             return (b.modifiedtime - a.modifiedtime);
@@ -37,7 +39,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
     }
     $scope.getDocumentList();
-
+    
+    $scope.filteredDocs = function() {
+        let res = [];
+        $scope.atts.forEach( function(item) {
+            if (item.name.indexOf($scope.docFilter) >= 0 || item.description.indexOf($scope.docFilter) >= 0) {
+                res.push(item);
+            }
+        } );
+        return res;
+    }
 });
 
 </script>
@@ -51,10 +62,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     
     <div class="instruction  ms-3">
-    Select a document:
+    Filter Docs: <input ng-model="docFilter"></input>
     </div>
     
-    <div ng-repeat="doc in atts" class="my-3 border border-1 border-dark rounded btn-raised">
+    <div ng-repeat="doc in filteredDocs()" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
         <a class="fs-6 bold text-wrap text-decoration-none ms-2" href="DocView.wmf?docId={{doc.id}}">
             <span class="fa fa-file-o"></span> {{doc.name}}

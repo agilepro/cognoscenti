@@ -427,15 +427,17 @@ public class NGWorkspace extends NGPage {
     }
 
 
-    public TopicRecord createNote() throws Exception {
-        TopicRecord note = noteParent.createChild("note", TopicRecord.class);
+    public TopicRecord createTopic() throws Exception {
+        TopicRecord topicRec = noteParent.createChild("note", TopicRecord.class);
         String localId = getUniqueOnPage();
-        note.setId( localId );
-        note.setUniversalId(getContainerUniversalId() + "@" + localId);
-        NGRole subscribers = note.getSubscriberRole();
+        topicRec.setId( localId );
+        topicRec.setUniversalId(getContainerUniversalId() + "@" + localId);
+        NGRole subscribers = topicRec.getSubscriberRole();
+        NGRole members = this.getOrCreateRole("MembersRole");
+        subscribers.addPlayersIfNotPresent(members.getExpandedPlayers(this));
         NGRole stewards = this.getSecondaryRole();
         subscribers.addPlayersIfNotPresent(stewards.getExpandedPlayers(this));
-        return note;
+        return topicRec;
     }
 
 

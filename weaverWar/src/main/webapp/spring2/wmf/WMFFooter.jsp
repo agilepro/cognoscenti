@@ -1,3 +1,8 @@
+<%  
+    String meetId = request.getParameter("meetId"); 
+    String topicId = request.getParameter("topicId"); 
+%>
+  
   <div class="mt-2"></div>
   
   
@@ -9,18 +14,25 @@
 
 
 <div>
-  <h2 class="h6">Site Full View Links:</h2>
+    <h2 class="h6">Site Full View Links:</h2>
     <div class="d-flex" >
-      
         
-    <div class="btn btn-wide btn-comment btn-raised" ng-show="meetId">
-       <a href="MeetingHtml.htm?id={{meetId}}" class="text-decoration-none lh-sm">Meeting</a>
+        <% if (topicId!=null) { %>
+        <div class="btn btn-wide btn-comment btn-raised"
+                onclick="location.href='noteZoom<%=topicId%>.htm'">
+           Topic
+        </div>
+        <% } else if (meetId!=null) { %>
+        <div class="btn btn-wide btn-comment btn-raised"
+                onclick="location.href='MeetingHtml.htm?id=<%=meetId%>'">
+           Meeting
+        </div>
+        <% } %>
+        <div class="btn btn-wide btn-comment btn-raised" onclick="location.href='FrontPage.htm'">
+           Workspace
+        </div>
+        <div class="btn btn-wide btn-comment btn-raised" onclick="location.href='https://s06.circleweaver.com/'">
+           Weaver.com
+        </div>
     </div>
-    <div class="btn btn-wide btn-comment btn-raised">
-       <a href="FrontPage.htm" class="text-decoration-none">Workspace</a>
-    </div>
-    <div class="btn btn-wide btn-comment btn-raised">
-       <a href="https://s06.circleweaver.com/" class="text-decoration-none">Weaver.com</a>
-    </div>
-  </div>
-  </div>
+</div>

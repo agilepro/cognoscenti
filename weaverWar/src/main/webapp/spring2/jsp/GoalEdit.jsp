@@ -508,7 +508,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         window.location="DocDetail.htm?aid="+doc.id;
     }
     $scope.sendDocByEmail = function(doc) {
-        window.location="SendNote.htm?att="+doc.id;
+        window.location="EmailCompose.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(doc) {
         window.location="a/"+doc.name;
@@ -631,6 +631,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     $scope.refreshActionItem();
 
+    $scope.goToMobileUi = function() {
+        let dest = "TaskView.wmf?taskId="+$scope.goalInfo.id;
+        console.log("NAV TO: "+dest);
+        window.location.assign(dest);
+    }
 });
 
 function addvalue() {
@@ -679,8 +684,10 @@ function addvalue() {
                 <span class="dropdown-item" type="button">
                     <a class="nav-link" role="menuitem" tabindex="-1"
                         ng-click="startEdit('details')">
-                        Edit Details</a>
-                </span>
+                        Edit Details</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" ng-click="goToMobileUi()">
+                        Mobile UI</a></span>
             </li>
         </ul>
     </span>

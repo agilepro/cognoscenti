@@ -277,7 +277,7 @@ public class TopicController extends BaseController {
             TopicRecord topic = null;
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             if ("~new~".equals(nid)) {
-                topic = ngw.createNote();
+                topic = ngw.createTopic();
                 noteInfo.put("universalid", topic.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
             }

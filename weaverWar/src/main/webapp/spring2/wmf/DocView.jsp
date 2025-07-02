@@ -155,18 +155,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     
     <div class="instruction">
-    Description:
+        Description:
     </div>
     <div ng-bind-html="document.description | wiki" class="richTextBox"></div> 
     
-    <div class="instruction">
-    Links:
+    <div class="instruction" ng-show="document.size>=0">
+        Size: {{document.size|number}} bytes
     </div>
-      <div class="subItemStyle" ng-repeat="comment in document.comments">
+    <div class="instruction" ng-show="document.modifiedtime>=0">
+        Updated: {{document.modifiedtime|cdate}}
+    </div>
+    <div class="instruction" ng-show="document.modifier">
+        By: {{document.modifier.name}}
+    </div>
+
+    <div class="instruction" ng-show="document.comments.length>0">
+        Comments:
+    </div>
+    <div class="subItemStyle" ng-repeat="comment in document.comments">
         <a href="CmtView.wmf?meetId={{meeting.id}}&cmtId={{comment.time}}">
           <span class="fa {{getIcon(comment)}}"></span> {{trimit(comment.body)}}</a>
-      </div>
-    
+    </div>
 
 
 

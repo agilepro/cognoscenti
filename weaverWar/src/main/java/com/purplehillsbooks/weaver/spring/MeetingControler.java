@@ -863,7 +863,7 @@ public class MeetingControler extends BaseController {
             TopicRecord nr = null;
 
             if (nr == null) {
-                nr = ngw.createNote();
+                nr = ngw.createTopic();
                 nr.setSubject("Minutes for Meeting: " + meeting.getName());
                 meeting.setMinutesId(nr.getUniversalId());
                 ngw.findOrCreateLabelRecord("Minutes", "SkyBlue");

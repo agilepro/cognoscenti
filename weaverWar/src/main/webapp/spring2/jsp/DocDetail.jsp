@@ -261,7 +261,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="<%=ar.retPath%>v/"+encodeURIComponent(player.key)+"/PersonShow.htm";
     }
     $scope.composeEmail = function() {
-        window.location="SendNote.htm?att="+$scope.docInfo.id;
+        window.location="EmailCompose.htm?att="+$scope.docInfo.id;
     }
 
 

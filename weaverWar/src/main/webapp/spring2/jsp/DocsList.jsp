@@ -293,7 +293,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <a class="nav-link" href="DocsAdd.htm">
                         Add Document</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="sendEmail">
-                    <a class="nav-link" href="SendNote.htm">
+                    <a class="nav-link" href="EmailCompose.htm">
                         Send Email</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="SharePorts">
                     <a class="nav-link" href="SharePorts.htm">
@@ -351,7 +351,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                                 <hr>
                                 <li><a class="dropdown-item" role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
                                     <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
-                                <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a>
+                                <li><a class="dropdown-item" role="menuitem" tabindex="-1" href="EmailCompose.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a>
                                 </li>
                             </ul>
                         </li>

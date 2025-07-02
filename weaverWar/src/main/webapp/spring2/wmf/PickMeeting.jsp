@@ -14,7 +14,9 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
-
+    
+    $scope.meetingFilter = "";
+    $scope.meetings = [];
     
     $scope.reportError = function(data) {
         console.log("ERROR: ", data);
@@ -31,6 +33,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     $scope.getMeetingList();
+    
+    $scope.filteredMeetings = function() {
+        let res = [];
+        $scope.meetings.forEach( function(item) {
+            if (item.name.indexOf($scope.meetingFilter) >= 0 ) {
+                res.push(item);
+            }
+        } );
+        return res;
+    }
 
 });
 
@@ -45,10 +57,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     
     <div class="instruction ms-3">
-    Select a meeting:
+    Filter Meetings: <input ng-model="meetingFilter"></input>
     </div>
     
-    <div ng-repeat="meet in meetings" class="my-3 border border-1 border-dark rounded btn-raised">
+    <div ng-repeat="meet in filteredMeetings()" class="my-3 border border-1 border-dark rounded btn-raised">
       <div class="listItemStyle">
         <a class="fs-5 bold text-wrap text-decoration-none ms-2" href="RunMeeting.wmf?meetId={{meet.id}}">
             <span class="fa fa-gavel"></span>&nbsp;{{meet.name}}

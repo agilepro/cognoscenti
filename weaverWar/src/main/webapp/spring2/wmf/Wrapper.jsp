@@ -7,6 +7,7 @@
     Cognoscenti cog=null;
     
     String wrappedJSP = ar.reqParam("wrappedJSP"); 
+    String meetId = ar.defParam("meetId", null); 
 
     JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {

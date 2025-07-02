@@ -734,9 +734,16 @@ public class TopicRecord extends CommentContainer {
         thisNote.put("draft", isDraftNote());
         thisNote.put("discussionPhase", getDiscussionPhase());
         thisNote.put("pin", getPinOrder());
-        thisNote.put("docList", constructJSONArray(getDocList()));
         thisNote.put("actionList", constructJSONArray(getActionList()));
         extractAttributeBool(thisNote, "suppressEmail");
+        thisNote.put("docList", constructJSONArray(getDocList()));
+
+        // now make a read-only convenience with addition info about the document
+        JSONArray attachedDocs = new JSONArray();
+        for (AttachmentRecord att : this.getAttachedDocs(ngw)) {
+            attachedDocs.put(att.getLinkableJSON());
+        }
+        thisNote.put("attachedDocs", attachedDocs);
 
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels(ngw)) {

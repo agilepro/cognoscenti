@@ -115,7 +115,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
             alert("You can't create an email because you are not a player of an update role in this workspace.");
             return;
         }
-        window.location="SendNote.htm";
+        window.location="EmailCompose.htm";
     }
 });
 
@@ -185,7 +185,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople, $modal) {
                     </ul>
                   </span>
             </td>
-            <td><a href="SendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
+            <td><a href="EmailCompose.htm?id={{rec.id}}">{{rec.subject}}</a></td>
             <td>{{stateName(rec.state)}}</td>
             <td ng-show="rec.state<=1">
               <a role="menuitem" tabindex="-1" title="Delete Email" href="#" ng-click="deleteEmail(rec)">

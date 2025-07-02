@@ -169,6 +169,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
     $scope.generateCommentHtml($scope.comment);
+    
+    $scope.goToMobileUi = function() {
+        let dest = "CmtView.wmf?cmtId="+$scope.cid;
+        window.location.assign(dest);
+    }
 });
 
 </script>
@@ -182,6 +187,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">
                     Refresh</button>
+            </li>
+            <li>
+                <button class="dropdown-item" ng-click="goToMobileUi()">
+                    Mobile UI</button>
             </li>
         </ul>
     </span>
@@ -211,10 +220,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom" ng-repeat="reply in comment.replies">
           <span class="col-3">Reply</span>
           <span class="col-6"><a href="CommentZoom.htm?cid={{reply}}">{{reply|cdate}}</a></span>
-        </div>
-        <div class="row d-flex my-2 pt-1 pb-3 border-1 border-bottom ">
-          <span class="col-3"></span>
-          <span class="col-6"><a href="CmtView.wmf?cmtId={{cid}}"><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>
         </div>
       </div>
       <div class="well" ng-hide="commentExists">

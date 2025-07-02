@@ -324,7 +324,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("This discussion has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
-        window.location = "SendNote.htm?noteId="+note.id;
+        window.location = "EmailCompose.htm?noteId="+note.id;
     }
     if ($scope.startMode=="create") {
         $scope.openTopicCreator();
@@ -367,7 +367,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <a class="nav-link">
                         Create New Topic</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="sendEmail">
-                    <a class="nav-link" href="SendNote.htm">
+                    <a class="nav-link" href="EmailCompose.htm">
                         Create Email</a></span>
                 <span class="dropdown-item" type="button" aria-labelledby="createPDF">
                     <a class="nav-link" href="PDFExport.htm">

@@ -301,7 +301,7 @@ embeddedData.canUpdate = <%=canUpdate%>;
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
-              href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
+              href="EmailCompose.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="MeetingHtml.htm?id={{meeting.id}}">Show Tabbed Meeting Display</a></li>
