@@ -46,6 +46,13 @@
       "canEdit": true,
       "description": "Selected by the circle members to lead circle meetings. Moves agenda forward, keeps everyone focused on the aim. Helps prepare the meeting agenda.",
       "eligibility": "Must be a full user with good judgement, integrity, who listens and empathizes effectively. Can hold the big picture of an issue. Articulate. Both a sense of humor and able to be firm."
+    },
+    {
+      "symbol": "Announcements",
+      "onlyMail": true,
+      "canEdit": false,
+      "description": "a list of users that can only be emailed to.",
+      "eligibility": "Any email address can be used.  Email can be sent to them, but they can not access the workspace."
     }
   ]
 }

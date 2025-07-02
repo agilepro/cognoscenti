@@ -193,6 +193,7 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
+    
     public WorkspaceRole createWorkspaceRole(RoleDefinition def) throws Exception {
 
         // check to make sure it does not exist

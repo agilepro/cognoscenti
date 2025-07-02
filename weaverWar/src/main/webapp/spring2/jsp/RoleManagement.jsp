@@ -466,8 +466,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </ul>
                     </span> &nbsp; &nbsp;
 <% } %>
-                    <span ng-show="role.canUpdateWorkspace">(Can Update)</span>
-                    <span ng-hide="role.canUpdateWorkspace">(Read only)</span>
+                    <span ng-show="role.canUpdateWorkspace && role.canAccessWorkspace">(Can Update)</span>
+                    <span ng-show="!role.canUpdateWorkspace && role.canAccessWorkspace">(Read only)</span>
+                    <span ng-show="!role.canAccessWorkspace">(No Access)</span>
                 </span> 
             </div>
             <div class="row py-3">

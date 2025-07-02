@@ -46,19 +46,38 @@ public class RoleDefinition {
     // whether this is created by default in a workspace
     public boolean isWorkspaceDefault = false;
 
+    // This is a list of email addresses that can only be used for
+    // sending out announcements and such.  These users can not
+    // access anything in the workspace except things specifically
+    // mentioned by the email.  They are not members of the workspace.
+    // Default is false.  If true, takes precidence over edit or administer
+    public boolean onlyMail = false;
+
     public RoleDefinition() {}
  
+    public void normalize() {
+        if (onlyMail) {
+            canEdit = false;
+            canAdminister = false;
+        }
+        if (!canEdit) {
+            canAdminister = false;
+        }
+    }
+
     /**
      * getJSON is for normal lists of roles, the current players, and such.
      * Does not include all the historical detail.
      */
     public JSONObject getJSON() throws Exception {
+        normalize();
         JSONObject jObj = new JSONObject();
         jObj.put("symbol", symbol);
         jObj.put("name", name);
         jObj.put("description", description);
         jObj.put("eligibility", eligibility);
         jObj.put("canEdit", canEdit);
+        jObj.put("onlyMail", onlyMail);
         jObj.put("canAdminister", canAdminister);
         return jObj;
     }
@@ -83,14 +102,17 @@ public class RoleDefinition {
         if (roleInfo.has("isWorkspaceDefault")) {
             isWorkspaceDefault = roleInfo.getBoolean("isWorkspaceDefault");
         }
+        normalize();
     }
 
     public RoleDefinition getClone() {
+        normalize();
         RoleDefinition clone = new RoleDefinition();
         clone.symbol = this.symbol;
         clone.name = this.name;
         clone.description = this.description;
         clone.eligibility = this.eligibility;
+        clone.onlyMail = this.onlyMail;
         clone.canEdit = this.canEdit;
         clone.canAdminister = this.canAdminister;
         clone.isWorkspaceDefault = this.isWorkspaceDefault;

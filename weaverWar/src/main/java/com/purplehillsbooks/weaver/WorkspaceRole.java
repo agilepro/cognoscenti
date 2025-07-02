@@ -351,6 +351,9 @@ public class WorkspaceRole extends CustomRole {
         
         //this does some special things for Members and Stewards
         jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
+        jObj.put("canAccessWorkspace", allowAccessWorkspace());
+
+        jObj.put("def", def.getJSON());
 
         return jObj;
     }
@@ -411,6 +414,12 @@ public class WorkspaceRole extends CustomRole {
         updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
     }
     
+    public boolean allowAccessWorkspace() {
+        if (def == null) {
+            return false;
+        }
+        return !def.onlyMail;
+    }
     public boolean allowUpdateWorkspace() {
         if (def == null) {
             return false;

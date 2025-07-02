@@ -389,6 +389,7 @@ public class CustomRole extends DOMFace implements NGRole {
         
         //this does some special things for Members and Administrators
         jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
+        jObj.put("canAccessWorkspace", allowAccessWorkspace());
 
         return jObj;
     }
@@ -454,6 +455,11 @@ public class CustomRole extends DOMFace implements NGRole {
         updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
     }
     
+    public boolean allowAccessWorkspace() {
+        // custom role should not be used for any workspace role
+        // and so we never need to answer this question.
+        return false;
+    }
     public boolean allowUpdateWorkspace() {
         // custom role should not be used for any workspace role
         // and so we never need to answer this question.

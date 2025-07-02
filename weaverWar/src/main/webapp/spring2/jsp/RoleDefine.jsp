@@ -15,11 +15,11 @@
     String roleName    = ar.reqParam("role");
     
     //page must work for both workspaces and for sites
-    NGContainer ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGWorkspace ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
 
-    CustomRole theRole = ngc.getRole(roleName);
+    WorkspaceRole theRole = ngc.getWorkspaceRole(roleName);
     JSONObject role = theRole.getJSONDetail();
 
     boolean canUpdate = ar.canUpdateWorkspace();
@@ -178,7 +178,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
     </span>
     <span>
-        <h1 class="d-inline page-name" id="mainPageTitle">Define Role: Members</h1>
+        <h1 class="d-inline page-name" id="mainPageTitle">Define Role: {{role.name}}</h1>
     </span>
 </div>
 
@@ -212,13 +212,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 of time before they can be considered for the roles.
             </div>
             <div class="form-group d-flex col-11 m-2 g-2">
+                <label for="updateCheck" class="col-md-3 control-label h5">Can Access: 
+                <br/><span class="fa fa-question-circle helpIcon" ng-click="accessHelp=!accessHelp"></span></label>
+                
+                {{role.canAccessWorkspace}}
+            </div>
+            <div class="guideVocal m-4" ng-show="accessHelp" ng-click="accessHelp=false">
+                This indicates the ability for the players of this role to be able to 
+                access the workspace.  
+                When they can not access the workspace, the role can only be used for sending email
+                to people outside of the working group.
+            </div>
+            <div class="form-group d-flex col-11 m-2 g-2">
                 <label for="updateCheck" class="col-md-3 control-label h5">Can Update: 
                 <br/><span class="fa fa-question-circle helpIcon" ng-click="updateHelp=!updateHelp"></span></label>
                 
                 {{role.canUpdateWorkspace}}
             </div>
             <div class="guideVocal m-4" ng-show="updateHelp" ng-click="updateHelp=false">
-                This checkbox confers the ability for the players of this role to be able to 
+                This indicates the ability for the players of this role to be able to 
                 update the workspace.  
                 A person in any role will be able to see the workspace. 
                 Any person in a role checked like this will be able 
