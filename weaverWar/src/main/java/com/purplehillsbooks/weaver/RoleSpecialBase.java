@@ -134,8 +134,5 @@ public abstract class RoleSpecialBase implements NGRole {
     public boolean allowUpdateWorkspace() {
         return false;
     }
-    public void setUpdateWorkspace(boolean alllowed) {
-        throw new RuntimeException("AllowsEdit can not be set on special style role.");
-    }
 
 }

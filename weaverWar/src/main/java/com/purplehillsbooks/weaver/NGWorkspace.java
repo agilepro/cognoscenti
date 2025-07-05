@@ -167,7 +167,7 @@ public class NGWorkspace extends NGPage {
                 roleList.add(wsRole);
             }
             else {
-                roleList.add(role);
+                System.out.println("HIDDEN ROLE: Workspace ("+this.displayName+") has hidden role "+role.getName());
             }
         }
         return roleList;
@@ -1618,7 +1618,11 @@ public class NGWorkspace extends NGPage {
         }
         //now look through all the roles and see if this person plays any
         //that allow update
-        for (NGRole role : this.getAllRoles()) {
+        for (WorkspaceRole role : this.getWorkspaceRoles()) {
+            if (!role.allowAccessWorkspace()) {
+                // ignore noaccess roles
+                continue;
+            }
             if (role.allowUpdateWorkspace()) {
                 if (role.isExpandedPlayer(user, this)) {
                     return true;
@@ -1628,7 +1632,11 @@ public class NGWorkspace extends NGPage {
         return false;
     }
     public boolean canAccessWorkspace(UserRef user) throws Exception {
-        for (NGRole role : this.getAllRoles()) {
+        for (WorkspaceRole role : this.getWorkspaceRoles()) {
+            if (!role.allowAccessWorkspace()) {
+                // ignore noaccess roles
+                continue;
+            }
             if (role.isExpandedPlayer(user, this)) {
                     return true;
             }

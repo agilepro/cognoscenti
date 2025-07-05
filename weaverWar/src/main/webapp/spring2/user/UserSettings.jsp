@@ -237,7 +237,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     <div class="row d-flex my-2">
             <span class="col-2  labelColumn ps-2" style="cursor: pointer;"  ng-click="goToIconEdit()">Icon:</span>
-            <span class="col-3 p-0 mx-3" ng-dblclick="goToIconEdit()">
+            <span class="col-3 p-0 mx-3" ng-click="goToIconEdit()" ng-dblclick="goToIconEdit()">
                 <div>
                 <img src="<%ar.writeHtml(photoSrc);%>" width="100" height="100" alt="user photo" />
                 &nbsp; &nbsp;
@@ -253,9 +253,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <div class="well guideVocal thinnerGuide" ng-show="helpIcon">
                 The icon is an image of you that is used in lists of users.
                 By default you will be given a letter of the alphabet.
-                In Update Settings you can upload an image of yourself.
+                Here it is displayed in several sizes.  The two small circular
+                images are the ones that are used on Weaver pages.
                 <hr/>
-                Click in the leftmost column to upload a new image.
+                Click in the leftmost column (the box that says "Icon") to upload a new image.
               </div>
             </span>
     </div>

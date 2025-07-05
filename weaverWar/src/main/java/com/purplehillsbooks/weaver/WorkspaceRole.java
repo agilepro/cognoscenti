@@ -424,10 +424,7 @@ public class WorkspaceRole extends CustomRole {
         if (def == null) {
             return false;
         }
-        return def.canEdit;
-    }
-    public void setUpdateWorkspace(boolean allowed) {
-        throw new RuntimeException("RoleDefinition can not be set on the role object");
+        return !def.onlyMail && def.canEdit;
     }
 
 }

@@ -465,8 +465,5 @@ public class CustomRole extends DOMFace implements NGRole {
         // and so we never need to answer this question.
         return false;
     }
-    public void setUpdateWorkspace(boolean allowed) {
-        throw new RuntimeException("It is never alowed to set the update workspace setting on a CustomRole: " + getSymbol());
-    }
 
 }

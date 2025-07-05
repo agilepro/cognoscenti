@@ -107,7 +107,7 @@ public class UserCache {
                 if (meet.getState() != MeetingRecord.MEETING_STATE_COMPLETED) {
                     //now determine if the user is asked to attend this meeting
                     boolean mightAttend = false;
-                    NGRole targetRole = ngw.getRole(meet.getTargetRole());
+                    WorkspaceRole targetRole = ngw.getWorkspaceRole(meet.getTargetRole());
                     for (String part : meet.getParticipants()) {
                         if (up.hasAnyId(part)) {
                             mightAttend = true;

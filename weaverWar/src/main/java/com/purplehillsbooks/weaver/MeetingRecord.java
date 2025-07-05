@@ -279,7 +279,7 @@ public class MeetingRecord extends DOMFace {
      */
     private void verifyTargetRole(NGWorkspace ngw) throws Exception {
         String target = this.getTargetRole();
-        NGRole ngr = ngw.getRole(target);
+        WorkspaceRole ngr = ngw.getWorkspaceRole(target);
         if (ngr!=null) {
             //ok, role exists, return
             return;
@@ -287,7 +287,7 @@ public class MeetingRecord extends DOMFace {
 
         //specified role does not exist
         //so set it to 'Members'
-        ngr = ngw.getRole("Members");
+        ngr = ngw.getWorkspaceRole("Members");
         if (ngr!=null) {
             this.setTargetRole("Members");
             return;
@@ -295,7 +295,7 @@ public class MeetingRecord extends DOMFace {
 
         //oops, not even members exists.
         //set to the first role
-        for (NGRole ngr2 : ngw.getAllRoles()) {
+        for (WorkspaceRole ngr2 : ngw.getWorkspaceRoles()) {
             this.setTargetRole(ngr2.getSymbol());
             return;
         }
@@ -732,11 +732,8 @@ public class MeetingRecord extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
-        boolean hasSetMeetingInfo = false;
-
         if (input.has("name")) {
             setName(input.getString("name"));
-            hasSetMeetingInfo = true;
         }
         if (input.has("state")) {
             setState(input.getInt("state"));
@@ -751,8 +748,6 @@ public class MeetingRecord extends DOMFace {
             long oldTime = this.getStartTime();
             if (newTime!=oldTime) {
                 setStartTime(newTime);
-                hasSetMeetingInfo = true;
-
                 //if the meeting time changes, then clear out the reminder sent
                 //time to cause it to be sent again (if already sent).
                 setReminderSent(0);
@@ -763,29 +758,24 @@ public class MeetingRecord extends DOMFace {
         }
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
-            hasSetMeetingInfo = true;
         }
         if (input.has("meetingType")) {
             setMeetingType(input.getInt("meetingType"));
-            hasSetMeetingInfo = true;
         }
         if (input.has("reminderTime")) {
             setReminderAdvance(input.getInt("reminderTime"));
-            hasSetMeetingInfo = true;
         }
         if (input.has("descriptionMerge")) {
             JSONObject mergeObj = input.getJSONObject("descriptionMerge");
             String lastSaveVal = mergeObj.optString("old");
             String newVal = mergeObj.getString("new");
             mergeScalar("meetingInfo", lastSaveVal, newVal);
-            hasSetMeetingInfo = true;
         }
         else if (input.has("description")) {
         	//if there is a descriptionMerge, then ignore any complete description,
         	//only  one or the other
             String markdown = input.getString("description");
             setMeetingInfo(markdown);
-            hasSetMeetingInfo = true;
         }
 
 
@@ -1047,15 +1037,6 @@ public class MeetingRecord extends DOMFace {
 
             sb.append("\n\n"+ai.getDesc());
 
-            /*
-            String ainotes = ai.getNotes();
-
-            //TODO: I don't think notes are used any more
-            if (ainotes!=null && ainotes.length()>0) {
-                sb.append("\n\n''Notes:''\n\n");
-                sb.append(ainotes);
-            }
-            */
 
             for (String actionItemId : ai.getActionItems()) {
                 GoalRecord gr = ngw.getGoalOrNull(actionItemId);

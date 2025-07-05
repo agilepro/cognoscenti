@@ -78,7 +78,6 @@ public interface NGRole extends NGLabel {
     * anything on the site, can never play a role that allows update.
     */
     public boolean allowUpdateWorkspace();
-    public void setUpdateWorkspace(boolean alllowed);
 
     /**
     * A description of the purpose of the role, suitable for display to user.
