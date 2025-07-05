@@ -129,9 +129,17 @@ public abstract class ContainerCommon extends NGContainer
         return roleParent.getChildren("role", CustomRole.class);
     }
 
+    /**
+     * Gets a role by either the name or the symbol
+     */
     public CustomRole getRole(String roleSymbol) throws Exception {
         for (CustomRole role : getAllRoles()) {
             if (roleSymbol.equals(role.getSymbol())) {
+                return role;
+            }
+        }
+        for (CustomRole role : getAllRoles()) {
+            if (roleSymbol.equals(role.getName())) {
                 return role;
             }
         }
@@ -202,7 +210,7 @@ public abstract class ContainerCommon extends NGContainer
         return nameOfLink;
     }
 
-    protected void removeIfEmpty(String roleName) throws Exception {
+    protected void removeRoleIfEmpty(String roleName) throws Exception {
         NGRole role = getRole(roleName);
         if (role!=null && role.getDirectPlayers().size() == 0) {
             deleteRole(roleName);

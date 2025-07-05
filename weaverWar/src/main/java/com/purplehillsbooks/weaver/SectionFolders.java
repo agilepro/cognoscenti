@@ -40,16 +40,8 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
         return "Folders Format";
     }
 
-
-/*     public void writePlainText(NGSection section, Writer out) throws Exception {
-        //silently ignore this request ... no text to produce.
-        //necessary for search function
-    }
- */
     /*
-     * Walk through whatever elements this owns and put all the four digit IDs
-     * into the vector so that we can generate another ID and assure it does not
-     * duplication any id found here.
+     * Folders is no longer a valid sectoin format
      */
     public void findIDs(List<String> v, NGSection sec) throws Exception {
         //no content, nothing to check

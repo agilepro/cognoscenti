@@ -83,11 +83,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.startUpload = function(oneProgress) {
         oneProgress.status = "Starting";
-        var postURL = "<%=remoteProjectLink%>";
-        var postdata = '{"operation": "tempFile"}';
+        var getURL = "GetTempName.json";
         $scope.showError=false;
-        $http.post(postURL, postdata)
+        $http.get(getURL)
         .success( function(data) {
+            console.log("RCV GetTempName: ", data);
             oneProgress.tempFileName = data.tempFileName;
             oneProgress.tempFileURL = data.tempFileURL;
             $scope.actualUpload(oneProgress);
@@ -96,21 +96,48 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     };
-    $scope.actualUpload = function(oneProgress) {
+    $scope.actualUploadOLd = function(oneProgress) {
         oneProgress.status = "Uploading";
-        var postURL = "<%=remoteProjectLink%>";
-        $http.put(oneProgress.tempFileURL, oneProgress.file)
+        var putURL = "UploadTempFile.json?tempName="+oneProgress.tempName;
+        $http.put(putURL, oneProgress.file)
         .success( function(data) {
+            console.log("RCV UploadTempFile: ", data);
+            oneProgress.tempName = data.tempFileName;
             $scope.nameUploadedFile(oneProgress);
         })
         .error( function(data, status, headers, config) {
+            console.log("RCV UploadTempFile ERROR: ", data);
             $scope.reportError(data);
         });
     };
+    $scope.actualUpload = function(oneProgress) {
+        oneProgress.status = "Uploading";
+        var putURL = "UploadTempFile.json?tempName="+oneProgress.tempFileName;
+
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function(e){
+          $scope.$apply( function(){
+            if(e.lengthComputable){
+              oneProgress.loaded = e.loaded;
+              oneProgress.percent = Math.round(e.loaded * 100 / e.total);
+              console.log("progress event: "+oneProgress.loaded+" / "+e.total+"  ==  "+oneProgress.percent+"   "+oneProgress.status);
+            } else {
+              oneProgress.percent = 50;
+            }
+          });
+        }, false);
+        xhr.upload.addEventListener("load", function(data) {
+            $scope.nameUploadedFile(oneProgress);
+        }, false);
+        xhr.upload.addEventListener("error", $scope.reportError, false);
+        xhr.upload.addEventListener("abort", $scope.reportError, false);
+        xhr.open("PUT", putURL);
+        xhr.send(oneProgress.file);
+    };
     $scope.nameUploadedFile = function(oneProgress) {
         oneProgress.status = "Finishing";
-        var postURL = "<%=remoteProjectLink%>";
-        var op = {operation: "updateDoc"};
+        var postURL = "AttachTempFile.json?tempName="+oneProgress.tempFileName;
+        var op = {};
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
         op.doc.description = $scope.attachInfo.description;
@@ -120,9 +147,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
+            console.log("RCV AttachTempFile: ", data);
             oneProgress.status = "DONE";
             oneProgress.done = true;
             oneProgress.doc = data;
+            window.location.reload(true);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -255,7 +284,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                           <div ng-hide="fp.done">
                              Description:<br/>
                              <textarea ng-model="attachInfo.description" class="form-control"></textarea>
+                          </div>                        <div style="padding:5px;">
+                          <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
+                          <div class="progress">
+                              <div class="progress-bar progress-bar-success" role="progressbar"
+                                       aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                       style="width:{{fp.percent}}%">
+                              </div>
                           </div>
+                        </div>
                           <div ng-hide="fp.done">
                               <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
                               <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>

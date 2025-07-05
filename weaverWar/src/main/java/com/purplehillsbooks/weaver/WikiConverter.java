@@ -482,7 +482,7 @@ public class WikiConverter
             // if
             // the link was all punctuation, then just write the name out
             // might also include an indicator of the problem ....
-            String sanitizedName = SectionWiki.sanitize(linkAddr);
+            String sanitizedName = SectionUtil.sanitize(linkAddr);
             if (sanitizedName.length() == 0) {
                 ar.writeHtml(linkName);
                 return;
@@ -580,52 +580,6 @@ public class WikiConverter
 
     }
 
-    /**
-    * Given a block of wiki formatted text, this will strip out all the
-    * formatting characters, but write out everything else as plain text.
-    */
-/*     public void writePlainText(String wikiData) throws Exception
-    {
-        LineIterator li = new LineIterator(wikiData);
-        while (li.moreLines())
-        {
-            String thisLine = li.nextLine();
-            removeWikiFormattings(thisLine);
-            ar.write(" ");
-        }
-    }
- */
-/*     protected void removeWikiFormattings(String line)
-            throws Exception
-    {
-        if (line == null || ((line = line.trim()).length()) == 0) {
-            return;
-        }
-
-        if (line.startsWith("----"))
-        {
-            line = line.substring(4);
-        }
-        else if (line.startsWith("!!!") || (line.startsWith("***")))
-        {
-            line = line.substring(3);
-        }
-        else if (line.startsWith("!!") || (line.startsWith("**")))
-        {
-            line = line.substring(2);
-        }
-        else if (line.startsWith("!") || (line.startsWith("*")))
-        {
-            line = line.substring(1);
-        }
-        line = line.replaceAll("__", "");
-        line = line.replaceAll("''", "");
-        line = line.replaceAll("[", "");
-        line = line.replaceAll("]", "");
-        line = line.replaceAll("|", "");
-        ar.write(line);
-    }
- */
     protected void fomatFontStyle(String line) throws Exception{
         boolean scan = false;
         if(line.startsWith("%%(")){

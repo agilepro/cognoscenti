@@ -73,7 +73,7 @@ public class NGTerm
     */
     static public NGTerm findTerm(String name)
     {
-        String sanitizedName = SectionWiki.sanitize(name);
+        String sanitizedName = SectionUtil.sanitize(name);
         if (sanitizedName.length()==0)
         {
             return null;
@@ -101,7 +101,7 @@ public class NGTerm
     */
     static public NGTerm findOrCreateTag(String name)
     {
-        String sanitizedName = SectionWiki.sanitize(name);
+        String sanitizedName = SectionUtil.sanitize(name);
         if (sanitizedName.length()<3)
         {
             return null;
@@ -120,7 +120,7 @@ public class NGTerm
     */
     public static NGTerm findTermIfExists(String name)
     {
-        String sanitizedName = SectionWiki.sanitize(name);
+        String sanitizedName = SectionUtil.sanitize(name);
         NGTerm termx = allTerms.get(sanitizedName);
         return termx;
     }
@@ -129,7 +129,7 @@ public class NGTerm
     */
     public static NGTerm findTagIfExists(String name)
     {
-        String sanitizedName = SectionWiki.sanitize(name);
+        String sanitizedName = SectionUtil.sanitize(name);
         NGTerm termx = allTags.get(sanitizedName);
         return termx;
     }

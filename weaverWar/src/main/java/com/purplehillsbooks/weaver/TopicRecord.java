@@ -140,7 +140,7 @@ public class TopicRecord extends CommentContainer {
     public String getTargetRole() throws Exception {
         String target = getAttribute("targetRole");
         if (target == null || target.length() == 0) {
-            return "Members";
+            return "MembersRole";
         }
         return target;
     }
@@ -789,7 +789,7 @@ public class TopicRecord extends CommentContainer {
     public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngw) throws Exception {
         JSONObject thisNote = getJSON(ngw);
         String contentUrl = urlRoot + "note" + getId() + "/"
-                + SectionWiki.sanitize(getSubject()) + ".txt?lic=" + license.getId();
+                + SectionUtil.sanitize(getSubject()) + ".txt?lic=" + license.getId();
         thisNote.put("content", contentUrl);
         return thisNote;
     }

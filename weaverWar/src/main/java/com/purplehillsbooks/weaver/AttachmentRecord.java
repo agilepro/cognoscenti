@@ -257,12 +257,6 @@ public class AttachmentRecord extends CommentContainer {
      *    attachments repository
      * URL: this is a URL to an external web addressable
      *    content store
-     * EXTERN: this is also a URL which is launched in a
-     *    separate window, but it migh also have a local copy.
-     * EXTRA: deprecated, not used any more
-     * GONE: deprecated, not used any more
-     * DEFER: deprecated, not supported any more
-     * except legacy
      */
     public String getType() {
         String val = getAttribute("type");
@@ -292,16 +286,6 @@ public class AttachmentRecord extends CommentContainer {
             throw new RuntimeException("Attachment type has to be either FILE, or URL");
         }
         setAttribute("type", type);
-    }
-
-    /**
-     * Returns true if this document has appeared in the folder, and the workspace
-     * does not have any former knowledge of it ==> EXTRA or GONE Returns false
-     * if this is an otherwise expected document where the type is URL or FILE
-     */
-    public boolean isUnknown() {
-        String ftype = getType();
-        return ("EXTRA".equals(ftype) || "GONE".equals(ftype));
     }
 
     public AddressListEntry getModifier() {
@@ -987,7 +971,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
-        OptOutAddr.appendUsersFromRole(ngw, "Members", sendTo);
+        OptOutAddr.appendUsersFromRole(ngw, "MembersRole", sendTo);
     }
 
 

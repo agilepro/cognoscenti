@@ -107,9 +107,13 @@ public class MeetingRecord extends DOMFace {
         setAttributeInt("meetingType", newVal);
     }
 
-
+    // default to MembersRole if nothing is specified
     public String getTargetRole()  throws Exception {
-        return getAttribute("targetRole");
+        String roleName = getAttribute("targetRole");
+        if (roleName==null || roleName.length()==0) {
+            roleName = "MembersRole";
+        }
+        return roleName;
     }
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);
@@ -136,12 +140,7 @@ public class MeetingRecord extends DOMFace {
             OptOutAddr.appendUsersEmail(partUsers,sendTo);
         }
         else {
-            //if no participants, get the members of the role
-            String targetRole = getTargetRole();
-            if (targetRole==null || targetRole.length()==0) {
-                targetRole = "Members";
-            }
-            OptOutAddr.appendUnmutedUsersFromRole(ngw, targetRole, sendTo);
+            OptOutAddr.appendUnmutedUsersFromRole(ngw, getTargetRole(), sendTo);
         }
     }
 
@@ -278,8 +277,7 @@ public class MeetingRecord extends DOMFace {
      *
      */
     private void verifyTargetRole(NGWorkspace ngw) throws Exception {
-        String target = this.getTargetRole();
-        WorkspaceRole ngr = ngw.getWorkspaceRole(target);
+        WorkspaceRole ngr = ngw.getWorkspaceRole(getTargetRole());
         if (ngr!=null) {
             //ok, role exists, return
             return;
@@ -287,9 +285,9 @@ public class MeetingRecord extends DOMFace {
 
         //specified role does not exist
         //so set it to 'Members'
-        ngr = ngw.getWorkspaceRole("Members");
+        ngr = ngw.getWorkspaceRole("MembersRole");
         if (ngr!=null) {
-            this.setTargetRole("Members");
+            this.setTargetRole("MembersRole");
             return;
         }
 
@@ -1116,11 +1114,7 @@ public class MeetingRecord extends DOMFace {
             else {
                 //of no participants, use the role
                 List<String> names = new ArrayList<String>();
-                String tRole = getTargetRole();
-                if (tRole==null || tRole.length()==0) {
-                    tRole = "Members";
-                }
-                names.add(tRole);
+                names.add( getTargetRole() );
                 emg.setRoleNames(names);
             }
 

@@ -74,12 +74,6 @@ Required parameters:
     }
 
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    String docSpaceURL = "";
-    if (uProf!=null) {
-        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-        docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
-                    + "/summary.json?lic="+lfu.getId();
-    }
     String privateLink = ar.baseURL + ar.getResourceURL(ngp, "DocDetail.htm?aid="+aid);
 
     JSONArray allLabels = ngp.getJSONLabels();
@@ -130,7 +124,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
-    $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
     $scope.primitiveURL = "<%=ar.baseURL%><%ar.writeJS(permaLink);%>";
 
 

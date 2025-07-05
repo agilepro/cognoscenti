@@ -76,17 +76,14 @@ public class SectionDef
     * garbage collection can be done, and subsequently, the
     * class will be reinitialized.
     */
-    public synchronized static void clearAllStaticVars()
-    {
+    public synchronized static void clearAllStaticVars() {
         allDefs = null;
-        //defaultUnknownSectionFormat = null;
     }
 
 
     private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
 
-        //defaultUnknownSectionFormat = new SectionUnknown();
         SectionFormat cannonNotes =      new SectionForNotes();
         SectionFormat canonAttachments = new SectionAttachments();
         SectionFormat cannonTasks =      new SectionTask();

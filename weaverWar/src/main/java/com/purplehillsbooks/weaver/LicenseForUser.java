@@ -97,7 +97,7 @@ public class LicenseForUser implements License
     public String getRole() throws Exception {
         //TODO: we have to return somthing.
         //Member is pretty general.
-        return "Members";
+        return "MembersRole";
     }
 
     public void setRole(String newRole) throws Exception {

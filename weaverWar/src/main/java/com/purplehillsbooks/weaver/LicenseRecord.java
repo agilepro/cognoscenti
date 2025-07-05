@@ -98,7 +98,7 @@ public class LicenseRecord extends DOMFace  implements License
         String ret = getScalar("role");
         if (ret==null || ret.length()==0) {
             //default on the fly to Members
-            return "Members";
+            return "MembersRole";
         }
         return ret;
     }

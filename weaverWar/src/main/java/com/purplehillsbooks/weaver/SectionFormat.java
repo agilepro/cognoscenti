@@ -42,12 +42,6 @@ public interface SectionFormat
     public void findLinks(List<String> v, NGSection section) throws Exception;
 
     /**
-    * scans the section information, and return the plain text data that can be
-    * used for search.
-    */
-//    public void writePlainText(NGSection section, Writer out) throws Exception;
-
-    /**
     * Walk through whatever elements this owns and put all the four digit
     * IDs into the vector so that we can generate another ID and assure it
     * does not duplication any id found here.

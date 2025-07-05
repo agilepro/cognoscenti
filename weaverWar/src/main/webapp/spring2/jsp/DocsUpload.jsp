@@ -55,12 +55,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         oneProgress.loaded = 0;
         oneProgress.percent = 0;
         oneProgress.labelMap = $scope.filterMap;
-        var postURL = "<%=remoteProjectLink%>";
-        var postdata = '{"operation": "tempFile"}';
+        var postURL = "GetTempName.json";
         $scope.showError=false;
         
-        $http.post(postURL, postdata)
+        $http.get(postURL)
         .success( function(data) {
+            console.log("RCV GetTempName: ", data);
             oneProgress.tempFileName = data.tempFileName;
             oneProgress.tempFileURL = data.tempFileURL;
             $scope.actualUpload(oneProgress);
@@ -71,7 +71,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     $scope.actualUpload = function(oneProgress) {
         oneProgress.status = "Uploading";
-        var postURL = "<%=remoteProjectLink%>";
+        var putURL = "UploadTempFile.json?tempName="+oneProgress.tempFileName;
 
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener("progress", function(e){
@@ -90,22 +90,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }, false);
         xhr.upload.addEventListener("error", $scope.reportError, false);
         xhr.upload.addEventListener("abort", $scope.reportError, false);
-        xhr.open("PUT", oneProgress.tempFileURL);
+        xhr.open("PUT", putURL);
         xhr.send(oneProgress.file);
     };
     $scope.nameUploadedFile = function(oneProgress) {
         oneProgress.status = "Finishing";
-        var postURL = "<%=remoteProjectLink%>";
-        var op = {operation: "newDoc"};
+        var postURL = "AttachTempFile.json?tempName="+oneProgress.tempFileName;
+        var op = {};
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
         op.doc.description = oneProgress.description;
         op.doc.name = oneProgress.file.name;
+        op.doc.id = null;
         op.doc.size = oneProgress.file.size;
         op.doc.labelMap = oneProgress.labelMap;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
+            console.log("RCV AttachTempFile: ", data);
             if (data.exception || data.error) {
                 $scope.reportError(data);
                 return;

@@ -840,8 +840,6 @@ public class GoalRecord extends BaseRecord {
             throw WeaverException.newBasic("getJSON4Goal needs a license object");
         }
         JSONObject thisGoal = getJSON4Goal(ngw);
-        String urlRoot = baseURL + "api/" + ngw.getSiteKey() + "/" + ngw.getKey() + "/";
-        String goalinfo = urlRoot + "goal" + getId() + "/goal.json?lic=" + license.getId();
         LicenseForUser lfu = LicenseForUser.getUserLicense(license);
         String siteRoot = baseURL + "api/" + ngw.getSiteKey() + "/$/?lic=" + lfu.getId();
         String uiUrl = getRemoteUpdateURL();
@@ -849,7 +847,6 @@ public class GoalRecord extends BaseRecord {
             uiUrl = baseURL + "t/" + ngw.getSiteKey() + "/" + ngw.getKey()
                 + "/task" + getId() + ".htm";
         }
-        thisGoal.put("goalinfo", goalinfo);
         thisGoal.put("ui", uiUrl);
         thisGoal.put("siteinfo", siteRoot);
         return thisGoal;

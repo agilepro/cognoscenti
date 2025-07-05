@@ -20,6 +20,9 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import com.purplehillsbooks.weaver.CommentRecord;
 import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
+import com.purplehillsbooks.weaver.IdGenerator;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGRole;
@@ -64,6 +68,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.StreamHelper;
 
 @Controller
 public class ProjectDocsController extends BaseController {
@@ -123,6 +128,17 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2.jsp");
     }
 
+    /**
+     * This is a view that prompts the user to specify how they want the PDF to be
+     * produced.
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/PDFExport.htm", method = RequestMethod.GET)
+    public void pdfExport(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable String pageId, @PathVariable String siteId) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "PDFExport.jsp");
+    }
+
     // this will be DocDetail.htm??aid={aid}&lic={license}
     @RequestMapping(value = "/{siteId}/{pageId}/DocDetail.htm", method = RequestMethod.GET)
     protected void docDetail(@PathVariable String siteId,
@@ -167,11 +183,9 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
         // special behavior. On the Upload New Version page, if someone hits this when
-        // NOT LOGGED IN
-        // then redirect to the document information page, which is allowed when not
-        // logged in,
-        // and from there they can decide whether to log in or not, and then to add a
-        // new version.
+        // NOT LOGGED IN then redirect to the document information page, which is allowed 
+        // when not logged in, and from there they can decide whether to log in or not, 
+        // and then to add a new version.
         // Seems better than just saying you are not logged in.
         if (!ar.isLoggedIn()) {
             ar.resp.sendRedirect("DocDetail.htm?aid=" + URLEncoder.encode(ar.reqParam("aid"), "UTF-8"));
@@ -250,17 +264,6 @@ public class ProjectDocsController extends BaseController {
                     "Failed to perform operation while downloading document of workspace %s in site %s.", ex, pageId,
                     siteId);
         }
-    }
-
-    /**
-     * This is a view that prompts the user to specify how they want the PDF to be
-     * produced.
-     */
-    @RequestMapping(value = "/{siteId}/{pageId}/PDFExport.htm", method = RequestMethod.GET)
-    public void pdfExport(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable String pageId, @PathVariable String siteId) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "PDFExport.jsp");
     }
 
     /**
@@ -1058,6 +1061,148 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+
+    @RequestMapping(value = "/{siteId}/{pageId}/GetTempName.json", method = RequestMethod.GET)
+    public void GetTempName(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            ar.assertLoggedIn("Temp Files are available only when logged in.");
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            ngw.assertNotFrozen("Must be an active workspace to attach a document");
+
+            File folder = ngw.getContainingFolder();
+            boolean nameIsAcceptable = false;
+            String tempName = null;
+            while (!nameIsAcceptable) {
+                // we just want to make sure that the temp file does not already exist here
+                tempName = "~tmp~"+IdGenerator.generateKey()+"~tmp~";
+                File tempFile = new File(folder, tempName);
+                nameIsAcceptable = !tempFile.exists();
+            }
+
+            JSONObject res = new JSONObject();
+            res.put("tempFileName", tempName);
+            res.put("tempFileURL", "UploadTempFile.json?tempName=" + tempName);
+
+            sendJson(ar, res);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to create a temp name in workspace (%s)", ex, pageId);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/UploadTempFile.json", method = RequestMethod.PUT)
+    public void UploadTempFile(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            ar.assertLoggedIn("Temp Files can up uploaded only when logged in.");
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            ngw.assertNotFrozen("Must be an active workspace to attach a document");
+
+            String tempName = ar.reqParam("tempName");
+            if (!tempName.startsWith("~tmp")) {
+                throw WeaverException.newBasic("Got an upload request to a non-temp file name: %s", tempName);
+            }
+            File folder = ngw.getContainingFolder();
+            File tempFile = new File(folder, tempName);
+            if (tempFile.exists()) {
+                throw WeaverException.newBasic("Temp file %s already exists in workspace %s, should never happen, name should only be used once", 
+                        tempFile, ngw.getFullName());
+            }
+            InputStream is = ar.req.getInputStream();
+            StreamHelper.copyStreamToFile(is, tempFile);
+
+            JSONObject res = new JSONObject();
+            res.put("tempFileName", tempName);
+            res.put("tempFileURL", "AttachTempFile.json?tempName=" + tempName);
+
+            sendJson(ar, res);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to create a temp file in workspace (%s)", ex, pageId);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/AttachTempFile.json", method = RequestMethod.POST)
+    public void AttachTempFile(@PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String tempName = "UNKNOWN";
+        try {
+            ar.assertLoggedIn("Temp Files can be attached only when logged in.");
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            ngw.assertNotFrozen("Must be an active workspace to attach a document");
+            ngw.assertUpdateWorkspace(ar.getUserProfile(), 
+                    "Only users that can update the workspace can attach documents");
+
+            tempName = ar.reqParam("tempName");
+            File folder = ngw.getContainingFolder();
+            File tempFile = new File(folder, tempName);
+            if (!tempFile.exists()) {
+                throw WeaverException.newBasic("Temp file %s does not exist in workspace %s", 
+                        tempFile, ngw.getFullName());
+            }
+            
+            JSONObject input = getPostedObject(ar);
+            JSONObject newDocObj = input.getJSONObject("doc");
+            long size = newDocObj.optLong("size", -1);
+
+            // if the temp file is still being uploaded, then wait a bit
+            int count = 0;
+            while (tempFile.length()<size) {
+                if (count++ > 20) {
+                    throw WeaverException.newBasic("Attach temp file failed because file size is %s, should be %s", 
+                            Long.toString(tempFile.length()), Long.toString(size));
+                }
+                System.out.println("WAITING "+count+" FOR ("+tempFile.toString()
+                    +") to get from "+tempFile.length()+" to "+size+" bytes.");
+                Thread.sleep(300);
+            }
+
+            AttachmentRecord att;
+            int historyEventType = HistoryRecord.EVENT_TYPE_CREATED;
+            String updateReason = "Created new document attachment";
+            String docId = newDocObj.optString("id");
+            if (docId == null || docId.isEmpty()) {
+                att = ngw.createAttachment();
+            }
+            else {
+                att = ngw.findAttachmentByIDOrFail(docId);
+                historyEventType = HistoryRecord.EVENT_TYPE_MODIFIED;
+                updateReason = "Modified document attachment with new version";
+            }
+
+            // this is to satisfy a protection in the update method 
+            newDocObj.put("universalid", att.getUniversalId());
+            att.updateDocFromJSON(newDocObj, ar);
+
+            // Now, actually create an attachment version from the temp file
+            String userUpdate = ar.getBestUserId();
+            long timeUpdate = newDocObj.optLong("modifiedtime", ar.nowTime);
+            FileInputStream fis = new FileInputStream(tempFile);
+            att.streamNewVersion(ngw, fis, userUpdate, timeUpdate);
+            fis.close();
+            tempFile.delete();
+
+            HistoryRecord.createHistoryRecord(ngw, att.getId(),  HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+                    0, historyEventType, ar, updateReason);
+            System.out.println("DOCUMENT: updated: "+att.getNiceName()+" ("+size+" bytes) and history created.");
+            ngw.saveFile(ar, updateReason);
+
+            JSONObject res = att.getJSON4Doc(ar, ngw);
+            sendJson(ar, res);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to attach a temp file %s in workspace (%s)", ex, tempName, pageId);
+            streamException(ee, ar);
+        }
+    }
+
+    
     @RequestMapping(value = "/{siteId}/{pageId}/GetScratchpad.json", method = RequestMethod.GET)
     public void getScratchpad(@PathVariable String siteId,
             @PathVariable String pageId,

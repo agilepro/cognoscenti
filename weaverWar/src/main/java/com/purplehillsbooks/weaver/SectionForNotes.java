@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
-public class SectionForNotes extends SectionWiki {
+public class SectionForNotes extends SectionUtil implements SectionFormat {
 
     public static String LEAFLET_NODE_NAME = "note";
     public static String OWNER_NODE_NAME = "owner";
@@ -56,10 +56,6 @@ public class SectionForNotes extends SectionWiki {
         return null;
     }
 
-/*     public void writePlainText(NGSection section, Writer out) throws Exception {
-        writePlainTextForComments(section, out);
-    }
- */
     public void findLinks(List<String> v, NGSection section) throws Exception {
 
         for (TopicRecord cr : getAllNotesInSection(section)) {
@@ -69,6 +65,21 @@ public class SectionForNotes extends SectionWiki {
                 String thisLine = li.nextLine();
                 scanLineForLinks(thisLine, v);
             }
+        }
+    }
+
+    protected void scanLineForLinks(String thisLine, List<String> v) {
+        int bracketPos = thisLine.indexOf('[');
+        int startPos = 0;
+        while (bracketPos >= startPos) {
+            int endPos = thisLine.indexOf(']', bracketPos);
+            if (endPos <= startPos) {
+                return; // could not find any more closing brackets, leave
+            }
+            String link = thisLine.substring(bracketPos + 1, endPos);
+            v.add(link);
+            startPos = endPos + 1;
+            bracketPos = thisLine.indexOf('[', startPos);
         }
     }
 

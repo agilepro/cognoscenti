@@ -139,6 +139,12 @@ public class NGWorkspace extends NGPage {
                     System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
                 }
             }
+            if (fname.indexOf("~tmp")>0 && fname.startsWith("meet")) {
+                System.out.println("CLEANUP: deleting meet####.ics~tmp file created more than 30 days ago: "+child.getAbsolutePath());
+                if (!child.delete()) {
+                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                }
+            }
         }
 
         // eliminate all the old unsupported attachments types, there should not be any
@@ -1583,6 +1589,16 @@ public class NGWorkspace extends NGPage {
     }
 
 
+    public void assertNotFrozen(String op) throws Exception {
+        if (this.isDeleted()) {
+            throw WeaverException.newBasic("Workspace (%s) is deleted; %s", 
+                this.getFullName(), op);
+        }
+        if (this.isFrozen()) {
+            throw WeaverException.newBasic("Workspace (%s) is frozen; %s", 
+                this.getFullName(), op);
+        }
+    }
 
     public void assertUpdateWorkspace(UserProfile user, String op) throws Exception {
         //The administrator can control which users are update users and

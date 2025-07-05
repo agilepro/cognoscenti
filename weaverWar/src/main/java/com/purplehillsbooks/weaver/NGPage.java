@@ -78,7 +78,26 @@ public abstract class NGPage extends ContainerCommon {
             throw WeaverException.newBasic("workspaces have to be created with a site object sent in now");
         }
 
+        //This is the ONLY place you should see these
+        //deprecated sections, check to see if
+        //there are any leaflets in there, and move them to the
+        //main comments section.
 
+        removeAnySectionWithThisName("Public Attachments");
+        removeAnySectionWithThisName("Public Comments");
+        removeAnySectionWithThisName("See Also");
+        removeAnySectionWithThisName("Links");
+        removeAnySectionWithThisName("Description");
+        removeAnySectionWithThisName("Public Content");
+        removeAnySectionWithThisName("Notes");
+        removeAnySectionWithThisName("Author Notes");
+        removeAnySectionWithThisName("Private");
+        removeAnySectionWithThisName("Member Content");
+        removeAnySectionWithThisName("Poll");
+        removeAnySectionWithThisName("Geospatial");
+        removeAnySectionWithThisName("Folder");
+
+        
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
         displayName = pageInfo.getPageName();
@@ -103,74 +122,11 @@ public abstract class NGPage extends ContainerCommon {
             pageProcess.setState(BaseRecord.STATE_UNSTARTED);
         }
 
-        //This is the ONLY place you should see these
-        //deprecated sections, check to see if
-        //there are any leaflets in there, and move them to the
-        //main comments section.
-
-        assertNoSectionWithThisName("Public Attachments");
-        assertNoSectionWithThisName("Public Comments");
-        assertNoSectionWithThisName("See Also");
-        assertNoSectionWithThisName("Links");
-        assertNoSectionWithThisName("Description");
-        assertNoSectionWithThisName("Public Content");
-        assertNoSectionWithThisName("Notes");
-        assertNoSectionWithThisName("Author Notes");
-        assertNoSectionWithThisName("Private");
-        assertNoSectionWithThisName("Member Content");
-        assertNoSectionWithThisName("Poll");
-        assertNoSectionWithThisName("Geospatial");
 
 
-
-        DOMFace userList = pageInfo.getChild("userlist", DOMFace.class);
-        if (userList!=null) {
-            throw WeaverException.newBasic("DEPRECATED FUNCTION:  very old schema for holding users should not be used and is now eliminated");
-            /*
-            //migrate the old forms of members and admins roles to the new form
-            //the old form was a "userlist" element, with "user" elements below that
-            //with permissions PM, M, PA, and A.  Move those to the real "roles"
-            //and eliminate the old userlist element.
-            NGRole newMemberRole = getRequiredRole("Notify");
-            NGRole newAdminRole = getRequiredRole("Administrators");
-
-            List<DOMFace> users = userList.getChildren("user", DOMFace.class);
-            for (DOMFace ele : users) {
-                String id = ele.getAttribute("id");
-                AddressListEntry user = AddressListEntry.newEntryFromStorage(id);
-                String permis = ele.getAttribute("permission");
-                if (permis.equals("M") || permis.equals("PA"))
-                {
-                    newMemberRole.addPlayer(user);
-                }
-                if (permis.equals("A"))
-                {
-                    newAdminRole.addPlayer(user);
-                }
-            }
-            //now get rid of all former evidence.
-            pageInfo.removeChildElement(userList.getElement());
-            */
-        }
 
         // this is the old name, the new name is Meeting Manager
-        removeIfEmpty("Circle Administrator");
-
-        //refresh the roles from the site if linked
-        /* 
-        for (CustomRole aRole : this.getAllRoles()) {
-            String linkedRole = aRole.getLinkedRole();
-            if (linkedRole!=null && linkedRole.length()>0) {
-                String actualName = "~"+linkedRole;
-                CustomRole linker = prjSite.getRole(actualName);
-                if (linker!=null) {
-                    //this is saved only if the page is saved for any other reason
-                    aRole.updateFromJSON(linker.getJSON());
-                    aRole.setLinkedRole(linkedRole);
-                }
-            }
-        }
-        */
+        removeRoleIfEmpty("Circle Administrator");
 
 
         //eliminate old meetings that were just backlog containers
@@ -446,7 +402,7 @@ public abstract class NGPage extends ContainerCommon {
         }
         return null;
     }
-    private void assertNoSectionWithThisName(String name) throws Exception {
+    private void removeAnySectionWithThisName(String name) throws Exception {
         Element found = null;
         for (Element ele : getNamedChildrenVector("section")) {
             if (name.equals(ele.getAttribute("name"))) {
