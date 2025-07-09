@@ -213,7 +213,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         
         //fetch the newest, most up to date copy to start editing
         var postURL = "getTopic.json?nid="+$scope.topicId;
-        console.log("GET (StartEdit):", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data) {
@@ -245,7 +244,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         rec.subject = $scope.noteInfo.subject;
         
         var postURL = "mergeTopicDoc.json?nid="+$scope.topicId;
-        console.log("POST (Merge):", postURL);
         $scope.showError=false;
         $http.post(postURL, angular.toJson(rec))
         .success( function(data) {
@@ -285,7 +283,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
     function refreshTopic() {
         var postURL = "getTopic.json?nid="+$scope.topicId;
-        console.log("GET:", postURL);
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data, status, headers, config) {
@@ -301,7 +298,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.mergeFromOthers = function() {
         if ($scope.isEditing) {
             $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
-            console.log("MERGE:", "("+$scope.wikiLastSave+")", "("+$scope.wikiEditing+")", "("+$scope.noteInfo.wiki+")");
             $scope.wikiEditing = Textmerger.get().merge($scope.wikiLastSave, $scope.wikiEditing, $scope.noteInfo.wiki);
         }
         else {
@@ -317,6 +313,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         data.comments.forEach( function(cmt) {
             $scope.generateCommentHtml(cmt);
         });
+        if (data.subscribers) {
+            data.subscribers.forEach( function(person) {
+                if (person.uid == "<%=ar.getBestUserId()%>") {
+                    check = true;
+                }
+                person.image = AllPeople.imageName(person);
+            });
+        }
         $scope.lastRefreshTimestamp = new Date().getTime();
         $scope.noteInfo = data;
         if (data.wiki) {
@@ -331,14 +335,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             }
         }
         var check = false;
-        if (data.subscribers) {
-            data.subscribers.forEach( function(person) {
-                if (person.uid == "<%=ar.getBestUserId()%>") {
-                    check = true;
-                }
-                person.image = AllPeople.imageName(person);
-            });
-        }
         $scope.fixUpChoices();
         $scope.isSubscriber = check;
         $scope.refreshHistory();
@@ -376,12 +372,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var postURL = "roleUpdate.json?op=Update";
         var roleData = {name: "MembersRole", addPlayers: []};
         roleData.addPlayers.push(newMember);
-        console.log("ADD MEMBER", roleData);
         var postdata = angular.toJson(roleData);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            console.log("ADD MEMBER RESULT", data);
             location.reload(true);
         })
         .error( function(data, status, headers, config) {
@@ -396,7 +390,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.showError=false;
         $http.get("getAllLabels.json")
         .success( function(data) {
-            console.log("ALL LABELS", data);
             $scope.allLabels = data.list;
             refreshTopic();
         })
@@ -610,7 +603,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.noteInfo.sendEmailNow = false;;
         $scope.setPhase("Freeform");
         $scope.addressMode = false;
-        console.log("Yes, posted now, but send email is: ", sendEmail);
         if (sendEmail) {
             $scope.sendNoteByMail();
         }
@@ -671,7 +663,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.navigateToDoc = function(doc) {
         if (!doc.id) {
-            console.log("DOCID", doc);
             alert("doc id is missing");
             return;
         }
@@ -710,7 +701,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             $scope.allDocs = undeleted;
-            console.log("DOCUMENT LIST", data);
             $scope.refreshAttachedDocs();
         })
         .error( function(data, status, headers, config) {
@@ -732,7 +722,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 });
             });
             $scope.attachedDocs = attachedDocTemp;
-            console.log("ATTACHED LIST", $scope.attachedDocs);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1123,7 +1112,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         let subList = [];
         role.players.forEach( function(player) {
             let found = false;
-            $scope.noteInfo.subscribers.forEach( function(alreadyThere) {
+            $scope.subscriberBuffer.forEach( function(alreadyThere) {
                 if (alreadyThere.key === player.key) {
                     found = true;
                 } else if (alreadyThere.uid === player.uid) {
@@ -1131,12 +1120,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 }
             });
             if (!found) {
-                $scope.noteInfo.subscribers.push(player);
+                $scope.subscriberBuffer.push(player);
             }
         });
     }
     $scope.clearSubscribers = function() {
-        $scope.noteInfo.subscribers.length = 0;
+        $scope.subscriberBuffer.length = 0;
     }
 });
 
@@ -1251,7 +1240,7 @@ function copyTheLink() {
             {{noteInfo.modTime|cdate}}
             <button class="btn btn-primary btn-default btn-raised" ng-click="postIt(true)" 
                     title="Send this topic description by email with a link back to this page">
-                Send Topic By Email</button>
+                Send This Topic <br/> By Email</button>
             <button class="btn btn-primary btn-default btn-raised" ng-click="postIt(false)" 
                     title="Send this topic description by email with a link back to this page"
                     ng-show="noteInfo.draft">

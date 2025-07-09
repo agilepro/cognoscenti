@@ -146,7 +146,7 @@
             <span class="col-8" ng-show="'targetRole'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:400px">
                     <select class="form-control" ng-model="meeting.targetRole" 
-                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
+                            ng-options="value.name for value in allRoles" ng-change="checkRole()"></select>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
             </span>

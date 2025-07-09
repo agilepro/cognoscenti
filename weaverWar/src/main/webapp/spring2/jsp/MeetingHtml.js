@@ -804,32 +804,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         //everything matched down to here, so matches
         $scope.roleEqualsParticipants = true;
     }
-    $scope.appendRolePlayers = function () {
-        var theRole = getMeetingRole();
-        if (!theRole) {
-            //name appears to be invalid
-            console.log("Meeting has invalid targetRole");
-            return;
-        }
-        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
-        for (var i = 0; i < theRole.players.length; i++) {
-            var rolePerson = theRole.players[i];
-            var found = false;
-            for (var j = 0; j < $scope.participantEditCopy.length; j++) {
-                var participant = $scope.participantEditCopy[j];
-                if (participant.uid == rolePerson.uid) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                $scope.participantEditCopy.push(rolePerson);
-            }
-        }
-    }
-
-    $scope.updateParticipants = function () {
-        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
-    }
 
     $scope.createAgendaItem = function () {
         if (!embeddedData.canUpdate) {
@@ -1171,34 +1145,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             });
         }
     }
-    $scope.addAttendee = function () {
-        if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are not playing an update role in the workspace");
-            return;
-        }
-        if (!$scope.newAttendee) {
-            return;
-        }
-        var fakeMeeting = {};
-        fakeMeeting.attended_add = $scope.newAttendee;
-        $scope.putGetMeetingInfo(fakeMeeting);
-        $scope.newAttendee = "";
-    }
-    $scope.removeAttendee = function (person) {
-        if (!embeddedData.canUpdate) {
-            alert("Unable to update meeting because you are not playing an update role in the workspace");
-            return;
-        }
-        var promise = $scope.refreshMeetingPromise();
-        promise.success(function () {
-            if (confirm("Remove " + person.name + " from attendee list?")) {
-                $scope.meeting.attended = $scope.meeting.attended.filter(function (item) {
-                    return (item != person.uid);
-                });
-            }
-            $scope.savePartialMeeting(['attended']);
-        });
-    }
     $scope.getAttended = function () {
         return $scope.attendedCache;
     }
@@ -1261,23 +1207,38 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
             $scope.savePartialMeeting(['participants']);
         }
     }
-    $scope.addParticipants = function () {
+    $scope.addPlayers = function (role) {
         if (!embeddedData.canUpdate) {
             alert("Unable to update meeting because you are not playing an update role in the workspace");
             return;
         }
-        $scope.participantEditCopy = cleanUserList($scope.participantEditCopy);
-        $scope.participantEditCopy.forEach(function (newPers) {
-            let found = false;
-            $scope.meeting.participants.forEach(function (already) {
-                if (already.uid == newPers.uid) {
-                    found = true;
-                }
-            });
-            if (!found) {
-                $scope.meeting.participants.push(newPers);
+        role.players.forEach( function(player) {
+            addToTo(player);
+        });
+    }
+    function addToTo(player) {
+        var found = false;
+        $scope.meeting.participants.forEach( function(person) {
+            if (person.name == player.name) {
+                found = true;
             }
         });
+        if (!found) {
+            $scope.meeting.participants.push({name: player.name, uid: player.uid});
+        }
+    }
+    
+    $scope.startParticipantEdit = function () {
+        console.log("PARTICIPANTS", $scope.meeting.participants);
+        console.log("ROLES", $scope.allRoles);
+        $scope.participantEditCopy = [];
+        $scope.editMeetingPart = 'participants';
+    }
+    $scope.finishEditParticipants = function () {
+        if (!embeddedData.canUpdate) {
+            alert("Unable to update meeting because you are not playing an update role in the workspace");
+            return;
+        }
         $scope.savePartialMeeting(['participants']);
         $scope.editMeetingPart = "";
     }
@@ -2117,10 +2078,6 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
                 $scope.getSims();
             });
     };
-    $scope.startParticipantEdit = function () {
-        $scope.participantEditCopy = [];
-        $scope.editMeetingPart = 'participants';
-    }
 
     $scope.isPresent = function (tuid) {
         var found = false;

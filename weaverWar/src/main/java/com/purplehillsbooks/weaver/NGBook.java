@@ -282,7 +282,6 @@ public class NGBook extends ContainerCommon {
         allSites = null;
     }
 
-    //TODO:get rid of statics, put them into the Cognoscenti object
     public synchronized static void initStaticVars() {
         keyToSite = new Hashtable<String, NGBook>();
         allSites = new ArrayList<NGBook>();

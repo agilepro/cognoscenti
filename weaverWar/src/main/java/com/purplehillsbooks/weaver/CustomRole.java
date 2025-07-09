@@ -101,13 +101,6 @@ public class CustomRole extends DOMFace implements NGRole {
         return term.getDirectPlayers();
     }
 
-    public AddressListEntry getFirstPlayer() throws Exception {
-        for (AddressListEntry ale : getDirectPlayers()) {
-            return ale;
-        }
-        return null;
-    }
-
     private List<AddressListEntry> getNonTermList() throws Exception {
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");

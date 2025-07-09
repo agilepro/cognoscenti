@@ -73,7 +73,7 @@
 
     JSONArray allRoles = new JSONArray();
     for (NGRole aRole : ngw.getAllRoles()) {
-        allRoles.put(aRole.getName());
+        allRoles.put(aRole.getJSON());
     }
 
     JSONArray allTopics = new JSONArray();

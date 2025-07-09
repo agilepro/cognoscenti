@@ -9,45 +9,51 @@
             
             <button class="btn btn-wide btn-secondary btn-raised" 
                     ng-click="startParticipantEdit()"
-                    title="Add more people to the list below">
-            <span class="fa fa-plus"></span> Add Participants </button>
+                    title="change the people invited to the meeting">
+                Change Participants </button>
         </span>
         <span class="col-md-3 float-end"><a class="btn btn-wide btn-comment btn-raised" href="EmailCompose.htm?meet={{meetId}}"> Send Email <i class="fa fa-envelope-o"></i> About Meeting</a>
           </span>
     </div>
-    <div class="well override" ng-show="editMeetingPart=='participants'">
-        <div>
-            <tags-input ng-model="participantEditCopy" 
-                        placeholder="Enter users to participate in the meeting"
-                        display-property="name" key-property="uid"
-                        replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                    on-tag-added="updateParticipants()" 
-                    on-tag-removed="updateParticipants()">
-                <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-            </tags-input>
+    <section class="well"  ng-show="editMeetingPart=='participants'">
+        <div class="row d-flex col-12 my-2">
+            <label class="col-md-2 control-label h5" for="alsoalsoTo">Invited:</label>
+            <div class="col-md-10">
+                <tags-input ng-model="meeting.participants" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true" on-tag-added="cleanUpAlsoTo()" on-tag-removed="cleanUpAlsoTo()"> 
+                    <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                </tags-input>
+            </div>
         </div>
-        <div>
-        <span class="dropdown ">
-              <button class="btn btn-danger btn-default btn-raised" type="button" 
-                    ng-click="editMeetingPart=''"
-                    title="Ignore what has been put here and close box">
-            Cancel 
-              </button>
-              <button class="btn btn-secondary btn-wide btn-raised " ng-click="appendRolePlayers()" 
-                    ng-hide="roleEqualsParticipants" 
-                    title="Look at the workspace role, and suggest anyone not already a participant">
-                Show Everyone from {{meeting.targetRole}}
-            </button>
-            <button class="btn btn-primary float-end btn-raised" 
-                    ng-click="addParticipants()"
-                    title="Add these people to the list of participants">
-            <span class="fa fa-plus"></span> Add </button>
-            
+        <div class="row d-flex mt-3 ms-2">
+            <label class="col-md-2 control-label h6">Invite Role Players:</label>
+            <div class="col-md-10 d-flex flex-wrap">
+                <div ng-repeat="role in allRoles" > 
+                    <button class="btn-comment btn-wide btn-raised" 
+                            ng-click="addPlayers(role)">
+                        {{role.name}}</button>
+                </div>
+            </div>
+        </div>
+    
 
-        </span>
+        <!--Clear-->
+        <div class="row d-flex col-12 m-2">
+            <div class="form-group d-flex">
+                <label class="col-md-2 control-label h6">Clear Addressees:</label>
+                <span class="col-md-10">
+                        <button class="btn-comment btn-wide btn-raised" 
+                                ng-click="meeting.participants = []" 
+                                title="Add all the people invited to the meeting">
+                            Clear Addressees</button>
+                </span>
+            </div>
         </div>
-    </div>
-    <div class="col-12">
+        <button class="btn-secondary btn-wide btn-raised float-end" 
+                ng-click="finishEditParticipants()" 
+                title="close the addressing mode">Change Complete</button>
+        <div class="clearfix"></div>
+    </section>
+    <div class="col-12" ng-hide="editMeetingPart=='participants'">
     <div class="row d-flex border-opacity-25 border-bottom border-secondary ms-4">
         <span class="col-1 h6">  </span>
         <span class="col-2 h6" title="Name of the participant">Name</span>
