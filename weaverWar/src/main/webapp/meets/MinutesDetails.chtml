@@ -8,9 +8,9 @@
 
 <h1>{$name|html}</h1>
 <div>{$startTime|date("MMM dd, YYYY")}</div>
-<div class="emailbody"><div class="h1" style="float:center"></div></div>
+<div class="emailbody"><div class="h1" style="float:center;"></div></div>
 
-<div style="color:#888">{$description|markdown}</div>
+<div style="color:#707070">{$description|markdown}</div>
 
 <table class="niceTable">
 {% if ($prevMeet)}
@@ -30,20 +30,21 @@
 <tr>
 <td><div class="h3">{$agItem.number}.</div></td>
 <td><div class="h3">{$agItem.subject|html}</div>
-    <div style="color:#888">{$agItem.description|markdown}</div>
+    <div style="color:#707070">{$agItem.description|markdown}</div>
     <div>{$agItem.minutes|markdown}</div>
-    <ul>
     {% loop in $agItem.attList as $doc %}
-    <li><a href="{$doc.url}">{$doc.name|html}</a></li>
+    <ul class="doc"><em>Attachments:
+        <li><a href="{$doc.url}">{$doc.name|html}</a></li>
     {% onEmpty %}
     {% endloop %}
-    </ul>
-    <ul>
+    </em></ul>
     {% loop in $agItem.aiList as $aItem %}
+    <ul class="action"><em>Action Items:
+    
     <li><a href="{$aItem.url}">{$aItem.synopsis|html}</a></li>
     {% onEmpty %}
     {% endloop %}
-    </ul>
+    </em></ul>
 </td>
 </tr>
 

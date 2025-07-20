@@ -1,6 +1,6 @@
 .emailbody {
     font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border-bottom: 2px solid skyblue;
+    border-bottom: 2px solid rgba(59, 69, 126, 0.38);
     padding:5px;
     text-align: center;
     max-width: 800px;
@@ -15,4 +15,53 @@
 }
 .smallPrint {
     font-size:-2;
+}
+li{
+    display: list-item;
+    text-align: -webkit-match-parent;
+    unicode-bidi: isolate;
+}
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    padding-inline-start: 40px;
+    unicode-bidi: isolate;
+}
+:is(dir, menu, ol, ul) ul {
+    list-style-type: circle;
+}
+:is(dir, dl, menu, ol, ul) ul {
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+}
+ul.doc{
+    list-style-type: square;
+    width: 500px;
+    padding: 7px 10px;
+    margin-left: -10px;
+    border: 2px rgba(59, 69, 126, 0.38) solid;
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    font-weight: 600;
+
+    li{
+        margin-left: 20px;
+    }
+}
+ul.action{
+    list-style-type: square;
+    width: 500px;
+    padding: 7px 10px;
+    margin-left: -10px;
+    border: 2px solid rgba(82, 107, 97, 0.27);
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    font-weight: 600;
+
+    li{
+        margin-left: 20px;
+    }
+
 }
