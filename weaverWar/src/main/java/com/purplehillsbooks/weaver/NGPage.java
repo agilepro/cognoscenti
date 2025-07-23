@@ -96,6 +96,7 @@ public abstract class NGPage extends ContainerCommon {
         removeAnySectionWithThisName("Poll");
         removeAnySectionWithThisName("Geospatial");
         removeAnySectionWithThisName("Folder");
+        removeAnySectionWithThisName("Folders");
 
         
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);

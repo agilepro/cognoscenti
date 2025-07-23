@@ -849,7 +849,7 @@ public class NGWorkspace extends NGPage {
                 for (HistoryRecord hist : goal.getTaskHistory(this)) {
                     if (hist.getTimeStamp()>lastModTime) {
                         lastModTime = hist.getTimeStamp();
-                        lastModUser = hist.getResponsible();
+                        lastModUser = hist.getResponsible().getUniversalId();
                     }
                 }
                 goal.setModifiedDate(lastModTime);

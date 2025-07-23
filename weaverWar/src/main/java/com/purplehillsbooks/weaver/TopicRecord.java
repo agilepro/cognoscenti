@@ -59,11 +59,9 @@ public class TopicRecord extends CommentContainer {
     public static final String DISCUSSION_PHASE_MOVED = "Moved";
 
     // This is actually one week before the server started, and is used mainly in
-    // the
-    // startup methods for an arbitrary time long enough ago that automated
-    // notifications
-    // should be cancelled or ignored. If the server stays on a long this value will
-    // not be updated -- it remains the time a week before starting the server.
+    // the startup methods for an arbitrary time long enough ago that automated
+    // notifications should be cancelled or ignored. If the server stays on a long 
+    // this value will not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000;
 
     private int repliesMade = -1;
@@ -71,10 +69,6 @@ public class TopicRecord extends CommentContainer {
 
     public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
-
-        // get rid of visibility entry if any, schema migration, clean up, delete after
-        // 2023
-        clearScalar("visibility");
 
         // convert to using discussion phase instead of older deleted indicator
         // NGWorkspace schema 101 -> 102 migration
@@ -720,9 +714,9 @@ public class TopicRecord extends CommentContainer {
 
     public JSONObject getLinkableJSON() throws Exception {
         JSONObject thisNote = new JSONObject();
-        thisNote.put("id", getId());
-        thisNote.put("subject", getSubject());
-        thisNote.put("universalid", getUniversalId());
+        extractAttributeString(thisNote, "id");
+        extractScalarString(thisNote, "subject");
+        extractScalarString(thisNote, "universalid");
         return thisNote;
     }
 
@@ -732,10 +726,12 @@ public class TopicRecord extends CommentContainer {
         thisNote.put("modUser", getModUser().getJSON());
         thisNote.put("deleted", isDeleted());
         thisNote.put("draft", isDraftNote());
-        thisNote.put("discussionPhase", getDiscussionPhase());
+        extractAttributeString(thisNote, "discussionPhase");
         thisNote.put("pin", getPinOrder());
         thisNote.put("actionList", constructJSONArray(getActionList()));
         extractAttributeBool(thisNote, "suppressEmail");
+        extractScalarLong(thisNote, "reportStart");
+        extractScalarLong(thisNote, "reportEnd");
         thisNote.put("docList", constructJSONArray(getDocList()));
 
         // now make a read-only convenience with addition info about the document
@@ -756,8 +752,6 @@ public class TopicRecord extends CommentContainer {
             subs.put(ale.getJSON());
         }
         thisNote.put("subscribers", subs);
-        thisNote.put("responsesNeeded", getRepliesNeeded());
-        thisNote.put("responsesMade", getRepliesMade());
         return thisNote;
     }
 
@@ -802,9 +796,7 @@ public class TopicRecord extends CommentContainer {
                     "Error trying to update the record for a note with UID (%s) with post from topic with UID (%s)",
                     getUniversalId(), universalid);
         }
-        if (noteObj.has("subject")) {
-            setSubject(noteObj.getString("subject"));
-        }
+        updateScalarString("subject", noteObj);
         if (noteObj.has("modifieduser") && noteObj.has("modifiedtime")) {
             setLastEdited(noteObj.getLong("modTime"));
             setModUser(AddressListEntry.fromJSON(noteObj.getJSONObject("modUser")));
@@ -876,7 +868,8 @@ public class TopicRecord extends CommentContainer {
         // simplistic for now ... if you update anything, you get added to the
         // subscribers
         subRole.addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
-
+        updateScalarLong("reportStart", noteObj);
+        updateScalarLong("reportEnd", noteObj);
     }
 
     public void mergeDoc(String oldMarkDown, String newMarkDown) {
@@ -963,41 +956,22 @@ public class TopicRecord extends CommentContainer {
         }
     }
 
-    public int getRepliesMade() throws Exception {
-        if (repliesMade < 0) {
-            calcReplies();
-        }
-        return repliesMade;
-    }
-
-    public int getRepliesNeeded() throws Exception {
-        if (repliesNeeded < 0) {
-            calcReplies();
-        }
-        return repliesNeeded;
-    }
-
-    private void calcReplies() throws Exception {
-        int newRepliesMade = 0;
-        int newRepliesNeeded = 0;
-        for (CommentRecord cr : this.getComments()) {
-            if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_PROPOSAL ||
-                    cr.getCommentType() == CommentRecord.COMMENT_TYPE_REQUEST) {
-                for (ResponseRecord response : cr.getResponses()) {
-                    newRepliesNeeded++;
-                    String content = response.getContent();
-                    if (content != null && content.length() > 0) {
-                        newRepliesMade++;
-                    }
-                }
-            }
-        }
-        repliesMade = newRepliesMade;
-        repliesNeeded = newRepliesNeeded;
-    }
-
     public String getGlobalContainerKey(NGWorkspace ngw) {
         return "T" + getId();
     }
+
+    public long getReportStart() {
+        return getScalarLong("reportStart");
+    }
+    public void setReportStart(long newDate) throws Exception {
+        setScalarLong("reportStart", newDate);
+    }
+
+    public long getReportEnd() {
+        return getScalarLong("reportEnd");
+    }
+    public void setReportEnd(long newDate) throws Exception {
+        setScalarLong("reportEnd", newDate);
+    }   
 
 }

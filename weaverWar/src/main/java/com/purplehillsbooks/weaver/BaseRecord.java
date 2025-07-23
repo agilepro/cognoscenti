@@ -110,63 +110,38 @@ public class BaseRecord extends DOMFace
     }
 
     public long getDueDate() {
-        String endDate = getScalar("dueDate");
-        return safeConvertLong(endDate);
+        return getScalarLong("dueDate");
     }
     public void setDueDate(long newVal) throws Exception {
-        setScalar("dueDate", Long.toString(newVal));
+        setScalarLong("dueDate", newVal);
     }
 
     public long getStartDate() {
-        String startDate = getScalar("startDate");
-        return safeConvertLong(startDate);
+        return getScalarLong("startDate");
     }
     public void setStartDate(long newVal) {
-        setScalar("startDate", Long.toString(newVal));
+        setScalarLong("startDate", newVal);
     }
 
     public long getEndDate() {
-        String endDate = getScalar("endDate");
-        return safeConvertLong(endDate);
+        return getScalarLong("endDate");
     }
     public void setEndDate(long newVal) {
-        setScalar("endDate", Long.toString(newVal));
+        setScalarLong("endDate", newVal);
     }
 
-    public int getPriority()
-        throws Exception
-    {
-        String priority = getScalar("priority");
-        return safeConvertInt(priority);
+    public int getPriority() throws Exception {
+        return getScalarInt("priority");
     }
-    /*
-    public static String getPriorityStr(int priority) throws Exception {
-        switch (priority) {
-            case 0:
-                return PRIORITY_HIGH_STR;
-            case 1:
-                return PRIORITY_MIDIUM__STR;
-            case 2:
-                return PRIORITY_LOW__STR;
-            default:
-        }
-        return PRIORITY_LOW__STR;
-    }
-    */
     public void setPriority(int newVal) throws Exception {
         setScalar("priority", Integer.toString(newVal));
     }
 
-    public long getDuration()
-        throws Exception
-    {
-        String duration = getScalar("duration");
-        return safeConvertLong(duration);
+    public long getDuration() throws Exception {
+        return getScalarLong("duration");
     }
-    public void setDuration(long newVal)
-        throws Exception
-    {
-        setScalar("duration", Long.toString(newVal));
+    public void setDuration(long newVal) throws Exception {
+        setScalarLong("duration", newVal);
     }
 
     public static String stateName(int state)
@@ -248,8 +223,7 @@ public class BaseRecord extends DOMFace
     }
     
     public int getState() {
-        String stateVal = getScalar("state");
-        return safeConvertInt(stateVal);
+        return getScalarInt("state");
     }
 
     public void setState(int newVal) throws Exception {

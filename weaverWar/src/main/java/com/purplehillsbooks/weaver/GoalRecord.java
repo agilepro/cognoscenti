@@ -390,22 +390,6 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * when a task is moved to another workspace, use this to record where it was
-     * moved to, so that we can link there.
-     *
-    public void setMovedTo(String workspace, String otherId) throws Exception {
-        setScalar("MovedToProject", workspace);
-        setScalar("MovedToId", otherId);
-    }
-*/
-    /**
-     * get the workspace that this task was moved to.
-     *
-    public String getMovedToProjectKey() throws Exception {
-        return getScalar("MovedToProject");
-    }
-*/
-    /**
      * get the id of the task in the other workspace that this task was moved to.
      */
     public String getMovedToTaskId() throws Exception {

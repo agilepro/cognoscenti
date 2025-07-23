@@ -31,23 +31,23 @@
     boolean canUpdate = ar.canUpdateWorkspace();
 
     String topicId = ar.reqParam("topicId");
-    TopicRecord note = ngw.getNoteOrFail(topicId);
+    TopicRecord topic = ngw.getNoteOrFail(topicId);
     
     String topicPrivateUrl = ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topicId+".htm");
-    String magicNumber = AccessControl.getAccessTopicParams(ngw, note);
+    String magicNumber = AccessControl.getAccessTopicParams(ngw, topic);
     String topicPublicUrl = ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topicId+".htm?"+magicNumber);
 
-    if (!AccessControl.canAccessTopic(ar, ngw, note)) {
+    if (!AccessControl.canAccessTopic(ar, ngw, topic)) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
     }
 
-    JSONObject noteInfo = note.getJSONWithComments(ar, ngw);
+    JSONObject noteInfo = topic.getJSONWithComments(ar, ngw);
     JSONArray comments = noteInfo.getJSONArray("comments");
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
     JSONArray allLabels = ngw.getJSONLabels();
 
     JSONArray history = new JSONArray();
-    for (HistoryRecord hist : note.getNoteHistory(ngw)) {
+    for (HistoryRecord hist : topic.getNoteHistory(ngw)) {
         history.put(hist.getJSON(ngw, ar));
     }
 
@@ -66,15 +66,45 @@
 
     //to access the email-ready page, you need to get the license parameter
     //for this note.  This string saves this for use below on reply to comments
-    String specialAccess =  AccessControl.getAccessTopicParams(ngw, note)
+    String specialAccess =  AccessControl.getAccessTopicParams(ngw, topic)
                 + "&emailId=" + URLEncoder.encode(ar.getBestUserId(), "UTF-8");
 
+
+    long reportStart = topic.getReportStart();
+    long reportEnd = topic.getReportEnd();
+    
+    JSONObject report = new JSONObject();
+    JSONArray meetingList = report.requireJSONArray("meetingList");
+    JSONArray goalList = report.requireJSONArray("goalList");
+    JSONArray decisionList = report.requireJSONArray("decisionList");
+    
+    if (reportStart>0 && reportEnd > 0) {
+        for (MeetingRecord meet: ngw.getMeetings()) {
+            if (meet.getStartTime()>=reportStart && meet.getStartTime()<=reportEnd) {
+                meetingList.put(meet.getListableJSON(ar));
+            }
+        }
+        for (GoalRecord goal: ngw.getAllGoals()) {
+            if (goal.getState() != BaseRecord.STATE_COMPLETE) {
+                // continue;
+            }
+            if (goal.getEndDate()>=reportStart && goal.getEndDate()<=reportEnd) {
+                goalList.put(goal.getJSON4Goal(ngw));
+            }
+        }
+        for (DecisionRecord dec: ngw.getDecisions()) {
+            if (dec.getTimestamp()>=reportStart && dec.getTimestamp()<=reportEnd) {
+                decisionList.put(dec.getJSON4Decision(ngw, ar));
+            }
+        }
+    }
+    
 %>
 
 
 
 <script type="text/javascript">
-document.title="<% ar.writeJS(note.getSubject());%>";
+document.title="<% ar.writeJS(topic.getSubject());%>";
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
@@ -96,6 +126,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.topicPrivateUrl = "<%ar.writeJS(topicPrivateUrl);%>";
     $scope.topicPublicUrl = "<%ar.writeJS(topicPublicUrl);%>";
+    $scope.report = <%report.write(out,2,4);%>;
 
     $scope.currentTime = (new Date()).getTime();
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
@@ -1127,6 +1158,25 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.clearSubscribers = function() {
         $scope.subscriberBuffer.length = 0;
     }
+    $scope.editReport = function() {
+        $scope.editMeetingPart = 'report';
+    }
+    $scope.saveReport = function() {
+        $scope.editMeetingPart = '';
+        console.log("NOTE REPORT:", $scope.noteInfo);
+        var saveRecord = {};
+        saveRecord.id = $scope.topicId;
+        saveRecord.universalid = $scope.noteInfo.universalid;
+        saveRecord.reportStart = $scope.noteInfo.reportStart;
+        saveRecord.reportEnd = $scope.noteInfo.reportEnd;
+        $scope.savePartial(saveRecord);
+    }
+    $scope.clearReport = function() {
+        $scope.noteInfo.reportStart = 0;
+        $scope.noteInfo.reportEnd = 0;
+        $scope.saveReport();
+    }
+    
 });
 
 function copyTheLink() {
@@ -1141,6 +1191,19 @@ function copyTheLink() {
 }
 </script>
 <script src="../../new_assets/jscript/AllPeople.js"></script>
+
+<style>
+.box {
+    border: solid 1px lightskyblue;
+    border-radius: 15px;
+    padding: 10px;
+}
+.shade {
+    background-color: #EEE;
+    padding: 10px;
+    border-radius: 15px;
+}
+</style>
 
 <div class="container-fluid override mb-4 mx-3 d-inline-flex">
     <span class="dropdown mt-1">
@@ -1187,19 +1250,15 @@ function copyTheLink() {
     </span>
 </div>
 
-<div ng-cloak>
+
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid override mx-2">
-                 
-              <!--experimental mobile UI not finished-->
-             <!-- <span class="btn btn-secondary btn-comment btn-raised m-3 pb-2 pt-0" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-              title="Access the new mobile UI in development"
-              href="TopicView.wmf?topicId={{topicId}}" ><i class="fa fa-bolt"></i> Experimental Mobile UI</a></span>-->
-<div class="d-flex col-12"><div class="contentColumn">
+
+<div class="d-flex col-12">
+  <div class="contentColumn">
     <div class="container-fluid">
-        <div class="generalContent">
+      <div class="generalContent">
 
 
     <h2 class="h3" ng-hide="isEditing" ng-click="startEdit()" >
@@ -1229,6 +1288,40 @@ function copyTheLink() {
         <span ng-show="changesToSave" class="h6">Changes will be saved in {{secondsTillSave}} seconds.</span>
     </div>
 <% } %>
+
+<div class="box" ng-show="noteInfo.reportStart>0 && noteInfo.reportEnd>0">
+  <h3>Status</h3>
+  
+  <p> The following accomplishments were recorded between {{noteInfo.reportStart|date}} and {{noteInfo.reportEnd|date}}.</p>
+  
+  <h3>Meetings</h3>
+  
+  <ul>
+    <li ng-repeat="meet in report.meetingList">{{meet.startTime|cdate}} - 
+            <a href="{{meet.minutesUrl}}">{{meet.name}}</a></li>
+  </ul>
+  
+   
+  <h3>Completed Action Items</h3>
+  
+  <ul>
+    <li ng-repeat="goal in report.goalList">
+        {{goal.enddate|date}} - {{goal.synopsis}}<br/>
+        {{goal.description}} <br/>
+        <span ng-repeat="john in goal.assignTo"> {{john.name}}, </span>
+    </li>
+  </ul>
+    
+  <h3>Decisions Recorded / Reviewed</h3>
+  
+  <div>
+    <div ng-repeat="dec in report.decisionList" ng-show="dec.num">
+        Decision {{dec.num}} - {{dec.timestamp|cdate}}
+        <div ng-bind-html="dec.decision|wiki" class="shade"></div>
+    </div>
+  </div>
+   
+</div>
 
 <div class="col-12 m-2">
 <hr/>
@@ -1262,6 +1355,26 @@ function copyTheLink() {
             <%@ include file="/spring2/jsp/LabelPicker.jsp" %>
         </span>
     </div><hr/>
+
+    <div class="row ms-3">
+    <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="editReport()">Report Settings:</span>
+    <span class="col-9" ng-dblclick="editReport()" ng-hide="editMeetingPart=='report'">
+        Start Date: {{noteInfo.reportStart | date}}<br/>
+        End Date: {{noteInfo.reportEnd | date}}
+    </span>
+    <span class="col-9" ng-dblclick="editReport()" ng-show="editMeetingPart=='report'">
+        Start Date: <span datetime-picker ng-model="noteInfo.reportStart"
+                  class="form-control">
+              {{noteInfo.reportStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
+            </span><br/>
+        End Date: <span datetime-picker ng-model="noteInfo.reportEnd"
+                  class="form-control">
+              {{noteInfo.reportEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
+            </span>
+        <button ng-click="saveReport()">Save</button>  <button ng-click="clearReport()">Clear Dates</button>
+    </span>
+    </div><hr/>
+    
     <div class="row ms-3">
     <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary mt-2" style="text-align:left" ng-click="openAttachDocument()">Attachments:</span>
     <span class="col-9" ng-dblclick="openAttachDocument()">
@@ -1285,7 +1398,7 @@ function copyTheLink() {
         </div>
         
     </span>
-    </div><hr>
+    </div><hr/>
     <div class="row ms-3">
     <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-secondary" style="text-align:left" ng-click="openAttachAction()">Action Items:</span>
     <span class="col-9">
@@ -1453,22 +1566,20 @@ function copyTheLink() {
     </div>
 </div>
             
-        </div> 
-        <div class="well mx-3" ng-repeat="cmt in getComments()">
+      </div> 
+      <div class="well mx-3" ng-repeat="cmt in getComments()">
 
             <%@ include file="/spring2/jsp/CommentView.jsp" %>
        
-         </div>
-</div>
-<div ng-hide="canComment">
+      </div>
+    </div>
+    <div ng-hide="canComment">
         <i>You have to be logged in and a member of this workspace in order to create a comment</i>
-</div>
-
-
-
+    </div>
 
     <div>Refreshing {{autoRefresh}} in {{secondsTillSave}} seconds, {{autoSaveCount}} refreshes</div>
 
+  </div>
 </div>
 
 
