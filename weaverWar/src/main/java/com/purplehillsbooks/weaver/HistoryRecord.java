@@ -284,10 +284,11 @@ public class HistoryRecord extends DOMFace
         setScalar("timestamp", Long.toString(ts));
     }
 
-    public String getResponsible()
-        throws Exception
-    {
+    private String getResponsibleString() throws Exception {
         return UserManager.getCorrectedEmail(getScalar("responsible"));
+    }
+    public AddressListEntry getResponsible() throws Exception {
+        return AddressListEntry.findOrCreate(getResponsibleString());
     }
     public void setResponsible(String resp)
         throws Exception
@@ -777,7 +778,7 @@ history.task.subtask.add    113
         ar.write("</a> was ");
         ar.writeHtml(convertEventTypeToString(getEventType()));
         ar.write(" by ");
-        AddressListEntry ale = AddressListEntry.findOrCreate(getResponsible());
+        AddressListEntry ale = getResponsible();
         ale.writeLink(ar);
         ar.write(" on ");
         SectionUtil.nicePrintDate(ar.w, getTimeStamp(), null);
@@ -789,7 +790,7 @@ history.task.subtask.add    113
     }
 
     public JSONObject getJSON(NGWorkspace ngw, AuthRequest ar) throws Exception {
-        AddressListEntry ale = AddressListEntry.findOrCreate(getResponsible());
+        AddressListEntry ale = getResponsible();
         JSONObject jo = new JSONObject();
         jo.put("ctxId", getContext());
         jo.put("ctxName", lookUpObjectName(ngw));

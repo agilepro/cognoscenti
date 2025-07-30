@@ -174,6 +174,12 @@ public class DOMFace
         }
         return DOMUtils.getChildText(fEle, memberName);
     }
+    public int getScalarInt(String memberName) {
+        return safeConvertInt(getScalar(memberName));
+    }
+    public void setScalarInt(String memberName, int value) {
+        setScalar(memberName, Integer.toString(value));
+    }
     public long getScalarLong(String memberName) {
         return safeConvertLong(getScalar(memberName));
     }
