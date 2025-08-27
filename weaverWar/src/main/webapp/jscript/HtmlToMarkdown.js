@@ -182,9 +182,6 @@ function HTML2Markdown(html, opts) {
     var parserObj = {
         start: function(tag, attrs, unary) {
             tag = tag.toLowerCase();
-            if(logging) {
-                console.log("start: "+ tag);
-            }
 
             if(unary && (tag != "br" && tag != "hr" && tag != "img")) {
                 return;

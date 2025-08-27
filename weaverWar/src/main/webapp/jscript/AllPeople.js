@@ -1,7 +1,6 @@
 WCACHE = {
     getObj: function(key) {
         let box = this.getBox(key);
-        console.log("GETTING "+key, box.value);
         return box.value;
     },
     getAge: function(key) {
@@ -13,7 +12,6 @@ WCACHE = {
         if (timestamp > box.time) {
             box.time = timestamp;
             box.value = newValue;
-            console.log("SETTING "+key, box.value);
             localStorage.setItem("WCACHE"+key, JSON.stringify(box));
         }
     },
@@ -226,20 +224,15 @@ app.service('AllPeople', function($http) {
         siteObj.pendingRefresh = true;
         var url = "../../"+site+"/$/SitePeople.json";
         $http.get(url)
-        //$http.get("../../AllPeople.json")
         .success( function(data) {
-            console.log("Read people from", url, data);
             data.validTime = new Date().getTime() + 360000;
             AllPeople.allPersonBySite[site] = data;
             sessionStorage.setItem('allPersonBySite', JSON.stringify(AllPeople.allPersonBySite));
-            console.log("allPersonBySite["+site+"] retrieved, count = "+data.people.length
-                        +", valid until ="+new Date(data.validTime));
         })
         .error( function(data) {
             //we got an error and the most common error is because user logged out.
             //this prevents the continued polling after logging out.
             refreshDisabled = true;
-            console.log("allPersonBySite["+site+"] FAILURE: ", data);
         });
     }
     AllPeople.getPeopleOutOfStorage = function () {

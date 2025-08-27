@@ -93,14 +93,7 @@ SLAP.retrieveSession = function() {
     }
     else {
         console.log("SSOFI: NO data from previous session: ");
-    }        
-    /* calling method does this anyway...
-    if (!SLAP.loginInfo.ss) {
-        //if there is no session id, go and get one, migration from earlier object.
-        SLAP.queryTheProvider();
-        console.log("FETCHED new SSOFI session id: ", SLAP.loginInfo);
     }
-    */
 }
     
 SLAP.getJSON = function(url, passedFunction, errorFunction) {

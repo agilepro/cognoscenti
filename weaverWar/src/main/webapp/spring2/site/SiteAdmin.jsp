@@ -200,7 +200,6 @@ $scope.garbageCollect = function() {
     $http.get(postURL)
     .success( function(data) {
         console.log("Garbage Results", data);
-        alert("Success.  REFRESHING the page");
         window.location.reload();
     })
     .error( function(data, status, headers, config) {

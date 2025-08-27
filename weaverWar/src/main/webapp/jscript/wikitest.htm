@@ -7,9 +7,7 @@
 <script>
 function convert() {
     var inStr = document.getElementById("srcVal").value;
-    console.log("IN ----------------\n", inStr);
     var outStr = convertMarkdownToHtml(inStr);
-    console.log("OUT ---------------\n", outStr);
     document.getElementById("demo").innerHTML = outStr;
     var roundtrip = HTML2Markdown(outStr);
     document.getElementById("roundtrip").value = roundtrip;
