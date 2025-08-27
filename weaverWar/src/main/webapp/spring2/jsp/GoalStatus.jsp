@@ -426,7 +426,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             alert("Sorry, you are not playing a role that allows update, so you can't create an action item.");
             return;
         }
-        alert("dddd.");
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
         newRec.universalid = "~new~";

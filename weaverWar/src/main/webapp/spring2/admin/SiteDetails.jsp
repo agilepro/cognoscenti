@@ -136,7 +136,6 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.siteLedger = data;
-            alert("payment recorded successfully");
             console.log("PAYMENT: ", data);
         })
         .error( function(data, status, headers, config) {
@@ -157,7 +156,6 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.siteLedger = data;
-            alert("payment recorded successfully");
             console.log("CHARGE: ", data);
         })
         .error( function(data, status, headers, config) {

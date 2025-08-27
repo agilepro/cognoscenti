@@ -30,11 +30,7 @@ function standardTinyMCEOptions() {
 		// put logic here for keypress
 		},
         paste_preprocess: function(plugin, args) {
-            console.log("PASTE:", args.content);
-            //var modified = args.content.replace(new RegExp("<br ?/>", 'g'),"</p><p>");
-            
-            //args.content = modified;
-            //console.log("MOD  :", args.content);
+            //console.log("PASTE:", args.content);
         },
         paste_as_text: false,
         browser_spellcheck: true,
