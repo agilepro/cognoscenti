@@ -5,7 +5,9 @@
         <span ng-click="openAgenda(item)"></span>
         <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary py-2">
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
-          <span class="col-5"><em><a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">Click Here to Join the Meeting Conference Call</a></em></span>
+          <span class="col-5"><em ng-show="meeting.conferenceUrl">
+            <a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">
+                Click Here to Join the Meeting Conference Call</a></em></span>
 
       </div>
       <div class="row d-flex">
