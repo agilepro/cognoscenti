@@ -180,7 +180,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
     
     if (!$scope.emailInfo.meetingLayout) {
-        $scope.emailInfo.meetingLayout = "FullDetail.chtml";
+        $scope.emailInfo.meetingLayout = "AgendaDetail.chtml";
     }
 
     $scope.saveEmail = function() {

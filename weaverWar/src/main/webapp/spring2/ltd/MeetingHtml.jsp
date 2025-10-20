@@ -227,12 +227,12 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="container-fluid">
+<div class="container-fluid override mb-4 mx-3 d-inline-flex">
     <div class="row">
         <div class="col-12 col-md-auto fixed-width border-end border-1 border-secondary">
             <!--Meeting Setting Panel-->
 
-<hr/>
+
 <!--Agenda Panel-->
 <div style="height: 0.5rem">&nbsp;</div>
 <h3 class="h5 mb-0">Agenda:</h3>
@@ -240,7 +240,7 @@ embeddedData.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     <div ng-style="itemTabStyleComplete(item)" ng-click="changeMeetingMode('Items');setSelectedItem(item)" ng-hide="item.proposed" ng-dblclick="openAgenda(selectedItem)">
         <div class="d-flex">
             <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
-            <span class="text-secondary align-center m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
+            <span class="text-secondary m-1 fa fa-clock-o fa-2x" ng-show="item.isSpacer"></span> 
             &nbsp;<span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
 <br/>
             <button class="btn" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
@@ -273,12 +273,12 @@ ng-dblclick="openAgenda(selectedItem)">
 <!--Agenda and Minutes buttons  -->
 
 <h3 class="h5 mt-4 mb-2">Static Displays:</h3>
-<div class="my-3 d-flex justify-content-start">
-                    <div class="smallButton mx-3">
+<div class="my-3 d-flex justify-content-start override">
+                    <div class="btn mx-3">
                     <button ng-click="changeMeetingMode('Agenda')"       ng-class="btn-small" ><img src="<%=ar.retPath%>new_assets\assets\navicon\agendaIcon.png"></br> Agenda
                     </button>
                     </div>
-                    <div class="smallButton mx-3">
+                    <div class="btn mx-3">
                     <button ng-click="changeMeetingMode('Minutes')"  ng-class="btn-small"> <img src="<%=ar.retPath%>new_assets\assets\navicon\minutesIcon.png"></br> Minutes
                     </button>
                     </div>

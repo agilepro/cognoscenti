@@ -1,6 +1,6 @@
 
 
-<div class="container-fluid col-12">
+<div class="container-fluid col-12 override">
   <div class="row d-flex" ng-dblclick="openAgenda(item)">
     <span ng-click="openAgenda(item)"></span>
     <span class="col-7" ng-style="timerStyleComplete(item)"><h3 class="h4 text-secondary py-2">
@@ -8,14 +8,14 @@
       <span class="col-5">
         <em ng-show="meeting.conferenceUrl">
           <a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">
-            Click Here to Join the Meeting Conference Call</a></em></span>
+            Join Online</a></em></span>
   </div>
 
   <div class="row d-flex">
     <div class="col-md-7">
-
-      <div ng-show="!item.isSpacer" class="description-container">
-        <div class="border border-2 border-primary-subtle py-2 px-4 m-4 " ng-bind-html="item.descriptionHtml"></div>
+      
+      <div ng-show="!item.isSpacer" class="well py-2 px-4 mx-4 description-container">
+        <div ng-bind-html="item.descriptionHtml"></div>
         <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
         Double-click to edit description
         </span>
@@ -43,7 +43,7 @@
           <span class="col-md-6">
 
             <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
-              <div class="mt-2" ng-hide="item.presenterList && item.presenterList.length>0"><b>Add Presenter</b>
+              <div class="mt-2 text-center" ng-hide="item.presenterList && item.presenterList.length>0"><b>  Add Presenter</b>
               </div>                 
               
               <div class="ps-0 mt-2" ng-repeat="presenter in item.presenterList">

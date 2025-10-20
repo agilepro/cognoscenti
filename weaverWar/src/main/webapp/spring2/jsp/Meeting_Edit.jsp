@@ -7,12 +7,12 @@
           <span ng-hide="item.isSpacer" >{{item.number}}. </span>{{item.subject}}</h3></span>
           <span class="col-5"><em ng-show="meeting.conferenceUrl">
             <a class="h5 text-secondary" href="{{meeting.conferenceUrl}}" target="_blank">
-                Click Here to Join the Meeting Conference Call</a></em></span>
+                Join Online</a></em></span>
 
       </div>
       <div class="row d-flex">
         <div class="col-md-7">
-          <div class="well py-2 px-4 mx-4" ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer" class="description-container">
+          <div class="well py-2 px-4 mx-4 description-container" ng-dblclick="openAgendaControlled(item,'Description')" ng-show="!item.isSpacer">
             <div  ng-bind-html="item.descriptionHtml"></div>
             <span ng-hide="item.descriptionHtml && item.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to edit description
@@ -40,7 +40,7 @@
               <span class="col-md-6">
 
                 <div ng-click="openAgenda(item)" ng-hide="item.isSpacer">
-                  <div class="mt-2" ng-hide="item.presenterList && item.presenterList.length>0"><b>Add Presenter</b>
+                  <div class="mt-2 text-center" ng-hide="item.presenterList && item.presenterList.length>0"><b>  Add Presenter</b>
                   </div>                 
                   
                   <div class="ps-0 mt-2" ng-repeat="presenter in item.presenterList">
@@ -76,7 +76,7 @@
             </div>
             <div ng-hide="item.isSpacer" >
               <div class="justify-content-center ms-2 mb-3 mt-2" ng-click="toggleReady(item)">
-              <span class="btn btn-comment btn-default mt-0" ng-hide="item.readyToGo" >
+              <span class="btn btn-comment mt-0" ng-hide="item.readyToGo" >
                   <b>Not <img src="<%=ar.retPath%>new_assets/assets/goalstate/agenda-not-ready.png"
                        title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                        style="width:24px;height:24px">
