@@ -335,6 +335,7 @@ public class SiteController extends BaseController {
 
             JSONObject incoming = getPostedObject(ar);
             String userID = incoming.getString("uid");
+            String userName = incoming.optString("name", userID);
 
             UserManager um = UserManager.getStaticUserManager();
             UserProfile user = UserManager.lookupUserByAnyId(userID);
@@ -343,7 +344,7 @@ public class SiteController extends BaseController {
             	user = um.createUserWithId(userID);
             	String name = user.getName();
             	if (name==null || name.length()==0) {
-            		user.setName(userID);
+            		user.setName(userName);
             	}
         		um.saveUserProfiles();
             }
