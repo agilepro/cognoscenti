@@ -358,6 +358,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <span class="fa fa-phone"></span> Invite Users</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="MultiInvite.htm">
               <span class="fa fa-phone"></span> Multi-Person Invite</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="UserAdd.htm">
+              <span class="fa fa-phone"></span> Add User</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
               <span class="fa fa-plus-square"></span> Create New Role</a></li>

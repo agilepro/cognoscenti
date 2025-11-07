@@ -154,11 +154,21 @@ function parseList(inText) {
         <ul class="dropdown-menu" aria-labelledby="dropdownInfoMenu">
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
-                <span class="dropdown-item" type="button"><a class="nav-link" role="menuitem" tabindex="-1"
-                        href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles</a></span>
-                <span class="dropdown-item" type="button" ng-click="openTopicCreator()"
-                    aria-labelledby="createNewSingleInvite"><a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
-                        <span class="fa fa-envelope"></span> &nbsp;Invite Users</a></span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1"
+                        href="RoleManagement.htm"><span class="fa fa-users"></span>&nbsp;Manage Roles
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button" ng-click="openTopicCreator()">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
+                        <span class="fa fa-envelope"></span> &nbsp;Invite Users
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="UserAdd.htm">
+                        <span class="fa fa-envelope"></span> &nbsp;Add User
+                    </a>
+                </span>
             </li>
         </ul>
     </span>

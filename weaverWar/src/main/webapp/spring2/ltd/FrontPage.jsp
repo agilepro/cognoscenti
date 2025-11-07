@@ -139,6 +139,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myActions  = <%myActions.write(out,2,4);%>;
     $scope.purpose = "<%ar.writeJS(ngw.getProcess().getDescription());%>";
     $scope.isWatching = <%=isWatching%>;
+    $scope.enterRequest = "I would like to join this workspace because: \n\nMy email address is <% ar.writeHtml(ar.getBestUserId()); %>";
 
     $scope.filter = "";
     
@@ -378,6 +379,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
 
             <div class="card-body fs-6">
+                You are logged in as <b><% ar.writeHtml(ar.getBestUserId()); %></b>
+                <br/>
                 You do not play any role in this workspace.
                 <br/>
                 You do have some limited access to some things.
@@ -456,7 +459,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div ng-show="enterMode && !alternateEmailMode" class="warningBox well">
             <div>Enter a reason to join the workspace:</div>
-            <textarea ng-model="enterRequest" class="form-control"></textarea>
+            <textarea ng-model="enterRequest" class="form-control" style="min-height:200px"></textarea>
             <button class="btn btn-danger btn-raised" ng-click="enterMode=false">Cancel</button>
             <button class="btn btn-primary btn-raised float-end" ng-click="roleChange()">Request Membership</button>
             

@@ -248,7 +248,7 @@ function setUpLearningMethods($scope, $modal, $http) {
 
 <!-- Begin mainContent -->
 
-<%@ include file="AnonNavBar.jsp" %>
+<!--%@ include file="AnonNavBar.jsp" %-->
 
 <div class="container-fluid px-0" ng-cloak>
     <div class="row">

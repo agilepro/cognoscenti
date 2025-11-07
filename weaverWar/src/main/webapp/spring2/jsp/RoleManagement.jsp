@@ -398,6 +398,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <li>
                 <button class="dropdown-item" onclick="window.location.reload(true)">Refresh</button>
                 <span class="dropdown-item" type="button" aria-labelledby="createNewSingleInvite">
+                    <a class="nav-link" role="menuitem" tabindex="-1" href="UserAdd.htm">
+                        <span class="fa fa-plus-square"></span> &nbsp;Add User
+                    </a>
+                </span>
+                <span class="dropdown-item" type="button" aria-labelledby="createNewSingleInvite">
                     <a class="nav-link" role="menuitem" tabindex="-1" href="RoleInvite.htm">
                         <span class="fa fa-envelope"></span> &nbsp;Invite Users
                     </a>

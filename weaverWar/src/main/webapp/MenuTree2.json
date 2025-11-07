@@ -301,7 +301,8 @@
             "AdminStats.jsp",
             "AdminAPI.jsp",
             "RoleRequest.jsp",
-            "LabelList.jsp"
+            "LabelList.jsp",
+            "UserAdd.jsp"
           ],
           "href": "RoleManagement.htm",
           "name": "Roles",
@@ -322,7 +323,8 @@
                 "RoleManagement.jsp",
                 "RoleInvite.jsp",
                 "MultiInvite.jsp",
-                "RoleMap.jsp"
+                "RoleMap.jsp",
+                "UserAdd.jsp"
               ],
               "href": "RoleMap.htm",
               "name": "User Map",
@@ -333,7 +335,8 @@
                 "RoleManagement.jsp",
                 "RoleInvite.jsp",
                 "MultiInvite.jsp",
-                "RoleMap.jsp"
+                "RoleMap.jsp",
+                "UserAdd.jsp"
               ],
               "href": "RoleInvite.htm",
               "name": "Invite User",
@@ -344,11 +347,24 @@
                 "RoleManagement.jsp",
                 "RoleInvite.jsp",
                 "MultiInvite.jsp",
-                "RoleMap.jsp"
+                "RoleMap.jsp",
+                "UserAdd.jsp"
               ],
               "href": "MultiInvite.htm",
               "name": "Multi-Invite",
               "title": "Invite multiple users to a role"
+            },
+            {
+              "use": [
+                "RoleManagement.jsp",
+                "RoleInvite.jsp",
+                "MultiInvite.jsp",
+                "RoleMap.jsp",
+                "UserAdd.jsp"
+              ],
+              "href": "UserAdd.htm",
+              "name": "Add User",
+              "title": "Add a user to the workspace"
             }
           ]
         },
