@@ -182,7 +182,7 @@ public class WorkspaceStats {
             if (uProf == null) {
                 readUserCount++;
             }
-            else if (userMap.isUnpaid(uProf)) {
+            else if (!userMap.isPaid(uProf)) {
                 readUserCount++;
             }
             else {

@@ -1171,14 +1171,14 @@ public class NGBook extends ContainerCommon {
         }
         SiteUsers siteUsers = getUserMap();
         AddressListEntry ale = AddressListEntry.findOrCreate(userId);
-        return siteUsers.isUnpaid(ale.getUserProfile());
+        return !siteUsers.isPaid(ale.getUserProfile());
     }
     public boolean isUnpaidUser(UserProfile uProf) throws Exception {
         if (uProf==null) {
             throw WeaverException.newBasic("isUnpaidUser requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
-        return siteUsers.isUnpaid(uProf);
+        return !siteUsers.isPaid(uProf);
     }
     
     

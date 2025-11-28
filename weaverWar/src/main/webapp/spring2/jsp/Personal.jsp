@@ -212,7 +212,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div>AR Update = <%=ar.canUpdateWorkspace()%></div>
     <div>Workspace Update = <%=ngw.canUpdateWorkspace(uProf)%></div>
     <div>Site Read Only = <%=site.isUnpaidUser(uProf.getUniversalId())%></div>
-    <div>Site Read Only = <%=siteUsers.isUnpaid(uProf)%></div>
+    <div>Site Read Only = <%=!siteUsers.isPaid(uProf)%></div>
     
                 </div>
             </div>

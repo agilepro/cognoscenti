@@ -704,6 +704,36 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
+    //pass the parameter 'role' to see if logged in user is a player of that role
+    @RequestMapping(value = "/{siteId}/{pageId}/assureRolePlayer.json", method = RequestMethod.POST)
+    public void assureRolePlayer(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String roleName = "";
+        try{
+            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId );
+            ar.assertLoggedIn("Must be logged in to manipulate role membership");
+            ar.setPageAccessLevels(ngc);
+            JSONObject postedObject = getPostedObject(ar);
+            roleName = postedObject.getString("role");
+            String uid = postedObject.getString("uid");
+
+            NGRole role = ngc.getRole(roleName);
+            if (role==null) {
+                throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
+            }
+            ar.getCogInstance().getUserManager();
+            AddressListEntry ale = UserManager.findUserByAnyIdOrFail(uid).getAddressListEntry();
+            role.addPlayerIfNotPresent(ale);
+
+            JSONObject repo = new JSONObject();
+            repo.put("isPlayer", true);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = WeaverException.newBasic("Unable to assure user is player of role `%s`", ex, roleName);
+            streamException(ee, ar);
+        }
+    }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailGeneratorUpdate.json", method = RequestMethod.POST)

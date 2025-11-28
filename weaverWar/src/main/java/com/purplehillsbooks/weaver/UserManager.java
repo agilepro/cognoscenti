@@ -348,7 +348,7 @@ public class UserManager
         return null;
     }
 
-    public synchronized UserProfile findUserByAnyIdOrFail(String anyId){
+    public static synchronized UserProfile findUserByAnyIdOrFail(String anyId){
         UserProfile up = lookupUserByAnyId(anyId);
         if (up == null) {
             throw new RuntimeException("Can not find a user profile for the id: "+anyId);

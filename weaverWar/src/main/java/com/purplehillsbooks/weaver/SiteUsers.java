@@ -95,7 +95,7 @@ public class SiteUsers {
                 // a user without a profile can not update
                 continue;
             }
-            if (!isUnpaid(uProf)) {
+            if (isPaid(uProf)) {
                 newMap.add(uProf.getKey());
             }
         }
@@ -127,17 +127,26 @@ public class SiteUsers {
         }
         return count;
     }
-    
-    public boolean isUnpaid(UserProfile uProf) throws Exception {
-        if (uProf == null || !uProf.hasLoggedIn()) {
-            return true;
+
+    public boolean isSiteUser(UserProfile uProf) throws Exception {
+        return kernel.has(uProf.getKey());
+    }
+    public boolean isPaid(UserProfile uProf) throws Exception {
+        if (uProf == null) {
+            return false;
         }
         JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
-        return userInfo.optBoolean("readOnly", false);
+        return !userInfo.optBoolean("readOnly", false);
     }
-    public void setUnpaid(UserProfile uProf, boolean unpaid) throws Exception {
+    public void setPaid(UserProfile uProf, boolean paid) throws Exception {
         JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
-        userInfo.put("readOnly", unpaid);
+        userInfo.put("readOnly", !paid);
+        if (!userInfo.has("name")) {
+            userInfo.put("name", uProf.getName());
+        }
+        if (!userInfo.has("info")) {
+            userInfo.put("info", uProf.getFullJSON());
+        }
     }
     
     public void keepTheseUsers(List<UserProfile> allUsers) throws Exception {

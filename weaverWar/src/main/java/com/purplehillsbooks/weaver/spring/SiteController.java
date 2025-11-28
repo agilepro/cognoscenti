@@ -324,6 +324,32 @@ public class SiteController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/$/findUserProfile.json", method = RequestMethod.POST)
+    public void findUserProfile(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            ar.setPageAccessLevels(site);
+            ar.assertLoggedIn("Must be logged in to look up site users.");
+
+            JSONObject incoming = getPostedObject(ar);
+            String uid = incoming.getString("uid");
+
+            UserProfile user = UserManager.findUserByAnyIdOrFail(uid);
+            SiteUsers siteUsers = site.getUserMap();
+            if (!siteUsers.isSiteUser(user)) {
+                throw WeaverException.newBasic("User (%s) is not a member of site (%s)", uid, siteId);
+            }
+            JSONObject repo = user.getFullJSON();
+            repo.put("isPaid", siteUsers.isPaid(user));
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = WeaverException.newWrap("Unable to findUserProfile in site ("+siteId+")", ex);
+            streamException(ee, ar);
+        }
+    }
+
     @RequestMapping(value = "/{siteId}/$/assureUserProfile.json", method = RequestMethod.POST)
     public void assureUserProfile(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -335,27 +361,51 @@ public class SiteController extends BaseController {
 
             JSONObject incoming = getPostedObject(ar);
             String userID = incoming.getString("uid");
-            String userName = incoming.optString("name", userID);
+            String userName = incoming.optString("name", null);
+            boolean setPaid = incoming.optBoolean("setPaid", false);
+            boolean setUnPaid = incoming.optBoolean("setUnPaid", false);
 
             UserManager um = UserManager.getStaticUserManager();
             UserProfile user = UserManager.lookupUserByAnyId(userID);
 
             if (user==null) {
             	user = um.createUserWithId(userID);
-            	String name = user.getName();
-            	if (name==null || name.length()==0) {
-            		user.setName(userName);
-            	}
+                if (userName!=null && !userName.isEmpty()) {
+                	user.setName(userName); 
+                }
         		um.saveUserProfiles();
             }
+            if (user.getKey()==null || user.getKey().isEmpty()) {
+                throw WeaverException.newBasic("User profile for (%s) has no key, cannot proceed.", userID);
+            }
+            SiteUsers siteUsers = site.getUserMap();
+            if (!siteUsers.isSiteUser(user)) {
+                siteUsers.setPaid(user, false);
+            }
+            JSONObject repo = user.getFullJSON();
+            if (setPaid) {
+                siteUsers.setPaid(user, true);
+                siteUsers.writeUsers(siteUsers.folder);
+                if (!siteUsers.isPaid(user)) {
+                    throw WeaverException.newBasic("Failed to set user as paid: %s", userID);
+                }
+            }
+            if (setUnPaid) {
+                siteUsers.setPaid(user, false);
+                siteUsers.writeUsers(siteUsers.folder);
+                if (siteUsers.isPaid(user)) {
+                    throw WeaverException.newBasic("Failed to clear user as unpaid: %s", userID);
+                }
+            }
+            repo.put("isPaid", siteUsers.isPaid(user));
+            site.saveFile(ar, "Assure user saved in site: "+userID);
+            sendJson(ar, repo);
 
-            sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
             Exception ee = new Exception("Unable to assureUserProfile in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
-
     /**
      * This is the Site Administrator version of updating user settings
      */
