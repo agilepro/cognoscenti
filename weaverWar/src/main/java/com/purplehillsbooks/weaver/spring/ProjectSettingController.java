@@ -316,7 +316,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on workspace "+pageId, ex);
+            Exception ee = WeaverException.newWrap("Unable to update the user setting for `%s` on workspace `%s`", ex, op, pageId);
             streamException(ee, ar);
         }
     }
@@ -338,7 +338,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update user setting for workspace "+pageId, ex);
+            Exception ee = WeaverException.newWrap("Unable to update user setting for workspace "+pageId, ex);
             streamException(ee, ar);
         }
     }    
@@ -420,7 +420,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleId+" workspace  "+pageId, ex);
+            Exception ee = WeaverException.newWrap("Unable to update the user setting for "+op+" on role "+roleId+" workspace  "+pageId, ex);
             streamException(ee, ar);
         }
     }
@@ -521,7 +521,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleName+" workspace  "+pageId, ex);
+            Exception ee = WeaverException.newWrap("Unable to update the user setting for "+op+" on role "+roleName+" workspace  "+pageId, ex);
             streamException(ee, ar);
         }
     }
@@ -638,7 +638,7 @@ public class ProjectSettingController extends BaseController {
             }
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to '"+op+"' the role.", ex);
+            Exception ee = WeaverException.newWrap("Unable to '"+op+"' the role.", ex);
             streamException(ee, ar);
         }
     }
@@ -656,7 +656,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get roleDefinitions from the workspace.", ex);
+            Exception ee = WeaverException.newWrap("Unable to get roleDefinitions from the workspace.", ex);
             streamException(ee, ar);
         }
     }
@@ -672,7 +672,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, res);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get all labels from the workspace.", ex);
+            Exception ee = WeaverException.newWrap("Unable to get all labels from the workspace.", ex);
             streamException(ee, ar);
         }
     }
@@ -700,7 +700,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("isPlayer", isPlayer);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to determine if user is player of role '"+roleName, ex);
+            Exception ee = WeaverException.newWrap("Unable to determine if user is player of role '"+roleName, ex);
             streamException(ee, ar);
         }
     }
@@ -730,7 +730,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("isPlayer", true);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = WeaverException.newBasic("Unable to assure user is player of role `%s`", ex, roleName);
+            Exception ee = WeaverException.newWrap("Unable to assure user is player of role `%s`", ex, roleName);
             streamException(ee, ar);
         }
     }
@@ -791,7 +791,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update Email Generator "+id, ex);
+            Exception ee = WeaverException.newWrap("Unable to update Email Generator "+id, ex);
             streamException(ee, ar);
         }
     }
@@ -845,7 +845,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to render the email message "+id, ex);
+            Exception ee = WeaverException.newWrap("Unable to render the email message "+id, ex);
             streamException(ee, ar);
         }
     }
@@ -871,7 +871,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, ret);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to supply all labels.", ex);
+            Exception ee = WeaverException.newWrap("Unable to supply all labels.", ex);
             streamException(ee, ar);
         }
     }
@@ -924,7 +924,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = label.getJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to modify "+op+" label.", ex);
+            Exception ee = WeaverException.newWrap("Unable to modify "+op+" label.", ex);
             streamException(ee, ar);
         }
     }
@@ -963,7 +963,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("list", newLabelsCreated);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to modify "+op+" label.", ex);
+            Exception ee = WeaverException.newWrap("Unable to modify "+op+" label.", ex);
             streamException(ee, ar);
         }
     }
@@ -984,7 +984,7 @@ public class ProjectSettingController extends BaseController {
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -1007,7 +1007,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("invitations", shareList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of invitations ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of invitations ", ex);
             streamException(ee, ar);
         }
     }
@@ -1024,7 +1024,7 @@ public class ProjectSettingController extends BaseController {
             
             //posted object MUST have a ss field in it to work
             if (!posted.has("ss")) {
-            	throw new Exception("Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
+            	throw WeaverException.newBasic("Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
             }
 
             String email = posted.getString("email");
@@ -1044,7 +1044,7 @@ public class ProjectSettingController extends BaseController {
                 }
             }
             if (!found) {
-                throw new Exception("Can not find a role named '"+roleName+"' in the workspace "+ngw.getFullName());
+                throw WeaverException.newBasic("Can not find a role named '"+roleName+"' in the workspace "+ngw.getFullName());
             }
 
             RoleInvitation ri = ngw.findOrCreateInvite(ale);
@@ -1055,7 +1055,7 @@ public class ProjectSettingController extends BaseController {
             ngw.saveFile(ar, "Created a inviation to join workspace");
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update an invitation", ex);
+            Exception ee = WeaverException.newWrap("Unable to update an invitation", ex);
             streamException(ee, ar);
         }
     }

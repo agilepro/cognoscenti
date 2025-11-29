@@ -88,7 +88,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get comment ("+cid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to get comment ("+cid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -111,7 +111,7 @@ public class CommentController extends BaseController {
             sendJson(ar, jo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get list of all comments", ex);
+            Exception ee = WeaverException.newWrap("Unable to get list of all comments", ex);
             streamException(ee, ar);
         }
     }
@@ -150,7 +150,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update comment ("+cid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to update comment ("+cid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -200,7 +200,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update comment ("+cid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to update comment ("+cid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -246,7 +246,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to fetch "+command+ " info from workspace "+siteId+"/"+pageId, ex);
+            Exception ee = WeaverException.newWrap("Unable to fetch "+command+ " info from workspace "+siteId+"/"+pageId, ex);
             streamException(ee, ar);
         }
     }

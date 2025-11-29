@@ -611,7 +611,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
     private void reportUnparseableFile(File badFile, Exception eig) {
         AuthRequest dummy = AuthDummy.serverBackgroundRequest();
-        Exception wrapper = new Exception("Failure reading file during Initialization: "
+        Exception wrapper = WeaverException.newWrap("Failure reading file during Initialization: "
                 + badFile.toString(), eig);
         dummy.logException("Initialization Loop Continuing After Failure", wrapper);
     }

@@ -194,7 +194,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = gr.getJSON4Goal(ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to fetch Action Item ("+gid+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to fetch Action Item ("+gid+")", ex);
             streamException(ee, ar);
         }
     }
@@ -275,7 +275,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = gr.getJSON4Goal(ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to update Action Item ("+gid+")", ex);
             streamException(ee, ar);
         }
     }
@@ -322,7 +322,7 @@ public class ProjectGoalController extends BaseController {
             repo.put("list",  responseList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update multiple Action Items", ex);
+            Exception ee = WeaverException.newWrap("Unable to update multiple Action Items", ex);
             streamException(ee, ar);
         }
     }
@@ -347,7 +347,7 @@ public class ProjectGoalController extends BaseController {
             }
             sendJsonArray(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get history for Action Item.", ex);
+            Exception ee = WeaverException.newWrap("Unable to get history for Action Item.", ex);
             streamException(ee, ar);
         }
     }
@@ -405,7 +405,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = dr.getJSON4Decision(ngw, ar);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update Decision ("+did+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to update Decision ("+did+")", ex);
             streamException(ee, ar);
         }
     }
@@ -432,7 +432,7 @@ public class ProjectGoalController extends BaseController {
             repo.put("taskAreas", shareList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of task areas ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -466,7 +466,7 @@ public class ProjectGoalController extends BaseController {
             repo.put("taskAreas", shareList);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get change the order of task areas ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get change the order of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -507,7 +507,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = ta.getMinJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get the list of task areas ", ex);
+            Exception ee = WeaverException.newWrap("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -597,7 +597,7 @@ public class ProjectGoalController extends BaseController {
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to move the action item", ex);
+            Exception ee = WeaverException.newWrap("Unable to move the action item", ex);
             streamException(ee, ar);
         }
     }

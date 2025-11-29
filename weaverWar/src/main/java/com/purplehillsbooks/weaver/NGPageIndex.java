@@ -130,7 +130,6 @@ public class NGPageIndex {
 
     private long lockedBy = 0;
     private long lockedTime = 0;
-    //private Exception lockedByAuditException = new Exception("Audit Lock Trail");
 
     private ArrayBlockingQueue<String> lockBlq;
 

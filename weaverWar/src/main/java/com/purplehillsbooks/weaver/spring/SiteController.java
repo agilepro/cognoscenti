@@ -100,7 +100,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, newSiteRequest.getJSON());
         } catch(Exception ex){
-            Exception ee = new Exception("Unable to a request a site", ex);
+            Exception ee = WeaverException.newWrap("Unable to a request a site", ex);
             streamException(ee, ar);
         }
     }
@@ -138,7 +138,7 @@ public class SiteController extends BaseController {
             JSONObject jo = site.getConfigJSON();
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to take ownership of the site.", ex);
+            Exception ee = WeaverException.newWrap("Unable to take ownership of the site.", ex);
             streamException(ee, ar);
         }
     }
@@ -190,7 +190,7 @@ public class SiteController extends BaseController {
             jo.put("status", "success");
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to garbage collect the site "+siteKey, ex);
+            Exception ee = WeaverException.newWrap("Unable to garbage collect the site "+siteKey, ex);
             streamException(ee, ar);
         }
     }
@@ -290,7 +290,7 @@ public class SiteController extends BaseController {
             {
                 NGBook site = ar.getCogInstance().getSiteById(siteId);
                 ar.setPageAccessLevels(site);
-                ar.assertAdmin("Must be owner of a site to replace users.");
+                ar.assertAdmin("replace users in site '"+site.getFullName()+"'.");
                 listOfSpaces = ar.getCogInstance().getNonDelWorkspacesInSite(siteId);
                 NGPageIndex.clearLocksHeldByThisThread();
             }
@@ -319,7 +319,7 @@ public class SiteController extends BaseController {
             jo.put("updated", count);
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to replace users in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -357,7 +357,7 @@ public class SiteController extends BaseController {
         try{
             NGBook site = ar.getCogInstance().getSiteById(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertAdmin("Must be owner of a site to replace users.");
+            ar.assertAdmin("assure a user profile in site '"+site.getFullName()+"'.");
 
             JSONObject incoming = getPostedObject(ar);
             String userID = incoming.getString("uid");
@@ -402,7 +402,7 @@ public class SiteController extends BaseController {
             sendJson(ar, repo);
 
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to assureUserProfile in site ("+siteId+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to assureUserProfile in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -416,20 +416,20 @@ public class SiteController extends BaseController {
         try{
             NGBook site = ar.getCogInstance().getSiteById(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertAdmin("Must be owner of a site to replace users.");
+            ar.assertAdmin("update user profile in site '"+site.getFullName()+"'.");
 
             JSONObject incoming = getPostedObject(ar);
             String userId = incoming.getString("uid");
 
             UserManager um = UserManager.getStaticUserManager();
-            UserProfile user = um.findUserByAnyIdOrFail(userId);
+            UserProfile user = UserManager.findUserByAnyIdOrFail(userId);
 
             user.updateFromJSON(incoming);
             um.saveUserProfiles();
 
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to updateUserProfile in site ("+siteId+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to updateUserProfile in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -445,7 +445,7 @@ public class SiteController extends BaseController {
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteById(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertAdmin("Must be owner of a site to replace users.");
+            ar.assertAdmin("manage user roles in site '"+site.getFullName()+"'.");
 
             JSONObject incoming = getPostedObject(ar);
             String userId = incoming.getString("uid");
@@ -499,7 +499,7 @@ public class SiteController extends BaseController {
             }
             sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to manageUserRoles in site ("+siteId+")", ex);
+            Exception ee = WeaverException.newWrap("Unable to manageUserRoles in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }
@@ -526,7 +526,7 @@ public class SiteController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update Email Generator "+id, ex);
+            Exception ee = WeaverException.newWrap("Unable to update Email Generator "+id, ex);
             streamException(ee, ar);
         }
     }
@@ -555,7 +555,7 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to generate people information.", ex);
+            Exception ee = WeaverException.newWrap("Unable to generate people information.", ex);
             streamException(ee, ar);
         }
     }
@@ -646,7 +646,7 @@ public class SiteController extends BaseController {
             ar = AuthRequest.getOrCreate(request, response);
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertAdmin("Must be admin to garbage collect items");
+            ar.assertAdmin("garbage collect items.");
 
             JSONObject result = site.actuallyGarbageCollect();
             site.recalculateStats(ar.getCogInstance());
@@ -671,7 +671,7 @@ public class SiteController extends BaseController {
             ar.resp.out.flush();
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to put the chunk template.", ex);
+            Exception ee = WeaverException.newWrap("Unable to put the chunk template.", ex);
             streamException(ee, ar);
         }
     }
@@ -697,7 +697,7 @@ public class SiteController extends BaseController {
             }
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to put the chunk template.", ex);
+            Exception ee = WeaverException.newWrap("Unable to put the chunk template.", ex);
             streamException(ee, ar);
         }
     }    
@@ -716,7 +716,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -741,7 +741,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, ledger.generateJson());
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to calculate site charges", ex);
+            Exception ee = WeaverException.newWrap("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }
@@ -777,7 +777,7 @@ public class SiteController extends BaseController {
             JSONObject jo = ledger.generateJson();
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create payment record for site "+siteId, ex);
+            Exception ee = WeaverException.newWrap("Unable to create payment record for site "+siteId, ex);
             streamException(ee, ar);
         }
     }
@@ -804,7 +804,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, rslt);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to calculate site charges", ex);
+            Exception ee = WeaverException.newWrap("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }

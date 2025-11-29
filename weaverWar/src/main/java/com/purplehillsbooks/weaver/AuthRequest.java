@@ -633,7 +633,7 @@ public class AuthRequest {
 
         // even in redirect case, we need to throw exception to stop the processing
         // of the calling code.
-        throw WeaverException.newBasic("User is not logged in. %s", opDescription);
+        throw WeaverException.newBasic("User is not logged in. Can't %s", opDescription);
     }
 
     public void assertAdmin(String opDescription) throws Exception {
@@ -646,7 +646,7 @@ public class AuthRequest {
             return;
         }
         if (!ngp.primaryOrSecondaryPermission(getUserProfile())) {
-            throw WeaverException.newBasic("Admin privilege is required for %s", opDescription);
+            throw WeaverException.newBasic("Admin privilege is required to %s", opDescription);
         }
     }
 

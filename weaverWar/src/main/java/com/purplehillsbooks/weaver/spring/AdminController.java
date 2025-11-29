@@ -45,7 +45,7 @@ public class AdminController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAdmin("Must be an admin to change workspace info.");
+            ar.assertAdmin("update workspace info for "+ngw.getFullName());
             //ar.assertNotFrozen(ngp);
             JSONObject newConfig = getPostedObject(ar);
 
@@ -59,7 +59,7 @@ public class AdminController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update project information.", ex);
+            Exception ee = WeaverException.newWrap("Unable to update project information.", ex);
             streamException(ee, ar);
         }
     }
@@ -72,7 +72,7 @@ public class AdminController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAdmin("Must be an admin to change workspace info.");
+            ar.assertAdmin("change workspace name.");
             
             //NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
             //      of a frozen workspace needs to be changed to differentiate from newer workspaces.
@@ -90,7 +90,7 @@ public class AdminController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to save new name.", ex);
+            Exception ee = WeaverException.newWrap("Unable change workspace name for '%s'", ex, pageId);
             streamException(ee, ar);
         }
     }
@@ -106,7 +106,7 @@ public class AdminController extends BaseController {
             throw WeaverException.newBasic("deleteWorkspaceName is no longer implemented, no longer needed");
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to save new name.", ex);
+            Exception ee = WeaverException.newWrap("Unable to save new name.", ex);
             streamException(ee, ar);
         }
     }
@@ -119,7 +119,7 @@ public class AdminController extends BaseController {
         try{
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
-            ar.assertAdmin("Must be an admin to change site info.");
+            ar.assertAdmin("update site info.");
             //even when frozen, need to be able to unfreeze
             //ar.assertNotFrozen(site);
             JSONObject newConfig = getPostedObject(ar);
@@ -137,7 +137,7 @@ public class AdminController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update site information.", ex);
+            Exception ee = WeaverException.newWrap("Unable to update site information.", ex);
             streamException(ee, ar);
         }
     }

@@ -184,7 +184,7 @@ public class EmailListener extends TimerTask{
                  return;
              }
              lastException = e;
-             Exception failure = new Exception("Failure in the EmailListener TimerTask run method.", e);
+             Exception failure = WeaverException.newWrap("Failure in the EmailListener TimerTask run method.", e);
              ar.logException("EMAIL LISTENER PROBLEM: ", failure);
              threadLastCheckException = failure;
              try {

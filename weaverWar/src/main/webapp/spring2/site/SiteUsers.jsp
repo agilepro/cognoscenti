@@ -243,8 +243,7 @@ app.filter('encode', function() {
         <div class="col-4  mt-3">{{value.info.uid}}</div>
         <div class="col-1  mt-3">
             <span ng-show="value.readOnly">Basic User</span>
-            <span class="ps-0 ms-0 fs-.5" ng-show="!value.readOnly && value.lastAccess < 100000" >No Login</span>
-            <span class="ps-0 ms-0" ng-show="!value.readOnly && value.lastAccess > 100000"><b>Full User</b></span>
+            <span class="ps-0 ms-0" ng-show="!value.readOnly"><b>Full User</b></span>
         </div>
         <div class="col-1  mt-3"><span>{{value.info.lastLogin|cdate}}</span></div>
         <div class="col-1  mt-3">{{value.count}}</div>

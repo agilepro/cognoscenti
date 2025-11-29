@@ -106,7 +106,7 @@ public class TopicController extends BaseController {
 
             sendJsonArray(ar, topicList);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to fetch the list of topics", ex);
+            Exception ee = WeaverException.newWrap("Unable to fetch the list of topics", ex);
             streamException(ee, ar);
         }
     }
@@ -134,7 +134,7 @@ public class TopicController extends BaseController {
             repo.put("topics", allTopics);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to retrieve discussion topic list", ex);
+            Exception ee = WeaverException.newWrap("Unable to retrieve discussion topic list", ex);
             streamException(ee, ar);
         }
     }
@@ -181,7 +181,7 @@ public class TopicController extends BaseController {
             sendJsonArray(ar, noteArray);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to get history for note.", ex);
+            Exception ee = WeaverException.newWrap("Unable to get history for note.", ex);
             streamException(ee, ar);
         }
     }
@@ -211,7 +211,7 @@ public class TopicController extends BaseController {
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to merge-update topic ("+nid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to merge-update topic ("+nid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -253,7 +253,7 @@ public class TopicController extends BaseController {
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to update topic ("+nid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to update topic ("+nid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -299,7 +299,7 @@ public class TopicController extends BaseController {
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to HTML update topic ("+nid+") contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to HTML update topic ("+nid+") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -369,7 +369,7 @@ public class TopicController extends BaseController {
             ngw.save(); //just save flag, don't mark page as changed
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to subscribe to topic "+nid+" contents", ex);
             streamException(ee, ar);
         }
     }
@@ -409,7 +409,7 @@ public class TopicController extends BaseController {
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
+            Exception ee = WeaverException.newWrap("Unable to subscribe to topic "+nid+" contents", ex);
             streamException(ee, ar);
         }
     }

@@ -31,11 +31,16 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     setUpLearningMethods($scope, $modal, $http);
-    window.setMainPageTitle("Invite Members");
+    window.setMainPageTitle("Add User");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.workspaceName = "<%ar.writeJS(ngw.getFullName());%>";
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     $scope.isFrozen = <%= isFrozen %>;
     
+    $scope.registryErrors = [];
+    $scope.siteErrors = [];
+    $scope.workspaceErrors = [];
+
     $scope.targetRole = "Members";
     $scope.invitations = [];
     $scope.newEmail = "";
@@ -78,6 +83,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         })
         .error( function(data, status, headers, config) {
             console.log("FAIL TO FIND:", data);
+            $scope.registryErrors = errorToList(data);
             // failure to find for any reason means to create one
             $scope.wizardStep = 2;
         });
@@ -107,7 +113,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         })
         .error( function(data, status, headers, config) {
-            $scope.reportError(data);
+            $scope.registryErrors = errorToList(data);
+            $scope.wizardStep = 1;
         });
     }
     
@@ -124,10 +131,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             AllPeople.clearCache($scope.siteInfo.key);
             $scope.sitePerson = data;
             console.log("FIND RETURNED: ", data);
-            $scope.wizardStep = 5;
+            $scope.wizardStep = 6;
         })
         .error( function(data, status, headers, config) {
             console.log("FAIL TO FIND:", data);
+            $scope.siteErrors = errorToList(data);
             // failure to find for any reason means to create one
             $scope.wizardStep = 4;
         });
@@ -164,12 +172,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 }
             }
             $scope.shouldBePaid = data.isPaid;
-            $scope.wizardStep = 5;
+            $scope.wizardStep = 6;
         })
         .error( function(data, status, headers, config) {
             console.log("FAIL TO ADD:", data);
+            $scope.siteErrors = errorToList(data);
             // failure to find for any reason means to create one
-            $scope.wizardStep = 4;
+            $scope.wizardStep = 5;
         });
     }
     $scope.changeToPaid = function(paidStatus) {
@@ -193,13 +202,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.sitePerson = data;
             console.log("addToRole RETURNED: ", data);
             $scope.shouldBePaid = data.isPaid;
-            $scope.wizardStep = 7;
+            $scope.wizardStep = 8;
         })
         .error( function(data, status, headers, config) {
             console.log("FAIL TO addToRole:", data);
+            $scope.workspaceErrors = errorToList(data);
             // failure to find for any reason means to create one
-            $scope.wizardStep = 6;
+            $scope.wizardStep = 7;
         });
+    }
+    
+    function errorToList(data) {
+        ret = [];
+        data.error.details.forEach(function(item) {
+            ret.push(item.message);
+        });
+        return ret;
     }
 });
 
@@ -246,7 +264,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="d-flex col-12 m-3">
             <div class="contentColumn">
                 
-                
+    <h2>Weaver User Registration</h2>
     <div class="well col-12 m-2" ng-show="wizardStep < 1">
         <span class="h6">
             <i>Add people to the workspace, start by entering their email address.</i>
@@ -261,12 +279,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </div>
 
         
-        <div ng-show="wizardStep < 1">
+        <div>
             <button ng-click="doSearch()" class="btn btn-primary btn-wide btn-raised">Search Weaver</button>
         </div>
     </div>
                 
                 
+    <div class="well col-12 m-2" ng-show="wizardStep==1">
+
+        <div class="row d-flex my-3">
+            <span class="col-2">
+                <label class="h6">Email Address</label>
+            </span>
+            <span class="col-10">{{newEmail}}
+            </span>
+        </div>
+        <span class="h6">
+            <i>Error Creating the User in Weaver Registration</i></span>
+        <div ng-repeat="err in registryErrors"> {{err}} </div>
+        
+        <div>
+            <button ng-click="wizardStep=0" class="btn btn-primary btn-wide btn-raised">Try Again</button>
+        </div>
+    </div>
+    
     <div class="well col-12 m-2" ng-show="wizardStep==2">
 
         <div class="row d-flex my-3">
@@ -307,7 +343,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </span>
         </div>
     </div>    
-    
+    <h2>Site: {{siteInfo.names[0]}}</h2>  
     <div class="well col-12 m-2" ng-show="wizardStep==3">
         <span class="h6"><i>Person exists in Weaver, check if they are in this site?</i></span>
 
@@ -330,7 +366,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <button ng-click="addToSite()" class="btn btn-primary btn-wide btn-raised">Add To Site</button>
         </div>
     </div>
-    <div class="well col-12 m-2" ng-show="wizardStep>4">
+    <div class="well col-12 m-2" ng-show="wizardStep==5">
+        <span class="h6"><i>Something went wrong with that.</i></span>
+
+        <div ng-repeat="err in siteErrors"> {{err}} </div>
+        <div>
+            <button ng-click="wizardStep=4" class="btn btn-primary btn-wide btn-raised">Try Again</button>
+        </div>
+    </div>
+    <div class="well col-12 m-2" ng-show="wizardStep>5">
         <span class="h6" ng-hide="sitePerson.isPaid"><i>User exists in site as a Basic user</i></span>
         <span class="h6" ng-show="sitePerson.isPaid"><i>User exists in site as a Full user</i></span>
         <div ng-hide="sitePerson.isPaid">
@@ -342,8 +386,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
     
     
-    <div class="well col-12 m-2" ng-show="wizardStep==5">
-        <span class="h6"><i>Person exists in Weaver and Site, what role in workspace?</i></span>
+    <h2>Workspace: {{workspaceName}}</h2>  
+    <div class="well col-12 m-2" ng-show="wizardStep==6">
+        <span class="h6"><i>What role in workspace?</i></span>
 
         <div class="row d-flex my-3">
             <span class="col-2">
@@ -355,9 +400,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <button ng-click="addToRole(newRole)" class="btn btn-primary btn-wide btn-raised">Place into Role</button>
         </div>
     </div>
+    <div class="well col-12 m-2" ng-show="wizardStep==7">
+        <span class="h6"><i>Something went wrong with that.</i></span>
+
+        <div ng-repeat="err in workspaceErrors"> {{err}} </div>
+        <div>
+            <button ng-click="wizardStep=6" class="btn btn-primary btn-wide btn-raised">Try Again</button>
+        </div>
+    </div>
     
     
-    <div class="well col-12 m-2" ng-show="wizardStep>6">
+    <div class="well col-12 m-2" ng-show="wizardStep>7">
         <span class="h6"><i>Person is now playing the role {{newRole}}</i></span>
 
         <div>

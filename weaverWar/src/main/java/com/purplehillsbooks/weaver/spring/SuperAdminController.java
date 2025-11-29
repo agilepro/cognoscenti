@@ -202,7 +202,7 @@ public class SuperAdminController extends BaseController {
             requestInfo.put("status", "success");
             sendJson(ar, requestInfo);
         } catch (Exception ex) {
-            Exception ee = new Exception("Unable to update site request (" + requestId + ")", ex);
+            Exception ee = WeaverException.newWrap("Unable to update site request (" + requestId + ")", ex);
             streamException(ee, ar);
         }
     }
@@ -241,7 +241,7 @@ public class SuperAdminController extends BaseController {
             }
             sendJson(ar, result);
         } catch (Exception ex) {
-            Exception ee = new Exception("Unable to create or update comment", ex);
+            Exception ee = WeaverException.newWrap("Unable to create or update comment", ex);
             streamException(ee, ar);
         }
     }
@@ -292,7 +292,7 @@ public class SuperAdminController extends BaseController {
             JSONObject repo = EmailSender.querySuperAdminEmail(posted);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = new Exception("Unable to get email", ex);
+            Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -307,7 +307,7 @@ public class SuperAdminController extends BaseController {
             UserProfile uProf = UserManager.findUserByAnyIdOrFail(email);
             sendJson(ar, uProf.getJSON());
         } catch (Exception ex) {
-            Exception ee = new Exception("Unable to lookup or find that user", ex);
+            Exception ee = WeaverException.newWrap("Unable to lookup or find that user", ex);
             streamException(ee, ar);
         }
     }
