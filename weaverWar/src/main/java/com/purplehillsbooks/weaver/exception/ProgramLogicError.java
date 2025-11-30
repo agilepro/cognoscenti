@@ -110,6 +110,10 @@ public class ProgramLogicError extends RuntimeException {
         msg = message;
     }
 
+    public static ProgramLogicError newBasic(String message) {
+        return ProgramLogicError.newBasic(message);
+    }
+
     public ProgramLogicError(String message, Exception e) {
         super("Program Logic Error: " + message, e);
         msg = "Program Logic Error: " + message;

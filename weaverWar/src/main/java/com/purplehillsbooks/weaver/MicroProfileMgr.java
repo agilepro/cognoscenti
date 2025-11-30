@@ -192,7 +192,7 @@ public class MicroProfileMgr {
     public static MicroProfileRecord findMicroProfileById(String id)
     {
         if (id == null) {
-            throw new ProgramLogicError("findMicroProfileById was passed a null id parameter");
+            throw ProgramLogicError.newBasic("findMicroProfileById was passed a null id parameter");
         }
         if (microProfiles != null){
             String lowerCase = id.toLowerCase();

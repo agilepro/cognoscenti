@@ -1688,7 +1688,7 @@ public class AuthRequest {
         StringBuilder stringBuff = new StringBuilder();
         char aChar;
         if (str == null) {
-            throw new ProgramLogicError("Can not remove whitespaces from a null string");
+            throw ProgramLogicError.newBasic("Can not remove whitespaces from a null string");
         }
         for (int i = 0; i < str.length(); i++) {
             aChar = str.charAt(i);

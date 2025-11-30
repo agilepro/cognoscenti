@@ -98,10 +98,10 @@ public class AddressListEntry implements UserRef {
      */
     private AddressListEntry(String addr) {
         if (addr == null) {
-            throw new ProgramLogicError("AddressListEntry: attempt to construct an instance with a null value");
+            throw ProgramLogicError.newBasic("AddressListEntry: attempt to construct an instance with a null value");
         }
         if (addr.indexOf(LAQUO) >= 0 || addr.indexOf('<') >= 0) {
-            throw new ProgramLogicError(
+            throw ProgramLogicError.newBasic(
                     "AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "
                             + addr);
         }
@@ -111,10 +111,10 @@ public class AddressListEntry implements UserRef {
 
     public static AddressListEntry findByAnyId(String addr) {
         if (addr == null) {
-            throw new ProgramLogicError("AddressListEntry: attempt to construct an instance with a null value");
+            throw ProgramLogicError.newBasic("AddressListEntry: attempt to construct an instance with a null value");
         }
         if (addr.indexOf(LAQUO) >= 0 || addr.indexOf('<') >= 0) {
-            throw new ProgramLogicError(
+            throw ProgramLogicError.newBasic(
                     "AddressListEntry: looks like a combined address value and should be using parseCombinedAddress method: "
                             + addr);
         }
