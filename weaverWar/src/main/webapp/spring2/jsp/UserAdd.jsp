@@ -219,6 +219,55 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return ret;
     }
+    
+    function updateInvite(invite) {
+        var email = invite.email;
+        var postURL = "invitationUpdate.json";
+        var postdata = angular.toJson(invite);
+        console.log("INVITE SENT: ", invite);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            console.log("INVITE RETURNED: ", data);
+            var newList = [];
+            $scope.invitations.forEach( function(item) {
+                if (email != item.email) {
+                    newList.push(item);
+                }
+            });
+            newList.push(data);
+            newList.sort( function(a,b) {return b.timestamp - a.timestamp} );
+            $scope.invitations = newList;
+            $scope.wizardStep = 9;
+        } )
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+            $scope.workspaceErrors = errorToList(data);
+            $scope.wizardStep = 10;
+        });
+    }
+    $scope.sendInvite = function() {
+        if (!$scope.foundPerson.name || $scope.foundPerson.name==0) {
+            alert("Enter a name before inviting this person");
+            return;
+        }
+        if (!$scope.newEmail || $scope.newEmail.length==0) {
+            alert("Enter a email address before inviting this person");
+            return;
+        }
+        var obj = {};
+        obj.name = $scope.foundPerson.name;
+        obj.email = $scope.newEmail;
+        obj.role = $scope.newRole;
+        obj.msg = $scope.message;
+        obj.ss = "Invitation to workspace '<%ar.writeHtml(ngw.getFullName());%>'";
+        obj.status = "New";
+        obj.timestamp = new Date().getTime();
+        updateInvite(obj);
+    }
+    
+    $scope.clearandStartOver = function() {
+        $scope.wizardStep = 0;
+    }
 });
 
 
@@ -413,47 +462,38 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div class="well col-12 m-2" ng-show="wizardStep>7">
         <span class="h6"><i>Person is now playing the role {{newRole}}</i></span>
 
-        <div>
-            <button ng-click="alert('not implemented yet')" class="btn btn-primary btn-wide btn-raised">Send Invite (not implemented yet)</button>
-        </div>
     </div>
     
+    <h2>Invitation</h2>  
+    <div class="well col-12 m-2" ng-show="wizardStep==8">
+        <span class="h6"><i>Would you like to send an invitation email?</i></span>
+
+        <div>
+            <textarea ng-model="message" class="col-8"></textarea>
+        </div>
+        <div>
+            <button ng-click="sendInvite()" class="btn btn-primary btn-wide btn-raised">Send Invite</button>
+        </div>
+    </div>    
+    <div class="well col-12 m-2" ng-show="wizardStep==9">
+        <span class="h6"><i>Invitation Sent</i></span>
+
+        <div ng-bind-html="message|wiki"></div>
+    </div>     
+    <div class="well col-12 m-2" ng-show="wizardStep==10">
+        <span class="h6"><i>Something went wrong with that.</i></span>
+
+        <div ng-repeat="err in workspaceErrors"> {{err}} </div>
+        <div>
+            <button ng-click="wizardStep=8" class="btn btn-primary btn-wide btn-raised">Try Again</button>
+        </div>
+    </div>  
     
-    
-    
-                <div class="well col-12 m-2" ng-hide="true">
-                    <div ng-show="addressing">
-                        <div class="row d-flex my-3">
-                            <span class="col-2">
-                            <label class="h6">Full Name</label></span>
-                            <span class="col-10"><input class="form-control" ng-model="newName"/>
-                            </span>
-                        </div>
-                        <div class="row d-flex my-3">
-                            <span class="col-2">
-                                <label class="h6">Role</label></span>
-                            <span class="col-10">
-                                <select class="form-control" ng-model="newRole" ng-options="r for r in allRoles"></select></span>
-                        </div>
-                        <div class="row d-flex my-3">
-                            <span class="col-2">
-                                <label class="h6">Message</label></span>
-                            <span class="col-10">
-                                <textarea class="form-control" style="height:200px" ng-model="message"></textarea></span>
-                    </div>
-                    <div class="d-flex my-3">
-                        <button ng-click="addressing=false" class="btn btn-danger btn-default btn-raised">Close</button>
-                        <button ng-click="inviteOne()" class="btn btn-primary btn-raised btn-default ms-auto">Send Invitation (not implemented yet)</button>
-                        
-                    </div>
-                </div>
-                <div ng-hide="addressing">
-                    <button ng-click="addressing=true" class="btn btn-primary btn-wide btn-raised">Open to Invite Another</button>
-                </div>
-            </div>  
-            <div class="well" style="max-width:500px;margin-bottom:50px" ng-show="isFrozen">
-                You can't invite anyone because this workspace is frozen or deleted.
-            </div>  
+        <div>
+            <button ng-click="clearandStartOver()" class="btn btn-default btn-wide btn-raised">Clear and Start Over</button>
+        </div>
+        </div>
+    </div>  
 <% } %> 
   
 
