@@ -7,33 +7,33 @@
   <div class="card-body">
         <div class="container-fluid">
           <div class="row d-flex">
-            <span ng-click="editMeetingPart='name'" class="col-2 labelColumn">Name:</span>
+            <span ng-click="editMeetingTitle()" class="col-2 labelColumn">Name:</span>
             <span class="col-8" ng-hide="'name'==editMeetingPart" ng-click="editMeetingPart='name'">
               <b>{{meeting.name}}</b>
             </span>
             <span class="col-8" ng-show="'name'==editMeetingPart">
                 <div class="well form-horizontal form-group">
-                    <input ng-model="meeting.name"  class="form-control">
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                    <input ng-model="editDescriptionTitle"  class="form-control">
+                    <button class="btn btn-primary btn-raised" ng-click="saveMeetingTitle()">Save</button>
                 </div>
             </span>
           </div>
           <div class="row">
             <div ng-hide="editMeetingDesc"></div>
-            <span ng-click="editMeetingDesc=true" class="labelColumn col-2">Description:</span>
-            <span ng-click="editMeetingDesc=true" class="col-8">
-              <div ng-bind-html="meeting.descriptionHtml"></div><span class="mt-0"><i class="pull-right">(include purpose, goals, location, conference link)</i></span>
+            <span ng-click="editDescription()" class="labelColumn col-2">Description:</span>
+            <span ng-click="editDescription()" class="col-8" ng-hide="editMeetingDesc" >
+              <div ng-bind-html="meeting.descriptionHtml"></div><span class="mt-0"><i class="pull-right">(include purpose, goals, and location)</i></span>
               <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
                   Double-click to edit description
               </div>
             </span>
             <div ng-show="editMeetingDesc" style="width:100%">
               <div class="well leafContent">
-                  <div ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
+                  <div ui-tinymce="tinymceOptions" ng-model="editDescriptionBuffer"
                        class="leafContent" style="min-height:200px;" ></div>
                        <div class="d-flex">
                   <button ng-click="revertAllEdits()" class="btn btn-danger btn-raised">Cancel</button>
-                  <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised ms-auto">Save</button></div>
+                  <button ng-click="saveDescription()" class="btn btn-primary btn-raised ms-auto">Save</button></div>
                   
               </div>
           </div>

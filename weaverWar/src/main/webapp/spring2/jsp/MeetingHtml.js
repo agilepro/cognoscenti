@@ -592,6 +592,29 @@ app.controller('myCtrl', function ($scope, $http, $modal, $interval, AllPeople, 
         $scope.putGetMeetingInfo(null);
         $scope.stopEditing();
     };
+    $scope.editDescription = function() {
+        console.log("editDescription");
+        $scope.editDescriptionBuffer = $scope.meeting.descriptionHtml;
+        $scope.editMeetingDesc=true;
+    };
+    $scope.saveDescription = function() {
+        console.log("saveDescription");
+        $scope.meeting.descriptionHtml = $scope.editDescriptionBuffer
+        $scope.savePendingEdits();
+        $scope.editMeetingDesc=false;
+    };
+    $scope.editMeetingTitle = function() {
+        $scope.editDescriptionTitle = $scope.meeting.name;
+        $scope.editMeetingPart='name';
+        console.log("editMeetingTitle");
+    };
+    $scope.saveMeetingTitle = function() {
+        console.log("saveMeetingTitle");
+        $scope.meeting.name = $scope.editDescriptionTitle;
+        $scope.savePendingEdits();
+        $scope.editMeetingPart='';
+    };
+        
     $scope.putGetMeetingInfo = function (readyToSave) {
         var promise;
         if (readyToSave) {
