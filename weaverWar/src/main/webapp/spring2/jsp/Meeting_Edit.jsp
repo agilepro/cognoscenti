@@ -101,7 +101,7 @@
       <div class="card my-2" ng-dblclick="openNotesDialog(item)">
         <div class="d-flex card-header" title="Current Meeting Minutes">
           <span ng-hide="item.isSpacer">
-            <h4 class="h6" >Meeting Notes</h4>
+            <h4 class="h6" >Meeting Notes &nbsp; <span ng-click="openNotesDialog(item)" class="fa fa-edit"></span></h4>
           </span>
           
         </div><!--END Current Meeting Minutes card header-->
@@ -124,16 +124,15 @@
         <div class="card my-2">
           <div class="d-flex card-header" title="Minutes from last meeting">
             <span ng-hide="item.isSpacer">
-              <h4 class="h6" ng-click="copyNotes(item)">Last Meeting Minutes</h4>
+              <h4 class="h6">Last Meeting Minutes 
+              <button ng-click="copyNotes(item)">Copy to Current</button></h4>
             </span>
           </div><!--END Previous Meeting Minutes card header-->
           <div class="card-body">
             <div ng-hide="item.isSpacer">
               <div class="modal-body" ng-style="bodyStyle()">
                 <div class="form-group">  
-                  <span ng-click="copyNotes(item)">
                     <div ng-bind-html="item.lastMeetingMinutes | wiki"></div>
-                  </span>
                 </div>
               </div>
             </div>
