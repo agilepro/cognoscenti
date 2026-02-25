@@ -154,6 +154,9 @@ public class MailInst extends JSONWrapper {
      * The user key will be looked up.
      */
     public void setAddressee(String val) throws Exception {
+        if (val.contains(" ")) {
+            throw WeaverException.newBasic("MailInst.setAddressee requires a single email address without spaces");
+        }
         kernel.put("Addressee", val);
         UserProfile user = UserManager.lookupUserByAnyId(val);
         if (user!=null) {

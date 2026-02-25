@@ -272,7 +272,10 @@ embeddedData.canUpdate = <%=canUpdate%>;
                             &nbsp;<span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}. &nbsp;</span>
         <br/>
                             <button class="btn" ng-class="labelButtonClass('Items', item)"  >{{item.subject}}</button>
-                            <span style="ms-auto" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
+                            <div>
+                            <span class="h6 ms-5" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}}</span>
+                            <span class="h6 ms-5" ng-show="meeting.state>=2">{{item.duration - item.timerTotal| minutes}}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

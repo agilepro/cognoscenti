@@ -51,6 +51,9 @@ public class UserProfile implements UserRef
     private boolean isFacilitator = false;
 
     public UserProfile(String preferredEmail) throws Exception {
+        if (preferredEmail.contains(" ")) {
+            throw WeaverException.newBasic("UserProfile constructor requires a single email address without spaces");
+        }
         userKey = IdGenerator.generateKey();
         emailAddresses = new ArrayList<String>();
         emailAddresses.add(preferredEmail);
@@ -61,7 +64,7 @@ public class UserProfile implements UserRef
 
 
     public static boolean looksLikeEmail(String possibleEmail) {
-        return (possibleEmail.indexOf('@')>0 && possibleEmail.indexOf('/')<0);
+        return (possibleEmail.indexOf('@')>0 && possibleEmail.indexOf('/')<0 && possibleEmail.indexOf(' ')<0);
     }
     
 
