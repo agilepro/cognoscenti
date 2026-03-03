@@ -290,17 +290,24 @@ public class AttachmentRecord extends CommentContainer {
 
     public AddressListEntry getModifier() {
         String modifiedBy = checkAndReturnAttributeValue("modifiedBy");
-
-        //clean up old email addresses, and send latest if found
+        if (!UserManager.isValidEmailAddress(modifiedBy)) {
+            return null;
+        }
         return AddressListEntry.findOrCreate(modifiedBy);
     }
     public String getModifiedBy() {
         //clean up old email addresses, and send latest if found
         AddressListEntry user = getModifier();
+        if (user == null) {
+            return null;
+        }
         return user.getEmail();
     }
 
     public void setModifiedBy(String modifiedBy) {
+        if (modifiedBy != null && !UserManager.isValidEmailAddress(modifiedBy)) {
+            throw new IllegalArgumentException("Invalid email address for modifiedBy: " + modifiedBy);
+        }
         setAttribute("modifiedBy", modifiedBy);
     }
 

@@ -36,9 +36,6 @@ import com.purplehillsbooks.weaver.exception.WeaverException;
  * and optionally a UserProfile so that duplicate or alternate
  * email addresses can be identified easily.
  *
- * Address lists can also hold a reference to a role.
- * The method isRoleRef() returns true if this is the case.
- * Create a role ref version with newRoleRef.
  *
  * ALE provides a number of functions around parsing and handling
  * email addresses and openids. Whenever you get an email address
@@ -78,13 +75,10 @@ import com.purplehillsbooks.weaver.exception.WeaverException;
  *
  * writeLink() to write a well formatted link into a web page
  *
- * writeURLEncodedID() for composing web URLS
- *
  *
  */
 public class AddressListEntry implements UserRef {
     String rawAddress;
-    boolean isRole = false;
     UserProfile user;
     String namePart;
 
@@ -173,16 +167,6 @@ public class AddressListEntry implements UserRef {
         }
         user = knownUser;
         rawAddress = user.getUniversalId();
-    }
-
-    /**
-     * Pass the name of a role in, and get an AddressListEntry
-     * that represents a reference to a role in return.
-     */
-    public static AddressListEntry newRoleRef(String roleName) {
-        AddressListEntry retval = new AddressListEntry(roleName);
-        retval.setRoleRef(true);
-        return retval;
     }
 
     /**
@@ -296,14 +280,6 @@ public class AddressListEntry implements UserRef {
         return rawAddress;
     }
 
-    public void writeURLEncodedID(AuthRequest ar) throws Exception {
-        if (user != null) {
-            ar.write(user.getKey());
-        } else {
-            ar.writeURLData(rawAddress);
-        }
-    }
-
     /**
      * Write out a HTML link to fetch the informatin about this user
      * if possible.
@@ -342,35 +318,6 @@ public class AddressListEntry implements UserRef {
         } else {
             return "v/FindPerson.htm?uid=" + URLEncoder.encode(rawAddress, "UTF-8");
         }
-
-    }
-
-    public boolean isRoleRef() {
-        return isRole;
-    }
-
-    public void setRoleRef(boolean newVal) {
-        isRole = newVal;
-    }
-
-    public String getStorageRepresentation() {
-        String memberID = getUniversalId();
-        if (isRoleRef()) {
-            memberID = "%" + memberID;
-        }
-        return memberID;
-    }
-
-    public static AddressListEntry newEntryFromStorage(String roleName) {
-        String actualName = roleName;
-        boolean isRole = false;
-        if (roleName.startsWith("%")) {
-            actualName = roleName.substring(1);
-            isRole = true;
-        }
-        AddressListEntry retval = new AddressListEntry(actualName);
-        retval.setRoleRef(isRole);
-        return retval;
     }
 
     public UserProfile getUserProfile() {
@@ -494,23 +441,6 @@ public class AddressListEntry implements UserRef {
             eAddress = eAddress.replace('\"', ' ');
         }
         return eAddress;
-    }
-
-    /**
-     * Given a string that contains a comma delimited list of email addresses
-     * this will parse the addresses out, and write links for every address.
-     */
-    public static void writeParsedLinks(AuthRequest ar, String addressList)
-            throws Exception {
-        List<AddressListEntry> list = parseEmailList(addressList);
-        boolean needsComma = false;
-        for (AddressListEntry ale : list) {
-            if (needsComma) {
-                ar.write(", ");
-            }
-            ale.writeLink(ar);
-            needsComma = true;
-        }
     }
 
     /**
@@ -641,6 +571,13 @@ public class AddressListEntry implements UserRef {
             }
         }
         addressList.add(newMember);
+    }
+
+    public static void addAllIfNotPresent(List<AddressListEntry> addressList,
+            List<AddressListEntry> newMembers) throws Exception {
+        for (AddressListEntry one : newMembers) {
+            addIfNotPresent(addressList, one);
+        }
     }
 
 }

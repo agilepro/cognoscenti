@@ -32,8 +32,8 @@ import com.purplehillsbooks.weaver.mail.EmailSender;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
 
 /**
  * An site is a collection of pages. This allows a collection of pages to share
@@ -851,31 +851,41 @@ public class NGBook extends ContainerCommon {
      * in the cache.
      */
     public WorkspaceStats recalculateStats(Cognoscenti cog) throws Exception {
+        try {
+            System.out.println(String.format(
+                "SCANNING STATS: for site (%s) at %s", 
+                this.key, SectionUtil.currentTimestampString()));
+            //we should figure out how to do this at a time when all the
+            //projects are being scanned for some other purpose....
+            WorkspaceStats siteStats = new WorkspaceStats();
 
-        System.out.println(String.format(
-            "SCANNING STATS: for site (%s) at %s", 
-            this.key, SectionUtil.currentTimestampString()));
-        //we should figure out how to do this at a time when all the
-        //projects are being scanned for some other purpose....
-        WorkspaceStats siteStats = new WorkspaceStats();
-
-        for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(this.getKey())) {
-            NGWorkspace ngw = ngpi.getWorkspace();
-            siteStats.gatherFromWorkspace(ngw);
-            siteStats.numWorkspaces++;
+            for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(this.getKey())) {
+                try {
+                    NGWorkspace ngw = ngpi.getWorkspace();
+                    siteStats.gatherFromWorkspace(ngw);
+                    siteStats.numWorkspaces++;
+                }
+                catch (Exception e) {
+                    JSONException.traceException(System.out, e, "Ignoring stats for this in Site "+this.getKey());
+                }
+            }
+            
+            // Update the SiteUsers with this information, removing all the entries
+            // that do not match to a user with a profile
+            SiteUsers siteUsers = getUserMap();
+            siteUsers.keepTheseUsers(siteStats.listAllUserProfiles());
+            File cogFolder = new File(siteFolder, ".cog");
+            siteUsers.writeUsers(cogFolder);
+            
+            // Now with updated site users, count the users active and inactive
+            siteStats.countUsers(siteUsers);
+            saveStatsFile(siteStats);
+            return siteStats;
         }
-        
-        // Update the SiteUsers with this information, removing all the entries
-        // that do not match to a user with a profile
-        SiteUsers siteUsers = getUserMap();
-        siteUsers.keepTheseUsers(siteStats.listAllUserProfiles());
-        File cogFolder = new File(siteFolder, ".cog");
-        siteUsers.writeUsers(cogFolder);
-        
-        // Now with updated site users, count the users active and inactive
-        siteStats.countUsers(siteUsers);
-        saveStatsFile(siteStats);
-        return siteStats;
+        catch (Exception e) {
+            throw WeaverException.newWrap("Unable to recalculate stats for site: %s", 
+            e, this.getKey());
+        }
     }
     
     

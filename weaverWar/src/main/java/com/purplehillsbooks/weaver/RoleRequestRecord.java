@@ -76,6 +76,9 @@ public class RoleRequestRecord extends DOMFace {
     }
 
     public void setModifiedBy(String modifiedBy) {
+        if (modifiedBy != null && !UserManager.isValidEmailAddress(modifiedBy)) {
+            throw new IllegalArgumentException("Invalid email address for modifiedBy: " + modifiedBy);
+        }
         setAttribute("modifiedBy", modifiedBy);
     }
 

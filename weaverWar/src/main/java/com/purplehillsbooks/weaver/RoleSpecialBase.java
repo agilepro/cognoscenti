@@ -61,9 +61,7 @@ public abstract class RoleSpecialBase implements NGRole {
 
     public List<AddressListEntry> getExpandedPlayers(NGContainer ngp)
             throws Exception {
-        List<AddressListEntry> result = new ArrayList<AddressListEntry>();
-        CustomRole.expandRoles(result, ngp, getDirectPlayers(), 4);
-        return result;
+        return getDirectPlayers();
     }
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {

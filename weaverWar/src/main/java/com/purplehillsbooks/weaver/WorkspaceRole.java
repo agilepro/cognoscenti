@@ -106,11 +106,8 @@ public class WorkspaceRole extends CustomRole {
 
 
 
-    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception
-    {
-        List<AddressListEntry> result = new ArrayList<AddressListEntry>();
-        expandRoles(result, ngp, getDirectPlayers(), 4);
-        return result;
+    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
+        return getDirectPlayers();
     }
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
@@ -132,7 +129,7 @@ public class WorkspaceRole extends CustomRole {
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
-            AddressListEntry ale = AddressListEntry.newEntryFromStorage(memberID);
+            AddressListEntry ale = AddressListEntry.findOrCreate(memberID);
             if (ale.isWellFormed()) {
                 //don't add the reference if it is not a suitable user
                 list.add(ale);
@@ -216,52 +213,6 @@ public class WorkspaceRole extends CustomRole {
             }
         }
         return null;
-    }
-
-    /**
-    * recursively walk through users and roles, expanding roles and adding all the
-    * the user so that you have a single, flat list of users in the result list.
-    * loopLimiter prevents endless loops from badly formed role data.
-    */
-    static void expandRoles(List<AddressListEntry> result, NGContainer ngp,
-        List<AddressListEntry> list, int loopLimiter)
-        throws Exception
-    {
-        if (--loopLimiter<0)
-        {
-            //stop recuring after the limit has been reached, silently ignore the problem
-            return;
-        }
-        for (AddressListEntry ale : list)
-        {
-            if (ale.isRoleRef())
-            {
-                String roleName = ale.getInitialId();
-                NGRole role = ngp.getRole(roleName);
-                //silently ignore invalid role references - no users in nonexistent role
-                if (role!=null)
-                {
-                    List<AddressListEntry> nextLevel = role.getDirectPlayers();
-                    expandRoles(result, ngp, nextLevel, loopLimiter);
-                }
-            }
-            else
-            {
-                //only add an entry if it is not already in the result list
-                boolean found = false;
-                for (AddressListEntry listEntry : result)
-                {
-                    if (listEntry.equals(ale))
-                    {
-                        found=true;
-                    }
-                }
-                if (!found)
-                {
-                    result.add(ale);
-                }
-            }
-        }
     }
 
 

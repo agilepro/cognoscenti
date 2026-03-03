@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver.spring;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;

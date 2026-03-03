@@ -86,10 +86,10 @@ public class RoleTerm extends DOMFace {
         return playerList;
     }
     public void addPlayer(AddressListEntry newMember) throws Exception {
-        addVectorValue("players", newMember.getStorageRepresentation());
+        addVectorValue("players", newMember.getUniversalId());
     }
     public void removePlayer(AddressListEntry oldMember) throws Exception {
-        String whichId = oldMember.getStorageRepresentation();
+        String whichId = oldMember.getUniversalId();
         UserProfile up = oldMember.getUserProfile();
         List<Element> children = getNamedChildrenVector("players");
         for (Element child : children) {

@@ -52,7 +52,7 @@ public class UserProfile implements UserRef
 
     public UserProfile(String preferredEmail) throws Exception {
         if (preferredEmail.contains(" ")) {
-            throw WeaverException.newBasic("UserProfile constructor requires a single email address without spaces");
+            throw WeaverException.newBasic("UserProfile constructor requires a single email address without spaces: (%s)", preferredEmail);
         }
         userKey = IdGenerator.generateKey();
         emailAddresses = new ArrayList<String>();
@@ -535,7 +535,8 @@ public class UserProfile implements UserRef
             // not sure what to do here.  Profile is not valid without any ids
             // but key should work in most places it is needed.  Not universal
             // but it is unique on this site at least
-            return getKey();
+            System.out.println("WARNING: user profile does not have a preferred email address, using key as universal id: "+getKey());
+            return getKey()+"@nomailweaver.com";
         }
         return usable;
     }

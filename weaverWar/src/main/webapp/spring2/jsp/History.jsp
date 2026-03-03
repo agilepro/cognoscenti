@@ -33,14 +33,19 @@ Required parameters:
         if (endRecord >= start+size) {
             break;
         }
-        AddressListEntry ale = hist.getResponsible();
-        JSONObject userObject = ale.getJSON();
-        UserProfile responsible = ale.getUserProfile();
-        if(responsible!=null && responsible.hasLoggedIn()) {
-            userObject = responsible.getFullJSON();
-        }
-        else {
-            userObject.put("image", "../assets/photoThumbnail.gif");
+        JSONObject jObj = hist.getJSON(ngp,ar);
+        AddressListEntry responsibleUser = hist.getResponsible();
+        if (responsibleUser != null) {
+            JSONObject userObject = responsibleUser.getJSON();
+            UserProfile responsible = responsibleUser.getUserProfile();
+            if(responsible!=null && responsible.hasLoggedIn()) {
+                userObject = responsible.getJSON();
+            }
+            else {
+                userObject.put("image", "../assets/photoThumbnail.gif");
+            }
+            jObj.put("responsible", userObject);
+            jObj.put("respName",    responsibleUser.getName() );
         }
         String objectKey = hist.getContext();
         int contextType = hist.getContextType();
@@ -48,19 +53,6 @@ Required parameters:
         String url = hist.lookUpURL(ar, ngp);
         String objName = hist.lookUpObjectName(ngp);
 
-
-
-        JSONObject jObj = hist.getJSON(ngp,ar);
-        jObj.put("responsible", userObject);
-        /*
-        if (responsible!=null) {
-            jObj.put("respUrl",     "v/"+responsible.getKey()+"/UserSettings.htm" );
-        }
-        else {
-            jObj.put("respUrl",     "findUser.htm?id="+URLEncoder.encode(ale.getUniversalId(),"UTF-8") );
-        }
-        */
-        jObj.put("respName",    ale.getName() );
         jObj.put("contextUrl",  url );
         allHistory.put(jObj);
     }

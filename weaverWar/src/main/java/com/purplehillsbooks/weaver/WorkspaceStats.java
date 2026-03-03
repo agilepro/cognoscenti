@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.NameCounter;
 
 public class WorkspaceStats {
@@ -36,105 +37,114 @@ public class WorkspaceStats {
 
     public void gatherFromWorkspace(NGWorkspace ngw) throws Exception {
 
-        long changed = ngw.getLastModifyTime();
-        if (changed > recentChange) {
-            recentChange = changed;
-        }
-        for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
-            numTopics++;
-            String uid = topic.getScalar("modifiedby");
-            if (uid!=null && uid.length()>0) {
-                UserProfile uProf = assureProfile(uid);
-                if (uProf != null) {
-                    topicsPerUser.increment(uProf.getUniversalId());
+        try {
+            long changed = ngw.getLastModifyTime();
+            if (changed > recentChange) {
+                recentChange = changed;
+            }
+            for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
+                numTopics++;
+                List<String> badTags = new ArrayList<>();
+                String uid = topic.getScalar("modifiedby");
+                if (uid!=null && uid.length()>0) {
+                    UserProfile uProf = assureProfile(uid);
+                    if (uProf == null) {
+                        badTags.add(uid);
+                    } else {
+                        topicsPerUser.increment(uProf.getUniversalId());
+                    }
+                }
+                countComments(topic.getComments());
+            }
+            for (AttachmentRecord doc : ngw.getAllAttachments()) {
+                numDocs++;
+                if (!doc.isDeleted()) {
+                    String modifier = doc.getModifiedBy();
+                    
+                    // strangely, it appears that doc modified by was added in Aug 2019
+                    // and so documents before that have it missing and no information
+                    // about who loaded the file into the workspace.  
+                    if (modifier!=null && modifier.length()>0) {
+                        UserProfile uProf = assureProfile(modifier);
+                        String uid = uProf.getUniversalId();
+                        docsPerUser.increment(uid);
+                    }
+                }
+                int version = doc.getVersion();
+                for (AttachmentVersion ver : doc.getVersions(ngw)) {
+                    if (ver.getNumber()==version) {
+                        sizeDocuments += ver.getFileSize();
+                    }
+                    else {
+                        sizeArchives += ver.getFileSize();
+                    }
+                }
+                countComments(doc.getComments());
+            }
+            for (MeetingRecord meet : ngw.getMeetings()) {
+                numMeetings++;
+                String owner = meet.getOwner();
+                if (owner!=null && owner.length()>0) {
+                    UserProfile uProf = assureProfile(owner);
+                    owner = uProf.getUniversalId();
+                    meetingsPerUser.increment(owner);
+                }
+                for (AgendaItem ai : meet.getSortedAgendaItems()) {
+                    countComments(ai.getComments());
                 }
             }
-            countComments(topic.getComments());
-        }
-        for (AttachmentRecord doc : ngw.getAllAttachments()) {
-            numDocs++;
-            if (!doc.isDeleted()) {
-                String modifier = doc.getModifiedBy();
-                
-                // strangely, it appears that doc modified by was added in Aug 2019
-                // and so documents before that have it missing and no information
-                // about who loaded the file into the workspace.  
-                if (modifier!=null && modifier.length()>0) {
-                    UserProfile uProf = assureProfile(modifier);
-                    String uid = uProf.getUniversalId();
-                    docsPerUser.increment(uid);
+            for (@SuppressWarnings("unused") DecisionRecord dr : ngw.getDecisions()) {
+                numDecisions++;
+            }
+            
+            //count assignees of all active action items as members
+            for (GoalRecord gr : ngw.getAllGoals()) {
+                if (GoalRecord.isFinal(gr.getState())) {
+                    continue;
+                }
+                for (AddressListEntry ale: gr.getAssigneeRole().getExpandedPlayers(ngw)) {
+                    anythingPerUser.increment(ale.getUniversalId());
                 }
             }
-            int version = doc.getVersion();
-            for (AttachmentVersion ver : doc.getVersions(ngw)) {
-                if (ver.getNumber()==version) {
-                    sizeDocuments += ver.getFileSize();
-                }
-                else {
-                    sizeArchives += ver.getFileSize();
-                }
-            }
-            countComments(doc.getComments());
-        }
-        for (MeetingRecord meet : ngw.getMeetings()) {
-            numMeetings++;
-            String owner = meet.getOwner();
-            if (owner!=null && owner.length()>0) {
-                UserProfile uProf = assureProfile(owner);
-                owner = uProf.getUniversalId();
-                meetingsPerUser.increment(owner);
-            }
-            for (AgendaItem ai : meet.getSortedAgendaItems()) {
-                countComments(ai.getComments());
-            }
-        }
-        for (@SuppressWarnings("unused") DecisionRecord dr : ngw.getDecisions()) {
-            numDecisions++;
-        }
-        
-        //count assignees of all active action items as members
-        for (GoalRecord gr : ngw.getAllGoals()) {
-            if (GoalRecord.isFinal(gr.getState())) {
-                continue;
-            }
-            for (AddressListEntry ale: gr.getAssigneeRole().getExpandedPlayers(ngw)) {
-                anythingPerUser.increment(ale.getUniversalId());
-            }
-        }
 
-        //count all the users in all roles
-        for (WorkspaceRole role : ngw.getWorkspaceRoles()) {
-            for (AddressListEntry ale: role.getExpandedPlayers(ngw)) {
-                anythingPerUser.increment(ale.getUniversalId());
-            }
-        }
-
-        //count all the history of the various types
-        for (HistoryRecord hist : ngw.getAllHistory()) {
-            String histKey = HistoryRecord.getContextTypeName(hist.getContextType()) 
-                    + "-" + HistoryRecord.convertEventTypeToString(hist.getEventType());
-            historyPerType.increment(histKey);
-        }
-        
-        //now, let's clean out any old temp documents polluting the space left by a broken upload
-        File containingFolder = ngw.containingFolder;
-        long beforeYesterday = System.currentTimeMillis() - 24L*60*60*1000;
-        for (File child : containingFolder.listFiles()) {
-            if (child.getName().startsWith("~tmp~")) {
-                if (child.lastModified() < beforeYesterday) {
-                    //here is a file that begins with ~tmp~ that was created more than 24 hours ago
-                    //so clearly it is abandoned.   A tmp file should never site for more than a few
-                    //minutes, and anything 24 hours old is junk
-                    child.delete();
+            //count all the users in all roles
+            for (WorkspaceRole role : ngw.getWorkspaceRoles()) {
+                for (AddressListEntry ale: role.getExpandedPlayers(ngw)) {
+                    anythingPerUser.increment(ale.getUniversalId());
                 }
             }
+
+            //count all the history of the various types
+            for (HistoryRecord hist : ngw.getAllHistory()) {
+                String histKey = HistoryRecord.getContextTypeName(hist.getContextType()) 
+                        + "-" + HistoryRecord.convertEventTypeToString(hist.getEventType());
+                historyPerType.increment(histKey);
+            }
+            
+            //now, let's clean out any old temp documents polluting the space left by a broken upload
+            File containingFolder = ngw.containingFolder;
+            long beforeYesterday = System.currentTimeMillis() - 24L*60*60*1000;
+            for (File child : containingFolder.listFiles()) {
+                if (child.getName().startsWith("~tmp~")) {
+                    if (child.lastModified() < beforeYesterday) {
+                        //here is a file that begins with ~tmp~ that was created more than 24 hours ago
+                        //so clearly it is abandoned.   A tmp file should never site for more than a few
+                        //minutes, and anything 24 hours old is junk
+                        child.delete();
+                    }
+                }
+            }
+            
+            if (ngw.isFrozen() || ngw.isDeleted()) {
+                numFrozen++;
+            }
+            else {
+                numActive++;
+            }
         }
-        
-        if (ngw.isFrozen() || ngw.isDeleted()) {
-            numFrozen++;
-        }
-        else {
-            numActive++;
+        catch (Exception ex) {
+            throw WeaverException.newWrap("Unable to gather stats for workspace: %s",
+               ex, ngw.getFullName());
         }
     }
     
@@ -270,34 +280,4 @@ public class WorkspaceStats {
         jo.put("historyPerType",     historyPerType.getJSON());
         return jo;
     }
-/* 
-    public static WorkspaceStats fromJSON(JSONObject jo) throws Exception {
-        WorkspaceStats res = new WorkspaceStats();
-        res.numTopics = jo.getInt("numTopics");
-        res.numDocs = jo.getInt("numDocs");
-        res.numMeetings = jo.getInt("numMeetings");
-        res.numDecisions = jo.getInt("numDecisions");
-        res.numComments = jo.getInt("numComments");
-        res.numProposals = jo.getInt("numProposals");
-        res.sizeDocuments = jo.getLong("sizeDocuments");
-        res.sizeArchives = jo.getLong("sizeArchives");
-        res.numWorkspaces = jo.optInt("numWorkspaces", 0);
-        res.recentChange = jo.getLong("recentChange");
-        res.editUserCount = jo.getInt("editUserCount");
-        res.readUserCount = jo.getInt("readUserCount");
-        res.numActive = jo.getInt("numActive");
-        res.numFrozen = jo.getInt("numFrozen");
-
-        res.topicsPerUser.fromJSON(jo, "topicsPerUser");
-        res.docsPerUser.fromJSON(jo ,"docsPerUser");
-        res.commentsPerUser.fromJSON(jo, "commentsPerUser");
-        res.meetingsPerUser.fromJSON(jo, "meetingsPerUser");
-        res.proposalsPerUser.fromJSON(jo, "proposalsPerUser");
-        res.responsesPerUser.fromJSON(jo, "responsesPerUser");
-        res.unrespondedPerUser.fromJSON(jo, "unrespondedPerUser");
-        res.anythingPerUser.fromJSON(jo, "anythingPerUser");
-        res.historyPerType.fromJSON(jo, "historyPerType");
-        return res;
-    }
-*/
 }

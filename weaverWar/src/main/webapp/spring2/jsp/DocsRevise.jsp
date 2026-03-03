@@ -31,13 +31,15 @@
     for (HistoryRecord hist : histRecs) {
         JSONObject jo = hist.getJSON(ngp, ar);
         AddressListEntry ale = hist.getResponsible();
-        jo.put("responsible", ale.getJSON() );
-        UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
-        if(responsible!=null) {
-            String imgPath = responsible.getImage();
-            if (imgPath!=null && imgPath.length() > 0) {
-                imagePath = "icon/"+imgPath;
+        if (ale != null) {
+            jo.put("responsible", ale.getJSON() );
+            UserProfile responsible = ale.getUserProfile();
+            if(responsible!=null) {
+                String imgPath = responsible.getImage();
+                if (imgPath!=null && imgPath.length() > 0) {
+                    imagePath = "icon/"+imgPath;
+                }
             }
         }
         jo.put("imagePath",   imagePath );

@@ -2,6 +2,8 @@ package com.purplehillsbooks.weaver;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -236,34 +238,13 @@ public class AgendaItem extends CommentContainer {
         return res;
     }
     public void setPresenters(List<String> newVal) throws Exception {
-        setVector("presenters", newVal);
-    }
-
-
-    /**
-     * This is the edit lock mechanism.  Before making a change the
-     * client should get an edit lock on this object.  It records the user
-     * and the time that the lock was made.  Locks are automatically cleared
-     * 30 minutes after setting them ... nobody can hold a lock that long.
-     * When a save is made, the lock should be cleared.
-     * The current lock owner is communicated to the client, for two reasons:
-     * 1. this is the flag that opens the editor
-     * 2. this tells others that the object is currently being edited.
-     *
-     * Rules:
-     * 1. get the lock before allowing the user to edit
-     * 2. If you try to get the lock, but find out it is someone else,
-     *    then display that it is being edited by that other person
-     * 3. When you save the lock will be cleared, so you have to get it again.
-     * 4. If the user cancels edit, be sure to clear the lock.
-     *
-     */
-    public AddressListEntry getLockUser() throws Exception {
-        String user = getScalar("editUser");
-        if (user==null || user.length()==0) {
-            return null;
+        // check that this is a list of email addresses.
+        for (String email : newVal) {
+            if (!UserManager.isValidEmailAddress(email)) {
+                throw WeaverException.newBasic("Presenter must be a proper email address: %s", email);
+            }
         }
-        return AddressListEntry.findOrCreate(user);
+        setVector("presenters", newVal);
     }
 
     public void startTimer() {
@@ -347,10 +328,6 @@ public class AgendaItem extends CommentContainer {
         
         addJSONComments(ar, aiInfo, allComments, ngw);
 
-        AddressListEntry locker = getLockUser();
-        if (locker!=null) {
-            aiInfo.put("lockUser",  locker.getJSON());
-        }
         extractAttributeBool(aiInfo, "showMinutes");
         extractAttributeBool(aiInfo, "timerRunning");
         extractAttributeLong(aiInfo, "timerStart");

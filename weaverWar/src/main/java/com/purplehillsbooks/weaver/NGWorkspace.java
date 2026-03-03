@@ -30,8 +30,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.w3c.dom.Document;
@@ -65,10 +63,6 @@ public class NGWorkspace extends NGPage {
 
     private File        jsonFilePath;
     private JSONObject  workspaceJSON;
-
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    static private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
@@ -158,6 +152,11 @@ public class NGWorkspace extends NGPage {
         }
         for (String idx : badList) {
             eraseAttachmentRecord(idx);
+        }
+
+        // just to test that all the roles have proper members
+        for (CustomRole role : getAllRoles()) {
+            role.getExpandedPlayers(this);
         }
     }
 
@@ -849,11 +848,13 @@ public class NGWorkspace extends NGPage {
                 for (HistoryRecord hist : goal.getTaskHistory(this)) {
                     if (hist.getTimeStamp()>lastModTime) {
                         lastModTime = hist.getTimeStamp();
-                        lastModUser = hist.getResponsible().getUniversalId();
+                        lastModUser = hist.getResponsibleString();
                     }
                 }
-                goal.setModifiedDate(lastModTime);
-                goal.setModifiedBy(lastModUser);
+                if (UserManager.isValidEmailAddress(lastModUser)) {
+                    goal.setModifiedDate(lastModTime);
+                    goal.setModifiedBy(lastModUser);
+                }
             }
         }
     }
@@ -1138,11 +1139,10 @@ public class NGWorkspace extends NGPage {
         }
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
         JSONObject newInvite = new JSONObject();
-        String emailId = ale.getEmail();
+        String emailId = ale.getEmail().trim();
 
         // this might not actually be an email address so check and skip otherwise
-        Matcher matcher = pattern.matcher(emailId.trim());
-        if (!matcher.matches()) {
+        if (!UserManager.isValidEmailAddress(emailId)) {
             throw WeaverException.newBasic("This email id (%s) does not look like an email address", emailId);
         }
         newInvite.put("email", ale.getEmail());

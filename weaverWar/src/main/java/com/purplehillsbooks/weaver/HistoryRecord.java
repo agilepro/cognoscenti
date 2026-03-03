@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
+import org.apache.catalina.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -284,15 +285,20 @@ public class HistoryRecord extends DOMFace
         setScalar("timestamp", Long.toString(ts));
     }
 
-    private String getResponsibleString() throws Exception {
+    public String getResponsibleString() throws Exception {
         return UserManager.getCorrectedEmail(getScalar("responsible"));
     }
     public AddressListEntry getResponsible() throws Exception {
-        return AddressListEntry.findOrCreate(getResponsibleString());
+        String resp = getResponsibleString();
+        if (resp==null || resp.length()==0) {
+            return null;
+        }
+        return AddressListEntry.findOrCreate(resp);
     }
-    public void setResponsible(String resp)
-        throws Exception
-    {
+    public void setResponsible(String resp) throws Exception {
+        if (resp!=null && !UserManager.isValidEmailAddress(resp)) {
+            throw WeaverException.newBasic("Invalid email address for responsible: %s", resp);
+        }
         setScalar("responsible", resp);
     }
 
@@ -779,7 +785,12 @@ history.task.subtask.add    113
         ar.writeHtml(convertEventTypeToString(getEventType()));
         ar.write(" by ");
         AddressListEntry ale = getResponsible();
-        ale.writeLink(ar);
+        if (ale==null) {
+            ar.write("unknown");
+        }
+        else {
+            ale.writeLink(ar);
+        }
         ar.write(" on ");
         SectionUtil.nicePrintDate(ar.w, getTimeStamp(), null);
         String comment = this.getComments();
@@ -790,7 +801,6 @@ history.task.subtask.add    113
     }
 
     public JSONObject getJSON(NGWorkspace ngw, AuthRequest ar) throws Exception {
-        AddressListEntry ale = getResponsible();
         JSONObject jo = new JSONObject();
         jo.put("ctxId", getContext());
         jo.put("ctxName", lookUpObjectName(ngw));
@@ -798,9 +808,12 @@ history.task.subtask.add    113
         jo.put("ctxSite", ngw.getSiteKey());
         jo.put("ctxType", getContextTypeName(getContextType()));
         jo.put("event", convertEventTypeToString(getEventType()));
-        jo.put("responsible", ale.getJSON());
-        jo.put("time",getTimeStamp());
-        jo.put("comment",getComments());
+        AddressListEntry ale = getResponsible();
+        if (ale != null) {
+            jo.put("responsible", ale.getJSON());
+        }
+        jo.put("time", getTimeStamp());
+        jo.put("comment", getComments());
         return jo;
     }
 

@@ -121,7 +121,16 @@ public class MeetingRecord extends DOMFace {
     public List<String> getParticipants() {
         return this.getVector("participants");
     }
-    public void setParticipants(List<String> newSet) {
+    public void setParticipants(List<String> newSet) throws Exception {
+        // check that all strings look like email addresses
+        for (String one: newSet) {
+            if (one==null || one.length()==0) {
+                throw WeaverException.newBasic("Participant list cannot contain null or empty values");
+            }
+            if (!UserManager.isValidEmailAddress(one)) {
+                throw WeaverException.newBasic("Participant list cannot contain invalid email addresses: %s", one);
+            }
+        }
         this.setVector("participants", newSet);
     }
 
@@ -817,7 +826,8 @@ public class MeetingRecord extends DOMFace {
         }
 
         if (input.has("participants")) {
-            this.setVector("participants", AddressListEntry.uidListfromJSONArray(input.getJSONArray("participants")));
+            this.setParticipants(AddressListEntry.uidListfromJSONArray(
+                input.getJSONArray("participants")));
         }
 
         if (input.has("timeSlots")) {

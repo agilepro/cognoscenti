@@ -24,6 +24,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
@@ -86,6 +89,20 @@ public class UserManager
     public static UserManager getStaticUserManager() {
         return cog.getUserManager();
     }
+
+
+    private static final String EMAIL_REGEX =
+        "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$";
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+    public static boolean isValidEmailAddress(String email) {
+        if (email == null || email.isBlank()) {
+            return false;
+        }
+        Matcher matcher = EMAIL_PATTERN.matcher(email.trim());
+        return matcher.matches();
+    }
+
 
     public synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
         //check to see if this has already been loaded, if so, there is nothing to do
@@ -313,11 +330,18 @@ public class UserManager
     }
 
     public static synchronized UserProfile lookupUserByAnyId(String anyId) {
-        //return null if a bogus value passed.
-        //fixed bug 12/20/2010 that was finding people with nullstring names
-        if (anyId==null || anyId.length()==0)
-        {
-            return null;
+        
+        if (anyId==null || anyId.length()==0) {
+            throw new RuntimeException("lookupUserByAnyId requires a non-null, non-empty anyId parameter");
+        }
+
+        // at some point, if a user profile does not have any email address, 
+        // a fake email address id generated with nomailweaver domain.  
+        // This is to allow the user profile to be found by the key, but not have 
+        // an email address that can cause problems.  So if we see an id with that domain, 
+        // we can just strip it off and look for the key.
+        if (anyId.endsWith("@nomailweaver.com")) {
+            anyId = anyId.substring(0, anyId.length()-17);
         }
 
         //first, try hashtable since that might be fast
