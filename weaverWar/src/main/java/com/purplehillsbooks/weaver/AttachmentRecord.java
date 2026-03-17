@@ -793,7 +793,10 @@ public class AttachmentRecord extends CommentContainer {
         thisDoc.put("deleted",      isDeleted());
         thisDoc.put("modifiedtime", getModifiedDate());
         thisDoc.put("modifieduser", getModifiedBy());
-        thisDoc.put("modifier",     getModifier().getJSON());
+        AddressListEntry mod = getModifier();
+        if (mod != null) {
+            thisDoc.put("modifier",     mod.getJSON());
+        }
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels() ) {
             labelMap.put(lRec.getName(), true);

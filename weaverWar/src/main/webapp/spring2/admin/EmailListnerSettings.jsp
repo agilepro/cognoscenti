@@ -138,7 +138,7 @@ myApp.controller('myCtrl', function($scope, $http) {
       </tr>
         <%
         for (String userid : activeUsers) {
-            UserProfile user = UserManager.getUserProfileByKey(userid); %>
+            UserProfile user = UserManager.getUserProfileOrFail(userid); %>
           <tr>
             <td><a href=\"../<%=userid%>/PersonShow.htm\"><%=userid%></a></td>
             <td><%=user.getName()%></td>
