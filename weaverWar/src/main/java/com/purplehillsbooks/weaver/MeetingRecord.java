@@ -103,10 +103,6 @@ public class MeetingRecord extends DOMFace {
         setAttributeLong("duration", newVal);
     }
 
-    private void setMeetingType(int newVal) {
-        setAttributeInt("meetingType", newVal);
-    }
-
     // default to MembersRole if nothing is specified
     public String getTargetRole()  throws Exception {
         String roleName = getAttribute("targetRole");
@@ -583,7 +579,6 @@ public class MeetingRecord extends DOMFace {
         extractAttributeInt   (meetingInfo, "state");
         extractAttributeLong  (meetingInfo, "startTime");
         extractAttributeLong  (meetingInfo, "duration");
-        extractAttributeInt   (meetingInfo, "meetingType");
         extractAttributeInt   (meetingInfo, "reminderTime");
         extractAttributeLong  (meetingInfo, "reminderSent");
         extractScalarEmail    (meetingInfo, "owner");
@@ -602,10 +597,6 @@ public class MeetingRecord extends DOMFace {
     public JSONObject getListableJSON(AuthRequest ar) throws Exception {
         JSONObject meetingInfo = getMinimalJSON();
         meetingInfo.put("description", getMeetingDescription());
-
-        //REMOVE THIS sometime soon, no more HTML needed
-        //String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
-        //meetingInfo.put("meetingInfo", htmlVal);
 
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
@@ -765,9 +756,6 @@ public class MeetingRecord extends DOMFace {
         }
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
-        }
-        if (input.has("meetingType")) {
-            setMeetingType(input.getInt("meetingType"));
         }
         if (input.has("reminderTime")) {
             setReminderAdvance(input.getInt("reminderTime"));

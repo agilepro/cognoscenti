@@ -1601,6 +1601,10 @@ public class NGWorkspace extends NGPage {
     }
 
     public void assertUpdateWorkspace(UserProfile user, String op) throws Exception {
+        NGBook site = getSite();
+        if (site.isSiteExecutive(user)) {
+            return;
+        }
         //The administrator can control which users are update users and
         //which users are read only.
         if (getSite().isUnpaidUser(user)) {
@@ -1627,9 +1631,13 @@ public class NGWorkspace extends NGPage {
      * then they will have update access.
      */
     public boolean canUpdateWorkspace(UserProfile user) throws Exception {
+        NGBook site = getSite();
+        if (site.isSiteExecutive(user)) {
+            return true;
+        }
         //The administrator can control which users are update users and
         //which users are read only.
-        if (getSite().isUnpaidUser(user)) {
+        if (site.isUnpaidUser(user)) {
             return false;
         }
         //now look through all the roles and see if this person plays any
@@ -1648,6 +1656,10 @@ public class NGWorkspace extends NGPage {
         return false;
     }
     public boolean canAccessWorkspace(UserRef user) throws Exception {
+        NGBook site = getSite();
+        if (site.isSiteExecutive(user)) {
+            return true;
+        }
         for (WorkspaceRole role : this.getWorkspaceRoles()) {
             if (!role.allowAccessWorkspace()) {
                 // ignore noaccess roles

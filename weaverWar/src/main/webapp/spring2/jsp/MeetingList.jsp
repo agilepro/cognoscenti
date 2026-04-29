@@ -41,7 +41,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         duration:60,
         startTime:(new Date()).getTime(),
         id:"",
-        meetingType:1,
         state:0,
         reminderTime:60
     };
