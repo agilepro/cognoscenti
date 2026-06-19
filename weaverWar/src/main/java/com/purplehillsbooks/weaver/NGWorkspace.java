@@ -1666,7 +1666,7 @@ public class NGWorkspace extends NGPage {
                 continue;
             }
             if (role.isExpandedPlayer(user, this)) {
-                    return true;
+                return true;
             }
         }
         return false;

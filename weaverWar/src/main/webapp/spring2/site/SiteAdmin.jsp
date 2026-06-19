@@ -266,6 +266,7 @@ $scope.garbageCollect = function() {
               Admin
             </a>
           </span>
+        <% } %>
       </li>
     </ul>
   </span>
@@ -284,7 +285,6 @@ $scope.garbageCollect = function() {
 
     <div class="d-flex col-12">
       <div class="contentColumn mx-5">
-        <% } %>
           <div class="container-fluid override mx-2">
             <div class="row my-2 border-bottom border-1 pb-2 ">
               <span class="col-2 fixed-width-md bold labelColumn btn btn-outline-primary mt-2 text-start"

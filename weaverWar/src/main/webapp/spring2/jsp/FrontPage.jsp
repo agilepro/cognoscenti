@@ -134,7 +134,7 @@ Required parameters:
             url = ar.getResourceURL(ngp, "MeetingHtml.htm?id="+objectKey);
             MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
             if (meet!=null) {
-                objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
+                objName = meet.getName();
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
