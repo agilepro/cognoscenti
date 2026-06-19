@@ -8,6 +8,7 @@ public class FooTest {
 
     public void aDifferentMethod() {
         // added this method in the master level
+        // added a second comment line in the master level
     }
 
 }
