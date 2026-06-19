@@ -6,4 +6,8 @@ public class FooTest {
         // added this constructor in the second level
     }
 
+    public int method111() {
+        return 111;
+    }
+
 }
