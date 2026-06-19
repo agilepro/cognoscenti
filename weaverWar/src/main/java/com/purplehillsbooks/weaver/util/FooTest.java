@@ -10,4 +10,8 @@ public class FooTest {
         return 111;
     }
 
+    public void aDifferentMethod() {
+        // added this method in the master level
+    }
+
 }
