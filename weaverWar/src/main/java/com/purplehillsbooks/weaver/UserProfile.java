@@ -450,11 +450,11 @@ public class UserProfile implements UserRef
     * If you generate a new token, don't forget to save user profiles
     */
     public void genNewLicenseToken() {
-        licenseToken = IdGenerator.generateKey();
+        licenseToken = IdGenerator.generateDoubleKey();
     }
     public String getLicenseToken() {
         if (licenseToken==null || licenseToken.length()==0) {
-            licenseToken = IdGenerator.generateKey();
+            licenseToken = IdGenerator.generateDoubleKey();
         }
         return licenseToken;
     }

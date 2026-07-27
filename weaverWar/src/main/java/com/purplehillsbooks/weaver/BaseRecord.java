@@ -320,7 +320,7 @@ public class BaseRecord extends DOMFace
 
         if (licId==null || licId.length()==0)
         {
-            licId = IdGenerator.generateKey();
+            licId = IdGenerator.generateDoubleKey();
         }
 
         licEle.setAttribute("id", licId);

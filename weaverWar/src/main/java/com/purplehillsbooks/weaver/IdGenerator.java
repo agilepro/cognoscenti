@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 
@@ -109,16 +110,18 @@ public class IdGenerator
 
     
     /**
-     * A double key is a combination of two timestamps, one now
-     * and one at the last time a unique key was asked for
+     * A double key is a combination of a timestamps (to guarantee uniqueness), 
+     * and a random number (to make it hard to guess).  The random number is
+     * generated using a secure random number generator, so that it is not predictable.
      * To guess this key, you need to know two timestamp values
      * to the millisecond.  While the current value might be guessed
      * to be a timestamp around the time that the request was made,
-     * The other is an indeterminate amount of time ago...
+     * The other is an indeterminate value...
      */
+    private static SecureRandom rand = new SecureRandom();
     public synchronized static String generateDoubleKey()
     {
-        long previousTime = ++lastKey;
+        long secondValue = rand.nextLong(1_000_000_000L);
         long ctime = System.currentTimeMillis();
         if (ctime <= lastKey) {
             ctime = lastKey+1;
@@ -127,17 +130,14 @@ public class IdGenerator
 
         //now convert timestamp into cryptic alpha string
         StringBuilder res = new StringBuilder(24);
-        while (ctime>0 || previousTime>0) {
+        while (ctime>0 || secondValue>0) {
             if (ctime>0) {
                 res.append((char)('A' + (ctime % 26)));
                 ctime = ctime / 26;
             } 
-            if (previousTime>0) {
-                //adding 5 rotates the character selection by 5 letters
-                //so they are not mostly the same
-                long elval = (previousTime+5) % 26;
-                res.append((char)('A' + (elval)));
-                previousTime = previousTime / 26;
+            if (secondValue>0) {
+                res.append((char)('A' + (secondValue % 26)));
+                secondValue = secondValue / 26;
             }
         }
         return res.toString();
