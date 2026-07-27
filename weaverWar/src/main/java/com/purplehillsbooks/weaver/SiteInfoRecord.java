@@ -20,21 +20,17 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SiteInfoRecord extends DOMFace {
 
-    public SiteInfoRecord(Document nDoc, Element nEle, DOMFace p)
-            throws Exception {
+    public SiteInfoRecord(Document nDoc, Element nEle, DOMFace p) throws Exception {
         super(nDoc, nEle, p);
         // assure that the user list element is there
         requireChild("roleList", DOMFace.class);
         requireChild("Role-Requests", DOMFace.class);
-
     }
 
     public long getModTime() {
@@ -102,5 +98,4 @@ public class SiteInfoRecord extends DOMFace {
     public String getDeleteUser() {
         return getAttribute("deleteUser");
     }
-
 }

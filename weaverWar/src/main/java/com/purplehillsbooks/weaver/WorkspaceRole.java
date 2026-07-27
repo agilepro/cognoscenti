@@ -20,23 +20,21 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
-* workspace role has a special relationship to the role definitions
-* from the site, while roles from sites and user pages do not have that.
-*/
+ * workspace role has a special relationship to the role definitions from the site, while roles from
+ * sites and user pages do not have that.
+ */
 public class WorkspaceRole extends CustomRole {
 
     NGBook site;
@@ -58,8 +56,8 @@ public class WorkspaceRole extends CustomRole {
             UserProfile uProf = newMember.getUserProfile();
             if (site.isUnpaidUser(uProf)) {
                 throw WeaverException.newBasic(
-                    "Role (%s) is an update role, and can not be played by a basic user (%s)", 
-                    getName(), newMember.getEmail());
+                        "Role (%s) is an update role, and can not be played by a basic user (%s)",
+                        getName(), newMember.getEmail());
             }
         }
     }
@@ -67,9 +65,11 @@ public class WorkspaceRole extends CustomRole {
     public String getSymbol() {
         return def.symbol;
     }
+
     public String getName() {
         return def.name;
     }
+
     public void setName(String name) {
         throw new RuntimeException("setName not implemented on Workspace Roles");
     }
@@ -77,6 +77,7 @@ public class WorkspaceRole extends CustomRole {
     public String getDescription() {
         return def.description;
     }
+
     public void setDescription(String desc) {
         throw new RuntimeException("setDescription not implemented on Workspace Roles");
     }
@@ -84,27 +85,25 @@ public class WorkspaceRole extends CustomRole {
     public String getRequirements() {
         return def.eligibility;
     }
+
     public void setRequirements(String reqs) {
-        throw new RuntimeException("setRequirements(eligibility) not implemented on Workspace Roles");
+        throw new RuntimeException(
+                "setRequirements(eligibility) not implemented on Workspace Roles");
     }
-    
+
     /**
-     * Each role in a workspace can be linked to a role in the Site.
-     * These will be synchronized.  When the workspace is read, it will
-     * be refreshed from the linked role.  When the workspace is updated
-     * it will also update the linked role.  The Site become a common
-     * ground to exchange the list of people who constitute a role.
+     * Each role in a workspace can be linked to a role in the Site. These will be synchronized.
+     * When the workspace is read, it will be refreshed from the linked role. When the workspace is
+     * updated it will also update the linked role. The Site become a common ground to exchange the
+     * list of people who constitute a role.
      */
-    public String getLinkedRole()
-    {
+    public String getLinkedRole() {
         return getAttribute("linkedRole");
     }
-    public void setLinkedRole(String linkedRole)
-    {
+
+    public void setLinkedRole(String linkedRole) {
         setAttribute("linkedRole", linkedRole);
     }
-
-
 
     public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
         return getDirectPlayers();
@@ -112,7 +111,7 @@ public class WorkspaceRole extends CustomRole {
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
         RoleTerm term = getCurrentTerm();
-        if (term==null) {
+        if (term == null) {
             return getNonTermList();
         }
         return term.getDirectPlayers();
@@ -126,12 +125,12 @@ public class WorkspaceRole extends CustomRole {
     }
 
     private List<AddressListEntry> getNonTermList() throws Exception {
-        List<AddressListEntry> list=new ArrayList<AddressListEntry>();
+        List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
             AddressListEntry ale = AddressListEntry.findOrCreate(memberID);
             if (ale.isWellFormed()) {
-                //don't add the reference if it is not a suitable user
+                // don't add the reference if it is not a suitable user
                 list.add(ale);
             }
         }
@@ -146,45 +145,43 @@ public class WorkspaceRole extends CustomRole {
     public void clear() {
         try {
             RoleTerm term = getCurrentTerm();
-            if (term!=null) {
+            if (term != null) {
                 term.clear();
             }
-            //the vector should be cleared out in any case, even
-            //if there is a valid term object.
+            // the vector should be cleared out in any case, even
+            // if there is a valid term object.
             clearVector("member");
-        }
-        catch (Exception e) {
-            //i hate this, but clear was previously a method unlikely to
-            //throw exception.  Still unlikely, so I don't want to change
-            //the signature for this.  So throw an undeclared exception.
+        } catch (Exception e) {
+            // i hate this, but clear was previously a method unlikely to
+            // throw exception.  Still unlikely, so I don't want to change
+            // the signature for this.  So throw an undeclared exception.
             throw new RuntimeException("Unable to clear the role", e);
         }
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception
-    {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
         return isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
-    public boolean isPlayer(UserRef user) throws Exception
-    {
+
+    public boolean isPlayer(UserRef user) throws Exception {
         return isPlayerOfAddressList(user, getDirectPlayers());
     }
-    public String whichIDForUser(UserRef user) throws Exception
-    {
+
+    public String whichIDForUser(UserRef user) throws Exception {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
-
-
 
     public String getColor() {
         return getAttribute("color");
     }
+
     public void setColor(String color) {
         setAttribute("color", color);
     }
+
     public RoleTerm getCurrentTerm() throws Exception {
         long nowTime = System.currentTimeMillis();
-        for( RoleTerm rt : getAllTerms()) {
+        for (RoleTerm rt : getAllTerms()) {
             if (rt.isComplete() && rt.includesDate(nowTime)) {
                 return rt;
             }
@@ -192,9 +189,9 @@ public class WorkspaceRole extends CustomRole {
         return null;
     }
 
-
-    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) throws Exception {
-        if (user==null) {
+    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list)
+            throws Exception {
+        if (user == null) {
             throw WeaverException.newBasic("isPlayerOfAddressList called with null user object.");
         }
         for (AddressListEntry alr : list) {
@@ -205,7 +202,8 @@ public class WorkspaceRole extends CustomRole {
         return false;
     }
 
-    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list) throws Exception {
+    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list)
+            throws Exception {
         for (AddressListEntry alr : list) {
             String thisID = alr.getInitialId();
             if (uRef.hasAnyId(thisID)) {
@@ -215,12 +213,10 @@ public class WorkspaceRole extends CustomRole {
         return null;
     }
 
-
-
-    public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
+    public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (AddressListEntry ale : getDirectPlayers()) {
-            if(ale.hasAddressMatchingFrag(frag)) {
+            if (ale.hasAddressMatchingFrag(frag)) {
                 result.add(ale);
             }
         }
@@ -235,7 +231,7 @@ public class WorkspaceRole extends CustomRole {
 
     public boolean replaceId(String sourceId, String destId) {
         List<String> players = getVector("member");
-        boolean foundOne=false;
+        boolean foundOne = false;
         for (String playerId : players) {
             if (playerId.equalsIgnoreCase(sourceId)) {
                 foundOne = true;
@@ -244,12 +240,11 @@ public class WorkspaceRole extends CustomRole {
         if (!foundOne) {
             return false;
         }
-        List<String> newPlayers =  new ArrayList<String>();
+        List<String> newPlayers = new ArrayList<String>();
         newPlayers.add(destId);
-        foundOne=false;
+        foundOne = false;
         for (String playerId : players) {
-            if (!playerId.equalsIgnoreCase(sourceId)
-                && !playerId.equalsIgnoreCase(destId)) {
+            if (!playerId.equalsIgnoreCase(sourceId) && !playerId.equalsIgnoreCase(destId)) {
                 newPlayers.add(playerId);
             }
         }
@@ -258,13 +253,13 @@ public class WorkspaceRole extends CustomRole {
     }
 
     public List<RoleTerm> getAllTerms() throws Exception {
-        List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
+        List<RoleTerm> list = this.getChildren("terms", RoleTerm.class);
         return list;
     }
 
     /**
-     * getJSON is for normal lists of roles, the current players, and such.
-     * Does not include all the historical detail.
+     * getJSON is for normal lists of roles, the current players, and such. Does not include all the
+     * historical detail.
      */
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -273,10 +268,9 @@ public class WorkspaceRole extends CustomRole {
         extractAttributeString(jObj, "color");
         extractAttributeString(jObj, "linkedRole");
         RoleTerm curTerm = this.getCurrentTerm();
-        if (curTerm!=null) {
+        if (curTerm != null) {
             jObj.put("currentTerm", curTerm.getKey());
-        }
-        else {
+        } else {
             jObj.put("currentTerm", "");
         }
         jObj.put("description", getDescription());
@@ -285,22 +279,22 @@ public class WorkspaceRole extends CustomRole {
         JSONArray playerArray = new JSONArray();
         for (AddressListEntry player : getDirectPlayers()) {
             String uniqueId = player.getUniversalId();
-            if (uniqueId==null || uniqueId.length()==0) {
-                //should not be any of these, but ignore any member without a unique global id
+            if (uniqueId == null || uniqueId.length() == 0) {
+                // should not be any of these, but ignore any member without a unique global id
                 continue;
             }
             if (uniquenessEnforcer.contains(uniqueId)) {
-                //each member should be in the set only once.  There was some cases where this
-                //was somehow happening, maybe people changing name, or whatever, so always
-                //enforce uniqueness in the output list.
+                // each member should be in the set only once.  There was some cases where this
+                // was somehow happening, maybe people changing name, or whatever, so always
+                // enforce uniqueness in the output list.
                 continue;
             }
             uniquenessEnforcer.add(uniqueId);
-            playerArray.put( player.getJSON() );
+            playerArray.put(player.getJSON());
         }
         jObj.put("players", playerArray);
-        
-        //this does some special things for Members and Stewards
+
+        // this does some special things for Members and Stewards
         jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
         jObj.put("canAccessWorkspace", allowAccessWorkspace());
 
@@ -308,10 +302,10 @@ public class WorkspaceRole extends CustomRole {
 
         return jObj;
     }
+
     /**
-     * Includes all the current info, and
-     * also the terms (historical) and data around
-     * what has happened with the role in the past and future.
+     * Includes all the current info, and also the terms (historical) and data around what has
+     * happened with the role in the past and future.
      */
     public JSONObject getJSONDetail() throws Exception {
         JSONObject jObj = getJSON();
@@ -325,7 +319,7 @@ public class WorkspaceRole extends CustomRole {
         }
         jObj.put("terms", termArray);
 
-        List<Responsibility> resplist= this.getChildren("responsibilities", Responsibility.class);
+        List<Responsibility> resplist = this.getChildren("responsibilities", Responsibility.class);
         JSONArray respArray = new JSONArray();
         for (Responsibility res : resplist) {
             respArray.put(res.getJSON());
@@ -334,6 +328,7 @@ public class WorkspaceRole extends CustomRole {
 
         return jObj;
     }
+
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
         updateAttributeString("linkedRole", roleInfo);
@@ -361,21 +356,21 @@ public class WorkspaceRole extends CustomRole {
                 this.removePlayer(oldMember);
             }
         }
-        updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");
-        updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
+        updateCollection(roleInfo, "responsibilities", Responsibility.class, "key");
+        updateCollection(roleInfo, "terms", RoleTerm.class, "key");
     }
-    
+
     public boolean allowAccessWorkspace() {
         if (def == null) {
             return false;
         }
         return !def.onlyMail;
     }
+
     public boolean allowUpdateWorkspace() {
         if (def == null) {
             return false;
         }
         return !def.onlyMail && def.canEdit;
     }
-
 }

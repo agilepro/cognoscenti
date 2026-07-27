@@ -22,8 +22,7 @@ package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.json.JSONObject;
 
-public class SearchResultRecord
-{
+public class SearchResultRecord {
     private String siteName = "";
     private String workspaceName = "";
     private String workspaceKey = "";
@@ -32,8 +31,8 @@ public class SearchResultRecord
     private String lastModifiedBy = "";
     private static final String NO_DATA = "";
 
-    //Not sure below two properties should be in this class or need to create another class
-    //but for time being added here
+    // Not sure below two properties should be in this class or need to create another class
+    // but for time being added here
     private String noteSubject = "";
     private String noteLink = "";
 
@@ -44,15 +43,18 @@ public class SearchResultRecord
     public String getNoteSubject() {
         return noteSubject;
     }
+
     public void setNoteSubject(String noteSubject) {
-        if (noteSubject==null || noteSubject.length()==0) {
+        if (noteSubject == null || noteSubject.length() == 0) {
             noteSubject = "No Subject";
         }
         this.noteSubject = noteSubject;
     }
+
     public String getBookName() {
         return siteName;
     }
+
     public void setBookName(String value) {
         if (value == null || value.length() == 0) {
             value = "No Site Name";
@@ -63,6 +65,7 @@ public class SearchResultRecord
     public String getPageKey() {
         return workspaceKey;
     }
+
     public void setPageKey(String value) {
         if (value == null || value.length() == 0) {
             value = "";
@@ -70,10 +73,10 @@ public class SearchResultRecord
         workspaceKey = value;
     }
 
-
     public String getPageName() {
         return workspaceName;
     }
+
     public void setPageName(String value) {
         if (value == null || value.length() == 0) {
             value = "No Workspace Name";
@@ -84,6 +87,7 @@ public class SearchResultRecord
     public String getPageLink() {
         return workspaceLink;
     }
+
     public void setPageLink(String value) {
         if (value == null || value.length() == 0) {
             value = NO_DATA;
@@ -94,6 +98,7 @@ public class SearchResultRecord
     public long getLastModifiedTime() {
         return lastModifiedTime;
     }
+
     public void setLastModifiedTime(long value) {
         lastModifiedTime = value;
     }
@@ -101,6 +106,7 @@ public class SearchResultRecord
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
+
     public void setLastModifiedBy(String value) {
         if (value == null || value.length() == 0) {
             value = NO_DATA;
@@ -131,5 +137,4 @@ public class SearchResultRecord
         jObj.put("modUser", lastModifiedBy);
         return jObj;
     }
-
 }

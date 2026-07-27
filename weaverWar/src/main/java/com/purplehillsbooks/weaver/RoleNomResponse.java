@@ -20,34 +20,27 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONObject;
 
 /**
-* A nomination is the proposal of a particular person
-* for a particular role.  It is the storage place for all
-* the work around consent based selection of people 
-* for roles.  Each selection time, there will be 
-* some number of nominations.  They will be discussed
-* and ultimately a person selected and agreed upon. 
-* 
-*/
+ * A nomination is the proposal of a particular person for a particular role. It is the storage
+ * place for all the work around consent based selection of people for roles. Each selection time,
+ * there will be some number of nominations. They will be discussed and ultimately a person selected
+ * and agreed upon.
+ */
 public class RoleNomResponse extends DOMFace {
 
     public RoleNomResponse(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
     }
 
-    /**
-     * The owner is the key of this nomination response.  Each person can have only
-     * one response.
-     */
+    /** The owner is the key of this nomination response. Each person can have only one response. */
     public String getOwner() {
         return getAttribute("owner");
     }
-    
-    
+
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "owner");
@@ -56,6 +49,7 @@ public class RoleNomResponse extends DOMFace {
         extractAttributeLong(jObj, "timestamp");
         return jObj;
     }
+
     public void updateFromJSON(JSONObject nomInfo) throws Exception {
         updateAttributeString("owner", nomInfo);
         updateScalarString("choice", nomInfo);

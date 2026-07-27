@@ -20,9 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AgendaItem;
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -35,93 +34,112 @@ import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.xml.Mel;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
-
 @Controller
 public class CommentController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/CommentList.htm", method = RequestMethod.GET)
-    public void commentList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+    public void commentList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "CommentList.jsp");
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/CommentZoom.htm", method = RequestMethod.GET)
-    public void commentZoom(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+    public void commentZoom(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         long cid = Mel.safeConvertLong(ar.reqParam("cid"));
         CommentRecord selectedComment = ngw.getCommentOrNull(cid);
-        if (selectedComment==null) {
-            showDisplayWarningF(ar, 
-                "Can not find comment, proposal, or question with the id (%d).  Was it deleted?",
-                cid);
+        if (selectedComment == null) {
+            showDisplayWarningF(
+                    ar,
+                    "Can not find comment, proposal, or question with the id (%d).  Was it deleted?",
+                    cid);
             return;
         }
         showJSPMembers(ar, siteId, pageId, "CommentZoom.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/getComment.json", method = RequestMethod.GET)
-    public void getTopic(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getTopic(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         long cid = 0;
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("must be a member to get comment");
-            
+
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
             CommentRecord topic = ngw.getCommentOrFail(cid);
 
-
             JSONObject repo = topic.getCompleteJSON();
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get comment ("+cid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable to get comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/getCommentList.json", method = RequestMethod.GET)
-    public void getCommentList(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getCommentList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("must havea access to workspace to get comment list");
-            
+
             JSONArray allComments = new JSONArray();
             for (CommentRecord cmt : ngw.getAllComments()) {
                 allComments.put(cmt.getJSONWithDocs(ngw));
             }
 
             JSONObject jo = new JSONObject();
-            jo.put("list",  allComments);
+            jo.put("list", allComments);
             sendJson(ar, jo);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to get list of all comments", ex);
             streamException(ee, ar);
         }
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/updateComment.json", method = RequestMethod.POST)
-    public void updateComment(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void updateComment(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         long cid = 0;
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("must be a member to update comment");
             JSONObject postObject = this.getPostedObject(ar);
@@ -131,43 +149,49 @@ public class CommentController extends BaseController {
             if (postObject.has("deleteMe")) {
                 ngw.deleteComment(cid);
                 repo = new JSONObject().put("delete", "success");
-            }
-            else {
+            } else {
                 CommentRecord cmt = ngw.getCommentOrFail(cid);
                 cmt.updateFromJSON(postObject, ar);
-    
+
                 repo = cmt.getJSONWithDocs(ngw);
             }
-            
-            //re-link (or unlink) replies links to all comments
+
+            // re-link (or unlink) replies links to all comments
             ngw.correctAllRepliesLinks();
-            
-            //if the comment was on a meeting, then refresh the meeting cache
-            if (meetingId!=null) {
+
+            // if the comment was on a meeting, then refresh the meeting cache
+            if (meetingId != null) {
                 MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
             }
             saveAndReleaseLock(ngw, ar, "updated a comment");
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update comment ("+cid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable to update comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
-    @RequestMapping(value = "/{siteId}/{pageId}/updateCommentAnon.json", method = RequestMethod.POST)
-    public void updateCommentAnon(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/updateCommentAnon.json",
+            method = RequestMethod.POST)
+    public void updateCommentAnon(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         long cid = 0;
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             JSONObject postObject = this.getPostedObject(ar);
-            
+
             cid = Mel.safeConvertLong(ar.reqParam("cid"));
-            
-            //in order to allow an anonymous update of a comment, there must be a valid email
-            //message id, and the email in question must be about the comment being upated
+
+            // in order to allow an anonymous update of a comment, there must be a valid email
+            // message id, and the email in question must be about the comment being upated
             long msgId = Mel.safeConvertLong(ar.reqParam("msg"));
             MailInst mail = EmailSender.findEmailById(msgId);
             if (mail == null) {
@@ -176,31 +200,30 @@ public class CommentController extends BaseController {
             if (cid != mail.getCommentId()) {
                 throw WeaverException.newBasic("Comment and email message id do not match");
             }
-                    
+
             JSONObject repo = null;
             String meetingId = ngw.findMeetingIdForComment(cid);
             if (postObject.has("deleteMe")) {
                 throw WeaverException.newBasic("delete is not allowed anonymously");
-            }
-            else {
+            } else {
                 CommentRecord cmt = ngw.getCommentOrFail(cid);
                 cmt.updateFromJSON(postObject, ar);
-    
+
                 repo = cmt.getJSONWithDocs(ngw);
             }
-            
-            //re-link (or unlink) replies links to all comments
+
+            // re-link (or unlink) replies links to all comments
             ngw.correctAllRepliesLinks();
-            
-            //if the comment was on a meeting, then refresh the meeting cache
-            if (meetingId!=null) {
+
+            // if the comment was on a meeting, then refresh the meeting cache
+            if (meetingId != null) {
                 MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
             }
             saveAndReleaseLock(ngw, ar, "updated a comment");
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update comment ("+cid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable to update comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -213,21 +236,25 @@ public class CommentController extends BaseController {
                 for (CommentRecord cr : ai.getComments()) {
                     count++;
                     sb.append(",");
-                    sb.append(Long.toString(cr.getTime()%1000));
+                    sb.append(Long.toString(cr.getTime() % 1000));
                 }
             }
         }
-        System.out.println("*** CommentController: Number of comments: "+count+sb.toString());
+        System.out.println("*** CommentController: Number of comments: " + count + sb.toString());
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/info/{command}")
-    public void fetchInfo(@PathVariable String siteId,@PathVariable String pageId,
+    public void fetchInfo(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
             @PathVariable String command,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
+        try {
             ar.assertLoggedIn("Must be logged in to access workspace information.");
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             countComments(ngw);
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("Must be a member to access workspace information.");
@@ -239,80 +266,81 @@ public class CommentController extends BaseController {
             JSONObject repo = null;
             if ("comment".equals(command)) {
                 repo = handleComment(ar, ngw, postObject);
-            }
-            else {
+            } else {
                 throw WeaverException.newBasic("Unrecognized command: %s", command);
             }
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to fetch "+command+ " info from workspace "+siteId+"/"+pageId, ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to fetch "
+                                    + command
+                                    + " info from workspace "
+                                    + siteId
+                                    + "/"
+                                    + pageId,
+                            ex);
             streamException(ee, ar);
         }
     }
 
-    private JSONObject handleComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {
+    private JSONObject handleComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject)
+            throws Exception {
         long cid = DOMFace.safeConvertLong(ar.reqParam("cid"));
-        System.out.println("Comment Controller: handling comment: "+cid);
+        System.out.println("Comment Controller: handling comment: " + cid);
         CommentRecord cr = null;
-        if (cid>0) {
+        if (cid > 0) {
             cr = ngw.getCommentOrFail(cid);
-        }
-        else {
+        } else {
             cr = createNewComment(ar, ngw, postObject);
         }
         if (postObject != null) {
             cr.updateFromJSON(postObject, ar);
-            
-            ngw.saveModifiedWorkspace(ar, "updated comment "+cid);
-            //now we have to tell the meeting controlled to update cache if meeting comment
+
+            ngw.saveModifiedWorkspace(ar, "updated comment " + cid);
+            // now we have to tell the meeting controlled to update cache if meeting comment
             if (cr.containerType == CommentRecord.CONTAINER_TYPE_MEETING) {
                 int pos = cr.containerID.indexOf(":");
-                String meetingId = cr.containerID.substring(0,pos);
+                String meetingId = cr.containerID.substring(0, pos);
                 MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
             }
-            System.out.println("Comment Controller: workspace is saved for: "+cid);
+            System.out.println("Comment Controller: workspace is saved for: " + cid);
         }
         return cr.getJSONWithDocs(ngw);
     }
 
-    private CommentRecord createNewComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {
-        
-        if (postObject == null) { 
+    private CommentRecord createNewComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject)
+            throws Exception {
+
+        if (postObject == null) {
             throw WeaverException.newBasic("Creating a comment requires a POST of JSON parameters");
         }
-        
+
         char containerType = postObject.getString("containerType").charAt(0);
-        String containerID   = postObject.getString("containerID");
+        String containerID = postObject.getString("containerID");
         CommentRecord cr = null;
         if ('M' == containerType) {
             int pos = containerID.indexOf(":");
-            if (pos<0) {
-                throw WeaverException.newBasic("Meeting ID must contain a colon.  Got: %s", containerID);
+            if (pos < 0) {
+                throw WeaverException.newBasic(
+                        "Meeting ID must contain a colon.  Got: %s", containerID);
             }
             String meetID = containerID.substring(0, pos);
-            String agendaID = containerID.substring(pos+1);
+            String agendaID = containerID.substring(pos + 1);
             MeetingRecord mr = ngw.findMeeting(meetID);
             AgendaItem ai = mr.findAgendaItem(agendaID);
             cr = ai.addComment(ar);
-            
-        }
-        else if ('T' == containerType) {
+
+        } else if ('T' == containerType) {
             TopicRecord tr = ngw.getDiscussionTopic(containerID);
             cr = tr.addComment(ar);
-        }
-        else if ('A' == containerType) {
+        } else if ('A' == containerType) {
             AttachmentRecord att = ngw.findAttachmentByIDOrFail(containerID);
             cr = att.addComment(ar);
-        }
-        else {
+        } else {
             throw WeaverException.newBasic(
-                "CreateComment is unable to understand the containerType: %s", 
-                containerType);
+                    "CreateComment is unable to understand the containerType: %s", containerType);
         }
         return cr;
     }
-    
-
 }
-

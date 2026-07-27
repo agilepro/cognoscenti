@@ -1,5 +1,8 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,110 +11,106 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
-
 /**
  * The ledge keeps track of the money used and spent on each site.
- * 
- * First is a list of agreed upon plans.  Usually a site will only have a single
- * plan, and that is valid from starting through to the current date.
- * But if the site ever changes plans, a new entry will be made with a set
- * of valid dates.  When calculating fees, the latest plan is used, but the old
- * ones are there for reference.
- * 
- * Then is a list of charges made.  this includes all the details necessary to 
+ *
+ * <p>First is a list of agreed upon plans. Usually a site will only have a single plan, and that is
+ * valid from starting through to the current date. But if the site ever changes plans, a new entry
+ * will be made with a set of valid dates. When calculating fees, the latest plan is used, but the
+ * old ones are there for reference.
+ *
+ * <p>Then is a list of charges made. this includes all the details necessary to
  */
 public class Ledger {
 
-    public static final String PLAN_TYPE_TRIAL          = "Trial";
-    public static final String PLAN_TYPE_GRASS_ROOTS    = "GrassRoots";
+    public static final String PLAN_TYPE_TRIAL = "Trial";
+    public static final String PLAN_TYPE_GRASS_ROOTS = "GrassRoots";
     public static final String PLAN_TYPE_SMALL_BUSINESS = "SmallBusiness";
-    public static final String PLAN_TYPE_BUSINESS       = "Business";
-    public static final String PLAN_TYPE_UNLIMITED      = "Unlimited";
+    public static final String PLAN_TYPE_BUSINESS = "Business";
+    public static final String PLAN_TYPE_UNLIMITED = "Unlimited";
 
     public static final int LAST_POSSIBLE_YEAR = getYear(System.currentTimeMillis()) + 1;
-        
+
     public List<LedgerCharge> charges = new ArrayList<>();
     public List<LedgerPayment> payments = new ArrayList<>();
-    
+
     public static Ledger readLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
         return JsonUtil.loadOrCreateJsonFile(ledgerFilePath, Ledger.class);
     }
+
     public void saveLedger(File folder) throws Exception {
         File ledgerFilePath = new File(folder, "ledger.json");
         JsonUtil.saveJsonFile(ledgerFilePath, this);
     }
 
-    private Ledger() {
-    }
-    
+    private Ledger() {}
+
     public static int getYear(long timestamp) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(timestamp);
-        return calendar.get(Calendar.YEAR);        
+        return calendar.get(Calendar.YEAR);
     }
-    /**
-     * Note that MONTH is 1-12 and NOT the Java standard
-     */
+
+    /** Note that MONTH is 1-12 and NOT the Java standard */
     public static int getMonth(long timestamp) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(timestamp);
-        return calendar.get(Calendar.MONTH)+1;        
+        return calendar.get(Calendar.MONTH) + 1;
     }
+
     public static int getDay(long timestamp) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(timestamp);
-        return calendar.get(Calendar.DAY_OF_MONTH);        
+        return calendar.get(Calendar.DAY_OF_MONTH);
     }
-    /**
-     * Note that MONTH is 1-12 and NOT the Java standard
-     */
+
+    /** Note that MONTH is 1-12 and NOT the Java standard */
     public static long getTimestamp(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.clear();
-        calendar.set(year, month-1, day, 0, 0, 0);
+        calendar.set(year, month - 1, day, 0, 0, 0);
         if (calendar.get(Calendar.HOUR_OF_DAY) > 0) {
-            throw new RuntimeException("The hour is set to: "+calendar.get(Calendar.HOUR_OF_DAY));
+            throw new RuntimeException("The hour is set to: " + calendar.get(Calendar.HOUR_OF_DAY));
         }
         if (calendar.get(Calendar.MINUTE) > 0) {
-            throw new RuntimeException("The minute is set to: "+calendar.get(Calendar.MINUTE));
+            throw new RuntimeException("The minute is set to: " + calendar.get(Calendar.MINUTE));
         }
         if (calendar.get(Calendar.SECOND) > 0) {
-            throw new RuntimeException("The second is set to: "+calendar.get(Calendar.SECOND));
+            throw new RuntimeException("The second is set to: " + calendar.get(Calendar.SECOND));
         }
         if (calendar.get(Calendar.MILLISECOND) > 0) {
-            throw new RuntimeException("The milliseconds is set to: "+calendar.get(Calendar.MILLISECOND));
+            throw new RuntimeException(
+                    "The milliseconds is set to: " + calendar.get(Calendar.MILLISECOND));
         }
         return calendar.getTimeInMillis();
     }
+
     public static long getFirstOfMonth(long timestamp) {
         int year = getYear(timestamp);
         int month = getMonth(timestamp);
         return getTimestamp(year, month, 1);
     }
+
     public static long getBeginningOfDay(long timestamp) {
         int year = getYear(timestamp);
         int month = getMonth(timestamp);
         int day = getDay(timestamp);
         return getTimestamp(year, month, day);
     }
+
     public static long getNextMonth(long timestamp) {
         int year = getYear(timestamp);
         int month = getMonth(timestamp);
         if (month >= 12) {
             year++;
             month = 1;
-        }
-        else {
+        } else {
             month++;
         }
         return getTimestamp(year, month, 1);
     }
-    
+
     public static List<Long> getAllMonthsInRange(long startDate, long endDate) throws Exception {
         if (startDate > endDate) {
             throw WeaverException.newBasic("end date must be after the start date");
@@ -123,7 +122,8 @@ public class Ledger {
             res.add(timestamp);
             long nextMonth = getNextMonth(timestamp);
             if (timestamp >= nextMonth) {
-                throw WeaverException.newBasic("getNextMonth(%s) returned %s", timestamp, nextMonth);
+                throw WeaverException.newBasic(
+                        "getNextMonth(%s) returned %s", timestamp, nextMonth);
             }
             timestamp = nextMonth;
             if (guard-- < 0) {
@@ -132,16 +132,13 @@ public class Ledger {
         }
         return res;
     }
-    
+
     private void sortAndCleanPlans() {
         Collections.sort(charges, new ChargeSorter());
-        Collections.sort(payments, new PaymentSorter());    
+        Collections.sort(payments, new PaymentSorter());
     }
 
-
-    
-
-    /* 
+    /*
      * sorts the SiteLedgerCharg in chrono order by year and month
      */
     private class ChargeSorter implements Comparator<LedgerCharge> {
@@ -150,13 +147,13 @@ public class Ledger {
         public int compare(LedgerCharge arg0, LedgerCharge arg1) {
             if (arg0.year == arg1.year) {
                 return (int) (arg0.month - arg1.month);
-            }
-            else {
+            } else {
                 return (int) (arg0.year - arg1.year);
             }
         }
     }
-    /* 
+
+    /*
      * sorts the SiteLedgerPayment in chrono order by payment date
      */
     private class PaymentSorter implements Comparator<LedgerPayment> {
@@ -166,13 +163,12 @@ public class Ledger {
             long difference = (arg0.payDate - arg1.payDate);
             if (difference < 0) {
                 return -1;
-            } 
-            else {
+            } else {
                 return 1;
             }
         }
     }
-    
+
     private void removePayment(long timestamp) {
         timestamp = getBeginningOfDay(timestamp);
         List<LedgerPayment> newList = new ArrayList<>();
@@ -183,9 +179,11 @@ public class Ledger {
         }
         payments = newList;
     }
+
     public void createPayment(long timestamp, double amount, String detail) throws Exception {
-        if (detail== null || detail.isEmpty()) {
-            throw WeaverException.newBasic("'detail' is missing.  Please always include detail with a payment");
+        if (detail == null || detail.isEmpty()) {
+            throw WeaverException.newBasic(
+                    "'detail' is missing.  Please always include detail with a payment");
         }
         timestamp = getBeginningOfDay(timestamp);
         if (amount == 0) {
@@ -207,7 +205,7 @@ public class Ledger {
         payRec.payAmount = amount;
         payRec.detail = detail;
     }
-    
+
     public List<LedgerPayment> getPaymentsInRange(long start, long end) {
         List<LedgerPayment> ret = new ArrayList<LedgerPayment>();
         for (LedgerPayment onePay : payments) {
@@ -229,10 +227,9 @@ public class Ledger {
         return balance;
     }
 
-    
     public JSONArray getInfoForAllMonths() throws Exception {
         JSONArray ja = new JSONArray();
-        
+
         long today = System.currentTimeMillis();
         long startDate = today;
 
@@ -246,21 +243,21 @@ public class Ledger {
 
         double balance = 0;
         int guard = 100;
-        for( long monthBegin : getAllMonthsInRange(startDate, today)) {
+        for (long monthBegin : getAllMonthsInRange(startDate, today)) {
             long followingMonth = getNextMonth(monthBegin);
             int year = getYear(monthBegin);
             int month = getMonth(monthBegin);
             JSONObject jo = new JSONObject();
             jo.put("firstOfMonth", monthBegin);
-            jo.put("year",  year);
-            jo.put("month",  month);
-            
+            jo.put("year", year);
+            jo.put("month", month);
+
             LedgerCharge charge = getChargesOrNull(year, month);
             if (charge != null) {
                 jo.put("chargeAmt", charge.amount);
                 balance += charge.amount;
             }
-            
+
             JSONArray pays = new JSONArray();
             for (LedgerPayment onePay : getPaymentsInRange(monthBegin, followingMonth)) {
                 pays.put(onePay.generateJson());
@@ -269,7 +266,7 @@ public class Ledger {
             jo.put("payments", pays);
             jo.put("balance", balance);
             ja.put(jo);
-            
+
             if (guard-- < 0) {
                 return ja;
             }
@@ -279,19 +276,22 @@ public class Ledger {
 
     public void assertValid(int year, int month) throws Exception {
         if (year < 2020) {
-            throw WeaverException.newBasic("No charges are allowed of years less than 2020, value %d not allowed", year);
+            throw WeaverException.newBasic(
+                    "No charges are allowed of years less than 2020, value %d not allowed", year);
         }
         if (year > LAST_POSSIBLE_YEAR) {
-            throw WeaverException.newBasic("No charges are allowed of years greater than %d, value %d not allowed", LAST_POSSIBLE_YEAR, year);
+            throw WeaverException.newBasic(
+                    "No charges are allowed of years greater than %d, value %d not allowed",
+                    LAST_POSSIBLE_YEAR, year);
         }
         if (month < 1 || month > 12) {
-            throw WeaverException.newBasic("Month value (%d) not a valid month value (1 thru 12)", month);
-        }        
+            throw WeaverException.newBasic(
+                    "Month value (%d) not a valid month value (1 thru 12)", month);
+        }
     }
 
     /**
-     * find the charges for a given year and month.
-     * Month is defined in the standard Java way 0 - 11
+     * find the charges for a given year and month. Month is defined in the standard Java way 0 - 11
      */
     public LedgerCharge getChargesOrNull(int year, int month) throws Exception {
         assertValid(year, month);
@@ -306,9 +306,9 @@ public class Ledger {
         }
         return null;
     }
+
     /**
-     * find the charge for a given year and month.
-     * Month is defined in the standard Java way 0 - 11
+     * find the charge for a given year and month. Month is defined in the standard Java way 0 - 11
      */
     public LedgerCharge getOrCreateCharge(int year, int month) throws Exception {
         assertValid(year, month);
@@ -322,9 +322,9 @@ public class Ledger {
         }
         return charge;
     }
+
     /**
-     * find the charge for a given year and month.
-     * Month is defined in the standard Java way 0 - 11
+     * find the charge for a given year and month. Month is defined in the standard Java way 0 - 11
      */
     public void removeCharge(int year, int month) throws Exception {
         assertValid(year, month);
@@ -337,17 +337,16 @@ public class Ledger {
         charges = newList;
     }
 
-
     public void setChargeAmt(int year, int month, double thisCharge) throws Exception {
         assertValid(year, month);
         if (thisCharge == 0) {
             removeCharge(year, month);
-        }
-        else {
+        } else {
             LedgerCharge aCharge = getOrCreateCharge(year, month);
             aCharge.amount = thisCharge;
         }
-    }    
+    }
+
     public double getChargeAmt(int year, int month, double thisCharge) throws Exception {
         assertValid(year, month);
         for (LedgerCharge aCharge : charges) {
@@ -360,14 +359,14 @@ public class Ledger {
             return aCharge.amount;
         }
         return 0;
-    }    
-    
+    }
+
     public static void calculateChargesAllSites(Cognoscenti cog) throws Exception {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(System.currentTimeMillis());
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
-        
+
         for (NGPageIndex ngpi : cog.getAllSites()) {
             NGBook site = ngpi.getSite();
             site.recalculateStats(cog);
@@ -376,13 +375,12 @@ public class Ledger {
             LedgerCharge chargeMonth = ledger.getOrCreateCharge(year, month);
             double chargeAmt = 10.0;
 
-            chargeMonth.amount =  chargeAmt;
+            chargeMonth.amount = chargeAmt;
             // SiteUsers siteUser = site.getUserMap();
-            
+
         }
     }
-    
-    
+
     public JSONObject generateJson() throws Exception {
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
@@ -406,5 +404,4 @@ public class Ledger {
         jo.put("balance", balance);
         return jo;
     }
-
 }

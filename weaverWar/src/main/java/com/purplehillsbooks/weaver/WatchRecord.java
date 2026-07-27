@@ -3,10 +3,10 @@ package com.purplehillsbooks.weaver;
 import com.purplehillsbooks.json.JSONObject;
 
 public class WatchRecord {
-    
+
     public String pageKey;
-    public long   lastSeen;
-    
+    public long lastSeen;
+
     public WatchRecord(String key, long seen) {
         pageKey = key;
         lastSeen = seen;
@@ -19,9 +19,8 @@ public class WatchRecord {
 
     public JSONObject getJSON() throws Exception {
         JSONObject watchRec = new JSONObject();
-        watchRec.put("key",pageKey);
-        watchRec.put("lastSeen",lastSeen);
+        watchRec.put("key", pageKey);
+        watchRec.put("lastSeen", lastSeen);
         return watchRec;
     }
-    
 }

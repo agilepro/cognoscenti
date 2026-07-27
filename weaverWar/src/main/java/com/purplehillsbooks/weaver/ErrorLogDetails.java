@@ -20,19 +20,16 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.Writer;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
-
+import java.io.Writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
-
 
 public class ErrorLogDetails extends DOMFace {
 
@@ -43,13 +40,16 @@ public class ErrorLogDetails extends DOMFace {
     public long getModTime() {
         return safeConvertLong(getAttribute("modTime"));
     }
+
     public String getModUser() {
         return getAttribute("modUser");
     }
+
     public void setModified(String userId, long time) {
         setAttribute("modUser", userId);
         setAttribute("modTime", Long.toString(time));
     }
+
     public void setModTime(long time) {
         setAttribute("modTime", Long.toString(time));
     }
@@ -57,6 +57,7 @@ public class ErrorLogDetails extends DOMFace {
     public int getErrorNo() {
         return getAttributeInt("errorNo");
     }
+
     public void setErrorNo(int errorNo) {
         setAttributeInt("errorNo", errorNo);
     }
@@ -64,6 +65,7 @@ public class ErrorLogDetails extends DOMFace {
     public String getFileName() {
         return getScalar("errorfileName");
     }
+
     public void setFileName(String fileName) {
         setScalar("errorfileName", fileName);
     }
@@ -71,6 +73,7 @@ public class ErrorLogDetails extends DOMFace {
     public String getErrorMessage() {
         return getScalar("errorMessage");
     }
+
     public void setErrorMessage(String errorMessage) {
         setScalar("errorMessage", errorMessage);
     }
@@ -78,6 +81,7 @@ public class ErrorLogDetails extends DOMFace {
     public String getURI() {
         return getScalar("errorURI");
     }
+
     public void setURI(String URI) {
         setScalar("errorURI", URI);
     }
@@ -85,6 +89,7 @@ public class ErrorLogDetails extends DOMFace {
     public String getErrorDetails() {
         return getScalar("errorDetails");
     }
+
     public void setErrorDetails(String errorDetails) {
         setScalar("errorDetails", errorDetails);
     }
@@ -92,6 +97,7 @@ public class ErrorLogDetails extends DOMFace {
     public String getUserComment() {
         return getScalar("userComments");
     }
+
     public void setUserComment(String comments) {
         setScalar("userComments", comments);
     }
@@ -111,31 +117,35 @@ public class ErrorLogDetails extends DOMFace {
             w.flush();
 
             OptOutAddr ooa = new OptOutSuperAdmin(up.getAddressListEntry());
-            
-            MailInst msg = MailInst.genericEmail("$", "$", "Weaver feedback from " + ar.getBestUserId(), body.toString());
+
+            MailInst msg =
+                    MailInst.genericEmail(
+                            "$",
+                            "$",
+                            "Weaver feedback from " + ar.getBestUserId(),
+                            body.toString());
             NGContainer ngc = ar.ngp;
             if (ngc instanceof NGWorkspace) {
-                msg.setSiteKey(((NGWorkspace)ngc).getSiteKey());
-                msg.setWorkspaceKey(((NGWorkspace)ngc).getKey());
+                msg.setSiteKey(((NGWorkspace) ngc).getSiteKey());
+                msg.setWorkspaceKey(((NGWorkspace) ngc).getKey());
             }
 
             EmailSender.generalMailToOne(msg, from, ooa);
         }
     }
 
-
-
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
-        jo.put("errNo",        this.getErrorNo());
-        jo.put("message",      this.getErrorMessage());
-        jo.put("stackTrace",   this.getErrorDetails());
-        jo.put("comment",      this.getUserComment());
-        jo.put("modTime",      this.getModTime());
-        jo.put("modUser",      this.getModUser());
-        jo.put("uri",          this.getURI());
+        jo.put("errNo", this.getErrorNo());
+        jo.put("message", this.getErrorMessage());
+        jo.put("stackTrace", this.getErrorDetails());
+        jo.put("comment", this.getUserComment());
+        jo.put("modTime", this.getModTime());
+        jo.put("modUser", this.getModUser());
+        jo.put("uri", this.getURI());
         return jo;
     }
+
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("stackTrace")) {
             this.setErrorDetails(input.getString("stackTrace"));

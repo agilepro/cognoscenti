@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,20 +28,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * At the root of a DOM tree is a node that has no parent, and that is the root
- * node for an XML file on disk.
+ * At the root of a DOM tree is a node that has no parent, and that is the root node for an XML file
+ * on disk.
  *
- * DOMFile is a subclass of DOMFace, with the additional capabilities to read
- * and write files.
+ * <p>DOMFile is a subclass of DOMFace, with the additional capabilities to read and write files.
  */
 public class DOMFile extends DOMFace {
     protected File associatedFile;
@@ -59,16 +56,14 @@ public class DOMFile extends DOMFace {
             Document userDoc;
             if (!path.exists()) {
                 userDoc = DOMUtils.createDocument(rootNode);
-            }
-            else {
+            } else {
                 FileInputStream is = new FileInputStream(path);
                 userDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
             }
             return userDoc;
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to read or create an XML file: %s", e,
-                    path.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to read or create an XML file: %s", e, path.getAbsolutePath());
         }
     }
 
@@ -76,20 +71,18 @@ public class DOMFile extends DOMFace {
         try {
             reformatXML();
             DOMUtils.writeDomToFile(fDoc, associatedFile);
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to save file: %s", e,
-                    associatedFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
 
     public void saveNoFormatting() throws Exception {
         try {
             DOMUtils.writeDomToFile(fDoc, associatedFile);
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to save file: %s", e,
-                    associatedFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
 
@@ -97,10 +90,9 @@ public class DOMFile extends DOMFace {
         try {
             associatedFile = newFile;
             DOMUtils.writeDomToFile(fDoc, associatedFile);
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to save file: %s", e,
-                    associatedFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
 
@@ -162,7 +154,6 @@ public class DOMFile extends DOMFace {
             }
         }
         {
-
             Node nx = parent.getFirstChild();
             while (nx != null) {
                 parent.removeChild(nx);
@@ -193,16 +184,14 @@ public class DOMFile extends DOMFace {
         for (Element ele : elementSet) {
             indentChildren(ele, newIndent);
         }
-
     }
 
     /**
-     * use DOMElementComparator to sort a vector of elements into alphabetical
-     * order according to their name.
+     * use DOMElementComparator to sort a vector of elements into alphabetical order according to
+     * their name.
      */
     static class DOMElementComparator implements Comparator<Element> {
-        public DOMElementComparator() {
-        }
+        public DOMElementComparator() {}
 
         public int compare(Element o1, Element o2) {
             String name1 = o1.getNodeName();

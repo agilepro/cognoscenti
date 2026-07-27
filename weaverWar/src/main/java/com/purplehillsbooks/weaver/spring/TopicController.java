@@ -20,9 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -31,14 +30,12 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 
 @Controller
 public class TopicController extends BaseController {
@@ -46,8 +43,11 @@ public class TopicController extends BaseController {
     /////////////////////////// MAIN VIEWS //////////////////////////////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/NotesList.htm", method = RequestMethod.GET)
-    public void notesList(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void notesList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
@@ -55,76 +55,94 @@ public class TopicController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/NoteZoom{topicId}.htm", method = RequestMethod.GET)
-    public void NoteZoom(@PathVariable String topicId, @PathVariable String pageId,
-           @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-       try{
-           AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
-           TopicRecord topic = ngw.getDiscussionTopic(topicId);
-           if (topic==null) {
-               showDisplayWarning(ar, "Can not find a discussion topic with the id  "+topicId
-                       +".  Was it deleted?");
-               return;
-           }
+    public void NoteZoom(
+            @PathVariable String topicId,
+            @PathVariable String pageId,
+            @PathVariable String siteId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
+        try {
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
+            TopicRecord topic = ngw.getDiscussionTopic(topicId);
+            if (topic == null) {
+                showDisplayWarning(
+                        ar,
+                        "Can not find a discussion topic with the id  "
+                                + topicId
+                                + ".  Was it deleted?");
+                return;
+            }
 
-           request.setAttribute("topicId", topicId);
-           boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);
-           showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
-       }
-       catch(Exception ex) {
-           throw WeaverException.newWrap("Failed to open topic page %s in the workspace %s in site %s.", ex, topicId, pageId, siteId);
-       }
+            request.setAttribute("topicId", topicId);
+            boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);
+            showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
+        } catch (Exception ex) {
+            throw WeaverException.newWrap(
+                    "Failed to open topic page %s in the workspace %s in site %s.",
+                    ex, topicId, pageId, siteId);
+        }
     }
 
     // compatibility so many old places !!
     @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{topicId}.htm", method = RequestMethod.GET)
-    public void displayOneLeaflet(@PathVariable String topicId, @PathVariable String pageId,
-           @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-       NoteZoom(topicId, pageId, siteId, request, response);
+    public void displayOneLeaflet(
+            @PathVariable String topicId,
+            @PathVariable String pageId,
+            @PathVariable String siteId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
+        NoteZoom(topicId, pageId, siteId, request, response);
     }
 
-
     /////////////////////////// DATA //////////////////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/getTopics.json", method = RequestMethod.GET)
-    public void getTopics(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getTopics(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
 
             JSONArray topicList = new JSONArray();
             for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
 
                 if (!topic.isDeleted()) {
-                    topicList.put( topic.getJSON(ngw) );
+                    topicList.put(topic.getJSON(ngw));
                 }
             }
 
             sendJsonArray(ar, topicList);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to fetch the list of topics", ex);
             streamException(ee, ar);
         }
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/topicList.json", method = RequestMethod.GET)
-    public void topicList(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void topicList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             boolean isMember = ar.canAccessWorkspace();
 
             JSONArray allTopics = new JSONArray();
             for (TopicRecord topic : ngw.getAllDiscussionTopics()) {
                 if (!isMember || topic.isDeleted()) {
-                    //skip deleted if not member
+                    // skip deleted if not member
                     continue;
                 }
                 allTopics.put(topic.getJSON(ngw));
@@ -133,21 +151,23 @@ public class TopicController extends BaseController {
             JSONObject repo = new JSONObject();
             repo.put("topics", allTopics);
             sendJson(ar, repo);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to retrieve discussion topic list", ex);
             streamException(ee, ar);
         }
     }
 
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/getTopic.json", method = RequestMethod.GET)
-    public void getTopic(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getTopic(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String topicId = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             topicId = ar.reqParam("nid");
             TopicRecord topic = ngw.getNoteOrFail(topicId);
@@ -155,19 +175,26 @@ public class TopicController extends BaseController {
 
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get discussion topic (%s) contents from site/workspace: %s/%s", ex, topicId, siteId, pageId);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to get discussion topic (%s) contents from site/workspace: %s/%s",
+                            ex, topicId, siteId, pageId);
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)
-    public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getGoalHistory(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         String topicId = "";
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             topicId = ar.reqParam("nid");
             TopicRecord topic = ngw.getNoteOrFail(topicId);
@@ -179,28 +206,29 @@ public class TopicController extends BaseController {
             }
             releaseLock();
             sendJsonArray(ar, noteArray);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to get history for note.", ex);
             streamException(ee, ar);
         }
     }
 
-    
-    
     @RequestMapping(value = "/{siteId}/{pageId}/mergeTopicDoc.json", method = RequestMethod.POST)
-    public void mergeTopicDoc(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void mergeTopicDoc(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String nid = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
             String oldMarkDown = noteInfo.optString("old", "");
             String newMarkDown = noteInfo.getString("new");
-            
+
             TopicRecord topic = ngw.getNoteOrFail(nid);
             topic.mergeDoc(oldMarkDown, newMarkDown);
             if (noteInfo.has("subject")) {
@@ -210,21 +238,25 @@ public class TopicController extends BaseController {
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to merge-update topic ("+nid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to merge-update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
     }
-    
-    
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateNote.json", method = RequestMethod.POST)
-    public void updateNote(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void updateNote(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String nid = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertUpdateWorkspace("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
@@ -236,35 +268,45 @@ public class TopicController extends BaseController {
             if (noteInfo.has("comments")) {
                 JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
                 int numCmts = commentsToUpdate.length();
-                for (int i=0; i<numCmts; i++) {
+                for (int i = 0; i < numCmts; i++) {
                     JSONObject aCmt = commentsToUpdate.getJSONObject(i);
-                    if (aCmt.getLong("time")<=0) {
+                    if (aCmt.getLong("time") <= 0) {
                         String comment = GetFirstHundredNoHtml(aCmt.getString("body"));
-                        HistoryRecord.createHistoryRecord(ngw, topic.getId(),
+                        HistoryRecord.createHistoryRecord(
+                                ngw,
+                                topic.getId(),
                                 HistoryRecord.CONTEXT_TYPE_LEAFLET,
-                                HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
+                                HistoryRecord.EVENT_COMMENT_ADDED,
+                                ar,
+                                comment);
                     }
                 }
-            };
+            }
+            ;
 
             topic.updateNoteFromJSON(noteInfo, ar);
 
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update topic ("+nid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable to update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
-    public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void noteHtmlUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String nid = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertUpdateWorkspace("Must be a member to update a topic contents.");
             ar.assertNotFrozen(ngw);
@@ -272,7 +314,8 @@ public class TopicController extends BaseController {
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
 
-            boolean isAutoSave = noteInfo.has("saveMode") && "autosave".equals(noteInfo.getString("saveMode"));
+            boolean isAutoSave =
+                    noteInfo.has("saveMode") && "autosave".equals(noteInfo.getString("saveMode"));
 
             TopicRecord topic = null;
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
@@ -280,8 +323,7 @@ public class TopicController extends BaseController {
                 topic = ngw.createTopic();
                 noteInfo.put("universalid", topic.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
-            }
-            else {
+            } else {
                 topic = ngw.getDiscussionTopic(nid);
             }
 
@@ -289,8 +331,14 @@ public class TopicController extends BaseController {
             topic.setLastEdited(ar.nowTime);
             topic.setModUser(AddressListEntry.findByAnyIdOrFail(ar.getBestUserId()));
             if (!isAutoSave) {
-                HistoryRecord.createHistoryRecord(ngw, topic.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
-                    0, eventType, ar, "");
+                HistoryRecord.createHistoryRecord(
+                        ngw,
+                        topic.getId(),
+                        HistoryRecord.CONTEXT_TYPE_LEAFLET,
+                        0,
+                        eventType,
+                        ar,
+                        "");
             }
 
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
@@ -298,14 +346,14 @@ public class TopicController extends BaseController {
 
             repo.write(ar.w, 2, 2);
             ar.flush();
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to HTML update topic ("+nid+") contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to HTML update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
     }
 
-    
-    
     /*
      * Pull the first 100 character max from the string, but ignore anything
      * that looks like an HTML tag, and anything inside those tags.
@@ -315,19 +363,17 @@ public class TopicController extends BaseController {
         int limit = 100;
         boolean inTag = false;
         StringBuilder res = new StringBuilder();
-        for (int i=0; i<input.length() && limit>0; i++) {
+        for (int i = 0; i < input.length() && limit > 0; i++) {
             char ch = input.charAt(i);
             if (inTag) {
                 if ('>' == ch) {
-                    inTag=false;
+                    inTag = false;
                 }
-                //ignore all other characters while in the tag
-            }
-            else {
+                // ignore all other characters while in the tag
+            } else {
                 if ('<' == ch) {
-                    inTag=true;
-                }
-                else {
+                    inTag = true;
+                } else {
                     res.append(ch);
                     limit--;
                 }
@@ -336,82 +382,88 @@ public class TopicController extends BaseController {
         return res.toString();
     }
 
-
-    
     @RequestMapping(value = "/{siteId}/{pageId}/topicSubscribe.json", method = RequestMethod.GET)
-    public void topicSubscribe(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void topicSubscribe(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String nid = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             nid = ar.reqParam("nid");
             TopicRecord topic = ngw.getDiscussionTopic(nid);
-            boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
+            boolean canAccessTopic = AccessControl.canAccessTopic(ar, ngw, topic);
             if (!canAccessTopic) {
                 ar.assertUpdateWorkspace("must have permission to subscribe to a topic");
             }
             UserProfile up = ar.getUserProfile();
             AddressListEntry ale;
-            if (up==null) {
-                //if they are not logged in, but allowed, then they must have
-                //and emailId parameter
+            if (up == null) {
+                // if they are not logged in, but allowed, then they must have
+                // and emailId parameter
                 ale = AddressListEntry.findOrCreate(ar.reqParam("emailId"));
-            }
-            else {
+            } else {
                 ale = up.getAddressListEntry();
             }
 
             topic.getSubscriberRole().addPlayer(ale);
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
-            ngw.save(); //just save flag, don't mark page as changed
+            ngw.save(); // just save flag, don't mark page as changed
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to subscribe to topic "+nid+" contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to subscribe to topic " + nid + " contents", ex);
             streamException(ee, ar);
         }
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/topicUnsubscribe.json", method = RequestMethod.GET)
-    public void topicUsubscribe(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void topicUsubscribe(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String nid = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             nid = ar.reqParam("nid");
             TopicRecord topic = ngw.getDiscussionTopic(nid);
-            boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
+            boolean canAccessTopic = AccessControl.canAccessTopic(ar, ngw, topic);
             if (!canAccessTopic) {
-                //well ... the idea is that anyone can UNSUBSCRIBE.
-                //this might be open to abuse, allowing people to unsubscribe others
-                //but they will be resubscribed on the next comment ... so maybe
-                //harmless?
+                // well ... the idea is that anyone can UNSUBSCRIBE.
+                // this might be open to abuse, allowing people to unsubscribe others
+                // but they will be resubscribed on the next comment ... so maybe
+                // harmless?
             }
             UserProfile up = ar.getUserProfile();
             AddressListEntry ale;
-            if (up==null) {
-                //if they are not logged in, but allowed, then they must have
-                //and emailId parameter
+            if (up == null) {
+                // if they are not logged in, but allowed, then they must have
+                // and emailId parameter
                 ale = AddressListEntry.findOrCreate(ar.reqParam("emailId"));
-            }
-            else {
+            } else {
                 ale = up.getAddressListEntry();
             }
 
             topic.getSubscriberRole().removePlayerCompletely(ale);
-            ngw.save(); //just save flag, don't mark page as changed
+            ngw.save(); // just save flag, don't mark page as changed
             JSONObject repo = topic.getJSONWithComments(ar, ngw);
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to subscribe to topic "+nid+" contents", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to subscribe to topic " + nid + " contents", ex);
             streamException(ee, ar);
         }
     }
-
 }

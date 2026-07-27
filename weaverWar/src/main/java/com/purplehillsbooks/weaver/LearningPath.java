@@ -1,60 +1,59 @@
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import java.io.File;
 
 public class LearningPath {
-    
+
     private static File learningPathFile;
     private static JSONObject pathFile;
     private static Cognoscenti cog;
-    
+
     public static void init(Cognoscenti _cog) throws Exception {
         cog = _cog;
-        learningPathFile    =  new File(cog.getConfig().getUserFolderOrFail(), "learningPath.json");
+        learningPathFile = new File(cog.getConfig().getUserFolderOrFail(), "learningPath.json");
         if (!learningPathFile.exists()) {
             File templateFile = cog.getConfig().getFileFromRoot("learningPath-sample.json");
             StreamHelper.copyFileToFile(templateFile, learningPathFile);
         }
         if (!learningPathFile.exists()) {
-            throw WeaverException.newBasic("Learning path file is missing and can not be created: %s", 
+            throw WeaverException.newBasic(
+                    "Learning path file is missing and can not be created: %s",
                     learningPathFile.getAbsolutePath());
         }
     }
-    
+
     private static JSONObject getInternal() throws Exception {
-        if (pathFile==null) {
+        if (pathFile == null) {
             pathFile = JSONObject.readFromFile(learningPathFile);
         }
         return pathFile;
     }
-    
+
     public static JSONObject getAllLearningPrompts() throws Exception {
         return UtilityMethods.deepCopy(getInternal());
     }
-    
+
     public static JSONArray getLearningForPage(String jspName) throws Exception {
         JSONArray ret = getInternal().requireJSONArray(jspName);
         return ret;
     }
-    
-    
-    public static void putLearningForPage(String jspName, String mode, JSONObject learning) throws Exception {
+
+    public static void putLearningForPage(String jspName, String mode, JSONObject learning)
+            throws Exception {
         try {
             JSONArray ret = getInternal().requireJSONArray(jspName);
             JSONArray newList = new JSONArray();
-            learning.put("mode",  mode);
+            learning.put("mode", mode);
             boolean found = false;
             for (JSONObject oneLearn : ret.getJSONObjectList()) {
                 if (oneLearn.getString("mode").contentEquals(mode)) {
                     newList.put(learning);
                     found = true;
-                }
-                else {
+                } else {
                     newList.put(oneLearn);
                 }
             }
@@ -63,13 +62,11 @@ public class LearningPath {
             }
             pathFile.put(jspName, newList);
             pathFile.writeToFile(learningPathFile);
-        }
-        catch (Exception e) {
-            pathFile = null;  //force re-read
+        } catch (Exception e) {
+            pathFile = null; // force re-read
             throw WeaverException.newWrap(
-                "Failure while trying to update learning path mode=%s, jsp=%s", 
-                e,  mode, jspName);
+                    "Failure while trying to update learning path mode=%s, jsp=%s",
+                    e, mode, jspName);
         }
     }
-    
 }

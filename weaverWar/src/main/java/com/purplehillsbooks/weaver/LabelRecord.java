@@ -20,14 +20,13 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONObject;
 
 /**
- * Workspaces will have a set of labels to label documents, action items, and topics with.
- * This will put them into groups, and allow for a display somewhat like a folder.
- *
+ * Workspaces will have a set of labels to label documents, action items, and topics with. This will
+ * put them into groups, and allow for a display somewhat like a folder.
  */
 public class LabelRecord extends DOMFace implements NGLabel {
 
@@ -53,8 +52,8 @@ public class LabelRecord extends DOMFace implements NGLabel {
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
-        jObj.put("name",  getName());
-        jObj.put("color",  getColor());
+        jObj.put("name", getName());
+        jObj.put("color", getColor());
         return jObj;
     }
 }

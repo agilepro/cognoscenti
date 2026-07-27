@@ -20,99 +20,80 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.util.ThreeWayMerge;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
-* The purpose of this class is to be a base class to classes which
-* are designed to be interfaced to DOM trees.  If you have a DOM
-* tree, and you want to directly reflect that out to the program
-* as structured data, you create a file that has getters and setters
-* for the various members.  This base class containes convenient
-* methods for manipulating the DOM tree, and keeping it in sync
-* with the external representation you are presenting.
-*
-* GETTERS: pull values directly from child dom elements.  Useful when
-*     a particular member is gotten only a few times any reading
-*     of the file.  If this is a heavily used member, prefectch that
-*     to a cache member, and use that.
-* SETTERS: put value directly into child dom elements.  If you have
-*     decided to use a cache member for fast access, don't forget to
-*     update both the cache and the dom tree.
-*/
-public class DOMFace
-{
+ * The purpose of this class is to be a base class to classes which are designed to be interfaced to
+ * DOM trees. If you have a DOM tree, and you want to directly reflect that out to the program as
+ * structured data, you create a file that has getters and setters for the various members. This
+ * base class containes convenient methods for manipulating the DOM tree, and keeping it in sync
+ * with the external representation you are presenting.
+ *
+ * <p>GETTERS: pull values directly from child dom elements. Useful when a particular member is
+ * gotten only a few times any reading of the file. If this is a heavily used member, prefectch that
+ * to a cache member, and use that. SETTERS: put value directly into child dom elements. If you have
+ * decided to use a cache member for fast access, don't forget to update both the cache and the dom
+ * tree.
+ */
+public class DOMFace {
     protected Document fDoc;
     protected Element fEle;
     protected DOMFace parent;
 
+    private static Class<?>[] constructParams =
+            new Class<?>[] {Document.class, Element.class, DOMFace.class};
 
-    private static Class<?>[] constructParams = new Class<?>[] {Document.class,
-                              Element.class, DOMFace.class};
-
-
-    public DOMFace(Document doc, Element ele, DOMFace p)
-    {
-        if (ele == null)
-        {
-            throw new RuntimeException("Program logic error: DOMFace object can not"
-                +" be constructed on a null element parameter.");
+    public DOMFace(Document doc, Element ele, DOMFace p) {
+        if (ele == null) {
+            throw new RuntimeException(
+                    "Program logic error: DOMFace object can not"
+                            + " be constructed on a null element parameter.");
         }
-        if (doc == null)
-        {
-            throw new RuntimeException("Program logic error: DOMFace object can not"
-                +" be constructed on a null document parameter.");
+        if (doc == null) {
+            throw new RuntimeException(
+                    "Program logic error: DOMFace object can not"
+                            + " be constructed on a null document parameter.");
         }
         fDoc = doc;
         fEle = ele;
         parent = p;
     }
 
-
-    public void setAttribute(String attrName, String value)
-    {
-        if (attrName == null)
-        {
-            throw new RuntimeException("Program logic error: a null attribute name"
-                +" was passed to setAttribute.");
+    public void setAttribute(String attrName, String value) {
+        if (attrName == null) {
+            throw new RuntimeException(
+                    "Program logic error: a null attribute name" + " was passed to setAttribute.");
         }
-        if (value == null)
-        {
+        if (value == null) {
             fEle.removeAttribute(attrName);
-        }
-        else
-        {
+        } else {
             fEle.setAttribute(attrName, value);
         }
     }
-    public void clearAttribute(String attrName)
-    {
-        if (attrName == null)
-        {
-            throw new RuntimeException("Program logic error: a null attribute name"
-                +" was passed to setAttribute.");
+
+    public void clearAttribute(String attrName) {
+        if (attrName == null) {
+            throw new RuntimeException(
+                    "Program logic error: a null attribute name" + " was passed to setAttribute.");
         }
         fEle.removeAttribute(attrName);
     }
 
-    public String getAttribute(String attrName)
-    {
-        if (attrName == null)
-        {
-            throw new RuntimeException("Program logic error: a null attribute name"
-                +" was passed to getAttribute.");
+    public String getAttribute(String attrName) {
+        if (attrName == null) {
+            throw new RuntimeException(
+                    "Program logic error: a null attribute name" + " was passed to getAttribute.");
         }
         return fEle.getAttribute(attrName);
     }
@@ -120,38 +101,38 @@ public class DOMFace
     public void setAttributeLong(String attrName, long value) {
         setAttribute(attrName, Long.toString(value));
     }
+
     public void setAttributeInt(String attrName, int value) {
         setAttribute(attrName, Integer.toString(value));
     }
+
     public long getAttributeLong(String attrName) {
         return safeConvertLong(getAttribute(attrName));
     }
+
     public int getAttributeInt(String attrName) {
         return safeConvertInt(getAttribute(attrName));
     }
+
     public boolean getAttributeBool(String attrName) {
         return "true".equals(getAttribute(attrName));
     }
+
     public void setAttributeBool(String attrName, boolean newVal) {
         if (newVal) {
             setAttribute(attrName, "true");
-        }
-        else {
+        } else {
             clearAttribute(attrName);
         }
     }
 
-    public boolean attributeEquals(String attrName, String testValue)
-        throws Exception
-    {
-        if (testValue == null)
-        {
-            throw new RuntimeException("Program logic error: a null test value"
-                +" was passed to attributeEquals.");
+    public boolean attributeEquals(String attrName, String testValue) throws Exception {
+        if (testValue == null) {
+            throw new RuntimeException(
+                    "Program logic error: a null test value" + " was passed to attributeEquals.");
         }
         String val = getAttribute(attrName);
-        if (val==null)
-        {
+        if (val == null) {
             return false;
         }
         return testValue.equals(val);
@@ -160,58 +141,67 @@ public class DOMFace
     public void clearScalar(String memberName) {
         setScalar(memberName, null);
     }
+
     public void setScalar(String memberName, String value) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to setScalar.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to setScalar.");
         }
         DOMUtils.setChildValue(fDoc, fEle, memberName, value);
     }
+
     public String getScalar(String memberName) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to getScalar.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to getScalar.");
         }
         return DOMUtils.getChildText(fEle, memberName);
     }
+
     public int getScalarInt(String memberName) {
         return safeConvertInt(getScalar(memberName));
     }
+
     public void setScalarInt(String memberName, int value) {
         setScalar(memberName, Integer.toString(value));
     }
+
     public long getScalarLong(String memberName) {
         return safeConvertLong(getScalar(memberName));
     }
+
     public void setScalarLong(String memberName, long value) {
         setScalar(memberName, Long.toString(value));
     }
+
     public void mergeScalar(String key, String oldValue, String newValue) {
         String curDoc = getScalar(key);
         String result = ThreeWayMerge.mergeThem(curDoc, oldValue, newValue);
         setScalar(key, result);
     }
+
     public void mergeScalarDelta(String key, JSONObject vals) throws Exception {
         String curDoc = getScalar(key);
-        String result = ThreeWayMerge.mergeThem(curDoc, vals.optString("old",""),  vals.optString("new",""));
+        String result =
+                ThreeWayMerge.mergeThem(
+                        curDoc, vals.optString("old", ""), vals.optString("new", ""));
         setScalar(key, result);
     }
+
     public void mergeIfPresent(JSONObject updateJSON, String key) throws Exception {
-    	if (updateJSON.has(key+"Merge")) {
-    		mergeScalarDelta(key, updateJSON.getJSONObject(key+"Merge"));
-    	}
-        else {
+        if (updateJSON.has(key + "Merge")) {
+            mergeScalarDelta(key, updateJSON.getJSONObject(key + "Merge"));
+        } else {
             updateScalarString(key, updateJSON);
-    	}
+        }
     }
 
-
     // needed when the external key is different from the internal one.  Ugh!
-    public void mergeIfPresentSpecial(JSONObject updateJSON, String key, String internalKey) throws Exception {
-    	if (updateJSON.has(key+"Merge")) {
-    		mergeScalarDelta(internalKey, updateJSON.getJSONObject(key+"Merge"));
-    	}
-        else {
+    public void mergeIfPresentSpecial(JSONObject updateJSON, String key, String internalKey)
+            throws Exception {
+        if (updateJSON.has(key + "Merge")) {
+            mergeScalarDelta(internalKey, updateJSON.getJSONObject(key + "Merge"));
+        } else {
             if (updateJSON.has(key)) {
                 setScalar(internalKey, updateJSON.getString(key));
             }
@@ -219,103 +209,92 @@ public class DOMFace
     }
 
     /**
-    * Returns the entire contents of the element as a block of
-    * text.  Used when the element does not have any children elements
-    * but still has attributes, and it has content in the form of text.
-    */
-    public String getTextContents()
-    {
+     * Returns the entire contents of the element as a block of text. Used when the element does not
+     * have any children elements but still has attributes, and it has content in the form of text.
+     */
+    public String getTextContents() {
         return DOMUtils.textValueOf(fEle, true);
     }
-    public void setTextContents(String newValue)
-    {
+
+    public void setTextContents(String newValue) {
         DOMUtils.removeAllChildren(fEle);
         DOMUtils.addChildText(fDoc, fEle, newValue);
     }
 
-
-    public Element createChildElement(String elementName)
-    {
+    public Element createChildElement(String elementName) {
         return DOMUtils.createChildElement(fDoc, fEle, elementName);
     }
-    public Element createChildElement(String elementName, String value)
-    {
+
+    public Element createChildElement(String elementName, String value) {
         return DOMUtils.createChildElement(fDoc, fEle, elementName, value);
     }
-    public void removeChildElement(Element ele)
-    {
+
+    public void removeChildElement(Element ele) {
         fEle.removeChild(ele);
     }
-    public void removeFromParent(Element parent)
-    {
+
+    public void removeFromParent(Element parent) {
         parent.removeChild(fEle);
     }
-    public void removeAllNamedChild(String elementName)
-    {
+
+    public void removeAllNamedChild(String elementName) {
         DOMUtils.removeAllNamedChild(fEle, elementName);
     }
-    public void removeChildrenByNameAttrVal(String tagname, String attrName, String attrValue)
-    {
+
+    public void removeChildrenByNameAttrVal(String tagname, String attrName, String attrValue) {
         List<Element> children = getNamedChildrenVector(tagname);
-        for  (Element child : children) {
+        for (Element child : children) {
             if (tagname.equals(child.getLocalName()) || tagname.equals(child.getNodeName())) {
                 String childAttValue = child.getAttribute(attrName);
-                if (childAttValue!=null && attrValue.equals(childAttValue)) {
+                if (childAttValue != null && attrValue.equals(childAttValue)) {
                     fEle.removeChild(child);
                 }
             }
         }
     }
 
-
-
-
-    public List<Element> getNamedChildrenVector(String elementName)
-    {
+    public List<Element> getNamedChildrenVector(String elementName) {
         return DOMUtils.getNamedChildrenVector(fEle, elementName);
     }
+
     public void fillVectorValues(List<String> result, String elementName) {
         List<Element> children = getNamedChildrenVector(elementName);
         for (Element child : children) {
             result.add(DOMUtils.textValueOf(child, false));
         }
     }
-    public List<String> getVector(String memberName)
-    {
+
+    public List<String> getVector(String memberName) {
         List<String> children = new ArrayList<String>();
         fillVectorValues(children, memberName);
         return children;
     }
 
-
-
     /**
-    * If a containing tag has multiple child value tags
-    * you can access and set all the values at once using a
-    * vector of string values.
-    *
-    * Construct a vector will all of the string value in the correct
-    * order.  Call setVector, and a child tag and value will be created
-    * in the DOM tree for each value in the vector.  Any previous values
-    * will be removed.
-    *
-    * memberName: the name of the tag holding a data value
-    * values: a List of string values
-    */
+     * If a containing tag has multiple child value tags you can access and set all the values at
+     * once using a vector of string values.
+     *
+     * <p>Construct a vector will all of the string value in the correct order. Call setVector, and
+     * a child tag and value will be created in the DOM tree for each value in the vector. Any
+     * previous values will be removed.
+     *
+     * <p>memberName: the name of the tag holding a data value values: a List of string values
+     */
     public void setVector(String memberName, List<String> values) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to setVector.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to setVector.");
         }
         removeAllNamedChild(memberName);
         for (String val : values) {
             createChildElement(memberName, val);
         }
     }
+
     public void setVectorLong(String memberName, List<Long> values) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to setVector.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to setVector.");
         }
         removeAllNamedChild(memberName);
         for (Long val : values) {
@@ -324,38 +303,35 @@ public class DOMFace
     }
 
     /**
-    * Gets rid of all the values in a vector value
-    *
-    * memberName: the name of the tag holding a data value
-    */
-    public void clearVector(String memberName)
-    {
-        if (memberName == null)
-        {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to setVector.");
+     * Gets rid of all the values in a vector value
+     *
+     * <p>memberName: the name of the tag holding a data value
+     */
+    public void clearVector(String memberName) {
+        if (memberName == null) {
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to setVector.");
         }
         removeAllNamedChild(memberName);
     }
 
     /**
-    * If a containing tag has multiple child value tags
-    * you append a value to that set of values.
-    *
-    * memberName: the name of the tag holding a data value
-    * value: a string value to be added
-    */
+     * If a containing tag has multiple child value tags you append a value to that set of values.
+     *
+     * <p>memberName: the name of the tag holding a data value value: a string value to be added
+     */
     public void addVectorValue(String memberName, String value) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to addVectorValue.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to addVectorValue.");
         }
         createChildElement(memberName, value);
     }
+
     public void removeVectorValue(String memberName, String value) {
         if (memberName == null) {
-            throw new RuntimeException("Program logic error: a null member name"
-                +" was passed to addVectorValue.");
+            throw new RuntimeException(
+                    "Program logic error: a null member name" + " was passed to addVectorValue.");
         }
         List<Element> children = getNamedChildrenVector(memberName);
         for (Element child : children) {
@@ -366,38 +342,36 @@ public class DOMFace
         }
     }
 
-
     public Element getElement() {
         return fEle;
     }
+
     public Document getDocument() {
         return fDoc;
     }
+
     public DOMFace getParent() {
         return parent;
     }
 
     /**
-    * designed primarily for returning date long values
-    * works only for positive integer (long) values
-    * considers all numeral, ignores all letter and punctuation
-    * never throws an exception
-    * if you give this something that is not a number, you
-    * get surprising result.  Zero if no numerals at all.
-    */
+     * designed primarily for returning date long values works only for positive integer (long)
+     * values considers all numeral, ignores all letter and punctuation never throws an exception if
+     * you give this something that is not a number, you get surprising result. Zero if no numerals
+     * at all.
+     */
     public static long safeConvertLong(String val) {
-        if (val==null) {
+        if (val == null) {
             return 0;
         }
         long res = 0;
         boolean isNegative = false;
         int last = val.length();
-        for (int i=0; i<last; i++) {
+        for (int i = 0; i < last; i++) {
             char ch = val.charAt(i);
-            if (ch>='0' && ch<='9') {
-                res = res*10 + ch - '0';
-            }
-            else if (ch=='-') {
+            if (ch >= '0' && ch <= '9') {
+                res = res * 10 + ch - '0';
+            } else if (ch == '-') {
                 isNegative = true;
             }
         }
@@ -408,45 +382,34 @@ public class DOMFace
     }
 
     /**
-    * designed primarily for returning date long values
-    * works only for positive integer (long) values
-    * considers all numeral, ignores all letter and punctuation
-    * never throws an exception
-    * if you give this something that is not a number, you
-    * get surprising result.  Zero if no numerals at all.
-    */
-    public static int safeConvertInt(String val)
-    {
-        if (val==null)
-        {
+     * designed primarily for returning date long values works only for positive integer (long)
+     * values considers all numeral, ignores all letter and punctuation never throws an exception if
+     * you give this something that is not a number, you get surprising result. Zero if no numerals
+     * at all.
+     */
+    public static int safeConvertInt(String val) {
+        if (val == null) {
             return 0;
         }
         int res = 0;
         int last = val.length();
-        for (int i=0; i<last; i++)
-        {
+        for (int i = 0; i < last; i++) {
             char ch = val.charAt(i);
-            if (ch>='0' && ch<='9')
-            {
-                res = res*10 + ch - '0';
+            if (ch >= '0' && ch <= '9') {
+                res = res * 10 + ch - '0';
             }
         }
         return res;
     }
 
-
-
-
     ////////// CONSTRUCTORS - CHILDREN //////////////
 
-
     /**
-    * Constructs an instance of an extended class.  This is used by all
-    * the methods that take a class name and return elements of specific
-    * subclasses.
-    */
-    public static <T extends DOMFace> T construct(Document doc, Element ele, DOMFace parent,
-            Class<T> childClass) throws Exception {
+     * Constructs an instance of an extended class. This is used by all the methods that take a
+     * class name and return elements of specific subclasses.
+     */
+    public static <T extends DOMFace> T construct(
+            Document doc, Element ele, DOMFace parent, Class<T> childClass) throws Exception {
         try {
             Constructor<T> con = childClass.getConstructor(constructParams);
             Object[] inits = new Object[3];
@@ -460,39 +423,33 @@ public class DOMFace
                 throw WeaverException.newBasic("Constructor did not work");
             }
             return retval;
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to construct XML object for %s", e, childClass.getName());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to construct XML object for %s", e, childClass.getName());
         }
     }
 
-
-    private static String getElementName(Element e)
-    {
+    private static String getElementName(Element e) {
         String name = e.getNodeName();
-        if (name==null || name.length()==0)
-        {
+        if (name == null || name.length() == 0) {
             name = e.getLocalName();
         }
         int colonPos = name.lastIndexOf(":");
-        if (colonPos>=0)
-        {
-            name = name.substring(colonPos+1);
+        if (colonPos >= 0) {
+            name = name.substring(colonPos + 1);
         }
         return name;
     }
 
-
     /**
-    * Get a List full of DOMFace elements.  Pass in the tagname and the
-    * specific class or objects you want constructed.  Class must have
-    * a constructor with two parameters (like DOMFace).
-    *
-    * USAGE:  parent.getChildren("childtag", ChildClass.class);
-    */
+     * Get a List full of DOMFace elements. Pass in the tagname and the specific class or objects
+     * you want constructed. Class must have a constructor with two parameters (like DOMFace).
+     *
+     * <p>USAGE: parent.getChildren("childtag", ChildClass.class);
+     */
     public <T extends DOMFace> List<T> getChildren(String elementName, Class<T> childClass)
             throws Exception {
-        ArrayList<T> list = new ArrayList<T>() ;
+        ArrayList<T> list = new ArrayList<T>();
         Constructor<T> con = childClass.getConstructor(constructParams);
         Object[] inits = new Object[3];
         inits[0] = fDoc;
@@ -516,85 +473,75 @@ public class DOMFace
         return list;
     }
 
-
     /**
-    * Get a single DOMFace elements.  Pass in the tagname and the
-    * specific class or objects you want constructed.  Class must have
-    * a constructor with three parameters (like DOMFace).  If there are
-    * multiple dom elements, it only returns the child for the
-    * first such element.
-    *
-    * USAGE:  parent.getChild("childtag", ChildClass.class);
-    */
+     * Get a single DOMFace elements. Pass in the tagname and the specific class or objects you want
+     * constructed. Class must have a constructor with three parameters (like DOMFace). If there are
+     * multiple dom elements, it only returns the child for the first such element.
+     *
+     * <p>USAGE: parent.getChild("childtag", ChildClass.class);
+     */
     public <T extends DOMFace> T getChild(String elementName, Class<T> childClass)
-        throws Exception
-    {
+            throws Exception {
         NodeList childNdList = fEle.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
+        for (int i = 0; i < childNdList.getLength(); i++) {
+            org.w3c.dom.Node n = childNdList.item(i);
             if (n == null) {
                 continue; // there are strange cases where it can be null
             }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue ;
+                continue;
             }
-            Element ne = (Element)n;
-            if (elementName.equals(getElementName(ne)))
-            {
+            Element ne = (Element) n;
+            if (elementName.equals(getElementName(ne))) {
                 return construct(fDoc, ne, this, childClass);
             }
         }
         return null;
     }
 
-
     /**
-    * Create a child DOMFace elements.  Pass in the tagname and the
-    * specific class or objects you want constructed.  Class must have
-    * a constructor with three parameters (like DOMFace).
-    *
-    * USAGE:  parent.createChild("childtag", ChildClass.class);
-    */
+     * Create a child DOMFace elements. Pass in the tagname and the specific class or objects you
+     * want constructed. Class must have a constructor with three parameters (like DOMFace).
+     *
+     * <p>USAGE: parent.createChild("childtag", ChildClass.class);
+     */
     public <T extends DOMFace> T createChild(String elementName, Class<T> childClass)
-        throws Exception
-    {
+            throws Exception {
         Element ne = createChildElement(elementName);
         return construct(fDoc, ne, this, childClass);
     }
 
     /**
-    * Create a child DOMFace element as one of a number of such
-    * elements, setting a given id attribute to a given value.
-    * Pass in the tagname and the
-    * specific class or objects you want constructed, along with the
-    * name of an attribute, and a value to set it to.  Class must have
-    * a constructor with three parameters (like DOMFace).
-    *
-    * @param elementName   the tag name in the XML
-    * @param childClass    the Java class of the child
-    * @param idAttribute   the name of the attribute of the XML that holds the id
-    * @param idValue       the value of the id that you are looking for
-    */
-    public <T extends DOMFace> T createChildWithID(String elementName, Class<T> childClass,
-                String idAttribute, String idValue) throws Exception {
+     * Create a child DOMFace element as one of a number of such elements, setting a given id
+     * attribute to a given value. Pass in the tagname and the specific class or objects you want
+     * constructed, along with the name of an attribute, and a value to set it to. Class must have a
+     * constructor with three parameters (like DOMFace).
+     *
+     * @param elementName the tag name in the XML
+     * @param childClass the Java class of the child
+     * @param idAttribute the name of the attribute of the XML that holds the id
+     * @param idValue the value of the id that you are looking for
+     */
+    public <T extends DOMFace> T createChildWithID(
+            String elementName, Class<T> childClass, String idAttribute, String idValue)
+            throws Exception {
         Element ne = createChildElement(elementName);
         ne.setAttribute(idAttribute, idValue);
         return construct(fDoc, ne, this, childClass);
     }
 
-
     /**
-     * This will look for and find a child of a particular tag and class, with
-     * and id of a specified value if it exists.  If it does not exist, it will
-     * return null.
+     * This will look for and find a child of a particular tag and class, with and id of a specified
+     * value if it exists. If it does not exist, it will return null.
      *
-     * @param elementName   the tag name in the XML
-     * @param childClass    the Java class of the child
-     * @param idAttribute   the name of the attribute of the XML that holds the id
-     * @param idValue       the value of the id that you are looking for
+     * @param elementName the tag name in the XML
+     * @param childClass the Java class of the child
+     * @param idAttribute the name of the attribute of the XML that holds the id
+     * @param idValue the value of the id that you are looking for
      */
-    public <T extends DOMFace> T findChildWithID(String elementName, Class<T> childClass,
-            String idAttribute, String idValue) throws Exception {
+    public <T extends DOMFace> T findChildWithID(
+            String elementName, Class<T> childClass, String idAttribute, String idValue)
+            throws Exception {
         List<T> list = getChildren(elementName, childClass);
         for (T inst : list) {
             if (idValue.equals(inst.getAttribute(idAttribute))) {
@@ -605,35 +552,36 @@ public class DOMFace
     }
 
     /**
-     * This will look for and find a child of a particular tag and class, with
-     * and id of a specified value if it exists.  If it does not exist, it will
-     * create one.
+     * This will look for and find a child of a particular tag and class, with and id of a specified
+     * value if it exists. If it does not exist, it will create one.
      *
-     * @param elementName   the tag name in the XML
-     * @param childClass    the Java class of the child
-     * @param idAttribute   the name of the attribute of the XML that holds the id
-     * @param idValue       the value of the id that you are looking for
+     * @param elementName the tag name in the XML
+     * @param childClass the Java class of the child
+     * @param idAttribute the name of the attribute of the XML that holds the id
+     * @param idValue the value of the id that you are looking for
      */
-    public <T extends DOMFace> T findOrCreateChildWithID(String elementName, Class<T> childClass,
-            String idAttribute, String idValue) throws Exception {
+    public <T extends DOMFace> T findOrCreateChildWithID(
+            String elementName, Class<T> childClass, String idAttribute, String idValue)
+            throws Exception {
         T child = findChildWithID(elementName, childClass, idAttribute, idValue);
-        if (child==null) {
+        if (child == null) {
             child = createChildWithID(elementName, childClass, idAttribute, idValue);
         }
         return child;
     }
 
     /**
-     * This will look for and remove a child of a particular tag and class, with
-     * and id of a specified value if it exists.  If not found the call does nothing.
+     * This will look for and remove a child of a particular tag and class, with and id of a
+     * specified value if it exists. If not found the call does nothing.
      *
-     * @param elementName   the tag name in the XML
-     * @param childClass    the Java class of the child
-     * @param idAttribute   the name of the attribute of the XML that holds the id
-     * @param idValue       the value of the id that you are looking for
+     * @param elementName the tag name in the XML
+     * @param childClass the Java class of the child
+     * @param idAttribute the name of the attribute of the XML that holds the id
+     * @param idValue the value of the id that you are looking for
      */
-    public <T extends DOMFace> void removeChildWithID(String elementName, Class<T> childClass,
-            String idAttribute, String idValue) throws Exception {
+    public <T extends DOMFace> void removeChildWithID(
+            String elementName, Class<T> childClass, String idAttribute, String idValue)
+            throws Exception {
         List<T> list = getChildren(elementName, childClass);
         for (T inst : list) {
             if (idValue.equals(inst.getAttribute(idAttribute))) {
@@ -642,37 +590,28 @@ public class DOMFace
         }
     }
 
-
-
     /**
-    * Require child is used in places where you expect a single tag
-    * and if it is no there, go ahead and create it.
-    *
-    * USAGE:  parent.requireChild("childtag", ChildClass.class);
-    */
+     * Require child is used in places where you expect a single tag and if it is no there, go ahead
+     * and create it.
+     *
+     * <p>USAGE: parent.requireChild("childtag", ChildClass.class);
+     */
     public <T extends DOMFace> T requireChild(String elementName, Class<T> childClass)
-        throws Exception
-    {
+            throws Exception {
         T df = getChild(elementName, childClass);
-        if (df==null)
-        {
+        if (df == null) {
             df = createChild(elementName, childClass);
         }
         return df;
     }
 
-
-    /**
-    * Remove a child
-    */
-    public void removeChild(DOMFace unwantedChild)
-        throws Exception
-    {
+    /** Remove a child */
+    public void removeChild(DOMFace unwantedChild) throws Exception {
         fEle.removeChild(unwantedChild.getElement());
     }
 
-    public <T extends DOMFace> T getChildAttribute(String attributeValue, Class<T> childClass,
-            String AttributeName) throws Exception {
+    public <T extends DOMFace> T getChildAttribute(
+            String attributeValue, Class<T> childClass, String AttributeName) throws Exception {
         NodeList childNdList = fEle.getChildNodes();
         for (int i = 0; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
@@ -690,7 +629,6 @@ public class DOMFace
         return null;
     }
 
-
     public static JSONArray constructJSONArray(List<String> input) {
         JSONArray array = new JSONArray();
         for (String item : input) {
@@ -698,6 +636,7 @@ public class DOMFace
         }
         return array;
     }
+
     public static JSONArray constructJSONArrayEmail(List<String> input) {
         JSONArray array = new JSONArray();
         for (String item : input) {
@@ -705,6 +644,7 @@ public class DOMFace
         }
         return array;
     }
+
     public static JSONArray constructJSONArrayLong(List<Long> input) {
         JSONArray array = new JSONArray();
         for (Long item : input) {
@@ -716,21 +656,22 @@ public class DOMFace
     public static List<String> constructVector(JSONArray inputArray) throws Exception {
         ArrayList<String> list = new ArrayList<String>();
         int top = inputArray.length();
-        for (int i = 0; i<top; i++) {
+        for (int i = 0; i < top; i++) {
             String val = inputArray.getString(i);
-            //assure uniqueness of the values in the list, don't allow duplicates
+            // assure uniqueness of the values in the list, don't allow duplicates
             if (!list.contains(val)) {
                 list.add(val);
             }
         }
         return list;
     }
+
     public static List<Long> constructVectorLong(JSONArray inputArray) throws Exception {
         ArrayList<Long> list = new ArrayList<Long>();
         int top = inputArray.length();
-        for (int i = 0; i<top; i++) {
+        for (int i = 0; i < top; i++) {
             long longVal = inputArray.getLong(i);
-            //assure uniqueness of the values in the list, don't allow duplicates
+            // assure uniqueness of the values in the list, don't allow duplicates
             Long objVal = Long.valueOf(longVal);
             if (!list.contains(objVal)) {
                 list.add(objVal);
@@ -740,19 +681,21 @@ public class DOMFace
     }
 
     /**
-     * Every DOMFace object can implement an update from JSON in order to receive JSON update
-     * from external.  There is no default behavior and instead it must be implemented on
-     * each of the subclasses if need.  This is used by some of the base routines.
-     * If one of those routines are used, but this is not implemented on that class,
-     * then an exception will be thrown.
+     * Every DOMFace object can implement an update from JSON in order to receive JSON update from
+     * external. There is no default behavior and instead it must be implemented on each of the
+     * subclasses if need. This is used by some of the base routines. If one of those routines are
+     * used, but this is not implemented on that class, then an exception will be thrown.
      */
     public void updateFromJSON(JSONObject foo) throws Exception {
-        throw WeaverException.newBasic("UpdateFromJSON method needs to be implemented on the class %s", 
-            this.getClass().getName());
+        throw WeaverException.newBasic(
+                "UpdateFromJSON method needs to be implemented on the class %s",
+                this.getClass().getName());
     }
+
     public JSONObject getJSON() throws Exception {
-        throw WeaverException.newBasic("getJSON method needs to be implemented on the class %s", 
-            this.getClass().getName());
+        throw WeaverException.newBasic(
+                "getJSON method needs to be implemented on the class %s",
+                this.getClass().getName());
     }
 
     // --------------------------------------------------------------------------
@@ -764,17 +707,19 @@ public class DOMFace
 
     public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
         String val = getScalar(fieldName);
-        if (val!=null) {
+        if (val != null) {
             dest.put(fieldName, val);
         }
     }
+
     public void extractScalarEmail(JSONObject dest, String fieldName) throws Exception {
         String val = getScalar(fieldName);
-        if (val!=null) {
+        if (val != null) {
             val = UserManager.getCorrectedEmail(val);
             dest.put(fieldName, val);
         }
     }
+
     public boolean updateScalarString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalar(fieldName, srce.getString(fieldName));
@@ -782,6 +727,7 @@ public class DOMFace
         }
         return false;
     }
+
     public void extractVectorString(JSONObject dest, String fieldName) throws Exception {
         JSONArray ja = new JSONArray();
         for (String val : getVector(fieldName)) {
@@ -789,32 +735,34 @@ public class DOMFace
         }
         dest.put(fieldName, ja);
     }
+
     public boolean updateVectorString(String fieldName, JSONObject srce) throws Exception {
         if (!srce.has(fieldName)) {
             return false;
         }
         JSONArray ja = srce.getJSONArray(fieldName);
-        if (ja.length()==0) {
+        if (ja.length() == 0) {
             return false;
         }
         List<String> vals = new ArrayList<String>();
-        for (int i=0; i<ja.length(); i++) {
+        for (int i = 0; i < ja.length(); i++) {
             vals.add(ja.getString(i));
         }
         setVector(fieldName, vals);
         return true;
     }
+
     public boolean updateUniqueVectorString(String fieldName, JSONObject srce) throws Exception {
         Set<String> uniqueCheck = new HashSet<String>();
         if (!srce.has(fieldName)) {
             return false;
         }
         JSONArray ja = srce.getJSONArray(fieldName);
-        if (ja.length()==0) {
+        if (ja.length() == 0) {
             return false;
         }
         List<String> vals = new ArrayList<String>();
-        for (int i=0; i<ja.length(); i++) {
+        for (int i = 0; i < ja.length(); i++) {
             String value = ja.getString(i).trim();
             String lcvalue = value.toLowerCase();
             if (!uniqueCheck.contains(lcvalue)) {
@@ -825,12 +773,14 @@ public class DOMFace
         setVector(fieldName, vals);
         return true;
     }
+
     public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
         String val = getAttribute(fieldName);
-        if (val!=null) {
+        if (val != null) {
             dest.put(fieldName, val);
         }
     }
+
     public boolean updateAttributeString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setAttribute(fieldName, srce.getString(fieldName));
@@ -838,9 +788,11 @@ public class DOMFace
         }
         return false;
     }
+
     public void extractScalarLong(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getScalarLong(fieldName));
     }
+
     public boolean updateScalarLong(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalarLong(fieldName, srce.getLong(fieldName));
@@ -848,9 +800,11 @@ public class DOMFace
         }
         return false;
     }
+
     public void extractScalarInt(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, (int) getScalarLong(fieldName));
     }
+
     public boolean updateScalarInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalarLong(fieldName, srce.getInt(fieldName));
@@ -858,9 +812,11 @@ public class DOMFace
         }
         return false;
     }
+
     public void extractAttributeLong(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttributeLong(fieldName));
     }
+
     public boolean updateAttributeLong(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             long def = getAttributeLong(fieldName);
@@ -869,19 +825,20 @@ public class DOMFace
         }
         return false;
     }
-    
-    
-    
+
     public void extractAttributeInt(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, (int) getAttributeLong(fieldName));
     }
-    public void extractAttributeInt(JSONObject dest, String fieldName, int defValue) throws Exception {
+
+    public void extractAttributeInt(JSONObject dest, String fieldName, int defValue)
+            throws Exception {
         int val = (int) getAttributeLong(fieldName);
         if (val == 0) {
             val = defValue;
         }
         dest.put(fieldName, val);
     }
+
     public boolean updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             int def = getAttributeInt(fieldName);
@@ -894,6 +851,7 @@ public class DOMFace
     public void extractAttributeBool(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttributeBool(fieldName));
     }
+
     public boolean updateAttributeBool(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             boolean def = getAttributeBool(fieldName);
@@ -903,17 +861,17 @@ public class DOMFace
         return false;
     }
 
-
     /**
-     * Given a set of children with a specific tag name that all have associated
-     * Java classes that have getJSON implemented to generate the right representation
-     * in JSON, this method will create a JSONArray of those children.
-     * @param dest       the object that will get the array of the specified name
-     * @param fieldName  the name of the array
+     * Given a set of children with a specific tag name that all have associated Java classes that
+     * have getJSON implemented to generate the right representation in JSON, this method will
+     * create a JSONArray of those children.
+     *
+     * @param dest the object that will get the array of the specified name
+     * @param fieldName the name of the array
      * @param childClass the Java class for the children
      */
-    public <T extends DOMFace> void extractCollection(JSONObject dest, String fieldName,
-            Class<T> childClass) throws Exception {
+    public <T extends DOMFace> void extractCollection(
+            JSONObject dest, String fieldName, Class<T> childClass) throws Exception {
         JSONArray array = new JSONArray();
         for (T inst : getChildren(fieldName, childClass)) {
             array.put(inst.getJSON());
@@ -921,70 +879,63 @@ public class DOMFace
         dest.put(fieldName, array);
     }
 
-
     /**
-     * This will take an object which has a member that is a JSONArray of objects
-     * and it will update all of the corresponding children.  The assumption is that
-     * the member name on the JSONObject is the same as the tag name of the children.
-     * Each child has an id attribute, and the attribute name is the same in the JSON
-     * and in the XML.
+     * This will take an object which has a member that is a JSONArray of objects and it will update
+     * all of the corresponding children. The assumption is that the member name on the JSONObject
+     * is the same as the tag name of the children. Each child has an id attribute, and the
+     * attribute name is the same in the JSON and in the XML.
      *
-     * This gives PATCH style semantics to collections.  You can update with a single
-     * instance object in it, and it will either delete that child, create that child
-     * or update the child according to a key field value specified.  It is done in
-     * a type-safe class-safe way such that the Java can still ensure the consistency
-     * of the child XML DOM objects.
+     * <p>This gives PATCH style semantics to collections. You can update with a single instance
+     * object in it, and it will either delete that child, create that child or update the child
+     * according to a key field value specified. It is done in a type-safe class-safe way such that
+     * the Java can still ensure the consistency of the child XML DOM objects.
      *
-     * This will look at each JSONObject in the JSONArray specified by name, and look
-     * for a corresponding child DOM element with the same tag name, and with an id
-     * that matches.  It will then create, update or delete that child.
+     * <p>This will look at each JSONObject in the JSONArray specified by name, and look for a
+     * corresponding child DOM element with the same tag name, and with an id that matches. It will
+     * then create, update or delete that child.
      *
-     * If the object in the array has a member "_DELETE_ME_" then the child will be
-     * deleted instead of being updated.  If no matching child is found the delete
-     * command is ignored.
+     * <p>If the object in the array has a member "_DELETE_ME_" then the child will be deleted
+     * instead of being updated. If no matching child is found the delete command is ignored.
      *
-     * If not a delete case, then it looks for the child.  If no child is found,
-     * one will be created.  Whether found or created the child will be updated
-     * using JSONUpdate.
+     * <p>If not a delete case, then it looks for the child. If no child is found, one will be
+     * created. Whether found or created the child will be updated using JSONUpdate.
      *
      * @param parent the JSONObject that has a member which is a JSONArray
      * @param memberName the name of the member which is the JSONArray
      * @param childClass the Java class of the child objects
-     * @param idAttribute the name of the attribute that holds the id both
-     *                    in the JSON and in the child XML attribute.
+     * @param idAttribute the name of the attribute that holds the id both in the JSON and in the
+     *     child XML attribute.
      */
-    public <T extends DOMFace> void updateCollection(JSONObject parent, String memberName,
-            Class<T> childClass, String idAttribute) throws Exception {
+    public <T extends DOMFace> void updateCollection(
+            JSONObject parent, String memberName, Class<T> childClass, String idAttribute)
+            throws Exception {
         try {
             if (parent.has(memberName)) {
                 JSONArray respArray = parent.getJSONArray(memberName);
                 int last = respArray.length();
-                for (int i=0; i<last; i++) {
+                for (int i = 0; i < last; i++) {
                     JSONObject instanceObj = respArray.getJSONObject(i);
                     String key = null;
                     if (instanceObj.has(idAttribute)) {
-                        //use the key of the object passed in.
+                        // use the key of the object passed in.
                         key = instanceObj.getString(idAttribute);
-                    }
-                    else {
-                        //if no key is specified, then generate a key here and use that.
-                        //Can only be a CREATE case.
+                    } else {
+                        // if no key is specified, then generate a key here and use that.
+                        // Can only be a CREATE case.
                         key = IdGenerator.generateKey();
                     }
                     boolean isDelete = instanceObj.has("_DELETE_ME_");
                     if (isDelete) {
-                        removeChildWithID(memberName, childClass,  idAttribute, key);
-                    }
-                    else {
-                        T oneResp = findOrCreateChildWithID(memberName, childClass, idAttribute, key);
+                        removeChildWithID(memberName, childClass, idAttribute, key);
+                    } else {
+                        T oneResp =
+                                findOrCreateChildWithID(memberName, childClass, idAttribute, key);
                         oneResp.updateFromJSON(instanceObj);
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw WeaverException.newWrap("Unable to update collection named %s", e, memberName);
         }
     }
-
 }

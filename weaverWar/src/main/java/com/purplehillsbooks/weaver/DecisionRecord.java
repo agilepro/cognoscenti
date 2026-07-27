@@ -20,21 +20,20 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class DecisionRecord extends DOMFace {
 
-    //these codes match those for History record
-    public final static int SOURCE_TYPE_TOPIC        = 4;
-    public final static int SOURCE_TYPE_MEETING      = 7;
-    public final static int SOURCE_TYPE_DOCUMENT     = 8;
+    // these codes match those for History record
+    public static final int SOURCE_TYPE_TOPIC = 4;
+    public static final int SOURCE_TYPE_MEETING = 7;
+    public static final int SOURCE_TYPE_DOCUMENT = 8;
 
     public DecisionRecord(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
@@ -43,6 +42,7 @@ public class DecisionRecord extends DOMFace {
     public int getNumber() throws Exception {
         return getAttributeInt("num");
     }
+
     public void setNumber(int newVal) throws Exception {
         setAttributeInt("num", newVal);
     }
@@ -50,50 +50,54 @@ public class DecisionRecord extends DOMFace {
     public String getDecision() throws Exception {
         return getScalar("decision");
     }
+
     public void setDecision(String newVal) throws Exception {
         setScalar("decision", newVal);
     }
 
-
     public long getTimestamp() throws Exception {
         return getAttributeLong("timestamp");
     }
+
     public void setTimestamp(long newVal) throws Exception {
         setAttributeLong("timestamp", newVal);
     }
 
-    //Where did this decision come from???
+    // Where did this decision come from???
     public int getSourceType() throws Exception {
         return getAttributeInt("sourceType");
     }
+
     public void setSourceType(int newVal) throws Exception {
         setAttributeInt("sourceType", newVal);
     }
+
     public String getSourceId() throws Exception {
         return getAttribute("sourceId");
     }
+
     public void setSourceId(String newVal) throws Exception {
         setAttribute("sourceId", newVal);
     }
+
     public long getSourceCmt() throws Exception {
         return getAttributeLong("sourceCmt");
     }
+
     public void setSourceCmt(long newVal) throws Exception {
         setAttributeLong("sourceCmt", newVal);
     }
 
     public String getSourceUrl(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw, "CommentZoom.htm?cid="+getSourceCmt());
+        return ar.getResourceURL(ngw, "CommentZoom.htm?cid=" + getSourceCmt());
     }
 
-
     /**
-     * the universal id is a globally unique ID for this decision, composed of the
-     * id for the server, the workspace, and the action item. This is set at the point
-     * where the action item is created and remains with the note as it is carried
-     * around the system as long as it is moved as a clone from a workspace to a
-     * clone of a workspace. If it is copied or moved to another workspace for any
-     * other reason, then the universal ID should be reset.
+     * the universal id is a globally unique ID for this decision, composed of the id for the
+     * server, the workspace, and the action item. This is set at the point where the action item is
+     * created and remains with the note as it is carried around the system as long as it is moved
+     * as a clone from a workspace to a clone of a workspace. If it is copied or moved to another
+     * workspace for any other reason, then the universal ID should be reset.
      */
     public String getUniversalId() throws Exception {
         return getScalar("universalid");
@@ -103,16 +107,12 @@ public class DecisionRecord extends DOMFace {
         setScalar("universalid", newID);
     }
 
-
-    /**
-     * get the labels on a document -- only labels valid in the workspace,
-     * and no duplicates
-     */
+    /** get the labels on a document -- only labels valid in the workspace, and no duplicates */
     public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngw.getLabelRecordOrNull(name);
-            if (aLabel!=null) {
+            if (aLabel != null) {
                 if (!res.contains(aLabel)) {
                     res.add(aLabel);
                 }
@@ -121,20 +121,17 @@ public class DecisionRecord extends DOMFace {
         return res;
     }
 
-    /**
-     * set the list of labels on a document
-     */
+    /** set the list of labels on a document */
     public void setLabels(List<NGLabel> values) throws Exception {
         List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
             labelNames.add(aLable.getName());
         }
-        //Since this is a 'set' type vector, always sort them so that they are
-        //stored in a consistent way ... so files are more easily compared
+        // Since this is a 'set' type vector, always sort them so that they are
+        // stored in a consistent way ... so files are more easily compared
         Collections.sort(labelNames);
         setVector("labels", labelNames);
     }
-
 
     public JSONObject getJSON4Decision(NGWorkspace ngw, AuthRequest ar) throws Exception {
         JSONObject thisDecision = new JSONObject();
@@ -142,11 +139,11 @@ public class DecisionRecord extends DOMFace {
         thisDecision.put("num", getNumber());
         extractAttributeLong(thisDecision, "timestamp");
         JSONObject labelMap = new JSONObject();
-        for (NGLabel lRec : getLabels(ngw) ) {
+        for (NGLabel lRec : getLabels(ngw)) {
             labelMap.put(lRec.getName(), true);
         }
         extractScalarString(thisDecision, "decision");
-        thisDecision.put("labelMap",  labelMap);
+        thisDecision.put("labelMap", labelMap);
         thisDecision.put("sourceUrl", getSourceUrl(ar, ngw));
         extractAttributeString(thisDecision, "sourceId");
         extractAttributeInt(thisDecision, "sourceType");
@@ -155,15 +152,17 @@ public class DecisionRecord extends DOMFace {
         return thisDecision;
     }
 
-    public void updateDecisionFromJSON(JSONObject decisionObj, NGWorkspace ngw, AuthRequest ar) throws Exception {
+    public void updateDecisionFromJSON(JSONObject decisionObj, NGWorkspace ngw, AuthRequest ar)
+            throws Exception {
         String universalid = decisionObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
-            //just checking, this should never happen
-            throw WeaverException.newBasic("Error trying to update the record for a decision with UID (%s) with post from decision with UID %s)",
-                   getUniversalId(), universalid);
+            // just checking, this should never happen
+            throw WeaverException.newBasic(
+                    "Error trying to update the record for a decision with UID (%s) with post from decision with UID %s)",
+                    getUniversalId(), universalid);
         }
-        
-        // Two ways to update, either with a decisionMerge object which contains a new 
+
+        // Two ways to update, either with a decisionMerge object which contains a new
         // and old value,  or by setting the decision value outright.
         // Only one of these should be used generally.
         mergeIfPresent(decisionObj, "decision");
@@ -185,7 +184,5 @@ public class DecisionRecord extends DOMFace {
         updateAttributeString("sourceId", decisionObj);
         updateAttributeLong("sourceCmt", decisionObj);
         updateAttributeLong("reviewDate", decisionObj);
-
     }
-
 }

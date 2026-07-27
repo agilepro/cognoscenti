@@ -21,40 +21,38 @@
 package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class BaseRecord extends DOMFace
-{
+public class BaseRecord extends DOMFace {
 
-    public final static int STATE_ERROR     = 0;
-    public final static int STATE_UNSTARTED = 1;
-    public final static int STATE_OFFERED   = 2;
-    public final static int STATE_ACCEPTED  = 3;
-    public final static int STATE_WAITING   = 4;
-    public final static int STATE_COMPLETE  = 5;
-    public final static int STATE_SKIPPED   = 6;
-    public final static int STATE_FROZEN    = 8;
-    public final static int STATE_DELETED   = 9;
+    public static final int STATE_ERROR = 0;
+    public static final int STATE_UNSTARTED = 1;
+    public static final int STATE_OFFERED = 2;
+    public static final int STATE_ACCEPTED = 3;
+    public static final int STATE_WAITING = 4;
+    public static final int STATE_COMPLETE = 5;
+    public static final int STATE_SKIPPED = 6;
+    public static final int STATE_FROZEN = 8;
+    public static final int STATE_DELETED = 9;
 
-    private final static String STATE_ERROR_STR     = "Error";
-    private final static String STATE_UNSTARTED_STR = "Unstarted";
-    private final static String STATE_OFFERED_STR   = "Offered";
-    private final static String STATE_ACCEPTED_STR  = "Accepted";
-    private final static String STATE_WAITING_STR   = "Waiting";
-    private final static String STATE_COMPLETE_STR  = "Completed";
-    private final static String STATE_SKIPPED_STR   = "Skipped";
-    private final static String STATE_FROZEN_STR    = "Frozen";
-    private final static String STATE_DELETED_STR   = "Deleted";
-    private final static String STATE_UNKNOWN_STR   = "Unknown";
+    private static final String STATE_ERROR_STR = "Error";
+    private static final String STATE_UNSTARTED_STR = "Unstarted";
+    private static final String STATE_OFFERED_STR = "Offered";
+    private static final String STATE_ACCEPTED_STR = "Accepted";
+    private static final String STATE_WAITING_STR = "Waiting";
+    private static final String STATE_COMPLETE_STR = "Completed";
+    private static final String STATE_SKIPPED_STR = "Skipped";
+    private static final String STATE_FROZEN_STR = "Frozen";
+    private static final String STATE_DELETED_STR = "Deleted";
+    private static final String STATE_UNKNOWN_STR = "Unknown";
 
-    public final static long MAX_TASK_DURATION  = 365;
-    public final static long MAX_TASK_PRIORITY  = 100;
+    public static final long MAX_TASK_DURATION = 365;
+    public static final long MAX_TASK_PRIORITY = 100;
 
-    public final static String PRIORITY_HIGH_STR     = "High";
-    public final static String PRIORITY_MIDIUM__STR = "Medium";
-    public final static String PRIORITY_LOW__STR   = "Low";
+    public static final String PRIORITY_HIGH_STR = "High";
+    public static final String PRIORITY_MIDIUM__STR = "Medium";
+    public static final String PRIORITY_LOW__STR = "Low";
 
     public BaseRecord(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
@@ -65,11 +63,11 @@ public class BaseRecord extends DOMFace
     }
 
     public void setId(String newVal) throws Exception {
-        if (newVal.length()!=4) {
+        if (newVal.length() != 4) {
             throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
         }
-        for (int i=0; i<4; i++) {
-            if (newVal.charAt(i)<'0' || newVal.charAt(i)>'9') {
+        for (int i = 0; i < 4; i++) {
+            if (newVal.charAt(i) < '0' || newVal.charAt(i) > '9') {
                 throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
             }
         }
@@ -87,11 +85,10 @@ public class BaseRecord extends DOMFace
         setScalar("synopsis", newVal);
     }
 
-    public String getDescription()
-        throws Exception
-    {
+    public String getDescription() throws Exception {
         return getScalar("description");
     }
+
     public void setDescription(String newVal) throws Exception {
         if (newVal == null) {
             newVal = "";
@@ -102,6 +99,7 @@ public class BaseRecord extends DOMFace
     public String getActionScripts() throws Exception {
         return getScalar("actionScripts");
     }
+
     public void setActionScripts(String newVal) throws Exception {
         if (newVal == null) {
             newVal = "";
@@ -112,6 +110,7 @@ public class BaseRecord extends DOMFace
     public long getDueDate() {
         return getScalarLong("dueDate");
     }
+
     public void setDueDate(long newVal) throws Exception {
         setScalarLong("dueDate", newVal);
     }
@@ -119,6 +118,7 @@ public class BaseRecord extends DOMFace
     public long getStartDate() {
         return getScalarLong("startDate");
     }
+
     public void setStartDate(long newVal) {
         setScalarLong("startDate", newVal);
     }
@@ -126,6 +126,7 @@ public class BaseRecord extends DOMFace
     public long getEndDate() {
         return getScalarLong("endDate");
     }
+
     public void setEndDate(long newVal) {
         setScalarLong("endDate", newVal);
     }
@@ -133,6 +134,7 @@ public class BaseRecord extends DOMFace
     public int getPriority() throws Exception {
         return getScalarInt("priority");
     }
+
     public void setPriority(int newVal) throws Exception {
         setScalar("priority", Integer.toString(newVal));
     }
@@ -140,12 +142,12 @@ public class BaseRecord extends DOMFace
     public long getDuration() throws Exception {
         return getScalarLong("duration");
     }
+
     public void setDuration(long newVal) throws Exception {
         setScalarLong("duration", newVal);
     }
 
-    public static String stateName(int state)
-    {
+    public static String stateName(int state) {
         switch (state) {
             case STATE_ERROR:
                 return STATE_ERROR_STR;
@@ -171,11 +173,10 @@ public class BaseRecord extends DOMFace
     }
 
     /**
-     * There are three main categories of state and these three methods
-     * help to distinguish these categories.
-     * Future: means it has not been started and not ready
-     * Active: means it is actively being worked on (maybe not accepted)
-     * Final:  means it is done, either complete, skipped, or deleted
+     * There are three main categories of state and these three methods help to distinguish these
+     * categories. Future: means it has not been started and not ready Active: means it is actively
+     * being worked on (maybe not accepted) Final: means it is done, either complete, skipped, or
+     * deleted
      */
     public static boolean isFuture(int state) {
         switch (state) {
@@ -219,9 +220,9 @@ public class BaseRecord extends DOMFace
     }
 
     protected void handleStateChangeEvent() throws Exception {
-        //do nothing at the BaseRecord level
+        // do nothing at the BaseRecord level
     }
-    
+
     public int getState() {
         return getScalarInt("state");
     }
@@ -234,98 +235,82 @@ public class BaseRecord extends DOMFace
         }
     }
 
-    
     public boolean wasActiveAtTime(long startTime, long endTime) {
         if (GoalRecord.isFuture(getState())) {
-            //Exclude anything that is future now, because it must have been future then
+            // Exclude anything that is future now, because it must have been future then
             return false;
         }
-        if (getStartDate()>endTime) {
-            //Exclude anything that was started after the time period ended
+        if (getStartDate() > endTime) {
+            // Exclude anything that was started after the time period ended
             return false;
         }
-        if (GoalRecord.isFinal(getState()) && getEndDate()<startTime) {
-            //Exclude anything that is completed now, and was completed before the time period
+        if (GoalRecord.isFinal(getState()) && getEndDate() < startTime) {
+            // Exclude anything that is completed now, and was completed before the time period
             return false;
         }
-        //everything else must have been started before the time period ended, and
-        //ended after the time period started, so return true        
+        // everything else must have been started before the time period ended, and
+        // ended after the time period started, so return true
         return true;
     }
 
-/**
-* In June 2015 this was changed to the new location and names of the
-* image files, and this time it includes the full path from the root
-* of the application, requiring migration of code that uses this.
-*/
+    /**
+     * In June 2015 this was changed to the new location and names of the image files, and this time
+     * it includes the full path from the root of the application, requiring migration of code that
+     * uses this.
+     */
     public static String stateImg(int state) {
-        return "assets/goalstate/small"+state+".gif";
+        return "assets/goalstate/small" + state + ".gif";
     }
 
     /**
-    * Tasks, ParentLinks and Processes can have licenses.
-    * The license is automatically created when the object is created.
-    * Use this to get a reference to the license record.  Changes
-    * to the record are immediately reflected into the document.
-    * Older files will have inappropriately formed licenses, and existing
-    * must be converted to the appropriate form.
-    */
-    public LicenseRecord accessLicense()
-        throws Exception
-    {
+     * Tasks, ParentLinks and Processes can have licenses. The license is automatically created when
+     * the object is created. Use this to get a reference to the license record. Changes to the
+     * record are immediately reflected into the document. Older files will have inappropriately
+     * formed licenses, and existing must be converted to the appropriate form.
+     */
+    public LicenseRecord accessLicense() throws Exception {
         assureLicenseIsCorrectFormat();
         return getChild("license", LicenseRecord.class);
     }
 
-
-
-    //TODO: can be removed when oldest data page is after Feb 2010
-    private void assureLicenseIsCorrectFormat()
-        throws Exception
-    {
-        //this is special code for converting and upgrading files to a new format
-        //this use of DOM Utils should be eliminated after migrating all existing documents.
+    // TODO: can be removed when oldest data page is after Feb 2010
+    private void assureLicenseIsCorrectFormat() throws Exception {
+        // this is special code for converting and upgrading files to a new format
+        // this use of DOM Utils should be eliminated after migrating all existing documents.
         Element licEle = DOMUtils.getChildElement(fEle, "license");
         String licId = null;
 
-        if (licEle!=null)
-        {
+        if (licEle != null) {
             licId = licEle.getAttribute("id");
-            if (licId!=null && licId.length()>0)
-            {
-                //everything is fine, return the record
+            if (licId != null && licId.length() > 0) {
+                // everything is fine, return the record
                 return;
             }
         }
 
-        //if we get here, then we either need to generate a license
-        //automatically, or we need to to convert from the old form
-        //to the new form.
+        // if we get here, then we either need to generate a license
+        // automatically, or we need to to convert from the old form
+        // to the new form.
 
-        if (licEle==null)
-        {
-            //create a license if it does not already exist
+        if (licEle == null) {
+            // create a license if it does not already exist
             licEle = createChildElement("license");
-        }
-        else
-        {
-            //migration, there was a time when the id was placed in the contents of the
-            //tag, instead of in an attribute.  If that attribute is missing, assume that
-            //it is because the value is in the content.
-            //Remove this migration after the oldest known file is after May 2010
+        } else {
+            // migration, there was a time when the id was placed in the contents of the
+            // tag, instead of in an attribute.  If that attribute is missing, assume that
+            // it is because the value is in the content.
+            // Remove this migration after the oldest known file is after May 2010
             //
             licId = DOMUtils.textValueOf(licEle, false);
             DOMUtils.removeAllChildren(licEle);
         }
 
-        if (licId==null || licId.length()==0)
-        {
+        if (licId == null || licId.length() == 0) {
             licId = IdGenerator.generateDoubleKey();
         }
 
         licEle.setAttribute("id", licId);
 
-       //end of upgrade code
+        // end of upgrade code
     }
-
 }

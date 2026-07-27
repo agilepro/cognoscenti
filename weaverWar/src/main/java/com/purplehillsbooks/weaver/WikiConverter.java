@@ -23,25 +23,21 @@ package com.purplehillsbooks.weaver;
 import java.util.List;
 
 /**
- * Implements the Wiki formatting.
- * NOTE: this is NOT muti-thread safe!   Use on only one thread
- * at a time.  Usage pattern:
+ * Implements the Wiki formatting. NOTE: this is NOT muti-thread safe! Use on only one thread at a
+ * time. Usage pattern:
  *
- * WikiConverter wc = new WikiConverter(ar);
- * wc.writeWikiAsHtml(wikiData);
+ * <p>WikiConverter wc = new WikiConverter(ar); wc.writeWikiAsHtml(wikiData);
  *
- * writeWikiAsHtml can be called multiple times, but only from
- * a single thread.
+ * <p>writeWikiAsHtml can be called multiple times, but only from a single thread.
  */
-public class WikiConverter
-{
-    final static int NOTHING      = 0;
-    final static int PARAGRAPH    = 1;
-    final static int BULLET       = 2;
-    final static int HEADER       = 3;
-    final static int PREFORMATTED = 4;
-    
-    public final static char ESCAPE_CHAR = 'º';
+public class WikiConverter {
+    static final int NOTHING = 0;
+    static final int PARAGRAPH = 1;
+    static final int BULLET = 2;
+    static final int HEADER = 3;
+    static final int PREFORMATTED = 4;
+
+    public static final char ESCAPE_CHAR = 'º';
 
     protected AuthRequest ar;
     protected int majorState = 0;
@@ -50,46 +46,33 @@ public class WikiConverter
     protected boolean isItalic = false;
     protected String userKey;
 
-
-
-    /**
-    * Construct on the AuthRequest that output will be to
-    */
-    public WikiConverter(AuthRequest destination)
-    {
+    /** Construct on the AuthRequest that output will be to */
+    public WikiConverter(AuthRequest destination) {
         ar = destination;
         UserProfile up = ar.getUserProfile();
-        if (up==null)
-        {
+        if (up == null) {
             userKey = "xxxx";
-        }
-        else
-        {
+        } else {
             userKey = up.getKey();
         }
     }
 
     /**
-    * Static version create the object instance and then calls the
-    * converter directly.   Convenience for the case where you are
-    * going to use a converter only once, and only for HTML output.
-    */
-    public static void writeWikiAsHtml(AuthRequest destination, String tv) throws Exception
-    {
+     * Static version create the object instance and then calls the converter directly. Convenience
+     * for the case where you are going to use a converter only once, and only for HTML output.
+     */
+    public static void writeWikiAsHtml(AuthRequest destination, String tv) throws Exception {
         WikiConverter wc = new WikiConverter(destination);
         wc.writeWikiAsHtml(tv);
     }
 
     /**
-    * Takes a block of data formatted in wiki format, and converts
-    * it to HTML, outputting that to the AuthRequest that was
-    * passed in when the object was constructed.
-    */
-    public void writeWikiAsHtml(String tv) throws Exception
-    {
+     * Takes a block of data formatted in wiki format, and converts it to HTML, outputting that to
+     * the AuthRequest that was passed in when the object was constructed.
+     */
+    public void writeWikiAsHtml(String tv) throws Exception {
         LineIterator li = new LineIterator(tv);
-        while (li.moreLines())
-        {
+        while (li.moreLines()) {
             String thisLine = li.nextLine();
             formatText(thisLine);
         }
@@ -97,8 +80,7 @@ public class WikiConverter
         ar.flush();
     }
 
-    protected void formatText(String line) throws Exception
-    {
+    protected void formatText(String line) throws Exception {
         boolean isIndented = line.startsWith(" ");
         if (majorState != PREFORMATTED) {
             line = line.trim();
@@ -142,9 +124,9 @@ public class WikiConverter
             scanForStyle(line, 0);
         } else if (line.startsWith("%%")) {
             fomatFontStyle(line);
-        }else if (line.endsWith("%%")) {
+        } else if (line.endsWith("%%")) {
             fomatFontStyle(line);
-        }else {
+        } else {
 
             if (majorState != PARAGRAPH && majorState != PREFORMATTED) {
                 startParagraph();
@@ -153,8 +135,7 @@ public class WikiConverter
         }
     }
 
-    protected void terminate() throws Exception
-    {
+    protected void terminate() throws Exception {
         if (isBold) {
             ar.write("</b>");
         }
@@ -174,15 +155,15 @@ public class WikiConverter
             }
         } else if (majorState == HEADER) {
             switch (majorLevel) {
-            case 1:
-                ar.write("</h3>");
-                break;
-            case 2:
-                ar.write("</h2>");
-                break;
-            case 3:
-                ar.write("</h1>");
-                break;
+                case 1:
+                    ar.write("</h3>");
+                    break;
+                case 2:
+                    ar.write("</h2>");
+                    break;
+                case 3:
+                    ar.write("</h1>");
+                    break;
             }
         }
         majorState = NOTHING;
@@ -191,37 +172,29 @@ public class WikiConverter
         isItalic = false;
     }
 
-    protected void startParagraph() throws Exception
-    {
+    protected void startParagraph() throws Exception {
         terminate();
         ar.write("<p>\n");
         majorState = PARAGRAPH;
         majorLevel = 0;
     }
 
-    protected void startPRE() throws Exception
-    {
+    protected void startPRE() throws Exception {
         terminate();
         ar.write("<pre>\n");
         majorState = PREFORMATTED;
         majorLevel = 0;
     }
 
-    protected void makeLineBreak()
-        throws Exception
-    {
+    protected void makeLineBreak() throws Exception {
         ar.write("<br/>");
     }
 
-    protected void makeHorizontalRule()
-        throws Exception
-    {
+    protected void makeHorizontalRule() throws Exception {
         ar.write("<hr/>");
     }
 
-    protected void startBullet(String line, int level)
-            throws Exception
-    {
+    protected void startBullet(String line, int level) throws Exception {
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
@@ -240,104 +213,104 @@ public class WikiConverter
         scanForStyle(line, level);
     }
 
-    protected void startHeader(String line, int level)
-            throws Exception
-    {
+    protected void startHeader(String line, int level) throws Exception {
         terminate();
         majorState = HEADER;
         majorLevel = level;
         switch (level) {
-        case 1:
-            ar.write("<h3>");
-            break;
-        case 2:
-            ar.write("<h2>");
-            break;
-        case 3:
-            ar.write("<h1>");
-            break;
+            case 1:
+                ar.write("<h3>");
+                break;
+            case 2:
+                ar.write("<h2>");
+                break;
+            case 3:
+                ar.write("<h1>");
+                break;
         }
         scanForStyle(line, level);
     }
 
-    protected void scanForStyle(String line, int scanStart)
-            throws Exception
-    {
+    protected void scanForStyle(String line, int scanStart) throws Exception {
         int pos = scanStart;
         int last = line.length();
         while (pos < last) {
             char ch = line.charAt(pos);
             switch (ch) {
-            case '&':
-                ar.write("&amp;");
-                pos++;
-                continue;
-            case '"':
-                ar.write("&quot;");
-                pos++;
-                continue;
-            case '<':
-                ar.write("&lt;");
-                pos++;
-                continue;
-            case '>':
-                ar.write("&gt;");
-                pos++;
-                continue;
-            case '[':
-
-                int pos2 = line.indexOf(']', pos);
-                if (pos2 > pos + 1) {
-                    String linkURL = line.substring(pos + 1, pos2);
-                    outputProperLink(linkURL);
-                    pos = pos2 + 1;
-                } else if (pos2 == pos + 1) {
-                    pos = pos + 2;
-                } else {
-                    pos = pos + 1;
-                }
-                continue;
-            case '#':
-                int tagEnd = findIdentifierEnd(line, pos+1);
-                String tagName = line.substring(pos+1,tagEnd);
-                outputTagLink(tagName);
-                pos = tagEnd;
-                continue;
-            case '_':
-                if (line.length() > pos + 1 && line.charAt(pos + 1) == '_') {
-                    pos += 2;
-                    if (isBold) {
-                        ar.write("</b>");
-                    } else {
-                        ar.write("<b>");
-                    }
-                    isBold = !isBold;
+                case '&':
+                    ar.write("&amp;");
+                    pos++;
                     continue;
-                }
-                break;
-            case '\'':
-                if (line.length() > pos + 1 && line.charAt(pos + 1) == '\'') {
-                    pos += 2;
-                    if (isItalic) {
-                        ar.write("</i>");
-                    } else {
-                        ar.write("<i>");
-                    }
-                    isItalic = !isItalic;
+                case '"':
+                    ar.write("&quot;");
+                    pos++;
                     continue;
-                }
-                break;
-            case ESCAPE_CHAR:
-                if (line.length() > pos + 1) {
-                    char escape = line.charAt(pos + 1);
-                    if (escape == '[' || escape == '\'' || escape == '_'  || escape == ESCAPE_CHAR) {
-                        //only these characters can be escaped at this time
-                        //if one of these, eliminate the ยบ, and output the following character without interpretation
-                        ch = escape;
-                        pos++;
+                case '<':
+                    ar.write("&lt;");
+                    pos++;
+                    continue;
+                case '>':
+                    ar.write("&gt;");
+                    pos++;
+                    continue;
+                case '[':
+                    int pos2 = line.indexOf(']', pos);
+                    if (pos2 > pos + 1) {
+                        String linkURL = line.substring(pos + 1, pos2);
+                        outputProperLink(linkURL);
+                        pos = pos2 + 1;
+                    } else if (pos2 == pos + 1) {
+                        pos = pos + 2;
+                    } else {
+                        pos = pos + 1;
                     }
-                }
-                break;
+                    continue;
+                case '#':
+                    int tagEnd = findIdentifierEnd(line, pos + 1);
+                    String tagName = line.substring(pos + 1, tagEnd);
+                    outputTagLink(tagName);
+                    pos = tagEnd;
+                    continue;
+                case '_':
+                    if (line.length() > pos + 1 && line.charAt(pos + 1) == '_') {
+                        pos += 2;
+                        if (isBold) {
+                            ar.write("</b>");
+                        } else {
+                            ar.write("<b>");
+                        }
+                        isBold = !isBold;
+                        continue;
+                    }
+                    break;
+                case '\'':
+                    if (line.length() > pos + 1 && line.charAt(pos + 1) == '\'') {
+                        pos += 2;
+                        if (isItalic) {
+                            ar.write("</i>");
+                        } else {
+                            ar.write("<i>");
+                        }
+                        isItalic = !isItalic;
+                        continue;
+                    }
+                    break;
+                case ESCAPE_CHAR:
+                    if (line.length() > pos + 1) {
+                        char escape = line.charAt(pos + 1);
+                        if (escape == '['
+                                || escape == '\''
+                                || escape == '_'
+                                || escape == ESCAPE_CHAR) {
+                            // only these characters can be escaped at this time
+                            // if one of these, eliminate the ยบ, and output the following character
+                            // without
+                            // interpretation
+                            ch = escape;
+                            pos++;
+                        }
+                    }
+                    break;
             }
             ar.write(ch);
             pos++;
@@ -345,17 +318,11 @@ public class WikiConverter
         ar.write("\n");
     }
 
-
-    protected void outputTagLink(String tagName)
-        throws Exception
-    {
+    protected void outputTagLink(String tagName) throws Exception {
         ar.write("#");
-        if (tagName.length()<3)
-        {
+        if (tagName.length() < 3) {
             ar.writeHtml(tagName);
-        }
-        else
-        {
+        } else {
             ar.write("<a href=\"");
             ar.write(ar.retPath);
             ar.write("v/");
@@ -369,17 +336,14 @@ public class WikiConverter
     }
 
     /**
-    * Returns either the position of a white space, or it
-    * returns the length of the line if no white space char found
-    */
-    public static int findIdentifierEnd(String line, int pos)
-    {
+     * Returns either the position of a white space, or it returns the length of the line if no
+     * white space char found
+     */
+    public static int findIdentifierEnd(String line, int pos) {
         int last = line.length();
-        while (pos < last)
-        {
+        while (pos < last) {
             char ch = line.charAt(pos);
-            if (!Character.isLetterOrDigit(ch) && ch!='_')
-            {
+            if (!Character.isLetterOrDigit(ch) && ch != '_') {
                 return pos;
             }
             pos++;
@@ -388,22 +352,18 @@ public class WikiConverter
     }
 
     /**
-    * Given a block of wiki formatted text, this will find all the
-    * links within the block, and return a vector with just the
-    * links in them.
-    */
-    public void findLinks(List<String> v, NGSection section) throws Exception
-    {
+     * Given a block of wiki formatted text, this will find all the links within the block, and
+     * return a vector with just the links in them.
+     */
+    public void findLinks(List<String> v, NGSection section) throws Exception {
         LineIterator li = new LineIterator(section.asText().trim());
-        while (li.moreLines())
-        {
+        while (li.moreLines()) {
             String thisLine = li.nextLine();
             scanLineForLinks(thisLine, v);
         }
     }
 
-    protected void scanLineForLinks(String thisLine, List<String> v)
-    {
+    protected void scanLineForLinks(String thisLine, List<String> v) {
         int bracketPos = thisLine.indexOf('[');
         int startPos = 0;
         while (bracketPos >= startPos) {
@@ -418,33 +378,28 @@ public class WikiConverter
         }
     }
 
-
     public void outputProperLink(String linkURL) throws Exception {
         outputLink(ar, linkURL);
     }
 
     /**
-    * outputLink does the job of parsing the "wiki link" value and
-    * producing a valid HTML link to the desire thing.
-    * Wiki Link values may have a vertical bar character separating the
-    * display name of the link from the address.  If that vertical bar is
-    * not there, then the entire thing is taken as an address.
-    *
-    * Either    [ link-name | link-address ]
-    * or        [ link-address ]
-    *
-    * The address can either be the name of another page, or an HTTP hyperlink.
-    * If the address is missing or invalid (no page can be named that)
-    * then the display name is written without being a hyper link.
-    * If the address is to an external page, then a normal hyperlink is made.
-    * If the address is the name of a wiki page, then a hyperlink to that
-    * page is made.  If the address is a valid name, but no page exists
-    * with that name, then a link to the "CreatePage" function is created.
-    *
-    * The name part of the link
-    */
-    private static void outputLink(AuthRequest ar, String linkURL)
-            throws Exception {
+     * outputLink does the job of parsing the "wiki link" value and producing a valid HTML link to
+     * the desire thing. Wiki Link values may have a vertical bar character separating the display
+     * name of the link from the address. If that vertical bar is not there, then the entire thing
+     * is taken as an address.
+     *
+     * <p>Either [ link-name | link-address ] or [ link-address ]
+     *
+     * <p>The address can either be the name of another page, or an HTTP hyperlink. If the address
+     * is missing or invalid (no page can be named that) then the display name is written without
+     * being a hyper link. If the address is to an external page, then a normal hyperlink is made.
+     * If the address is the name of a wiki page, then a hyperlink to that page is made. If the
+     * address is a valid name, but no page exists with that name, then a link to the "CreatePage"
+     * function is created.
+     *
+     * <p>The name part of the link
+     */
+    private static void outputLink(AuthRequest ar, String linkURL) throws Exception {
         boolean isImage = linkURL.startsWith("IMG:");
 
         int barPos = linkURL.indexOf("|");
@@ -491,37 +446,41 @@ public class WikiConverter
             List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
             if (foundPages.size() == 1) {
                 NGPageIndex foundPI = foundPages.get(0);
-                linkAddr = ar.baseURL
-                        + ar.getResourceURL(foundPI, "FrontPage.htm");
+                linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "FrontPage.htm");
                 if (!userSpecifiedName) {
                     linkName = foundPI.containerName; // use the best name for
-                                                        // page
+                    // page
                 }
                 titleValue = "Navigate to the workspace: " + linkName;
                 pageExists = !foundPI.isDeleted;
                 specialGraphic = "deletedLink.gif";
             } else if (foundPages.size() == 0) {
 
-                //TODO: eliminate this leftover ability to make a link to a workspace that does not exist
-                //We no longer expect people to make new workspaces this way.
+                // TODO: eliminate this leftover ability to make a link to a workspace that does not
+                // exist
+                // We no longer expect people to make new workspaces this way.
 
                 pageExists = false;
                 specialGraphic = "createicon.gif";
                 titleValue = "Workspace does not exist";
 
                 if (ar.isLoggedIn()) {
-                    linkAddr = "javascript:brokenLink(" + isImage + ",'"
-                            + linkName + "','" + linkAddr + "')";
+                    linkAddr =
+                            "javascript:brokenLink("
+                                    + isImage
+                                    + ",'"
+                                    + linkName
+                                    + "','"
+                                    + linkAddr
+                                    + "')";
                 } else {
-                    //this only creates an error message now.
+                    // this only creates an error message now.
                     linkAddr = ar.retPath + "CreatePage.jsp";
                 }
             } else {
                 // this is the case where there is more than one page
-                linkAddr = ar.retPath + "Disambiguate.jsp?n="
-                        + SectionUtil.encodeURLData(linkAddr);
+                linkAddr = ar.retPath + "Disambiguate.jsp?n=" + SectionUtil.encodeURLData(linkAddr);
                 titleValue = "There is more than one workspace named " + linkAddr;
-
             }
         }
         if (isImage) {
@@ -541,8 +500,7 @@ public class WikiConverter
                 ar.writeHtml(linkName);
                 ar.write("\"/>");
             }
-        }
-        else { // not an image
+        } else { // not an image
             if (pageExists) {
                 ar.write("<a href=\"");
                 ar.writeHtml(linkAddr);
@@ -577,28 +535,26 @@ public class WikiConverter
                 ar.write("</a>");
             }
         }
-
     }
 
-    protected void fomatFontStyle(String line) throws Exception{
+    protected void fomatFontStyle(String line) throws Exception {
         boolean scan = false;
-        if(line.startsWith("%%(")){
+        if (line.startsWith("%%(")) {
             int indx = line.indexOf(')');
-            String attr = line.substring(3,indx);
+            String attr = line.substring(3, indx);
             attr = attr.replaceAll(":", "=");
             ar.write("<FONT " + attr + ">");
             line = line.substring(indx + 1);
             scan = true;
         }
-        if(line.endsWith("%%")){
+        if (line.endsWith("%%")) {
             line = line.substring(0, line.lastIndexOf("%%"));
             scanForStyle(line, 0);
             scan = false;
             ar.write("</FONT>");
         }
-        if(scan){
+        if (scan) {
             scanForStyle(line, 0);
         }
     }
-
 }

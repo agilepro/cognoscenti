@@ -24,13 +24,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
-* A ProfileRef is a reference to a remote profile.  This is the address that your
-* retrieve remote tasklists (goallists) from.  There may be a number of remote
-* sites that belong to a single remote profile, so they are not quite the same
-* thing as a remote site.
-*/
-public class ProfileRef extends DOMFace
-{
+ * A ProfileRef is a reference to a remote profile. This is the address that your retrieve remote
+ * tasklists (goallists) from. There may be a number of remote sites that belong to a single remote
+ * profile, so they are not quite the same thing as a remote site.
+ */
+public class ProfileRef extends DOMFace {
 
     public ProfileRef(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
@@ -47,8 +45,8 @@ public class ProfileRef extends DOMFace
     public long getLastAccess() throws Exception {
         return safeConvertLong(getAttribute("lastAccess"));
     }
+
     public void setLastAccess(long newVal) throws Exception {
         setAttribute("lastAccess", Long.toString(newVal));
     }
-
 }

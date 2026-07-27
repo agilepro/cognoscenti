@@ -20,43 +20,30 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+/** Implements the process and task formatting */
+public class SectionTask extends SectionUtil implements SectionFormat {
 
-/**
-* Implements the process and task formatting
-*/
-public class SectionTask extends SectionUtil implements SectionFormat
-{
+    public SectionTask() {}
 
-
-    public SectionTask()
-    {
-    }
-
-    public String getName()
-    {
+    public String getName() {
         return "Process";
     }
 
-
-    public static List<GoalRecord> getAllTasks(NGSection sec)
-            throws Exception
-    {
-        if (sec == null)
-        {
-            throw WeaverException.newBasic("trying to get tasks from a null section does not make sense");
+    public static List<GoalRecord> getAllTasks(NGSection sec) throws Exception {
+        if (sec == null) {
+            throw WeaverException.newBasic(
+                    "trying to get tasks from a null section does not make sense");
         }
 
         List<GoalRecord> list = sec.getChildren("task", GoalRecord.class);
-        for (GoalRecord task : list)
-        {
-            //temporary -- tasks may not have had ids, so patch that up now if necessary
-            //can remove this after existing pages have been converted to have id values
+        for (GoalRecord task : list) {
+            // temporary -- tasks may not have had ids, so patch that up now if necessary
+            // can remove this after existing pages have been converted to have id values
             String id = task.getId();
-            if (id==null || id.length()!=4)
-            {
+            if (id == null || id.length() != 4) {
                 task.setId(sec.parent.getUniqueOnPage());
             }
         }
@@ -64,29 +51,20 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return list;
     }
 
-
-
-    public void findLinks(List<String> v, NGSection sec)
-        throws Exception
-    {
-        for (GoalRecord tr : getAllTasks(sec))
-        {
+    public void findLinks(List<String> v, NGSection sec) throws Exception {
+        for (GoalRecord tr : getAllTasks(sec)) {
             String link = tr.getDisplayLink();
             v.add(link);
         }
     }
 
-
-
     /**
-    * Walk through whatever elements this owns and put all the four digit
-    * IDs into the vector so that we can generate another ID and assure it
-    * does not duplication any id found here.
-    */
+     * Walk through whatever elements this owns and put all the four digit IDs into the vector so
+     * that we can generate another ID and assure it does not duplication any id found here.
+     */
     public void findIDs(List<String> v, NGSection sec) throws Exception {
         for (GoalRecord tr : getAllTasks(sec)) {
             v.add(tr.getId());
         }
     }
-
 }

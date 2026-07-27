@@ -23,12 +23,11 @@ package com.purplehillsbooks.weaver;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
- * Projects will have a set of labels to label documents, action items, and topics with.
- * This will put them into groups, and allow for a display somewhat like a folder.
+ * Projects will have a set of labels to label documents, action items, and topics with. This will
+ * put them into groups, and allow for a display somewhat like a folder.
  *
- * Two objects implement this: a pure label, and a NGRole object.
- * Roles act like labels in many contexts.  A role is a lable with
- * extra feature of having a bunch of members and descriptions.
+ * <p>Two objects implement this: a pure label, and a NGRole object. Roles act like labels in many
+ * contexts. A role is a lable with extra feature of having a bunch of members and descriptions.
  */
 public interface NGLabel {
 
@@ -41,5 +40,4 @@ public interface NGLabel {
     public void setColor(String color);
 
     public JSONObject getJSON() throws Exception;
-
 }

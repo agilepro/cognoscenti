@@ -20,6 +20,14 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.mail.EmailGenerator;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,113 +38,118 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.w3c.dom.Document;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.HTMLWriter;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.EmailGenerator;
-import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailInst;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
-
 /**
-* NGWorkspace is a Container that represents a Workspace.
-* This kind of workspace/page/workspace exists anywhere in a site hierarchy.
-* The old workspace (NGPage) existed only in a single date folder, and all the attachments
-* existed in the attachment folder.  The old NGPage is not used anymore,
-* but exists in name only in the class hierarchy.
-*
-* This workspace is represented by a folder in a site hierarchy,
-* and the attachments are just files within that folder.
-* The workspace file itself has a reserved name ".cog/ProjInfo.xml"
-* and the old versions of attachments are in the ".cog" folder as well.
-*/
+ * NGWorkspace is a Container that represents a Workspace. This kind of workspace/page/workspace
+ * exists anywhere in a site hierarchy. The old workspace (NGPage) existed only in a single date
+ * folder, and all the attachments existed in the attachment folder. The old NGPage is not used
+ * anymore, but exists in name only in the class hierarchy.
+ *
+ * <p>This workspace is represented by a folder in a site hierarchy, and the attachments are just
+ * files within that folder. The workspace file itself has a reserved name ".cog/ProjInfo.xml" and
+ * the old versions of attachments are in the ".cog" folder as well.
+ */
 public class NGWorkspace extends NGPage {
-    /**
-    * This workspace inhabits a folder on disk, and this is the path to the folder.
-    */
+    /** This workspace inhabits a folder on disk, and this is the path to the folder. */
     public File containingFolder;
 
-    private File        jsonFilePath;
-    private JSONObject  workspaceJSON;
+    private File jsonFilePath;
+    private JSONObject workspaceJSON;
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
-        //eliminate any attachments to topics from documents that have been deleted
+        // eliminate any attachments to topics from documents that have been deleted
         for (TopicRecord tr : this.getAllDiscussionTopics()) {
             tr.verifyAllAttachments(this);
         }
 
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
 
-        //we can relax this and get from lazy evaluation, but need to test carefully
-        //leaving this in for now
+        // we can relax this and get from lazy evaluation, but need to test carefully
+        // leaving this in for now
         getWorkspaceJSON();
 
-        //search for old, outdated invitations and delete them
+        // search for old, outdated invitations and delete them
         removeOldInvitations();
-
 
         String name = theFile.getName();
         if (!name.equals("ProjInfo.xml")) {
-            throw WeaverException.newBasic("Something is wrong with the data folder structure.  "
-                        +"Tried to open a NGWorkspace file named %s"
-                        +" and don't know what to do with that.", name);
+            throw WeaverException.newBasic(
+                    "Something is wrong with the data folder structure.  "
+                            + "Tried to open a NGWorkspace file named %s"
+                            + " and don't know what to do with that.",
+                    name);
         }
 
         File cogFolder = theFile.getParentFile();
         if (!cogFolder.getName().equalsIgnoreCase(".cog")) {
-            throw WeaverException.newBasic("Something is wrong with the data folder structure.  "
-                    +"Tried to open a NGWorkspace file named %s"
-                    +" except it should be in a folder named .cog, however "
-                    +"it was in a folder named %s", name, cogFolder.getName());
+            throw WeaverException.newBasic(
+                    "Something is wrong with the data folder structure.  "
+                            + "Tried to open a NGWorkspace file named %s"
+                            + " except it should be in a folder named .cog, however "
+                            + "it was in a folder named %s",
+                    name, cogFolder.getName());
         }
         containingFolder = cogFolder.getParentFile();
 
         String realName = containingFolder.getName();
         String key = this.getKey();
         if (!key.equals(realName)) {
-            //maybe the workspace was moved or renamed
-            System.out.println("For some reason the page ("+site.getKey()+"/"+realName+") thinks its name is ("+key+") FIXING THIS");
+            // maybe the workspace was moved or renamed
+            System.out.println(
+                    "For some reason the page ("
+                            + site.getKey()
+                            + "/"
+                            + realName
+                            + ") thinks its name is ("
+                            + key
+                            + ") FIXING THIS");
             this.setKey(realName);
         }
 
-        //upgrade all the note, document, and task records
+        // upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
 
-        //check for and remove unnecessary files in the root folder
+        // check for and remove unnecessary files in the root folder
         purgeRootLevelFiles();
 
-        //get rid of old ics files that are piling up in directory
-        //oldest file should be today minus 30 days
-        long thirtyDaysAgo = System.currentTimeMillis() - 1000L*60*60*24*30;
+        // get rid of old ics files that are piling up in directory
+        // oldest file should be today minus 30 days
+        long thirtyDaysAgo = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30;
         for (File child : cogFolder.listFiles()) {
             String fname = child.getName();
-            if (child.lastModified()>thirtyDaysAgo) {
-                //don't bother cleaning up anything less than 30 days old
+            if (child.lastModified() > thirtyDaysAgo) {
+                // don't bother cleaning up anything less than 30 days old
                 continue;
             }
             if (fname.endsWith(".ics")) {
-                System.out.println("CLEANUP: deleting ICS created more than 30 days ago: "+child.getAbsolutePath());
+                System.out.println(
+                        "CLEANUP: deleting ICS created more than 30 days ago: "
+                                + child.getAbsolutePath());
                 if (!child.delete()) {
-                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                    System.out.println(
+                            "     ARRRGH: unable to delete it!  " + child.getAbsolutePath());
                 }
             }
             if (fname.startsWith("~tmp")) {
-                System.out.println("CLEANUP: deleting ~tmp file created more than 30 days ago: "+child.getAbsolutePath());
+                System.out.println(
+                        "CLEANUP: deleting ~tmp file created more than 30 days ago: "
+                                + child.getAbsolutePath());
                 if (!child.delete()) {
-                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                    System.out.println(
+                            "     ARRRGH: unable to delete it!  " + child.getAbsolutePath());
                 }
             }
-            if (fname.indexOf("~tmp")>0 && fname.startsWith("meet")) {
-                System.out.println("CLEANUP: deleting meet####.ics~tmp file created more than 30 days ago: "+child.getAbsolutePath());
+            if (fname.indexOf("~tmp") > 0 && fname.startsWith("meet")) {
+                System.out.println(
+                        "CLEANUP: deleting meet####.ics~tmp file created more than 30 days ago: "
+                                + child.getAbsolutePath());
                 if (!child.delete()) {
-                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                    System.out.println(
+                            "     ARRRGH: unable to delete it!  " + child.getAbsolutePath());
                 }
             }
         }
@@ -170,13 +183,17 @@ public class NGWorkspace extends NGPage {
                 WorkspaceRole wsRole = new WorkspaceRole(role.fDoc, role.fEle, roleParent);
                 wsRole.setDef(site, def);
                 roleList.add(wsRole);
-            }
-            else {
-                System.out.println("HIDDEN ROLE: Workspace ("+this.displayName+") has hidden role "+role.getName());
+            } else {
+                System.out.println(
+                        "HIDDEN ROLE: Workspace ("
+                                + this.displayName
+                                + ") has hidden role "
+                                + role.getName());
             }
         }
         return roleList;
     }
+
     public List<WorkspaceRole> getWorkspaceRoles() throws Exception {
         NGBook site = getSite();
         List<WorkspaceRole> roleList = new ArrayList<>();
@@ -190,6 +207,7 @@ public class NGWorkspace extends NGPage {
         }
         return roleList;
     }
+
     public WorkspaceRole getWorkspaceRole(String symbol) throws Exception {
         for (WorkspaceRole role : getWorkspaceRoles()) {
             if (symbol.equals(role.getSymbol())) {
@@ -198,13 +216,15 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
-    
+
     public WorkspaceRole createWorkspaceRole(RoleDefinition def) throws Exception {
 
         // check to make sure it does not exist
         NGRole existing = getRole(def.symbol);
-        if (existing!=null) {
-            throw WeaverException.newBasic("Can not create a new role, because there is already a role named '%s'", def.symbol);
+        if (existing != null) {
+            throw WeaverException.newBasic(
+                    "Can not create a new role, because there is already a role named '%s'",
+                    def.symbol);
         }
 
         WorkspaceRole newRole = roleParent.createChild("role", WorkspaceRole.class);
@@ -216,7 +236,8 @@ public class NGWorkspace extends NGPage {
     public WorkspaceRole getOrCreateRole(String symbol) throws Exception {
         CustomRole role = getRole(symbol);
         if (role != null && !(role instanceof WorkspaceRole)) {
-            throw WeaverException.newBasic("For some reason the role in a workspace is not a WorkspaceRole");
+            throw WeaverException.newBasic(
+                    "For some reason the role in a workspace is not a WorkspaceRole");
         }
         WorkspaceRole wsRole = (WorkspaceRole) role;
         if (wsRole == null) {
@@ -235,24 +256,27 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
+
     public void deleteOldRole(String roleSymbol) throws Exception {
         CustomRole role = getOldRole(roleSymbol);
-        if (role!=null) {
-            roleParent.removeChild((DOMFace)role);
+        if (role != null) {
+            roleParent.removeChild((DOMFace) role);
         }
     }
 
-    private boolean migrateRole(String roleSymbol, WorkspaceRole membersRole, 
-            WorkspaceRole stewardsRole) throws Exception {
+    private boolean migrateRole(
+            String roleSymbol, WorkspaceRole membersRole, WorkspaceRole stewardsRole)
+            throws Exception {
         NGBook site = this.getSite();
         CustomRole oldRole = this.getOldRole(roleSymbol);
         if (oldRole == null) {
             // don't migrate if there is no role
             return false;
         }
-        System.out.println(String.format(
-            "CONVERTING Role %s in: %s", roleSymbol, this.getFilePath().getAbsolutePath()));
-
+        System.out.println(
+                String.format(
+                        "CONVERTING Role %s in: %s",
+                        roleSymbol, this.getFilePath().getAbsolutePath()));
 
         for (AddressListEntry ale : oldRole.getDirectPlayers()) {
             UserProfile user = UserManager.getUserProfileByKey(ale.getKey());
@@ -262,20 +286,16 @@ public class NGWorkspace extends NGPage {
             }
             if (site.isUnpaidUser(user)) {
                 membersRole.addPlayerIfNotPresent(ale);
-                System.out.println(String.format(
-                    "    User (%s) --> MembersRole", ale.getEmail()));
-            }
-            else {
+                System.out.println(String.format("    User (%s) --> MembersRole", ale.getEmail()));
+            } else {
                 stewardsRole.addPlayerIfNotPresent(ale);
-                System.out.println(String.format(
-                    "    User (%s) --> StewardsRole", ale.getEmail()));
+                System.out.println(String.format("    User (%s) --> StewardsRole", ale.getEmail()));
             }
         }
 
         this.deleteOldRole(roleSymbol);
         return true;
     }
-
 
     public boolean convertOldRoleDefinitions(Cognoscenti cog) throws Exception {
         NGBook site = this.getSite();
@@ -317,19 +337,18 @@ public class NGWorkspace extends NGPage {
 
             // eliminate roles no longer needed, if empty, or only designated player
             List<AddressListEntry> players = oldRole.getDirectPlayers();
-            if (players.size()==0) {
+            if (players.size() == 0) {
                 deleteOldRole(symbol);
-                System.out.println(String.format(
-                    "    (%s) Role deleted because EMPTY", symbol));
+                System.out.println(String.format("    (%s) Role deleted because EMPTY", symbol));
                 continue;
             }
-            if (players.size()==1 && oldRole.isPlayer(creator)) {
+            if (players.size() == 1 && oldRole.isPlayer(creator)) {
                 // get rid of all roles that just have a single player, and that is the player
                 // that created the workspace.  Old pattern was to place that person in all
                 // the roles, but we want to get rid of those now.
                 deleteOldRole(symbol);
-                System.out.println(String.format(
-                    "    (%s) Role deleted because ONLY CREATOR", symbol));
+                System.out.println(
+                        String.format("    (%s) Role deleted because ONLY CREATOR", symbol));
                 continue;
             }
 
@@ -353,21 +372,21 @@ public class NGWorkspace extends NGPage {
         return true;
     }
 
-
     ///////////////// TOPICS //////////////////////
 
     public List<TopicRecord> getAllDiscussionTopics() throws Exception {
         return Collections.unmodifiableList(noteParent.getChildren("note", TopicRecord.class));
     }
 
-    public List<TopicRecord> getDraftNotes(AuthRequest ar)
-    throws Exception {
-        List<TopicRecord> list=new ArrayList<TopicRecord>();
+    public List<TopicRecord> getDraftNotes(AuthRequest ar) throws Exception {
+        List<TopicRecord> list = new ArrayList<TopicRecord>();
         if (ar.isLoggedIn()) {
             List<TopicRecord> fullList = getAllDiscussionTopics();
             UserProfile thisUserId = ar.getUserProfile();
             for (TopicRecord note : fullList) {
-                if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
+                if (!note.isDeleted()
+                        && note.isDraftNote()
+                        && note.getModUser().equals(thisUserId)) {
                     list.add(note);
                 }
             }
@@ -375,11 +394,11 @@ public class NGWorkspace extends NGPage {
         return list;
     }
 
-
     public TopicRecord getDiscussionTopic(String topicId) throws Exception {
-        if (topicId==null) {
-            //this is a program logic error so let it be known
-            throw WeaverException.newBasic("Attempt to getDiscussionTopic but a NULL was passed as the topic id");
+        if (topicId == null) {
+            // this is a program logic error so let it be known
+            throw WeaverException.newBasic(
+                    "Attempt to getDiscussionTopic but a NULL was passed as the topic id");
         }
         for (TopicRecord lr : getAllDiscussionTopics()) {
             if (topicId.equals(lr.getId())) {
@@ -392,36 +411,34 @@ public class NGWorkspace extends NGPage {
         return null;
     }
 
-
     public TopicRecord getNoteOrFail(String noteId) throws Exception {
-        if (noteId == null || noteId.length()==0) {
-            throw WeaverException.newBasic("Unable to find a discussion topic because no ID has been specified: %s",  getFullName());
+        if (noteId == null || noteId.length() == 0) {
+            throw WeaverException.newBasic(
+                    "Unable to find a discussion topic because no ID has been specified: %s",
+                    getFullName());
         }
-        TopicRecord ret =  getDiscussionTopic(noteId);
-        if (ret==null) {
-            throw WeaverException.newBasic("Unable to find a discussion topic (id=%s) %s",  noteId, getFullName());
+        TopicRecord ret = getDiscussionTopic(noteId);
+        if (ret == null) {
+            throw WeaverException.newBasic(
+                    "Unable to find a discussion topic (id=%s) %s", noteId, getFullName());
         }
         return ret;
     }
 
-
     /** mark deleted, don't actually deleting the Topic. */
-    public void deleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getDiscussionTopic( id );
+    public void deleteNote(String id, AuthRequest ar) throws Exception {
+        TopicRecord ei = getDiscussionTopic(id);
 
-        ei.setTrashPhase( ar );
+        ei.setTrashPhase(ar);
     }
 
-    public void unDeleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getDiscussionTopic( id );
+    public void unDeleteNote(String id, AuthRequest ar) throws Exception {
+        TopicRecord ei = getDiscussionTopic(id);
         ei.clearTrashPhase(ar);
     }
 
-
-
-    public List<TopicRecord> getDeletedNotes(AuthRequest ar)
-    throws Exception {
-        List<TopicRecord> list=new ArrayList<TopicRecord>();
+    public List<TopicRecord> getDeletedNotes(AuthRequest ar) throws Exception {
+        List<TopicRecord> list = new ArrayList<TopicRecord>();
         List<TopicRecord> fullList = getAllDiscussionTopics();
 
         for (TopicRecord note : fullList) {
@@ -432,11 +449,10 @@ public class NGWorkspace extends NGPage {
         return Collections.unmodifiableList(list);
     }
 
-
     public TopicRecord createTopic() throws Exception {
         TopicRecord topicRec = noteParent.createChild("note", TopicRecord.class);
         String localId = getUniqueOnPage();
-        topicRec.setId( localId );
+        topicRec.setId(localId);
         topicRec.setUniversalId(getContainerUniversalId() + "@" + localId);
         NGRole subscribers = topicRec.getSubscriberRole();
         NGRole members = this.getOrCreateRole("MembersRole");
@@ -446,24 +462,18 @@ public class NGWorkspace extends NGPage {
         return topicRec;
     }
 
-
-
-    /**
-    * Get a four digit numeric id which is unique on the page.
-    */
+    /** Get a four digit numeric id which is unique on the page. */
     @Override
-    public String getUniqueOnPage()
-        throws Exception
-    {
+    public String getUniqueOnPage() throws Exception {
         existingIds = new ArrayList<String>();
 
-        //this is not to be trusted any more
+        // this is not to be trusted any more
         for (NGSection sec : getAllSections()) {
             sec.findIDs(existingIds);
         }
 
-        //these added to be sure.  There is no harm in
-        //being redundant.
+        // these added to be sure.  There is no harm in
+        // being redundant.
         for (TopicRecord note : getAllDiscussionTopics()) {
             existingIds.add(note.getId());
         }
@@ -482,36 +492,39 @@ public class NGWorkspace extends NGPage {
         return IdGenerator.generateFourDigit(existingIds);
     }
 
-
     /**
-     * Need to inject the saving of the JSON file at this point
-     * to assure that both XML and JSON get saved.
+     * Need to inject the saving of the JSON file at this point to assure that both XML and JSON get
+     * saved.
      */
     @Override
     public void save() throws Exception {
         super.save();
 
-        if (workspaceJSON!=null) {
+        if (workspaceJSON != null) {
             workspaceJSON.writeToFile(jsonFilePath);
         }
 
-        //store into the cache.  Something might be copying things in memory,
-        //and this assures that the cache matches the latest written version.
-        //String fullFilePath = associatedFile.toString();
-        //pageCache.store(fullFilePath, this);
+        // store into the cache.  Something might be copying things in memory,
+        // and this assures that the cache matches the latest written version.
+        // String fullFilePath = associatedFile.toString();
+        // pageCache.store(fullFilePath, this);
         pageCache.emptyCache();
     }
 
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         super.saveFile(ar, comment);
         assureLaunchingPad(ar);
-        System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().threadId()+" time="+(System.currentTimeMillis()%10000));
+        System.out.println(
+                "     file save ("
+                        + getFullName()
+                        + ") tid="
+                        + Thread.currentThread().threadId()
+                        + " time="
+                        + (System.currentTimeMillis() % 10000));
 
         NGPageIndex ngpi = ar.cog.getWSBySiteAndKey(getSiteKey(), getKey());
         ngpi.updateAllUsersFromWorkspace(this);
     }
-
-
 
     @Override
     protected void migrateKeyValue(File theFile) throws Exception {
@@ -524,24 +537,23 @@ public class NGWorkspace extends NGPage {
                     setKey(fileKey);
                 }
             }
-        }
-        else if (theFile.getName().endsWith(".sp")) {
+        } else if (theFile.getName().endsWith(".sp")) {
             super.migrateKeyValue(theFile);
-        }
-        else {
-            throw WeaverException.newBasic("don't know how to make key for %s", theFile.getAbsoluteFile());
+        } else {
+            throw WeaverException.newBasic(
+                    "don't know how to make key for %s", theFile.getAbsoluteFile());
         }
     }
 
     public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
-        if (fromLevel<101) {
+        if (fromLevel < 101) {
             getAllAttachments();
             this.getAllGoals();
             this.getAllHistory();
             this.getAllLabels();
             for (TopicRecord note : this.getAllDiscussionTopics()) {
                 for (CommentRecord comm : note.getComments()) {
-                    //schema migration from before 101
+                    // schema migration from before 101
                     comm.schemaMigration(fromLevel, toLevel);
                 }
             }
@@ -549,31 +561,33 @@ public class NGWorkspace extends NGPage {
             for (MeetingRecord meet : getMeetings()) {
                 for (AgendaItem ai : meet.getAgendaItems()) {
                     for (CommentRecord comm : ai.getComments()) {
-                        //schema migration from before 101
+                        // schema migration from before 101
                         comm.schemaMigration(fromLevel, toLevel);
                     }
                 }
             }
         }
-        if (fromLevel<102) {
+        if (fromLevel < 102) {
             for (@SuppressWarnings("unused") TopicRecord nr : this.getAllDiscussionTopics()) {
-                //just run the constructor
+                // just run the constructor
             }
         }
     }
+
     public int currentSchemaVersion() {
         return 102;
     }
 
     public static NGWorkspace readWorkspaceAbsolutePath(File theFile) throws Exception {
         if (!theFile.exists()) {
-            throw WeaverException.newBasic("Workspace file is missing (%s)", theFile.getAbsolutePath());
+            throw WeaverException.newBasic(
+                    "Workspace file is missing (%s)", theFile.getAbsolutePath());
         }
         try {
-            //look in the cache
+            // look in the cache
             NGWorkspace newWorkspace = pageCache.recall(theFile);
-            if (newWorkspace==null) {
-                 //determine the site settings
+            if (newWorkspace == null) {
+                // determine the site settings
                 File cogFolder = theFile.getParentFile();
                 File workFolder = cogFolder.getParentFile();
                 File siteFolder = workFolder.getParentFile();
@@ -587,31 +601,42 @@ public class NGWorkspace extends NGPage {
                 newWorkspace = new NGWorkspace(theFile, newDoc, theSite);
 
                 if (!siteKey.equals(newWorkspace.getSiteKey())) {
-                    System.out.println("Site ("+siteKey+") != ("+newWorkspace.getSiteKey()+") FIXING UP workspace "+theFile);
+                    System.out.println(
+                            "Site ("
+                                    + siteKey
+                                    + ") != ("
+                                    + newWorkspace.getSiteKey()
+                                    + ") FIXING UP workspace "
+                                    + theFile);
                     newWorkspace.setSiteKey(siteKey);
-                    System.out.println("    NOW ("+newWorkspace.getSiteKey()+")");
+                    System.out.println("    NOW (" + newWorkspace.getSiteKey() + ")");
                 }
 
                 String workspaceKey = workFolder.getName();
                 if (!workspaceKey.equals(newWorkspace.getKey())) {
-                    System.out.println("Workspace ("+workspaceKey+") != ("+newWorkspace.getKey()+") FIXING UP workspace "+theFile);
+                    System.out.println(
+                            "Workspace ("
+                                    + workspaceKey
+                                    + ") != ("
+                                    + newWorkspace.getKey()
+                                    + ") FIXING UP workspace "
+                                    + theFile);
                     newWorkspace.setKey(workspaceKey);
                 }
             }
 
-            //store into the cache.
+            // store into the cache.
             pageCache.store(theFile, newWorkspace);
             return newWorkspace;
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to read the workspace file (%s)", e, theFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to read the workspace file (%s)", e, theFile.getAbsolutePath());
         }
     }
 
-
-
     public List<AttachmentRecord> getAllAttachments() throws Exception {
-        List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);
+        List<AttachmentRecord> list =
+                attachParent.getChildren("attachment", AttachmentRecord.class);
         List<AttachmentRecord> outlist = new ArrayList<>();
         for (AttachmentRecord att : list) {
             att.setContainer(this);
@@ -620,21 +645,25 @@ public class NGWorkspace extends NGPage {
             if (att.isFile()) {
                 if (!isDel) {
                     String attName = att.getDisplayName();
-                    if (attName==null || attName.length()==0) {
-                        System.out.println("Found attachement without name, id="+att.getId()+" in workspace ("+this.getCombinedKey()+")");
+                    if (attName == null || attName.length() == 0) {
+                        System.out.println(
+                                "Found attachement without name, id="
+                                        + att.getId()
+                                        + " in workspace ("
+                                        + this.getCombinedKey()
+                                        + ")");
                     }
                 }
                 outlist.add(att);
-            }
-            else if (att.isURL()) {
+            } else if (att.isURL()) {
                 outlist.add(att);
-            }
-            else {
+            } else {
                 // all other lingering attachments types should be ignored
             }
         }
         return Collections.unmodifiableList(outlist);
     }
+
     public List<AttachmentRecord> getListedAttachments(List<String> idList) throws Exception {
         List<AttachmentRecord> list = new ArrayList<AttachmentRecord>();
         for (AttachmentRecord aRec : getAllAttachments()) {
@@ -646,6 +675,7 @@ public class NGWorkspace extends NGPage {
         }
         return Collections.unmodifiableList(list);
     }
+
     public AttachmentRecord findAttachmentOrNull(String docId) throws Exception {
         for (AttachmentRecord aRec : getAllAttachments()) {
             if (aRec.getUniversalId().equals(docId)) {
@@ -658,25 +688,24 @@ public class NGWorkspace extends NGPage {
         return null;
     }
 
-
     public AttachmentRecord createAttachment() throws Exception {
         String newId = getUniqueOnPage();
         AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
         attach.setId(newId);
         attach.setContainer(this);
-        attach.setUniversalId( getContainerUniversalId() + "@" + newId );
+        attach.setUniversalId(getContainerUniversalId() + "@" + newId);
         return attach;
     }
+
     /**
-     * This is effectively the "empty trashcan" operation.  Documents that
-     * have been marked as deleted will actually, finally, be deleted with
-     * this operation.
+     * This is effectively the "empty trashcan" operation. Documents that have been marked as
+     * deleted will actually, finally, be deleted with this operation.
      */
     public void purgeDeletedAttachments() throws Exception {
         List<AttachmentRecord> cleanList = new ArrayList<AttachmentRecord>();
         for (AttachmentRecord ar : getAllAttachments()) {
             if (!ar.isDeleted()) {
-                //don't purge or do anything to non-deleted attachments
+                // don't purge or do anything to non-deleted attachments
                 continue;
             }
             ar.purgeAllVersions(this);
@@ -690,16 +719,15 @@ public class NGWorkspace extends NGPage {
     public File getAttachmentPathOrNull(String oneId) throws Exception {
 
         AttachmentRecord attach = this.findAttachmentByID(oneId);
-        if (attach==null) {
+        if (attach == null) {
             return null;
         }
         AttachmentVersion aVer = attach.getLatestVersion(this);
-        if (aVer==null) {
+        if (aVer == null) {
             return null;
         }
-        return(aVer.getLocalFile());
+        return (aVer.getLocalFile());
     }
-
 
     public void assureLaunchingPad(AuthRequest ar) throws Exception {
         File launchFile = new File(containingFolder, ".cogProjectView.htm");
@@ -715,7 +743,6 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-
     public File getContainingFolder() {
         return containingFolder;
     }
@@ -725,8 +752,9 @@ public class NGWorkspace extends NGPage {
         List<EmailGenerator> gg = getAllEmailGenerators();
         long timeLimit = ar.nowTime - 366L * 24 * 3600000;
         for (EmailGenerator egen : gg) {
-            //only list email generators less than one year old
-            if (egen.getState()<EmailGenerator.EG_STATE_SENT || egen.getScheduleTime() > timeLimit) {
+            // only list email generators less than one year old
+            if (egen.getState() < EmailGenerator.EG_STATE_SENT
+                    || egen.getScheduleTime() > timeLimit) {
                 val.put(egen.getJSON(ar, this));
             }
         }
@@ -737,20 +765,19 @@ public class NGWorkspace extends NGPage {
         return pageInfo.getAttributeBool("suppressEmail");
     }
 
-
     public boolean getSuppressGoalEmail() {
         return pageInfo.getAttributeBool("suppressGoalEmail");
     }
 
     /**
-     * Return the time of the next automated action.  If there are multiple
-     * scheduled actions, this returns the time of the next one.
+     * Return the time of the next automated action. If there are multiple scheduled actions, this
+     * returns the time of the next one.
      *
-     * A negative number means there are no scheduled events.
+     * <p>A negative number means there are no scheduled events.
      */
     @Override
     public long nextActionDue() throws Exception {
-        //initialize to some time next year
+        // initialize to some time next year
         long yearFromNow = System.currentTimeMillis() + 31000000000L;
         long nextTime = yearFromNow;
 
@@ -758,7 +785,7 @@ public class NGWorkspace extends NGPage {
         gatherUnsentScheduledNotification(resList, yearFromNow);
 
         ScheduledNotification first = null;
-        //Now scan all the standard scheduled notifications
+        // Now scan all the standard scheduled notifications
         for (ScheduledNotification sn : resList) {
             long timeToAct = sn.futureTimeToSend();
             if (timeToAct < nextTime) {
@@ -766,9 +793,13 @@ public class NGWorkspace extends NGPage {
                 first = sn;
             }
         }
-        if (first!=null) {
-            System.out.println("Found the next event to be: ("+first.selfDescription()+") to be sent at ("
-                     +SectionUtil.getNicePrintDate(first.futureTimeToSend())+")");
+        if (first != null) {
+            System.out.println(
+                    "Found the next event to be: ("
+                            + first.selfDescription()
+                            + ") to be sent at ("
+                            + SectionUtil.getNicePrintDate(first.futureTimeToSend())
+                            + ")");
         }
         return nextTime;
     }
@@ -778,15 +809,15 @@ public class NGWorkspace extends NGPage {
         msg.setSiteKey(getSiteKey());
         msg.setWorkspaceKey(getKey());
         if (suppressEmail()) {
-            //if this workspace is not supposed to send email, then generate
-            //the email in the already sent state
+            // if this workspace is not supposed to send email, then generate
+            // the email in the already sent state
             msg.setStatus(MailInst.SUPPRESS);
         }
         return msg;
     }
 
-
-    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+    public void gatherUnsentScheduledNotification(
+            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         for (MeetingRecord meeting : getMeetings()) {
             meeting.gatherUnsentScheduledNotification(this, resList, timeout);
         }
@@ -808,10 +839,12 @@ public class NGWorkspace extends NGPage {
             ri.gatherUnsentScheduledNotification(this, resList, timeout);
         }
     }
-    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime) throws Exception {
+
+    public boolean generateNotificationEmail(AuthRequest ar, EmailSender sender, long nowTime)
+            throws Exception {
         boolean sentMessage = false;
-        //now open the page and generate all the email messages, remember this
-        //locks the file blocking all other threads, so be quick
+        // now open the page and generate all the email messages, remember this
+        // locks the file blocking all other threads, so be quick
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
         gatherUnsentScheduledNotification(resList, nowTime);
 
@@ -824,29 +857,25 @@ public class NGWorkspace extends NGPage {
         return sentMessage;
     }
 
-
-
     /**
-    * schema migration ...
-    * make sure that all tasks have universal ids.
-    * do this here because the GoalRecord constructor
-    * does not easily know what the container is.
-    */
+     * schema migration ... make sure that all tasks have universal ids. do this here because the
+     * GoalRecord constructor does not easily know what the container is.
+     */
     private void cleanUpTaskUniversalId() throws Exception {
 
         cleanUpNoteAndDocUniversalId();
 
         for (GoalRecord goal : getAllGoals()) {
             String uid = goal.getUniversalId();
-            if (uid==null || uid.length()==0) {
+            if (uid == null || uid.length() == 0) {
                 uid = getContainerUniversalId() + "@" + goal.getId();
                 goal.setUniversalId(uid);
             }
             long lastModTime = goal.getModifiedDate();
-            if (lastModTime<=0) {
+            if (lastModTime <= 0) {
                 String lastModUser = "";
                 for (HistoryRecord hist : goal.getTaskHistory(this)) {
-                    if (hist.getTimeStamp()>lastModTime) {
+                    if (hist.getTimeStamp() > lastModTime) {
                         lastModTime = hist.getTimeStamp();
                         lastModUser = hist.getResponsibleString();
                     }
@@ -860,8 +889,8 @@ public class NGWorkspace extends NGPage {
     }
 
     /**
-     * Another structure migration.   Get rid of the files that are in the root
-     * of the workspace folder.
+     * Another structure migration. Get rid of the files that are in the root of the workspace
+     * folder.
      */
     private void purgeRootLevelFiles() throws Exception {
         for (AttachmentRecord att : getAllAttachments()) {
@@ -870,45 +899,44 @@ public class NGWorkspace extends NGPage {
     }
 
     /**
-    * schema migration ...
-    * make sure that all topics and documents have universal ids.
-    * do this here because the TopicRecord & AttachmentRecord constructor
-    * does not easily know what the container is.
-    */
+     * schema migration ... make sure that all topics and documents have universal ids. do this here
+     * because the TopicRecord & AttachmentRecord constructor does not easily know what the
+     * container is.
+     */
     private void cleanUpNoteAndDocUniversalId() throws Exception {
-        //schema migration ...
-        //make sure that all topics have universal ids.
+        // schema migration ...
+        // make sure that all topics have universal ids.
         for (TopicRecord lr : getAllDiscussionTopics()) {
             String uid = lr.getUniversalId();
-            if (uid==null || uid.length()==0) {
+            if (uid == null || uid.length() == 0) {
                 uid = getContainerUniversalId() + "@" + lr.getId();
                 lr.setUniversalId(uid);
             }
         }
 
-        //and the same for documents
+        // and the same for documents
         for (AttachmentRecord att : getAllAttachments()) {
             String uid = att.getUniversalId();
-            if (uid==null || uid.length()==0) {
+            if (uid == null || uid.length() == 0) {
                 uid = getContainerUniversalId() + "@" + att.getId();
                 att.setUniversalId(uid);
             }
         }
     }
 
-
     ///////////////////////// SharePortRecord //////////////////
 
     public List<SharePortRecord> getSharePorts() throws Exception {
         JSONArray ports = workspaceJSON.requireJSONArray("sharePorts");
         ArrayList<SharePortRecord> res = new ArrayList<SharePortRecord>();
-        for (int i=0; i<ports.length(); i++) {
+        for (int i = 0; i < ports.length(); i++) {
             JSONObject onePort = ports.getJSONObject(i);
             SharePortRecord spr = new SharePortRecord(onePort);
             res.add(spr);
         }
         return Collections.unmodifiableList(res);
     }
+
     public SharePortRecord createSharePort() throws Exception {
         JSONArray ports = workspaceJSON.requireJSONArray("sharePorts");
         JSONObject jo = new JSONObject();
@@ -917,6 +945,7 @@ public class NGWorkspace extends NGPage {
         SharePortRecord spr = new SharePortRecord(jo);
         return spr;
     }
+
     public SharePortRecord findSharePortOrNull(String id) throws Exception {
         for (SharePortRecord m : getSharePorts()) {
             if (id.equals(m.getPermId())) {
@@ -925,14 +954,14 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
+
     public SharePortRecord findSharePortOrFail(String id) throws Exception {
         SharePortRecord spr = findSharePortOrNull(id);
-        if (spr!=null) {
+        if (spr != null) {
             return spr;
         }
         throw WeaverException.newBasic("Could not find a share port with the id=%s", id);
     }
-
 
     public int replaceUserAcrossWorkspace(String sourceUser, String destUser) throws Exception {
         try {
@@ -982,19 +1011,17 @@ public class NGWorkspace extends NGPage {
                 count += meet.removeFromTimeSlots(sourceUser);
             }
             return count;
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to replace user (%s) in workspace: %s", e, sourceUser, this.getKey());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to replace user (%s) in workspace: %s", e, sourceUser, this.getKey());
         }
     }
-
 
     private JSONObject getWorkspaceJSON() throws Exception {
         if (workspaceJSON == null) {
             if (jsonFilePath.exists()) {
                 workspaceJSON = JSONObject.readFromFile(jsonFilePath);
-            }
-            else {
+            } else {
                 workspaceJSON = new JSONObject();
             }
         }
@@ -1004,8 +1031,8 @@ public class NGWorkspace extends NGPage {
     public JSONObject getWSSettings() throws Exception {
         JSONObject wsJSON = getWorkspaceJSON();
         if (!wsJSON.has("wsSettings")) {
-            //traditionally we have shown the aim on the front page,
-            //so if the settings are not there, default to that setting
+            // traditionally we have shown the aim on the front page,
+            // so if the settings are not there, default to that setting
             JSONObject def = new JSONObject();
             def.put("showAimOnFrontPage", true);
             wsJSON.put("wsSettings", def);
@@ -1020,52 +1047,53 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-
     ///////////////////////// TaskArea //////////////////
 
     public List<TaskArea> getTaskAreas() throws Exception {
         JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         ArrayList<TaskArea> res = new ArrayList<TaskArea>();
-        for (int i=0; i<ports.length(); i++) {
+        for (int i = 0; i < ports.length(); i++) {
             JSONObject onePort = ports.getJSONObject(i);
             TaskArea spr = new TaskArea(onePort);
             res.add(spr);
         }
         return res;
     }
+
     public void moveTaskArea(String id, boolean moveDown) throws Exception {
         JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         int index = -1;
-        for (int i=0; i<ports.length(); i++) {
+        for (int i = 0; i < ports.length(); i++) {
             if (id.equals(ports.getJSONObject(i).getString("id"))) {
                 index = i;
             }
         }
-        if (index<0) {
+        if (index < 0) {
             throw WeaverException.newBasic("Can not find any task area named %s", id);
         }
-        if (moveDown && index == ports.length()-1) {
-            return;  //nothing to do
+        if (moveDown && index == ports.length() - 1) {
+            return; // nothing to do
         }
         if (!moveDown && index == 0) {
-            return;  //nothing to do
+            return; // nothing to do
         }
         JSONArray newArray = new JSONArray();
         JSONObject movedOne = ports.getJSONObject(index);
-        for (int i=0; i<ports.length(); i++) {
+        for (int i = 0; i < ports.length(); i++) {
             JSONObject thisOne = ports.getJSONObject(i);
-            if (!moveDown && i==index-1) {
+            if (!moveDown && i == index - 1) {
                 newArray.put(movedOne);
             }
             if (i != index) {
                 newArray.put(thisOne);
             }
-            if (moveDown && i==index+1) {
+            if (moveDown && i == index + 1) {
                 newArray.put(movedOne);
             }
         }
         workspaceJSON.put("taskAreas", newArray);
     }
+
     public TaskArea createTaskArea() throws Exception {
         JSONArray ports = getWorkspaceJSON().requireJSONArray("taskAreas");
         JSONObject jo = new JSONObject();
@@ -1074,6 +1102,7 @@ public class NGWorkspace extends NGPage {
         TaskArea ta = new TaskArea(jo);
         return ta;
     }
+
     public TaskArea findTaskAreaOrNull(String id) throws Exception {
         for (TaskArea m : getTaskAreas()) {
             if (id.equals(m.getId())) {
@@ -1082,13 +1111,15 @@ public class NGWorkspace extends NGPage {
         }
         return null;
     }
+
     public TaskArea findTaskAreaOrFail(String id) throws Exception {
         TaskArea ta = findTaskAreaOrNull(id);
-        if (ta!=null) {
+        if (ta != null) {
             return ta;
         }
         throw WeaverException.newBasic("Could not find a task area with the id=%s", id);
     }
+
     public TaskArea removeTaskArea(String id) throws Exception {
         JSONObject wkspc = getWorkspaceJSON();
         JSONArray areas = wkspc.requireJSONArray("taskAreas");
@@ -1102,35 +1133,35 @@ public class NGWorkspace extends NGPage {
         return null;
     }
 
-
-
     ///////////////////////// Invitations //////////////////
 
     public List<RoleInvitation> getInvitations() throws Exception {
         JSONArray invites = getWorkspaceJSON().requireJSONArray("roleInvitations");
         ArrayList<RoleInvitation> res = new ArrayList<RoleInvitation>();
-        for (int i=0; i<invites.length(); i++) {
+        for (int i = 0; i < invites.length(); i++) {
             JSONObject riObj = invites.getJSONObject(i);
             RoleInvitation spr = new RoleInvitation(riObj);
             res.add(spr);
         }
         return Collections.unmodifiableList(res);
     }
+
     public void removeOldInvitations() throws Exception {
         if (!getWorkspaceJSON().has("roleInvitations")) {
             return;
         }
-        long timeLimit = System.currentTimeMillis() - 180L*24*60*60*1000;
+        long timeLimit = System.currentTimeMillis() - 180L * 24 * 60 * 60 * 1000;
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
         JSONArray newInvites = new JSONArray();
-        for (int i=0; i<invites.length(); i++) {
+        for (int i = 0; i < invites.length(); i++) {
             JSONObject onePort = invites.getJSONObject(i);
-            if (onePort.getLong("timestamp")>timeLimit) {
+            if (onePort.getLong("timestamp") > timeLimit) {
                 newInvites.put(onePort);
             }
         }
         workspaceJSON.put("roleInvitations", newInvites);
     }
+
     public RoleInvitation findOrCreateInvite(AddressListEntry ale) throws Exception {
         for (RoleInvitation ri : getInvitations()) {
             if (ale.hasAnyId(ri.getEmail())) {
@@ -1143,7 +1174,8 @@ public class NGWorkspace extends NGPage {
 
         // this might not actually be an email address so check and skip otherwise
         if (!UserManager.isValidEmailAddress(emailId)) {
-            throw WeaverException.newBasic("This email id (%s) does not look like an email address", emailId);
+            throw WeaverException.newBasic(
+                    "This email id (%s) does not look like an email address", emailId);
         }
         newInvite.put("email", ale.getEmail());
         invites.put(newInvite);
@@ -1151,9 +1183,8 @@ public class NGWorkspace extends NGPage {
     }
 
     /**
-     * When users are invited, and the invitation send, then
-     * we mark the invitation as "joined" when they actually
-     * visit the workspace in question.
+     * When users are invited, and the invitation send, then we mark the invitation as "joined" when
+     * they actually visit the workspace in question.
      */
     public void registerJoining(UserProfile user) throws Exception {
         boolean needSave = false;
@@ -1163,11 +1194,11 @@ public class NGWorkspace extends NGPage {
                     ri.markJoined();
                     needSave = true;
 
-                    //if the user has entered a name for themselves
-                    //copy it into the invite so that there is less confusion
-                    //even though this is temporary
+                    // if the user has entered a name for themselves
+                    // copy it into the invite so that there is less confusion
+                    // even though this is temporary
                     String userName = user.getName();
-                    if (userName!=null && userName.length()>3) {
+                    if (userName != null && userName.length() > 3) {
                         ri.setName(userName);
                     }
                 }
@@ -1178,11 +1209,10 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-
     public CommentRecord getCommentOrNull(long cid) throws Exception {
         for (TopicRecord note : this.getAllDiscussionTopics()) {
             for (CommentRecord comm : note.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     return comm;
                 }
             }
@@ -1190,7 +1220,7 @@ public class NGWorkspace extends NGPage {
         for (MeetingRecord meet : getMeetings()) {
             for (AgendaItem ai : meet.getAgendaItems()) {
                 for (CommentRecord comm : ai.getComments()) {
-                    if (comm.getTime()==cid) {
+                    if (comm.getTime() == cid) {
                         return comm;
                     }
                 }
@@ -1198,24 +1228,27 @@ public class NGWorkspace extends NGPage {
         }
         for (AttachmentRecord doc : this.getAllAttachments()) {
             for (CommentRecord comm : doc.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     return comm;
                 }
             }
         }
         return null;
     }
+
     public CommentRecord getCommentOrFail(long cid) throws Exception {
         CommentRecord com = getCommentOrNull(cid);
-        if (com==null) {
-            throw WeaverException.newBasic("Unable to find any comment (%s) on workspace %s", cid, this.getFullName());
+        if (com == null) {
+            throw WeaverException.newBasic(
+                    "Unable to find any comment (%s) on workspace %s", cid, this.getFullName());
         }
         return com;
     }
+
     public CommentContainer getCommentContainer(long cid) throws Exception {
         for (TopicRecord note : this.getAllDiscussionTopics()) {
             for (CommentRecord comm : note.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     return note;
                 }
             }
@@ -1223,7 +1256,7 @@ public class NGWorkspace extends NGPage {
         for (MeetingRecord meet : getMeetings()) {
             for (AgendaItem ai : meet.getAgendaItems()) {
                 for (CommentRecord comm : ai.getComments()) {
-                    if (comm.getTime()==cid) {
+                    if (comm.getTime() == cid) {
                         return ai;
                     }
                 }
@@ -1231,13 +1264,14 @@ public class NGWorkspace extends NGPage {
         }
         for (AttachmentRecord doc : this.getAllAttachments()) {
             for (CommentRecord comm : doc.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     return doc;
                 }
             }
         }
         return null;
     }
+
     public CommentContainer findContainerByKey(String searchKey) throws Exception {
 
         for (MeetingRecord meet : getMeetings()) {
@@ -1257,12 +1291,9 @@ public class NGWorkspace extends NGPage {
                 return att;
             }
         }
-        System.out.println("COMMENT-CONTAINER: attempt to find container not found: "+searchKey);
+        System.out.println("COMMENT-CONTAINER: attempt to find container not found: " + searchKey);
         return null;
     }
-
-
-
 
     public List<CommentRecord> getAllComments() throws Exception {
         List<CommentRecord> res = new ArrayList<CommentRecord>();
@@ -1291,7 +1322,7 @@ public class NGWorkspace extends NGPage {
         CommentRecord foundComment = null;
         for (TopicRecord note : this.getAllDiscussionTopics()) {
             for (CommentRecord comm : note.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     foundComment = comm;
                 }
             }
@@ -1303,7 +1334,7 @@ public class NGWorkspace extends NGPage {
         for (MeetingRecord meet : getMeetings()) {
             for (AgendaItem ai : meet.getAgendaItems()) {
                 for (CommentRecord comm : ai.getComments()) {
-                    if (comm.getTime()==cid) {
+                    if (comm.getTime() == cid) {
                         foundComment = comm;
                     }
                 }
@@ -1315,7 +1346,7 @@ public class NGWorkspace extends NGPage {
         }
         for (AttachmentRecord doc : this.getAllAttachments()) {
             for (CommentRecord comm : doc.getComments()) {
-                if (comm.getTime()==cid) {
+                if (comm.getTime() == cid) {
                     foundComment = comm;
                 }
             }
@@ -1325,19 +1356,19 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
+
     /**
-     * Context is that a comment going to be changed.  If that comment was on a meeting
-     * then the meeting cache needs to be updated.   This method searches to
-     * find whether a comment in on a meeting, and returns the id for that meeting
-     * so that the cache can be updated.
+     * Context is that a comment going to be changed. If that comment was on a meeting then the
+     * meeting cache needs to be updated. This method searches to find whether a comment in on a
+     * meeting, and returns the id for that meeting so that the cache can be updated.
      *
-     * Returns null if the comment is NOT on any meeting
+     * <p>Returns null if the comment is NOT on any meeting
      */
     public String findMeetingIdForComment(long cid) throws Exception {
         for (MeetingRecord meet : getMeetings()) {
             for (AgendaItem ai : meet.getAgendaItems()) {
                 for (CommentRecord comm : ai.getComments()) {
-                    if (comm.getTime()==cid) {
+                    if (comm.getTime() == cid) {
                         return meet.getId();
                     }
                 }
@@ -1348,7 +1379,7 @@ public class NGWorkspace extends NGPage {
 
     public void assureRepliesSet(long cid, long replyId) throws Exception {
         CommentRecord source = getCommentOrNull(cid);
-        if (source!=null) {
+        if (source != null) {
             source.addOneToReplies(replyId);
         }
     }
@@ -1361,12 +1392,11 @@ public class NGWorkspace extends NGPage {
         }
         for (CommentRecord cr : allComments) {
             long replyTo = cr.getReplyTo();
-            if (replyTo>0) {
+            if (replyTo > 0) {
                 assureRepliesSet(replyTo, cr.getTime());
             }
         }
     }
-
 
     public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
 
@@ -1377,7 +1407,7 @@ public class NGWorkspace extends NGPage {
 
         int state = this.getAccessState();
         if (state == ACCESS_STATE_DELETED) {
-            //delete everything
+            // delete everything
             File cogFolder = this.getFilePath().getParentFile();
             File workspaceFolder = cogFolder.getParentFile();
 
@@ -1385,8 +1415,7 @@ public class NGWorkspace extends NGPage {
 
             FileUtils.deleteDirectory(workspaceFolder);
             results.put("action", "folder for workapce is completed deleted");
-        }
-        else {
+        } else {
             boolean didClean = false;
             List<String> oldIds = new ArrayList<String>();
             for (TopicRecord tr : this.getAllDiscussionTopics()) {
@@ -1394,7 +1423,7 @@ public class NGWorkspace extends NGPage {
                     oldIds.add(tr.getId());
                 }
             }
-            for (String oldId: oldIds) {
+            for (String oldId : oldIds) {
                 noteParent.removeChildrenByNameAttrVal("note", "id", oldId);
                 didClean = true;
             }
@@ -1412,30 +1441,27 @@ public class NGWorkspace extends NGPage {
             if (didClean) {
                 this.save();
                 results.put("action", "removed some topics or documents");
-            }
-            else {
+            } else {
                 results.put("action", "no change required");
             }
         }
 
-        //check for documents to delete garbage collect
-        //not implemented yet
+        // check for documents to delete garbage collect
+        // not implemented yet
         return results;
-
     }
-
 
     public JSONObject getPersonalWorkspaceSettings(UserProfile user) throws Exception {
         File cogFolder = new File(containingFolder, ".cog");
-        File personalFile = new File(cogFolder, "personal-"+user.getKey()+".json");
+        File personalFile = new File(cogFolder, "personal-" + user.getKey() + ".json");
 
         if (personalFile.exists()) {
             return JSONObject.readFromFile(personalFile);
         }
 
-        //the old way was in these specific settings.
-        //pull them out (if there) convert to JSON object
-        //and eliminate the old settings.
+        // the old way was in these specific settings.
+        // pull them out (if there) convert to JSON object
+        // and eliminate the old settings.
         JSONObject personalSettings = new JSONObject();
         String combo = this.getCombinedKey();
         personalSettings.put("isWatching", user.isWatch(combo));
@@ -1451,9 +1477,10 @@ public class NGWorkspace extends NGPage {
         return personalSettings;
     }
 
-    public JSONObject updatePersonalWorkspaceSettings(UserProfile user, JSONObject newVals) throws Exception {
+    public JSONObject updatePersonalWorkspaceSettings(UserProfile user, JSONObject newVals)
+            throws Exception {
         File cogFolder = new File(containingFolder, ".cog");
-        File personalFile = new File(cogFolder, "personal-"+user.getKey()+".json");
+        File personalFile = new File(cogFolder, "personal-" + user.getKey() + ".json");
         JSONObject personal = getPersonalWorkspaceSettings(user);
         String combo = getCombinedKey();
 
@@ -1463,8 +1490,7 @@ public class NGWorkspace extends NGPage {
                 boolean bval = newVals.getBoolean(key);
                 if (bval) {
                     user.setWatch(combo);
-                }
-                else {
+                } else {
                     user.clearWatch(combo);
                 }
             }
@@ -1481,13 +1507,12 @@ public class NGWorkspace extends NGPage {
         }
         return personal.getBoolean("isWatching");
     }
+
     public void setWatching(UserProfile user, boolean val) throws Exception {
         JSONObject newVal = new JSONObject();
         newVal.put("isWatching", val);
         updatePersonalWorkspaceSettings(user, newVal);
     }
-
-
 
     public JSONObject getConfigJSON() throws Exception {
 
@@ -1499,23 +1524,24 @@ public class NGWorkspace extends NGPage {
         workspaceConfigInfo.put("deleted", isDeleted());
         if (isDeleted()) {
             workspaceConfigInfo.put("deleteDate", pageInfo.getDeleteDate());
-            workspaceConfigInfo.put("deleteUser", UserManager.getCorrectedEmail(pageInfo.getDeleteUser()));
+            workspaceConfigInfo.put(
+                    "deleteUser", UserManager.getCorrectedEmail(pageInfo.getDeleteUser()));
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
         pageInfo.extractAttributeBool(workspaceConfigInfo, "suppressEmail");
         pageInfo.extractAttributeBool(workspaceConfigInfo, "suppressGoalEmail");
 
-        //read only information from the site
+        // read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
 
-        //returns all the names for this page, there is only one but must pass an array
+        // returns all the names for this page, there is only one but must pass an array
         JSONArray nameArray = new JSONArray();
         nameArray.put(this.getFullName());
         workspaceConfigInfo.put("allNames", nameArray);
 
         ProcessRecord process = getProcess();
         workspaceConfigInfo.put("goal", process.getSynopsis());
-        workspaceConfigInfo.put("purpose", process.getDescription());  //a.k.a. 'aim'
+        workspaceConfigInfo.put("purpose", process.getDescription()); // a.k.a. 'aim'
         process.extractScalarString(workspaceConfigInfo, "mission");
         process.extractScalarString(workspaceConfigInfo, "vision");
         process.extractScalarString(workspaceConfigInfo, "domain");
@@ -1528,8 +1554,7 @@ public class NGWorkspace extends NGPage {
             String parentKey = newConfig.getString("parentKey");
             if ("$delete$".equals(parentKey)) {
                 setParentKey(null);
-            }
-            else {
+            } else {
                 setParentKey(parentKey);
             }
         }
@@ -1538,11 +1563,9 @@ public class NGWorkspace extends NGPage {
             boolean newFrozen = newConfig.optBoolean("frozen", false);
             if (newDelete) {
                 setAccessState(ar, ACCESS_STATE_DELETED);
-            }
-            else if (newFrozen) {
+            } else if (newFrozen) {
                 setAccessState(ar, ACCESS_STATE_FROZEN);
-            }
-            else {
+            } else {
                 setAccessState(ar, ACCESS_STATE_LIVE);
             }
         }
@@ -1555,7 +1578,7 @@ public class NGWorkspace extends NGPage {
         ProcessRecord process = getProcess();
         process.updateScalarString("goal", newConfig);
         if (newConfig.has("purpose")) {
-            //also known as 'aim'
+            // also known as 'aim'
             process.setDescription(newConfig.getString("purpose"));
         }
 
@@ -1567,18 +1590,17 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-
-
     @Override
     public NGRole getPrimaryRole() throws Exception {
         return getOrCreateRole("StewardsRole");
     }
+
     @Override
     public NGRole getSecondaryRole() throws Exception {
         return getOrCreateRole("StewardsRole");
     }
 
-    // prefer in workspace specific code to use this to get the list of 
+    // prefer in workspace specific code to use this to get the list of
     // people who are able to modify the workspace
     public NGRole getStewards() throws Exception {
         return getOrCreateRole("StewardsRole");
@@ -1588,15 +1610,12 @@ public class NGWorkspace extends NGPage {
         return pageInfo.requireChild("muteRole", CustomRole.class);
     }
 
-
     public void assertNotFrozen(String op) throws Exception {
         if (this.isDeleted()) {
-            throw WeaverException.newBasic("Workspace (%s) is deleted; %s", 
-                this.getFullName(), op);
+            throw WeaverException.newBasic("Workspace (%s) is deleted; %s", this.getFullName(), op);
         }
         if (this.isFrozen()) {
-            throw WeaverException.newBasic("Workspace (%s) is frozen; %s", 
-                this.getFullName(), op);
+            throw WeaverException.newBasic("Workspace (%s) is frozen; %s", this.getFullName(), op);
         }
     }
 
@@ -1605,14 +1624,15 @@ public class NGWorkspace extends NGPage {
         if (site.isSiteExecutive(user)) {
             return;
         }
-        //The administrator can control which users are update users and
-        //which users are read only.
+        // The administrator can control which users are update users and
+        // which users are read only.
         if (getSite().isUnpaidUser(user)) {
             throw WeaverException.newBasic(
-                "(%s) is a basic user of the site and not able to update workspace. %s", user.getName(), op);
+                    "(%s) is a basic user of the site and not able to update workspace. %s",
+                    user.getName(), op);
         }
-        //now look through all the roles and see if this person plays any
-        //that allow update
+        // now look through all the roles and see if this person plays any
+        // that allow update
         for (NGRole role : this.getAllRoles()) {
             if (role.allowUpdateWorkspace()) {
                 if (role.isExpandedPlayer(user, this)) {
@@ -1621,27 +1641,27 @@ public class NGWorkspace extends NGPage {
             }
         }
         throw WeaverException.newBasic(
-            "(%s) is not a player of any update role for this workspace. %s", user.getName(), op);
+                "(%s) is not a player of any update role for this workspace. %s",
+                user.getName(), op);
     }
 
     /**
-     * This gives a definitive response of whether this workspace can be updated
-     * by the given user.  It checks all roles, and anyone in any role will be
-     * able to have read-only access, but if the role is a role that allows update
-     * then they will have update access.
+     * This gives a definitive response of whether this workspace can be updated by the given user.
+     * It checks all roles, and anyone in any role will be able to have read-only access, but if the
+     * role is a role that allows update then they will have update access.
      */
     public boolean canUpdateWorkspace(UserProfile user) throws Exception {
         NGBook site = getSite();
         if (site.isSiteExecutive(user)) {
             return true;
         }
-        //The administrator can control which users are update users and
-        //which users are read only.
+        // The administrator can control which users are update users and
+        // which users are read only.
         if (site.isUnpaidUser(user)) {
             return false;
         }
-        //now look through all the roles and see if this person plays any
-        //that allow update
+        // now look through all the roles and see if this person plays any
+        // that allow update
         for (WorkspaceRole role : this.getWorkspaceRoles()) {
             if (!role.allowAccessWorkspace()) {
                 // ignore noaccess roles
@@ -1655,6 +1675,7 @@ public class NGWorkspace extends NGPage {
         }
         return false;
     }
+
     public boolean canAccessWorkspace(UserRef user) throws Exception {
         NGBook site = getSite();
         if (site.isSiteExecutive(user)) {
@@ -1671,9 +1692,8 @@ public class NGWorkspace extends NGPage {
         }
         return false;
     }
+
     public String getGlobalContainerKey() {
-        return "S"+getSiteKey()+"|W"+getKey();
+        return "S" + getSiteKey() + "|W" + getKey();
     }
-
-
 }

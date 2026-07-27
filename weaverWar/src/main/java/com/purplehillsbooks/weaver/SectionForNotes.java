@@ -20,9 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.List;
-
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import java.util.List;
 
 public class SectionForNotes extends SectionUtil implements SectionFormat {
 
@@ -33,20 +32,17 @@ public class SectionForNotes extends SectionUtil implements SectionFormat {
     public static String SUBJECT_NODE_NAME = "subject";
     public static String PRIVATE_SECTION_NAME = "Comments";
 
-    public SectionForNotes() {
-    }
+    public SectionForNotes() {}
 
     public String getName() {
         return "Note";
     }
 
-    private static List<TopicRecord> getAllNotesInSection(NGSection section)
-            throws Exception {
+    private static List<TopicRecord> getAllNotesInSection(NGSection section) throws Exception {
         return section.getChildren(LEAFLET_NODE_NAME, TopicRecord.class);
     }
 
-    public static TopicRecord getLeaflet(String cmtId, NGSection section)
-            throws Exception {
+    public static TopicRecord getLeaflet(String cmtId, NGSection section) throws Exception {
         for (TopicRecord lr : getAllNotesInSection(section)) {
             String id = lr.getId();
             if (cmtId.equals(id)) {
@@ -84,13 +80,12 @@ public class SectionForNotes extends SectionUtil implements SectionFormat {
     }
 
     /**
-     * Copies the topics from on section to another. The idea is that all
-     * (displayable) sections will become topics in the future. This might be
-     * called just before deleting the section. Returns NULL if the section is
-     * empty.
+     * Copies the topics from on section to another. The idea is that all (displayable) sections
+     * will become topics in the future. This might be called just before deleting the section.
+     * Returns NULL if the section is empty.
      */
-    public TopicRecord convertToLeaflet(NGSection noteSection,
-            NGSection wikiSection) throws Exception {
+    public TopicRecord convertToLeaflet(NGSection noteSection, NGSection wikiSection)
+            throws Exception {
         SectionDef def = wikiSection.def;
         SectionFormat sf = def.format;
         if (sf != this) {
@@ -98,9 +93,12 @@ public class SectionForNotes extends SectionUtil implements SectionFormat {
                     "Method convertToLeaflet must be called on the format object for the section being converted");
         }
         for (TopicRecord cr : getAllNotesInSection(wikiSection)) {
-            TopicRecord newNote = noteSection
-                    .createChildWithID(SectionForNotes.LEAFLET_NODE_NAME,
-                            TopicRecord.class, "id", IdGenerator.generateKey());
+            TopicRecord newNote =
+                    noteSection.createChildWithID(
+                            SectionForNotes.LEAFLET_NODE_NAME,
+                            TopicRecord.class,
+                            "id",
+                            IdGenerator.generateKey());
             newNote.setOwner(cr.getOwner());
             newNote.setLastEdited(cr.getLastEdited());
             newNote.setModUser(AddressListEntry.findOrCreate(cr.getOwner()));
@@ -110,5 +108,4 @@ public class SectionForNotes extends SectionUtil implements SectionFormat {
         }
         return null;
     }
-
 }

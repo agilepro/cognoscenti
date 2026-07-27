@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Tracks a single user visiting a site so taht we can report how many others are
- * there at the same time.
+ * Tracks a single user visiting a site so taht we can report how many others are there at the same
+ * time.
  */
 public final class Visitation {
 
@@ -38,15 +38,19 @@ public final class Visitation {
     public String workspace;
     public long timestamp;
 
-    private Visitation() {
-    }
+    private Visitation() {}
 
     /**
-     * This is the main way that you add a user to a visitation list.
-     * It walks through the list passed, and returns a new list with the specified user
-     * added, and with all the out-of-date entries removed.
+     * This is the main way that you add a user to a visitation list. It walks through the list
+     * passed, and returns a new list with the specified user added, and with all the out-of-date
+     * entries removed.
      */
-    static List<Visitation> markVisit(List<Visitation> source, String vuser, String vsite, String vworkspace, long vtimestamp) {
+    static List<Visitation> markVisit(
+            List<Visitation> source,
+            String vuser,
+            String vsite,
+            String vworkspace,
+            long vtimestamp) {
         Visitation thisVisit = new Visitation();
         thisVisit.timestamp = vtimestamp;
         thisVisit.userKey = vuser;
@@ -57,11 +61,11 @@ public final class Visitation {
         newList.add(thisVisit);
         for (Visitation v : source) {
             if (v.timestamp < tooOld) {
-                //remove this because it is too old
+                // remove this because it is too old
                 continue;
             }
             if (v.userKey.equals(vuser) && v.site.equals(vsite) && v.workspace.equals(vworkspace)) {
-                //remove this because it will be replaced below
+                // remove this because it will be replaced below
                 continue;
             }
             newList.add(v);
@@ -70,8 +74,8 @@ public final class Visitation {
     }
 
     /**
-     * Pass a site and workspace, and returns a list of the users that have accessed that
-     * site in the past 30 minutes.
+     * Pass a site and workspace, and returns a list of the users that have accessed that site in
+     * the past 30 minutes.
      */
     static List<String> getCurrentUsers(List<Visitation> source, String vsite, String vworkspace) {
         long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
@@ -86,10 +90,10 @@ public final class Visitation {
         }
         return newList;
     }
-    
+
     /**
-     * Simply produce a list of all users accessing in the past 30 minutes
-     * without regard to workspace or site
+     * Simply produce a list of all users accessing in the past 30 minutes without regard to
+     * workspace or site
      */
     static Set<String> getGlobalUsers(List<Visitation> source) {
         long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
@@ -98,15 +102,13 @@ public final class Visitation {
             if (v.timestamp < tooOld) {
                 continue;
             }
-            //this will add only if not already there
+            // this will add only if not already there
             newList.add(v.userKey);
         }
         return newList;
     }
 
-    /**
-     * gets the most recent visitation
-     */
+    /** gets the most recent visitation */
     static Visitation getRecentVisit(List<Visitation> source, String uid) {
         long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
         Visitation ret = null;
@@ -115,16 +117,16 @@ public final class Visitation {
                 continue;
             }
             if (uid.equals(v.userKey)) {
-                if (ret==null) {
+                if (ret == null) {
                     ret = v;
-                }
-                else if (v.timestamp > ret.timestamp) {
+                } else if (v.timestamp > ret.timestamp) {
                     ret = v;
                 }
             }
         }
         return ret;
     }
+
     static List<Visitation> getAllVisits(List<Visitation> source, String uid) {
         long tooOld = System.currentTimeMillis() - THIRTY_MINUTES;
         List<Visitation> ret = new ArrayList<Visitation>();
@@ -138,6 +140,4 @@ public final class Visitation {
         }
         return ret;
     }
-    
-
 }

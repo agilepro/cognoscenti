@@ -25,10 +25,7 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
-/**
-
- */
-
+/** */
 public class RestHandler {
 
     AuthRequest ar;
@@ -38,45 +35,42 @@ public class RestHandler {
     NGBook prjSite;
     NGWorkspace ngw;
 
-    /**
-     * This servlet handles REST style requests for XML content
-     */
+    /** This servlet handles REST style requests for XML content */
     public RestHandler(AuthRequest _ar) {
         ar = _ar;
     }
 
-    public void doAuthenticatedGet()  throws Exception {
+    public void doAuthenticatedGet() throws Exception {
 
         findResource();
-
     }
 
-    private void findResource()  throws Exception {
-        //if this servlet is mapped with /r/*
-        //getPathInfo return only the path AFTER the r
+    private void findResource() throws Exception {
+        // if this servlet is mapped with /r/*
+        // getPathInfo return only the path AFTER the r
         String path = ar.req.getPathInfo();
         // TEST: check to see that the servlet path starts with /
         if (!path.startsWith("/")) {
-            throw WeaverException.newBasic("Path should start with / but instead it is: "
-                            + path);
+            throw WeaverException.newBasic("Path should start with / but instead it is: " + path);
         }
 
-        int slashPos = path.indexOf("/",1);
-        if (slashPos<1) {
+        int slashPos = path.indexOf("/", 1);
+        if (slashPos < 1) {
             throw WeaverException.newBasic("could not find a second slash in: " + path);
         }
         siteId = path.substring(1, slashPos);
         prjSite = ar.getCogInstance().getSiteByIdOrFail(siteId);
-        int nextSlashPos = path.indexOf("/",slashPos+1);
-        if (nextSlashPos<0) {
+        int nextSlashPos = path.indexOf("/", slashPos + 1);
+        if (nextSlashPos < 0) {
             throw WeaverException.newBasic("could not find a third slash in: " + path);
         }
-        workspaceKey = path.substring(slashPos+1, nextSlashPos);
+        workspaceKey = path.substring(slashPos + 1, nextSlashPos);
         ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspaceKey).getWorkspace();
 
-        resource = path.substring(nextSlashPos+1);
+        resource = path.substring(nextSlashPos + 1);
         if (!"case.xml".equals(resource)) {
-            throw WeaverException.newBasic("the only resource supported is case.xml, but got: "+resource);
+            throw WeaverException.newBasic(
+                    "the only resource supported is case.xml, but got: " + resource);
         }
     }
 }

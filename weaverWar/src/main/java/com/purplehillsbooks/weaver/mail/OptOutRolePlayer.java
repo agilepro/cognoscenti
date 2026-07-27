@@ -20,30 +20,30 @@
 
 package com.purplehillsbooks.weaver.mail;
 
-import java.net.URLEncoder;
-
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import java.net.URLEncoder;
 
 /**
-* This is for email messages which are sent to the Super Admin
-* and you really can't opt out of that responsibility.
-* So this makes a message that says that.
-*/
+ * This is for email messages which are sent to the Super Admin and you really can't opt out of that
+ * responsibility. So this makes a message that says that.
+ */
 public class OptOutRolePlayer extends OptOutAddr {
 
     public String containerID;
     public String siteID;
     public String roleName;
 
-    public OptOutRolePlayer(AddressListEntry _assignee, String siteKey, String containerKey, String _roleName) {
+    public OptOutRolePlayer(
+            AddressListEntry _assignee, String siteKey, String containerKey, String _roleName) {
         super(_assignee);
-        if (assignee.getEmail()==null || assignee.getEmail().length()==0) {
-            throw new RuntimeException("Somehow got an opt out addressee with a missing email address.  Should not happen");
+        if (assignee.getEmail() == null || assignee.getEmail().length() == 0) {
+            throw new RuntimeException(
+                    "Somehow got an opt out addressee with a missing email address.  Should not happen");
         }
         containerID = containerKey;
         siteID = siteKey;
@@ -52,25 +52,24 @@ public class OptOutRolePlayer extends OptOutAddr {
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
-        if (emailId==null || emailId.length()==0) {
+        if (emailId == null || emailId.length() == 0) {
             throw WeaverException.newBasic(
-                "There is a problem with this addressee, the email field is blank????");
+                    "There is a problem with this addressee, the email field is blank????");
         }
-        
+
         NGPageIndex ngpi = null;
-        if (siteID==null || siteID.length()==0) {
+        if (siteID == null || siteID.length() == 0) {
             ngpi = clone.getCogInstance().lookForWSBySimpleKeyOnly(containerID);
-        }
-        else {
+        } else {
             ngpi = clone.getCogInstance().getWSBySiteAndKey(siteID, containerID);
         }
         NGWorkspace ngc = null;
-        if (ngpi!=null) {
+        if (ngpi != null) {
             ngc = ngpi.getWorkspace();
         }
 
-        //if the workspace no longer exists, then just use the generic response.
-        if (ngc==null) {
+        // if the workspace no longer exists, then just use the generic response.
+        if (ngc == null) {
             super.writeUnsubscribeLink(clone);
             return;
         }
@@ -94,7 +93,8 @@ public class OptOutRolePlayer extends OptOutAddr {
         clone.writeURLData(emailId);
         clone.write("&mn=");
         clone.writeURLData(ngc.emailDependentMagicNumber(emailId));
-        clone.write("\">withdraw from that role</a> if you no longer want to be involved and receive email for the role. ");
+        clone.write(
+                "\">withdraw from that role</a> if you no longer want to be involved and receive email for the role. ");
         writeConcludingPart(clone);
     }
 
@@ -103,15 +103,22 @@ public class OptOutRolePlayer extends OptOutAddr {
         NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngw = ngpi.getWorkspace();
         String emailId = assignee.getEmail();
-        jo.put("leaveRole", ar.baseURL+"t/EmailAdjustment.htm?pageId="+containerID
-            +"&siteId="+URLEncoder.encode(ngw.getSiteKey(),"UTF-8")
-            +"&role="+URLEncoder.encode(roleName,"UTF-8")
-            +"&email="+URLEncoder.encode(emailId,"UTF-8")
-            +"&mn="+URLEncoder.encode(ngw.emailDependentMagicNumber(emailId),"UTF-8"));
-        jo.put("roleName",  roleName);
+        jo.put(
+                "leaveRole",
+                ar.baseURL
+                        + "t/EmailAdjustment.htm?pageId="
+                        + containerID
+                        + "&siteId="
+                        + URLEncoder.encode(ngw.getSiteKey(), "UTF-8")
+                        + "&role="
+                        + URLEncoder.encode(roleName, "UTF-8")
+                        + "&email="
+                        + URLEncoder.encode(emailId, "UTF-8")
+                        + "&mn="
+                        + URLEncoder.encode(ngw.emailDependentMagicNumber(emailId), "UTF-8"));
+        jo.put("roleName", roleName);
         jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);
         return jo;
     }
-
 }

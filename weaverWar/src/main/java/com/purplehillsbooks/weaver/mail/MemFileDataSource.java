@@ -1,14 +1,12 @@
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.streams.MemFile;
+import jakarta.activation.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import jakarta.activation.DataSource;
-
-import com.purplehillsbooks.streams.MemFile;
-
-public class MemFileDataSource implements DataSource{
+public class MemFileDataSource implements DataSource {
     private MemFile mf;
     private String contentType;
     private String name;
@@ -38,6 +36,4 @@ public class MemFileDataSource implements DataSource{
     public OutputStream getOutputStream() throws IOException {
         throw new IOException("getOutputStream is not implemented for this data source.");
     }
-
-
 }

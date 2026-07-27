@@ -20,34 +20,30 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.streams.NullWriter;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Properties;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.streams.NullWriter;
-
 /**
-* AuthDummy is a dummy request object which can be used inside the server
-* when there is no actual HTTPRequest to start with.   It will handle
-* the authentication part of the job, but no actual output will
-* be produced.
-*/
-public class AuthDummy extends AuthRequest
-{
+ * AuthDummy is a dummy request object which can be used inside the server when there is no actual
+ * HTTPRequest to start with. It will handle the authentication part of the job, but no actual
+ * output will be produced.
+ */
+public class AuthDummy extends AuthRequest {
 
     private static AuthDummy theDummy = null;
 
     /**
-    * This is the PREFERRED way to get an AuthRequest object for use in server background processing.
-    * This will check to see if an AuthRequest object has been associated with this request.
-    * If so, it is returned.
-    * If not, one will be created and associated with request, then returned
-    */
+     * This is the PREFERRED way to get an AuthRequest object for use in server background
+     * processing. This will check to see if an AuthRequest object has been associated with this
+     * request. If so, it is returned. If not, one will be created and associated with request, then
+     * returned
+     */
     public static AuthRequest serverBackgroundRequest() {
         return theDummy;
     }
-
 
     public static void clearStaticVariables() {
         theDummy = null;
@@ -55,174 +51,130 @@ public class AuthDummy extends AuthRequest
 
     public static void initializeDummyRequest(Cognoscenti cog) throws Exception {
         if (!cog.getConfig().isInitialized()) {
-            throw WeaverException.newBasic("ConfigFile class must be initialized before AuthDummy!");
+            throw WeaverException.newBasic(
+                    "ConfigFile class must be initialized before AuthDummy!");
         }
         Writer wr = new NullWriter();
         theDummy = new AuthDummy(wr, cog);
     }
 
-
     /**
-    * constructor: if this object is constructed in a servlet, then pass
-    * a NULL to the newWriter parameter, and the output stream will be
-    * retrieved from the response object in a safe way.
-    * If object is constructed in a JSP page, then getWriter has already
-    * been called on the request, and you must pass the writer in here
-    * so that we can avoid calling this method twice
-    */
+     * constructor: if this object is constructed in a servlet, then pass a NULL to the newWriter
+     * parameter, and the output stream will be retrieved from the response object in a safe way. If
+     * object is constructed in a JSP page, then getWriter has already been called on the request,
+     * and you must pass the writer in here so that we can avoid calling this method twice
+     */
     public AuthDummy(Writer w, Cognoscenti cog) {
         super(w, cog);
     }
 
     /**
-    * This is the constructor that create a fake request object for a
-    * particular user, and with a particular writer.
-    * This can be used for creating email messages and such.
-    */
+     * This is the constructor that create a fake request object for a particular user, and with a
+     * particular writer. This can be used for creating email messages and such.
+     */
     public AuthDummy(UserProfile up, Writer w, Cognoscenti cog) {
         super(w, cog);
         user = up;
     }
 
-    public NGSession getSession()
-    {
-        throw new RuntimeException("The AuthDummy does not have a session object and "
-        + "so whatever method is calling for a session can not run in background.");
+    public NGSession getSession() {
+        throw new RuntimeException(
+                "The AuthDummy does not have a session object and "
+                        + "so whatever method is calling for a session can not run in background.");
     }
 
     @SuppressWarnings("unused")
-    private void resolveUser() throws Exception
-    {
+    private void resolveUser() throws Exception {
         throw WeaverException.newBasic("Not implemented on dummy auth request object: resolveUser");
     }
 
-
-    public void setPageAccessLevelsWithoutVisit(NGContainer newNgp)
-        throws Exception
-    {
-        //nothing to do, all access is author level
+    public void setPageAccessLevelsWithoutVisit(NGContainer newNgp) throws Exception {
+        // nothing to do, all access is author level
     }
 
-    public void setPageAccessLevels(NGContainer newNgp)
-        throws Exception
-    {
-        //nothing to do, all access is author level
+    public void setPageAccessLevels(NGContainer newNgp) throws Exception {
+        // nothing to do, all access is author level
     }
 
     /**
-    * Set logged in user is a function of the user interface to record that someone
-    * has just logged in, but the AuthDummy object is fully controlled by the
-    * system.  Therefor this method should not be needed.
-    */
-    public void setLoggedInUser(UserProfile newUser, String loginId, String autoLogin, String openId)
-        throws Exception
-    {
-        throw WeaverException.newBasic("Not implemented on dummy auth request object: setLoggedInUser");
+     * Set logged in user is a function of the user interface to record that someone has just logged
+     * in, but the AuthDummy object is fully controlled by the system. Therefor this method should
+     * not be needed.
+     */
+    public void setLoggedInUser(
+            UserProfile newUser, String loginId, String autoLogin, String openId) throws Exception {
+        throw WeaverException.newBasic(
+                "Not implemented on dummy auth request object: setLoggedInUser");
     }
 
-    /**
-    * The user interface for logging out should never be used with AuthDummy situations.
-    */
-    public void logOutUser()
-    {
+    /** The user interface for logging out should never be used with AuthDummy situations. */
+    public void logOutUser() {
         throw new RuntimeException("Not implemented on dummy auth request object: logOutUser");
     }
 
-
-    public void assertNotPost()
-        throws Exception
-    {
-        //nothing to do, IO does not matter
+    public void assertNotPost() throws Exception {
+        // nothing to do, IO does not matter
     }
 
-    public String getFormerId()
-        throws Exception
-    {
+    public String getFormerId() throws Exception {
         throw WeaverException.newBasic("Not implemented on dummy auth request object: getFormerId");
     }
 
-
-    public String getRequestURL()
-    {
+    public String getRequestURL() {
         throw new RuntimeException("Not implemented on dummy auth request object: getRequestURL");
     }
 
-
     /**
-    * Return the complete URL that got us here, including query parameters
-    * so we can redirect back as necessary.
-    */
+     * Return the complete URL that got us here, including query parameters so we can redirect back
+     * as necessary.
+     */
     public String getCompleteURL() {
         return "DummyRequest";
     }
 
-
-
-
     /**
-    * Get a paramter value from the local properties object on Dummy request
-    * Note that reqParam depends upon defParam, so reqParam is not reimplemented
-    * for the dummyAuth class..
-    */
-    public String defParam(String paramName, String defaultValue)
-        throws Exception
-    {
+     * Get a paramter value from the local properties object on Dummy request Note that reqParam
+     * depends upon defParam, so reqParam is not reimplemented for the dummyAuth class..
+     */
+    public String defParam(String paramName, String defaultValue) throws Exception {
         String val = localProperties.getProperty(paramName);
-        if (val!=null)
-        {
+        if (val != null) {
             return val;
         }
         return defaultValue;
     }
 
-    /**
-    * Get a required parameter from the local properties on the DummyAuth request
-    */
-    public String reqParam(String paramName)
-        throws Exception
-    {
+    /** Get a required parameter from the local properties on the DummyAuth request */
+    public String reqParam(String paramName) throws Exception {
         String val = defParam(paramName, null);
-        if (val == null || val.length()==0)
-        {
-            //The exception that is thrown will not be seen by users.  Once all of the pages
-            //have proper URLs constricted for redirecting to other pages, this error will
-            //not occur.  Therefor, there is no need to localize this exception.
-            throw WeaverException.newBasic("Required parameter '%s' is missing from %s", paramName, getRequestURL());
+        if (val == null || val.length() == 0) {
+            // The exception that is thrown will not be seen by users.  Once all of the pages
+            // have proper URLs constricted for redirecting to other pages, this error will
+            // not occur.  Therefor, there is no need to localize this exception.
+            throw WeaverException.newBasic(
+                    "Required parameter '%s' is missing from %s", paramName, getRequestURL());
         }
         return val;
     }
 
-
-    /**
-    * This is where the DummyAuth stores the parameters to the request
-    */
+    /** This is where the DummyAuth stores the parameters to the request */
     Properties localProperties = new Properties();
 
-    public void setParam(String paramName, String paramValue)
-        throws Exception
-    {
+    public void setParam(String paramName, String paramValue) throws Exception {
         localProperties.setProperty(paramName, paramValue);
     }
 
-
-    public void makeHonoraryMember()
-    {
-        //nothing to do, always full access
+    public void makeHonoraryMember() {
+        // nothing to do, always full access
     }
 
-
-    public Locale getLocale()
-    {
+    public Locale getLocale() {
         // for background operations, alwasys use the default locale for the machine
         return Locale.getDefault();
     }
 
-
-    public void invokeJSP(String JSPName)
-        throws Exception
-    {
-        //there is no real request object, so calling JSP is difficult
+    public void invokeJSP(String JSPName) throws Exception {
+        // there is no real request object, so calling JSP is difficult
         throw WeaverException.newBasic("Dummy Auth objects are not able to actually call JSP");
     }
-
 }

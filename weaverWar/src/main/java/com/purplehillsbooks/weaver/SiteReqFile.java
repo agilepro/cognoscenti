@@ -20,26 +20,23 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
  * Holds New Site Requests
  *
- * This is a RARELY used file.  Very rare to request a site, and
- * also rare to review, grant, or deny it.  We are talking about
- * less than 0.1% of the traffic.  So don't waste a lot of time
- * storing this in memory.
+ * <p>This is a RARELY used file. Very rare to request a site, and also rare to review, grant, or
+ * deny it. We are talking about less than 0.1% of the traffic. So don't waste a lot of time storing
+ * this in memory.
  *
- * Requests are kept 100 days, and thrown away after that.
- * The site persists if granted, but otherwise forgotten about.
- *
+ * <p>Requests are kept 100 days, and thrown away after that. The site persists if granted, but
+ * otherwise forgotten about.
  */
 public class SiteReqFile {
 
@@ -50,20 +47,20 @@ public class SiteReqFile {
         File userFolder = cog.getConfig().getUserFolderOrFail();
         requestFile = new File(userFolder, "siteRequests.json");
         if (!requestFile.exists()) {
-            //initialize it here
+            // initialize it here
             contents = new JSONObject();
             contents.put("reqs", new JSONArray());
-        }
-        else {
+        } else {
             contents = JSONObject.readFromFile(requestFile);
             JSONArray reqs = contents.getJSONArray("reqs");
 
-            //now remove anything more than ninety days old
-            long ninetyDaysAgo = System.currentTimeMillis() - 90L*24*60*60*1000;  //ninety days
+            // now remove anything more than ninety days old
+            long ninetyDaysAgo =
+                    System.currentTimeMillis() - 90L * 24 * 60 * 60 * 1000; // ninety days
             JSONArray cleanList = new JSONArray();
-            for (int i=0; i<reqs.length(); i++) {
+            for (int i = 0; i < reqs.length(); i++) {
                 JSONObject oneReq = reqs.getJSONObject(i);
-                if (oneReq.optLong("modTime",0)>=ninetyDaysAgo) {
+                if (oneReq.optLong("modTime", 0) >= ninetyDaysAgo) {
                     cleanList.put(oneReq);
                 }
             }
@@ -75,47 +72,38 @@ public class SiteReqFile {
         contents.writeToFile(requestFile);
     }
 
-
-
-    /**
-     * Get all requests
-     */
+    /** Get all requests */
     public List<SiteRequest> getAllSiteReqs() throws Exception {
         List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
         JSONArray reqs = contents.getJSONArray("reqs");
-        for (int i=0; i<reqs.length(); i++) {
+        for (int i = 0; i < reqs.length(); i++) {
             SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
-            usersReqs.add( oneReq );
+            usersReqs.add(oneReq);
         }
         sortSiteRequests(usersReqs);
         return usersReqs;
     }
 
-    /**
-     * Get requests for one user
-     */
+    /** Get requests for one user */
     public List<SiteRequest> getUsersSiteRequests(UserProfile up) throws Exception {
         List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
         JSONArray reqs = contents.getJSONArray("reqs");
-        for (int i=0; i<reqs.length(); i++) {
+        for (int i = 0; i < reqs.length(); i++) {
             SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
-            if(up.hasAnyId(oneReq.getRequester())) {
-                usersReqs.add( oneReq );
+            if (up.hasAnyId(oneReq.getRequester())) {
+                usersReqs.add(oneReq);
             }
         }
         sortSiteRequests(usersReqs);
         return usersReqs;
     }
 
-
-    /**
-     * Get requests more than 48 hours old
-     */
+    /** Get requests more than 48 hours old */
     public List<SiteRequest> scanAllDelayedSiteReqs() throws Exception {
         List<SiteRequest> delayedList = new ArrayList<SiteRequest>();
         long fortyEightHoursAgo = System.currentTimeMillis() - 172800000; // 172800000 = 48 hours
         JSONArray reqs = contents.getJSONArray("reqs");
-        for (int i=0; i<reqs.length(); i++) {
+        for (int i = 0; i < reqs.length(); i++) {
             SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
             if ((oneReq.getStatus().equalsIgnoreCase("requested"))) {
                 if (oneReq.getModTime() < fortyEightHoursAgo) {
@@ -127,10 +115,9 @@ public class SiteReqFile {
         return delayedList;
     }
 
-
     public SiteRequest getRequestByKey(String key) throws Exception {
         JSONArray reqs = contents.getJSONArray("reqs");
-        for (int i=0; i<reqs.length(); i++) {
+        for (int i = 0; i < reqs.length(); i++) {
             SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
             if (key.equals(oneReq.getRequestId())) {
                 return oneReq;
@@ -139,39 +126,26 @@ public class SiteReqFile {
         return null;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /**
-     * Create new request for new site with the specified name and description.
-     * And save the file.
+     * Create new request for new site with the specified name and description. And save the file.
      */
-    public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, AuthRequest ar) throws Exception {
+    public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, AuthRequest ar)
+            throws Exception {
 
         Cognoscenti cog = ar.getCogInstance();
 
-        String siteId      = newSiteReq.getString("siteId").toLowerCase();
-        
-        siteId = SiteRequest.cleanUpSiteId(siteId);
-        
-        //need to assure this is lower case so that the folder is created
-        //lower case.  On Linux this makes a difference.
-        newSiteReq.put("siteId", siteId);
+        String siteId = newSiteReq.getString("siteId").toLowerCase();
 
+        siteId = SiteRequest.cleanUpSiteId(siteId);
+
+        // need to assure this is lower case so that the folder is created
+        // lower case.  On Linux this makes a difference.
+        newSiteReq.put("siteId", siteId);
 
         SiteReqFile siteReqFile = new SiteReqFile(cog);
         SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
-        
-        //this will throw some exceptions if values like site id are bad
+
+        // this will throw some exceptions if values like site id are bad
         newRequest.validateValues();
         newRequest.assertSiteNotExist(cog);
 
@@ -181,14 +155,11 @@ public class SiteReqFile {
             ha.completeSiteRequest(newRequest, true);
         }
 
-        //actually update the file
+        // actually update the file
         siteReqFile.save();
 
         return newRequest;
     }
-
-    
-
 
     private SiteRequest createNewRequest(JSONObject newSiteReq) throws Exception {
         String requestedId = IdGenerator.generateKey();
@@ -203,14 +174,11 @@ public class SiteReqFile {
         return newRequest;
     }
 
-
-    /**
-     * Sort reverse chronological, so most recent is first
-     *
-     */
+    /** Sort reverse chronological, so most recent is first */
     public static void sortSiteRequests(List<SiteRequest> sortable) throws Exception {
         Collections.sort(sortable, new SortByDateComparator());
     }
+
     private static class SortByDateComparator implements Comparator<SiteRequest> {
 
         public SortByDateComparator() {}
@@ -224,13 +192,10 @@ public class SiteReqFile {
                 if (arg1.getModTime() < arg0.getModTime()) {
                     return -1;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return 0;
             }
             return 1;
-
         }
     }
-
 }

@@ -4,17 +4,14 @@
 
 package com.purplehillsbooks.weaver.capture;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
-/**
- *
- */
+/** */
 public class WebFile {
 
     private JSONObject webFile = new JSONObject();
@@ -47,6 +44,7 @@ public class WebFile {
 
     static int threshold = 400;
     static int articleThreshold = 400;
+
     public void refreshFromWeb() throws Exception {
         String url = getUrl();
         try {
@@ -61,14 +59,11 @@ public class WebFile {
                 seg.put("content", block);
                 if (block.startsWith("!!")) {
                     seg.put("group", "article");
-                }
-                else if (HtmlToWikiConverter2.amtNonLinkedText(block)>articleThreshold) {
+                } else if (HtmlToWikiConverter2.amtNonLinkedText(block) > articleThreshold) {
                     seg.put("group", "article");
-                }
-                else if (block.length()>threshold) {
+                } else if (block.length() > threshold) {
                     seg.put("group", "links");
-                }
-                else {
+                } else {
                     seg.put("group", "hidden");
                 }
                 sections.put(seg);
@@ -76,8 +71,7 @@ public class WebFile {
             webFile.put("sections", sections);
             sortAndNumber();
             save();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw WeaverException.newWrap("Unable to download web page from (%s)", e, url);
         }
     }
@@ -86,19 +80,19 @@ public class WebFile {
         int count = 0;
         JSONArray sections = webFile.getJSONArray("sections");
         JSONArray sortedList = new JSONArray();
-        for (JSONObject sec : sections.getJSONObjectList() ) {
+        for (JSONObject sec : sections.getJSONObjectList()) {
             if ("article".equals(sec.getString("group"))) {
                 sec.put("displayOrder", ++count);
                 sortedList.put(sec);
             }
         }
-        for (JSONObject sec : sections.getJSONObjectList() ) {
+        for (JSONObject sec : sections.getJSONObjectList()) {
             if ("links".equals(sec.getString("group"))) {
                 sec.put("displayOrder", ++count);
                 sortedList.put(sec);
             }
         }
-        for (JSONObject sec : sections.getJSONObjectList() ) {
+        for (JSONObject sec : sections.getJSONObjectList()) {
             if ("hidden".equals(sec.getString("group"))) {
                 sec.put("displayOrder", ++count);
                 sortedList.put(sec);
@@ -125,7 +119,7 @@ public class WebFile {
         sortAndNumber();
     }
 
-    private void  updateSectionData(int secNum, JSONObject newSection) {
+    private void updateSectionData(int secNum, JSONObject newSection) {
         for (JSONObject oldSection : webFile.getJSONArray("sections").getJSONObjectList()) {
             if (secNum == oldSection.getInt("originPos")) {
                 copyIfPresent(oldSection, newSection, "group");
@@ -191,7 +185,7 @@ public class WebFile {
         StringBuilder paragraph = new StringBuilder();
         for (String line : block.split("\n")) {
             line = line.trim();
-            boolean isNewParagraph = (line.length()==0);
+            boolean isNewParagraph = (line.length() == 0);
             int start = 0;
             if (line.startsWith("*")) {
                 isNewParagraph = true;
@@ -207,7 +201,7 @@ public class WebFile {
             }
             if (isNewParagraph) {
                 String full = paragraph.toString().trim();
-                if (full.length()>0) {
+                if (full.length() > 0) {
                     listOfParagraphs.add(full);
                 }
                 paragraph = new StringBuilder();
@@ -218,7 +212,7 @@ public class WebFile {
             paragraph.append(" ");
         }
         String full2 = paragraph.toString().trim();
-        if (full2.length()>0) {
+        if (full2.length() > 0) {
             listOfParagraphs.add(full2.trim());
         }
         return listOfParagraphs;
@@ -230,7 +224,7 @@ public class WebFile {
         while (start < paragraph.length()) {
             int pos = findSentenceEnd(paragraph, start);
             String trimmedLine = paragraph.substring(start, pos).trim();
-            if (trimmedLine.length()>0) {
+            if (trimmedLine.length() > 0) {
                 listOfSentences.add(trimmedLine);
             }
             start = skipWhite(pos, paragraph);
@@ -239,11 +233,11 @@ public class WebFile {
     }
 
     private static int skipWhite(int pos, String val) {
-        if (pos>= val.length()) {
+        if (pos >= val.length()) {
             return pos;
         }
 
-        while (pos<val.length()) {
+        while (pos < val.length()) {
             char ch = val.charAt(pos);
             if (!Character.isWhitespace(ch) && 160 != ch) {
                 return pos;
@@ -254,7 +248,7 @@ public class WebFile {
     }
 
     private static int skipChar(int pos, String val, char match) {
-        if (pos>= val.length()) {
+        if (pos >= val.length()) {
             return pos;
         }
 
@@ -270,7 +264,7 @@ public class WebFile {
 
     private static int findSentenceEnd(String paragraph, int start) {
         int i = start;
-        int limit = paragraph.length()-1;
+        int limit = paragraph.length() - 1;
         if (i >= paragraph.length()) {
             return paragraph.length();
         }
@@ -279,18 +273,16 @@ public class WebFile {
             char ch = paragraph.charAt(i);
             i++;
             if (skipHyperLink) {
-                if (ch==']') {
+                if (ch == ']') {
                     skipHyperLink = false;
                 }
-            }
-            else {
-                if (ch=='[') {
+            } else {
+                if (ch == '[') {
                     skipHyperLink = true;
-                }
-                else if (i < limit && (ch == '.' || ch == ';' || ch == '?' || ch == '!')) {
+                } else if (i < limit && (ch == '.' || ch == ';' || ch == '?' || ch == '!')) {
                     ch = paragraph.charAt(i);
-                    while (i < limit &&
-                            (ch == '\"' || ch == '”' || ch == '\'' || ch == '’' || ch == ')')) {
+                    while (i < limit
+                            && (ch == '\"' || ch == '”' || ch == '\'' || ch == '’' || ch == ')')) {
                         i++;
                         ch = paragraph.charAt(i);
                     }
@@ -317,5 +309,4 @@ public class WebFile {
     public String lionize(String input) {
         return input;
     }
-
 }

@@ -20,13 +20,11 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +34,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MobileFirstController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{wsId}/{pageName}.wmf", method = RequestMethod.GET)
-    public void meetingFull(@PathVariable String siteId, @PathVariable String wsId, @PathVariable String pageName,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetingFull(
+            @PathVariable String siteId,
+            @PathVariable String wsId,
+            @PathVariable String pageName,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -46,15 +48,14 @@ public class MobileFirstController extends BaseController {
             ar.setPageAccessLevels(ngw);
             if (!ar.isLoggedIn()) {
                 streamJSPMobileFirst(ar, "Login.jsp");
-            }
-            else  {
+            } else {
                 streamJSPMobileFirst(ar, pageName + ".jsp");
             }
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to serve up a mobile first page named %s",
-                    e, pageName));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to serve up a mobile first page named %s", e, pageName));
         }
     }
-
 }

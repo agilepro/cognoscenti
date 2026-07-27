@@ -20,67 +20,58 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.ArrayList;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 /**
- * Each page can have a role that represents the members of the page, and this
- * object represents that as a NGRole object.
+ * Each page can have a role that represents the members of the page, and this object represents
+ * that as a NGRole object.
  */
 public abstract class RoleSpecialBase implements NGRole {
 
-    RoleSpecialBase() {
-    }
+    RoleSpecialBase() {}
 
     public String getSymbol() {
         throw new RuntimeException("SpecialRoleBase does not implement getSymbol");
     }
+
     public String getName() {
         throw new RuntimeException("SpecialRoleBase does not implement getName");
     }
 
     public void setName(String name) {
-        throw new RuntimeException("The '" + getName()
-                + "' role can not have the name set to something else");
+        throw new RuntimeException(
+                "The '" + getName() + "' role can not have the name set to something else");
     }
 
-    /**
-     * A description of the purpose of the role, suitable for display to user.
-     */
+    /** A description of the purpose of the role, suitable for display to user. */
     public String getDescription() {
-        throw new RuntimeException(
-                "SpecialRoleBase does not implement getDescription");
+        throw new RuntimeException("SpecialRoleBase does not implement getDescription");
     }
 
     public void setDescription(String desc) {
-        throw new RuntimeException("The '" + getName()
-                + "' role can not have the description set to something else");
+        throw new RuntimeException(
+                "The '" + getName() + "' role can not have the description set to something else");
     }
 
-    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp)
-            throws Exception {
+    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
         return getDirectPlayers();
     }
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
-        throw new RuntimeException(
-                "SpecialRoleBase does not implement getDirectPlayers");
+        throw new RuntimeException("SpecialRoleBase does not implement getDirectPlayers");
     }
 
     public void addPlayer(AddressListEntry newMember) throws Exception {
-        throw new RuntimeException(
-                "SpecialRoleBase does not implement addPlayer");
+        throw new RuntimeException("SpecialRoleBase does not implement addPlayer");
     }
 
     public void removePlayer(AddressListEntry oldMember) throws Exception {
-        throw new RuntimeException(
-                "SpecialRoleBase does not implement removePlayer");
+        throw new RuntimeException("SpecialRoleBase does not implement removePlayer");
     }
+
     public void removePlayerCompletely(UserRef oldMember) throws Exception {
-        throw new RuntimeException(
-                "SpecialRoleBase does not implement removePlayer");
+        throw new RuntimeException("SpecialRoleBase does not implement removePlayer");
     }
 
     public void clear() {
@@ -88,11 +79,9 @@ public abstract class RoleSpecialBase implements NGRole {
                 "not implemented yet ... and you probably don't want to do this to this role");
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp)
-            throws Exception {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
         if (user == null) {
-            throw WeaverException.newBasic(
-                    "isExpandedPlayer called with null user object.");
+            throw WeaverException.newBasic("isExpandedPlayer called with null user object.");
         }
         return CustomRole.isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
@@ -106,12 +95,11 @@ public abstract class RoleSpecialBase implements NGRole {
     }
 
     /**
-     * A descriptive statement to the users about the requirements of becoming a
-     * member of this role. This will have whatever the users that set up the
-     * role want, but it might include: required skills, required
-     * certifications, a description of expected duties, how long to expect to
-     * wait for approval, and whatever a person should know before attempting to
-     * join the role.
+     * A descriptive statement to the users about the requirements of becoming a member of this
+     * role. This will have whatever the users that set up the role want, but it might include:
+     * required skills, required certifications, a description of expected duties, how long to
+     * expect to wait for approval, and whatever a person should know before attempting to join the
+     * role.
      */
     public String getRequirements() {
         return "getRequirements not implemented on role '" + getName() + "'";
@@ -128,9 +116,8 @@ public abstract class RoleSpecialBase implements NGRole {
     public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {
         return null;
     }
-    
+
     public boolean allowUpdateWorkspace() {
         return false;
     }
-
 }

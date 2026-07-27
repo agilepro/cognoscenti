@@ -1,24 +1,22 @@
 package com.purplehillsbooks.weaver;
 
-import java.util.List;
-
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import java.util.List;
 
 /**
  * What a mess!
- * 
- * This attempts to carry all the information necessary to create
- * a comment email from the various places that a comment
- * email can come from.  These methods are needed for 
- * composing the email message for a comment.
+ *
+ * <p>This attempts to carry all the information necessary to create a comment email from the
+ * various places that a comment email can come from. These methods are needed for composing the
+ * email message for a comment.
  */
 public class EmailContext {
-    
+
     private TopicRecord discussionTopic;
     private MeetingRecord meet;
     private AgendaItem agenda;
     private AttachmentRecord attach;
-    
+
     public EmailContext(TopicRecord _discussionTopic) {
         discussionTopic = _discussionTopic;
     }
@@ -31,56 +29,47 @@ public class EmailContext {
     public EmailContext(AttachmentRecord _att) {
         attach = _att;
     }
-    
+
     public String emailSubject() throws Exception {
-        if (discussionTopic!=null) {
+        if (discussionTopic != null) {
             return discussionTopic.getSubject();
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             return meet.getName();
-        }
-        else {
+        } else {
             return attach.emailSubject();
         }
     }
+
     public String selfDescription() throws Exception {
-        if (discussionTopic!=null) {
-            return "(Topic) "+discussionTopic.getSubject();
-        }
-        else if (meet!=null) {
+        if (discussionTopic != null) {
+            return "(Topic) " + discussionTopic.getSubject();
+        } else if (meet != null) {
             return meet.selfDescription();
-        }
-        else  {
+        } else {
             return attach.selfDescription();
         }
     }
 
-
-    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw)  throws Exception {
-        if (discussionTopic!=null) {
+    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
+        if (discussionTopic != null) {
             discussionTopic.appendTargetEmails(sendTo, ngw);
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             meet.appendTargetEmails(sendTo, ngw);
-        }
-        else {
+        } else {
             attach.appendTargetEmails(sendTo, ngw);
         }
     }
-    
+
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        if (discussionTopic!=null) {
+        if (discussionTopic != null) {
             return discussionTopic.getEmailURL(ar, ngw);
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             return meet.getEmailURL(ar, ngw);
-        }
-        else {
+        } else {
             return attach.getEmailURL(ar, ngw);
         }
     }
-    
-    
+
     /*
      * The comment will call this when the email is sent, which is the official
      * time of the change, allowing the note to mark that it has been changed
@@ -89,56 +78,49 @@ public class EmailContext {
      * Meetings don't care about this.
      */
     public void markTimestamp(long newTime) throws Exception {
-        if (discussionTopic!=null) {
+        if (discussionTopic != null) {
             discussionTopic.setLastEdited(newTime);
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             meet.markTimestamp(newTime);
         }
     }
 
     /**
-     * The comment can have new people to notify, and this informs the container of the these
-     * new recipients.
+     * The comment can have new people to notify, and this informs the container of the these new
+     * recipients.
      */
-    public void extendNotifyList(List<AddressListEntry> addressList) throws Exception{
-        if (discussionTopic!=null) {
+    public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
+        if (discussionTopic != null) {
             discussionTopic.extendNotifyList(addressList);
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             meet.extendNotifyList(addressList);
-        }
-        else {
+        } else {
             attach.extendNotifyList(addressList);
         }
     }
-    
-    /**
-     * Get all the comments on this comment container
-     */
-    public List<CommentRecord> getPeerComments()  throws Exception {
-        if (discussionTopic!=null) {
+
+    /** Get all the comments on this comment container */
+    public List<CommentRecord> getPeerComments() throws Exception {
+        if (discussionTopic != null) {
             return discussionTopic.getComments();
-        }
-        else if (meet!=null) {
+        } else if (meet != null) {
             return agenda.getComments();
-        }
-        else {
+        } else {
             return attach.getComments();
         }
     }
-    
+
     public CommentContainer getcontainer() {
-        if (discussionTopic!=null) {
+        if (discussionTopic != null) {
             return discussionTopic;
         }
-        if (agenda!=null) {
+        if (agenda != null) {
             return agenda;
         }
-        if (attach!=null) {
+        if (attach != null) {
             return attach;
         }
-        throw new RuntimeException("Program Logic Error: EmailContext is missing the CommentContainer for some reason.");
+        throw new RuntimeException(
+                "Program Logic Error: EmailContext is missing the CommentContainer for some reason.");
     }
-    
 }

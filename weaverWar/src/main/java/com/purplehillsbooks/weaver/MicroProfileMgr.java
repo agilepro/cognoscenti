@@ -20,68 +20,65 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 import org.w3c.dom.Document;
 
 public class MicroProfileMgr {
 
-    private static Hashtable<String, MicroProfileRecord> microProfiles = new Hashtable<String, MicroProfileRecord>();
-    private static DOMFile  profileFile;
+    private static Hashtable<String, MicroProfileRecord> microProfiles =
+            new Hashtable<String, MicroProfileRecord>();
+    private static DOMFile profileFile;
     private static List<AddressListEntry> allProfileIds = new ArrayList<AddressListEntry>();
 
-    public synchronized static void loadMicroProfilesInMemory(Cognoscenti cog) throws Exception {
+    public static synchronized void loadMicroProfilesInMemory(Cognoscenti cog) throws Exception {
         ConfigFile config = cog.getConfig();
         File userFolder = config.getUserFolderOrFail();
 
-        //this is in {userFolder}/microprofiles.profile
+        // this is in {userFolder}/microprofiles.profile
         File theFile = new File(userFolder, "microprofiles.profile");
 
         Document newDoc = DOMFile.readOrCreateFile(theFile, "micro-profiles");
         profileFile = new DOMFile(theFile, newDoc);
         refreshMicroProfilesHashTable();
-        
-        //now clean it up because in the past we allowed a lot of bad ids in the list
+
+        // now clean it up because in the past we allowed a lot of bad ids in the list
         List<String> badIdList = new ArrayList<String>();
-        for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()){
+        for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()) {
             String id = profileRecord.getId();
             if (!MicroProfileRecord.validEmailAddress(id)) {
                 badIdList.add(id);
             }
         }
-        
-        if (badIdList.size()>0) {
+
+        if (badIdList.size() > 0) {
             for (String badId : badIdList) {
-                System.out.println("MicroProfileManager: Found and REMOVED a bad id from the file: "+badId);
+                System.out.println(
+                        "MicroProfileManager: Found and REMOVED a bad id from the file: " + badId);
                 removeMicroProfileRecord(badId);
             }
             save();
         }
-        
     }
 
-    public synchronized static void clearAllStaticVars() {
+    public static synchronized void clearAllStaticVars() {
         microProfiles = new Hashtable<String, MicroProfileRecord>();
         allProfileIds = new ArrayList<AddressListEntry>();
         profileFile = null;
     }
 
-
-    public static void refreshMicroProfilesHashTable() throws Exception
-    {
+    public static void refreshMicroProfilesHashTable() throws Exception {
         microProfiles = new Hashtable<String, MicroProfileRecord>();
         allProfileIds = new ArrayList<AddressListEntry>();
 
-        //right now there are a bunch of junk entries in the microprofiles table
-        //so we are cleaning them out by considering only entries that look like
-        //actual email addresses.   The rest are forgotten.
-        for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()){
+        // right now there are a bunch of junk entries in the microprofiles table
+        // so we are cleaning them out by considering only entries that look like
+        // actual email addresses.   The rest are forgotten.
+        for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()) {
             String lowerCase = profileRecord.getId().toLowerCase();
             if (MicroProfileRecord.validEmailAddress(lowerCase)) {
                 microProfiles.put(lowerCase, profileRecord);
@@ -90,19 +87,19 @@ public class MicroProfileMgr {
         }
     }
 
-    private static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception
-    {
-        if (profileFile==null)
-        {
-            throw WeaverException.newBasic("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
+    private static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception {
+        if (profileFile == null) {
+            throw WeaverException.newBasic(
+                    "profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
-        List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
+        List<MicroProfileRecord> vc =
+                profileFile.getChildren("microprofile", MicroProfileRecord.class);
         return vc;
     }
 
     /**
-     * Theoretically gets a list of all the email addresses that the system knows about,
-     * some with names, and others without.
+     * Theoretically gets a list of all the email addresses that the system knows about, some with
+     * names, and others without.
      */
     public static List<AddressListEntry> getAllUsers() throws Exception {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
@@ -110,11 +107,10 @@ public class MicroProfileMgr {
             String id = mpr.getId();
             if (MicroProfileRecord.validEmailAddress(id)) {
                 String dName = mpr.getDisplayName();
-                if (dName!=null && dName.length()>0) {
+                if (dName != null && dName.length() > 0) {
                     res.add(new AddressListEntry(id, dName));
-                }
-                else {
-                    //seems like we should remember email addresses even if we don't have a name
+                } else {
+                    // seems like we should remember email addresses even if we don't have a name
                     res.add(AddressListEntry.findOrCreate(id));
                 }
             }
@@ -122,23 +118,24 @@ public class MicroProfileMgr {
         return res;
     }
 
-    public synchronized static void save() throws Exception{
-        if(profileFile == null){
-            throw WeaverException.newBasic("Unable to write micro profile information to disk.  The micro profile file name is not set.");
+    public static synchronized void save() throws Exception {
+        if (profileFile == null) {
+            throw WeaverException.newBasic(
+                    "Unable to write micro profile information to disk.  The micro profile file name is not set.");
         }
         profileFile.save();
     }
 
-    /**
-    * find a MicroProfileRecord, or create one
-    */
-    public static MicroProfileRecord findOrCreateMicroProfile(String emailId, String displayName) throws Exception
-    {
+    /** find a MicroProfileRecord, or create one */
+    public static MicroProfileRecord findOrCreateMicroProfile(String emailId, String displayName)
+            throws Exception {
         if (emailId == null) {
-            throw WeaverException.newBasic("createMicroProfileRecord was passed a null emailId parameter");
+            throw WeaverException.newBasic(
+                    "createMicroProfileRecord was passed a null emailId parameter");
         }
-        if (profileFile==null) {
-            throw WeaverException.newBasic("profileFile is null when it should not be.  May not have been initialized correctly.");
+        if (profileFile == null) {
+            throw WeaverException.newBasic(
+                    "profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         if (!MicroProfileRecord.validEmailAddress(emailId)) {
             throw WeaverException.newBasic("This does not look like an email address: %s", emailId);
@@ -146,7 +143,7 @@ public class MicroProfileMgr {
 
         MicroProfileRecord profileRecord = findMicroProfileById(emailId);
 
-        if (profileRecord!=null) {
+        if (profileRecord != null) {
             return profileRecord;
         }
 
@@ -160,14 +157,17 @@ public class MicroProfileMgr {
         return profileRecord;
     }
 
-    public synchronized static boolean removeMicroProfileRecord(String id) throws Exception {
+    public static synchronized boolean removeMicroProfileRecord(String id) throws Exception {
         if (id == null) {
-            throw WeaverException.newBasic("removeMicroProfileRecord was passed a null emailId parameter");
+            throw WeaverException.newBasic(
+                    "removeMicroProfileRecord was passed a null emailId parameter");
         }
-        if (profileFile==null) {
-            throw WeaverException.newBasic("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
+        if (profileFile == null) {
+            throw WeaverException.newBasic(
+                    "profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
-        List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
+        List<MicroProfileRecord> vc =
+                profileFile.getChildren("microprofile", MicroProfileRecord.class);
         for (MicroProfileRecord child : vc) {
             if (id.equals(child.getAttribute("id"))) {
                 profileFile.removeChild(child);
@@ -178,23 +178,20 @@ public class MicroProfileMgr {
         return false;
     }
 
-    public synchronized static void setDisplayName(String id, String displayName) throws Exception
-    {
+    public static synchronized void setDisplayName(String id, String displayName) throws Exception {
         MicroProfileRecord child = findOrCreateMicroProfile(id, displayName);
         child.setDisplayName(displayName);
     }
 
-    public static List<AddressListEntry> getAllProfileIds() throws Exception
-    {
+    public static List<AddressListEntry> getAllProfileIds() throws Exception {
         return allProfileIds;
     }
 
-    public static MicroProfileRecord findMicroProfileById(String id)
-    {
+    public static MicroProfileRecord findMicroProfileById(String id) {
         if (id == null) {
             throw ProgramLogicError.newBasic("findMicroProfileById was passed a null id parameter");
         }
-        if (microProfiles != null){
+        if (microProfiles != null) {
             String lowerCase = id.toLowerCase();
             return microProfiles.get(lowerCase);
         }

@@ -20,88 +20,72 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.List;
-
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class NGSection extends DOMFace
-{
+public class NGSection extends DOMFace {
 
     public NGWorkspace parent = null;
     public SectionDef def = null;
 
-    public NGSection(Document d, Element e, DOMFace p)
-        throws Exception
-    {
+    public NGSection(Document d, Element e, DOMFace p) throws Exception {
         super(d, e, p);
 
-        //make sure that these members are present, a lot of logic requres them
-        //to be there.
-        if (e==null)
-        {
-            throw WeaverException.newBasic("someone created a section object, but passed null for element");
+        // make sure that these members are present, a lot of logic requres them
+        // to be there.
+        if (e == null) {
+            throw WeaverException.newBasic(
+                    "someone created a section object, but passed null for element");
         }
-        if (p==null)
-        {
-            throw WeaverException.newBasic("someone created a section object, but passed null for page object");
+        if (p == null) {
+            throw WeaverException.newBasic(
+                    "someone created a section object, but passed null for page object");
         }
 
         parent = (NGWorkspace) p;
 
         String sectionName = getAttribute("name");
-        if (sectionName==null || sectionName.length()==0)
-        {
-            //Sections must be constructed with a name value specified in advance.
-            //because sections are identified by name.  Only one section per name allowed.
-            throw WeaverException.newBasic("Section tag MUST have an attribute 'name' with a valid value.");
+        if (sectionName == null || sectionName.length() == 0) {
+            // Sections must be constructed with a name value specified in advance.
+            // because sections are identified by name.  Only one section per name allowed.
+            throw WeaverException.newBasic(
+                    "Section tag MUST have an attribute 'name' with a valid value.");
         }
         def = SectionDef.getDefByName(sectionName);
         assertNameIsConsistent();
     }
 
-
     // testing code, can be removed
-    private void assertNameIsConsistent()
-        throws Exception
-    {
-        //just checking here for correctness
+    private void assertNameIsConsistent() throws Exception {
+        // just checking here for correctness
         String myName = getAttribute("name");
-        if (myName==null)
-        {
+        if (myName == null) {
             throw WeaverException.newBasic("Somehow the name is null on this section");
         }
         String defName = def.getTypeName();
-        if (!myName.equals(defName))
-        {
-            throw WeaverException.newBasic("Was not able to find the right definition for '"
-                  +myName+"' and got '"+defName+"' instead.");
+        if (!myName.equals(defName)) {
+            throw WeaverException.newBasic(
+                    "Was not able to find the right definition for '"
+                            + myName
+                            + "' and got '"
+                            + defName
+                            + "' instead.");
         }
     }
 
-
-    public String getName()
-        throws Exception
-    {
+    public String getName() throws Exception {
         String name = getAttribute("name");
-        if (name==null)
-        {
+        if (name == null) {
             throw WeaverException.newBasic("Somehow the name is null on this section");
         }
         assertNameIsConsistent();
         return name;
     }
 
-
-    /**
-    * Get the 'value' of this section as text.
-    * Only for simple wiki value sections
-    */
-    public String asText()
-        throws Exception
-    {
+    /** Get the 'value' of this section as text. Only for simple wiki value sections */
+    public String asText() throws Exception {
         // Added June 2009
         // Need for migration.  Originally the wiki
         // source was placed directly in the section tag, while for other
@@ -109,80 +93,61 @@ public class NGSection extends DOMFace
         // inconsistent.  The change is to move the text into a sub element
         // named wiki.
         Element wikiElem = DOMUtils.getChildElement(fEle, "wiki");
-        if (wikiElem!=null)
-        {
+        if (wikiElem != null) {
             return getScalar("wiki");
         }
         String value = DOMUtils.textValueOf(fEle, false);
-        if (value==null)
-        {
-            value="";
+        if (value == null) {
+            value = "";
         }
         setText(value, null);
         return value;
-
     }
 
-
-    /**
-    * Set the 'value' of this section as text.
-    * Only for simple wiki value sections
-    */
+    /** Set the 'value' of this section as text. Only for simple wiki value sections */
     public void setText(String textValue, AuthRequest ar) throws Exception {
-        if (fEle==null) {
+        if (fEle == null) {
             throw WeaverException.newBasic("Why is the fEle variable null?????");
         }
 
         setScalar("wiki", textValue);
-        if (ar!=null) {
+        if (ar != null) {
             setLastModify(ar);
         }
     }
 
-
-    public SectionFormat getFormat()
-    {
+    public SectionFormat getFormat() {
         return def.getFormat();
     }
 
-    /**
-    * Returns 'true' is the section def is deprecated.
-    */
-    public boolean isDeprecated()
-    {
+    /** Returns 'true' is the section def is deprecated. */
+    public boolean isDeprecated() {
         return def.deprecated;
     }
 
-    public void findLinks(List<String> v)
-        throws Exception
-    {
+    public void findLinks(List<String> v) throws Exception {
         def.format.findLinks(v, this);
     }
 
-    public long getLastModifyTime()
-    {
+    public long getLastModifyTime() {
         String timeAttrib = getAttribute("modTime");
         return safeConvertLong(timeAttrib);
     }
 
-    public String getLastModifyUser()
-    {
+    public String getLastModifyUser() {
         return getAttribute("modUser");
     }
 
-    public void setLastModify(AuthRequest ar)
-    {
+    public void setLastModify(AuthRequest ar) {
         setAttribute("modTime", Long.toString(ar.nowTime));
         setAttribute("modUser", ar.getBestUserId());
     }
 
     /**
-    * What through whatever elements this owns and put all the four digit
-    * IDs into the vector so that we can generate another ID and assure it
-    * does not duplication any id found here.
-    */
+     * What through whatever elements this owns and put all the four digit IDs into the vector so
+     * that we can generate another ID and assure it does not duplication any id found here.
+     */
     public void findIDs(List<String> v) throws Exception {
         def.format.findIDs(v, this);
     }
-
 }

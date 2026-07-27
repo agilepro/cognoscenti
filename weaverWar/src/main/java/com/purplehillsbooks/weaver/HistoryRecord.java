@@ -20,51 +20,43 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
-import org.apache.catalina.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONObject;
-
-
-public class HistoryRecord extends DOMFace
-{
+public class HistoryRecord extends DOMFace {
 
     // list of outdated / unused history contexts
-    //public final static int CONTEXT_TYPE_PROCESS      = 0;
-    public final static int CONTEXT_TYPE_PERMISSIONS  = 2;
-    public final static int CONTEXT_TYPE_ROLE         = 5;
-    
-    //These appear to be in use currently
-    public final static int CONTEXT_TYPE_TASK         = 1;
-    public final static int CONTEXT_TYPE_DOCUMENT     = 3;
-    public final static int CONTEXT_TYPE_LEAFLET      = 4;
-    public final static int CONTEXT_TYPE_CONTAINER    = 6;
-    public final static int CONTEXT_TYPE_MEETING      = 7;
-    public final static int CONTEXT_TYPE_DECISION     = 8;
+    // public final static int CONTEXT_TYPE_PROCESS      = 0;
+    public static final int CONTEXT_TYPE_PERMISSIONS = 2;
+    public static final int CONTEXT_TYPE_ROLE = 5;
 
+    // These appear to be in use currently
+    public static final int CONTEXT_TYPE_TASK = 1;
+    public static final int CONTEXT_TYPE_DOCUMENT = 3;
+    public static final int CONTEXT_TYPE_LEAFLET = 4;
+    public static final int CONTEXT_TYPE_CONTAINER = 6;
+    public static final int CONTEXT_TYPE_MEETING = 7;
+    public static final int CONTEXT_TYPE_DECISION = 8;
 
-    public final static String EVENT_TYPE_PREFIX="event.type";
-    public final static String CONTEXT_TYPE_PREFIX="context.type";
+    public static final String EVENT_TYPE_PREFIX = "event.type";
+    public static final String CONTEXT_TYPE_PREFIX = "context.type";
 
+    // public final static String OBJECT_TYPE_USER="object.type.user";
+    // public final static String OBJECT_TYPE_ATTACHMENT="object.type.attachment";
+    // public final static String OBJECT_TYPE_PLAYER="object.type.player";
+    // public final static String OBJECT_TYPE_ROLE="object.type.role";
+    // public final static String OBJECT_TYPE_PROCESS="object.type.process";
+    // public final static String OBJECT_TYPE_TASK="object.type.task";
+    // public final static String OBJECT_TYPE_NOTE="object.type.note";
+    // public final static String OBJECT_TYPE_SUBTASK="object.type.subtask";
 
-    //public final static String OBJECT_TYPE_USER="object.type.user";
-    //public final static String OBJECT_TYPE_ATTACHMENT="object.type.attachment";
-    //public final static String OBJECT_TYPE_PLAYER="object.type.player";
-    //public final static String OBJECT_TYPE_ROLE="object.type.role";
-    //public final static String OBJECT_TYPE_PROCESS="object.type.process";
-    //public final static String OBJECT_TYPE_TASK="object.type.task";
-    //public final static String OBJECT_TYPE_NOTE="object.type.note";
-    //public final static String OBJECT_TYPE_SUBTASK="object.type.subtask";
-
-/*
+    /*
     public final static String OBJECT_CREATED="object.created";
     public final static String OBJECT_SENT_BY_EMAIL="object.sent.by.email";
     public final static String OBJECT_MODIFIED="object.modified";
@@ -83,231 +75,195 @@ public class HistoryRecord extends DOMFace
     public final static String DOC_UPDATED="document.updated";
     */
 
-
     // list of all the events.
     // states 0-6 are reserved as the old representation of 50-56
 
-    public final static int EVENT_TYPE_CREATED  = 7;
-    public final static int EVENT_TYPE_MODIFIED = 8;
-    public final static int EVENT_TYPE_DELETED  = 9;
+    public static final int EVENT_TYPE_CREATED = 7;
+    public static final int EVENT_TYPE_MODIFIED = 8;
+    public static final int EVENT_TYPE_DELETED = 9;
 
-    public final static int EVENT_TYPE_APPROVED   = 10;
-    public final static int EVENT_TYPE_REJECTED   = 11;
+    public static final int EVENT_TYPE_APPROVED = 10;
+    public static final int EVENT_TYPE_REJECTED = 11;
 
-    public final static int EVENT_TYPE_SUBTASK_CREATED = 12;
-    public final static int EVENT_TYPE_SUBLEAF_CREATED = 13;
+    public static final int EVENT_TYPE_SUBTASK_CREATED = 12;
+    public static final int EVENT_TYPE_SUBLEAF_CREATED = 13;
 
-    public final static int EVENT_TYPE_REORDERED = 14;
+    public static final int EVENT_TYPE_REORDERED = 14;
 
-    public final static int EVENT_ROLE_ADDED     = 15;
-    public final static int EVENT_ROLE_REMOVED   = 16;
-    public final static int EVENT_ROLE_MODIFIED  = 17;
+    public static final int EVENT_ROLE_ADDED = 15;
+    public static final int EVENT_ROLE_REMOVED = 16;
+    public static final int EVENT_ROLE_MODIFIED = 17;
 
+    public static final int EVENT_MEMBER_REQUEST = 20;
+    public static final int EVENT_MEMBER_ADDED = 21;
+    public static final int EVENT_PLAYER_ADDED_CUSTOM_ROLE = 41;
+    public static final int EVENT_MEMBER_REMOVED = 22;
+    public static final int EVENT_ADMIN_REQUEST = 23;
+    public static final int EVENT_ADMIN_ADDED = 24;
+    public static final int EVENT_ADMIN_REMOVED = 25;
+    public static final int EVENT_LEVEL_CHANGE = 26; // unspecified level change
+    public static final int EVENT_PLAYER_ADDED = 27;
+    public static final int EVENT_PLAYER_REMOVED = 28;
 
-    public final static int EVENT_MEMBER_REQUEST = 20;
-    public final static int EVENT_MEMBER_ADDED   = 21;
-    public final static int EVENT_PLAYER_ADDED_CUSTOM_ROLE  = 41;
-    public final static int EVENT_MEMBER_REMOVED = 22;
-    public final static int EVENT_ADMIN_REQUEST  = 23;
-    public final static int EVENT_ADMIN_ADDED    = 24;
-    public final static int EVENT_ADMIN_REMOVED  = 25;
-    public final static int EVENT_LEVEL_CHANGE   = 26;  //unspecified level change
-    public final static int EVENT_PLAYER_ADDED   = 27;
-    public final static int EVENT_PLAYER_REMOVED = 28;
+    public static final int EVENT_DOC_ADDED = 30;
+    public static final int EVENT_DOC_REMOVED = 31;
+    public static final int EVENT_DOC_UPDATED = 32;
+    public static final int EVENT_DOC_APPROVED = 33; // I read it and it is OK
+    public static final int EVENT_DOC_REJECTED = 34; // I read it and it needs improvement
+    public static final int EVENT_DOC_SKIPPED = 35; // I decided not to read it
+    public static final int EVENT_DOC_DOWNLOADED = 36;
+    public static final int EVENT_COMMENT_ADDED = 39;
+    public static final int EVENT_EMAIL_SENT = 40;
 
-    public final static int EVENT_DOC_ADDED    = 30;
-    public final static int EVENT_DOC_REMOVED  = 31;
-    public final static int EVENT_DOC_UPDATED  = 32;
-    public final static int EVENT_DOC_APPROVED = 33;  //I read it and it is OK
-    public final static int EVENT_DOC_REJECTED = 34;  //I read it and it needs improvement
-    public final static int EVENT_DOC_SKIPPED  = 35;  //I decided not to read it
-    public final static int EVENT_DOC_DOWNLOADED = 36;
-    public final static int EVENT_COMMENT_ADDED= 39;
-    public final static int EVENT_EMAIL_SENT   = 40;
+    // These used to be states 0-6 to match the states of the task,
+    // but then a new state was added to the task, but there was no room
+    // for history states.  So now, the history states are 50 + task state.
+    public static final int EVENT_TYPE_STATE_CHANGE_ERROR = 50;
+    public static final int EVENT_TYPE_STATE_CHANGE_UNSTARTED = 51;
+    public static final int EVENT_TYPE_STATE_CHANGE_STARTED = 52;
+    public static final int EVENT_TYPE_STATE_CHANGE_ACCEPTED = 53;
+    public static final int EVENT_TYPE_STATE_CHANGE_WAITING = 54;
+    public static final int EVENT_TYPE_STATE_CHANGE_COMPLETE = 55;
+    public static final int EVENT_TYPE_STATE_CHANGE_SKIPPED = 56;
+    public static final int EVENT_TYPE_STATE_CHANGE_REVIEWED = 57;
 
-    //These used to be states 0-6 to match the states of the task,
-    //but then a new state was added to the task, but there was no room
-    //for history states.  So now, the history states are 50 + task state.
-    public final static int EVENT_TYPE_STATE_CHANGE_ERROR     = 50;
-    public final static int EVENT_TYPE_STATE_CHANGE_UNSTARTED = 51;
-    public final static int EVENT_TYPE_STATE_CHANGE_STARTED   = 52;
-    public final static int EVENT_TYPE_STATE_CHANGE_ACCEPTED  = 53;
-    public final static int EVENT_TYPE_STATE_CHANGE_WAITING   = 54;
-    public final static int EVENT_TYPE_STATE_CHANGE_COMPLETE  = 55;
-    public final static int EVENT_TYPE_STATE_CHANGE_SKIPPED   = 56;
-    public final static int EVENT_TYPE_STATE_CHANGE_REVIEWED  = 57;
     // reserve states 58-69 for task state mapping
 
-    public HistoryRecord(Document definingDoc, Element definingElement, DOMFace p)
-    {
+    public HistoryRecord(Document definingDoc, Element definingElement, DOMFace p) {
         super(definingDoc, definingElement, p);
     }
 
-    public String getId()
-        throws Exception
-    {
+    public String getId() throws Exception {
         return getAttribute("id");
     }
 
-    public void setId(String id)
-        throws Exception
-    {
-        if (id.length()!=4) {
-            throw WeaverException.newBasic("Invalid id, must be a exactly four digits and no other characters");
+    public void setId(String id) throws Exception {
+        if (id.length() != 4) {
+            throw WeaverException.newBasic(
+                    "Invalid id, must be a exactly four digits and no other characters");
         }
 
-        for (int i=0; i<4; i++)
-        {
-            if (id.charAt(i)<'0' || id.charAt(i)>'9') {
-                throw WeaverException.newBasic("Invalid id, must be a exactly four digits and no other characters");
+        for (int i = 0; i < 4; i++) {
+            if (id.charAt(i) < '0' || id.charAt(i) > '9') {
+                throw WeaverException.newBasic(
+                        "Invalid id, must be a exactly four digits and no other characters");
             }
         }
         setAttribute("id", id);
     }
 
-
-
-    /**
-     * TODO: document what the event type is
-     */
-    public int getEventType()
-        throws Exception
-    {
+    /** TODO: document what the event type is */
+    public int getEventType() throws Exception {
         int i = safeConvertInt(getScalar("type"));
-        //These used to be states 0-6 to match the states of the task,
-        //but then a new state was added to the task, but there was no room
-        //for history states.  So now, the history states are 50 + task state.
-        //This code converts the old value 0-6 to new values "on the fly"
-        if (i>=0 && i<=6)
-        {
-            //increment by 50
-            i = 50+i;
-            //remember this so the file is consistent ... eventually
+        // These used to be states 0-6 to match the states of the task,
+        // but then a new state was added to the task, but there was no room
+        // for history states.  So now, the history states are 50 + task state.
+        // This code converts the old value 0-6 to new values "on the fly"
+        if (i >= 0 && i <= 6) {
+            // increment by 50
+            i = 50 + i;
+            // remember this so the file is consistent ... eventually
             setEventType(i);
         }
 
         return i;
     }
-    public void setEventType(int type)
-        throws Exception
-    {
+
+    public void setEventType(int type) throws Exception {
         setScalar("type", Integer.toString(type));
     }
 
     /**
-    * The context is the id of the "object" that the history item is
-    * about.
-    * In the case of task history, the context is the id of the task
-    * in the case of permission, the context is the name of user changed
-    * in document, the context is the path of the document
-    */
-    public String getContext()
-        throws Exception
-    {
+     * The context is the id of the "object" that the history item is about. In the case of task
+     * history, the context is the id of the task in the case of permission, the context is the name
+     * of user changed in document, the context is the path of the document
+     */
+    public String getContext() throws Exception {
         return getScalar("context");
     }
-    public void setContext(String context)
-        throws Exception
-    {
+
+    public void setContext(String context) throws Exception {
         setScalar("context", context);
     }
 
     /**
-    * Tells how to interpret the context id.  Must be one of:
-    * CONTEXT_TYPE_PROCESS      = 0;
-    * CONTEXT_TYPE_TASK         = 1;
-    * CONTEXT_TYPE_PERMISSIONS  = 2;
-    * CONTEXT_TYPE_DOCUMENT     = 3;
-    * CONTEXT_TYPE_LEAFLET      = 4;
-    * CONTEXT_TYPE_ROLE         = 5;
-    * CONTEXT_TYPE_CONTAINER    = 6;
-    * CONTEXT_TYPE_MEETING      = 7;
-    * CONTEXT_TYPE_DECISION     = 8;
-    */
+     * Tells how to interpret the context id. Must be one of: CONTEXT_TYPE_PROCESS = 0;
+     * CONTEXT_TYPE_TASK = 1; CONTEXT_TYPE_PERMISSIONS = 2; CONTEXT_TYPE_DOCUMENT = 3;
+     * CONTEXT_TYPE_LEAFLET = 4; CONTEXT_TYPE_ROLE = 5; CONTEXT_TYPE_CONTAINER = 6;
+     * CONTEXT_TYPE_MEETING = 7; CONTEXT_TYPE_DECISION = 8;
+     */
     public int getContextType() throws Exception {
         return safeConvertInt(getScalar("contextType"));
     }
+
     public void setContextType(int contextTypeVal) throws Exception {
-        if (contextTypeVal<0 || contextTypeVal>8) {
-            throw WeaverException.newBasic("Program Logic Error: history context type must be from 0 to 8.");
+        if (contextTypeVal < 0 || contextTypeVal > 8) {
+            throw WeaverException.newBasic(
+                    "Program Logic Error: history context type must be from 0 to 8.");
         }
         setScalar("contextType", Integer.toString(contextTypeVal));
     }
 
     /**
-    * This records the specific version of the context object.
-    * In the case of "reading" a document, when a new version
-    * of the document arrives, it invalidates the read note.
-    * For documents, the version is simply the timestamp of the document.
-    */
-    public long getContextVersion()
-        throws Exception
-    {
+     * This records the specific version of the context object. In the case of "reading" a document,
+     * when a new version of the document arrives, it invalidates the read note. For documents, the
+     * version is simply the timestamp of the document.
+     */
+    public long getContextVersion() throws Exception {
         return safeConvertLong(getScalar("contextVersion"));
     }
-    public void setContextVersion(long context)
-        throws Exception
-    {
+
+    public void setContextVersion(long context) throws Exception {
         setScalar("contextVersion", Long.toString(context));
     }
 
-
     /**
-    * Each history item can have text explanation, presumably
-    * entered by the user at the time of taking action.
-    */
-    public String getComments()
-        throws Exception
-    {
+     * Each history item can have text explanation, presumably entered by the user at the time of
+     * taking action.
+     */
+    public String getComments() throws Exception {
         return getScalar("comments");
     }
-    public void setComments(String comment)
-        throws Exception
-    {
-        if (comment==null)
-        {
+
+    public void setComments(String comment) throws Exception {
+        if (comment == null) {
             comment = "";
         }
         setScalar("comments", comment);
     }
 
-    /**
-    * This is the timestamp at which the history action happened.
-    */
-    public long getTimeStamp()
-        throws Exception
-    {
+    /** This is the timestamp at which the history action happened. */
+    public long getTimeStamp() throws Exception {
         return safeConvertLong(getScalar("timestamp"));
     }
-    public void setTimeStamp(long ts)
-        throws Exception
-    {
+
+    public void setTimeStamp(long ts) throws Exception {
         setScalar("timestamp", Long.toString(ts));
     }
 
     public String getResponsibleString() throws Exception {
         return UserManager.getCorrectedEmail(getScalar("responsible"));
     }
+
     public AddressListEntry getResponsible() throws Exception {
         String resp = getResponsibleString();
-        if (resp==null || resp.length()==0) {
+        if (resp == null || resp.length() == 0) {
             return null;
         }
         return AddressListEntry.findOrCreate(resp);
     }
+
     public void setResponsible(String resp) throws Exception {
-        if (resp!=null && !UserManager.isValidEmailAddress(resp)) {
+        if (resp != null && !UserManager.isValidEmailAddress(resp)) {
             throw WeaverException.newBasic("Invalid email address for responsible: %s", resp);
         }
         setScalar("responsible", resp);
     }
 
-    public static String getContextTypeName(int ptype)
-    {
-        switch (ptype)
-        {
-            //case CONTEXT_TYPE_PROCESS:
-            //    return "Process";
+    public static String getContextTypeName(int ptype) {
+        switch (ptype) {
+                // case CONTEXT_TYPE_PROCESS:
+                //    return "Process";
             case CONTEXT_TYPE_TASK:
                 return "Action Item";
             case CONTEXT_TYPE_PERMISSIONS:
@@ -327,21 +283,24 @@ public class HistoryRecord extends DOMFace
         return "Object";
     }
 
-
     /**
-    * @deprecated: remove this method when there is a chance.
-    */
-    public static HistoryRecord createHistoryRecord(NGWorkspace ngw,
-        String context, int contextType, int eventType,
-        AuthRequest ar, String comments) throws Exception
-    {
+     * @deprecated: remove this method when there is a chance.
+     */
+    public static HistoryRecord createHistoryRecord(
+            NGWorkspace ngw,
+            String context,
+            int contextType,
+            int eventType,
+            AuthRequest ar,
+            String comments)
+            throws Exception {
         return createHistoryRecord(ngw, context, contextType, 0, eventType, ar, comments);
     }
 
     /**
-     *
      * @param ngc the container (Workspace, Site, Profile) that this history is to add to
-     * @param objectID this is the ID of the object that the history is about.  Use null string if about the entire container
+     * @param objectID this is the ID of the object that the history is about. Use null string if
+     *     about the entire container
      * @param contextType
      * @param contextVersion
      * @param eventType
@@ -350,17 +309,27 @@ public class HistoryRecord extends DOMFace
      * @return
      * @throws Exception
      */
-    public static HistoryRecord createHistoryRecord(NGWorkspace ngc,
-        String objectID, int contextType, long contextVersion, int eventType,
-        AuthRequest ar, String comments) throws Exception
-    {
-        //there are certain situations where the editor is doing automatic saves, and creating the same
-        //history item over and over.  This suppresses all the duplicate history records, but looking
-        //at the last history.  If it is the same, then it simply updates the timestamp, and retains
-        //that, without creating a new history item.
+    public static HistoryRecord createHistoryRecord(
+            NGWorkspace ngc,
+            String objectID,
+            int contextType,
+            long contextVersion,
+            int eventType,
+            AuthRequest ar,
+            String comments)
+            throws Exception {
+        // there are certain situations where the editor is doing automatic saves, and creating the
+        // same
+        // history item over and over.  This suppresses all the duplicate history records, but
+        // looking
+        // at the last history.  If it is the same, then it simply updates the timestamp, and
+        // retains
+        // that, without creating a new history item.
         HistoryRecord hr = ngc.getLatestHistory();
-        if (hr!=null && hr.getContextType() == contextType && hr.getContext().equals(objectID) &&
-                hr.getEventType() == eventType) {
+        if (hr != null
+                && hr.getContextType() == contextType
+                && hr.getContext().equals(objectID)
+                && hr.getEventType() == eventType) {
             hr.setTimeStamp(ar.nowTime);
             return hr;
         }
@@ -377,37 +346,30 @@ public class HistoryRecord extends DOMFace
     }
 
     /**
-     * Creates a history record appropriate for the entire container
-     * without referring to any part within the container.
+     * Creates a history record appropriate for the entire container without referring to any part
+     * within the container.
      */
-    public static HistoryRecord createContainerHistoryRecord(NGWorkspace ngc,
-            int eventType, AuthRequest ar, String comments) throws Exception
-    {
-        return createHistoryRecord(ngc, "",  HistoryRecord.CONTEXT_TYPE_CONTAINER,
-                0, eventType, ar, comments);
+    public static HistoryRecord createContainerHistoryRecord(
+            NGWorkspace ngc, int eventType, AuthRequest ar, String comments) throws Exception {
+        return createHistoryRecord(
+                ngc, "", HistoryRecord.CONTEXT_TYPE_CONTAINER, 0, eventType, ar, comments);
     }
 
-    /**
-     * Creates a history record appropriate for a change to a topic.
-     */
-    public static HistoryRecord createNoteHistoryRecord(NGWorkspace ngc,
-            TopicRecord note, int eventType, AuthRequest ar, String comments) throws Exception
-    {
-        return createHistoryRecord(ngc, note.getId(),  HistoryRecord.CONTEXT_TYPE_LEAFLET,
-                0, eventType, ar, comments);
+    /** Creates a history record appropriate for a change to a topic. */
+    public static HistoryRecord createNoteHistoryRecord(
+            NGWorkspace ngc, TopicRecord note, int eventType, AuthRequest ar, String comments)
+            throws Exception {
+        return createHistoryRecord(
+                ngc, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET, 0, eventType, ar, comments);
     }
 
-
-
-    public String getCombinedKey()
-        throws Exception
-    {
+    public String getCombinedKey() throws Exception {
         String messageID;
         int ctx = getContextType();
         switch (ctx) {
-            //case CONTEXT_TYPE_PROCESS:
-            //    messageID = "history.process.";
-            //    break;
+                // case CONTEXT_TYPE_PROCESS:
+                //    messageID = "history.process.";
+                //    break;
             case CONTEXT_TYPE_TASK:
                 messageID = "history.task.";
                 break;
@@ -430,191 +392,189 @@ public class HistoryRecord extends DOMFace
                 messageID = "history.decision.";
                 break;
             case CONTEXT_TYPE_CONTAINER:
-                //THIS IS NEVER USED!
+                // THIS IS NEVER USED!
                 messageID = "history.container.";
                 break;
             default:
-                throw WeaverException.newBasic("HistoryRecord.getCombinedKey does "
-                + "not know how to handle a context type value: %s ", ctx);
+                throw WeaverException.newBasic(
+                        "HistoryRecord.getCombinedKey does "
+                                + "not know how to handle a context type value: %s ",
+                        ctx);
         }
 
         int event = getEventType();
-        switch (event)
-        {
+        switch (event) {
             case EVENT_TYPE_CREATED:
-                //history.note.created  506
-                //history.process.created   397
-                //history.role.created  15
-                //history.task.created  1028
-                return messageID+"created";
+                // history.note.created  506
+                // history.process.created   397
+                // history.role.created  15
+                // history.task.created  1028
+                return messageID + "created";
             case EVENT_TYPE_MODIFIED:
-                //history.note.modified 1617
-                //history.process.modified  23
-                //history.task.modified 2014
-                return messageID+"modified";
+                // history.note.modified 1617
+                // history.process.modified  23
+                // history.task.modified 2014
+                return messageID + "modified";
             case EVENT_TYPE_DELETED:
-                //history.note.deleted  35
-                return messageID+"deleted";
+                // history.note.deleted  35
+                return messageID + "deleted";
             case EVENT_TYPE_APPROVED:
-                //history.task.approved 16
-                return messageID+"approved";
+                // history.task.approved 16
+                return messageID + "approved";
             case EVENT_TYPE_REJECTED:
-                //history.task.rejected 2
-                return messageID+"rejected";
+                // history.task.rejected 2
+                return messageID + "rejected";
             case EVENT_TYPE_SUBTASK_CREATED:
-                //history.task.subtask.add  113
-                return messageID+"subtask.add";
+                // history.task.subtask.add  113
+                return messageID + "subtask.add";
             case EVENT_TYPE_SUBLEAF_CREATED:
-                //history.task.subproject.add   9
-                return messageID+"subproject.add";
+                // history.task.subproject.add   9
+                return messageID + "subproject.add";
             case EVENT_TYPE_REORDERED:
-                return messageID+"reordered";
+                return messageID + "reordered";
             case EVENT_ROLE_ADDED:
-                //history.role.role.add 10
-                return messageID+"role.add";
+                // history.role.role.add 10
+                return messageID + "role.add";
             case EVENT_ROLE_REMOVED:
-                return messageID+"role.remove";
+                return messageID + "role.remove";
             case EVENT_ROLE_MODIFIED:
-                //history.role.role.mod 22
-                return messageID+"role.mod";
+                // history.role.role.mod 22
+                return messageID + "role.mod";
             case EVENT_TYPE_STATE_CHANGE_ERROR:
-                //history.process.state.error   2
-                return messageID+"state.error";
+                // history.process.state.error   2
+                return messageID + "state.error";
             case EVENT_TYPE_STATE_CHANGE_UNSTARTED:
-                return messageID+"state.unstarted";
+                return messageID + "state.unstarted";
             case EVENT_TYPE_STATE_CHANGE_STARTED:
-                //history.task.state.started    65
-                return messageID+"state.started";
+                // history.task.state.started    65
+                return messageID + "state.started";
             case EVENT_TYPE_STATE_CHANGE_ACCEPTED:
-                //history.task.state.accepted   206
-                return messageID+"state.accepted";
+                // history.task.state.accepted   206
+                return messageID + "state.accepted";
             case EVENT_TYPE_STATE_CHANGE_WAITING:
-                return messageID+"state.waiting";
+                return messageID + "state.waiting";
             case EVENT_TYPE_STATE_CHANGE_COMPLETE:
-                //history.task.state.completed  553
-                return messageID+"state.completed";
+                // history.task.state.completed  553
+                return messageID + "state.completed";
             case EVENT_TYPE_STATE_CHANGE_SKIPPED:
-                return messageID+"state.skipped";
+                return messageID + "state.skipped";
             case EVENT_TYPE_STATE_CHANGE_REVIEWED:
-                return messageID+"state.reviewed";
+                return messageID + "state.reviewed";
             case EVENT_MEMBER_REQUEST:
-                //history.permission.member.request 26
-                return messageID+"member.request";
+                // history.permission.member.request 26
+                return messageID + "member.request";
             case EVENT_MEMBER_ADDED:
-                //history.permission.member.add 179
-                return messageID+"member.add";
+                // history.permission.member.add 179
+                return messageID + "member.add";
             case EVENT_MEMBER_REMOVED:
-                //history.permission.member.remove  21
-                return messageID+"member.remove";
+                // history.permission.member.remove  21
+                return messageID + "member.remove";
             case EVENT_ADMIN_REQUEST:
-                //history.permission.admin.request  12
-                return messageID+"admin.request";
+                // history.permission.admin.request  12
+                return messageID + "admin.request";
             case EVENT_ADMIN_ADDED:
-                //history.permission.admin.add  6
-                return messageID+"admin.add";
+                // history.permission.admin.add  6
+                return messageID + "admin.add";
             case EVENT_ADMIN_REMOVED:
-                //history.permission.admin.remove   3
-                return messageID+"admin.remove";
+                // history.permission.admin.remove   3
+                return messageID + "admin.remove";
             case EVENT_LEVEL_CHANGE:
-                //history.doc.access.level.change: 1
-                //history.note.access.level.change  39
-                //history.permission.access.level.change    1
-                //history.role.access.level.change  122
-                return messageID+"access.level.change";
+                // history.doc.access.level.change: 1
+                // history.note.access.level.change  39
+                // history.permission.access.level.change    1
+                // history.role.access.level.change  122
+                return messageID + "access.level.change";
             case EVENT_PLAYER_ADDED:
-                //history.permission.player.add 233
-                //history.role.player.add   322
-                return messageID+"player.add";
+                // history.permission.player.add 233
+                // history.role.player.add   322
+                return messageID + "player.add";
             case EVENT_PLAYER_REMOVED:
-                //history.role.player.removed   188
-                return messageID+"player.removed";
+                // history.role.player.removed   188
+                return messageID + "player.removed";
             case EVENT_PLAYER_ADDED_CUSTOM_ROLE:
-                //history.permission.player.custom  105
-                return messageID+"player.custom";
+                // history.permission.player.custom  105
+                return messageID + "player.custom";
             case EVENT_DOC_ADDED:
-                //history.doc.attached  1899
-                return messageID+"attached";
+                // history.doc.attached  1899
+                return messageID + "attached";
             case EVENT_DOC_REMOVED:
-                //history.doc.removed   47
-                return messageID+"removed";
+                // history.doc.removed   47
+                return messageID + "removed";
             case EVENT_DOC_UPDATED:
-                //history.doc.updated   414
-                return messageID+"updated";
+                // history.doc.updated   414
+                return messageID + "updated";
             case EVENT_DOC_APPROVED:
-                //history.doc.mark.read   7
-                return messageID+"mark.read";
+                // history.doc.mark.read   7
+                return messageID + "mark.read";
             case EVENT_DOC_REJECTED:
-                //history.doc.mark.reject   1
-                return messageID+"mark.reject";
+                // history.doc.mark.reject   1
+                return messageID + "mark.reject";
             case EVENT_DOC_SKIPPED:
-                return messageID+"mark.skipped";
+                return messageID + "mark.skipped";
             case EVENT_DOC_DOWNLOADED:
-                return messageID+"downloaded";
+                return messageID + "downloaded";
             case EVENT_EMAIL_SENT:
-                //history.note.email.sent   1173
-                //history.process.email.sent  1
-                return messageID+"email.sent";
+                // history.note.email.sent   1173
+                // history.process.email.sent  1
+                return messageID + "email.sent";
             default:
-                return messageID+"((HISTORY TYPE "+event+"))";
+                return messageID + "((HISTORY TYPE " + event + "))";
         }
-
     }
 
-/*
- *
- * Performed a study of the actual history states that
- * were used in the 7 year history of the Nugen server
- * in the office.   Some of these might have been in the
- * early early years and no longer produced.
- *
-history.doc.access.level.change  1
-history.doc.attached    1899
-history.doc.mark.read   7
-history.doc.mark.reject 1
-history.doc.removed 47
-history.doc.updated 414
-history.note.access.level.change    39
-history.note.created    506
-history.note.deleted    35
-history.note.email.sent 1173
-history.note.modified   1617
-history.permission.access.level.change  1
-history.permission.admin.add    6
-history.permission.admin.remove 3
-history.permission.admin.request    12
-history.permission.member.add   179
-history.permission.member.remove    21
-history.permission.member.request   26
-history.permission.player.add   233
-history.permission.player.custom    105
-history.process.created 397
-history.process.email.sent  1
-history.process.modified    23
-history.process.state.error 2
-history.role.access.level.change    122
-history.role.created    15
-history.role.player.add 322
-history.role.player.removed 188
-history.role.role.add   10
-history.role.role.mod   22
-history.task.approved   16
-history.task.created    1028
-history.task.modified   2014
-history.task.rejected   2
-history.task.state.accepted 206
-history.task.state.completed    553
-history.task.state.started  65
-history.task.subproject.add 9
-history.task.subtask.add    113
- *
- *
- *
- */
+    /*
+     *
+     * Performed a study of the actual history states that
+     * were used in the 7 year history of the Nugen server
+     * in the office.   Some of these might have been in the
+     * early early years and no longer produced.
+     *
+    history.doc.access.level.change  1
+    history.doc.attached    1899
+    history.doc.mark.read   7
+    history.doc.mark.reject 1
+    history.doc.removed 47
+    history.doc.updated 414
+    history.note.access.level.change    39
+    history.note.created    506
+    history.note.deleted    35
+    history.note.email.sent 1173
+    history.note.modified   1617
+    history.permission.access.level.change  1
+    history.permission.admin.add    6
+    history.permission.admin.remove 3
+    history.permission.admin.request    12
+    history.permission.member.add   179
+    history.permission.member.remove    21
+    history.permission.member.request   26
+    history.permission.player.add   233
+    history.permission.player.custom    105
+    history.process.created 397
+    history.process.email.sent  1
+    history.process.modified    23
+    history.process.state.error 2
+    history.role.access.level.change    122
+    history.role.created    15
+    history.role.player.add 322
+    history.role.player.removed 188
+    history.role.role.add   10
+    history.role.role.mod   22
+    history.task.approved   16
+    history.task.created    1028
+    history.task.modified   2014
+    history.task.rejected   2
+    history.task.state.accepted 206
+    history.task.state.completed    553
+    history.task.state.started  65
+    history.task.subproject.add 9
+    history.task.subtask.add    113
+     *
+     *
+     *
+     */
 
-    public static String convertEventTypeToString(int type)
-    {
-        switch (type)
-        {
+    public static String convertEventTypeToString(int type) {
+        switch (type) {
             case EVENT_TYPE_CREATED:
                 return "created";
             case EVENT_TYPE_MODIFIED:
@@ -690,25 +650,19 @@ history.task.subtask.add    113
             case EVENT_COMMENT_ADDED:
                 return "extended with a comment";
             default:
-                return "modified (#"+type+")";
+                return "modified (#" + type + ")";
         }
     }
 
-
-    public static void sortByTimeStamp(List<HistoryRecord> list)
-    {
+    public static void sortByTimeStamp(List<HistoryRecord> list) {
         Collections.sort(list, new HistoryRecord.HistoryTimeStampComparator());
     }
 
-    public static void sortByContext(List<HistoryRecord> list)
-    {
+    public static void sortByContext(List<HistoryRecord> list) {
         Collections.sort(list, new HistoryRecord.HistoryContextComparator());
     }
 
-
-
-    public static class HistoryTimeStampComparator implements Comparator<HistoryRecord>
-    {
+    public static class HistoryTimeStampComparator implements Comparator<HistoryRecord> {
         public HistoryTimeStampComparator() {}
 
         public int compare(HistoryRecord o1, HistoryRecord o2) {
@@ -722,15 +676,13 @@ history.task.subtask.add    113
                     return -1;
                 }
                 return 1;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return 0;
             }
         }
     }
 
-    public static class HistoryContextComparator implements Comparator<HistoryRecord>
-    {
+    public static class HistoryContextComparator implements Comparator<HistoryRecord> {
         public HistoryContextComparator() {}
 
         public int compare(HistoryRecord o1, HistoryRecord o2) {
@@ -758,13 +710,11 @@ history.task.subtask.add    113
                     return 1;
                 }
                 return 0;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return 0;
             }
         }
     }
-
 
     public void writeLocalizedHistoryMessage(NGWorkspace ngw, AuthRequest ar) throws Exception {
         /*
@@ -785,16 +735,15 @@ history.task.subtask.add    113
         ar.writeHtml(convertEventTypeToString(getEventType()));
         ar.write(" by ");
         AddressListEntry ale = getResponsible();
-        if (ale==null) {
+        if (ale == null) {
             ar.write("unknown");
-        }
-        else {
+        } else {
             ale.writeLink(ar);
         }
         ar.write(" on ");
         SectionUtil.nicePrintDate(ar.w, getTimeStamp(), null);
         String comment = this.getComments();
-        if (comment!=null && comment.length()>0) {
+        if (comment != null && comment.length() > 0) {
             ar.write(" - ");
             ar.writeHtml(comment);
         }
@@ -822,44 +771,38 @@ history.task.subtask.add    113
         String objectKey = getContext();
         if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
             GoalRecord gr = ngw.getGoalOrNull(objectKey);
-            if (gr!=null) {
+            if (gr != null) {
                 return gr.getSynopsis();
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
             AttachmentRecord att = ngw.findAttachmentByID(objectKey);
-            if (att!=null) {
+            if (att != null) {
                 return att.getDisplayName();
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
             TopicRecord nr = ngw.getDiscussionTopic(objectKey);
-            if (nr!=null) {
+            if (nr != null) {
                 return nr.getSubject();
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             MeetingRecord meet = ngw.findMeetingOrNull(objectKey);
-            if (meet!=null) {
-                return meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
+            if (meet != null) {
+                return meet.getName() + " @ " + SectionUtil.getNicePrintDate(meet.getStartTime());
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             DecisionRecord dr = ngw.findDecisionOrNull(safeConvertInt(objectKey));
-            if (dr!=null) {
+            if (dr != null) {
                 String val = dr.getDecision();
-                if (val.length()>30) {
-                    val = val.substring(0,30);
+                if (val.length() > 30) {
+                    val = val.substring(0, 30);
                 }
                 return "#" + dr.getNumber() + ": " + val;
             }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
             return objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
             NGRole role = ngw.getRole(objectKey);
-            if (role!=null) {
+            if (role != null) {
                 return role.getName();
             }
         }
@@ -871,38 +814,30 @@ history.task.subtask.add    113
     }
 
     /**
-     * Get a 'standard' URL for accessing object based on their type and ID.
-     * Only work on a single project workspace.
+     * Get a 'standard' URL for accessing object based on their type and ID. Only work on a single
+     * project workspace.
      */
-    public static String lookUpResourceURL(AuthRequest ar, NGWorkspace ngw,
-            int contextType, String contextKey) throws Exception {
+    public static String lookUpResourceURL(
+            AuthRequest ar, NGWorkspace ngw, int contextType, String contextKey) throws Exception {
 
-        //always encode to avoid problems with injection
+        // always encode to avoid problems with injection
         String objectKey = URLEncoder.encode(contextKey, "UTF-8");
 
         if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-            return  ar.getResourceURL(ngw, "task"+objectKey+".htm");
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            return ar.getResourceURL(ngw, "DocDetail.htm?aid="+objectKey);
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            return ar.getResourceURL(ngw, "NoteZoom"+objectKey+".htm");
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            return ar.getResourceURL(ngw, "MeetingHtml.htm?id=")+objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-            return ar.getResourceURL(ngw, "DecisionList.htm#DEC")+objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            return ar.getResourceURL(ngw, "findUser.htm?id=")+objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+            return ar.getResourceURL(ngw, "task" + objectKey + ".htm");
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
+            return ar.getResourceURL(ngw, "DocDetail.htm?aid=" + objectKey);
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
+            return ar.getResourceURL(ngw, "NoteZoom" + objectKey + ".htm");
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
+            return ar.getResourceURL(ngw, "MeetingHtml.htm?id=") + objectKey;
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+            return ar.getResourceURL(ngw, "DecisionList.htm#DEC") + objectKey;
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+            return ar.getResourceURL(ngw, "findUser.htm?id=") + objectKey;
+        } else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
             return ar.getResourceURL(ngw, "RoleManagement.htm");
         }
         return ar.getResourceURL(ngw, "FrontPage.htm");
     }
-
-
 }

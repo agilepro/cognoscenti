@@ -20,43 +20,38 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
-* A role may have many terms, and they will be played
-* by different people each term.  A term will have a
-* specific start date, and end date.
-* Some roles will not have terms, and they are perpetual
-* meaning that the same person holds them forever.
-* Old terms become a kind of history behind who
-* has played the role in the past.
-* 
-* Terms have a complete cycle around selecting people
-* to play a particular term of a particular role.
-* 
-* JSON Members:
-* 
-* key: this is an arbitrary (unique) key
-* 
-* state: Nominating, Proposing, Completed
-* 
-* termStart: TimeStamp for the beginning of the term
-* 
-* termEnd: TimeStamp for the end of the term
-* 
-* players: a list of people assigned to this term
-* 
-* nominations: a list of RoleNomination objects, key=owner
-* 
-* responses: a list of RoleNomResponse objects, key=owner
-*/
+ * A role may have many terms, and they will be played by different people each term. A term will
+ * have a specific start date, and end date. Some roles will not have terms, and they are perpetual
+ * meaning that the same person holds them forever. Old terms become a kind of history behind who
+ * has played the role in the past.
+ *
+ * <p>Terms have a complete cycle around selecting people to play a particular term of a particular
+ * role.
+ *
+ * <p>JSON Members:
+ *
+ * <p>key: this is an arbitrary (unique) key
+ *
+ * <p>state: Nominating, Proposing, Completed
+ *
+ * <p>termStart: TimeStamp for the beginning of the term
+ *
+ * <p>termEnd: TimeStamp for the end of the term
+ *
+ * <p>players: a list of people assigned to this term
+ *
+ * <p>nominations: a list of RoleNomination objects, key=owner
+ *
+ * <p>responses: a list of RoleNomResponse objects, key=owner
+ */
 public class RoleTerm extends DOMFace {
 
     public RoleTerm(Document doc, Element ele, DOMFace p) {
@@ -66,10 +61,8 @@ public class RoleTerm extends DOMFace {
     public String getKey() {
         return getAttribute("key");
     }
-    /**
-     * Note, this is the 'key',
-     * so don't change it if you have references elsewhere.
-     */
+
+    /** Note, this is the 'key', so don't change it if you have references elsewhere. */
     public void setKey(String newKey) {
         setAttribute("key", newKey);
     }
@@ -85,9 +78,11 @@ public class RoleTerm extends DOMFace {
         }
         return playerList;
     }
+
     public void addPlayer(AddressListEntry newMember) throws Exception {
         addVectorValue("players", newMember.getUniversalId());
     }
+
     public void removePlayer(AddressListEntry oldMember) throws Exception {
         String whichId = oldMember.getUniversalId();
         UserProfile up = oldMember.getUserProfile();
@@ -96,12 +91,12 @@ public class RoleTerm extends DOMFace {
             String childVal = DOMUtils.textValueOf(child, false);
             if (childVal.equalsIgnoreCase(whichId)) {
                 fEle.removeChild(child);
-            }
-            else if (up != null && up.hasAnyId(childVal)) {
+            } else if (up != null && up.hasAnyId(childVal)) {
                 fEle.removeChild(child);
             }
         }
     }
+
     public void removePlayerCompletely(UserRef user) throws Exception {
         List<String> oldPlayers = getVector("players");
         List<String> newPlayers = new ArrayList<String>();
@@ -112,27 +107,29 @@ public class RoleTerm extends DOMFace {
         }
         this.setVector("players", newPlayers);
     }
+
     public void clear() {
         clearVector("players");
     }
+
     public boolean isComplete() {
         String state = this.getAttribute("state");
         return "Completed".equals(state);
     }
+
     public boolean includesDate(long testDate) {
         long termStart = getAttributeLong("termStart");
         long termEnd = getAttributeLong("termEnd");
         return (testDate >= termStart && testDate < termEnd);
     }
-    
-    
+
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "key");
         extractAttributeString(jObj, "state");
         extractAttributeLong(jObj, "termStart");
         extractAttributeLong(jObj, "termEnd");
-        
+
         JSONArray playerArray = new JSONArray();
         List<String> players = getVector("players");
         for (String player : players) {
@@ -142,22 +139,23 @@ public class RoleTerm extends DOMFace {
             }
         }
         jObj.put("players", playerArray);
-        
+
         extractCollection(jObj, "nominations", RoleNomination.class);
         extractCollection(jObj, "responses", RoleNomResponse.class);
         return jObj;
     }
+
     public void updateFromJSON(JSONObject termInfo) throws Exception {
         updateAttributeString("state", termInfo);
         updateAttributeLong("termStart", termInfo);
         updateAttributeLong("termEnd", termInfo);
-        
+
         if (termInfo.has("players")) {
             JSONArray playerArray = termInfo.getJSONArray("players");
             List<String> players = AddressListEntry.uidListfromJSONArray(playerArray);
             this.setVector("players", players);
         }
-        
+
         updateCollection(termInfo, "nominations", RoleNomination.class, "owner");
         updateCollection(termInfo, "responses", RoleNomResponse.class, "owner");
     }

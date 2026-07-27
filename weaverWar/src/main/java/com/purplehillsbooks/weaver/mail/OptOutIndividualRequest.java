@@ -25,11 +25,10 @@ import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 
 /**
-* This is for email messages which are send in order to satisfy a
-* request that a user makes themselves.  For example, requesting
-* to be in a particular role, you get the message confirming that,
-* there is nothing you can (or would want) to do to avoid that.
-*/
+ * This is for email messages which are send in order to satisfy a request that a user makes
+ * themselves. For example, requesting to be in a particular role, you get the message confirming
+ * that, there is nothing you can (or would want) to do to avoid that.
+ */
 public class OptOutIndividualRequest extends OptOutAddr {
 
     public OptOutIndividualRequest(AddressListEntry _assignee) {
@@ -38,14 +37,14 @@ public class OptOutIndividualRequest extends OptOutAddr {
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         writeSentToMsg(clone);
-        clone.write("You have received this message in order to carry out the request that you made. ");
+        clone.write(
+                "You have received this message in order to carry out the request that you made. ");
         writeConcludingPart(clone);
     }
-    
+
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         JSONObject jo = super.getUnsubscribeJSON(ar);
         jo.put("isIndividualRequest", true);
         return jo;
     }
-
 }

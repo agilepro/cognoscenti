@@ -28,20 +28,22 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
-/**
-* This is for email messages which are sent to the
-* subscriber of a topic
-*/
+/** This is for email messages which are sent to the subscriber of a topic */
 public class OptOutTopicSubscriber extends OptOutAddr {
 
     String containerID;
     String siteID;
     TopicRecord topic;
 
-    public OptOutTopicSubscriber(AddressListEntry _assignee, String siteKey, String containerKey, TopicRecord tr) {
+    public OptOutTopicSubscriber(
+            AddressListEntry _assignee, String siteKey, String containerKey, TopicRecord tr) {
         super(_assignee);
-        if (assignee.getEmail()==null || assignee.getEmail().length()==0) {
-            throw new RuntimeException("Somehow got an opt out addressee with a missing email address: "+assignee.getName()+" / "+assignee.getUniversalId() );
+        if (assignee.getEmail() == null || assignee.getEmail().length() == 0) {
+            throw new RuntimeException(
+                    "Somehow got an opt out addressee with a missing email address: "
+                            + assignee.getName()
+                            + " / "
+                            + assignee.getUniversalId());
         }
         containerID = containerKey;
         siteID = siteKey;
@@ -50,27 +52,30 @@ public class OptOutTopicSubscriber extends OptOutAddr {
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
-        if (emailId==null || emailId.length()==0) {
-            throw WeaverException.newBasic("There is a problem with this addressee, the email field is blank????");
+        if (emailId == null || emailId.length() == 0) {
+            throw WeaverException.newBasic(
+                    "There is a problem with this addressee, the email field is blank????");
         }
         NGPageIndex ngpi = clone.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngc = ngpi.getWorkspace();
 
-        //if the workspace no longer exists, then just use the generic response.
-        if (ngc==null) {
+        // if the workspace no longer exists, then just use the generic response.
+        if (ngc == null) {
             super.writeUnsubscribeLink(clone);
             return;
         }
 
         writeSentToMsg(clone);
-        clone.write("\n You have received this message because you are subscribed to the topic <b><a href=\"");
+        clone.write(
+                "\n You have received this message because you are subscribed to the topic <b><a href=\"");
         clone.write(clone.baseURL);
-        clone.write("NoteZoom"+topic.getId()+".htm\">");
+        clone.write("NoteZoom" + topic.getId() + ".htm\">");
         clone.writeHtml(topic.getSubject());
         clone.write("</a></b> in the '");
         ngc.writeContainerLink(clone, 100);
         clone.write("' workspace.  ");
-        clone.write("Visit that topic if you no longer want to be subscribed and receive email for the discussion topic.");
+        clone.write(
+                "Visit that topic if you no longer want to be subscribed and receive email for the discussion topic.");
         writeConcludingPart(clone);
     }
 
@@ -78,11 +83,12 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         JSONObject jo = super.getUnsubscribeJSON(ar);
         NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngw = ngpi.getWorkspace();
-        jo.put("topicName",  topic.getSubject());
-        jo.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, "NoteZoom"+topic.getId()+".htm"));
+        jo.put("topicName", topic.getSubject());
+        jo.put(
+                "topicURL",
+                ar.baseURL + ar.getResourceURL(ngw, "NoteZoom" + topic.getId() + ".htm"));
         jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);
         return jo;
     }
-
 }

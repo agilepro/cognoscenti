@@ -23,67 +23,62 @@ package com.purplehillsbooks.weaver;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 
-
 /**
-* A license is also known as a "free pass".
-*
-* This license is use when a user accesses a project, and does not have
-* a project specific license.  In that case the user's privileges are
-* used to control access to the project.  This license is necessary
-* when creating a user action item list, so that proper licensed links can be created
-* without actually creating unique licenses in each of the projects
-* involved.
-*
-* This license has a format that can be recognized with two parts.
-* The first part is the users key, the second is a token that is
-* generated occasionally so that others can not just guess the
-* license value and access all the information.
-*/
-public class LicenseForUser implements License
-{
+ * A license is also known as a "free pass".
+ *
+ * <p>This license is use when a user accesses a project, and does not have a project specific
+ * license. In that case the user's privileges are used to control access to the project. This
+ * license is necessary when creating a user action item list, so that proper licensed links can be
+ * created without actually creating unique licenses in each of the projects involved.
+ *
+ * <p>This license has a format that can be recognized with two parts. The first part is the users
+ * key, the second is a token that is generated occasionally so that others can not just guess the
+ * license value and access all the information.
+ */
+public class LicenseForUser implements License {
 
     public UserProfile uProf;
 
     public LicenseForUser(UserProfile up) throws Exception {
-        if (up==null) {
+        if (up == null) {
             throw WeaverException.newBasic(
-                "Program Logic Error: Unable to create a LicenseForUser on a null user profile");
+                    "Program Logic Error: Unable to create a LicenseForUser on a null user profile");
         }
         uProf = up;
     }
 
     public static LicenseForUser getUserLicense(License other) throws Exception {
         if (other instanceof LicenseForUser) {
-            return (LicenseForUser)other;
+            return (LicenseForUser) other;
         }
 
         UserProfile up = UserManager.lookupUserByAnyId(other.getCreator());
-        if (up==null) {
+        if (up == null) {
             throw WeaverException.newBasic(
-                "Attempt to use a user license for a user that does not exist");
+                    "Attempt to use a user license for a user that does not exist");
         }
         return new LicenseForUser(up);
     }
 
     public String getId() throws Exception {
         String token = uProf.getLicenseToken();
-        return uProf.getKey()+"!"+token;
+        return uProf.getKey() + "!" + token;
     }
 
     public String getNotes() throws Exception {
-        return "This license for the user: "+uProf.getName();
+        return "This license for the user: " + uProf.getName();
     }
 
     public void setNotes(String newVal) throws Exception {
-        //ignore this
+        // ignore this
     }
 
-    public String getCreator() throws Exception  {
+    public String getCreator() throws Exception {
         return uProf.getUniversalId();
     }
 
     public void setCreator(String newVal) throws Exception {
-        //ignore this
+        // ignore this
     }
 
     public long getTimeout() throws Exception {
@@ -91,24 +86,25 @@ public class LicenseForUser implements License
     }
 
     public void setTimeout(long timeout) throws Exception {
-        //ignore this
+        // ignore this
     }
 
     public String getRole() throws Exception {
-        //TODO: we have to return somthing.
-        //Member is pretty general.
+        // TODO: we have to return somthing.
+        // Member is pretty general.
         return "MembersRole";
     }
 
     public void setRole(String newRole) throws Exception {
-        //ignore this
+        // ignore this
     }
 
     public boolean isReadOnly() throws Exception {
         return false;
     }
+
     public void setReadOnly(boolean isReadOnly) throws Exception {
-        //ignore this
+        // ignore this
     }
 
     public JSONObject getJSON() throws Exception {
@@ -119,5 +115,4 @@ public class LicenseForUser implements License
         licenseInfo.put("role", getRole());
         return licenseInfo;
     }
-
 }

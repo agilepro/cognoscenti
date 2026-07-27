@@ -20,13 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -49,24 +44,27 @@ import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
 
 @Controller
 public class ProjectSettingController extends BaseController {
 
-
-
     //////////////////////// MAIN VIEWS ////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/LimitedAccess.htm", method = RequestMethod.GET)
-    public void LimitedAccess(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void LimitedAccess(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
@@ -74,8 +72,11 @@ public class ProjectSettingController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/AddSomething.htm", method = RequestMethod.GET)
-    public void AddSomething(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void AddSomething(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
@@ -87,94 +88,127 @@ public class ProjectSettingController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/Personal.htm", method = RequestMethod.GET)
-    public void showPersonalTab(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void showPersonalTab(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "Personal.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleManagement.htm", method = RequestMethod.GET)
-    public void roleManagement(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void roleManagement(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleManagement.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleMap.htm", method = RequestMethod.GET)
-    public void roleMap(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void roleMap(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleMap.jsp");
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/MultiInvite.htm", method = RequestMethod.GET)
-    public void MultiInvite(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void MultiInvite(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MultiInvite.jsp");
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/UserAdd.htm", method = RequestMethod.GET)
-    public void UserAdd(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void UserAdd(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "UserAdd.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleDefine.htm", method = RequestMethod.GET)
-    public void roleDefine(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void roleDefine(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleDefine.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleNomination.htm", method = RequestMethod.GET)
-    public void roleNomination(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void roleNomination(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleNomination.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/RoleRequest.htm", method = RequestMethod.GET)
-    public void remindersTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void remindersTab(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleRequest.jsp");
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/AdminSettings.htm", method = RequestMethod.GET)
-    public void showAdminTab(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void showAdminTab(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerWorkspaceRequired(ar, siteId, pageId);
         if (ar.isAdmin()) {
             streamJSP(ar, "AdminSettings.jsp");
-        }
-        else {
+        } else {
             showJSPMembers(ar, siteId, pageId, "AdminSettings.jsp");
         }
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/AdminStats.htm", method = RequestMethod.GET)
-    public void showAdminStats(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void showAdminStats(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerWorkspaceRequired(ar, siteId, pageId);
         showJSPMembers(ar, siteId, pageId, "AdminStats.jsp");
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/AdminAPI.htm", method = RequestMethod.GET)
-    public void showAdminAPI(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+    public void showAdminAPI(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerWorkspaceRequired(ar, siteId, pageId);
@@ -183,174 +217,193 @@ public class ProjectSettingController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/LabelList.htm", method = RequestMethod.GET)
     public void labelList(
-            @PathVariable String pageId, @PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
+            @PathVariable String pageId,
+            @PathVariable String siteId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "LabelList.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/EmailCreated.htm", method = RequestMethod.GET)
-    public void getEmailRecordsPage( @PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void getEmailRecordsPage(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "EmailCreated.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/EmailSent.htm", method = RequestMethod.GET)
-    public void emailSent( @PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void emailSent(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "EmailSent.jsp");
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/EmailMsg.htm", method = RequestMethod.GET)
-    public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void emailMsg(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         long msgId = ar.reqParamLong("msg");
         MailInst emailMsg = EmailSender.findEmailById(ngw, msgId);
-        if (emailMsg==null) {
-            showDisplayWarning(ar, "Unable to find an existing email message with id: "+msgId);
+        if (emailMsg == null) {
+            showDisplayWarning(ar, "Unable to find an existing email message with id: " + msgId);
             return;
         }
         showJSPDepending(ar, ngw, "EmailMsg.jsp", true);
     }
 
-
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/EmailCompose.htm", method = RequestMethod.GET)
     public void sendNote(
-            @PathVariable String pageId, @PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            @PathVariable String pageId,
+            @PathVariable String siteId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
         String eGenId = ar.defParam("id", null);
-        if (eGenId!=null) {
+        if (eGenId != null) {
             EmailGenerator eGen = ngw.getEmailGeneratorOrNull(eGenId);
-            if (eGen==null) {
-                showDisplayWarning(ar, "Can not find an email generator with the id: "+eGenId);
+            if (eGen == null) {
+                showDisplayWarning(ar, "Can not find an email generator with the id: " + eGenId);
                 return;
             }
         }
         showJSPMembers(ar, siteId, pageId, "EmailCompose.jsp");
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/sendNoteView.htm", method = RequestMethod.GET)
     public void sendNoteView(
-            @PathVariable String pageId, @PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+            @PathVariable String pageId,
+            @PathVariable String siteId,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "sendNoteView.jsp");
     }
 
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/RoleInvite.htm", method = RequestMethod.GET)
-    public void RoleInvite(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void RoleInvite(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleInvite.jsp");
     }
 
-
-
-
-
     //////////////////////// REST REQUESTS ///////////////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/personalUpdate.json", method = RequestMethod.POST)
-    public void personalUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void personalUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
-            String siteWorkspaceCombo = ngw.getSiteKey()+"|"+ngw.getKey();
+            String siteWorkspaceCombo = ngw.getSiteKey() + "|" + ngw.getKey();
 
             op = personalInfo.getString("op");
             UserManager userManager = ar.getCogInstance().getUserManager();
             if ("SetWatch".equals(op)) {
                 up.setWatch(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
-            }
-            else if ("SetReviewTime".equals(op)) {
+            } else if ("SetReviewTime".equals(op)) {
                 up.setReviewTime(siteWorkspaceCombo, ar.nowTime);
                 userManager.saveUserProfiles();
-            }
-            else if ("ClearWatch".equals(op)) {
+            } else if ("ClearWatch".equals(op)) {
                 up.clearWatch(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
-            }
-            else if ("SetNotify".equals(op)) {
+            } else if ("SetNotify".equals(op)) {
                 up.setNotification(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
-            }
-            else if ("ClearNotify".equals(op)) {
+            } else if ("ClearNotify".equals(op)) {
                 up.clearNotification(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
-            }
-            else if ("SetEmailMute".equals(op)) {
+            } else if ("SetEmailMute".equals(op)) {
                 ngw.getMuteRole().addPlayerIfNotPresent(up.getAddressListEntry());
-                ngw.save(); //just save flag, don't mark workspace as changed
-            }
-            else if ("ClearEmailMute".equals(op)) {
+                ngw.save(); // just save flag, don't mark workspace as changed
+            } else if ("ClearEmailMute".equals(op)) {
                 ngw.getMuteRole().removePlayerCompletely(up);
-                ngw.save(); //just save flag, don't mark workspace as changed
-            }
-            else {
+                ngw.save(); // just save flag, don't mark workspace as changed
+            } else {
                 throw WeaverException.newBasic("Unable to understand the operation %s", op);
             }
 
             JSONObject repo = new JSONObject();
             repo.put("wsSettings", up.getWorkspaceSettings(siteWorkspaceCombo));
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update the user setting for `%s` on workspace `%s`", ex, op, pageId);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to update the user setting for `%s` on workspace `%s`",
+                            ex, op, pageId);
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/setPersonal.json", method = RequestMethod.POST)
-    public void setPersonal(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void setPersonal(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
-            
+
             ngw.updatePersonalWorkspaceSettings(up, personalInfo);
 
             JSONObject repo = ngw.getPersonalWorkspaceSettings(up);
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update user setting for workspace "+pageId, ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to update user setting for workspace " + pageId, ex);
             streamException(ee, ar);
         }
-    }    
+    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/rolePlayerUpdate.json", method = RequestMethod.POST)
-    public void rolePlayerUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void rolePlayerUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
-        String roleId= "Unknown";
-        try{
-            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId );
+        String roleId = "Unknown";
+        try {
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
             ar.assertNotFrozen(ngw);
@@ -361,74 +414,81 @@ public class ProjectSettingController extends BaseController {
             roleId = personalInfo.getString("roleId");
 
             NGRole role = ngw.getRoleOrFail(roleId);
-            RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getSymbol(),up.getUniversalId());
-
+            RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getSymbol(), up.getUniversalId());
 
             if ("Join".equals(op)) {
                 if (role.isPlayer(up)) {
-                    //don't do anything
-                }
-                else {
+                    // don't do anything
+                } else {
                     String requestDesc = "";
                     if (personalInfo.has("desc")) {
                         requestDesc = personalInfo.getString("desc");
                     }
-                    rrr = ngw.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
+                    rrr =
+                            ngw.createRoleRequest(
+                                    roleId,
+                                    up.getUniversalId(),
+                                    ar.nowTime,
+                                    up.getUniversalId(),
+                                    requestDesc);
 
                     NGRole adminRole = ngw.getSecondaryRole();
                     boolean hasSpecialPermission = adminRole.isPlayer(up);
 
-                    if (!hasSpecialPermission && ngw instanceof NGWorkspace)  {
-                        NGRole executiveRole = ngw.getSite().getRole("Executives");//getSecondaryRole();
+                    if (!hasSpecialPermission && ngw instanceof NGWorkspace) {
+                        NGRole executiveRole =
+                                ngw.getSite().getRole("Executives"); // getSecondaryRole();
                         hasSpecialPermission = executiveRole.isPlayer(up);
                     }
 
-                    //Note: if there is no administrator for the project, then ANYONE is allowed to
-                    //sign up as ANY role.  Once grabbed, that person is administrator.
-                    boolean noAdmin = adminRole.getDirectPlayers().size()==0;
+                    // Note: if there is no administrator for the project, then ANYONE is allowed to
+                    // sign up as ANY role.  Once grabbed, that person is administrator.
+                    boolean noAdmin = adminRole.getDirectPlayers().size() == 0;
 
-                    if(hasSpecialPermission || noAdmin ) {
+                    if (hasSpecialPermission || noAdmin) {
                         rrr.setState("Approved");
-                        ngw.addPlayerToRole(roleId,up.getUniversalId());
-                    }
-                    else{
-                        sendRoleRequestEmail(ar,rrr,ngw);
+                        ngw.addPlayerToRole(roleId, up.getUniversalId());
+                    } else {
+                        sendRoleRequestEmail(ar, rrr, ngw);
                     }
                 }
-            }
-            else if ("Leave".equals(op)) {
+            } else if ("Leave".equals(op)) {
                 if (role.isPlayer(up)) {
                     role.removePlayerCompletely(up);
                 }
-                if (rrr!=null && !rrr.isCompleted()) {
+                if (rrr != null && !rrr.isCompleted()) {
                     rrr.setResponseDescription("Cancelled by user");
                     rrr.setCompleted(true);
                 }
-            }
-            else {
+            } else {
                 throw WeaverException.newBasic("Unable to understand the operation %s", op);
             }
 
-            ngw.getSite().flushUserCache();  //calculate the users again
-            ngw.saveFile(ar, "Updated role "+roleId);
+            ngw.getSite().flushUserCache(); // calculate the users again
+            ngw.saveFile(ar, "Updated role " + roleId);
             JSONObject repo = new JSONObject();
-            repo.put("op",  op);
-            repo.put("success",  true);
+            repo.put("op", op);
+            repo.put("success", true);
             repo.put("player", role.isPlayer(up));
-            RoleRequestRecord rrr2 = ngw.getRoleRequestRecord(role.getName(),up.getUniversalId());
-            repo.put("reqPending", (rrr2!=null && !rrr2.isCompleted()));
+            RoleRequestRecord rrr2 = ngw.getRoleRequestRecord(role.getName(), up.getUniversalId());
+            repo.put("reqPending", (rrr2 != null && !rrr2.isCompleted()));
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update the user setting for "+op+" on role "+roleId+" workspace  "+pageId, ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to update the user setting for "
+                                    + op
+                                    + " on role "
+                                    + roleId
+                                    + " workspace  "
+                                    + pageId,
+                            ex);
             streamException(ee, ar);
         }
     }
 
-
-    private static void sendRoleRequestEmail(AuthRequest ar,
-            RoleRequestRecord roleRequestRecord, NGWorkspace ngw)
-            throws Exception {
+    private static void sendRoleRequestEmail(
+            AuthRequest ar, RoleRequestRecord roleRequestRecord, NGWorkspace ngw) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
         if (up == null) {
@@ -436,12 +496,14 @@ public class ProjectSettingController extends BaseController {
                     "Program Logic Error: only logged in users can request to join a role, and got such a request when there appears to be nobody logged in");
         }
 
-        //This is a magic URL that contains a magic token that will allow people
-        //who are not logged in, to approve this request.
-        String resourceURL = ar.getResourceURL(ngw, "approveOrRejectRoleReqThroughMail.htm")
-            +"?requestId="  + roleRequestRecord.getRequestId()
-            + "&isAccessThroughEmail=yes&"
-            + AccessControl.getAccessRoleRequestParams(ngw, roleRequestRecord);
+        // This is a magic URL that contains a magic token that will allow people
+        // who are not logged in, to approve this request.
+        String resourceURL =
+                ar.getResourceURL(ngw, "approveOrRejectRoleReqThroughMail.htm")
+                        + "?requestId="
+                        + roleRequestRecord.getRequestId()
+                        + "&isAccessThroughEmail=yes&"
+                        + AccessControl.getAccessRoleRequestParams(ngw, roleRequestRecord);
 
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngw, ngw.getPrimaryRole().getSymbol(), initialList);
@@ -460,8 +522,8 @@ public class ProjectSettingController extends BaseController {
 
         MailInst msg = ngw.createMailInst();
         msg.setSubject("Role Requested by " + ar.getBestUserId());
-        AddressListEntry from =  ar.getUserProfile().getAddressListEntry();
-        
+        AddressListEntry from = ar.getUserProfile().getAddressListEntry();
+
         // filter out users that who have no profile and have never logged in.
         // Only send this request to real users, not just email addresses
         for (OptOutAddr ooa : initialList) {
@@ -473,15 +535,19 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/roleRequestResolution.json", method = RequestMethod.POST)
-    public void roleRequestResolution(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/roleRequestResolution.json",
+            method = RequestMethod.POST)
+    public void roleRequestResolution(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
-        String roleName= "Unknown";
-        try{
-            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId );
+        String roleName = "Unknown";
+        try {
+            NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             JSONObject personalInfo = getPostedObject(ar);
@@ -492,64 +558,71 @@ public class ProjectSettingController extends BaseController {
             boolean canAccess = AccessControl.canAccessRoleRequest(ar, ngw, rrr);
 
             if (!canAccess) {
-                throw WeaverException.newBasic("Unable to access that RoleRequestRecord.  You might need to be logged in.");
+                throw WeaverException.newBasic(
+                        "Unable to access that RoleRequestRecord.  You might need to be logged in.");
             }
 
             if ("Approve".equals(op)) {
                 String requestedBy = rrr.getRequestedBy();
-                ngw.addPlayerToRole(roleName,requestedBy);
+                ngw.addPlayerToRole(roleName, requestedBy);
                 rrr.setState("Approved");
                 rrr.setCompleted(true);
-            }
-            else if ("Reject".equals(op)) {
+            } else if ("Reject".equals(op)) {
                 rrr.setState("Rejected");
                 rrr.setCompleted(true);
-            }
-            else {
-                throw WeaverException.newBasic("roleRequestResolution doesn't understand the request for %s", op);
+            } else {
+                throw WeaverException.newBasic(
+                        "roleRequestResolution doesn't understand the request for %s", op);
             }
 
             if (ar.isLoggedIn()) {
-                ngw.saveFile(ar, "Resolved role "+roleName);
-            }
-            else {
-                ngw.saveWithoutAuthenticatedUser("Unknown", ar.nowTime, "Resolved role "+roleName, ar.getCogInstance());
+                ngw.saveFile(ar, "Resolved role " + roleName);
+            } else {
+                ngw.saveWithoutAuthenticatedUser(
+                        "Unknown", ar.nowTime, "Resolved role " + roleName, ar.getCogInstance());
             }
             JSONObject repo = new JSONObject();
             repo.put("state", rrr.getState());
             repo.put("completed", rrr.isCompleted());
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update the user setting for "+op+" on role "+roleName+" workspace  "+pageId, ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to update the user setting for "
+                                    + op
+                                    + " on role "
+                                    + roleName
+                                    + " workspace  "
+                                    + pageId,
+                            ex);
             streamException(ee, ar);
         }
     }
 
-
-
-    //This works for Sites as well as Projects
+    // This works for Sites as well as Projects
     @RequestMapping(value = "/{siteId}/{pageId}/roleUpdate.json", method = RequestMethod.POST)
-    public void roleUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void roleUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         boolean saveSite = false;
         boolean roleChanged = false;
         NGBook site = null;
-        try{
-            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
-            //get this early so that the error message is proper
+        try {
+            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
+            // get this early so that the error message is proper
             op = ar.reqParam("op");
             ar.setPageAccessLevels(ngc);
-            
+
             if (ngc instanceof NGWorkspace) {
                 ar.assertUpdateWorkspace("Must be a member to modify roles.");
-                site = ((NGWorkspace)ngc).getSite();
-            }
-            else {
+                site = ((NGWorkspace) ngc).getSite();
+            } else {
                 ar.assertExecutive("Must be an executive of site to modify roles.");
-                site = (NGBook)ngc;
+                site = (NGBook) ngc;
             }
             ar.assertNotReadOnly("Cannot modify roles");
             JSONObject roleInfo = getPostedObject(ar);
@@ -557,20 +630,22 @@ public class ProjectSettingController extends BaseController {
             System.out.println(String.format("roleUpdate: (%s) with %s", op, roleInfo.toString()));
 
             if ("Update".equals(op)) {
-                //OK to do this when frozen
+                // OK to do this when frozen
                 String roleSymbol = roleInfo.optString("symbol", null);
                 if (roleSymbol == null) {
                     // this is a little sloppy but some old code used the name
                     // as unique identifier, so accomodate that
                     roleSymbol = roleInfo.getString("name");
-                    System.out.println("ROLE SYMBOL WARNING: some web service needs to set the symbol of the role: "+roleSymbol);
+                    System.out.println(
+                            "ROLE SYMBOL WARNING: some web service needs to set the symbol of the role: "
+                                    + roleSymbol);
                 }
                 CustomRole role = ngc.getRoleOrFail(roleSymbol);
                 String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
                 roleChanged = true;
                 if (ngc instanceof NGWorkspace) {
-                    
+
                     /* LINKED ROLES disabled
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
@@ -601,21 +676,18 @@ public class ProjectSettingController extends BaseController {
                     */
                 }
                 repo = role.getJSONDetail();
-            }
-            else if ("Create".equals(op)) {
+            } else if ("Create".equals(op)) {
                 ar.assertNotFrozen(ngc);
                 CustomRole role = ngc.createRole(roleInfo.getString("symbol"), "");
                 role.updateFromJSON(roleInfo);
                 roleChanged = true;
                 repo = role.getJSONDetail();
-            }
-            else if ("Delete".equals(op)) {
-                //OK to do this when frozen
+            } else if ("Delete".equals(op)) {
+                // OK to do this when frozen
                 ngc.deleteRole(roleInfo.getString("symbol"));
                 roleChanged = true;
-                repo.put("success",  true);
-            }
-            else if ("GetAll".equals(op)) {
+                repo.put("success", true);
+            } else if ("GetAll".equals(op)) {
                 JSONArray ja = new JSONArray();
                 for (CustomRole ngr : ngc.getAllRoles()) {
                     ja.put(ngr.getJSONDetail());
@@ -624,94 +696,110 @@ public class ProjectSettingController extends BaseController {
             }
 
             if (ngc instanceof NGWorkspace) {
-                ((NGWorkspace)ngc).saveModifiedWorkspace(ar, op + " Role ");
+                ((NGWorkspace) ngc).saveModifiedWorkspace(ar, op + " Role ");
+            } else {
+                ((NGBook) ngc).saveModifiedSite(ar, op + " Role ");
             }
-            else {
-                ((NGBook)ngc).saveModifiedSite(ar, op + " Role ");
-            }
-            if (saveSite & site!=null) {
+            if (saveSite & site != null) {
                 site.save();
             }
             if (roleChanged) {
-                site.flushUserCache();  //calculate the users again
+                site.flushUserCache(); // calculate the users again
                 site.recalculateStats(ar.getCogInstance());
             }
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to '"+op+"' the role.", ex);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to '" + op + "' the role.", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/roleDefinitions.json", method = RequestMethod.GET)
-    public void roleDefinitions(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void roleDefinitions(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             NGBook site = ngw.getSite();
             RoleDefinitionFile rdf = site.getAllRoleDefs(ar.getCogInstance());
             JSONObject res = new JSONObject();
-            res.put("defs",  rdf.getJSON());
+            res.put("defs", rdf.getJSON());
             sendJson(ar, res);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get roleDefinitions from the workspace.", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to get roleDefinitions from the workspace.", ex);
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/getAllLabels.json", method = RequestMethod.GET)
-    public void getAllLabels(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getAllLabels(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             JSONObject res = new JSONObject();
             res.put("list", ngw.getJSONLabels());
             sendJson(ar, res);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to get all labels from the workspace.", ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable to get all labels from the workspace.", ex);
             streamException(ee, ar);
         }
     }
-    
-    
-    //pass the parameter 'role' to see if logged in user is a player of that role
+
+    // pass the parameter 'role' to see if logged in user is a player of that role
     @RequestMapping(value = "/{siteId}/{pageId}/isRolePlayer.json", method = RequestMethod.GET)
-    public void isRolePlayer(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void isRolePlayer(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String roleName = "";
-        try{
-            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId );
+        try {
+            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to check your role membership");
             ar.setPageAccessLevels(ngc);
             roleName = ar.reqParam("role");
             JSONObject repo = new JSONObject();
 
             NGRole role = ngc.getRole(roleName);
-            if (role==null) {
+            if (role == null) {
                 throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
             }
             boolean isPlayer = role.isExpandedPlayer(ar.getUserProfile(), ngc);
 
             repo.put("isPlayer", isPlayer);
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to determine if user is player of role '"+roleName, ex);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to determine if user is player of role '" + roleName, ex);
             streamException(ee, ar);
         }
     }
-    //pass the parameter 'role' to see if logged in user is a player of that role
+
+    // pass the parameter 'role' to see if logged in user is a player of that role
     @RequestMapping(value = "/{siteId}/{pageId}/assureRolePlayer.json", method = RequestMethod.POST)
-    public void assureRolePlayer(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void assureRolePlayer(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String roleName = "";
-        try{
-            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId );
+        try {
+            NGWorkspace ngc = registerWorkspaceRequired(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to manipulate role membership");
             ar.setPageAccessLevels(ngc);
             JSONObject postedObject = getPostedObject(ar);
@@ -719,7 +807,7 @@ public class ProjectSettingController extends BaseController {
             String uid = postedObject.getString("uid");
 
             NGRole role = ngc.getRole(roleName);
-            if (role==null) {
+            if (role == null) {
                 throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
             }
             ar.getCogInstance().getUserManager();
@@ -729,22 +817,30 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = new JSONObject();
             repo.put("isPlayer", true);
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to assure user is player of role `%s`", ex, roleName);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to assure user is player of role `%s`", ex, roleName);
             streamException(ee, ar);
         }
     }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/emailGeneratorUpdate.json", method = RequestMethod.POST)
-    public void emailGeneratorUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/emailGeneratorUpdate.json",
+            method = RequestMethod.POST)
+    public void emailGeneratorUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertUpdateWorkspace("Must be able to update workspace to create an email generator.");
+            ar.assertUpdateWorkspace(
+                    "Must be able to update workspace to create an email generator.");
             ar.assertNotReadOnly("Cannot generate email");
             ar.assertNotFrozen(ngw);
             JSONObject eGenInfo = getPostedObject(ar);
@@ -754,56 +850,55 @@ public class ProjectSettingController extends BaseController {
             if ("~new~".equals(id)) {
                 eGen = ngw.createEmailGenerator();
                 eGen.setOwner(ar.getBestUserId());
-            }
-            else {
+            } else {
                 eGen = ngw.getEmailGeneratorOrFail(id);
             }
 
-            //the 'owner' is always the last person who saves the record. The email can
-            //only include what this person sees.  This avoid a problem with getting around
-            //security by finding an email of a highly privileged person, and modifying the
-            //email to send confidential stuff.
+            // the 'owner' is always the last person who saves the record. The email can
+            // only include what this person sees.  This avoid a problem with getting around
+            // security by finding an email of a highly privileged person, and modifying the
+            // email to send confidential stuff.
             eGen.setOwner(ar.getBestUserId());
 
-            //this is a non persistent flag in the body ... could be a URL parameter
+            // this is a non persistent flag in the body ... could be a URL parameter
             boolean sendIt = eGenInfo.optBoolean("sendIt");
             boolean scheduleIt = eGenInfo.optBoolean("scheduleIt");
             boolean deleteIt = eGenInfo.optBoolean("deleteIt");
             if (deleteIt) {
                 ngw.deleteEmailGenerator(eGen.getId());
-            }
-            else {
+            } else {
                 eGen.updateFromJSON(eGenInfo);
                 if (sendIt) {
-                    //send it 5 seconds from now.  Background thread has to pick it up..
+                    // send it 5 seconds from now.  Background thread has to pick it up..
                     eGen.setScheduleTime(ar.nowTime + 5000);
                     eGen.scheduleEmail(ar);
-                }
-                else if (scheduleIt) {
+                } else if (scheduleIt) {
                     eGen.updateFromJSON(eGenInfo);
-                    //time to send must have been set in the updateFromJSON
+                    // time to send must have been set in the updateFromJSON
                     eGen.scheduleEmail(ar);
                 }
             }
 
-            ngw.saveFile(ar, "Updated Email Generator "+id);
+            ngw.saveFile(ar, "Updated Email Generator " + id);
             JSONObject repo = eGen.getJSON(ar, ngw);
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to update Email Generator "+id, ex);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to update Email Generator " + id, ex);
             streamException(ee, ar);
         }
     }
 
-
     @RequestMapping(value = "/{siteId}/{pageId}/renderEmail.json", method = RequestMethod.POST)
-    public void renderEmail(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void renderEmail(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("Must be a role player to render an email.");
             JSONObject eGenInfo = getPostedObject(ar);
@@ -812,8 +907,7 @@ public class ProjectSettingController extends BaseController {
             String sampleUser = null;
             if (eGenInfo.has("toUser")) {
                 sampleUser = eGenInfo.getString("toUser");
-            }
-            else {
+            } else {
                 sampleUser = ar.getBestUserId();
             }
 
@@ -822,17 +916,16 @@ public class ProjectSettingController extends BaseController {
             if ("~new~".equals(id)) {
 
                 repo.put("html", "Click 'save' to see the email rendered");
-            }
-            else {
+            } else {
                 EmailGenerator eGen = ngw.getEmailGeneratorOrFail(id);
-                List<OptOutAddr> oList = eGen.expandAddresses(ar,ngw);
+                List<OptOutAddr> oList = eGen.expandAddresses(ar, ngw);
                 JSONArray addressees = new JSONArray();
                 for (OptOutAddr ooa : oList) {
                     addressees.put(ooa.getAssignee().getJSON());
                 }
 
-                //would be better if we could capture the actual relationship
-                OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar,  ngw, sampleUser);
+                // would be better if we could capture the actual relationship
+                OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar, ngw, sampleUser);
                 MailInst mail = new MailInst();
                 mail.markNotReal();
                 eGen.generateEmailBody(ar, ngw, sampleAddressee, mail);
@@ -843,46 +936,48 @@ public class ProjectSettingController extends BaseController {
             }
 
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to render the email message "+id, ex);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to render the email message " + id, ex);
             streamException(ee, ar);
         }
     }
 
-
-    
     @RequestMapping(value = "/{siteId}/{pageId}/getLabels.json", method = RequestMethod.POST)
-    public void getLabels(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getLabels(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
+        try {
+            NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
             ar.assertAccessWorkspace("Must be able to access workspace to get labels.");
-            
+
             JSONObject ret = new JSONObject();
             JSONArray list = new JSONArray();
-            
+
             for (NGLabel label : ngw.getAllLabels()) {
                 list.put(label.getJSON());
             }
             ret.put("list", list);
-            
+
             sendJson(ar, ret);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to supply all labels.", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelUpdate.json", method = RequestMethod.POST)
-    public void labelUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void labelUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
-        try{
-            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
+        try {
+            NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
             ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
             ar.assertNotFrozen(ngw);
@@ -894,47 +989,49 @@ public class ProjectSettingController extends BaseController {
             if ("Create".equals(op)) {
                 String editedName = labelInfo.getString("editedName");
                 NGLabel other = ngw.getLabelRecordOrNull(editedName);
-                if (label==null) {
-                    if (other!=null) {
+                if (label == null) {
+                    if (other != null) {
                         throw WeaverException.newBasic(
-                            "Cannot create label '%s' because a label already exists with that name.",
-                            editedName);
+                                "Cannot create label '%s' because a label already exists with that name.",
+                                editedName);
                     }
                     label = ngw.findOrCreateLabelRecord(editedName, labelInfo.getString("color"));
-                }
-                else {
+                } else {
                     if (!editedName.equals(labelName)) {
-                        if (other!=null) {
+                        if (other != null) {
                             throw WeaverException.newBasic(
-                                "Cannot change label '%s' to '%s' because a label already exists with that name.",
-                                labelName, editedName);
+                                    "Cannot change label '%s' to '%s' because a label already exists with that name.",
+                                    labelName, editedName);
                         }
                     }
                     label.setName(editedName);
                     label.setColor(labelInfo.getString("color"));
                 }
-            }
-            else if ("Delete".equals(op)) {
-                if (label!=null && label instanceof LabelRecord) {
-                    ngw.removeLabelRecord((LabelRecord)label);
+            } else if ("Delete".equals(op)) {
+                if (label != null && label instanceof LabelRecord) {
+                    ngw.removeLabelRecord((LabelRecord) label);
                 }
             }
 
             ngw.saveFile(ar, "Updated Agenda Item");
             JSONObject repo = label.getJSON();
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to modify "+op+" label.", ex);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to modify " + op + " label.", ex);
             streamException(ee, ar);
         }
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/copyLabels.json", method = RequestMethod.POST)
-    public void copyLabels(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void copyLabels(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
-        try{
-            NGWorkspace ngw = ar.findAndSetWorkspace( siteId, pageId );
+        try {
+            NGWorkspace ngw = ar.findAndSetWorkspace(siteId, pageId);
             ar.assertUpdateWorkspace("Must be able to update workspace to modify labels.");
             ar.assertNotReadOnly("Cannot modify labels");
             ar.assertNotFrozen(ngw);
@@ -943,12 +1040,12 @@ public class ProjectSettingController extends BaseController {
             Cognoscenti cog = ar.getCogInstance();
             JSONObject pojb = getPostedObject(ar);
             String sourceProject = pojb.getString("from");
-            NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( sourceProject ).getWorkspace();
+            NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail(sourceProject).getWorkspace();
 
-            for (NGLabel aLabel : fromWS.getAllLabels() ) {
+            for (NGLabel aLabel : fromWS.getAllLabels()) {
                 boolean found = false;
-                for (NGLabel alreadyThere : ngw.getAllLabels() ) {
-                    if (aLabel.getName().equals( alreadyThere.getName() )) {
+                for (NGLabel alreadyThere : ngw.getAllLabels()) {
+                    if (aLabel.getName().equals(alreadyThere.getName())) {
                         found = true;
                     }
                 }
@@ -962,8 +1059,8 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = new JSONObject();
             repo.put("list", newLabelsCreated);
             sendJson(ar, repo);
-        }catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable to modify "+op+" label.", ex);
+        } catch (Exception ex) {
+            Exception ee = WeaverException.newWrap("Unable to modify " + op + " label.", ex);
             streamException(ee, ar);
         }
     }
@@ -971,11 +1068,15 @@ public class ProjectSettingController extends BaseController {
     ///////////////////////// Eamil ///////////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/QueryEmail.json", method = RequestMethod.POST)
-    public void queryEmail(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void queryEmail(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAccessWorkspace("Project email list is accessible only by role players.");
             JSONObject posted = this.getPostedObject(ar);
@@ -983,22 +1084,24 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = EmailSender.queryWorkspaceEmail(ngw, posted);
 
             sendJson(ar, repo);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
 
-
-
     ///////////////////////// Invitations ///////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/invitations.json", method = RequestMethod.GET)
-    public void invitations(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void invitations(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             JSONObject repo = new JSONObject();
             JSONArray shareList = new JSONArray();
             for (RoleInvitation ta : ngw.getInvitations()) {
@@ -1006,45 +1109,56 @@ public class ProjectSettingController extends BaseController {
             }
             repo.put("invitations", shareList);
             sendJson(ar, repo);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to get the list of invitations ", ex);
             streamException(ee, ar);
         }
     }
+
     @RequestMapping(value = "/{siteId}/{pageId}/invitationUpdate.json", method = RequestMethod.POST)
-    public void invitationUpdate(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void invitationUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
-            
+
             JSONObject posted = this.getPostedObject(ar);
-            
-            //posted object MUST have a ss field in it to work
+
+            // posted object MUST have a ss field in it to work
             if (!posted.has("ss")) {
-            	throw WeaverException.newBasic("Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
+                throw WeaverException.newBasic(
+                        "Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
             }
 
             String email = posted.getString("email");
 
-            //we don't know what the user will enter for the email address
-            //but if they do enter a combined address, this will help handle it
-            //a bit better.   If it is a pure email address that will work as well
+            // we don't know what the user will enter for the email address
+            // but if they do enter a combined address, this will help handle it
+            // a bit better.   If it is a pure email address that will work as well
             AddressListEntry ale = AddressListEntry.parseCombinedAddress(email);
 
-            //check that the role exists to avoid getting invitations for non existent roles.
+            // check that the role exists to avoid getting invitations for non existent roles.
             boolean found = false;
             String roleName = posted.getString("role");
             for (WorkspaceRole existingRole : ngw.getWorkspaceRoles()) {
-                if (roleName.equals(existingRole.getName()) || roleName.equals(existingRole.getSymbol())) {
+                if (roleName.equals(existingRole.getName())
+                        || roleName.equals(existingRole.getSymbol())) {
                     existingRole.addPlayerIfNotPresent(ale);
                     found = true;
                 }
             }
             if (!found) {
-                throw WeaverException.newBasic("Can not find a role named '"+roleName+"' in the workspace "+ngw.getFullName());
+                throw WeaverException.newBasic(
+                        "Can not find a role named '"
+                                + roleName
+                                + "' in the workspace "
+                                + ngw.getFullName());
             }
 
             RoleInvitation ri = ngw.findOrCreateInvite(ale);
@@ -1054,7 +1168,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = ri.getInvitationJSON();
             ngw.saveFile(ar, "Created a inviation to join workspace");
             sendJson(ar, repo);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to update an invitation", ex);
             streamException(ee, ar);
         }

@@ -20,6 +20,8 @@
 
 package com.purplehillsbooks.weaver.util;
 
+import com.purplehillsbooks.streams.Base64;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,20 +30,13 @@ import java.io.FileWriter;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.streams.Base64;
-
-/**
- * TextEncrypter handles the encruption of password in ini file
- */
-
+/** TextEncrypter handles the encruption of password in ini file */
 public class TextEncrypter {
     public static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
     public static final String DES_ENCRYPTION_SCHEME = "DES";
@@ -57,8 +52,7 @@ public class TextEncrypter {
         this(encryptionScheme, DEFAULT_ENCRYPTION_KEY);
     }
 
-    public TextEncrypter(String encryptionScheme, String encryptionKey)
-            throws Exception {
+    public TextEncrypter(String encryptionScheme, String encryptionKey) throws Exception {
         populateKeys();
         if (encryptionKey == null) {
             throw WeaverException.newBasic("Invalid Encryption key");
@@ -66,7 +60,6 @@ public class TextEncrypter {
 
         if (encryptionKey.trim().length() < 24) {
             throw WeaverException.newBasic("Invalid Encryption key");
-
         }
         byte[] keyAsBytes = encryptionKey.getBytes(UNICODE_FORMAT);
 
@@ -80,7 +73,6 @@ public class TextEncrypter {
 
         keyFactory = SecretKeyFactory.getInstance(encryptionScheme);
         cipher = Cipher.getInstance(encryptionScheme);
-
     }
 
     public String encrypt(String unencryptedString) throws Exception {
@@ -109,7 +101,8 @@ public class TextEncrypter {
     public void updatePropFile(String fileName) throws Exception {
         File iniFile = new File(fileName);
         if (!iniFile.exists()) {
-            throw WeaverException.newBasic("Can't find file for updatePropFile: %s", iniFile.getAbsolutePath());
+            throw WeaverException.newBasic(
+                    "Can't find file for updatePropFile: %s", iniFile.getAbsolutePath());
         }
 
         BufferedReader fileBr = new BufferedReader(new FileReader(iniFile));
@@ -128,14 +121,12 @@ public class TextEncrypter {
                     String value = readLn.substring(srchIndex + 1).trim();
                     if (value == null || value.length() <= 0) {
                         lineList.add(readLn);
-                    }
-                    else {
+                    } else {
                         String newL = encrypt(value);
                         newL = key + " = " + newL;
                         lineList.add(newL);
                     }
-                }
-                else {
+                } else {
                     lineList.add(readLn);
                 }
             } else {
@@ -206,8 +197,7 @@ public class TextEncrypter {
                 value = tEncryp.decrypt(value);
                 System.out.println(value);
             } else {
-                System.out
-                        .println("Failed to encrypt. Please check the input parameters.");
+                System.out.println("Failed to encrypt. Please check the input parameters.");
                 printMessage();
                 System.exit(0);
             }
@@ -216,19 +206,15 @@ public class TextEncrypter {
             System.out.println("Exception occured: " + e.toString());
             System.exit(1);
         }
-
     }
 
     private static void printMessage() {
-        System.out
-                .println("usage : java TextEncrypter -e StringToEncrypt EncryptionKey EncryptionScheme");
+        System.out.println(
+                "usage : java TextEncrypter -e StringToEncrypt EncryptionKey EncryptionScheme");
         System.out.println("      OR     ");
-        System.out
-                .println("usage : java TextEncrypter -f iniFileWithPath EncryptionKey EncryptionScheme");
-        System.out
-                .println("NOTE: EncryptionKey key should be minimum 24 characters.");
-        System.out
-                .println("NOTE: Supported EncryptionScheme is \"DESede\"  and \"DES\"");
+        System.out.println(
+                "usage : java TextEncrypter -f iniFileWithPath EncryptionKey EncryptionScheme");
+        System.out.println("NOTE: EncryptionKey key should be minimum 24 characters.");
+        System.out.println("NOTE: Supported EncryptionScheme is \"DESede\"  and \"DES\"");
     }
-
 }

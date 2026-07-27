@@ -20,101 +20,121 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 /**
-* a monomorphic class which holds details about a section definition
-* read from the configuration file.  Users can create new definitions
-* if they need to.
-*/
-public class SectionDef
-{
+ * a monomorphic class which holds details about a section definition read from the configuration
+ * file. Users can create new definitions if they need to.
+ */
+public class SectionDef {
 
     public static final int PUBLIC_ACCESS = 1;
     public static final int MEMBER_ACCESS = 2;
-    public static final int ADMIN_ACCESS  = 3;
+    public static final int ADMIN_ACCESS = 3;
     public static final int PRIVATE_ACCESS = 4;
 
-
-    //holds the section ele element
+    // holds the section ele element
     public SectionFormat format = null;
-    public String name          = null;
-    public String displayName   = null;
-    public int    viewAccess    = ADMIN_ACCESS;
-    public int    editAccess    = ADMIN_ACCESS;
+    public String name = null;
+    public String displayName = null;
+    public int viewAccess = ADMIN_ACCESS;
+    public int editAccess = ADMIN_ACCESS;
 
-    //mark deprecated sections so they can not be ADDED to pages
-    //and so that existing copies can indicate that the information
-    //should be moved to a different section.
+    // mark deprecated sections so they can not be ADDED to pages
+    // and so that existing copies can indicate that the information
+    // should be moved to a different section.
     public boolean deprecated = false;
 
-    //mark required sections to prevent deleting
-    public boolean required   = false;
+    // mark required sections to prevent deleting
+    public boolean required = false;
 
     //
     private static List<SectionDef> allDefs = null;
-    //private static SectionFormat defaultUnknownSectionFormat = null;
-    public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
-    {
+
+    // private static SectionFormat defaultUnknownSectionFormat = null;
+    public SectionDef(
+            SectionFormat newFormat,
+            String newName,
+            int view,
+            int edit,
+            boolean depr,
+            String dName,
+            boolean req) {
         if (allDefs == null) {
             initialize();
         }
-        format      = newFormat;
-        name        = newName;
-        viewAccess  = view;
-        editAccess  = edit;
-        deprecated  = depr;
+        format = newFormat;
+        name = newName;
+        viewAccess = view;
+        editAccess = edit;
+        deprecated = depr;
         displayName = dName;
-        required    = req;
+        required = req;
     }
 
     /**
-    * Set all static values back to their initial states, so that
-    * garbage collection can be done, and subsequently, the
-    * class will be reinitialized.
-    */
-    public synchronized static void clearAllStaticVars() {
+     * Set all static values back to their initial states, so that garbage collection can be done,
+     * and subsequently, the class will be reinitialized.
+     */
+    public static synchronized void clearAllStaticVars() {
         allDefs = null;
     }
-
 
     private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
 
-        SectionFormat cannonNotes =      new SectionForNotes();
+        SectionFormat cannonNotes = new SectionForNotes();
         SectionFormat canonAttachments = new SectionAttachments();
-        SectionFormat cannonTasks =      new SectionTask();
-        SectionFormat canonFolders     = new SectionFolders();
+        SectionFormat cannonTasks = new SectionTask();
+        SectionFormat canonFolders = new SectionFolders();
 
-        allDefs.add(new SectionDef(cannonNotes, "Comments", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   false, "Notes", true));
-        allDefs.add(new SectionDef(canonAttachments, "Attachments", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   false, "Attachments", true));
-        allDefs.add(new SectionDef(cannonTasks, "Tasks", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   false, "Tasks", true));
-        allDefs.add(new SectionDef(canonFolders, "Folders", MEMBER_ACCESS, MEMBER_ACCESS,
-                false, "Folders", true));
+        allDefs.add(
+                new SectionDef(
+                        cannonNotes,
+                        "Comments",
+                        MEMBER_ACCESS,
+                        MEMBER_ACCESS,
+                        false,
+                        "Notes",
+                        true));
+        allDefs.add(
+                new SectionDef(
+                        canonAttachments,
+                        "Attachments",
+                        MEMBER_ACCESS,
+                        MEMBER_ACCESS,
+                        false,
+                        "Attachments",
+                        true));
+        allDefs.add(
+                new SectionDef(
+                        cannonTasks, "Tasks", MEMBER_ACCESS, MEMBER_ACCESS, false, "Tasks", true));
+        allDefs.add(
+                new SectionDef(
+                        canonFolders,
+                        "Folders",
+                        MEMBER_ACCESS,
+                        MEMBER_ACCESS,
+                        false,
+                        "Folders",
+                        true));
     }
 
     public String getTypeName() throws Exception {
         return name;
     }
 
-
-    public SectionFormat getFormat()
-    {
+    public SectionFormat getFormat() {
         return format;
     }
-
 
     public static SectionDef getDefByName(String defName) throws Exception {
         if (allDefs == null) {
             initialize();
         }
-        if (defName==null||defName.length()==0) {
+        if (defName == null || defName.length() == 0) {
             throw WeaverException.newBasic("Must pass a non-null name to getDefByName");
         }
         for (SectionDef sd : allDefs) {

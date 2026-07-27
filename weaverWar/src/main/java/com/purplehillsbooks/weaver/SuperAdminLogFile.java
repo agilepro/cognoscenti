@@ -20,18 +20,16 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import java.io.File;
 import org.w3c.dom.Document;
 
 /**
- * SuperAdminHelper manages a file called 'SuperAdminInfo.xml' in the user folder
- * That file holds information relevant to the running of the whole server
+ * SuperAdminHelper manages a file called 'SuperAdminInfo.xml' in the user folder That file holds
+ * information relevant to the running of the whole server
  *
- * 1. automated scheduling of email messages
- * 2. list of new users who joined recently
- * 3. list of sites accepted/denied
+ * <p>1. automated scheduling of email messages 2. list of new users who joined recently 3. list of
+ * sites accepted/denied
  */
 public class SuperAdminLogFile extends DOMFile {
 
@@ -41,36 +39,32 @@ public class SuperAdminLogFile extends DOMFile {
     }
 
     public static SuperAdminLogFile getInstance(Cognoscenti cog) throws Exception {
-        File superAdminFile = new File( cog.getConfig().getUserFolderOrFail(), "SuperAdminInfo.xml");
+        File superAdminFile = new File(cog.getConfig().getUserFolderOrFail(), "SuperAdminInfo.xml");
         try {
             Document newDoc = readOrCreateFile(superAdminFile, "super-admin");
             return new SuperAdminLogFile(superAdminFile, newDoc);
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to load the SuperAdminLogFile from %s", e, superAdminFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to load the SuperAdminLogFile from %s",
+                    e, superAdminFile.getAbsolutePath());
         }
     }
 
+    public void createAdminEvent(String objectId, long modTime, String modUser, String context)
+            throws Exception {
 
-    public void createAdminEvent(String objectId, long modTime,
-            String modUser, String context) throws Exception {
-
-        if (objectId == null || modUser == null || context == null
-                || context.equals("")) {
-            throw WeaverException.newBasic(
-                    "parameter is required to log an event for Super Admin");
+        if (objectId == null || modUser == null || context == null || context.equals("")) {
+            throw WeaverException.newBasic("parameter is required to log an event for Super Admin");
         }
 
-        AdminEvent newEvent = getEventsParent().createChild(
-                "event", AdminEvent.class);
+        AdminEvent newEvent = getEventsParent().createChild("event", AdminEvent.class);
         newEvent.setObjectId(objectId);
         newEvent.setModified(modUser, modTime);
         newEvent.setContext(context);
         save();
     }
 
-    public void setLastNotificationSentTime(long time, String logTrace)
-            throws Exception {
+    public void setLastNotificationSentTime(long time, String logTrace) throws Exception {
         setScalarLong("lastnotificationsenttime", time);
         setScalar("previousSendLog", getScalar("lastSendLog"));
         setScalar("lastSendLog", logTrace);
@@ -85,7 +79,6 @@ public class SuperAdminLogFile extends DOMFile {
         return getScalar("lastSendLog");
     }
 
-
     protected DOMFace getEventsParent() throws Exception {
         return requireChild("events", DOMFace.class);
     }
@@ -97,15 +90,13 @@ public class SuperAdminLogFile extends DOMFile {
         return exceptionNo;
     }
 
-    public void setEmailListenerWorking(boolean flag)
-            throws Exception {
-        setScalar("emailListenerPropertiesFlag",Boolean.toString(flag));
+    public void setEmailListenerWorking(boolean flag) throws Exception {
+        setScalar("emailListenerPropertiesFlag", Boolean.toString(flag));
         save();
     }
 
     public void setEmailListenerProblem(Throwable ex) throws Exception {
-        setScalar("emailListenerProblem",
-                WeaverException.getFullMessage(ex));
+        setScalar("emailListenerProblem", WeaverException.getFullMessage(ex));
         save();
     }
 

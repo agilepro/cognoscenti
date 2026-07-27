@@ -20,22 +20,19 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONObject;
 
 /**
-* A role may have many terms, and they will be played
-* by different people each term.  A term will have a
-* specific start date, and end date.
-* Some roles will not have terms, and they are perpetual
-* meaning that the same person holds them forever.
-* Old terms become a kind of history behind who
-* has played the role in the past.
-* 
-* Terms have a complete cycle around selecting people
-* to play a particular term of a particular role.
-*/
+ * A role may have many terms, and they will be played by different people each term. A term will
+ * have a specific start date, and end date. Some roles will not have terms, and they are perpetual
+ * meaning that the same person holds them forever. Old terms become a kind of history behind who
+ * has played the role in the past.
+ *
+ * <p>Terms have a complete cycle around selecting people to play a particular term of a particular
+ * role.
+ */
 public class Responsibility extends DOMFace {
 
     public Responsibility(Document doc, Element ele, DOMFace p) {
@@ -45,14 +42,11 @@ public class Responsibility extends DOMFace {
     public String getKey() {
         return getAttribute("key");
     }
-    /**
-     * Note, this is the 'key',
-     * so don't change it if you have references elsewhere.
-     */
+
+    /** Note, this is the 'key', so don't change it if you have references elsewhere. */
     public void setKey(String newKey) {
         setAttribute("key", newKey);
     }
-
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -60,6 +54,7 @@ public class Responsibility extends DOMFace {
         extractScalarString(jObj, "text");
         return jObj;
     }
+
     public void updateFromJSON(JSONObject termInfo) throws Exception {
         updateAttributeString("key", termInfo);
         updateScalarString("text", termInfo);

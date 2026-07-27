@@ -20,58 +20,53 @@
 
 package com.purplehillsbooks.weaver.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This servlet serves up pages using the following URL format:
  *
- * http://machine:port/{application}/p/{pageid}/leaf.htm
+ * <p>http://machine:port/{application}/p/{pageid}/leaf.htm
  *
- * {application} is whatever you install the application to on Tomcat could be
- * multiple levels deep.
+ * <p>{application} is whatever you install the application to on Tomcat could be multiple levels
+ * deep.
  *
- * "p" is fixed. This is the indicator within the nugen application that says
- * this servlet will be invoked.
+ * <p>"p" is fixed. This is the indicator within the nugen application that says this servlet will
+ * be invoked.
  *
- * {pageid} unique identifier for the page. Obviously depends on the page
+ * <p>{pageid} unique identifier for the page. Obviously depends on the page
  *
- * leaf.htm is the resource-id of the main page presented as HTML page. This is
- * a fixed resource id for the page. There are other resources as well.
+ * <p>leaf.htm is the resource-id of the main page presented as HTML page. This is a fixed resource
+ * id for the page. There are other resources as well.
  *
- * http://machine:port/{application}/p/{pageid}/leaf.xml
+ * <p>http://machine:port/{application}/p/{pageid}/leaf.xml
  *
- * There is a subspace for attachments using the name "a" Thus an attachment
- * "MyReport.doc" would be found at:
+ * <p>There is a subspace for attachments using the name "a" Thus an attachment "MyReport.doc" would
+ * be found at:
  *
- * http://machine:port/{application}/p/{pageid}/a/MyReport.doc
- *
+ * <p>http://machine:port/{application}/p/{pageid}/a/MyReport.doc
  */
 @SuppressWarnings("serial")
 public class RestServlet extends jakarta.servlet.http.HttpServlet {
 
-    /**
-     * This servlet handles REST style requests for XML content
-     */
+    /** This servlet handles REST style requests for XML content */
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
             NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
-                throw WeaverException.newWrap("not initialized", ar.getCogInstance().initializer.lastFailureMsg);
+                throw WeaverException.newWrap(
+                        "not initialized", ar.getCogInstance().initializer.lastFailureMsg);
             }
 
             RestHandler rh = new RestHandler(ar);
             rh.doAuthenticatedGet();
-        }
-        catch (Exception e) {
-            //do something better
-        }
-        finally {
+        } catch (Exception e) {
+            // do something better
+        } finally {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         ar.logCompletedRequest();

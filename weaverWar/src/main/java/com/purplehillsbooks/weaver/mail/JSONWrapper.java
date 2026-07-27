@@ -4,12 +4,11 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
- * This is a base class for other JSONObject wrapper classes, that is 
- * a Java class that stores all its information as JSON objects.
- * 
- * It provides a way to 'create on demand' an array, testing for whether
- * the array exists, and creating it if not.
+ * This is a base class for other JSONObject wrapper classes, that is a Java class that stores all
+ * its information as JSON objects.
  *
+ * <p>It provides a way to 'create on demand' an array, testing for whether the array exists, and
+ * creating it if not.
  */
 public class JSONWrapper {
 
@@ -22,19 +21,17 @@ public class JSONWrapper {
     public JSONArray getRequiredArray(String key) throws Exception {
         if (kernel.has(key)) {
             return kernel.getJSONArray(key);
-        }
-        else {
+        } else {
             JSONArray t = new JSONArray();
             kernel.put(key, t);
             return t;
         }
     }
-    
+
     /**
-     * If the incoming object has a value for the ket, the value will 
-     * be transferred and stored.   If not value then the original 
-     * value will remain unchanged.
-     * 
+     * If the incoming object has a value for the ket, the value will be transferred and stored. If
+     * not value then the original value will remain unchanged.
+     *
      * @return true if the incoming object had a value to set
      * @param jo is the new object with values to be stored
      */
@@ -45,6 +42,7 @@ public class JSONWrapper {
         }
         return false;
     }
+
     protected boolean copyBooleanToKernel(JSONObject jo, String key) throws Exception {
         if (jo.has(key)) {
             kernel.put(key, jo.getBoolean(key));
@@ -52,6 +50,7 @@ public class JSONWrapper {
         }
         return false;
     }
+
     protected boolean copyArrayToKernel(JSONObject jo, String key) throws Exception {
         if (jo.has(key)) {
             kernel.put(key, jo.getJSONArray(key));
@@ -59,6 +58,7 @@ public class JSONWrapper {
         }
         return false;
     }
+
     protected boolean copyIntToKernel(JSONObject jo, String key) throws Exception {
         if (jo.has(key)) {
             kernel.put(key, jo.getInt(key));
@@ -66,6 +66,7 @@ public class JSONWrapper {
         }
         return false;
     }
+
     protected boolean copyLongToKernel(JSONObject jo, String key) throws Exception {
         if (jo.has(key)) {
             kernel.put(key, jo.getLong(key));
@@ -79,21 +80,25 @@ public class JSONWrapper {
             jo.put(key, kernel.getString(key));
         }
     }
+
     protected void extractBoolean(JSONObject jo, String key) throws Exception {
         if (kernel.has(key)) {
             jo.put(key, kernel.getBoolean(key));
         }
     }
+
     protected void extractArray(JSONObject jo, String key) throws Exception {
         if (kernel.has(key)) {
             jo.put(key, kernel.getJSONArray(key));
         }
     }
+
     protected void extractInt(JSONObject jo, String key) throws Exception {
         if (kernel.has(key)) {
             jo.put(key, kernel.getInt(key));
         }
     }
+
     protected void extractLong(JSONObject jo, String key) throws Exception {
         if (kernel.has(key)) {
             jo.put(key, kernel.getLong(key));
@@ -103,7 +108,4 @@ public class JSONWrapper {
     public JSONObject getJSON() {
         return kernel;
     }
-    
-    
-
 }

@@ -20,8 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.IOException;
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -29,30 +27,30 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class NGFilter implements Filter {
 
     public void destroy() {
-        //nothing to destroy
+        // nothing to destroy
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
-        try{
-            //always set the encoding to UTF-8 in filter, as early as possible to avoid well known J2EE bug
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        try {
+            // always set the encoding to UTF-8 in filter, as early as possible to avoid well known
+            // J2EE
+            // bug
             request.setCharacterEncoding("UTF-8");
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse rsp = (HttpServletResponse) response;
                 rsp.setHeader("Cache-Control", "must-revalidate");
             }
             chain.doFilter(request, response);
-        }finally{
+        } finally {
             NGPageIndex.clearLocksHeldByThisThread();
         }
-
     }
 
-    public void init(FilterConfig arg0) throws ServletException {
-    }
-
+    public void init(FilterConfig arg0) throws ServletException {}
 }

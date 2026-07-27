@@ -20,20 +20,18 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.util.StringCounter;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
- * This is a role that extacts the assignees of a task, and returns that using
- * an interface of a role.
+ * This is a role that extacts the assignees of a task, and returns that using an interface of a
+ * role.
  *
- * This class is an interface wrapper class -- it does not hold any information but it
- * simply reads and write information to/from the GoalRecord itself without
- * caching anything.
+ * <p>This class is an interface wrapper class -- it does not hold any information but it simply
+ * reads and write information to/from the GoalRecord itself without caching anything.
  */
 public class RoleGoalAssignee extends RoleSpecialBase {
     private GoalRecord goal;
@@ -46,9 +44,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         return "Assigned to goal: " + taskName();
     }
 
-    /**
-     * A description of the purpose of the role, suitable for display to user.
-     */
+    /** A description of the purpose of the role, suitable for display to user. */
     public String getDescription() {
         return "Assigned to the goal " + taskName();
     }
@@ -77,7 +73,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         newList.add(newMember.getUniversalId());
         goal.setAssigneeList(newList);
     }
-    
+
     @Override
     public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
         for (AddressListEntry ale : addressList) {
@@ -85,13 +81,13 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         }
     }
 
-
     @Override
     public void removePlayer(AddressListEntry oldMember) throws Exception {
-        //in this case the methods are the same as the one below
-        //however this is an interface method to implement
+        // in this case the methods are the same as the one below
+        // however this is an interface method to implement
         removePlayerCompletely(oldMember);
     }
+
     @Override
     public void removePlayerCompletely(UserRef user) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
@@ -101,8 +97,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
             if (user.hasAnyId(one.getUniversalId())) {
                 // person was in the list, this will remove him from it
                 changed = true;
-            } 
-            else {
+            } else {
                 newList.add(one.getUniversalId());
             }
         }
@@ -136,9 +131,10 @@ public class RoleGoalAssignee extends RoleSpecialBase {
     public String getColor() {
         return "lightgreen";
     }
+
     @Override
     public void setColor(String reqs) {
-        //ignore this
+        // ignore this
     }
 
     @Override
@@ -146,43 +142,35 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         throw WeaverException.newBasic("getJSON has not been implemented on RoleGoalAssignee");
     }
 
-
     public void countIdentifiersInRole(StringCounter sc) {
         for (String id : getAssigneeList()) {
             sc.increment(id);
         }
     }
 
-
-    /**
-     * This will replace the assignee of an goal with another, avoiding
-     * any duplication.
-     */
+    /** This will replace the assignee of an goal with another, avoiding any duplication. */
     public boolean replaceId(String sourceId, String destId) {
-        //first a clear search path to see if one is there.
+        // first a clear search path to see if one is there.
         List<String> assignees = getAssigneeList();
 
         List<String> newList = new ArrayList<String>();
         newList.add(destId);
         boolean found = false;
         for (String oneAss : assignees) {
-            //be sure not to duplicate the destId ... one might have already been in there.
+            // be sure not to duplicate the destId ... one might have already been in there.
             if (oneAss.equalsIgnoreCase(sourceId)) {
                 found = true;
-            } 
-            else if (oneAss.equalsIgnoreCase(destId)) {
-                //already there???
-            }
-            else {
+            } else if (oneAss.equalsIgnoreCase(destId)) {
+                // already there???
+            } else {
                 newList.add(oneAss);
             }
         }
         if (!found) {
-            //if you never find the source, then ignore the command
+            // if you never find the source, then ignore the command
             return false;
         }
         goal.setAssigneeList(newList);
         return true;
     }
-    
 }

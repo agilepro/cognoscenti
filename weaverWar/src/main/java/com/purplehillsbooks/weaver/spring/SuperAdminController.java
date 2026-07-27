@@ -20,9 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -37,13 +35,13 @@ import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.purplehillsbooks.json.JSONObject;
 
 @Controller
 public class SuperAdminController extends BaseController {
@@ -55,15 +53,18 @@ public class SuperAdminController extends BaseController {
                 return;
             }
             if (!ar.isSuperAdmin()) {
-                showDisplayWarning(ar, "In order to see this section, you need to be a system administrator.");
+                showDisplayWarning(
+                        ar, "In order to see this section, you need to be a system administrator.");
                 return;
             }
             ar.req.setAttribute("wrappedJSP", jspName);
             ar.invokeJSP("/spring/admin/Wrapper.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Failed to open administration page (%s) for user (%s).",
-                    e, jspName, ar.getBestUserId()));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Failed to open administration page (%s) for user (%s).",
+                            e, jspName, ar.getBestUserId()));
         }
     }
 
@@ -74,8 +75,7 @@ public class SuperAdminController extends BaseController {
     }
 
     @RequestMapping(value = "/su/EmailTest.htm", method = RequestMethod.GET)
-    public void emailTest(HttpServletRequest request,
-            HttpServletResponse response) {
+    public void emailTest(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         streamAdminJSP(ar, "EmailTest.jsp");
     }
@@ -152,7 +152,8 @@ public class SuperAdminController extends BaseController {
             SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
             SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
             if (siteRequest == null) {
-                throw WeaverException.newBasic("Could not find any site request with id=%s", requestId);
+                throw WeaverException.newBasic(
+                        "Could not find any site request with id=%s", requestId);
             }
 
             String possiblyChangedSiteId = requestInfo.optString("siteId");
@@ -169,14 +170,16 @@ public class SuperAdminController extends BaseController {
             } else if ("Denied".equals(newStatus)) {
                 ha.completeSiteRequest(siteRequest, false);
             } else {
-                throw WeaverException.newBasic("Unrecognized new status (" + newStatus + ") in acceptOrDenySite.json");
+                throw WeaverException.newBasic(
+                        "Unrecognized new status (" + newStatus + ") in acceptOrDenySite.json");
             }
             siteReqFile.save();
 
             JSONObject repo = siteRequest.getJSON();
             sendJson(ar, repo);
         } catch (Exception e) {
-            Exception ee = WeaverException.newWrap("Unable to update site request (%s)", e, requestId);
+            Exception ee =
+                    WeaverException.newWrap("Unable to update site request (%s)", e, requestId);
             streamException(ee, ar);
         }
     }
@@ -202,14 +205,16 @@ public class SuperAdminController extends BaseController {
             requestInfo.put("status", "success");
             sendJson(ar, requestInfo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update site request (" + requestId + ")", ex);
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to update site request (" + requestId + ")", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/su/submitComment", method = RequestMethod.POST)
-    public void submitComment(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public void submitComment(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             Cognoscenti cog = ar.getCogInstance();
@@ -232,7 +237,10 @@ public class SuperAdminController extends BaseController {
                 }
                 if (errNo != det.getErrorNo()) {
                     throw WeaverException.newBasic(
-                            "For some reason looked for error " + errNo + " but got error " + det.getErrorNo());
+                            "For some reason looked for error "
+                                    + errNo
+                                    + " but got error "
+                                    + det.getErrorNo());
                 }
                 det.updateFromJSON(requestInfo);
                 det.sendFeedbackEmail(ar);
@@ -247,9 +255,12 @@ public class SuperAdminController extends BaseController {
     }
 
     @RequestMapping(value = "/su/ErrorDetail{errorId}.htm", method = RequestMethod.GET)
-    public void errorDetailsPage(@PathVariable String errorId,
-            @RequestParam String searchByDate, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public void errorDetailsPage(
+            @PathVariable String errorId,
+            @RequestParam String searchByDate,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             ar.setParam("errorId", errorId);
@@ -272,21 +283,21 @@ public class SuperAdminController extends BaseController {
             prepareSiteView(ar, siteId);
             streamAdminJSP(ar, "SiteMerge.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to perform SiteMerge with site %s",
-                    e, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap("Unable to perform SiteMerge with site %s", e, siteId));
         }
     }
 
     ///////////////////////// Eamil ///////////////////////
 
     @RequestMapping(value = "/su/QuerySuperAdminEmail.json", method = RequestMethod.POST)
-    public void queryEmail(
-            HttpServletRequest request, HttpServletResponse response) {
+    public void queryEmail(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             if (!ar.isSuperAdmin()) {
-                throw WeaverException.newBasic("Super admin email list is accessible only by administrator.");
+                throw WeaverException.newBasic(
+                        "Super admin email list is accessible only by administrator.");
             }
             JSONObject posted = this.getPostedObject(ar);
             JSONObject repo = EmailSender.querySuperAdminEmail(posted);
@@ -311,5 +322,4 @@ public class SuperAdminController extends BaseController {
             streamException(ee, ar);
         }
     }
-
 }

@@ -20,10 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.mail.JSONWrapper;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.mail.JSONWrapper;
 
 public class TaskArea extends JSONWrapper {
 
@@ -34,33 +33,30 @@ public class TaskArea extends JSONWrapper {
     public String getId() {
         try {
             return kernel.getString("id");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("TaskArea does not have an id????", e);
         }
     }
+
     public void setId(String newId) throws Exception {
         kernel.put("id", newId);
     }
 
-    /**
-     * looks for one name, and replaces them with another name
-     */
+    /** looks for one name, and replaces them with another name */
     public void replaceAssignee(String sourceUser, String destUser) throws Exception {
         JSONArray assignees = kernel.optJSONArray("assignees");
-        if (assignees==null) {
-            //if there are no assignees at all, then ignore this task area
+        if (assignees == null) {
+            // if there are no assignees at all, then ignore this task area
             return;
         }
         JSONArray newOnes = new JSONArray();
-        for (int i=0; i<assignees.length(); i++) {
+        for (int i = 0; i < assignees.length(); i++) {
             JSONObject oneAss = assignees.getJSONObject(i);
             String oneName = oneAss.getString("uid");
             if (sourceUser.equalsIgnoreCase(oneName)) {
                 AddressListEntry ale = AddressListEntry.findOrCreate(destUser);
                 newOnes.put(ale.getJSON());
-            }
-            else {
+            } else {
                 newOnes.put(oneAss);
             }
         }
@@ -78,7 +74,6 @@ public class TaskArea extends JSONWrapper {
         return thisPort;
     }
 
-
     public void updateFromJSON(JSONObject input) throws Exception {
         boolean changed = copyStringToKernel(input, "name");
         changed = copyStringToKernel(input, "purpose") || changed;
@@ -86,5 +81,4 @@ public class TaskArea extends JSONWrapper {
         changed = copyStringToKernel(input, "prospects") || changed;
         changed = copyArrayToKernel(input, "assignees") || changed;
     }
-
 }

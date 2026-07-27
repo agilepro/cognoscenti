@@ -20,40 +20,35 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import java.util.ArrayList;
+import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
-* There are a couple of kinds of comment containers....
-* Discussion topics:   TopicRecord
-* Meeting Agenda Items:  AgendaItem
-* This abstract bas class offers some functionality to both
-* to support holding and manipulating comments, rounds, proposals, and meeting minutes
-*/
+ * There are a couple of kinds of comment containers.... Discussion topics: TopicRecord Meeting
+ * Agenda Items: AgendaItem This abstract bas class offers some functionality to both to support
+ * holding and manipulating comments, rounds, proposals, and meeting minutes
+ */
 public abstract class CommentContainer extends DOMFace {
-
 
     public CommentContainer(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
     }
 
-    //subclasses must implement this
+    // subclasses must implement this
     public List<CommentRecord> getComments() throws Exception {
         List<CommentRecord> chilluns = getChildren("comment", CommentRecord.class);
-        for (CommentRecord comm : chilluns){
+        for (CommentRecord comm : chilluns) {
             addContainerFields(comm);
         }
         return chilluns;
     }
-    
-    public CommentRecord findComment(long timestamp)  throws Exception {
+
+    public CommentRecord findComment(long timestamp) throws Exception {
         for (CommentRecord cr : getComments()) {
             if (cr.getTime() == timestamp) {
                 return cr;
@@ -61,31 +56,31 @@ public abstract class CommentContainer extends DOMFace {
         }
         return null;
     }
-    public CommentRecord addComment(AuthRequest ar)  throws Exception {
+
+    public CommentRecord addComment(AuthRequest ar) throws Exception {
         CommentRecord newCR = createChild("comment", CommentRecord.class);
         newCR.setTime(ar.nowTime);
-        //remember that we allow comment creation by anonymous users as long
-        //as an email has been supplied
+        // remember that we allow comment creation by anonymous users as long
+        // as an email has been supplied
         UserProfile user = ar.getPossibleUser();
-        if (user==null) {
+        if (user == null) {
             throw WeaverException.newBasic("Unable to create a comment anonymously");
         }
         newCR.setUser(user);
         addContainerFields(newCR);
         return newCR;
     }
-    public void deleteComment(long timeStamp)  throws Exception {
+
+    public void deleteComment(long timeStamp) throws Exception {
         CommentRecord selectedForDelete = findComment(timeStamp);
-        if (selectedForDelete!=null) {
+        if (selectedForDelete != null) {
             this.removeChild(selectedForDelete);
         }
     }
 
     public abstract void addContainerFields(CommentRecord cr) throws Exception;
 
-
-/////////////////////////// JSON ///////////////////////////////
-
+    /////////////////////////// JSON ///////////////////////////////
 
     public JSONArray getAllComments(NGWorkspace ngw) throws Exception {
         JSONArray allCmts = new JSONArray();
@@ -94,6 +89,7 @@ public abstract class CommentContainer extends DOMFace {
         }
         return allCmts;
     }
+
     public JSONArray getIncludedComments(NGWorkspace ngw) throws Exception {
         JSONArray includedCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
@@ -103,22 +99,22 @@ public abstract class CommentContainer extends DOMFace {
         }
         return includedCmts;
     }
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, boolean allComments, NGWorkspace ngw) throws Exception {
+
+    public void addJSONComments(
+            AuthRequest ar, JSONObject thisContainer, boolean allComments, NGWorkspace ngw)
+            throws Exception {
         if (allComments) {
-            thisContainer.put("comments",  getAllComments(ngw));
+            thisContainer.put("comments", getAllComments(ngw));
+        } else {
+            thisContainer.put("comments", getIncludedComments(ngw));
         }
-        else {
-            thisContainer.put("comments",  getIncludedComments(ngw));
-            
-        }
-        
     }
 
     public List<CommentRecord> getCommentTimeFrame(long startTime, long endTime) throws Exception {
         List<CommentRecord> ret = new ArrayList<CommentRecord>();
         for (CommentRecord cr : getComments()) {
-            if (cr.getTime()<startTime || cr.getTime()>endTime) {
-                //ignore comment created before or after the period
+            if (cr.getTime() < startTime || cr.getTime() > endTime) {
+                // ignore comment created before or after the period
                 continue;
             }
             ret.add(cr);
@@ -126,116 +122,117 @@ public abstract class CommentContainer extends DOMFace {
         return ret;
     }
 
-
-    private JSONArray getCommentJSONTimeFrame(AuthRequest ar, long startTime, long endTime) throws Exception {
+    private JSONArray getCommentJSONTimeFrame(AuthRequest ar, long startTime, long endTime)
+            throws Exception {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
-            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT
-                    && (thisUser==null
-                    || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
-                //skip draft email from other people
+            if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT
+                    && (thisUser == null || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
+                // skip draft email from other people
                 continue;
             }
-            if (cr.getTime()<startTime || cr.getTime()>endTime) {
-                //ignore comment created before or after the period
+            if (cr.getTime() < startTime || cr.getTime() > endTime) {
+                // ignore comment created before or after the period
                 continue;
             }
             allCommentss.put(cr.getCompleteJSON());
         }
         return allCommentss;
     }
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) throws Exception {
-        thisContainer.put("comments",  getCommentJSONTimeFrame(ar, startTime, endTime));
+
+    public void addJSONComments(
+            AuthRequest ar, JSONObject thisContainer, long startTime, long endTime)
+            throws Exception {
+        thisContainer.put("comments", getCommentJSONTimeFrame(ar, startTime, endTime));
     }
 
     public void updateCommentsFromJSON(JSONObject noteObj, AuthRequest ar) throws Exception {
 
-        //if there is a comments, then IF the creator of the comment is the currently
-        //logged in user, and the timestamps match, then update the html part
-        //a timeStamp -1 means it is new.
+        // if there is a comments, then IF the creator of the comment is the currently
+        // logged in user, and the timestamps match, then update the html part
+        // a timeStamp -1 means it is new.
         if (noteObj.has("comments")) {
             updateAllComments(noteObj.getJSONArray("comments"), ar);
         }
     }
 
-    private void updateAllComments(JSONArray allComments, AuthRequest ar) throws Exception  {
+    private void updateAllComments(JSONArray allComments, AuthRequest ar) throws Exception {
         UserProfile uProf = ar.getPossibleUser();
-        if (uProf==null) {
+        if (uProf == null) {
             throw WeaverException.newBasic("Attempt to update comments without having a user set");
         }
-        for (int i=0; i<allComments.length(); i++) {
+        for (int i = 0; i < allComments.length(); i++) {
             JSONObject oneComment = allComments.getJSONObject(i);
             long timeStamp = oneComment.getLong("time");
-            //comment type 4 ... for meetings will not be found
-            //and so will never be updated
+            // comment type 4 ... for meetings will not be found
+            // and so will never be updated
             CommentRecord cr = findComment(timeStamp);
-            if (cr==null) {
-                //none found, so create one
+            if (cr == null) {
+                // none found, so create one
                 cr = addComment(ar);
-                if (timeStamp>0) {
-                    //override the automatically created timestamp....
+                if (timeStamp > 0) {
+                    // override the automatically created timestamp....
                     cr.setTime(timeStamp);
                 }
                 cr.updateFromJSON(oneComment, ar);
                 linkReplyToSource(cr);
 
-                //if you add a comment, then you also get this workspace on your watch list
+                // if you add a comment, then you also get this workspace on your watch list
                 NGWorkspace ngw = (NGWorkspace) ar.ngp;
                 uProf.assureWatch(ngw.getCombinedKey());
-            }
-            else if (oneComment.has("deleteMe")) {
-                //a special flag in the comment indicates it should be removed
-                //setting to draft will UNLINK this comment from the other
+            } else if (oneComment.has("deleteMe")) {
+                // a special flag in the comment indicates it should be removed
+                // setting to draft will UNLINK this comment from the other
                 cr.setState(CommentRecord.COMMENT_STATE_DRAFT);
                 linkReplyToSource(cr);
                 deleteComment(timeStamp);
-            }
-            else {
+            } else {
                 cr.updateFromJSON(oneComment, ar);
                 linkReplyToSource(cr);
             }
         }
     }
+
     private void linkReplyToSource(CommentRecord cr) throws Exception {
         long replyto = cr.getReplyTo();
-        if (replyto<=0) {
-            //not a reply, nothing to link to
+        if (replyto <= 0) {
+            // not a reply, nothing to link to
             return;
         }
         CommentRecord source = findComment(replyto);
-        if (source!=null) {
-            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
-                //don't link up draft replies.
+        if (source != null) {
+            if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT) {
+                // don't link up draft replies.
                 source.removeFromReplies(cr.getTime());
-            }
-            else {
+            } else {
                 source.addOneToReplies(cr.getTime());
             }
-        }
-        else {
-            //did not find the other, but otherwise silently ignore the problem
-            System.out.println("New comment reply to time value, cannot find corresponding comment: "+replyto);
+        } else {
+            // did not find the other, but otherwise silently ignore the problem
+            System.out.println(
+                    "New comment reply to time value, cannot find corresponding comment: "
+                            + replyto);
         }
     }
-    
+
     public String getGlobalContainerKey(NGWorkspace ngw) {
         return "BOGUS";
     }
-    
 
     public String getPageWebAddress() {
         if (this instanceof TopicRecord) {
-            return "NoteZoom"+((TopicRecord)this).getId()+".htm";
+            return "NoteZoom" + ((TopicRecord) this).getId() + ".htm";
         }
         if (this instanceof AttachmentRecord) {
-            return "DocInfo"+((TopicRecord)this).getId()+".htm";
+            return "DocInfo" + ((TopicRecord) this).getId() + ".htm";
         }
         if (this instanceof AgendaItem) {
-            MeetingRecord mr = ((AgendaItem)this).meeting;
-            return "MeetingHtml.htm?id="+mr.getId();
+            MeetingRecord mr = ((AgendaItem) this).meeting;
+            return "MeetingHtml.htm?id=" + mr.getId();
         }
-        throw new RuntimeException("Unable to getPageWebAddress, unrecognized container type: "+getClass().getName());
+        throw new RuntimeException(
+                "Unable to getPageWebAddress, unrecognized container type: "
+                        + getClass().getName());
     }
-
 }

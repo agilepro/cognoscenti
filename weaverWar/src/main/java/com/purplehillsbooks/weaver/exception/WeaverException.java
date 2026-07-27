@@ -19,9 +19,8 @@ package com.purplehillsbooks.weaver.exception;
 import com.purplehillsbooks.json.JSONException;
 
 /**
- * WeaverException is a barebones exception that wraps the
- * JSONException with static factory methods.
- * Uses Java String.format style formatting
+ * WeaverException is a barebones exception that wraps the JSONException with static factory
+ * methods. Uses Java String.format style formatting
  */
 public class WeaverException extends JSONException {
 
@@ -29,19 +28,22 @@ public class WeaverException extends JSONException {
     private WeaverException() {
         super("Unspecified WeaverException");
     }
+
     private WeaverException(String msg, Exception cause) {
         super(msg, cause);
     }
+
     public static WeaverException newBasic(String msg, Object... params) {
         return new WeaverException(String.format(msg, params), null);
     }
+
     public static WeaverException newWrap(String msg, Exception cause, Object... params) {
         return new WeaverException(String.format(msg, params), cause);
     }
+
     public static WeaverException newProgramLogicError(String msg, Object... params) {
         return newBasic(msg, params);
     }
-
 
     public static boolean contains(Throwable e, String searchToken) {
         while (e != null) {
@@ -58,7 +60,7 @@ public class WeaverException extends JSONException {
         while (e != null) {
             String line = e.toString();
             int colonPos = line.indexOf(":");
-            if (colonPos>0 && colonPos<60) {
+            if (colonPos > 0 && colonPos < 60) {
                 String prefix = line.substring(0, colonPos);
                 boolean strip = false;
                 if (prefix.contains("WeaverException")) {
@@ -68,7 +70,7 @@ public class WeaverException extends JSONException {
                     strip = true;
                 }
                 if (strip) {
-                    line = line.substring(colonPos+1);
+                    line = line.substring(colonPos + 1);
                 }
             }
             retMsg.append(line);
@@ -77,6 +79,4 @@ public class WeaverException extends JSONException {
         }
         return retMsg.toString();
     }
-  
-
 }

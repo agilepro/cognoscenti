@@ -20,16 +20,9 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TimeZone;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AccessControl;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AgendaItem;
@@ -39,22 +32,24 @@ import com.purplehillsbooks.weaver.BaseRecord;
 import com.purplehillsbooks.weaver.GoalRecord;
 import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.MeetingRecord;
-import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.TimeZone;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
 
 @Controller
 public class MeetingControler extends BaseController {
@@ -62,8 +57,11 @@ public class MeetingControler extends BaseController {
     public static MeetingNotesCache meetingCache = new MeetingNotesCache();
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingFull.htm", method = RequestMethod.GET)
-    public void meetingFull(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingFull(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
@@ -91,15 +89,20 @@ public class MeetingControler extends BaseController {
 
             streamJSP(ar, "MeetingFull.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingAvail.htm", method = RequestMethod.GET)
-    public void meetingAvail(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingAvail(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
@@ -114,15 +117,20 @@ public class MeetingControler extends BaseController {
             boolean canAccess = true;
             showJSPDepending(ar, ngw, "../anon/MeetingAvail.jsp", canAccess);
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting availability page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting availability page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingHtml.htm", method = RequestMethod.GET)
-    public void meetingHtml(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetingHtml(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -139,15 +147,20 @@ public class MeetingControler extends BaseController {
             //
             showJSPDepending(ar, ngw, "MeetingHtml.jsp", canAccess);
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting display page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting display page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetMerge.htm", method = RequestMethod.GET)
-    public void meetMerge(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetMerge(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -164,15 +177,20 @@ public class MeetingControler extends BaseController {
 
             streamJSP(ar, "MeetMerge.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting merge page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting merge page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetPrint.htm", method = RequestMethod.GET)
-    public void MeetPrint(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void MeetPrint(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -184,7 +202,8 @@ public class MeetingControler extends BaseController {
             String template = ar.reqParam("tem");
             if (!template.endsWith("chtml")) {
                 throw WeaverException.newBasic(
-                        "Meeting template must end with 'chtml'.  Do you have the right file name? %s", template);
+                        "Meeting template must end with 'chtml'.  Do you have the right file name? %s",
+                        template);
             }
             String baseTemplateName = template.substring(0, template.length() - 6);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
@@ -200,22 +219,29 @@ public class MeetingControler extends BaseController {
             UserProfile uProf = ar.getUserProfile();
             if (uProf != null) {
                 // if a user is logged in, stream with their calendar (timezone)
-                ChunkTemplate.streamAuthRequest(ar.w, ar, baseTemplateName, meetingJSON, uProf.getCalendar());
+                ChunkTemplate.streamAuthRequest(
+                        ar.w, ar, baseTemplateName, meetingJSON, uProf.getCalendar());
             } else {
                 // not logged in gets the system default calendar
-                ChunkTemplate.streamAuthRequest(ar.w, ar, baseTemplateName, meetingJSON, Calendar.getInstance());
+                ChunkTemplate.streamAuthRequest(
+                        ar.w, ar, baseTemplateName, meetingJSON, Calendar.getInstance());
             }
 
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting print page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting print page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingMinutes.htm", method = RequestMethod.GET)
-    public void meetingMinutes(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetingMinutes(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -232,16 +258,23 @@ public class MeetingControler extends BaseController {
             ar.setParam("pageId", pageId);
             ar.invokeJSP("/spring/jsp/MeetingMinutes.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting minutes page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting minutes page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/meetingTime{meetId}.ics", method = RequestMethod.GET)
-    public void meetingTime(@PathVariable String siteId, @PathVariable String pageId,
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/meetingTime{meetId}.ics",
+            method = RequestMethod.GET)
+    public void meetingTime(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
             @PathVariable String meetId,
-            HttpServletRequest request, HttpServletResponse response)
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -264,14 +297,19 @@ public class MeetingControler extends BaseController {
             ar.flush();
 
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to create the ICS calendar file for meeting %s", ex, meetId);
+            Exception ee =
+                    WeaverException.newWrap(
+                            "Unable to create the ICS calendar file for meeting %s", ex, meetId);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/CloneMeeting.htm", method = RequestMethod.GET)
-    public void cloneMeeting(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void cloneMeeting(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             NGWorkspace ngw = registerWorkspaceRequired(ar, siteId, pageId);
@@ -288,15 +326,20 @@ public class MeetingControler extends BaseController {
             }
             showJSPMembers(ar, siteId, pageId, "CloneMeeting.jsp");
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap(
-                    "Unable to construct the meeting clone page for workspace (%s) in site (%s)",
-                    e, pageId, siteId));
+            showDisplayException(
+                    ar,
+                    WeaverException.newWrap(
+                            "Unable to construct the meeting clone page for workspace (%s) in site (%s)",
+                            e, pageId, siteId));
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingCreate.htm", method = RequestMethod.GET)
-    public void meetingCreateUi(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetingCreateUi(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
@@ -312,16 +355,22 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingList.htm", method = RequestMethod.GET)
-    public void meetingList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void meetingList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MeetingList.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/MeetingAttendees.htm", method = RequestMethod.GET)
-    public void attendeeMatrix(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
+    public void attendeeMatrix(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MeetingAttendees.jsp");
@@ -357,11 +406,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingCreate.json", method = RequestMethod.POST)
-    public void meetingCreate(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingCreate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             ar.assertNotReadOnly("Cannot create a meeting");
@@ -369,16 +422,21 @@ public class MeetingControler extends BaseController {
             JSONObject meetingInfo = getPostedObject(ar);
             String name = meetingInfo.getString("name");
             if (name == null || name.length() == 0) {
-                throw WeaverException.newBasic("You must supply a meeting name to create a meeting.");
+                throw WeaverException.newBasic(
+                        "You must supply a meeting name to create a meeting.");
             }
             MeetingRecord newMeeting = ngw.createMeeting();
             newMeeting.setOwner(ar.getBestUserId());
             removeCompletedActionItems(ngw, meetingInfo);
             newMeeting.updateFromJSON(meetingInfo, ar);
             newMeeting.createAgendaFromJSON(meetingInfo, ar, ngw);
-            HistoryRecord.createHistoryRecord(ngw, newMeeting.getId(),
+            HistoryRecord.createHistoryRecord(
+                    ngw,
+                    newMeeting.getId(),
                     HistoryRecord.CONTEXT_TYPE_MEETING,
-                    HistoryRecord.EVENT_TYPE_CREATED, ar, "");
+                    HistoryRecord.EVENT_TYPE_CREATED,
+                    ar,
+                    "");
             saveAndReleaseLock(ngw, ar, "Created new Meeting");
             JSONObject repo = newMeeting.getFullJSON(ar, ngw, true);
             sendJson(ar, repo);
@@ -395,7 +453,8 @@ public class MeetingControler extends BaseController {
      * along.
      * They are no longer useful.
      */
-    private void removeCompletedActionItems(NGWorkspace ngw, JSONObject meetingInfo) throws Exception {
+    private void removeCompletedActionItems(NGWorkspace ngw, JSONObject meetingInfo)
+            throws Exception {
         if (!meetingInfo.has("agenda")) {
             return;
         }
@@ -424,15 +483,18 @@ public class MeetingControler extends BaseController {
             }
             agendaItem.put("aiList", approvedItems);
         }
-
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
-    public void meetingListB(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingListB(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             JSONObject jo = new JSONObject();
             JSONArray meetings = new JSONArray();
@@ -450,8 +512,11 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
-    public void meetingRead(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingRead(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             String id = ar.reqParam("id");
@@ -466,18 +531,23 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingUpdate.json", method = RequestMethod.POST)
-    public void meetingUpdate(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String id = ar.reqParam("id");
             MeetingRecord meeting = ngw.findMeeting(id);
             if (!AccessControl.canAccessMeeting(ar, ngw, meeting)) {
                 if (ar.isLoggedIn()) {
-                    throw WeaverException.newBasic("User " + ar.getBestUserId() + " not able to access meeting %s", id);
+                    throw WeaverException.newBasic(
+                            "User " + ar.getBestUserId() + " not able to access meeting %s", id);
                 }
                 throw WeaverException.newBasic("Anonymous not able to access meeting %s", id);
             }
@@ -497,9 +567,13 @@ public class MeetingControler extends BaseController {
                         if (newComment.has("html")) {
                             String comment = newComment.getString("html");
                             comment = GetFirstHundredNoHtml(comment);
-                            HistoryRecord.createHistoryRecord(ngw, meeting.getId(),
+                            HistoryRecord.createHistoryRecord(
+                                    ngw,
+                                    meeting.getId(),
                                     HistoryRecord.CONTEXT_TYPE_MEETING,
-                                    HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
+                                    HistoryRecord.EVENT_COMMENT_ADDED,
+                                    ar,
+                                    comment);
                         }
                     }
                 }
@@ -517,7 +591,8 @@ public class MeetingControler extends BaseController {
         }
     }
 
-    private void addVisitors(AuthRequest ar, JSONObject repo, String siteId, String pageId) throws Exception {
+    private void addVisitors(AuthRequest ar, JSONObject repo, String siteId, String pageId)
+            throws Exception {
         JSONArray visitors = new JSONArray();
         for (String userKey : ar.whoIsVisiting(siteId, pageId)) {
             AddressListEntry ale = AddressListEntry.findOrCreate(userKey);
@@ -527,11 +602,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/proposedTimes.json", method = RequestMethod.POST)
-    public void meetingTimes(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingTimes(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             String id = ar.reqParam("id");
             ar.assertNotFrozen(ngw);
@@ -557,11 +636,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/setSituation.json", method = RequestMethod.POST)
-    public void setSituation(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void setSituation(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             String id = ar.reqParam("id");
             ar.assertNotFrozen(ngw);
@@ -590,8 +673,11 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/getMeetingNotes.json", method = RequestMethod.GET)
-    public void getMeetingNotes(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void getMeetingNotes(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             String id = ar.reqParam("id");
@@ -605,9 +691,14 @@ public class MeetingControler extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/updateMeetingNotes.json", method = RequestMethod.POST)
-    public void updateMeetingNotes(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/updateMeetingNotes.json",
+            method = RequestMethod.POST)
+    public void updateMeetingNotes(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             String id = ar.reqParam("id");
@@ -619,7 +710,8 @@ public class MeetingControler extends BaseController {
                 return;
             }
 
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             MeetingRecord meeting = ngw.findMeeting(id);
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
@@ -639,12 +731,16 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingDelete.json", method = RequestMethod.POST)
-    public void meetingDelete(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void meetingDelete(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String meetingId = "";
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertUpdateWorkspace("Must be able to update a workspace to delete a meeting.");
             ar.assertNotFrozen(ngw);
@@ -663,11 +759,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaAdd.json", method = RequestMethod.POST)
-    public void agendaAdd(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void agendaAdd(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String id = ar.reqParam("id");
@@ -681,7 +781,8 @@ public class MeetingControler extends BaseController {
 
             String subject = agendaInfo.getString("subject");
             if (subject == null || subject.length() == 0) {
-                throw WeaverException.newBasic("You must supply a agenda subject to create an agenda item.");
+                throw WeaverException.newBasic(
+                        "You must supply a agenda subject to create an agenda item.");
             }
             AgendaItem ai = meeting.createAgendaItem(ngw);
             ai.setPosition(99999);
@@ -700,11 +801,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaDelete.json", method = RequestMethod.POST)
-    public void agendaDelete(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void agendaDelete(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String id = ar.reqParam("id");
@@ -723,17 +828,22 @@ public class MeetingControler extends BaseController {
             ar.write("deleted agenda item " + agendaId);
             ar.flush();
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to delete agenda item from meeting.", ex);
+            Exception ee =
+                    WeaverException.newWrap("Unable to delete agenda item from meeting.", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaMove.json", method = RequestMethod.POST)
-    public void agendaMove(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void agendaMove(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String src = ar.reqParam("src");
@@ -769,11 +879,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaGet.json", method = RequestMethod.GET)
-    public void agendaGet(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void agendaGet(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
 
             String id = ar.reqParam("id");
@@ -793,11 +907,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaUpdate.json", method = RequestMethod.POST)
-    public void agendaUpdate(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void agendaUpdate(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String id = ar.reqParam("id");
@@ -811,7 +929,8 @@ public class MeetingControler extends BaseController {
             if (!"~new~".equals(aid)) {
                 ai = meeting.findAgendaItem(aid);
                 if (ai == null) {
-                    throw WeaverException.newBasic("Can not find an agenda item (%s) in meeting (%s)", aid, id);
+                    throw WeaverException.newBasic(
+                            "Can not find an agenda item (%s) in meeting (%s)", aid, id);
                 }
             } else {
                 ai = meeting.createAgendaItem(ngw);
@@ -845,11 +964,15 @@ public class MeetingControler extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/createMinutes.json", method = RequestMethod.POST)
-    public void createMinutes(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void createMinutes(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertNotFrozen(ngw);
             String id = ar.reqParam("id");
@@ -888,14 +1011,18 @@ public class MeetingControler extends BaseController {
             saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to create Topic for minutes of meeting.", ex);
+            Exception ee =
+                    WeaverException.newWrap("Unable to create Topic for minutes of meeting.", ex);
             streamException(ee, ar);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/timeZoneList.json", method = RequestMethod.POST)
-    public void timeZoneList(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void timeZoneList(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             JSONObject timeZoneRequest = getPostedObject(ar);
@@ -949,5 +1076,4 @@ public class MeetingControler extends BaseController {
             streamException(ee, ar);
         }
     }
-
 }

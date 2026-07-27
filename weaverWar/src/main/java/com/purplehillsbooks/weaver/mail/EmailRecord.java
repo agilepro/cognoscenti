@@ -20,42 +20,34 @@
 
 package com.purplehillsbooks.weaver.mail;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
 import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
 
 /**
- * This class represents an email message in the ngPage world.
- * Operations that happen in the page, will create an email message
- * of this type, and store it in the page for delivery.
+ * This class represents an email message in the ngPage world. Operations that happen in the page,
+ * will create an email message of this type, and store it in the page for delivery.
  *
- * Constructing and storing this message is expected to be fast,
- * reliable, and part of the same transaction that updates the
- * page.
+ * <p>Constructing and storing this message is expected to be fast, reliable, and part of the same
+ * transaction that updates the page.
  *
- * A separate thread will wake up, take the message from the page
- * deleting it here, and adding it to the mail archive file.
- * Then mail messages in the archive file are sent to the email
- * service.
- *
+ * <p>A separate thread will wake up, take the message from the page deleting it here, and adding it
+ * to the mail archive file. Then mail messages in the archive file are sent to the email service.
  */
-public class EmailRecord extends DOMFace
-{
+public class EmailRecord extends DOMFace {
 
     public static final String READY_TO_GO = "Ready";
     public static final String SENT = "Sent";
@@ -64,32 +56,30 @@ public class EmailRecord extends DOMFace
     public static final String RECEIVED = "Received";
 
     private Hashtable<String, MemFile> attachmentContents;
-    private Hashtable<String, File>    attachmentPaths;
+    private Hashtable<String, File> attachmentPaths;
 
-    public EmailRecord(Document doc, Element upEle, DOMFace p)
-    {
-        super(doc,upEle, p);
+    public EmailRecord(Document doc, Element upEle, DOMFace p) {
+        super(doc, upEle, p);
     }
 
-    public String getId()
-    {
+    public String getId() {
         String val = getAttribute("id");
-        if (val==null)
-        {
+        if (val == null) {
             return "";
         }
         return val;
     }
-    public void setId(String id)
-    {
+
+    public void setId(String id) {
         setAttribute("id", id);
     }
 
     public String getFromAddress() {
         return getAttribute("fromAddress");
     }
+
     public void setFromAddress(String fromAddress) {
-        setAttribute("fromAddress",fromAddress);
+        setAttribute("fromAddress", fromAddress);
     }
 
     public List<OptOutAddr> getAddressees() throws Exception {
@@ -109,27 +99,20 @@ public class EmailRecord extends DOMFace
                 String siteID = assignee.getAttribute("siteID");
                 String roleName = assignee.getAttribute("roleName");
                 res.add(new OptOutRolePlayer(ale, siteID, containerID, roleName));
-            }
-            else if ("Super".equals(ootype)) {
+            } else if ("Super".equals(ootype)) {
                 res.add(new OptOutSuperAdmin(ale));
-            }
-            else if ("Indiv".equals(ootype)) {
+            } else if ("Indiv".equals(ootype)) {
                 res.add(new OptOutIndividualRequest(ale));
-            }
-            else if ("Direct".equals(ootype)) {
+            } else if ("Direct".equals(ootype)) {
                 res.add(new OptOutDirectAddress(ale));
-            }
-            else {
+            } else {
                 res.add(new OptOutAddr(ale));
             }
         }
         return res;
     }
 
-
-    /**
-     * Sets this email to go to a single address.
-     */
+    /** Sets this email to go to a single address. */
     public void setAddress(OptOutAddr ooa) throws Exception {
         removeAllNamedChild("to");
 
@@ -141,21 +124,17 @@ public class EmailRecord extends DOMFace
             assignee.setAttribute("containerID", oorm.containerID);
             assignee.setAttribute("siteID", oorm.siteID);
             assignee.setAttribute("roleName", oorm.roleName);
-        }
-        else if (ooa instanceof OptOutSuperAdmin) {
+        } else if (ooa instanceof OptOutSuperAdmin) {
             assignee.setAttribute("ootype", "Super");
-        }
-        else if (ooa instanceof OptOutIndividualRequest) {
+        } else if (ooa instanceof OptOutIndividualRequest) {
             assignee.setAttribute("ootype", "Indiv");
-        }
-        else if (ooa instanceof OptOutDirectAddress) {
+        } else if (ooa instanceof OptOutDirectAddress) {
             assignee.setAttribute("ootype", "Direct");
-        }
-        else {
+        } else {
             assignee.setAttribute("ootype", "Gen");
         }
     }
-    
+
     public void setAddressees(List<OptOutAddr> inad) throws Exception {
         removeAllNamedChild("to");
         for (OptOutAddr ooa : inad) {
@@ -168,17 +147,13 @@ public class EmailRecord extends DOMFace
                 assignee.setAttribute("containerID", oorm.containerID);
                 assignee.setAttribute("siteID", oorm.siteID);
                 assignee.setAttribute("roleName", oorm.roleName);
-            }
-            else if (ooa instanceof OptOutSuperAdmin) {
+            } else if (ooa instanceof OptOutSuperAdmin) {
                 assignee.setAttribute("ootype", "Super");
-            }
-            else if (ooa instanceof OptOutIndividualRequest) {
+            } else if (ooa instanceof OptOutIndividualRequest) {
                 assignee.setAttribute("ootype", "Indiv");
-            }
-            else if (ooa instanceof OptOutDirectAddress) {
+            } else if (ooa instanceof OptOutDirectAddress) {
                 assignee.setAttribute("ootype", "Direct");
-            }
-            else {
+            } else {
                 assignee.setAttribute("ootype", "Gen");
             }
         }
@@ -187,26 +162,28 @@ public class EmailRecord extends DOMFace
     public String getCcAddress() {
         return getScalar("ccAddress");
     }
+
     public void setCcAddress(String ccAddress) {
-        setScalar("ccAddress",ccAddress);
+        setScalar("ccAddress", ccAddress);
     }
 
-    /**
-    * The body is the message without the unsubscribe part
-    */
+    /** The body is the message without the unsubscribe part */
     public String getBodyText() {
         return getScalar("bodyText");
     }
+
     public void setBodyText(String bodyText) {
-        setScalar("bodyText",bodyText);
+        setScalar("bodyText", bodyText);
     }
 
     public String getStatus() {
         return getAttribute("status");
     }
+
     public void setStatus(String status) {
-        setAttribute("status",status);
+        setAttribute("status", status);
     }
+
     public boolean statusReadyToSend() {
         return READY_TO_GO.equals(getAttribute("status"));
     }
@@ -214,6 +191,7 @@ public class EmailRecord extends DOMFace
     public String getErrorMessage() {
         return getScalar("error");
     }
+
     public void setErrorMessage(String err) {
         setScalar("error", err);
     }
@@ -221,34 +199,39 @@ public class EmailRecord extends DOMFace
     public long getLastSentDate() {
         return safeConvertLong(getAttribute("lastSentDate"));
     }
+
     public void setLastSentDate(long sentDate) {
-        setAttribute("lastSentDate",String.valueOf(sentDate));
+        setAttribute("lastSentDate", String.valueOf(sentDate));
     }
 
     public String getSubject() {
         return getAttribute("subject");
     }
+
     public void setSubject(String subject) {
-        setAttribute("subject",subject);
+        setAttribute("subject", subject);
     }
 
     public String getWorkspaceId() {
         return getAttribute("projectId");
     }
+
     public void setWorkspaceId(String key) {
-        setAttribute("projectId",key);
+        setAttribute("projectId", key);
     }
 
     public long getCreateDate() {
         return safeConvertLong(getAttribute("createDate"));
     }
+
     public void setCreateDate(long createDate) {
-        setAttribute("createDate",String.valueOf(createDate));
+        setAttribute("createDate", String.valueOf(createDate));
     }
 
     public String getExceptionMessage() {
         return getScalar("exception");
     }
+
     public void setExceptionMessage(Exception e) {
         setScalar("exception", WeaverException.getFullMessage(e));
     }
@@ -256,14 +239,14 @@ public class EmailRecord extends DOMFace
     public List<String> getAttachmentIds() {
         return getVector("attachid");
     }
+
     public void setAttachmentIds(List<String> ids) {
         setVector("attachid", ids);
     }
 
-
     /**
-     * Read attachments into cache so that all the information to send
-     * a file is held in memory and there is no chance for failure.
+     * Read attachments into cache so that all the information to send a file is held in memory and
+     * there is no chance for failure.
      */
     public void prepareForSending(NGWorkspace ngw) throws Exception {
         attachmentContents = new Hashtable<String, MemFile>();
@@ -272,24 +255,24 @@ public class EmailRecord extends DOMFace
         for (String oneId : getAttachmentIds()) {
 
             AttachmentRecord attach = ngw.findAttachmentByID(oneId);
-            if (attach==null) {
-                //attachments might get removed in the mean time, just ignore them
+            if (attach == null) {
+                // attachments might get removed in the mean time, just ignore them
                 continue;
             }
             AttachmentVersion aVer = attach.getLatestVersion(ngw);
-            if (aVer==null) {
+            if (aVer == null) {
                 continue;
             }
             File attachFile = aVer.getLocalFile();
             if (!attachFile.exists()) {
                 continue;
             }
-            attachmentPaths.put(oneId,  attachFile);
+            attachmentPaths.put(oneId, attachFile);
 
             MemFile thisContent = new MemFile();
             thisContent.fillWithInputStream(new FileInputStream(attachFile));
             attachmentContents.put(oneId, thisContent);
-       }
+        }
     }
 
     public void clearCache() throws Exception {
@@ -298,32 +281,34 @@ public class EmailRecord extends DOMFace
     }
 
     /**
-     * If the EailRecord is 'prepared' for sending, then you can get the file path for an attachment.
-     * Returns null if for any reason it was not able to find attachment or it had no latest version.
+     * If the EailRecord is 'prepared' for sending, then you can get the file path for an
+     * attachment. Returns null if for any reason it was not able to find attachment or it had no
+     * latest version.
      */
-    public File getAttachPath(String attId) throws Exception  {
-        if (attachmentPaths==null) {
-            throw WeaverException.newBasic("EmailRecord object has not been prepared for sending, and so can not return attachment paths.");
+    public File getAttachPath(String attId) throws Exception {
+        if (attachmentPaths == null) {
+            throw WeaverException.newBasic(
+                    "EmailRecord object has not been prepared for sending, and so can not return attachment paths.");
         }
         return attachmentPaths.get(attId);
     }
 
     /**
      * If the EailRecord is 'prepared' for sending, then you can get the contents of an attachment
-     * from the MemFile returned by this method.
-     * Returns null if for any reason it was not able to find and get the contents.
+     * from the MemFile returned by this method. Returns null if for any reason it was not able to
+     * find and get the contents.
      */
-    public MemFile getAttachContents(String attId) throws Exception  {
-        if (attachmentContents==null) {
-            throw WeaverException.newBasic("EmailRecord object has not been prepared for sending, and so can not return attachment contents.");
+    public MemFile getAttachContents(String attId) throws Exception {
+        if (attachmentContents == null) {
+            throw WeaverException.newBasic(
+                    "EmailRecord object has not been prepared for sending, and so can not return attachment contents.");
         }
         MemFile mf = attachmentContents.get(attId);
-        if (mf==null) {
+        if (mf == null) {
             return null;
         }
         return mf;
     }
-
 
     public JSONObject getJSON() throws Exception {
         JSONObject obj = new JSONObject();
@@ -340,7 +325,4 @@ public class EmailRecord extends DOMFace
 
         return obj;
     }
-
-
-
 }

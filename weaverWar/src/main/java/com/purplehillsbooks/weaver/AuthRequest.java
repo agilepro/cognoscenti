@@ -20,6 +20,17 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.ServletExit;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -36,62 +47,41 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.ServletExit;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.streams.HTMLWriter;
-
 /**
- * AuthRequest is the "Authorized Request and Response" class for the
- * NuGen way of responding to HTTP requests. This class wraps both the
- * HTTPRequest and the HTTPResponse objects, and carries them around to
- * whatever handler. It also provides some uniform services around such a
- * request. For example:
+ * AuthRequest is the "Authorized Request and Response" class for the NuGen way of responding to
+ * HTTP requests. This class wraps both the HTTPRequest and the HTTPResponse objects, and carries
+ * them around to whatever handler. It also provides some uniform services around such a request.
+ * For example:
  *
- * Identifying the user: this class will automatically detect in the headers
- * or in the session who the user is (by universal id) and it will maintain
- * cookies that the user or session might use in the future
+ * <p>Identifying the user: this class will automatically detect in the headers or in the session
+ * who the user is (by universal id) and it will maintain cookies that the user or session might use
+ * in the future
  *
- * Parsing the path: provide consistent mechanism for parsing and decoding
- * the request path. You get an array of decoded strings.
+ * <p>Parsing the path: provide consistent mechanism for parsing and decoding the request path. You
+ * get an array of decoded strings.
  *
- * Access level: provides convenience routines to detect access levels that
- * a user should have and carries that to all methods that might need it.
- * Access may depend upon multiple things, like you might be logged in
- * and have a license active at the same time.
+ * <p>Access level: provides convenience routines to detect access levels that a user should have
+ * and carries that to all methods that might need it. Access may depend upon multiple things, like
+ * you might be logged in and have a license active at the same time.
  *
- * Access limiting: there is a feature to limit your access to a lower level
- * so you can see what another person might see. It simulates this
- * access level, but not permanently: user can return regular level.
+ * <p>Access limiting: there is a feature to limit your access to a lower level so you can see what
+ * another person might see. It simulates this access level, but not permanently: user can return
+ * regular level.
  *
- * Output Stream and Writer: handles this appropriately, including a
- * copy constructor that allows you to substitute a different writer.
+ * <p>Output Stream and Writer: handles this appropriately, including a copy constructor that allows
+ * you to substitute a different writer.
  *
- * HTTPRequest & HTTPResponse: still lets you have access to these when needed.
+ * <p>HTTPRequest & HTTPResponse: still lets you have access to these when needed.
  *
- * The standard patterns for all servlets should be:
+ * <p>The standard patterns for all servlets should be:
  *
- * public void doGet(HttpServletRequest req, HttpServletResponse resp)
- * {
- * AuthRequest ar = AuthRequest.getOrCreate(req, resp);
- * ....
- * ar.flush();
- * ar.logCompletedRequest();
- * }
+ * <p>public void doGet(HttpServletRequest req, HttpServletResponse resp) { AuthRequest ar =
+ * AuthRequest.getOrCreate(req, resp); .... ar.flush(); ar.logCompletedRequest(); }
  *
- * All subsequent code should use the "ar" object, you can get the request
- * or response objects from that if necessary, but more important the userid,
- * path parsing, and access control will all be handled through that
- * consistently.
- * If a handler is a subroutine, pass the "ar" object for convenience.
+ * <p>All subsequent code should use the "ar" object, you can get the request or response objects
+ * from that if necessary, but more important the userid, path parsing, and access control will all
+ * be handled through that consistently. If a handler is a subroutine, pass the "ar" object for
+ * convenience.
  */
 public class AuthRequest {
     public HttpServletRequest req;
@@ -116,23 +106,19 @@ public class AuthRequest {
     // private List<String> parsedPath = null;
 
     /**
-     * baseURL is the full external global URL path to the base of the application
-     * either configured by baseURL setting, or from app server default.
-     * Suitable for use as a global URL in email and when passing a URL
-     * as a parameter to another page which might use it in a different context.
-     * ALWAYS includes a slash on the end.
-     * Generally, code that uses baseURL should be hidden from static site
-     * generation.
+     * baseURL is the full external global URL path to the base of the application either configured
+     * by baseURL setting, or from app server default. Suitable for use as a global URL in email and
+     * when passing a URL as a parameter to another page which might use it in a different context.
+     * ALWAYS includes a slash on the end. Generally, code that uses baseURL should be hidden from
+     * static site generation.
      */
     public String baseURL = null;
 
     /**
-     * retPath is an internal URL to the base of the application.
-     * Might be the same as baseURL, or it might the right relative path.
-     * Use retPath for normal page to page navigation URLs.
-     * Do not use retPath when a URL is being constructed for use in a different
-     * context.
-     * ALWAYS includes a slash on the end.
+     * retPath is an internal URL to the base of the application. Might be the same as baseURL, or
+     * it might the right relative path. Use retPath for normal page to page navigation URLs. Do not
+     * use retPath when a URL is being constructed for use in a different context. ALWAYS includes a
+     * slash on the end.
      */
     public String retPath = null;
 
@@ -142,25 +128,21 @@ public class AuthRequest {
     public NGContainer ngp = null;
 
     /**
-     * nowTime should be used whenever you need to know the current time
-     * of the current request for recording in history or whatever.
-     * A request may take a few millisecond. nowTime records the time that
-     * the request STARTED. Use that for all timestamps. Within the
-     * execution of this request, and updating of pages, you should NEVER
-     * use currentTimeMillis, but use nowTime instead for all current
-     * time uses. This way the time markings will always be consistent regardless
-     * of how slow or busy the server is.
+     * nowTime should be used whenever you need to know the current time of the current request for
+     * recording in history or whatever. A request may take a few millisecond. nowTime records the
+     * time that the request STARTED. Use that for all timestamps. Within the execution of this
+     * request, and updating of pages, you should NEVER use currentTimeMillis, but use nowTime
+     * instead for all current time uses. This way the time markings will always be consistent
+     * regardless of how slow or busy the server is.
      */
     public long nowTime;
+
     public String nowTimeString;
 
     /**
-     * tiles plays with the request URL in the request object, so that every
-     * different
-     * JSP loaded thinks it is coming froma different URL. No idea why it does this.
-     * However, this variable, if set with preserveRealRequestURL(), will hold the
-     * request
-     * URL the way it is supposed to be.
+     * tiles plays with the request URL in the request object, so that every different JSP loaded
+     * thinks it is coming froma different URL. No idea why it does this. However, this variable, if
+     * set with preserveRealRequestURL(), will hold the request URL the way it is supposed to be.
      */
     public String realRequestURL;
 
@@ -169,22 +151,21 @@ public class AuthRequest {
     private boolean generateStatic = false;
 
     /**
-     * This is the PREFERRED way to create an AuthRequest object.
-     * This will check to see if an AuthRequest object has been associated with this
-     * request.
-     * If so, it is returned.
-     * If not, one will be created and associated with request, then returned
+     * This is the PREFERRED way to create an AuthRequest object. This will check to see if an
+     * AuthRequest object has been associated with this request. If so, it is returned. If not, one
+     * will be created and associated with request, then returned
      */
     public static AuthRequest getOrCreate(HttpServletRequest areq, HttpServletResponse aresp) {
         return getOrCreateWithWriter(areq, aresp, null);
     }
 
     /**
-     * Lame version for JSP files that use the normal JSP servlet directly
-     * JSP's play with the out stream as well, and so you need to be able to
-     * adopt that stream, and ignore the stream from the original request.
+     * Lame version for JSP files that use the normal JSP servlet directly JSP's play with the out
+     * stream as well, and so you need to be able to adopt that stream, and ignore the stream from
+     * the original request.
      */
-    public static AuthRequest getOrCreateWithWriter(HttpServletRequest areq, HttpServletResponse aresp, Writer aw) {
+    public static AuthRequest getOrCreateWithWriter(
+            HttpServletRequest areq, HttpServletResponse aresp, Writer aw) {
         AuthRequest ar = (AuthRequest) areq.getAttribute("AuthRequest");
         if (ar == null) {
             ar = new AuthRequest(areq, aresp, aw);
@@ -198,9 +179,9 @@ public class AuthRequest {
     }
 
     /**
-     * If as part of one web request, you want to fake another request to generate
-     * a page, this can be done with a nested request. Pass the URL of the
-     * request page, and the writer to write out to.
+     * If as part of one web request, you want to fake another request to generate a page, this can
+     * be done with a nested request. Pass the URL of the request page, and the writer to write out
+     * to.
      */
     /*
      * public AuthRequest getNestedRequest(String relativeUrl, Writer nestedOut)
@@ -216,12 +197,10 @@ public class AuthRequest {
      */
 
     /**
-     * This constructor is ONLY for use by AuthDummy.
-     * This is a special case, a subclass used by the server to
-     * get special authentication for initialization and background tasks.
-     * In that case, there is Request or Response object. The subclass is
-     * designed to operate properly when the request and response object
-     * are null.
+     * This constructor is ONLY for use by AuthDummy. This is a special case, a subclass used by the
+     * server to get special authentication for initialization and background tasks. In that case,
+     * there is Request or Response object. The subclass is designed to operate properly when the
+     * request and response object are null.
      */
     protected AuthRequest(Writer aw, Cognoscenti _cog) {
         if (aw != null) {
@@ -271,12 +250,10 @@ public class AuthRequest {
     }
 
     /**
-     * constructor: if this object is constructed in a servlet, then pass
-     * a NULL to the newWriter paramter, and the output stream will be
-     * retrieved from the response object in a safe way.
-     * If object is constructed in a JSP page, then getWriter has already
-     * been called on the request, and you must pass the writer in here
-     * so that we can avoid calling this method twice
+     * constructor: if this object is constructed in a servlet, then pass a NULL to the newWriter
+     * paramter, and the output stream will be retrieved from the response object in a safe way. If
+     * object is constructed in a JSP page, then getWriter has already been called on the request,
+     * and you must pass the writer in here so that we can avoid calling this method twice
      */
     public AuthRequest(HttpServletRequest areq, HttpServletResponse aresp, Writer aw) {
         this(aw, Cognoscenti.getInstance(areq));
@@ -329,7 +306,8 @@ public class AuthRequest {
 
             servletPath = req.getServletPath();
             if (servletPath == null) {
-                throw WeaverException.newBasic("Servlet path is missing.  That should be impossible.");
+                throw WeaverException.newBasic(
+                        "Servlet path is missing.  That should be impossible.");
             }
 
             if (baseURL == null || baseURL.length() == 0) {
@@ -362,19 +340,12 @@ public class AuthRequest {
     }
 
     /**
-     * this copy constructor allows you to access according to the access
-     * rights of the original request, but substitute a different writer
-     * so that you can, for example, create a file, or generate test output.
-     * private AuthRequest(AuthRequest oldAr, Writer newWriter)
-     * throws Exception
-     * {
-     * this(oldAr.req, oldAr.resp, newWriter);
-     * nestingCount = oldAr.nestingCount+1;
-     * }
+     * this copy constructor allows you to access according to the access rights of the original
+     * request, but substitute a different writer so that you can, for example, create a file, or
+     * generate test output. private AuthRequest(AuthRequest oldAr, Writer newWriter) throws
+     * Exception { this(oldAr.req, oldAr.resp, newWriter); nestingCount = oldAr.nestingCount+1; }
      */
-
-    public void flush()
-            throws Exception {
+    public void flush() throws Exception {
         w.flush();
     }
 
@@ -383,9 +354,8 @@ public class AuthRequest {
     }
 
     /**
-     * This returns the basic configuration parameters of the system
-     * System properties are generally sensitive (not to be displayed)
-     * but otherwise available to pages serving any user.
+     * This returns the basic configuration parameters of the system System properties are generally
+     * sensitive (not to be displayed) but otherwise available to pages serving any user.
      */
     public String getSystemProperty(String name) {
         return cog.getConfig().getProperty(name);
@@ -422,15 +392,14 @@ public class AuthRequest {
         }
     }
 
-    public void setPageAccessLevelsWithoutVisit(NGContainer newNgp)
-            throws Exception {
+    public void setPageAccessLevelsWithoutVisit(NGContainer newNgp) throws Exception {
         ngp = newNgp;
     }
 
     public void setPageAccessLevels(NGContainer newNgp) throws Exception {
         if (newNgp == null) {
-            throw WeaverException
-                    .newBasic("setPageAccessLevels was called with a null parameter.  That should not happen");
+            throw WeaverException.newBasic(
+                    "setPageAccessLevels was called with a null parameter.  That should not happen");
         }
         // record the fact that workspace was visited in this session
         if (newNgp instanceof NGWorkspace) {
@@ -453,17 +422,13 @@ public class AuthRequest {
     }
 
     /**
-     * If you want to throw away all the changes that might have been made to the
-     * copy
-     * of a workspace in memory, you need to NOT save the workspace, and you need to
-     * call this to make sure that all cached copies of the workspace are removed
-     * from
-     * memory, forcing the next read to actually read from the file on the disk.
+     * If you want to throw away all the changes that might have been made to the copy of a
+     * workspace in memory, you need to NOT save the workspace, and you need to call this to make
+     * sure that all cached copies of the workspace are removed from memory, forcing the next read
+     * to actually read from the file on the disk.
      *
-     * After calling this, ngp member is cleared back to null, so make sure your
-     * logic
-     * is expecting that. After this is called, you really should not do any more
-     * processing.
+     * <p>After calling this, ngp member is cleared back to null, so make sure your logic is
+     * expecting that. After this is called, you really should not do any more processing.
      */
     public void rollbackChanges() {
         if (ngp != null) {
@@ -474,20 +439,18 @@ public class AuthRequest {
     }
 
     /**
-     * Returns true if you have an actual logged in (authenticated) user
-     * Returns false if current access is anonymous.
+     * Returns true if you have an actual logged in (authenticated) user Returns false if current
+     * access is anonymous.
      *
-     * Note: if handling a request that has been pre-approved for
-     * anonymous use (like using a magic number of something) then use
-     * setUserForOneRequest() with the pre-approving authority
+     * <p>Note: if handling a request that has been pre-approved for anonymous use (like using a
+     * magic number of something) then use setUserForOneRequest() with the pre-approving authority
      * to make it appear logged in.
-     * 
+     *
      * @throws Exception
      */
     public boolean isLoggedIn() throws Exception {
         // logic is simple now, but might get more complex in future
         return (user != null);
-
     }
 
     public UserProfile getUserProfile() {
@@ -503,7 +466,8 @@ public class AuthRequest {
 
     public UserPage getUserPage() throws Exception {
         if (user == null) {
-            throw WeaverException.newBasic("Unable to get user page, you don't appear to be logged in");
+            throw WeaverException.newBasic(
+                    "Unable to get user page, you don't appear to be logged in");
         }
         return cog.getUserManager().findOrCreateUserPage(user.getKey());
     }
@@ -513,23 +477,20 @@ public class AuthRequest {
     }
 
     /**
-     * Not an authenticated user, but a hint for a user from the
-     * URL parameter or such can be specified here for use in
-     * non-private situations.
+     * Not an authenticated user, but a hint for a user from the URL parameter or such can be
+     * specified here for use in non-private situations.
      */
     public void setPossibleUser(UserProfile hintedUser) {
         possibleUser = hintedUser;
     }
 
     /**
-     * Technically this user is not logged in (they have not
-     * fully authenticated, however we have some idea who they
-     * are from either a link parameter or a session attribute.
-     * The pages that serve unauthenticated requests might use
-     * this value to help make the UI easier to use for these
-     * people without forcing login.
-     * 
-     * Returns logged in user if logged in.
+     * Technically this user is not logged in (they have not fully authenticated, however we have
+     * some idea who they are from either a link parameter or a session attribute. The pages that
+     * serve unauthenticated requests might use this value to help make the UI easier to use for
+     * these people without forcing login.
+     *
+     * <p>Returns logged in user if logged in.
      */
     public UserProfile getPossibleUser() {
         if (user != null) {
@@ -539,12 +500,11 @@ public class AuthRequest {
     }
 
     /**
-     * Sets this user profile as the current user of this object
-     * and also makes appropriate settings into the session so that
-     * the next request will remember this as well.
+     * Sets this user profile as the current user of this object and also makes appropriate settings
+     * into the session so that the next request will remember this as well.
      */
-    public void setLoggedInUser(UserProfile newUser, String loginId, String autoLogin, String openId)
-            throws Exception {
+    public void setLoggedInUser(
+            UserProfile newUser, String loginId, String autoLogin, String openId) throws Exception {
         user = newUser;
         ngsession.setLoggedInUser(newUser, loginId);
 
@@ -574,9 +534,7 @@ public class AuthRequest {
         }
     }
 
-    /**
-     * clears all record of the current user
-     */
+    /** clears all record of the current user */
     public void logOutUser() {
         ngsession.flushConfigCache();
         ngsession.deleteAllSpecialSessionAccess();
@@ -586,8 +544,8 @@ public class AuthRequest {
     }
 
     /**
-     * takes the passed in universal id
-     * and determine whether it is an ID for the current logged in user.
+     * takes the passed in universal id and determine whether it is an ID for the current logged in
+     * user.
      */
     public boolean isMe(String testId) {
         if (user == null) {
@@ -597,12 +555,10 @@ public class AuthRequest {
     }
 
     /**
-     * assertLoggedIn will test if the user is logged in, and if so is a no-op,
-     * but if not, will either produce a warning, or (if possible) will redirect
-     * to a page that will allow log in.
+     * assertLoggedIn will test if the user is logged in, and if so is a no-op, but if not, will
+     * either produce a warning, or (if possible) will redirect to a page that will allow log in.
      */
-    public void assertLoggedIn(String opDescription)
-            throws Exception {
+    public void assertLoggedIn(String opDescription) throws Exception {
         // if this is a post method, then the request URL does not contain all
         // the information needed. In that case, getting the user to back up
         // might be better. So redirect only on GET cases.
@@ -611,11 +567,14 @@ public class AuthRequest {
         // first test that the server is initialized, and if not redirect to the
         if (!cog.isInitialized()) {
             if (canRedirect) {
-                String configDest = retPath + "init/config.htm?go="
-                        + URLEncoder.encode(getRequestURL(), "UTF-8");
+                String configDest =
+                        retPath
+                                + "init/config.htm?go="
+                                + URLEncoder.encode(getRequestURL(), "UTF-8");
                 resp.sendRedirect(configDest);
             }
-            throw WeaverException.newWrap("Server is not initialized", cog.initializer.lastFailureMsg);
+            throw WeaverException.newWrap(
+                    "Server is not initialized", cog.initializer.lastFailureMsg);
         }
 
         if (isLoggedIn()) {
@@ -625,8 +584,10 @@ public class AuthRequest {
 
         if (canRedirect) {
             String go = getCompleteURL();
-            String loginUrl = getSystemProperty("identityProvider") + "?openid.mode=quick&go="
-                    + URLEncoder.encode(go, "UTF-8");
+            String loginUrl =
+                    getSystemProperty("identityProvider")
+                            + "?openid.mode=quick&go="
+                            + URLEncoder.encode(go, "UTF-8");
             resp.sendRedirect(loginUrl);
             throw new ServletExit();
         }
@@ -668,13 +629,14 @@ public class AuthRequest {
                     "'assertAccessWorkspace' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGWorkspace)) {
-            throw WeaverException
-                    .newBasic("Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
+            throw WeaverException.newBasic(
+                    "Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
         }
         NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic("User is not logged in, not a role of workspace. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "User is not logged in, not a role of workspace. %s", opDescription);
         }
 
         if (isSuperAdmin()) {
@@ -689,7 +651,8 @@ public class AuthRequest {
 
         // check the container rules on who can be a member
         if (!ngw.canAccessWorkspace(user)) {
-            throw WeaverException.newBasic("User is not a member of this workspace. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "User is not a member of this workspace. %s", opDescription);
         }
     }
 
@@ -699,11 +662,12 @@ public class AuthRequest {
                     "'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGBook)) {
-            throw WeaverException
-                    .newBasic("Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
+            throw WeaverException.newBasic(
+                    "Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
         }
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic("User is not logged in, not an executive of site. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "User is not logged in, not an executive of site. %s", opDescription);
         }
         NGBook ngb = (NGBook) ngp;
 
@@ -724,19 +688,17 @@ public class AuthRequest {
     }
 
     /**
-     * Identifies if the current logged in user is a basic (unpaid)
-     * user in the current workspace. If anything is wrong, like
-     * the user is not logged in or the workspace not set then
-     * it presumes the most restrictive: true.
-     * 
-     * The logic in the site is that unknown users are
-     * not read only, so that users added by workspace admin
-     * are usable at least until review at site level. This
-     * logic may change in the future.
-     * 
-     * If you are restricting update to a workspace, you still
-     * need to check isMember, because read only depends only on logic
-     * at the site level, and does not consider workspace membership.
+     * Identifies if the current logged in user is a basic (unpaid) user in the current workspace.
+     * If anything is wrong, like the user is not logged in or the workspace not set then it
+     * presumes the most restrictive: true.
+     *
+     * <p>The logic in the site is that unknown users are not read only, so that users added by
+     * workspace admin are usable at least until review at site level. This logic may change in the
+     * future.
+     *
+     * <p>If you are restricting update to a workspace, you still need to check isMember, because
+     * read only depends only on logic at the site level, and does not consider workspace
+     * membership.
      */
     public boolean isReadOnly() throws Exception {
         if (!isLoggedIn()) {
@@ -760,25 +722,29 @@ public class AuthRequest {
 
     public void assertNotReadOnly(String opDescription) throws Exception {
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic("You are not logged in and can not update information. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "You are not logged in and can not update information. %s", opDescription);
         }
         if (isSuperAdmin()) {
             return;
         }
         if (ngp == null) {
-            throw WeaverException.newBasic("Program logic error workspace not set. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "Program logic error workspace not set. %s", opDescription);
         }
         if (ngp instanceof NGBook) {
             NGBook site = ((NGBook) ngp);
             if (site.isUnpaidUser(user)) {
-                throw WeaverException.newBasic("As a basic user you can not update site. %s", opDescription);
+                throw WeaverException.newBasic(
+                        "As a basic user you can not update site. %s", opDescription);
             }
         } else if (ngp instanceof NGWorkspace) {
             NGWorkspace ngw = ((NGWorkspace) ngp);
             ngw.assertUpdateWorkspace(user, opDescription);
         }
         if (isReadOnly()) {
-            throw WeaverException.newBasic("With read only access you can not update workspace. %s", opDescription);
+            throw WeaverException.newBasic(
+                    "With read only access you can not update workspace. %s", opDescription);
         }
     }
 
@@ -793,8 +759,8 @@ public class AuthRequest {
             return true;
         }
         if (!(ngp instanceof NGBook)) {
-            throw WeaverException
-                    .newBasic("Program Logic Error: canAccessSite is called when not manipulating a site.");
+            throw WeaverException.newBasic(
+                    "Program Logic Error: canAccessSite is called when not manipulating a site.");
         }
         return (ngp.primaryOrSecondaryPermission(user));
     }
@@ -833,8 +799,7 @@ public class AuthRequest {
         return (ngp.primaryOrSecondaryPermission(user));
     }
 
-    public boolean isAdmin()
-            throws Exception {
+    public boolean isAdmin() throws Exception {
         if (!isLoggedIn()) {
             return false;
         }
@@ -848,70 +813,59 @@ public class AuthRequest {
     }
 
     /**
-     * Calling this gives the current session a special ability to
-     * access a particular "mode" AS IF the user was a member.
+     * Calling this gives the current session a special ability to access a particular "mode" AS IF
+     * the user was a member.
      *
-     * The mode is a unique identifier which must include the key of what
-     * container is being accessed along with a mode indicator.
-     * e.g. "Notifications:SUYAHSGUF" might be the mode indicator of the
-     * Navigation page of a particular user. The controller/view code
-     * determines how it wants to create a unique ID for that mode
-     * which enables access to a collection of views.
+     * <p>The mode is a unique identifier which must include the key of what container is being
+     * accessed along with a mode indicator. e.g. "Notifications:SUYAHSGUF" might be the mode
+     * indicator of the Navigation page of a particular user. The controller/view code determines
+     * how it wants to create a unique ID for that mode which enables access to a collection of
+     * views.
      *
-     * This will only last for the session and is lost when session times out.
+     * <p>This will only last for the session and is lost when session times out.
      *
-     * This privilege is extended even to requests that are not authenticated.
-     * Here is how it works:
+     * <p>This privilege is extended even to requests that are not authenticated. Here is how it
+     * works:
      *
-     * (0) A resource is associated with a unique key
-     * (1) a URL is constructed that is designed to give special access, such
-     * as a URL to be embedded into an email message that is sent to people
-     * who need to access a particular page. Receipt of the email message
-     * is enough to be assured that the right person has the link (even though
-     * that person could forward the mail, giving others the same privilege.
-     * That URL has a "magic number" in it which unlocks the capability.
-     * (2) When the user accesses the page with the magic number, the controller
-     * looks for the magic number, and identifies whether the number is valid
-     * for the resource, and also determines the unique key
-     * (3) If the magic number is valid, then the session is marked with the unique
-     * key of the resource in question. Further URLs do not need to carry
-     * the magic number.
-     * (4) The controller then determines if the current request has enough access
-     * (4a) is the user logged in and whether user has sufficient rights
-     * (4b) whether hasSpecialSessionAccess(unique key) is true
+     * <p>(0) A resource is associated with a unique key (1) a URL is constructed that is designed
+     * to give special access, such as a URL to be embedded into an email message that is sent to
+     * people who need to access a particular page. Receipt of the email message is enough to be
+     * assured that the right person has the link (even though that person could forward the mail,
+     * giving others the same privilege. That URL has a "magic number" in it which unlocks the
+     * capability. (2) When the user accesses the page with the magic number, the controller looks
+     * for the magic number, and identifies whether the number is valid for the resource, and also
+     * determines the unique key (3) If the magic number is valid, then the session is marked with
+     * the unique key of the resource in question. Further URLs do not need to carry the magic
+     * number. (4) The controller then determines if the current request has enough access (4a) is
+     * the user logged in and whether user has sufficient rights (4b) whether
+     * hasSpecialSessionAccess(unique key) is true
      */
     public void setSpecialSessionAccess(String uniqueAccessMode) {
         ngsession.addHonoraryMember(uniqueAccessMode);
     }
 
     /**
-     * This is for testing if a particular session has a special access.
-     * see #setSpecialMemberAccess
+     * This is for testing if a particular session has a special access. see #setSpecialMemberAccess
      */
     public boolean hasSpecialSessionAccess(String uniqueAccessMode) {
         return ngsession.isHonoraryMember(uniqueAccessMode);
     }
 
     /**
-     * This method should be called in any JSP that produces HTML output to the
-     * request.
-     * The point being that output should never be produced as the result of a POST
-     * request.
-     * This method will produce an error message if this ever happens.
+     * This method should be called in any JSP that produces HTML output to the request. The point
+     * being that output should never be produced as the result of a POST request. This method will
+     * produce an error message if this ever happens.
      */
-    public void assertNotPost()
-            throws Exception {
+    public void assertNotPost() throws Exception {
         String method = req.getMethod();
         if ("post".equalsIgnoreCase(method)) {
-            throw WeaverException.newBasic("this page is being displayed as the result of a POST request, "
-                    + "and internal guidelines are that pages should be displayed only in response to GET methods.");
+            throw WeaverException.newBasic(
+                    "this page is being displayed as the result of a POST request, "
+                            + "and internal guidelines are that pages should be displayed only in response to GET methods.");
         }
     }
 
-    /**
-     * Returns the value of a named cookie if there is one,
-     * returns null if there is not
-     */
+    /** Returns the value of a named cookie if there is one, returns null if there is not */
     public String findCookieValue(String cookieName) {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
@@ -930,17 +884,15 @@ public class AuthRequest {
     /**
      * There are two sources of former id.
      *
-     * 1) If the URL has a 'login' parameter which is set to the ID of a user
-     * 2) If a cookie has the ID of a user.
+     * <p>1) If the URL has a 'login' parameter which is set to the ID of a user 2) If a cookie has
+     * the ID of a user.
      *
-     * In either case, the user profile record for that ID is looked up, and if
-     * it exists, it looks to see what the user used to login last time.
-     * This is probably what they want to log in with this time.
-     * If no user profile record is found for any reason, a zero length string is
+     * <p>In either case, the user profile record for that ID is looked up, and if it exists, it
+     * looks to see what the user used to login last time. This is probably what they want to log in
+     * with this time. If no user profile record is found for any reason, a zero length string is
      * returned.
      */
-    public String getFormerId()
-            throws Exception {
+    public String getFormerId() throws Exception {
         // first look to see if there is a 'login' parameter
         String possibleKey = defParam("login", null);
         if (possibleKey == null) {
@@ -968,8 +920,8 @@ public class AuthRequest {
     }
 
     /**
-     * if the user logged in with an OpenID (in the past) then
-     * this will return the cookie value that saved that.
+     * if the user logged in with an OpenID (in the past) then this will return the cookie value
+     * that saved that.
      */
     public String getFormerOpenId() throws Exception {
         String foid = findCookieValue("lastOpenId");
@@ -977,8 +929,8 @@ public class AuthRequest {
     }
 
     /**
-     * if the user logged in with an Email address (in the past) then
-     * this will return the cookie value that saved that.
+     * if the user logged in with an Email address (in the past) then this will return the cookie
+     * value that saved that.
      */
     public String getFormerEmail() throws Exception {
         String fe = findCookieValue("lastEmail");
@@ -986,16 +938,14 @@ public class AuthRequest {
     }
 
     /**
-     * This is a tricky routine. The purpose is to find the best default values to
-     * go
-     * is a login form. If you are are returning to a web page which you logged in
-     * before, you want to, if possible, use the cookies to remember what you logged
-     * in as last time. But, there are some cases where the URL will specify the
-     * user to log in as (hint), and in that case it overrides the cookies.
+     * This is a tricky routine. The purpose is to find the best default values to go is a login
+     * form. If you are are returning to a web page which you logged in before, you want to, if
+     * possible, use the cookies to remember what you logged in as last time. But, there are some
+     * cases where the URL will specify the user to log in as (hint), and in that case it overrides
+     * the cookies.
      *
-     * Returns a two element array of strings:
-     * value[0]: the best guess OpenID
-     * value[1]: the best guess Email address
+     * <p>Returns a two element array of strings: value[0]: the best guess OpenID value[1]: the best
+     * guess Email address
      */
     public String[] getBestGuessId(String hint) throws Exception {
         String possibleOpenId = null;
@@ -1016,24 +966,22 @@ public class AuthRequest {
         if (possibleEmailId == null) {
             possibleEmailId = "";
         }
-        return new String[] { possibleOpenId, possibleEmailId };
+        return new String[] {possibleOpenId, possibleEmailId};
     }
 
     /**
-     * grab the request URL at this moment in time,a nd store it in the
-     * real request variable to preserve that value.
+     * grab the request URL at this moment in time,a nd store it in the real request variable to
+     * preserve that value.
      */
     public void preserveRealRequestURL() {
         realRequestURL = req.getRequestURL().toString();
     }
 
     /**
-     * Return the URL that got us here without query parameters.
-     * FULL: This is the full URL, starting with http including machine name and
-     * the full path provided by the client up to the query parameters, not
-     * relative.
-     * GLOBAL: It is the externally valid URL defined by baseURL configuration
-     * It does NOT include query parameters.
+     * Return the URL that got us here without query parameters. FULL: This is the full URL,
+     * starting with http including machine name and the full path provided by the client up to the
+     * query parameters, not relative. GLOBAL: It is the externally valid URL defined by baseURL
+     * configuration It does NOT include query parameters.
      */
     public String getRequestURL() {
         if (req == null) {
@@ -1059,20 +1007,23 @@ public class AuthRequest {
             if (contextPos < 0) {
                 throw new RuntimeException(
                         "Unknown problem, request URL does not contain the local context path,  RequestURL is ["
-                                + realRequestURL + "] and the getContextPath is ["
-                                + localContext + "]");
+                                + realRequestURL
+                                + "] and the getContextPath is ["
+                                + localContext
+                                + "]");
             }
-            realRequestURL = baseURL + realRequestURL.substring(contextPos + localContext.length() + 1);
+            realRequestURL =
+                    baseURL + realRequestURL.substring(contextPos + localContext.length() + 1);
         }
         return realRequestURL;
     }
 
     /**
-     * Return the complete URL that got us here, including query parameters
-     * so we can redirect back as necessary.
+     * Return the complete URL that got us here, including query parameters so we can redirect back
+     * as necessary.
      *
-     * Made so it does not throw exceptions so that this can be used in
-     * exception handlers easily.
+     * <p>Made so it does not throw exceptions so that this can be used in exception handlers
+     * easily.
      */
     public String getCompleteURL() {
         StringBuilder qs = new StringBuilder(getRequestURL());
@@ -1098,9 +1049,8 @@ public class AuthRequest {
     }
 
     /**
-     * Returns the URL up to the base address of the entire application.
-     * for example: http://server:port/nugen/
-     * Returns a path with a slash on the end.
+     * Returns the URL up to the base address of the entire application. for example:
+     * http://server:port/nugen/ Returns a path with a slash on the end.
      */
     public String getServerPath() {
         if (baseURL == null) {
@@ -1110,18 +1060,16 @@ public class AuthRequest {
     }
 
     /**
-     * Convenience method. If you want to write to the output stream of a
-     * request, this will alow you to write without having to get the
-     * output stream and call write on it.
+     * Convenience method. If you want to write to the output stream of a request, this will alow
+     * you to write without having to get the output stream and call write on it.
      */
     public void write(String t) throws Exception {
         w.write(t);
     }
 
     /**
-     * Convenience method. If you want to write to the output stream of a
-     * request, this will alow you to write without having to get the
-     * output stream and call write on it.
+     * Convenience method. If you want to write to the output stream of a request, this will alow
+     * you to write without having to get the output stream and call write on it.
      */
     public void write(char ch) throws Exception {
         w.write(ch);
@@ -1135,8 +1083,7 @@ public class AuthRequest {
         HTMLWriter.writeHtmlWithLines(w, t);
     }
 
-    public void writeURLData(String data)
-            throws Exception {
+    public void writeURLData(String data) throws Exception {
         // avoid NPE.
         if (data == null || data.length() == 0) {
             return;
@@ -1175,31 +1122,28 @@ public class AuthRequest {
     }
 
     /**
-     * writeJS makes sure that no quote characters are in the output
-     * and properly escaping backslash character, and converting high
-     * characters to a code-point expression.
+     * writeJS makes sure that no quote characters are in the output and properly escaping backslash
+     * character, and converting high characters to a code-point expression.
      */
     public void writeJS(String val) throws Exception {
         com.purplehillsbooks.streams.JavaScriptWriter.encode(w, val);
     }
 
     /**
-     * sometimes TomCat will fail to decode the parameters as UTF-8
-     * because the indication that the parameters are in UTF-8 come
-     * in TOO LATE for the parsing. So, instead of re-parsing the parameters
-     * according to the desired character set, it leaves them in ISO-8859-1
-     * which is the default as defined by the servlet spec.
-     * This flag indicates that we have detected this situation, and if it
-     * is set to true, it will do an extra decoding of the parameter from
+     * sometimes TomCat will fail to decode the parameters as UTF-8 because the indication that the
+     * parameters are in UTF-8 come in TOO LATE for the parsing. So, instead of re-parsing the
+     * parameters according to the desired character set, it leaves them in ISO-8859-1 which is the
+     * default as defined by the servlet spec. This flag indicates that we have detected this
+     * situation, and if it is set to true, it will do an extra decoding of the parameter from
      * 8859-1 to UTF-8.
      */
     static boolean needTomcatKludge = false;
 
     /**
-     * This method should be called once, before fetching any of the parameters
-     * It looks for a parameter called "encodingGuard" which it expects to see
-     * with the Kanji characters for "Tokyo" in it. If it sees the parameter,
-     * and it sees that it is distorted, then it turns on the TomCat kludge.
+     * This method should be called once, before fetching any of the parameters It looks for a
+     * parameter called "encodingGuard" which it expects to see with the Kanji characters for
+     * "Tokyo" in it. If it sees the parameter, and it sees that it is distorted, then it turns on
+     * the TomCat kludge.
      */
     public void setTomcatKludge() {
         // here we are testing is TomCat is configured correctly. If it is this value
@@ -1210,13 +1154,11 @@ public class AuthRequest {
     }
 
     /**
-     * Get a paramter value from the request stream. If that parameter
-     * is not in the request, then look and see if it is an attribute of the
-     * reuqest that was put there by code doing a server side redirect to the
-     * JSP file. If that is not there either, then return the default instead.
+     * Get a paramter value from the request stream. If that parameter is not in the request, then
+     * look and see if it is an attribute of the reuqest that was put there by code doing a server
+     * side redirect to the JSP file. If that is not there either, then return the default instead.
      */
-    public String defParam(String paramName, String defaultValue)
-            throws Exception {
+    public String defParam(String paramName, String defaultValue) throws Exception {
         String val = req.getParameter(paramName);
         if (val != null) {
             // this next line should not be needed, but I have seen this hack recommended
@@ -1237,21 +1179,21 @@ public class AuthRequest {
     }
 
     /**
-     * Get a required parameter. If the parameter is not found, generate an error
-     * message for that. When a page contains a link to another page, it should
-     * have all of the require parameters in it. If a parameter is missing, then
-     * it is a basic programming error that should be caught and fixed before
-     * release. This routine is to make it easy to find and fix missing parameters.
+     * Get a required parameter. If the parameter is not found, generate an error message for that.
+     * When a page contains a link to another page, it should have all of the require parameters in
+     * it. If a parameter is missing, then it is a basic programming error that should be caught and
+     * fixed before release. This routine is to make it easy to find and fix missing parameters.
      *
-     * The exception that is thrown will not be seen by users. Once all of the pages
-     * have proper URLs constricted for redirecting to other pages, this error will
-     * not occur. Therefor, there is no need to localize this exception.
+     * <p>The exception that is thrown will not be seen by users. Once all of the pages have proper
+     * URLs constricted for redirecting to other pages, this error will not occur. Therefor, there
+     * is no need to localize this exception.
      */
     public String reqParam(String paramName) throws Exception {
         String val = defParam(paramName, null);
         if (val == null || val.length() == 0) {
-            throw WeaverException.newBasic("A parameter named '%s' is required for page '%s'.", paramName,
-                    getRequestURL());
+            throw WeaverException.newBasic(
+                    "A parameter named '%s' is required for page '%s'.",
+                    paramName, getRequestURL());
         }
         return val;
     }
@@ -1259,38 +1201,40 @@ public class AuthRequest {
     public long reqParamLong(String paramName) throws Exception {
         String val = defParam(paramName, null);
         if (val == null || val.length() == 0) {
-            throw WeaverException.newBasic("A parameter named '%s' is required for page '%s'.", paramName,
-                    getRequestURL());
+            throw WeaverException.newBasic(
+                    "A parameter named '%s' is required for page '%s'.",
+                    paramName, getRequestURL());
         }
         return DOMFace.safeConvertLong(val);
     }
 
     /**
-     * set parameter on the request object, if there is one.
-     * AuthDummy does this a little differently
+     * set parameter on the request object, if there is one. AuthDummy does this a little
+     * differently
      */
     public void setParam(String paramName, String paramValue) throws Exception {
         if (req == null) {
-            throw WeaverException.newBasic("Calling setParam on an AuthRequest, but the "
-                    + "request object is null!?!?!?");
+            throw WeaverException.newBasic(
+                    "Calling setParam on an AuthRequest, but the "
+                            + "request object is null!?!?!?");
         }
         req.setAttribute(paramName, paramValue);
     }
 
     public void setParam(String paramName, long paramValue) throws Exception {
         if (req == null) {
-            throw WeaverException.newBasic("Calling setParam on an AuthRequest, but the "
-                    + "request object is null!?!?!?");
+            throw WeaverException.newBasic(
+                    "Calling setParam on an AuthRequest, but the "
+                            + "request object is null!?!?!?");
         }
         req.setAttribute(paramName, Long.toString(paramValue));
     }
 
     /**
-     * Get a parameter with multiple values. Returns an array of strings.
-     * if there are no values it returns an empty array of strings.
+     * Get a parameter with multiple values. Returns an array of strings. if there are no values it
+     * returns an empty array of strings.
      */
-    public String[] multiParam(String paramName)
-            throws Exception {
+    public String[] multiParam(String paramName) throws Exception {
         String[] val = req.getParameterValues(paramName);
         if (val == null) {
             return new String[0];
@@ -1299,20 +1243,18 @@ public class AuthRequest {
     }
 
     /**
-     * makeHonoraryMember causes this users session to be marked as a
-     * member of the current page. This will be remembered for the
-     * duration of the session in the NGSession object.
+     * makeHonoraryMember causes this users session to be marked as a member of the current page.
+     * This will be remembered for the duration of the session in the NGSession object.
      */
     public void makeHonoraryMember() {
         if (ngp == null) {
-            throw new RuntimeException("makeHonoraryMember can not be called "
-                    + "until after the NGWorkspace is set");
+            throw new RuntimeException(
+                    "makeHonoraryMember can not be called " + "until after the NGWorkspace is set");
         }
         ngsession.addHonoraryMember(ngp.getKey());
     }
 
-    public boolean isSuperAdmin()
-            throws Exception {
+    public boolean isSuperAdmin() throws Exception {
         if (user == null) {
             // not logged in, so of course you are not super admin
             return false;
@@ -1320,8 +1262,7 @@ public class AuthRequest {
         return isSuperAdmin(user.getKey());
     }
 
-    public boolean isSuperAdmin(String key)
-            throws Exception {
+    public boolean isSuperAdmin(String key) throws Exception {
         if (key == null) {
             return false;
         }
@@ -1337,8 +1278,11 @@ public class AuthRequest {
 
     public String getWorkspaceBaseURL(NGContainer ngc) throws Exception {
         if (ngc instanceof NGWorkspace) {
-            return "t/" + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
-                    + "/" + ngc.getKey() + "/";
+            return "t/"
+                    + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
+                    + "/"
+                    + ngc.getKey()
+                    + "/";
         }
 
         // for site go to the workspace list
@@ -1349,8 +1293,12 @@ public class AuthRequest {
         if (!ngpi.isWorkspace()) {
             return "t/" + ngpi.containerKey + "/$/" + resource;
         }
-        return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8") + "/"
-                + ngpi.containerKey + "/" + resource;
+        return "t/"
+                + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")
+                + "/"
+                + ngpi.containerKey
+                + "/"
+                + resource;
     }
 
     public String getResourceURL(NGContainer ngc, String resource) throws Exception {
@@ -1359,8 +1307,11 @@ public class AuthRequest {
 
     public String getDefaultURL(NGContainer ngc) throws Exception {
         if (ngc instanceof NGWorkspace) {
-            return "t/" + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8") + "/"
-                    + ngc.getKey() + "/FrontPage.htm";
+            return "t/"
+                    + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
+                    + "/"
+                    + ngc.getKey()
+                    + "/FrontPage.htm";
         }
 
         // for site go to the workspace list
@@ -1369,8 +1320,11 @@ public class AuthRequest {
 
     public String getDefaultURL(NGPageIndex ngpi) throws Exception {
         if (ngpi.isWorkspace()) {
-            return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8") + "/"
-                    + ngpi.containerKey + "/FrontPage.htm";
+            return "t/"
+                    + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")
+                    + "/"
+                    + ngpi.containerKey
+                    + "/FrontPage.htm";
         }
         // for site go to the workspace list
         return "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8") + "/$/SiteWorkspaces.htm";
@@ -1381,18 +1335,20 @@ public class AuthRequest {
     }
 
     /**
-     * Given the name of a JSP file, this will call it, and the
-     * output will appear in the place of the call.
+     * Given the name of a JSP file, this will call it, and the output will appear in the place of
+     * the call.
      */
     public void invokeJSP(String JSPName) throws Exception {
         try {
             if (!JSPName.startsWith("/spring")) {
-                throw WeaverException.newBasic("invokeJSP has been called with something OTHER than spring!!!");
+                throw WeaverException.newBasic(
+                        "invokeJSP has been called with something OTHER than spring!!!");
             }
             JSPName = "/spring2" + JSPName.substring(7);
             nestingCount++;
             if (nestingCount > 10) {
-                throw WeaverException.newBasic("Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
+                throw WeaverException.newBasic(
+                        "Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");
@@ -1401,7 +1357,8 @@ public class AuthRequest {
             if (rd == null) {
                 // at one point we needed a retPath in here, but now we
                 // don't need it, and I am not sure why....
-                throw WeaverException.newBasic("Unable to construct a RequestDispatcher for JSP %s", JSPName);
+                throw WeaverException.newBasic(
+                        "Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
             rd.include(req, resp);
@@ -1422,7 +1379,8 @@ public class AuthRequest {
         try {
             nestingCount++;
             if (nestingCount > 10) {
-                throw WeaverException.newBasic("Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
+                throw WeaverException.newBasic(
+                        "Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");
@@ -1431,7 +1389,8 @@ public class AuthRequest {
             if (rd == null) {
                 // at one point we needed a retPath in here, but now we
                 // don't need it, and I am not sure why....
-                throw WeaverException.newBasic("Unable to construct a RequestDispatcher for JSP %s", JSPName);
+                throw WeaverException.newBasic(
+                        "Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
             rd.include(req, resp);
@@ -1448,9 +1407,7 @@ public class AuthRequest {
         }
     }
 
-    /**
-     * returns the relative path to the base of the application
-     */
+    /** returns the relative path to the base of the application */
     public String getRelPathFromCtx() throws Exception {
         if (req == null) {
             return "";
@@ -1475,20 +1432,17 @@ public class AuthRequest {
     }
 
     /**
-     * To support the generation of static web sites.
-     * Set the parameter "static" to anything other than null
-     * This will be detected, and this method will return true;
-     * Otherwise it returns false;
-     * Use this to eliminate parts of the page that should not be
-     * on static sites.
+     * To support the generation of static web sites. Set the parameter "static" to anything other
+     * than null This will be detected, and this method will return true; Otherwise it returns
+     * false; Use this to eliminate parts of the page that should not be on static sites.
      */
     public boolean isStaticSite() {
         return generateStatic;
     }
 
     /**
-     * Sets the 'static site' flag to the value passed in.
-     * Set to 'true' in order to get all the features of a static site.
+     * Sets the 'static site' flag to the value passed in. Set to 'true' in order to get all the
+     * features of a static site.
      */
     public boolean setStaticSite(boolean isStatic) {
         return generateStatic = isStatic;
@@ -1499,8 +1453,8 @@ public class AuthRequest {
     }
 
     /**
-     * Given an input stream to read from, this will read all the
-     * bytes, and write them to the output stream as bytes (not characters);
+     * Given an input stream to read from, this will read all the bytes, and write them to the
+     * output stream as bytes (not characters);
      */
     public void streamBytesOut(InputStream is) throws Exception {
         byte[] buf = new byte[2048];
@@ -1515,12 +1469,10 @@ public class AuthRequest {
     }
 
     /**
-     * Creates the log file and starts new log files
-     * in a way that guarantees that only one thread
+     * Creates the log file and starts new log files in a way that guarantees that only one thread
      * at a time does this.
      */
-    public void manageLogFile()
-            throws Exception {
+    public void manageLogFile() throws Exception {
         if (logFile != null) {
             // OK, not that great to call System time here, but it does not
             // really matter when it switches over to the new log file.
@@ -1545,10 +1497,11 @@ public class AuthRequest {
     }
 
     /**
-     * log the output to a log file at the END of the request
-     * Should normally only be called by servlet classes
+     * log the output to a log file at the END of the request Should normally only be called by
+     * servlet classes
      */
     private static File logFile = null;
+
     private static long logRestartTime = 0;
     private static String synchObject = "goofy string";
 
@@ -1599,8 +1552,8 @@ public class AuthRequest {
         long exceptionNO = 0;
         try {
             ErrorLog el = ErrorLog.getLogForDate(nowTime, cog);
-            exceptionNO = el.logException(msg, ex, nowTime,
-                    getUserProfile(), getCompleteURL(), cog);
+            exceptionNO =
+                    el.logException(msg, ex, nowTime, getUserProfile(), getCompleteURL(), cog);
         } catch (Exception e) {
             // what else to do? ... crash the server. If your log file
             // is not working there is very little else to be done.
@@ -1627,8 +1580,7 @@ public class AuthRequest {
         return getHtml(UtilityMethods.quote4JS(val));
     }
 
-    public String getHtml(String t)
-            throws Exception {
+    public String getHtml(String t) throws Exception {
         String result = "";
         if (t == null) {
             return result; // treat it like an empty string
@@ -1699,9 +1651,7 @@ public class AuthRequest {
         return stringBuff.toString();
     }
 
-    /**
-     * clears "autoLogin" flag and "openId" (used for re-authentication)
-     */
+    /** clears "autoLogin" flag and "openId" (used for re-authentication) */
     public void clearCookie() {
 
         Cookie autoLoginCookie = new Cookie("autoLoginCookie", "");
@@ -1746,7 +1696,8 @@ public class AuthRequest {
             } else if (ngp instanceof NGBook) {
                 site = (NGBook) ngp;
             } else {
-                throw WeaverException.newBasic("No idea what ngp is at this attempt to findChunkTemplate");
+                throw WeaverException.newBasic(
+                        "No idea what ngp is at this attempt to findChunkTemplate");
             }
 
             File cogFolder = new File(site.getSiteRootFolder(), ".cog");
@@ -1777,7 +1728,7 @@ public class AuthRequest {
             return stdTemplate;
         }
 
-        throw WeaverException.newBasic("The standard chunk template '%s' does not exist!", templateName);
+        throw WeaverException.newBasic(
+                "The standard chunk template '%s' does not exist!", templateName);
     }
-
 }

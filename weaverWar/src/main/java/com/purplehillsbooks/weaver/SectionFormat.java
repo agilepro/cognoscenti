@@ -23,37 +23,28 @@ package com.purplehillsbooks.weaver;
 import java.util.List;
 
 /**
-* A section is associated with a section type, and each type is
-* assocaited with a format. A format is like a data type: it defines
-* how the section is displayed and how it is edited.
-*/
-public interface SectionFormat
-{
+ * A section is associated with a section type, and each type is assocaited with a format. A format
+ * is like a data type: it defines how the section is displayed and how it is edited.
+ */
+public interface SectionFormat {
 
-    /**
-    * get the name of the format
-    */
+    /** get the name of the format */
     public String getName();
 
-    /**
-    * scans the section information, finds all the link values, and adds them
-    * to the vector.
-    */
+    /** scans the section information, finds all the link values, and adds them to the vector. */
     public void findLinks(List<String> v, NGSection section) throws Exception;
 
     /**
-    * Walk through whatever elements this owns and put all the four digit
-    * IDs into the vector so that we can generate another ID and assure it
-    * does not duplication any id found here.
-    */
+     * Walk through whatever elements this owns and put all the four digit IDs into the vector so
+     * that we can generate another ID and assure it does not duplication any id found here.
+     */
     public void findIDs(List<String> v, NGSection sec) throws Exception;
 
     /**
-    * In an attempt to convert all the older display section formats to
-    * a common Topic format, this method will be a format specific way to
-    * convert the contents to a TopicRecord and place it with the other discussion topics.
-    */
-    public TopicRecord convertToLeaflet(NGSection leafletSection,
-                   NGSection wikiSection) throws Exception;
-
+     * In an attempt to convert all the older display section formats to a common Topic format, this
+     * method will be a format specific way to convert the contents to a TopicRecord and place it
+     * with the other discussion topics.
+     */
+    public TopicRecord convertToLeaflet(NGSection leafletSection, NGSection wikiSection)
+            throws Exception;
 }

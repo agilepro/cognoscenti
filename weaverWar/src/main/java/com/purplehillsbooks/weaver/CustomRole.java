@@ -20,29 +20,25 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
-* A custom role is defined by the users on a workspace, but
-* defining a name, and associated users with it.
-*
-* TODO: This class was designed around the idea that a role might contain
-* other roles symbolically.  This has never really worked out ...
-* it is too complicated for people to handle.  Should remove
-* this capability to make this code simpler to use.
-*/
+ * A custom role is defined by the users on a workspace, but defining a name, and associated users
+ * with it.
+ *
+ * <p>TODO: This class was designed around the idea that a role might contain other roles
+ * symbolically. This has never really worked out ... it is too complicated for people to handle.
+ * Should remove this capability to make this code simpler to use.
+ */
 public class CustomRole extends DOMFace implements NGRole {
 
     public CustomRole(Document doc, Element ele, DOMFace p) {
@@ -52,11 +48,13 @@ public class CustomRole extends DOMFace implements NGRole {
     public String getSymbol() {
         return getScalar("rolename");
     }
+
     public String getName() {
         return getSymbol();
     }
+
     public void setName(String name) {
-        if (name==null || name.length()==0) {
+        if (name == null || name.length() == 0) {
             throw new RuntimeException("A role can not be set to have an empty name.");
         }
         setScalar("rolename", name);
@@ -65,27 +63,24 @@ public class CustomRole extends DOMFace implements NGRole {
     public String getDescription() {
         return getScalar("description");
     }
+
     public void setDescription(String desc) {
         setScalar("description", desc);
     }
 
     /**
-     * Each role in a workspace can be linked to a role in the Site.
-     * These will be synchronized.  When the workspace is read, it will
-     * be refreshed from the linked role.  When the workspace is updated
-     * it will also update the linked role.  The Site become a common
-     * ground to exchange the list of people who constitute a role.
+     * Each role in a workspace can be linked to a role in the Site. These will be synchronized.
+     * When the workspace is read, it will be refreshed from the linked role. When the workspace is
+     * updated it will also update the linked role. The Site become a common ground to exchange the
+     * list of people who constitute a role.
      */
-    public String getLinkedRole()
-    {
+    public String getLinkedRole() {
         return getAttribute("linkedRole");
     }
-    public void setLinkedRole(String linkedRole)
-    {
+
+    public void setLinkedRole(String linkedRole) {
         setAttribute("linkedRole", linkedRole);
     }
-
-
 
     public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
         return getDirectPlayers();
@@ -93,20 +88,20 @@ public class CustomRole extends DOMFace implements NGRole {
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
         RoleTerm term = getCurrentTerm();
-        if (term==null) {
+        if (term == null) {
             return getNonTermList();
         }
         return term.getDirectPlayers();
     }
 
     private List<AddressListEntry> getNonTermList() throws Exception {
-        List<AddressListEntry> list=new ArrayList<AddressListEntry>();
+        List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
             if (UserManager.isValidEmailAddress(memberID)) {
                 AddressListEntry ale = AddressListEntry.findOrCreate(memberID);
                 if (ale.isWellFormed()) {
-                    //don't add the reference if it is not a suitable user
+                    // don't add the reference if it is not a suitable user
                     list.add(ale);
                 }
             }
@@ -116,33 +111,32 @@ public class CustomRole extends DOMFace implements NGRole {
 
     public void addPlayer(AddressListEntry newMember) throws Exception {
         RoleTerm term = getCurrentTerm();
-        if (term==null) {
+        if (term == null) {
             addVectorValue("member", newMember.getUniversalId());
-        }
-        else {
+        } else {
             term.addPlayer(newMember);
         }
     }
+
     public void removePlayer(AddressListEntry oldMember) throws Exception {
         RoleTerm term = getCurrentTerm();
-        if (term==null) {
+        if (term == null) {
             String whichId = oldMember.getUniversalId();
             UserProfile up = oldMember.getUserProfile();
-            if (up!=null) {
+            if (up != null) {
                 whichId = whichIDForUser(up);
             }
             removeVectorValue("member", whichId);
-        }
-        else {
+        } else {
             term.removePlayer(oldMember);
         }
     }
+
     public void removePlayerCompletely(UserRef user) throws Exception {
         RoleTerm term = getCurrentTerm();
-        if (term!=null) {
+        if (term != null) {
             term.removePlayerCompletely(user);
-        }
-        else {
+        } else {
             List<String> oldPlayers = getVector("member");
             List<String> newPlayers = new ArrayList<String>();
             for (String memberID : oldPlayers) {
@@ -157,53 +151,51 @@ public class CustomRole extends DOMFace implements NGRole {
     public void clear() {
         try {
             RoleTerm term = getCurrentTerm();
-            if (term!=null) {
+            if (term != null) {
                 term.clear();
             }
-            //the vector should be cleared out in any case, even
-            //if there is a valid term object.
+            // the vector should be cleared out in any case, even
+            // if there is a valid term object.
             clearVector("member");
-        }
-        catch (Exception e) {
-            //i hate this, but clear was previously a method unlikely to
-            //throw exception.  Still unlikely, so I don't want to change
-            //the signature for this.  So throw an undeclared exception.
+        } catch (Exception e) {
+            // i hate this, but clear was previously a method unlikely to
+            // throw exception.  Still unlikely, so I don't want to change
+            // the signature for this.  So throw an undeclared exception.
             throw new RuntimeException("Unable to clear the role", e);
         }
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception
-    {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
         return isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
-    public boolean isPlayer(UserRef user) throws Exception
-    {
+
+    public boolean isPlayer(UserRef user) throws Exception {
         return isPlayerOfAddressList(user, getDirectPlayers());
     }
-    public String whichIDForUser(UserRef user) throws Exception
-    {
+
+    public String whichIDForUser(UserRef user) throws Exception {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
 
-
-    public String getRequirements()
-    {
+    public String getRequirements() {
         return getScalar("reqs");
     }
-    public void setRequirements(String reqs)
-    {
+
+    public void setRequirements(String reqs) {
         setScalar("reqs", reqs);
     }
 
     public String getColor() {
         return getAttribute("color");
     }
+
     public void setColor(String color) {
         setAttribute("color", color);
     }
+
     public RoleTerm getCurrentTerm() throws Exception {
         long nowTime = System.currentTimeMillis();
-        for( RoleTerm rt : getAllTerms()) {
+        for (RoleTerm rt : getAllTerms()) {
             if (rt.isComplete() && rt.includesDate(nowTime)) {
                 return rt;
             }
@@ -211,9 +203,9 @@ public class CustomRole extends DOMFace implements NGRole {
         return null;
     }
 
-
-    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) throws Exception {
-        if (user==null) {
+    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list)
+            throws Exception {
+        if (user == null) {
             throw WeaverException.newBasic("isPlayerOfAddressList called with null user object.");
         }
         for (AddressListEntry alr : list) {
@@ -224,7 +216,8 @@ public class CustomRole extends DOMFace implements NGRole {
         return false;
     }
 
-    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list) throws Exception {
+    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list)
+            throws Exception {
         for (AddressListEntry alr : list) {
             String thisID = alr.getInitialId();
             if (uRef.hasAnyId(thisID)) {
@@ -249,12 +242,10 @@ public class CustomRole extends DOMFace implements NGRole {
         }
     }
 
-
-
-    public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
+    public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (AddressListEntry ale : getDirectPlayers()) {
-            if(ale.hasAddressMatchingFrag(frag)) {
+            if (ale.hasAddressMatchingFrag(frag)) {
                 result.add(ale);
             }
         }
@@ -269,7 +260,7 @@ public class CustomRole extends DOMFace implements NGRole {
 
     public boolean replaceId(String sourceId, String destId) {
         List<String> players = getVector("member");
-        boolean foundOne=false;
+        boolean foundOne = false;
         for (String playerId : players) {
             if (playerId.equalsIgnoreCase(sourceId)) {
                 foundOne = true;
@@ -278,12 +269,11 @@ public class CustomRole extends DOMFace implements NGRole {
         if (!foundOne) {
             return false;
         }
-        List<String> newPlayers =  new ArrayList<String>();
+        List<String> newPlayers = new ArrayList<String>();
         newPlayers.add(destId);
-        foundOne=false;
+        foundOne = false;
         for (String playerId : players) {
-            if (!playerId.equalsIgnoreCase(sourceId)
-                && !playerId.equalsIgnoreCase(destId)) {
+            if (!playerId.equalsIgnoreCase(sourceId) && !playerId.equalsIgnoreCase(destId)) {
                 newPlayers.add(playerId);
             }
         }
@@ -292,13 +282,13 @@ public class CustomRole extends DOMFace implements NGRole {
     }
 
     public List<RoleTerm> getAllTerms() throws Exception {
-        List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
+        List<RoleTerm> list = this.getChildren("terms", RoleTerm.class);
         return list;
     }
 
     /**
-     * getJSON is for normal lists of roles, the current players, and such.
-     * Does not include all the historical detail.
+     * getJSON is for normal lists of roles, the current players, and such. Does not include all the
+     * historical detail.
      */
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -307,10 +297,9 @@ public class CustomRole extends DOMFace implements NGRole {
         extractAttributeString(jObj, "color");
         extractAttributeString(jObj, "linkedRole");
         RoleTerm curTerm = this.getCurrentTerm();
-        if (curTerm!=null) {
+        if (curTerm != null) {
             jObj.put("currentTerm", curTerm.getKey());
-        }
-        else {
+        } else {
             jObj.put("currentTerm", "");
         }
         extractScalarString(jObj, "description");
@@ -319,31 +308,31 @@ public class CustomRole extends DOMFace implements NGRole {
         JSONArray playerArray = new JSONArray();
         for (AddressListEntry player : getDirectPlayers()) {
             String uniqueId = player.getUniversalId();
-            if (uniqueId==null || uniqueId.length()==0) {
-                //should not be any of these, but ignore any member without a unique global id
+            if (uniqueId == null || uniqueId.length() == 0) {
+                // should not be any of these, but ignore any member without a unique global id
                 continue;
             }
             if (uniquenessEnforcer.contains(uniqueId)) {
-                //each member should be in the set only once.  There was some cases where this
-                //was somehow happening, maybe people changing name, or whatever, so always
-                //enforce uniqueness in the output list.
+                // each member should be in the set only once.  There was some cases where this
+                // was somehow happening, maybe people changing name, or whatever, so always
+                // enforce uniqueness in the output list.
                 continue;
             }
             uniquenessEnforcer.add(uniqueId);
-            playerArray.put( player.getJSON() );
+            playerArray.put(player.getJSON());
         }
         jObj.put("players", playerArray);
-        
-        //this does some special things for Members and Administrators
+
+        // this does some special things for Members and Administrators
         jObj.put("canUpdateWorkspace", allowUpdateWorkspace());
         jObj.put("canAccessWorkspace", allowAccessWorkspace());
 
         return jObj;
     }
+
     /**
-     * Includes all the current info, and
-     * also the terms (historical) and data around
-     * what has happened with the role in the past and future.
+     * Includes all the current info, and also the terms (historical) and data around what has
+     * happened with the role in the past and future.
      */
     public JSONObject getJSONDetail() throws Exception {
         JSONObject jObj = getJSON();
@@ -357,7 +346,7 @@ public class CustomRole extends DOMFace implements NGRole {
         }
         jObj.put("terms", termArray);
 
-        List<Responsibility> resplist= this.getChildren("responsibilities", Responsibility.class);
+        List<Responsibility> resplist = this.getChildren("responsibilities", Responsibility.class);
         JSONArray respArray = new JSONArray();
         for (Responsibility res : resplist) {
             respArray.put(res.getJSON());
@@ -366,14 +355,15 @@ public class CustomRole extends DOMFace implements NGRole {
 
         return jObj;
     }
+
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
         updateAttributeString("linkedRole", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
-        
+
         if (roleInfo.has("requirements")) {
-            //internal key is not same as external
+            // internal key is not same as external
             setRequirements(roleInfo.getString("requirements"));
         }
         if (roleInfo.has("players")) {
@@ -398,19 +388,19 @@ public class CustomRole extends DOMFace implements NGRole {
                 this.removePlayer(oldMember);
             }
         }
-        updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");
-        updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
+        updateCollection(roleInfo, "responsibilities", Responsibility.class, "key");
+        updateCollection(roleInfo, "terms", RoleTerm.class, "key");
     }
-    
+
     public boolean allowAccessWorkspace() {
         // custom role should not be used for any workspace role
         // and so we never need to answer this question.
         return false;
     }
+
     public boolean allowUpdateWorkspace() {
         // custom role should not be used for any workspace role
         // and so we never need to answer this question.
         return false;
     }
-
 }

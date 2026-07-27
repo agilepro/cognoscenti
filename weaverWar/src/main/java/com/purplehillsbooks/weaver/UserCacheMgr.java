@@ -9,26 +9,27 @@ public class UserCacheMgr {
     Set<String> needsRecalc;
     Cognoscenti cog;
 
-    public UserCacheMgr(Cognoscenti _cog) throws Exception{
+    public UserCacheMgr(Cognoscenti _cog) throws Exception {
         cog = _cog;
         needsRecalc = new HashSet<String>();
 
-        //now initialize all users as needing a recalc sisce we don't know who
-        //needed update at the time the server was last shut down.
+        // now initialize all users as needing a recalc sisce we don't know who
+        // needed update at the time the server was last shut down.
         for (UserProfile up : cog.getUserManager().getAllUserProfiles()) {
             needsRecalc.add(up.getKey());
         }
     }
 
     public void needRecalc(List<String> usersWhoMightHaveChanges) {
-        for (String aUser :usersWhoMightHaveChanges ) {
-            System.out.println("USERCACHE: this user needs recalc: "+aUser);
+        for (String aUser : usersWhoMightHaveChanges) {
+            System.out.println("USERCACHE: this user needs recalc: " + aUser);
             needsRecalc.add(aUser);
         }
     }
+
     public void needRecalc(UserProfile userWhoMightHaveChanges) {
         String aUser = userWhoMightHaveChanges.getKey();
-        System.out.println("USERCACHE: this user needs recalc: "+aUser);
+        System.out.println("USERCACHE: this user needs recalc: " + aUser);
         needsRecalc.add(aUser);
     }
 
@@ -47,5 +48,4 @@ public class UserCacheMgr {
         */
         return theCache;
     }
-
 }

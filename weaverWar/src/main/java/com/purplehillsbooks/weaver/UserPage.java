@@ -20,26 +20,22 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-
 /**
-* Holds extra information for a particular user.
-* file name is "XXXXXXXXX.user" where the XXXXXXXX represents the
-* users internal unique key.
-*/
-public class UserPage extends ContainerCommon
-{
+ * Holds extra information for a particular user. file name is "XXXXXXXXX.user" where the XXXXXXXX
+ * represents the users internal unique key.
+ */
+public class UserPage extends ContainerCommon {
     private UserInfoRecord userInfo;
-    private String    key;
+    private String key;
     private List<String> existingIds = null;
 
     private DOMFace statusReps = null;
@@ -47,45 +43,38 @@ public class UserPage extends ContainerCommon
     private DOMFace profileRefs = null;
     private List<ProfileRef> profileList = null;
 
-
-    public UserPage(File file, Document newDoc, String userKey)
-        throws Exception
-    {
+    public UserPage(File file, Document newDoc, String userKey) throws Exception {
         super(file, newDoc);
         key = userKey;
         userInfo = requireChild("info", UserInfoRecord.class);
 
-
-        //There is a special user page for ANONYMOUS_REQUESTS which has
-        //no associated profile.  The code below should not be executed
-        //for the anonymous requests user page.
+        // There is a special user page for ANONYMOUS_REQUESTS which has
+        // no associated profile.  The code below should not be executed
+        // for the anonymous requests user page.
         UserProfile user = UserManager.getUserProfileByKey(userKey);
-        if (user!=null)
-        {
-            //make sure the two required roles exist
+        if (user != null) {
+            // make sure the two required roles exist
             NGRole principal = getRole("Principal");
-            if (principal==null)
-            {
-                //this is the primary role
+            if (principal == null) {
+                // this is the primary role
                 principal = createRole("Principal", "The owner of this profile");
                 principal.addPlayer(user.getAddressListEntry());
             }
             NGRole coll = getRole("Colleagues");
-            if (coll==null)
-            {
-                //this is the secondary role
+            if (coll == null) {
+                // this is the secondary role
                 coll = createRole("Colleagues", "People who work together with this person.");
             }
         }
     }
 
     public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
-        //nothing to do.....
+        // nothing to do.....
     }
+
     public int currentSchemaVersion() {
         return 51;
     }
-
 
     public void saveUserPage(AuthRequest ar, String comment) throws Exception {
         setLastModify(ar);
@@ -97,15 +86,11 @@ public class UserPage extends ContainerCommon
         userInfo.setModUser(ar.getBestUserId());
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-
-    /**
-    * Get a four digit numeric id which is unique on the page.
-    */
+    /** Get a four digit numeric id which is unique on the page. */
     public String getUniqueOnPage() throws Exception {
         if (existingIds == null) {
             existingIds = new ArrayList<String>();
@@ -118,7 +103,6 @@ public class UserPage extends ContainerCommon
         return IdGenerator.generateFourDigit(existingIds);
     }
 
-
     protected DOMFace getRoleParent() throws Exception {
         return requireChild("roleList", DOMFace.class);
     }
@@ -127,66 +111,61 @@ public class UserPage extends ContainerCommon
         return requireChild("pageInfo", DOMFace.class);
     }
 
-
     public NGRole getPrimaryRole() throws Exception {
         return getRoleOrFail("Principal");
     }
+
     public NGRole getSecondaryRole() throws Exception {
         return getRoleOrFail("Colleagues");
     }
 
-
-    public void saveContent(AuthRequest ar, String comment)  throws Exception
-    {
+    public void saveContent(AuthRequest ar, String comment) throws Exception {
         throw WeaverException.newBasic("saveContent not implemented on UserPage");
     }
-    public  String getFullName()
-    {
+
+    public String getFullName() {
         throw new RuntimeException("getFullName not implemented on UserPage");
     }
-    public boolean isDeleted()
-    {
+
+    public boolean isDeleted() {
         throw new RuntimeException("isDeleted not implemented on UserPage");
     }
-    public long getLastModifyTime()throws Exception {
+
+    public long getLastModifyTime() throws Exception {
         return userInfo.getModTime();
     }
+
     public String getContainerName() {
         return this.getFullName();
     }
 
-
     public String getTaskLink(AuthRequest ar, String taskId) throws Exception {
-       throw WeaverException.newBasic("Not Implemented");
+        throw WeaverException.newBasic("Not Implemented");
     }
-
 
     public String getReminderLink(AuthRequest ar, String reminderId) throws Exception {
         throw WeaverException.newBasic("Not Implemented");
     }
 
-
-
     public boolean isFrozen() throws Exception {
         return false;
     }
 
-    public NGRole getContactsRole()throws Exception {
+    public NGRole getContactsRole() throws Exception {
 
         NGRole role = getRole("Contacts");
-        if(role == null){
+        if (role == null) {
             role = createRole("Contacts", "this is preferred list of user.");
         }
         return role;
     }
 
-
     public List<StatusReport> getStatusReports() throws Exception {
 
-        if (statusReps==null) {
+        if (statusReps == null) {
             statusReps = requireChild("StatusReps", DOMFace.class);
         }
-        if (statusRepList==null) {
+        if (statusRepList == null) {
             statusRepList = statusReps.getChildren("StatusReport", StatusReport.class);
         }
 
@@ -206,7 +185,7 @@ public class UserPage extends ContainerCommon
 
     public StatusReport createStatusReport() throws Exception {
 
-        if (statusReps==null) {
+        if (statusReps == null) {
             statusReps = requireChild("StatusReps", DOMFace.class);
         }
         StatusReport newOne = statusReps.createChild("StatusReport", StatusReport.class);
@@ -227,35 +206,34 @@ public class UserPage extends ContainerCommon
         }
     }
 
-    public List<AddressListEntry> getExistingContacts() throws Exception{
-        NGRole aRole  = getRole("Contacts");
-        if(aRole != null){
+    public List<AddressListEntry> getExistingContacts() throws Exception {
+        NGRole aRole = getRole("Contacts");
+        if (aRole != null) {
             return aRole.getExpandedPlayers(this);
-        }
-        else{
+        } else {
             return new ArrayList<AddressListEntry>();
         }
     }
 
-    public List<AddressListEntry> getPeopleYouMayKnowList() throws Exception{
+    public List<AddressListEntry> getPeopleYouMayKnowList() throws Exception {
 
         List<AddressListEntry> resultList = new ArrayList<AddressListEntry>();
-        List <AddressListEntry> existingContacts = getExistingContacts();
+        List<AddressListEntry> existingContacts = getExistingContacts();
 
-        //TODO: this looks very suspicious.  It gets your contacts, and then it looks through
+        // TODO: this looks very suspicious.  It gets your contacts, and then it looks through
         // all of the user profiles, and gets the address list entry of the contct.
         // I can't tell if this does anything important or not.
         for (UserProfile userProfile : UserManager.getStaticUserManager().getAllUserProfiles()) {
-            if(!CustomRole.isPlayerOfAddressList(userProfile, existingContacts)){
+            if (!CustomRole.isPlayerOfAddressList(userProfile, existingContacts)) {
                 resultList.add(userProfile.getAddressListEntry());
             }
         }
 
-        //TODO: this does the same thing with the microprofile entries.
-        //I don't understand why it needs to do this.
+        // TODO: this does the same thing with the microprofile entries.
+        // I don't understand why it needs to do this.
         List<AddressListEntry> microProfileIds = MicroProfileMgr.getAllProfileIds();
         for (AddressListEntry ale : microProfileIds) {
-            if(!CustomRole.isPlayerOfAddressList(ale, existingContacts)){
+            if (!CustomRole.isPlayerOfAddressList(ale, existingContacts)) {
                 resultList.add(ale);
             }
         }
@@ -264,10 +242,10 @@ public class UserPage extends ContainerCommon
     }
 
     public List<ProfileRef> getProfileRefs() throws Exception {
-        if (profileRefs==null) {
+        if (profileRefs == null) {
             profileRefs = requireChild("ProfileRefs", DOMFace.class);
         }
-        if (profileList==null) {
+        if (profileList == null) {
             profileList = profileRefs.getChildren("ProfileRef", ProfileRef.class);
         }
         return profileList;
@@ -286,15 +264,13 @@ public class UserPage extends ContainerCommon
         return newOne;
     }
 
-    /**
-     * Creates one if it does not already exist.
-     * Throws as error if it exists.
-     */
+    /** Creates one if it does not already exist. Throws as error if it exists. */
     public ProfileRef createProfileRefOrFail(String urlAddress) throws Exception {
 
         for (ProfileRef tr : getProfileRefs()) {
             if (urlAddress.equals(tr.getAddress())) {
-                throw WeaverException.newBasic("The reference address already exists: %s", urlAddress);
+                throw WeaverException.newBasic(
+                        "The reference address already exists: %s", urlAddress);
             }
         }
 
@@ -318,8 +294,6 @@ public class UserPage extends ContainerCommon
         }
     }
 
-
-
     // operation get task list.
     public static JSONArray getWorkListJSON(UserProfile up, Cognoscenti cog) throws Exception {
 
@@ -340,14 +314,15 @@ public class UserPage extends ContainerCommon
             }
             NGBook site = aWorkspace.getSite();
             if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
-                //ignore any workspaces in deleted, frozen, or moved sites.
+                // ignore any workspaces in deleted, frozen, or moved sites.
                 continue;
             }
             for (GoalRecord gr : aWorkspace.getAllGoals()) {
 
                 if (gr.isPassive()) {
-                    //ignore tasks that are from other servers.  They will be identified and tracked on
-                    //those other servers
+                    // ignore tasks that are from other servers.  They will be identified and
+                    // tracked on
+                    // those other servers
                     continue;
                 }
 
@@ -359,31 +334,34 @@ public class UserPage extends ContainerCommon
             }
             // clean out any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
-       }
+        }
 
         return list;
     }
 
     public boolean getLearningDone(String jspName, String mode) throws Exception {
         DOMFace learning = requireChild("learning", DOMFace.class);
-        DOMFace learn = learning.findChildWithID("learn", DOMFace.class, "key", jspName+"-"+mode);
-        if (learn==null) {
+        DOMFace learn =
+                learning.findChildWithID("learn", DOMFace.class, "key", jspName + "-" + mode);
+        if (learn == null) {
             return false;
         }
         return learn.getAttributeBool("done");
     }
+
     public void setLearningDone(String jspName, String mode, boolean isDone) throws Exception {
         DOMFace learning = requireChild("learning", DOMFace.class);
-        DOMFace learn = learning.findChildWithID("learn", DOMFace.class, "key", jspName+"-"+mode);
-        if (learn==null) {
+        DOMFace learn =
+                learning.findChildWithID("learn", DOMFace.class, "key", jspName + "-" + mode);
+        if (learn == null) {
             Element child = learning.createChildElement("learn");
-            child.setAttribute("key",jspName+"-"+mode);
-            child.setAttribute("done", isDone?"true":"false");
-        }
-        else {
+            child.setAttribute("key", jspName + "-" + mode);
+            child.setAttribute("done", isDone ? "true" : "false");
+        } else {
             learn.setAttributeBool("done", isDone);
         }
     }
+
     public void clearAllLearning() throws Exception {
         JSONObject learningList = LearningPath.getAllLearningPrompts();
         for (String jspName : learningList.keySet()) {
@@ -394,7 +372,7 @@ public class UserPage extends ContainerCommon
             }
         }
     }
-    
+
     public JSONArray getLearningPathForUser(String jspName) throws Exception {
         JSONArray learningList = LearningPath.getLearningForPage(jspName);
         for (JSONObject oneLearn : learningList.getJSONObjectList()) {
@@ -403,6 +381,7 @@ public class UserPage extends ContainerCommon
         }
         return learningList;
     }
+
     public JSONObject getUserAllLearning() throws Exception {
         JSONObject learningList = LearningPath.getAllLearningPrompts();
         for (String jspName : learningList.keySet()) {

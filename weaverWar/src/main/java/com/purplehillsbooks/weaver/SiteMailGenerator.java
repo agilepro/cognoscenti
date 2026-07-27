@@ -20,30 +20,24 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutDirectAddress;
 import com.purplehillsbooks.weaver.mail.OptOutSiteExec;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
-
-/**
- * Email set to the owners and executives of a site
- * at various times.
- */
+/** Email set to the owners and executives of a site at various times. */
 public class SiteMailGenerator extends DOMFace {
 
     public SiteMailGenerator(Document nDoc, Element nEle, DOMFace p) {
@@ -51,57 +45,55 @@ public class SiteMailGenerator extends DOMFace {
     }
 
     public static final int SM_STATE_SCHEDULED = 2;
-    public static final int SM_STATE_SENT      = 3;
+    public static final int SM_STATE_SENT = 3;
 
     public int getState() {
         return getAttributeInt("state");
     }
+
     public void setState(int newVal) {
         setAttributeInt("state", newVal);
     }
 
-
     public String getLayoutName() throws Exception {
         return getAttribute("layout");
     }
+
     public void setLayoutName(String newVal) throws Exception {
         setAttribute("layout", newVal);
     }
 
-
     public String getSubject() throws Exception {
         return getAttribute("subject");
     }
+
     public void setSubject(String newVal) throws Exception {
         setAttribute("subject", newVal);
     }
 
-
-
     public long getSendDate() throws Exception {
         return getAttributeLong("sendDate");
     }
+
     public void setSendDate(long newVal) throws Exception {
         setAttributeLong("sendDate", newVal);
     }
 
-
     /**
-     * Different people will be receiving email for different reasons ... they might be in
-     * a particular role, or they might be addressed directly.   This returns the right
-     * OptOutAddress object for the given user ID.
+     * Different people will be receiving email for different reasons ... they might be in a
+     * particular role, or they might be addressed directly. This returns the right OptOutAddress
+     * object for the given user ID.
      */
     public OptOutAddr getOOAForUserID(AuthRequest ar, NGBook ngb, String userId) throws Exception {
         for (OptOutAddr ooa : expandAddresses(ar, ngb)) {
-            if (ooa.matches(userId))  {
+            if (ooa.matches(userId)) {
                 return ooa;
             }
         }
 
-        //didn't find them, then act as if they were directly added
+        // didn't find them, then act as if they were directly added
         return new OptOutDirectAddress(AddressListEntry.findOrCreate(userId));
     }
-
 
     public List<OptOutAddr> expandAddresses(AuthRequest ar, NGBook ngb) throws Exception {
         List<OptOutAddr> collector = new ArrayList<OptOutAddr>();
@@ -112,41 +104,44 @@ public class SiteMailGenerator extends DOMFace {
         return collector;
     }
 
-
-    public void actuallySendSiteMailNow(AuthRequest ar, NGBook ngb, EmailSender mailFile) throws Exception {
+    public void actuallySendSiteMailNow(AuthRequest ar, NGBook ngb, EmailSender mailFile)
+            throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngb);
 
         StringBuilder historyNameList = new StringBuilder();
         boolean needComma = false;
         for (OptOutAddr ooa : sendTo) {
             String addr = ooa.getEmail();
-            if (addr==null || addr.length()==0) {
-                System.out.println("STRANGE: got site mail address with email address?? "+ooa.assignee.rawAddress);
-            }
-            else {
+            if (addr == null || addr.length() == 0) {
+                System.out.println(
+                        "STRANGE: got site mail address with email address?? "
+                                + ooa.assignee.rawAddress);
+            } else {
                 sendIndividualSiteMailNow(ar, ngb, ooa, mailFile);
                 if (needComma) {
                     historyNameList.append(",");
                 }
                 historyNameList.append(addr);
-                needComma= true;
+                needComma = true;
             }
         }
-        System.out.println("  SITE MAIL SENT: "+this.getLayoutName()+" to ("+historyNameList+")");
+        System.out.println(
+                "  SITE MAIL SENT: " + this.getLayoutName() + " to (" + historyNameList + ")");
         setState(SM_STATE_SENT);
         setSendDate(ar.nowTime);
     }
 
-    private void sendIndividualSiteMailNow(AuthRequest ar, NGBook ngb, OptOutAddr ooa, EmailSender sender)
-            throws Exception  {
+    private void sendIndividualSiteMailNow(
+            AuthRequest ar, NGBook ngb, OptOutAddr ooa, EmailSender sender) throws Exception {
         String userAddress = ooa.getEmail();
-        if (userAddress==null || userAddress.length()==0) {
-            //don't send anything if the user does not have an email address
+        if (userAddress == null || userAddress.length() == 0) {
+            // don't send anything if the user does not have an email address
             return;
         }
         String from = getAttribute("from");
-        if (from==null || from.length()==0) {
-            File emailPropFile = ar.getCogInstance().getConfig().getFile("EmailNotification.properties");
+        if (from == null || from.length() == 0) {
+            File emailPropFile =
+                    ar.getCogInstance().getConfig().getFile("EmailNotification.properties");
             Properties emailProperties = new Properties();
             FileInputStream fis = new FileInputStream(emailPropFile);
             emailProperties.load(fis);
@@ -157,7 +152,6 @@ public class SiteMailGenerator extends DOMFace {
         String subject = subjAndBody[0];
         String entireBody = subjAndBody[1];
 
-
         MailInst mailMsg = new MailInst();
         mailMsg.setSiteKey(ngb.getKey());
         mailMsg.setWorkspaceKey("$");
@@ -165,18 +159,19 @@ public class SiteMailGenerator extends DOMFace {
         mailMsg.setBodyText(entireBody);
 
         sender.createEmailRecordInDB(mailMsg, AddressListEntry.findOrCreate(from), ooa.getEmail());
-        System.out.println("SiteMail was sent to ("+ooa.getEmail()+") "+subject);
+        System.out.println("SiteMail was sent to (" + ooa.getEmail() + ") " + subject);
     }
 
-
-    private String[] generateEmailBody(AuthRequest ar, NGBook ngb, OptOutAddr ooa) throws Exception {
+    private String[] generateEmailBody(AuthRequest ar, NGBook ngb, OptOutAddr ooa)
+            throws Exception {
 
         String[] ret = new String[2];
 
         MemFile bodyChunk = new MemFile();
         UserProfile originalSender = ar.getUserProfile();
 
-        AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
+        AuthRequest clone =
+                new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngb);
 
@@ -191,12 +186,12 @@ public class SiteMailGenerator extends DOMFace {
         return ret;
     }
 
-    private JSONObject getJSONForTemplate(AuthRequest ar, NGBook ngb, AddressListEntry ale) throws Exception {
-        //Gather all the data into a JSON structure
+    private JSONObject getJSONForTemplate(AuthRequest ar, NGBook ngb, AddressListEntry ale)
+            throws Exception {
+        // Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
         data.put("baseUrl", ar.baseURL);
 
-        
         JSONObject siteJSON = ngb.getConfigJSON();
         JSONArray projList = new JSONArray();
         for (NGPageIndex ngpi : ar.getCogInstance().getNonDelWorkspacesInSite(ngb.getKey())) {
@@ -214,13 +209,13 @@ public class SiteMailGenerator extends DOMFace {
         return data;
     }
 
-    private void writeNoteAttachmentEmailBody2(AuthRequest ar,
-            OptOutAddr ooa, JSONObject data) throws Exception {
+    private void writeNoteAttachmentEmailBody2(AuthRequest ar, OptOutAddr ooa, JSONObject data)
+            throws Exception {
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
         String templateName = getLayoutName();
-        String baseName = templateName.substring(0, templateName.length()-6);
+        String baseName = templateName.substring(0, templateName.length() - 6);
         ChunkTemplate.streamAuthRequest(ar.w, ar, baseName, data, ooa.getCalendar());
     }
 
@@ -244,7 +239,6 @@ public class SiteMailGenerator extends DOMFace {
     }
 
     public boolean notSentYet() {
-        return getState()==SM_STATE_SCHEDULED;
+        return getState() == SM_STATE_SCHEDULED;
     }
-
 }

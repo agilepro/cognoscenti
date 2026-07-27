@@ -25,62 +25,47 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
-* NGTerm implements the many-to-many linking of pages (with multiple links)
-* to pages (with multiple names).  Each term object represents a particular
-* simplified name.
-*/
-public class NGTerm
-{
+ * NGTerm implements the many-to-many linking of pages (with multiple links) to pages (with multiple
+ * names). Each term object represents a particular simplified name.
+ */
+public class NGTerm {
     public String sanitizedName;
     public List<NGPageIndex> sourceLeaves = new ArrayList<NGPageIndex>();
     public List<NGPageIndex> targetLeaves = new ArrayList<NGPageIndex>();
 
-    private static Hashtable<String,NGTerm> allTerms;
-    private static Hashtable<String,NGTerm> allTags;
+    private static Hashtable<String, NGTerm> allTerms;
+    private static Hashtable<String, NGTerm> allTags;
 
-    /**
-    * Name must be sanitized before constructing the term object.
-    */
-    private NGTerm(String name)
-    {
+    /** Name must be sanitized before constructing the term object. */
+    private NGTerm(String name) {
         sanitizedName = name;
     }
 
-
     /**
-    * Set all static values back to their initial states, so that
-    * garbage collection can be done, and subsequently, the
-    * class will be reinitialized.
-    */
-    public synchronized static void clearAllStaticVars()
-    {
+     * Set all static values back to their initial states, so that garbage collection can be done,
+     * and subsequently, the class will be reinitialized.
+     */
+    public static synchronized void clearAllStaticVars() {
         allTerms = null;
         allTags = null;
     }
 
-
-    static public void initialize()
-    {
-        allTerms  = new Hashtable<String,NGTerm>();
-        allTags  = new Hashtable<String,NGTerm>();
+    public static void initialize() {
+        allTerms = new Hashtable<String, NGTerm>();
+        allTags = new Hashtable<String, NGTerm>();
     }
 
-
     /**
-    * Pass a NON-sanitized name, and this will return
-    * the term object corresponding to that term.
-    * It will create one if an existing one is not found.
-    */
-    static public NGTerm findTerm(String name)
-    {
+     * Pass a NON-sanitized name, and this will return the term object corresponding to that term.
+     * It will create one if an existing one is not found.
+     */
+    public static NGTerm findTerm(String name) {
         String sanitizedName = SectionUtil.sanitize(name);
-        if (sanitizedName.length()==0)
-        {
+        if (sanitizedName.length() == 0) {
             return null;
         }
         NGTerm termx = allTerms.get(sanitizedName);
-        if (termx==null)
-        {
+        if (termx == null) {
             termx = new NGTerm(sanitizedName);
             allTerms.put(sanitizedName, termx);
         }
@@ -88,77 +73,60 @@ public class NGTerm
     }
 
     /**
-    * Pass a NON-sanitized name, and this will return
-    * the term object corresponding to that term.
-    * It will create one if an existing one is not found.
-    *
-    * Tags must have a sanitized value of 3 characters or more.
-    * Short tags are ignored.
-    *
-    * Tags are in a separate pool from terms, so they
-    * don't get mixed up or cross linked.  Otherwise
-    * tags that are the same as a name gets confused.
-    */
-    static public NGTerm findOrCreateTag(String name)
-    {
+     * Pass a NON-sanitized name, and this will return the term object corresponding to that term.
+     * It will create one if an existing one is not found.
+     *
+     * <p>Tags must have a sanitized value of 3 characters or more. Short tags are ignored.
+     *
+     * <p>Tags are in a separate pool from terms, so they don't get mixed up or cross linked.
+     * Otherwise tags that are the same as a name gets confused.
+     */
+    public static NGTerm findOrCreateTag(String name) {
         String sanitizedName = SectionUtil.sanitize(name);
-        if (sanitizedName.length()<3)
-        {
+        if (sanitizedName.length() < 3) {
             return null;
         }
         NGTerm termx = allTags.get(sanitizedName);
-        if (termx==null)
-        {
+        if (termx == null) {
             termx = new NGTerm(sanitizedName);
             allTags.put(sanitizedName, termx);
         }
         return termx;
     }
 
-    /**
-    * If the term exists, return it, otherwise return null
-    */
-    public static NGTerm findTermIfExists(String name)
-    {
+    /** If the term exists, return it, otherwise return null */
+    public static NGTerm findTermIfExists(String name) {
         String sanitizedName = SectionUtil.sanitize(name);
         NGTerm termx = allTerms.get(sanitizedName);
         return termx;
     }
-    /**
-    * If the tag exists, return it, otherwise return null
-    */
-    public static NGTerm findTagIfExists(String name)
-    {
+
+    /** If the tag exists, return it, otherwise return null */
+    public static NGTerm findTagIfExists(String name) {
         String sanitizedName = SectionUtil.sanitize(name);
         NGTerm termx = allTags.get(sanitizedName);
         return termx;
     }
 
-    public void removeSource(NGPageIndex idx)
-    {
+    public void removeSource(NGPageIndex idx) {
         sourceLeaves.remove(idx);
 
-        //if there are no inbound nor outbound references, then
-        //remove the term from the index ... no longer needed
-        //and will be recreated later if needed.
-        if (sourceLeaves.size()==0 && targetLeaves.size()==0)
-        {
+        // if there are no inbound nor outbound references, then
+        // remove the term from the index ... no longer needed
+        // and will be recreated later if needed.
+        if (sourceLeaves.size() == 0 && targetLeaves.size() == 0) {
             allTerms.remove(this.sanitizedName);
         }
     }
 
-    public void removeTarget(NGPageIndex idx)
-    {
+    public void removeTarget(NGPageIndex idx) {
         targetLeaves.remove(idx);
 
-        //if there are no inbound nor outbound references, then
-        //remove the term from the index ... no longer needed
-        //and will be recreated later if needed.
-        if (sourceLeaves.size()==0 && targetLeaves.size()==0)
-        {
+        // if there are no inbound nor outbound references, then
+        // remove the term from the index ... no longer needed
+        // and will be recreated later if needed.
+        if (sourceLeaves.size() == 0 && targetLeaves.size() == 0) {
             allTerms.remove(this.sanitizedName);
         }
     }
-
 }
-

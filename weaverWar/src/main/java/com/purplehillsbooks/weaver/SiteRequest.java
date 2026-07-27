@@ -20,18 +20,15 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.io.File;
-
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
-import com.purplehillsbooks.json.JSONObject;
+import java.io.File;
 
-/**
- *
- */
+/** */
 public class SiteRequest {
     JSONObject sr;
 
@@ -42,6 +39,7 @@ public class SiteRequest {
     public String getSiteName() throws Exception {
         return sr.getString("siteName");
     }
+
     public void setSiteName(String displayName) throws Exception {
         sr.put("siteName", displayName.trim());
     }
@@ -49,6 +47,7 @@ public class SiteRequest {
     public String getDescription() throws Exception {
         return sr.getString("purpose");
     }
+
     public void setDescription(String descr) throws Exception {
         sr.put("purpose", descr.trim());
     }
@@ -56,6 +55,7 @@ public class SiteRequest {
     public String getSiteId() throws Exception {
         return sr.getString("siteId");
     }
+
     public void setSiteId(String siteId) throws Exception {
         sr.put("siteId", siteId.trim());
     }
@@ -63,6 +63,7 @@ public class SiteRequest {
     public String getRequestId() throws Exception {
         return sr.getString("requestId");
     }
+
     public void setRequestId(String requestId) throws Exception {
         sr.put("requestId", requestId);
     }
@@ -73,36 +74,37 @@ public class SiteRequest {
     public String getRequester() throws Exception {
         return sr.getString("requester");
     }
+
     public void setRequester(String requester) throws Exception {
         sr.put("requester", requester.trim());
     }
 
-
     public void setStatus(String status) throws Exception {
         sr.put("status", status.trim());
     }
+
     public String getStatus() throws Exception {
         return sr.getString("status");
     }
 
-
-
     public long getModTime() throws Exception {
         return sr.getLong("modTime");
     }
+
     public String getModUser() throws Exception {
         return sr.getString("modUser");
     }
+
     public void setModified(String userId, long time) throws Exception {
         sr.put("modUser", userId);
         sr.put("modTime", time);
     }
 
-
     public void sendSiteRequestEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         AddressListEntry from = AddressListEntry.findOrCreate(ar.getBestUserId());
-        MailInst msg = MailInst.genericEmail("$", "$", "Site Approval for " + ar.getBestUserId(), "");
+        MailInst msg =
+                MailInst.genericEmail("$", "$", "Site Approval for " + ar.getBestUserId(), "");
         File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
             JSONObject jo = new JSONObject();
@@ -117,7 +119,6 @@ public class SiteRequest {
         }
     }
 
-
     public JSONObject getJSON() throws Exception {
         return sr;
     }
@@ -128,47 +129,48 @@ public class SiteRequest {
             char ch = siteId.charAt(i);
             if (ch >= '0' && ch <= '9') {
                 sb.append(ch);
-            }
-            else if (ch >= 'a' && ch <= 'z') {
+            } else if (ch >= 'a' && ch <= 'z') {
                 sb.append(ch);
-            }
-            else if (ch >= 'A' && ch <= 'Z') {
+            } else if (ch >= 'A' && ch <= 'Z') {
                 sb.append(Character.toLowerCase(ch));
             }
         }
-        if (sb.length()>12) {
+        if (sb.length() > 12) {
             sb.setLength(12);
         }
         return sb.toString();
     }
-    
+
     public void validateValues() throws Exception {
         if (getSiteName().length() < 4) {
             throw WeaverException.newBasic("New site must have a name with 4 or more letters");
         }
         String siteId = getSiteId();
         if (siteId == null) {
-            throw WeaverException.newBasic("SiteId parameter can not be null in createNewSiteRequest");
+            throw WeaverException.newBasic(
+                    "SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 12) {
-            throw WeaverException.newBasic("SiteId must be four to twelve charcters/numbers long.  Received (%s)", siteId);
+            throw WeaverException.newBasic(
+                    "SiteId must be four to twelve charcters/numbers long.  Received (%s)", siteId);
         }
 
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw WeaverException.newBasic("AccountId must have only letters and numbers - no spaces or punctuation.  Received (%s)",
+                throw WeaverException.newBasic(
+                        "AccountId must have only letters and numbers - no spaces or punctuation.  Received (%s)",
                         siteId);
             }
         }
     }
-    
+
     public void assertSiteNotExist(Cognoscenti cog) throws Exception {
         NGContainer site = cog.getSiteById(getSiteId());
         if (site != null) {
-            throw WeaverException.newBasic("Sorry, there already exists a site with that ID (%s).  Please try again with a different ID.",
+            throw WeaverException.newBasic(
+                    "Sorry, there already exists a site with that ID (%s).  Please try again with a different ID.",
                     getSiteId());
-        }        
+        }
     }
-
 }

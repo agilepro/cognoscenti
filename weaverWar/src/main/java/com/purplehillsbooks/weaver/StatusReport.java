@@ -21,59 +21,42 @@
 package com.purplehillsbooks.weaver;
 
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
-* A StatusReport is a record that holds the specification of a status
-* report that can be generated at any time.  It will point to a set of
-* workspaces, and will also have a set of tasks to exclude.
-*/
-public class StatusReport extends DOMFace
-{
+ * A StatusReport is a record that holds the specification of a status report that can be generated
+ * at any time. It will point to a set of workspaces, and will also have a set of tasks to exclude.
+ */
+public class StatusReport extends DOMFace {
 
-    public StatusReport(Document nDoc, Element nEle, DOMFace p)
-    {
+    public StatusReport(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
     }
 
-    public String getId()
-        throws Exception
-    {
+    public String getId() throws Exception {
         return getAttribute("id");
     }
 
-    public void setId(String newVal)
-        throws Exception
-    {
+    public void setId(String newVal) throws Exception {
         setAttribute("id", newVal);
     }
 
-    public String getName()
-        throws Exception
-    {
+    public String getName() throws Exception {
         return getScalar("name");
     }
 
-    public void setName(String newVal)
-        throws Exception
-    {
+    public void setName(String newVal) throws Exception {
         setScalar("name", newVal);
     }
 
-    public String getDescription()
-        throws Exception
-    {
+    public String getDescription() throws Exception {
         return getScalar("desc");
     }
 
-    public void setDescription(String newVal)
-        throws Exception
-    {
+    public void setDescription(String newVal) throws Exception {
         setScalar("desc", newVal);
     }
-
 
     private List<ProjectLink> getProjects() throws Exception {
         return getChildren("projLink", ProjectLink.class);
@@ -81,7 +64,7 @@ public class StatusReport extends DOMFace
 
     public ProjectLink getOrCreateProject(String siteKey, String key) throws Exception {
 
-        //first lets make sure that this workspace is not already in the set
+        // first lets make sure that this workspace is not already in the set
         for (ProjectLink pl : getProjects()) {
             if (key.equals(pl.getKey()) && siteKey.equals(pl.getSiteKey())) {
                 return pl;

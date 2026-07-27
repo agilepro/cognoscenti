@@ -20,32 +20,38 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
 
 public class UtilityMethods {
     public static String subString(String s, int pos, int len) throws Exception {
         try {
             return s.substring(pos, len);
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Substring exception: [" + s + "] (len " + s.length()
-                    + ") at " + pos + " for len " + len + "; ", e);
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Substring exception: ["
+                            + s
+                            + "] (len "
+                            + s.length()
+                            + ") at "
+                            + pos
+                            + " for len "
+                            + len
+                            + "; ",
+                    e);
         }
     }
 
     /**
-     * Proper split string.
-     * Returns a List of string
-     * Never returns a null, but will accept a null
-     * Does not ever return a zero-length string.
-     * Trims the string values of space next to delimiter
+     * Proper split string. Returns a List of string Never returns a null, but will accept a null
+     * Does not ever return a zero-length string. Trims the string values of space next to delimiter
      * For example the results from splitString(val, ",")
+     *
      * <pre>
      *   "a,b,c"    gives   ["a","b","c"]
      *   "a,b,c,"   gives   ["a","b","c"]
@@ -58,26 +64,26 @@ public class UtilityMethods {
      *   ","        gives   []
      * </pre>
      */
-    static public List<String> splitString(String str, char delim) {
+    public static List<String> splitString(String str, char delim) {
         ArrayList<String> vec = new ArrayList<String>();
-        if (str==null) {
+        if (str == null) {
             return vec;
         }
         int pos = str.indexOf(delim);
         int start = 0;
         while (pos > start) {
             String val = str.substring(start, pos).trim();
-            if (val.length()>0) {
-                //might only be spaces, so only add after trim
+            if (val.length() > 0) {
+                // might only be spaces, so only add after trim
                 vec.add(val);
             }
-            start = pos+1;
+            start = pos + 1;
             pos = str.indexOf(delim, start);
         }
-        if (start<str.length()) {
+        if (start < str.length()) {
             String val = str.substring(start).trim();
-            if (val.length()>0) {
-                //might only be spaces, so only add after trim
+            if (val.length() > 0) {
+                // might only be spaces, so only add after trim
                 vec.add(val);
             }
         }
@@ -85,10 +91,10 @@ public class UtilityMethods {
     }
 
     /**
-     * Joins a vector of strings into a comma delimited list of values Make sure
-     * this is done on sets of strings that do not have commas in them!
+     * Joins a vector of strings into a comma delimited list of values Make sure this is done on
+     * sets of strings that do not have commas in them!
      */
-    static public String joinStrings(List<String> strSet) {
+    public static String joinStrings(List<String> strSet) {
         StringBuilder res = new StringBuilder();
         boolean needsComma = false;
         for (String val : strSet) {
@@ -154,61 +160,53 @@ public class UtilityMethods {
 
             char c = t.charAt(i);
             switch (c) {
-            case '&':
-                out.write("&amp;");
-                continue;
-            case '<':
-                out.write("&lt;");
-                continue;
-            case '>':
-                out.write("&gt;");
-                continue;
-            case '"':
-                out.write("&quot;");
-                continue;
-            case '\n':
-                out.write("<br/>\n");
-                continue;
-            default:
-                out.write(c);
-                continue;
+                case '&':
+                    out.write("&amp;");
+                    continue;
+                case '<':
+                    out.write("&lt;");
+                    continue;
+                case '>':
+                    out.write("&gt;");
+                    continue;
+                case '"':
+                    out.write("&quot;");
+                    continue;
+                case '\n':
+                    out.write("<br/>\n");
+                    continue;
+                default:
+                    out.write(c);
+                    continue;
             }
-
         }
     }
 
-    static char[] hexchars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-            'D', 'E', 'F' };
-    static int[] hexvalue = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3,
-            4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    static char[] hexchars = {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+    static int[] hexvalue = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0,
+        0, 0, 0, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+    };
 
     /**
-     * Encodes a single <code>String</code> value to a JavaScript literal
-     * expression.
+     * Encodes a single <code>String</code> value to a JavaScript literal expression.
      *
-     * <p>
-     * If you are constructing a JavaScript expression and you have a String
-     * value that you want to be expressed as a String literal in the
-     * JavaScript, you must use this method to scan the String and convert any
-     * embedded problematic characters into their escaped equivalents. The
-     * result of the conversion is written into the String buffer that you pass
-     * in. This routine also adds start and end quotes.
-     * </p>
+     * <p>If you are constructing a JavaScript expression and you have a String value that you want
+     * to be expressed as a String literal in the JavaScript, you must use this method to scan the
+     * String and convert any embedded problematic characters into their escaped equivalents. The
+     * result of the conversion is written into the String buffer that you pass in. This routine
+     * also adds start and end quotes.
      *
-     * <p>
-     * <b>Do NOT simply paste quotes before and after the string!</b>
-     * </p>
+     * <p><b>Do NOT simply paste quotes before and after the string!</b>
      *
-     * @param res
-     *            The <code>StringBuilder</code> object to which the encoded
-     *            String value is added.
-     * @param val
-     *            The <code>String</code> value to encode.
-     * @return The JavaScript literal expression encoded from the supplied
-     *         value.
+     * @param res The <code>StringBuilder</code> object to which the encoded String value is added.
+     * @param val The <code>String</code> value to encode.
+     * @return The JavaScript literal expression encoded from the supplied value.
      */
     public static void quote4JS(StringBuilder res, String val) {
         // passing a null in results a no output, no quotes, nothing
@@ -222,46 +220,45 @@ public class UtilityMethods {
         for (int i = 0; i < len; i++) {
             char ch = val.charAt(i);
             switch (ch) {
-            case '\"':
-                trans = "\\\"";
-                break;
-            case '\\':
-                trans = "\\\\";
-                break;
-            case '\'':
-                trans = "\\\'";
-                break;
-            case '\n':
-                trans = "\\n";
-                break;
-            case '\t':
-                trans = "\\t";
-                break;
-            case '\r':
-                trans = "\\r";
-                break;
-            case '\f':
-                trans = "\\f";
-                break;
-            case '\b':
-                trans = "\\b";
-                break;
-            default:
-                if (ch < 128) {
-                    continue;
-                }
-                if (ch < 256) {
-                    char firstHex = hexchars[(ch / 16) % 16];
-                    char secondHex = hexchars[ch % 16];
-                    trans = "\\x" + firstHex + secondHex;
-                }
-                else {
-                    char firstHex = hexchars[(ch / 4096) % 16];
-                    char secondHex = hexchars[(ch / 256) % 16];
-                    char thirdHex = hexchars[(ch / 16) % 16];
-                    char fourthHex = hexchars[ch % 16];
-                    trans = "\\u" + firstHex + secondHex + thirdHex + fourthHex;
-                }
+                case '\"':
+                    trans = "\\\"";
+                    break;
+                case '\\':
+                    trans = "\\\\";
+                    break;
+                case '\'':
+                    trans = "\\\'";
+                    break;
+                case '\n':
+                    trans = "\\n";
+                    break;
+                case '\t':
+                    trans = "\\t";
+                    break;
+                case '\r':
+                    trans = "\\r";
+                    break;
+                case '\f':
+                    trans = "\\f";
+                    break;
+                case '\b':
+                    trans = "\\b";
+                    break;
+                default:
+                    if (ch < 128) {
+                        continue;
+                    }
+                    if (ch < 256) {
+                        char firstHex = hexchars[(ch / 16) % 16];
+                        char secondHex = hexchars[ch % 16];
+                        trans = "\\x" + firstHex + secondHex;
+                    } else {
+                        char firstHex = hexchars[(ch / 4096) % 16];
+                        char secondHex = hexchars[(ch / 256) % 16];
+                        char thirdHex = hexchars[(ch / 16) % 16];
+                        char fourthHex = hexchars[ch % 16];
+                        trans = "\\u" + firstHex + secondHex + thirdHex + fourthHex;
+                    }
             }
             if (trans != null) {
                 if (i > startPos) {
@@ -280,16 +277,12 @@ public class UtilityMethods {
     }
 
     /**
-     * Takes a single JavaScript literal and converts it back to a String value,
-     * removing the start and end quotes, and then converting any backslash
-     * escaped value into its actual value.
+     * Takes a single JavaScript literal and converts it back to a String value, removing the start
+     * and end quotes, and then converting any backslash escaped value into its actual value.
      *
-     * <p>
-     * Note: This method does not recognize the terminating quote in any
-     * position except the last. It allows characters in the String that
-     * JavaScript will not allow. This means you can "trick" this conversion by
-     * passing an invalid literal, such as:
-     * </p>
+     * <p>Note: This method does not recognize the terminating quote in any position except the
+     * last. It allows characters in the String that JavaScript will not allow. This means you can
+     * "trick" this conversion by passing an invalid literal, such as:
      *
      * <table>
      * <tr>
@@ -310,17 +303,13 @@ public class UtilityMethods {
      * </tr>
      * </table>
      *
-     * @param res
-     *            The <code>StringBuilder</code> object to which the converted
-     *            literalString is added.
-     * @param literalString
-     *            The JavaScript literal to be converted.
+     * @param res The <code>StringBuilder</code> object to which the converted literalString is
+     *     added.
+     * @param literalString The JavaScript literal to be converted.
      * @return The String value generated from the supplied JavaScript literal.
-     * @exception Exception
-     *                Thrown if the supplied <em>literalString</em> value is
-     *                empty, <code>null</code> or not surrounded by double
-     *                quotes. Furthermore this exception is thrown if the
-     *                supplied <em>res</em> value is null.
+     * @exception Exception Thrown if the supplied <em>literalString</em> value is empty, <code>null
+     *     </code> or not surrounded by double quotes. Furthermore this exception is thrown if the
+     *     supplied <em>res</em> value is null.
      */
     public static void unquote4JS(StringBuilder res, String literalString) throws Exception {
         if ((res == null) || (literalString == null)) {
@@ -361,33 +350,33 @@ public class UtilityMethods {
             // convert to the coded value. Quote and slash don't need this
             // conversion
             switch (ch) {
-            case 'n':
-                ch = '\n';
-                break;
-            case 't':
-                ch = '\t';
-                break;
-            case 'r':
-                ch = '\r';
-                break;
-            case 'f':
-                ch = '\f';
-                break;
-            case 'b':
-                ch = '\b';
-                break;
-            case 'x':
-                int i1 = hexvalue[literalString.charAt(++pos)];
-                int i2 = hexvalue[literalString.charAt(++pos)];
-                ch = (char) (i1 * 16 + i2);
-                break;
-            case 'u':
-                int u1 = hexvalue[literalString.charAt(++pos)];
-                int u2 = hexvalue[literalString.charAt(++pos)];
-                int u3 = hexvalue[literalString.charAt(++pos)];
-                int u4 = hexvalue[literalString.charAt(++pos)];
-                ch = (char) (u1 * 4096 + u2 * 256 + u3 * 16 + u4);
-                break;
+                case 'n':
+                    ch = '\n';
+                    break;
+                case 't':
+                    ch = '\t';
+                    break;
+                case 'r':
+                    ch = '\r';
+                    break;
+                case 'f':
+                    ch = '\f';
+                    break;
+                case 'b':
+                    ch = '\b';
+                    break;
+                case 'x':
+                    int i1 = hexvalue[literalString.charAt(++pos)];
+                    int i2 = hexvalue[literalString.charAt(++pos)];
+                    ch = (char) (i1 * 16 + i2);
+                    break;
+                case 'u':
+                    int u1 = hexvalue[literalString.charAt(++pos)];
+                    int u2 = hexvalue[literalString.charAt(++pos)];
+                    int u3 = hexvalue[literalString.charAt(++pos)];
+                    int u4 = hexvalue[literalString.charAt(++pos)];
+                    ch = (char) (u1 * 4096 + u2 * 256 + u3 * 16 + u4);
+                    break;
             }
             res.append(ch);
             startPos = pos + 1;
@@ -400,13 +389,10 @@ public class UtilityMethods {
     }
 
     /**
-     * Encodes a single <code>String</code> value to a JavaScript literal
-     * expression.
+     * Encodes a single <code>String</code> value to a JavaScript literal expression.
      *
-     * @param val
-     *            The <code>String</code> value to encode.
-     * @return The JavaScript literal expression encoded from the supplied
-     *         value.
+     * @param val The <code>String</code> value to encode.
+     * @return The JavaScript literal expression encoded from the supplied value.
      */
     public static String quote4JS(String val) {
         StringBuilder sb = new StringBuilder();
@@ -417,17 +403,12 @@ public class UtilityMethods {
     /**
      * Converts a single JavaScript literal back to a String value.
      *
-     * <p>
-     * The conversion starts with removing the start and end quotes and then
-     * converting any backslash escaped value into its actual value.
-     * </p>
+     * <p>The conversion starts with removing the start and end quotes and then converting any
+     * backslash escaped value into its actual value.
      *
-     * <p>
-     * Note: This method does not recognize the terminating quote in any
-     * position except the last. It allows characters in the String that
-     * <code>JavaScript</code> will not allow. This means you can "trick" this
-     * conversion by passing an invalid literal, such as:
-     * </p>
+     * <p>Note: This method does not recognize the terminating quote in any position except the
+     * last. It allows characters in the String that <code>JavaScript</code> will not allow. This
+     * means you can "trick" this conversion by passing an invalid literal, such as:
      *
      * <table>
      * <tr>
@@ -448,12 +429,10 @@ public class UtilityMethods {
      * </tr>
      * </table>
      *
-     * @param val
-     *            The JavaScript literal to be converted.
+     * @param val The JavaScript literal to be converted.
      * @return The String value generated from the supplied JavaScript literal.
-     * @exception Exception
-     *                Thrown if the supplied value is not surrounded by double
-     *                quotes or if the value is <code>null</code>.
+     * @exception Exception Thrown if the supplied value is not surrounded by double quotes or if
+     *     the value is <code>null</code>.
      */
     public static String unquote4JS(String val) throws Exception {
         StringBuilder sb = new StringBuilder();
@@ -462,8 +441,8 @@ public class UtilityMethods {
     }
 
     /**
-     * This method is to calculate duration between two time periods and return
-     * value in number of days.
+     * This method is to calculate duration between two time periods and return value in number of
+     * days.
      *
      * @param newTime
      * @param existingTime
@@ -474,41 +453,35 @@ public class UtilityMethods {
         return timeInterval / (24L * 60 * 60 * 1000);
     }
 
-
     ////////////////////////////
-    
+
     public static JSONObject deepCopy(JSONObject input) throws Exception {
         JSONObject output = new JSONObject();
         for (String key : input.keySet()) {
             Object o = input.get(key);
             if (o instanceof JSONObject) {
-                output.put(key, deepCopy((JSONObject)o));
-            }
-            else if (o instanceof JSONArray) {
-                output.put(key, deepCopyArray((JSONArray)o));
-            }
-            else {
+                output.put(key, deepCopy((JSONObject) o));
+            } else if (o instanceof JSONArray) {
+                output.put(key, deepCopyArray((JSONArray) o));
+            } else {
                 output.put(key, o);
             }
         }
         return output;
     }
+
     public static JSONArray deepCopyArray(JSONArray input) throws Exception {
         JSONArray output = new JSONArray();
-        for (int i=0; i<input.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
             Object o = input.get(i);
             if (o instanceof JSONObject) {
-                output.put(deepCopy((JSONObject)o));
-            }
-            else if (o instanceof JSONArray) {
-                output.put(deepCopyArray((JSONArray)o));
-            }
-            else {
+                output.put(deepCopy((JSONObject) o));
+            } else if (o instanceof JSONArray) {
+                output.put(deepCopyArray((JSONArray) o));
+            } else {
                 output.put(o);
             }
         }
         return output;
     }
-
-
 }

@@ -20,19 +20,17 @@
 
 package com.purplehillsbooks.weaver.mail;
 
-import java.util.List;
-
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGRole;
+import java.util.List;
 
 /**
-* This is for email messages which are sent to the Super Admin
-* and you really can't opt out of that responsibility.
-* So this makes a message that says that.
-*/
+ * This is for email messages which are sent to the Super Admin and you really can't opt out of that
+ * responsibility. So this makes a message that says that.
+ */
 public class OptOutSiteExec extends OptOutAddr {
 
     public OptOutSiteExec(AddressListEntry _assignee) {
@@ -41,17 +39,19 @@ public class OptOutSiteExec extends OptOutAddr {
 
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         writeSentToMsg(clone);
-        clone.write("You have received this message because you are either the owner or the executive of the site. ");
+        clone.write(
+                "You have received this message because you are either the owner or the executive of the site. ");
         writeConcludingPart(clone);
     }
-    
+
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         JSONObject jo = super.getUnsubscribeJSON(ar);
         jo.put("isDirectAddress", true);
         return jo;
     }
 
-    public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
+    public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector)
+            throws Exception {
         for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
             boolean found = false;
             for (OptOutAddr existing : collector) {
@@ -64,6 +64,5 @@ public class OptOutSiteExec extends OptOutAddr {
                 collector.add(ooa);
             }
         }
-    }    
-    
+    }
 }

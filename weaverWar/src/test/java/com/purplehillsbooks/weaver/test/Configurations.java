@@ -22,7 +22,6 @@ package com.purplehillsbooks.weaver.test;
 
 import java.util.Properties;
 
-
 public final class Configurations {
 
     private static Properties prop = new Properties();
@@ -64,11 +63,12 @@ public final class Configurations {
 
     static {
         try {
-            prop.load(Configurations.class.getClassLoader()
-                    .getResourceAsStream("crawal.properties"));
+            prop.load(
+                    Configurations.class.getClassLoader().getResourceAsStream("crawal.properties"));
         } catch (Exception e) {
             prop = null;
-            System.err.println("WARNING: Could not find test.config file in class path.Will use the default values.");
+            System.err.println(
+                    "WARNING: Could not find test.config file in class path.Will use the default values.");
         }
     }
 }

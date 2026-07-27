@@ -23,11 +23,10 @@ package com.purplehillsbooks.weaver;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
-* this defines a role in terms of a name, a symbol, a
-* description.  These are defined at the site level,
-* and are used at the workspace level.  thus each workspace 
-* can decide which roles it wants to use.
-*/
+ * this defines a role in terms of a name, a symbol, a description. These are defined at the site
+ * level, and are used at the workspace level. thus each workspace can decide which roles it wants
+ * to use.
+ */
 public class RoleDefinition {
 
     public String symbol;
@@ -54,7 +53,7 @@ public class RoleDefinition {
     public boolean onlyMail = false;
 
     public RoleDefinition() {}
- 
+
     public void normalize() {
         if (onlyMail) {
             canEdit = false;
@@ -66,8 +65,8 @@ public class RoleDefinition {
     }
 
     /**
-     * getJSON is for normal lists of roles, the current players, and such.
-     * Does not include all the historical detail.
+     * getJSON is for normal lists of roles, the current players, and such. Does not include all the
+     * historical detail.
      */
     public JSONObject getJSON() throws Exception {
         normalize();
@@ -118,5 +117,4 @@ public class RoleDefinition {
         clone.isWorkspaceDefault = this.isWorkspaceDefault;
         return clone;
     }
-
 }

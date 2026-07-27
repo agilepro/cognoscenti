@@ -77,7 +77,8 @@ public class RoleRequestRecord extends DOMFace {
 
     public void setModifiedBy(String modifiedBy) {
         if (modifiedBy != null && !UserManager.isValidEmailAddress(modifiedBy)) {
-            throw new IllegalArgumentException("Invalid email address for modifiedBy: " + modifiedBy);
+            throw new IllegalArgumentException(
+                    "Invalid email address for modifiedBy: " + modifiedBy);
         }
         setAttribute("modifiedBy", modifiedBy);
     }
@@ -107,7 +108,8 @@ public class RoleRequestRecord extends DOMFace {
     }
 
     public boolean showRecord() throws Exception {
-        long oldestLegalRecord = System.currentTimeMillis()-(24L*60*60*1000*HISTORY_MAX_DAYS);
-        return getModifiedDate()>oldestLegalRecord;
+        long oldestLegalRecord =
+                System.currentTimeMillis() - (24L * 60 * 60 * 1000 * HISTORY_MAX_DAYS);
+        return getModifiedDate() > oldestLegalRecord;
     }
 }

@@ -36,45 +36,44 @@ public class ErrorLog extends DOMFile {
         super(path, newDoc);
     }
 
-    private static  ErrorLog cachedLogFile=null;
+    private static ErrorLog cachedLogFile = null;
 
     public static ErrorLog getLogForDate(long dateValue, Cognoscenti cog) throws Exception {
 
         // create a log file name based on the date passed in.
         String encodedDate = new SimpleDateFormat("yyyy.MM.dd").format(dateValue);
-        String fileName = "errorLog_"+ encodedDate.substring(0,10)+".xml";
+        String fileName = "errorLog_" + encodedDate.substring(0, 10) + ".xml";
         File logFolder = new File(cog.getConfig().getUserFolderOrFail(), "logs");
         File newPlace = new File(logFolder, fileName);
-        
-        //maybe this one is already cached and in use ... if so use that.
-        if (cachedLogFile!=null && newPlace.equals(cachedLogFile.getFilePath())) {
+
+        // maybe this one is already cached and in use ... if so use that.
+        if (cachedLogFile != null && newPlace.equals(cachedLogFile.getFilePath())) {
             return cachedLogFile;
         }
-        
-        
-        //error log files were placed directly in the main users folder for a while
-        //now moved to the users logs folder, but look if it is there and move it if found there
+
+        // error log files were placed directly in the main users folder for a while
+        // now moved to the users logs folder, but look if it is there and move it if found there
         File oldPlace = new File(cog.getConfig().getUserFolderOrFail(), fileName);
         if (!newPlace.exists() && oldPlace.exists()) {
             StreamHelper.copyFileToFile(oldPlace, newPlace);
             oldPlace.delete();
         }
 
-
-        //not cached, so load or create a new one
+        // not cached, so load or create a new one
         Document errorLogDoc = readOrCreateFile(newPlace, "errorlog");
-        cachedLogFile=new ErrorLog(newPlace, errorLogDoc);
+        cachedLogFile = new ErrorLog(newPlace, errorLogDoc);
         return cachedLogFile;
     }
 
     /**
      * Returns the error details for the specified error id.
+     *
      * @param errorId that you are looking for details on
      * @return the error details, or null if no error with that id
      */
     public ErrorLogDetails getDetails(int errorId) throws Exception {
         for (ErrorLogDetails errorLogDetails : getChildren("error", ErrorLogDetails.class)) {
-            if(errorLogDetails.getErrorNo() == errorId){
+            if (errorLogDetails.getErrorNo() == errorId) {
                 return errorLogDetails;
             }
         }
@@ -89,30 +88,35 @@ public class ErrorLog extends DOMFile {
         return list;
     }
 
-
     public ErrorLogDetails createNewError(Cognoscenti cog) throws Exception {
         ErrorLogDetails errorLogDetails = createChild("error", ErrorLogDetails.class);
-        //fine the next error number and initialize it to that
+        // fine the next error number and initialize it to that
         SuperAdminLogFile salf = SuperAdminLogFile.getInstance(cog);
         int exceptionNO = salf.incrementExceptionNo();
         errorLogDetails.setErrorNo(exceptionNO);
-        //just in case it is not set elsewhere, give it a valid timestamp
+        // just in case it is not set elsewhere, give it a valid timestamp
         errorLogDetails.setModTime(System.currentTimeMillis());
         return errorLogDetails;
     }
 
-    private int logsError(UserProfile up,String msg,Throwable ex, String errorURL,
-            long nowTime, Cognoscenti cog) throws Exception {
-        if (ex==null) {
+    private int logsError(
+            UserProfile up,
+            String msg,
+            Throwable ex,
+            String errorURL,
+            long nowTime,
+            Cognoscenti cog)
+            throws Exception {
+        if (ex == null) {
             System.out.println("ERROR LOG: attempt to record null exception object");
             return -1;
         }
-        String userName="GUEST";
+        String userName = "GUEST";
 
-        if (up!=null) {
-            userName = up.getName()+"("+up.getKey()+")";
+        if (up != null) {
+            userName = up.getName() + "(" + up.getKey() + ")";
         }
-        StackTraceElement[] element =ex.getStackTrace()  ;
+        StackTraceElement[] element = ex.getStackTrace();
 
         ErrorLogDetails errorLogDetails = createNewError(cog);
 
@@ -121,8 +125,8 @@ public class ErrorLog extends DOMFile {
         errorLogDetails.setFileName(element[0].getFileName());
         errorLogDetails.setURI(errorURL);
 
-        if (msg!=null && msg.length()>0) {
-            errorLogDetails.setErrorMessage(msg+"\n"+WeaverException.getFullMessage(ex));
+        if (msg != null && msg.length() > 0) {
+            errorLogDetails.setErrorMessage(msg + "\n" + WeaverException.getFullMessage(ex));
         } else {
             errorLogDetails.setErrorMessage(WeaverException.getFullMessage(ex));
         }
@@ -132,15 +136,11 @@ public class ErrorLog extends DOMFile {
         return errorLogDetails.getErrorNo();
     }
 
-
     public static File getErrorFileFullPath(Date date, Cognoscenti cog) throws Exception {
-        String searchByDate=new SimpleDateFormat("yyyy.MM.dd").format(date);
+        String searchByDate = new SimpleDateFormat("yyyy.MM.dd").format(date);
         File userFolder = cog.getConfig().getUserFolderOrFail();
-        return new File(userFolder, "errorLog_"+searchByDate+".xml");
+        return new File(userFolder, "errorLog_" + searchByDate + ".xml");
     }
-
-
-
 
     public void logUserComments(int errorId, long logFileDate, String comments) throws Exception {
 
@@ -153,39 +153,48 @@ public class ErrorLog extends DOMFile {
         return JSONException.convertToJSON(new Exception(exception), "ErrorLog").toString(2);
     }
 
-
-    public synchronized long logException(String msg, Throwable ex, long nowTime,
-            UserProfile userProfile, String errorURL, Cognoscenti cog) {
+    public synchronized long logException(
+            String msg,
+            Throwable ex,
+            long nowTime,
+            UserProfile userProfile,
+            String errorURL,
+            Cognoscenti cog) {
         try {
 
-            //redundantly included in the system out as well
-            //maybe someday this will not be necessary???
-            System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().threadId()
-                     +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis()));
-            if (msg==null || msg.length()==0) {
-                msg = "LOGGED EXCEPTION: t="+Thread.currentThread().threadId()
-                        +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
+            // redundantly included in the system out as well
+            // maybe someday this will not be necessary???
+            System.out.println(
+                    "\nLOGGED EXCEPTION: t="
+                            + Thread.currentThread().threadId()
+                            + ", start="
+                            + SectionUtil.getNiceTimestamp(nowTime)
+                            + ", now="
+                            + SectionUtil.getNiceTimestamp(System.currentTimeMillis()));
+            if (msg == null || msg.length() == 0) {
+                msg =
+                        "LOGGED EXCEPTION: t="
+                                + Thread.currentThread().threadId()
+                                + ", start="
+                                + SectionUtil.getNiceTimestamp(nowTime)
+                                + ", now="
+                                + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
             }
             if (WeaverException.containsMessage(ex, "Must be logged in")) {
-                //suppress the logging of the entire stack trace just for not logged in.
+                // suppress the logging of the entire stack trace just for not logged in.
                 System.out.println(msg);
                 System.out.println(WeaverException.getFullMessage(ex));
-            }
-            else {
+            } else {
                 WeaverException.traceException(System.out, ex, msg);
             }
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);
-        }
-        catch (Exception e) {
-            System.out.println("FATAL FAILURE TO LOG ERROR: "+e);
+        } catch (Exception e) {
+            System.out.println("FATAL FAILURE TO LOG ERROR: " + e);
             // what else to do? ... crash the server. If your log file
             // is not working there is very little else to be done.
             // Might as well try throwing the exception...
             throw new RuntimeException("Can not write other exception to log file", e);
         }
     }
-
-
 }
-

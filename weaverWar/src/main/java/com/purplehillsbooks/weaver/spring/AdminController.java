@@ -20,127 +20,137 @@
 
 package com.purplehillsbooks.weaver.spring;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import com.purplehillsbooks.json.JSONObject;
 
 @Controller
 public class AdminController extends BaseController {
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/updateProjectInfo.json", method = RequestMethod.POST)
-    public void updateProjectInfo(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/updateProjectInfo.json",
+            method = RequestMethod.POST)
+    public void updateProjectInfo(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            ar.assertAdmin("update workspace info for "+ngw.getFullName());
-            //ar.assertNotFrozen(ngp);
+            ar.assertAdmin("update workspace info for " + ngw.getFullName());
+            // ar.assertNotFrozen(ngp);
             JSONObject newConfig = getPostedObject(ar);
 
             ngw.updateConfigJSON(ar, newConfig);
 
-            //note: this save does not set the "last changed" metadata
-            //configuration changes are not content changes and should not
-            //appear as being updated.
-            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
+            // note: this save does not set the "last changed" metadata
+            // configuration changes are not content changes and should not
+            // appear as being updated.
+            ngw.saveWithoutMarkingModified(
+                    ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
             JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to update project information.", ex);
             streamException(ee, ar);
         }
     }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/updateWorkspaceName.json", method = RequestMethod.POST)
-    public void updateWorkspaceName(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/updateWorkspaceName.json",
+            method = RequestMethod.POST)
+    public void updateWorkspaceName(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+        try {
+            NGWorkspace ngw =
+                    ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertAdmin("change workspace name.");
-            
-            //NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
-            //      of a frozen workspace needs to be changed to differentiate from newer workspaces.
-            
+
+            // NOTE: this operation is ALLOWED on a frozen workspace because sometimes the name
+            //      of a frozen workspace needs to be changed to differentiate from newer
+            // workspaces.
+
             JSONObject newData = getPostedObject(ar);
 
             String newName = newData.getString("newName");
             ngw.setNewName(newName);
 
-            //note: this save does not set the "last changed" metadata
-            //configuration changes are not content changes and should not
-            //appear as being updated.
-            ngw.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
+            // note: this save does not set the "last changed" metadata
+            // configuration changes are not content changes and should not
+            // appear as being updated.
+            ngw.saveWithoutMarkingModified(
+                    ar.getBestUserId(), "Updating workspace name", ar.getCogInstance());
             JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
-            Exception ee = WeaverException.newWrap("Unable change workspace name for '%s'", ex, pageId);
+        } catch (Exception ex) {
+            Exception ee =
+                    WeaverException.newWrap("Unable change workspace name for '%s'", ex, pageId);
             streamException(ee, ar);
         }
     }
 
-
-
     // this can be deleted
-    @RequestMapping(value = "/{siteId}/{pageId}/deleteWorkspaceName.json", method = RequestMethod.POST)
-    public void deleteWorkspaceName(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(
+            value = "/{siteId}/{pageId}/deleteWorkspaceName.json",
+            method = RequestMethod.POST)
+    public void deleteWorkspaceName(
+            @PathVariable String siteId,
+            @PathVariable String pageId,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            throw WeaverException.newBasic("deleteWorkspaceName is no longer implemented, no longer needed");
-        }
-        catch(Exception ex){
+        try {
+            throw WeaverException.newBasic(
+                    "deleteWorkspaceName is no longer implemented, no longer needed");
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to save new name.", ex);
             streamException(ee, ar);
         }
     }
 
-
     @RequestMapping(value = "/{siteId}/$/updateSiteInfo.json", method = RequestMethod.POST)
-    public void updateSiteInfo(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response) {
+    public void updateSiteInfo(
+            @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
+        try {
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
             ar.assertAdmin("update site info.");
-            //even when frozen, need to be able to unfreeze
-            //ar.assertNotFrozen(site);
+            // even when frozen, need to be able to unfreeze
+            // ar.assertNotFrozen(site);
             JSONObject newConfig = getPostedObject(ar);
 
             site.updateConfigJSON(newConfig);
-            
-            //allow updates for super admin things only if super admin
+
+            // allow updates for super admin things only if super admin
             if (ar.isSuperAdmin()) {
                 site.updateAdminConfigJSON(newConfig);
             }
 
-            //save changes but DONT change the date.   These kinds of meta-changes don't qualify as modifications.
+            // save changes but DONT change the date.   These kinds of meta-changes don't qualify as
+            // modifications.
             site.save();
             JSONObject repo = site.getConfigJSON();
             sendJson(ar, repo);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             Exception ee = WeaverException.newWrap("Unable to update site information.", ex);
             streamException(ee, ar);
         }
     }
-
-
 }

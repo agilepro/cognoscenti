@@ -29,13 +29,9 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     public static final int TYPE_FILE = 1;
     public static final String PTCL_WEBDAV = "WEBDAV";
 
-    public SectionFolders() {
+    public SectionFolders() {}
 
-    }
-
-    /**
-     * get the name of the format
-     */
+    /** get the name of the format */
     public String getName() {
         return "Folders Format";
     }
@@ -44,7 +40,6 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
      * Folders is no longer a valid sectoin format
      */
     public void findIDs(List<String> v, NGSection sec) throws Exception {
-        //no content, nothing to check
+        // no content, nothing to check
     }
-
 }

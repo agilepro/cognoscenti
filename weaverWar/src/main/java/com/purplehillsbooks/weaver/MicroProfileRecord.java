@@ -23,30 +23,28 @@ package com.purplehillsbooks.weaver;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class MicroProfileRecord extends DOMFace {
-    
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public static boolean validEmailAddress(String emailStr) {
-            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
-            return matcher.find();
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
     }
 
     public MicroProfileRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
     }
 
-    public String getId()
-    {
+    public String getId() {
         return getAttribute("id");
     }
-    public void setId(String id)
-    {
+
+    public void setId(String id) {
         setAttribute("id", id);
     }
 
@@ -58,21 +56,20 @@ public class MicroProfileRecord extends DOMFace {
         setAttribute("displayName", displayName);
     }
 
-
     public void writeLink(AuthRequest ar) throws Exception {
         boolean makeItALink = ar.isLoggedIn() && !ar.isStaticSite();
         writeSpecificLink(ar, getDisplayName(), getId(), makeItALink);
     }
 
     /**
-    * Creates a link for a displayname and id.  If you don't have a display name
-    * pass a nullstring in, and the id will be used instead.
-    */
-    public static void writeSpecificLink(AuthRequest ar, String cleanName, String id, boolean makeItALink)
-            throws Exception {
-        String olink = "v/FindPerson.htm?uid="+URLEncoder.encode(id, "UTF-8");
-        if (cleanName.length()>28)  {
-            cleanName = cleanName.substring(0,28);
+     * Creates a link for a displayname and id. If you don't have a display name pass a nullstring
+     * in, and the id will be used instead.
+     */
+    public static void writeSpecificLink(
+            AuthRequest ar, String cleanName, String id, boolean makeItALink) throws Exception {
+        String olink = "v/FindPerson.htm?uid=" + URLEncoder.encode(id, "UTF-8");
+        if (cleanName.length() > 28) {
+            cleanName = cleanName.substring(0, 28);
         }
         if (makeItALink) {
             ar.write("<a href=\"");
@@ -83,8 +80,7 @@ public class MicroProfileRecord extends DOMFace {
             ar.writeHtml(cleanName);
             ar.write("</span>");
             ar.write("</a>");
-        }
-        else {
+        } else {
             ar.writeHtml(cleanName);
         }
     }

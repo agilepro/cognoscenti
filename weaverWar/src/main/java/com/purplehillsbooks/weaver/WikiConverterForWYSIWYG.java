@@ -20,44 +20,42 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.util.List;
-
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import java.util.List;
 
 /**
- * This is a sub class of WikiConverter that handles the HTML to WIKI conversion
- * for new Editor.
+ * This is a sub class of WikiConverter that handles the HTML to WIKI conversion for new Editor.
  *
- * Because of threading issues, a new instance should be created on every
- * thread.  This is done for you by using writeWikiAsHtml method for conversion.
- * Constructor is private, so use writeWikiAsHtml instead.
+ * <p>Because of threading issues, a new instance should be created on every thread. This is done
+ * for you by using writeWikiAsHtml method for conversion. Constructor is private, so use
+ * writeWikiAsHtml instead.
  */
-public class WikiConverterForWYSIWYG extends WikiConverter
-{
-    
-    public final static char ESCAPE_CHAR = 'º';
-    
-    /**
-    * Don't construct.  Just use writeWikiAsHtml instead.
-    */
+public class WikiConverterForWYSIWYG extends WikiConverter {
+
+    public static final char ESCAPE_CHAR = 'º';
+
+    /** Don't construct. Just use writeWikiAsHtml instead. */
     private WikiConverterForWYSIWYG(AuthRequest destination) {
-        super( destination );
+        super(destination);
     }
 
-
     /**
-    * Static version create the object instance and then calls the
-    * converter directly.   Convenience for the case where you are
-    * going to use a converter only once, and only for HTML output.
-    */
+     * Static version create the object instance and then calls the converter directly. Convenience
+     * for the case where you are going to use a converter only once, and only for HTML output.
+     */
     public static String makeHtmlString(AuthRequest destination, String tv) throws Exception {
-        if (destination.ngp==null) {
-            throw WeaverException.newBasic("makeHtmlString requires the AuthRequest to have a ngp object");
+        if (destination.ngp == null) {
+            throw WeaverException.newBasic(
+                    "makeHtmlString requires the AuthRequest to have a ngp object");
         }
         MemFile htmlChunk = new MemFile();
-        AuthDummy dummy = new AuthDummy(destination.getUserProfile(), htmlChunk.getWriter(), destination.getCogInstance());
-        dummy.ngp     = destination.ngp;
+        AuthDummy dummy =
+                new AuthDummy(
+                        destination.getUserProfile(),
+                        htmlChunk.getWriter(),
+                        destination.getCogInstance());
+        dummy.ngp = destination.ngp;
         dummy.retPath = destination.retPath;
         WikiConverterForWYSIWYG wc = new WikiConverterForWYSIWYG(dummy);
         wc.writeWikiAsHtml(tv);
@@ -65,25 +63,19 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         return htmlChunk.toString();
     }
 
-
-
     /**
-    * Static version create the object instance and then calls the
-    * converter directly.   Convenience for the case where you are
-    * going to use a converter only once, and only for HTML output.
-    */
-    public static void writeWikiAsHtml(AuthRequest destination, String tv) throws Exception
-    {
+     * Static version create the object instance and then calls the converter directly. Convenience
+     * for the case where you are going to use a converter only once, and only for HTML output.
+     */
+    public static void writeWikiAsHtml(AuthRequest destination, String tv) throws Exception {
         WikiConverterForWYSIWYG wc = new WikiConverterForWYSIWYG(destination);
         wc.writeWikiAsHtml(tv);
     }
 
-
-    public void outputProperLink(String linkContentText)
-        throws Exception
-    {
-        if (ar.ngp==null) {
-            throw WeaverException.newBasic("outputProperLink requires the AuthRequest to have a ngp object");
+    public void outputProperLink(String linkContentText) throws Exception {
+        if (ar.ngp == null) {
+            throw WeaverException.newBasic(
+                    "outputProperLink requires the AuthRequest to have a ngp object");
         }
         linkContentText = linkContentText.trim();
         int barPos = linkContentText.indexOf("|");
@@ -91,26 +83,22 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         String linkAddr = null;
         String titleValue = linkContentText;
 
-
-
         if (barPos >= 0) {
 
-            //We have both a link text, and a link address, so use them.
-            linkText = linkContentText.substring(0,barPos).trim();
-            linkAddr = linkContentText.substring(barPos+1).trim();
+            // We have both a link text, and a link address, so use them.
+            linkText = linkContentText.substring(0, barPos).trim();
+            linkAddr = linkContentText.substring(barPos + 1).trim();
 
-            //if this has been shortened, it must be converted back to full length.
-            //not really sure how this got shortened in the first place
+            // if this has been shortened, it must be converted back to full length.
+            // not really sure how this got shortened in the first place
             if (linkAddr.startsWith("http")) {
-                //ok the address is a full URL
-            }
-            else if (ar.ngp!=null) {
+                // ok the address is a full URL
+            } else if (ar.ngp != null) {
                 linkAddr = ar.baseURL + ar.getResourceURL(ar.ngp, linkAddr);
             }
-        }
-        else {
-            //This is the case that we have no bar char, and thus no link address.
-            //The address is then derived from the text, one of two ways:
+        } else {
+            // This is the case that we have no bar char, and thus no link address.
+            // The address is then derived from the text, one of two ways:
             //
             // 1. if there is a slash, and it starts with http, then the text itself is
             //    assumed to be a URL and the text value is used as a URL without modification.
@@ -125,19 +113,17 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             // After editing there should always be a link and we will not go through
             // this again.
             //
-            if (linkText.startsWith("http") && linkText.indexOf("/")>0) {
+            if (linkText.startsWith("http") && linkText.indexOf("/") > 0) {
                 linkAddr = linkText;
-            }
-            else {
+            } else {
                 List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkText);
                 if (foundPages.size() >= 1) {
                     NGPageIndex foundPI = foundPages.get(0);
                     linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "FrontPage.htm");
-                }
-                else {
-                    //didn't find a workspace with that name, so just link to hash which
-                    //works out to be the current page
-                    linkAddr="#";
+                } else {
+                    // didn't find a workspace with that name, so just link to hash which
+                    // works out to be the current page
+                    linkAddr = "#";
                 }
             }
         }
@@ -146,7 +132,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         String target = null;
         if (isExternal) {
             target = "_blank";
-            titleValue = "external link: "+titleValue;
+            titleValue = "external link: " + titleValue;
         }
 
         ar.write("<a href=\"");
@@ -162,28 +148,20 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         ar.write("</a>");
     }
 
-    protected void makeLineBreak()
-        throws Exception
-    {
+    protected void makeLineBreak() throws Exception {
         ar.write("<br>");
     }
 
-    protected void makeHorizontalRule()
-        throws Exception
-    {
+    protected void makeHorizontalRule() throws Exception {
         ar.write("<hr>");
     }
 
     /**
-    * Currently tags are output to the editor simply as text that can be
-    * edited, and not as a hyperlink.   Later, we might have
-    * some special coding to allow for a nice tag editor.
-    */
-    protected void outputTagLink(String tagName)
-        throws Exception
-    {
+     * Currently tags are output to the editor simply as text that can be edited, and not as a
+     * hyperlink. Later, we might have some special coding to allow for a nice tag editor.
+     */
+    protected void outputTagLink(String tagName) throws Exception {
         ar.write("#");
         ar.writeURLData(tagName);
     }
-
 }

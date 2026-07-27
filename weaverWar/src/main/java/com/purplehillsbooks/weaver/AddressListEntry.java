@@ -20,62 +20,53 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.exception.ProgramLogicError;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
 /**
- * An entry in the address list. Holds the email address
- * and optionally a UserProfile so that duplicate or alternate
- * email addresses can be identified easily.
+ * An entry in the address list. Holds the email address and optionally a UserProfile so that
+ * duplicate or alternate email addresses can be identified easily.
  *
+ * <p>ALE provides a number of functions around parsing and handling email addresses and openids.
+ * Whenever you get an email address the code should immediately create an ALE and manipulate that.
  *
- * ALE provides a number of functions around parsing and handling
- * email addresses and openids. Whenever you get an email address
- * the code should immediately create an ALE and manipulate that.
+ * <p>Upon construction, the ALE will parse the email address, and say whether it is a valid email
+ * address or not.
  *
- * Upon construction, the ALE will parse the email address, and say
- * whether it is a valid email address or not.
+ * <p>The constructor will also detect if the ID is an openid.
  *
- * The constructor will also detect if the ID is an openid.
+ * <p>Then, it will look into the list of profiles, and see if there is a user profile that matches
+ * this address. If it finds one, it will make use of of that user's PREFERRED address, instead of
+ * the one given.
  *
- * Then, it will look into the list of profiles, and see if there is
- * a user profile that matches this address. If it finds one, it will
- * make use of of that user's PREFERRED address, instead of the one
- * given.
+ * <p>getUniversalId() - returns the "best" id for the user matched with this address. If no user
+ * was found, then the original address returned.
  *
- * getUniversalId() - returns the "best" id for the user matched with
- * this address. If no user was found, then the original address returned.
+ * <p>getOriginalId() - returns the (cleaned up) address that was passed in.
  *
- * getOriginalId() - returns the (cleaned up) address that was passed in.
+ * <p>getEmail() - returns either the best email address for the user, or the original address if
+ * that looks like email, otherwise null string.
  *
- * getEmail() - returns either the best email address for the user, or
- * the original address if that looks like email, otherwise null string.
+ * <p>There is no way to "set" the id since you only use the constructor and pass an email address
+ * in.
  *
- * There is no way to "set" the id since you only use the constructor
- * and pass an email address in.
+ * <p>Generally, the ALE is passed to other objects to either add them to a list of addresses (like
+ * a NGRole) or to other methods that need a target address.
  *
- * Generally, the ALE is passed to other objects to either add them to
- * a list of addresses (like a NGRole) or to other methods that need a
- * target address.
+ * <p>When you have a list of ALE you can find which ones match a particular address using
+ * hasAnyId() which will test all of a user's addresses as well as their name for a match. If no
+ * matching profile was found, the obviously it only matches against the address passed in.
  *
- * When you have a list of ALE you can find which ones match a particular
- * address using hasAnyId() which will test all of a user's addresses
- * as well as their name for a match. If no matching profile was found,
- * the obviously it only matches against the address passed in.
+ * <p>Then, when outputting UI you have:
  *
- * Then, when outputting UI you have:
- *
- * writeLink() to write a well formatted link into a web page
- *
- *
+ * <p>writeLink() to write a well formatted link into a web page
  */
 public class AddressListEntry implements UserRef {
     String rawAddress;
@@ -86,13 +77,13 @@ public class AddressListEntry implements UserRef {
     public static final char LAQUO = '\u00AB';
 
     /**
-     * This is the main constructor used on a unique id of a person,
-     * could be an email address or an OpenID style uid.
-     * It will search and try to find the user.
+     * This is the main constructor used on a unique id of a person, could be an email address or an
+     * OpenID style uid. It will search and try to find the user.
      */
     private AddressListEntry(String addr) {
         if (addr == null) {
-            throw ProgramLogicError.newBasic("AddressListEntry: attempt to construct an instance with a null value");
+            throw ProgramLogicError.newBasic(
+                    "AddressListEntry: attempt to construct an instance with a null value");
         }
         if (addr.indexOf(LAQUO) >= 0 || addr.indexOf('<') >= 0) {
             throw ProgramLogicError.newBasic(
@@ -105,7 +96,8 @@ public class AddressListEntry implements UserRef {
 
     public static AddressListEntry findByAnyId(String addr) {
         if (addr == null) {
-            throw ProgramLogicError.newBasic("AddressListEntry: attempt to construct an instance with a null value");
+            throw ProgramLogicError.newBasic(
+                    "AddressListEntry: attempt to construct an instance with a null value");
         }
         if (addr.indexOf(LAQUO) >= 0 || addr.indexOf('<') >= 0) {
             throw ProgramLogicError.newBasic(
@@ -137,11 +129,10 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * This constructor is used when you have two values, one
-     * universal id, and a name. First the uid will be used to
-     * try and find the user object. If found, then the name
-     * is ignored. If not found, then the name is remembered.
-     * 
+     * This constructor is used when you have two values, one universal id, and a name. First the
+     * uid will be used to try and find the user object. If found, then the name is ignored. If not
+     * found, then the name is remembered.
+     *
      * @throws Exception
      */
     public AddressListEntry(String uid, String name) throws Exception {
@@ -163,16 +154,14 @@ public class AddressListEntry implements UserRef {
 
     public AddressListEntry(UserProfile knownUser) {
         if (knownUser == null) {
-            throw new RuntimeException("Unable to construct AddressListEntry on a null user profile object");
+            throw new RuntimeException(
+                    "Unable to construct AddressListEntry on a null user profile object");
         }
         user = knownUser;
         rawAddress = user.getUniversalId();
     }
 
-    /**
-     * Return the email address for this entry if one is known.
-     * If not, return a null string.
-     */
+    /** Return the email address for this entry if one is known. If not, return a null string. */
     public String getEmail() {
         if (user != null) {
             return user.getPreferredEmail();
@@ -181,13 +170,13 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * An ALE is constructed on a string value. That value might or might not
-     * be appropriate to designate a user. Use this function to see if the
-     * ALE looks like it is a valid representation of a user.
+     * An ALE is constructed on a string value. That value might or might not be appropriate to
+     * designate a user. Use this function to see if the ALE looks like it is a valid representation
+     * of a user.
      *
-     * Every user HAS to have an email address at this point, so this method
-     * will check to make sure that they have an email. In the future if there
-     * are any other consistency constraints we can set that here.
+     * <p>Every user HAS to have an email address at this point, so this method will check to make
+     * sure that they have an email. In the future if there are any other consistency constraints we
+     * can set that here.
      */
     public boolean isWellFormed() {
         String email = getEmail();
@@ -195,11 +184,9 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * Return the best global unique ID for this address list entry.
-     * Usually an email address, but not always. Could be an openid if there is no
-     * user
-     * profile associated with the initial address. Or it could be the name of a
-     * role.
+     * Return the best global unique ID for this address list entry. Usually an email address, but
+     * not always. Could be an openid if there is no user profile associated with the initial
+     * address. Or it could be the name of a role.
      */
     public String getUniversalId() {
         if (user != null) {
@@ -219,16 +206,14 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * return the ID that was used in this role or address list
-     * the one that was used to find the associated user.
+     * return the ID that was used in this role or address list the one that was used to find the
+     * associated user.
      */
     public String getInitialId() {
         return rawAddress;
     }
 
-    /**
-     * return the best email address for this entry
-     */
+    /** return the best email address for this entry */
     public boolean hasAnyId(String testAddr) {
         if (user != null) {
             return user.hasAnyId(testAddr);
@@ -247,9 +232,7 @@ public class AddressListEntry implements UserRef {
         return other.hasAnyId(getUniversalId());
     }
 
-    /**
-     * Say whether this address list entry is for the specified profile
-     */
+    /** Say whether this address list entry is for the specified profile */
     public boolean isSameAs(UserProfile another) {
         if (user != null) {
             return user.getKey().equals(another.getKey());
@@ -258,8 +241,8 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * return the best name, either the user name, or the address
-     * in the case that no user was found.
+     * return the best name, either the user name, or the address in the case that no user was
+     * found.
      */
     public String getName() {
         if (user != null) {
@@ -280,10 +263,7 @@ public class AddressListEntry implements UserRef {
         return rawAddress;
     }
 
-    /**
-     * Write out a HTML link to fetch the informatin about this user
-     * if possible.
-     */
+    /** Write out a HTML link to fetch the informatin about this user if possible. */
     public void writeLink(AuthRequest ar) throws Exception {
         if (user != null) {
             user.writeLink(ar);
@@ -305,13 +285,11 @@ public class AddressListEntry implements UserRef {
             return;
         }
 
-        MicroProfileRecord.writeSpecificLink(ar, SectionUtil.cleanName(getName()),
-                rawAddress, makeItALink);
+        MicroProfileRecord.writeSpecificLink(
+                ar, SectionUtil.cleanName(getName()), rawAddress, makeItALink);
     }
 
-    /**
-     * Make a link to this to provide information about the person
-     */
+    /** Make a link to this to provide information about the person */
     public String getLinkUrl() throws Exception {
         if (user != null) {
             return "v/FindPerson.htm?uid=" + URLEncoder.encode(user.getKey(), "UTF-8");
@@ -333,8 +311,7 @@ public class AddressListEntry implements UserRef {
     }
 
     static class UserRefComparator implements Comparator<UserRef> {
-        public UserRefComparator() {
-        }
+        public UserRefComparator() {}
 
         public int compare(UserRef o1, UserRef o2) {
             String name1 = o1.getName();
@@ -347,7 +324,8 @@ public class AddressListEntry implements UserRef {
         if (user != null) {
             return user.hasAddressMatchingFrag(frag);
         } else {
-            if (getName().toLowerCase().contains(frag) || getUniversalId().toLowerCase().contains(frag)) {
+            if (getName().toLowerCase().contains(frag)
+                    || getUniversalId().toLowerCase().contains(frag)) {
                 return true;
             }
         }
@@ -355,34 +333,28 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * If the address was supplied with a name AND and address,
-     * then this method will return the name part.
-     * If not, returns null.
+     * If the address was supplied with a name AND and address, then this method will return the
+     * name part. If not, returns null.
      *
-     * For example, some email addresses look like:
-     * "Tom Jones" <tom.jones@example.com>
+     * <p>For example, some email addresses look like: "Tom Jones" <tom.jones@example.com>
      *
-     * This will be properly parsed, and the email address /
-     * universal ID will be just the email address, but to get
-     * the name that comes before that, use this method.
+     * <p>This will be properly parsed, and the email address / universal ID will be just the email
+     * address, but to get the name that comes before that, use this method.
      */
     public String getNamePart() {
         return namePart;
     }
 
     /**
-     * See #getNamePart(). This method allows you to force a
-     * name part into the address list entry.
+     * See #getNamePart(). This method allows you to force a name part into the address list entry.
      */
     public void setNamePart(String newName) {
         this.namePart = newName;
     }
 
     /**
-     * Give this method a 'combined' address, that contains both a
-     * user name and email address. This will correctly parse the
-     * two out, and return an AddressListEntry object that contains
-     * both.
+     * Give this method a 'combined' address, that contains both a user name and email address. This
+     * will correctly parse the two out, and return an AddressListEntry object that contains both.
      */
     public static AddressListEntry parseCombinedAddress(String nameAddress) {
         // first check for the laquo and raquo case. This is NOT
@@ -410,8 +382,8 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * In some cases we use email addresses with laquo and raquo demarking
-     * the name. This cleans that up, and uses angle brackets instead.
+     * In some cases we use email addresses with laquo and raquo demarking the name. This cleans
+     * that up, and uses angle brackets instead.
      */
     public static String cleanQuotes(String eAddress) throws Exception {
 
@@ -429,9 +401,14 @@ public class AddressListEntry implements UserRef {
                         "Got an address with only a start laquo char -- the address should have both start and end, or none");
             }
             if (braketEnd <= braketStart) {
-                throw WeaverException.newBasic("Got an address with laquo and raquo in the wrong order");
+                throw WeaverException.newBasic(
+                        "Got an address with laquo and raquo in the wrong order");
             }
-            eAddress = eAddress.substring(0, braketStart) + '<' + eAddress.substring(braketStart + 1, braketEnd) + '>';
+            eAddress =
+                    eAddress.substring(0, braketStart)
+                            + '<'
+                            + eAddress.substring(braketStart + 1, braketEnd)
+                            + '>';
         }
 
         // also eliminate any quote characters that might exist
@@ -444,12 +421,10 @@ public class AddressListEntry implements UserRef {
     }
 
     /**
-     * Given a string with email addresses (or openids) separated by either commas
-     * semicolons, or carriage returns, this will parse the list, and return a
-     * vector of AddressListEntry objects.
+     * Given a string with email addresses (or openids) separated by either commas semicolons, or
+     * carriage returns, this will parse the list, and return a vector of AddressListEntry objects.
      */
-    public static List<AddressListEntry> parseEmailList(String addressList)
-            throws Exception {
+    public static List<AddressListEntry> parseEmailList(String addressList) throws Exception {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
 
         int start = 0;
@@ -478,9 +453,7 @@ public class AddressListEntry implements UserRef {
         return res;
     }
 
-    /**
-     * Convert a list of string values into a list of address list entry objects
-     */
+    /** Convert a list of string values into a list of address list entry objects */
     public static List<AddressListEntry> toAddressList(List<String> uidList) {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (String uid : uidList) {
@@ -497,9 +470,7 @@ public class AddressListEntry implements UserRef {
         return res;
     }
 
-    /**
-     * Takes an array of user object, each user object with key, uid, and name
-     */
+    /** Takes an array of user object, each user object with key, uid, and name */
     public static List<String> uidListfromJSONArray(JSONArray inputArray) throws Exception {
         List<String> uids = new ArrayList<String>();
         for (JSONObject oneEntry : inputArray.getJSONObjectList()) {
@@ -542,8 +513,8 @@ public class AddressListEntry implements UserRef {
         if (jObj.has("uid")) {
             return new AddressListEntry(jObj.getString("uid"));
         }
-        throw WeaverException
-                .newBasic("Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
+        throw WeaverException.newBasic(
+                "Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
     }
 
     public static JSONArray getJSONArrayFromIds(List<String> idList) throws Exception {
@@ -563,8 +534,8 @@ public class AddressListEntry implements UserRef {
         return array;
     }
 
-    public static void addIfNotPresent(List<AddressListEntry> addressList,
-            AddressListEntry newMember) throws Exception {
+    public static void addIfNotPresent(
+            List<AddressListEntry> addressList, AddressListEntry newMember) throws Exception {
         for (AddressListEntry one : addressList) {
             if (one.equals(newMember)) {
                 return;
@@ -573,11 +544,11 @@ public class AddressListEntry implements UserRef {
         addressList.add(newMember);
     }
 
-    public static void addAllIfNotPresent(List<AddressListEntry> addressList,
-            List<AddressListEntry> newMembers) throws Exception {
+    public static void addAllIfNotPresent(
+            List<AddressListEntry> addressList, List<AddressListEntry> newMembers)
+            throws Exception {
         for (AddressListEntry one : newMembers) {
             addIfNotPresent(addressList, one);
         }
     }
-
 }

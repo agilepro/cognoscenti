@@ -25,18 +25,16 @@ public final class ValueElement {
     public String name;
     public String value;
 
-    public ValueElement() {
-    }
+    public ValueElement() {}
 
     public ValueElement(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
-    public String toString()
-    {
-        final java.lang.StringBuilder _ret = new java.lang.StringBuilder(
-                "org.socialbiz.cog.ValueElement {");
+    public String toString() {
+        final java.lang.StringBuilder _ret =
+                new java.lang.StringBuilder("org.socialbiz.cog.ValueElement {");
         _ret.append("String name=");
         _ret.append(name);
         _ret.append("\n");
@@ -57,5 +55,4 @@ public final class ValueElement {
         }
         return true;
     }
-
 }

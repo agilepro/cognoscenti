@@ -20,12 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -33,19 +30,19 @@ import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutTopicSubscriber;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
-
 /**
- * A TopicRecord represents a Topic in a Workspace.
- * Topic exist on workspaces as quick ways for people to
- * write and exchange information about the workspace.
- * Leaflet is the old term for this, we prefer the term Topic now everywhere.
- * (Used to be called LeafletRecord, but name changed March 2013)
+ * A TopicRecord represents a Topic in a Workspace. Topic exist on workspaces as quick ways for
+ * people to write and exchange information about the workspace. Leaflet is the old term for this,
+ * we prefer the term Topic now everywhere. (Used to be called LeafletRecord, but name changed March
+ * 2013)
  */
 public class TopicRecord extends CommentContainer {
 
@@ -60,7 +57,7 @@ public class TopicRecord extends CommentContainer {
 
     // This is actually one week before the server started, and is used mainly in
     // the startup methods for an arbitrary time long enough ago that automated
-    // notifications should be cancelled or ignored. If the server stays on a long 
+    // notifications should be cancelled or ignored. If the server stays on a long
     // this value will not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000;
 
@@ -89,7 +86,8 @@ public class TopicRecord extends CommentContainer {
         }
     }
 
-    public void copyFrom(AuthRequest ar, NGWorkspace otherWorkspace, TopicRecord other) throws Exception {
+    public void copyFrom(AuthRequest ar, NGWorkspace otherWorkspace, TopicRecord other)
+            throws Exception {
         JSONObject full = other.getJSONWithComments(ar, otherWorkspace);
         // fake this to avoid the consistency assurance constraints
         full.put("id", getId());
@@ -149,7 +147,8 @@ public class TopicRecord extends CommentContainer {
         if (subscribers.size() > 0) {
             for (AddressListEntry ale : subscribers) {
                 if (ale.isWellFormed()) {
-                    OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getSiteKey(), ngw.getKey(), this);
+                    OptOutAddr ooa =
+                            new OptOutTopicSubscriber(ale, ngw.getSiteKey(), ngw.getKey(), this);
                     sendTo.add(ooa);
                 }
             }
@@ -192,12 +191,11 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * This date used to sort the comments. Set to the date that
-     * the comment was first made or published. That date remains
-     * fixed even if the comment continues to be edited.
+     * This date used to sort the comments. Set to the date that the comment was first made or
+     * published. That date remains fixed even if the comment continues to be edited.
      *
-     * When effective date is not set, use last saved date instead.
-     * These will be the same a lot of the time.
+     * <p>When effective date is not set, use last saved date instead. These will be the same a lot
+     * of the time.
      */
     public long getEffectiveDate() {
         long effDate = getScalarLong("effective");
@@ -212,13 +210,10 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * If the comment is "pinned" to the top of the page, then
-     * this pin order will be set with a positive integer value
-     * so that comments are in the order 1, 2, 3, etc.
-     * A value of zero (or negative) means that the comment is
-     * not pinned to the top, and should instead be sorted by
-     * effective date.
-     * Default: 0
+     * If the comment is "pinned" to the top of the page, then this pin order will be set with a
+     * positive integer value so that comments are in the order 1, 2, 3, etc. A value of zero (or
+     * negative) means that the comment is not pinned to the top, and should instead be sorted by
+     * effective date. Default: 0
      */
     public long getPinOrder() {
         long pin = getScalarLong("pin");
@@ -235,37 +230,27 @@ public class TopicRecord extends CommentContainer {
         setScalar("pin", Long.toString(newPinOrder));
     }
 
-    /**
-     * Given a vector, this will fill the vector with tag terms
-     */
+    /** Given a vector, this will fill the vector with tag terms */
     public void fillTags(List<String> result) {
         fillVectorValues(result, "tag");
     }
 
-    /**
-     * Returns a vector of string tag values
-     */
+    /** Returns a vector of string tag values */
     public List<String> getTags() {
         return getVector("tag");
     }
 
-    /**
-     * Given a vector of string, this tag terms for this comment
-     */
+    /** Given a vector of string, this tag terms for this comment */
     public void setTags(List<String> newVal) {
         setVector("tag", newVal);
     }
 
-    /**
-     * Returns a vector of string choice values
-     */
+    /** Returns a vector of string choice values */
     public String getChoices() {
         return getScalar("choices");
     }
 
-    /**
-     * Given a vector of string, this choices for this topic
-     */
+    /** Given a vector of string, this choices for this topic */
     public void setChoices(String choices) {
         setScalar("choices", choices);
     }
@@ -275,18 +260,14 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * Compares its two arguments for order.
-     * First compares their pin order value which the user has placed
-     * on them to pin them in a particular position. The order
-     * is 1, 2, 3, ... and then 0 at the end denoting that there is
-     * no pin order set.
-     * If no pin order is set (or if pin order is equal) then
-     * compared by effective date order, which is usually the date
-     * that the comment was first created.
+     * Compares its two arguments for order. First compares their pin order value which the user has
+     * placed on them to pin them in a particular position. The order is 1, 2, 3, ... and then 0 at
+     * the end denoting that there is no pin order set. If no pin order is set (or if pin order is
+     * equal) then compared by effective date order, which is usually the date that the comment was
+     * first created.
      */
     private static class NotesInPinOrder implements Comparator<TopicRecord> {
-        NotesInPinOrder() {
-        }
+        NotesInPinOrder() {}
 
         public int compare(TopicRecord o1, TopicRecord o2) {
             long p1 = o1.getPinOrder();
@@ -317,20 +298,13 @@ public class TopicRecord extends CommentContainer {
             }
             return 1;
         }
-
     }
 
     /**
-     * Discussion Phase is an overall state of the note object.
-     * These are the phases:
-     * Draft - private, not publicized, one person only
-     * Freeform - just a general discussion topic, freeform
-     * Picture Forming
-     * Proposal Shaping
-     * Proposal Finalizing
-     * Resolved
-     * Closed
-     * Trash - this overlaps with deleted.
+     * Discussion Phase is an overall state of the note object. These are the phases: Draft -
+     * private, not publicized, one person only Freeform - just a general discussion topic, freeform
+     * Picture Forming Proposal Shaping Proposal Finalizing Resolved Closed Trash - this overlaps
+     * with deleted.
      */
     public String getDiscussionPhase() {
         return getAttribute("discussionPhase");
@@ -348,9 +322,8 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * Marking a Topic as deleted means that we SET the phase to trash.
-     * A Topic that is deleted / trash remains in the archive until a later
-     * date, when garbage has been collected.
+     * Marking a Topic as deleted means that we SET the phase to trash. A Topic that is deleted /
+     * trash remains in the archive until a later date, when garbage has been collected.
      */
     public boolean isDeleted() {
         String currentPhase = getDiscussionPhase();
@@ -358,10 +331,9 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * Set deleted date to the date that it is effectively deleted,
-     * which is the current time in most cases.
-     * Set the date to zero in order to clear the deleted flag
-     * and make the topic to be not-deleted
+     * Set deleted date to the date that it is effectively deleted, which is the current time in
+     * most cases. Set the date to zero in order to clear the deleted flag and make the topic to be
+     * not-deleted
      */
     public void setTrashPhase(AuthRequest ar) throws Exception {
         setAttribute("deleteDate", Long.toString(ar.nowTime));
@@ -388,15 +360,11 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * the universal id is a globally unique ID for this topic, composed of the id
-     * for the
-     * server, the workspace, and the topic. This is set at the point where the
-     * topic is created
-     * and remains with the topic as it is carried around the system as long as it
-     * is moved
-     * as a clone from a workspace to a clone of a workspace. If it is copied or
-     * moved to another
-     * workspace for any other reason, then the universal ID should be reset.
+     * the universal id is a globally unique ID for this topic, composed of the id for the server,
+     * the workspace, and the topic. This is set at the point where the topic is created and remains
+     * with the topic as it is carried around the system as long as it is moved as a clone from a
+     * workspace to a clone of a workspace. If it is copied or moved to another workspace for any
+     * other reason, then the universal ID should be reset.
      */
     public String getUniversalId() {
         return getScalar("universalid");
@@ -407,9 +375,9 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * check if a particular role has access to the particular topic.
-     * Just handles the 'special' roles, and does not take into consideration
-     * the Members or Admin roles, nor whether the attachment is public.
+     * check if a particular role has access to the particular topic. Just handles the 'special'
+     * roles, and does not take into consideration the Members or Admin roles, nor whether the
+     * attachment is public.
      */
     public boolean roleCanAccess(String roleName) {
         List<String> roleNames = getVector("labels");
@@ -440,7 +408,8 @@ public class TopicRecord extends CommentContainer {
 
     public String getNoteHtml(AuthRequest ar) throws Exception {
         MemFile htmlChunk = new MemFile();
-        AuthDummy dummy = new AuthDummy(ar.getUserProfile(), htmlChunk.getWriter(), ar.getCogInstance());
+        AuthDummy dummy =
+                new AuthDummy(ar.getUserProfile(), htmlChunk.getWriter(), ar.getCogInstance());
         dummy.ngp = ar.ngp;
         dummy.retPath = ar.retPath;
         WikiConverterForWYSIWYG.writeWikiAsHtml(dummy, getWiki());
@@ -520,13 +489,13 @@ public class TopicRecord extends CommentContainer {
     }
 
     /**
-     * Return all the Action Items that were 'live' during the specified
-     * time period. We only know the state that it is now, and timestamp
-     * that if was started and ended. Exclude anything that was closed before the
-     * time period
-     * began. Exclude anything that had not yet started by the time period end.
+     * Return all the Action Items that were 'live' during the specified time period. We only know
+     * the state that it is now, and timestamp that if was started and ended. Exclude anything that
+     * was closed before the time period began. Exclude anything that had not yet started by the
+     * time period end.
      */
-    public List<String> getActionItemsAtTime(NGWorkspace ngw, long startTime, long endTime) throws Exception {
+    public List<String> getActionItemsAtTime(NGWorkspace ngw, long startTime, long endTime)
+            throws Exception {
         ArrayList<String> res = new ArrayList<String>();
         for (String possible : getActionList()) {
             GoalRecord gr = ngw.getGoalOrNull(possible);
@@ -537,10 +506,7 @@ public class TopicRecord extends CommentContainer {
         return res;
     }
 
-    /**
-     * get the labels on a document -- only labels valid in the workspace,
-     * and no duplicates
-     */
+    /** get the labels on a document -- only labels valid in the workspace, and no duplicates */
     public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
@@ -554,9 +520,7 @@ public class TopicRecord extends CommentContainer {
         return res;
     }
 
-    /**
-     * set the list of labels on a document
-     */
+    /** set the list of labels on a document */
     public void setLabels(List<NGLabel> values) throws Exception {
         List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
@@ -568,10 +532,7 @@ public class TopicRecord extends CommentContainer {
         setVector("labels", labelNames);
     }
 
-    /**
-     * Check to see if a label is on the discussion topic,
-     * if not, add it
-     */
+    /** Check to see if a label is on the discussion topic, if not, add it */
     public void assureLabel(String labelName) throws Exception {
         List<String> labels = getVector("labels");
         for (String name : labels) {
@@ -647,7 +608,8 @@ public class TopicRecord extends CommentContainer {
         return requireChild("subscriberRole", CustomRole.class);
     }
 
-    public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
+    public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile)
+            throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
 
         // The user interface will initialize the subscribers to the members of the
@@ -660,8 +622,10 @@ public class TopicRecord extends CommentContainer {
         UserRef creator = getModUser();
         UserProfile creatorProfile = UserManager.lookupUserByAnyId(creator.getUniversalId());
         if (creatorProfile == null) {
-            System.out.println("DATA PROBLEM: discussion topic came from a person without a profile ("
-                    + getModUser().getUniversalId() + ") ignoring");
+            System.out.println(
+                    "DATA PROBLEM: discussion topic came from a person without a profile ("
+                            + getModUser().getUniversalId()
+                            + ") ignoring");
             setEmailSent(true);
             return;
         }
@@ -676,8 +640,14 @@ public class TopicRecord extends CommentContainer {
         setLastEdited(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, TopicRecord note, OptOutAddr ooa,
-            UserProfile commenterProfile, EmailSender mailFile) throws Exception {
+    private void constructEmailRecordOneUser(
+            AuthRequest ar,
+            NGWorkspace ngw,
+            TopicRecord note,
+            OptOutAddr ooa,
+            UserProfile commenterProfile,
+            EmailSender mailFile)
+            throws Exception {
         if (!ooa.hasEmailAddress()) {
             return; // ignore users without email addresses
         }
@@ -690,9 +660,14 @@ public class TopicRecord extends CommentContainer {
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, this)
-                + "?" + AccessControl.getAccessTopicParams(ngw, this)
-                + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
+        data.put(
+                "topicURL",
+                ar.baseURL
+                        + ar.getResourceURL(ngw, this)
+                        + "?"
+                        + AccessControl.getAccessTopicParams(ngw, this)
+                        + "&emailId="
+                        + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
         data.put("topic", this.getJSONWithMarkdown(ngw));
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
         data.put("wsName", ngw.getFullName());
@@ -701,13 +676,15 @@ public class TopicRecord extends CommentContainer {
 
         AttachmentRecord.addEmailStyleAttList(data, ar, ngw, getDocList());
 
-        ChunkTemplate.streamAuthRequest(clone.w, ar, "NewTopic", data, commenterProfile.getCalendar());
+        ChunkTemplate.streamAuthRequest(
+                clone.w, ar, "NewTopic", data, commenterProfile.getCalendar());
         clone.flush();
 
         mailMsg.setSubject("New Topic: " + note.getSubject());
         mailMsg.setBodyText(body.toString());
 
-        mailFile.createEmailRecordInDB(mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
+        mailFile.createEmailRecordInDB(
+                mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
     /////////////////////////// JSON ///////////////////////////////
@@ -764,7 +741,7 @@ public class TopicRecord extends CommentContainer {
     public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject noteData = getJSONWithMarkdown(ngw);
         JSONArray comments = getAllComments(ngw);
-        /* DON'T add the meeting comments any more 
+        /* DON'T add the meeting comments any more
         for (MeetingRecord meet : getLinkedMeetings(ngw)) {
             JSONObject specialMeetingComment = new JSONObject();
             specialMeetingComment.put("emailSent", true);
@@ -780,10 +757,17 @@ public class TopicRecord extends CommentContainer {
         return noteData;
     }
 
-    public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngw) throws Exception {
+    public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngw)
+            throws Exception {
         JSONObject thisNote = getJSON(ngw);
-        String contentUrl = urlRoot + "note" + getId() + "/"
-                + SectionUtil.sanitize(getSubject()) + ".txt?lic=" + license.getId();
+        String contentUrl =
+                urlRoot
+                        + "note"
+                        + getId()
+                        + "/"
+                        + SectionUtil.sanitize(getSubject())
+                        + ".txt?lic="
+                        + license.getId();
         thisNote.put("content", contentUrl);
         return thisNote;
     }
@@ -876,9 +860,7 @@ public class TopicRecord extends CommentContainer {
         mergeScalar("data", oldMarkDown, newMarkDown);
     }
 
-    /**
-     * Needed for the EmailContext interface
-     */
+    /** Needed for the EmailContext interface */
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
         return ar.getResourceURL(ngw, "NoteZoom" + this.getId() + ".htm?")
                 + AccessControl.getAccessTopicParams(ngw, this);
@@ -891,11 +873,11 @@ public class TopicRecord extends CommentContainer {
 
     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
         getSubscriberRole().addPlayersIfNotPresent(addressList);
-
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngw,
-            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+    public void gatherUnsentScheduledNotification(
+            NGWorkspace ngw, ArrayList<ScheduledNotification> resList, long timeout)
+            throws Exception {
         ScheduledNotification sn = new NScheduledNotification(ngw, this);
         if (sn.needsSendingBefore(timeout)) {
             resList.add(sn);
@@ -963,6 +945,7 @@ public class TopicRecord extends CommentContainer {
     public long getReportStart() {
         return getScalarLong("reportStart");
     }
+
     public void setReportStart(long newDate) throws Exception {
         setScalarLong("reportStart", newDate);
     }
@@ -970,8 +953,8 @@ public class TopicRecord extends CommentContainer {
     public long getReportEnd() {
         return getScalarLong("reportEnd");
     }
+
     public void setReportEnd(long newDate) throws Exception {
         setScalarLong("reportEnd", newDate);
-    }   
-
+    }
 }

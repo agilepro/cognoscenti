@@ -5,18 +5,15 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-
-/**
-* this is just a file that contains a bunch of role definitions
-*/
+/** this is just a file that contains a bunch of role definitions */
 public class RoleDefinitionFile {
-    
+
     public List<RoleDefinition> roleDefs = new ArrayList<>();
 
     private RoleDefinitionFile() {}
@@ -38,7 +35,7 @@ public class RoleDefinitionFile {
     public JSONArray getJSON() throws Exception {
         JSONArray ja = new JSONArray();
         for (RoleDefinition rd : roleDefs) {
-            ja.put( rd.getJSON() );
+            ja.put(rd.getJSON());
         }
         return ja;
     }
@@ -71,5 +68,5 @@ public class RoleDefinitionFile {
         newOne.name = symbol;
         roleDefs.add(newOne);
         return newOne;
-    }    
+    }
 }

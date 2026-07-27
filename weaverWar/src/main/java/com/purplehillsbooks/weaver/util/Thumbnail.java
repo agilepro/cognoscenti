@@ -3,6 +3,7 @@
  */
 package com.purplehillsbooks.weaver.util;
 
+import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -16,32 +17,31 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.imageio.ImageIO;
-
 import org.imgscalr.Scalr;
-
-import com.purplehillsbooks.json.JSONException;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 
 public class Thumbnail {
 
-    public static synchronized void scalePhoto(File inFileName, OutputStream mainOut,
-            int thumbWidth, int thumbHeight, int quality) throws Exception {
+    public static synchronized void scalePhoto(
+            File inFileName, OutputStream mainOut, int thumbWidth, int thumbHeight, int quality)
+            throws Exception {
         FileInputStream fis = new FileInputStream(inFileName);
         try {
             scalePhoto(fis, mainOut, thumbWidth, thumbHeight, quality);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw WeaverException.newWrap("Unable to read file %s", e, inFileName);
-        }
-        finally {
+        } finally {
             fis.close();
         }
     }
 
-    public static synchronized void scalePhoto(InputStream inStream, OutputStream mainOut,
-            int thumbWidth, int thumbHeight, int quality) throws Exception {
+    public static synchronized void scalePhoto(
+            InputStream inStream,
+            OutputStream mainOut,
+            int thumbWidth,
+            int thumbHeight,
+            int quality)
+            throws Exception {
         if (thumbWidth < 0) {
             throw WeaverException.newBasic("a width of '%s' makes no sense", thumbWidth);
         }
@@ -61,13 +61,14 @@ public class Thumbnail {
             int imageWidth = image.getWidth(null);
             int imageHeight = image.getHeight(null);
             if (imageWidth < 0 || imageHeight < 0) {
-                throw WeaverException.newBasic("Image appears damaged with width of '%s' and height of '%s'", imageWidth, imageHeight);
+                throw WeaverException.newBasic(
+                        "Image appears damaged with width of '%s' and height of '%s'",
+                        imageWidth, imageHeight);
             }
             if (thumbWidth <= 0) {
                 thumbWidth = imageWidth;
                 thumbHeight = imageHeight;
-            }
-            else if (thumbWidth > imageWidth && thumbHeight > imageHeight) {
+            } else if (thumbWidth > imageWidth && thumbHeight > imageHeight) {
                 // avoid expanding image ... shrink only
                 thumbWidth = imageWidth;
                 thumbHeight = imageHeight;
@@ -76,37 +77,42 @@ public class Thumbnail {
             double imageRatio = (double) imageWidth / (double) imageHeight;
             if (thumbRatio < imageRatio) {
                 thumbHeight = (int) (thumbWidth / imageRatio);
-            }
-            else {
+            } else {
                 thumbWidth = (int) (thumbHeight * imageRatio);
             }
 
             // draw original image to thumbnail image object and
             // scale it to the new size on-the-fly
-            BufferedImage thumbImage = org.imgscalr.Scalr.resize(image, Scalr.Method.ULTRA_QUALITY,
-                    Scalr.Mode.FIT_EXACT, thumbWidth, thumbHeight, Scalr.OP_ANTIALIAS);
+            BufferedImage thumbImage =
+                    org.imgscalr.Scalr.resize(
+                            image,
+                            Scalr.Method.ULTRA_QUALITY,
+                            Scalr.Mode.FIT_EXACT,
+                            thumbWidth,
+                            thumbHeight,
+                            Scalr.OP_ANTIALIAS);
 
             BufferedOutputStream out = new BufferedOutputStream(mainOut);
 
             ImageIO.write(thumbImage, "jpg", out);
 
             out.close();
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to resize image to %s by %s", e, thumbWidth, thumbHeight);
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to resize image to %s by %s", e, thumbWidth, thumbHeight);
         }
     }
 
-    public static void makeThumbnail(File inFileName, String outFileName, int thumbWidth,
-            int thumbHeight, int quality) throws Exception {
+    public static void makeThumbnail(
+            File inFileName, String outFileName, int thumbWidth, int thumbHeight, int quality)
+            throws Exception {
         scalePhoto(inFileName, new FileOutputStream(outFileName), thumbWidth, thumbHeight, quality);
     }
 
     /**
-     * This makes a thumbnail whic his square, and fills the square. First is
-     * shrinks the image so that the short dimension is the requested size. Then
-     * it pulls a square out of the middle of the image, and saves it as a JPG
-     * image
+     * This makes a thumbnail whic his square, and fills the square. First is shrinks the image so
+     * that the short dimension is the requested size. Then it pulls a square out of the middle of
+     * the image, and saves it as a JPG image
      */
     public static void makeSquare(String inFileName, String outFileName, int size, int quality)
             throws Exception {
@@ -115,8 +121,8 @@ public class Thumbnail {
         out.close();
     }
 
-    public static synchronized void makeSquare(String inFileName, OutputStream out, int size,
-            int quality) throws Exception {
+    public static synchronized void makeSquare(
+            String inFileName, OutputStream out, int size, int quality) throws Exception {
 
         // load image from INFILE
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -136,40 +142,39 @@ public class Thumbnail {
         if (imageWidth < imageHeight) {
             thumbHeight = (int) (size / imageRatio);
             offSetY = (thumbHeight - size) / 2;
-        }
-        else {
+        } else {
             thumbWidth = (int) (size * imageRatio);
             offSetX = (thumbWidth - size) / 2;
         }
 
         // draw original image to thumbnail image object and
         // scale it to the new size on-the-fly
-        BufferedImage thumbImage = new BufferedImage(thumbWidth, thumbHeight,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage thumbImage =
+                new BufferedImage(thumbWidth, thumbHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = thumbImage.createGraphics();
         // graphics2D.setClip(offSetX,offSetY,size,size);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2D.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         graphics2D.drawImage(image, 0, 0, thumbWidth, thumbHeight, null);
 
         // pull the square segment out of the middle
         BufferedImage squareImage = thumbImage.getSubimage(offSetX, offSetY, size, size);
 
         ImageIO.write(squareImage, "jpg", out);
-
     }
 
-    public static synchronized void makeSquareFile(File inFileName, File outFile, int size) throws Exception {
+    public static synchronized void makeSquareFile(File inFileName, File outFile, int size)
+            throws Exception {
 
         // load image from INFILE
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Image image = toolkit.getImage(inFileName.toString());
 
-        //this is extremely goofy code.   The library can not simply read and write
-        //a file.  For some reason, it has to be entered into a cache, and then
-        //later it must be read from that cache.  No idea why.
-        //Probably need to read and possibly simply the image editor code.
-        //for now, this magic piece of code seems to work.
+        // this is extremely goofy code.   The library can not simply read and write
+        // a file.  For some reason, it has to be entered into a cache, and then
+        // later it must be read from that cache.  No idea why.
+        // Probably need to read and possibly simply the image editor code.
+        // for now, this magic piece of code seems to work.
 
         MediaTracker mediaTracker = new MediaTracker(new Container());
         mediaTracker.addImage(image, 0);
@@ -186,20 +191,19 @@ public class Thumbnail {
         if (imageWidth < imageHeight) {
             thumbHeight = (int) (size / imageRatio);
             offSetY = (thumbHeight - size) / 2;
-        }
-        else {
+        } else {
             thumbWidth = (int) (size * imageRatio);
             offSetX = (thumbWidth - size) / 2;
         }
 
         // draw original image to thumbnail image object and
         // scale it to the new size on-the-fly
-        BufferedImage thumbImage = new BufferedImage(thumbWidth, thumbHeight,
-                BufferedImage.TYPE_INT_RGB);
+        BufferedImage thumbImage =
+                new BufferedImage(thumbWidth, thumbHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = thumbImage.createGraphics();
         // graphics2D.setClip(offSetX,offSetY,size,size);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2D.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         graphics2D.drawImage(image, 0, 0, thumbWidth, thumbHeight, null);
 
         // pull the square segment out of the middle
@@ -211,10 +215,10 @@ public class Thumbnail {
 
         out.close();
 
-        //this class seems to be storing images for some reason, and preferring
-        //the last image you stored to the one you just gave it.
-        //Images are stored until server reboot.
-        //this hopefully will prevent waste of memory
+        // this class seems to be storing images for some reason, and preferring
+        // the last image you stored to the one you just gave it.
+        // Images are stored until server reboot.
+        // this hopefully will prevent waste of memory
         mediaTracker.removeImage(image);
     }
 
@@ -233,28 +237,27 @@ public class Thumbnail {
             File outFile = new File(outFileName);
             if (outFile.exists()) {
                 throw WeaverException.newBasic(
-                        "File '%s' already exists -- this program does not write over existing files.  Remove it first.", outFileName);
+                        "File '%s' already exists -- this program does not write over existing files.  Remove it first.",
+                        outFileName);
             }
 
             int thumbWidth = 225;
             int quality = 90;
 
             switch (args.length) {
-            case 4:
-                quality = Integer.parseInt(args[3]);
-            case 3:
-                thumbWidth = Integer.parseInt(args[2]);
-            default:
+                case 4:
+                    quality = Integer.parseInt(args[3]);
+                case 3:
+                    thumbWidth = Integer.parseInt(args[2]);
+                default:
             }
 
             makeSquare(inFileName, outFileName, thumbWidth, quality);
 
             System.exit(0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
-
 }

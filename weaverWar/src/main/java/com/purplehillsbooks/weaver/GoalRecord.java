@@ -20,6 +20,15 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
+import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.mail.ChunkTemplate;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import com.purplehillsbooks.weaver.mail.MailInst;
+import com.purplehillsbooks.weaver.mail.OptOutAddr;
+import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -31,42 +40,28 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.mail.ChunkTemplate;
-import com.purplehillsbooks.weaver.mail.EmailSender;
-import com.purplehillsbooks.weaver.mail.MailInst;
-import com.purplehillsbooks.weaver.mail.OptOutAddr;
-import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
-
 public class GoalRecord extends BaseRecord {
-    public GoalRecord(Document definingDoc, Element definingElement, DOMFace p)
-            throws Exception {
+    public GoalRecord(Document definingDoc, Element definingElement, DOMFace p) throws Exception {
         super(definingDoc, definingElement, p);
 
         // migrate old documents
         accessLicense();
-
     }
 
-
     /**
-     * Get a NGRole that represents the assignees of the action item. a role is a list
-     * of users. Using the role you can test whether a user is playing the role
-     * or not, as well as add and remove people from the role.
+     * Get a NGRole that represents the assignees of the action item. a role is a list of users.
+     * Using the role you can test whether a user is playing the role or not, as well as add and
+     * remove people from the role.
      */
     public NGRole getAssigneeRole() {
         return new RoleGoalAssignee(this);
     }
 
     public void setCreator(String newVal) throws Exception {
-        if (newVal==null || newVal.length()==0) {
+        if (newVal == null || newVal.length() == 0) {
             throw WeaverException.newBasic("Why is the creator being set to null string?");
         }
         setScalar("creator", newVal);
@@ -102,43 +97,41 @@ public class GoalRecord extends BaseRecord {
 
     public void setStateAndAct(int newVal, AuthRequest ar) throws Exception {
         int prevState = getState();
-        if (newVal==prevState) {
-            //ignore any non-change call
+        if (newVal == prevState) {
+            // ignore any non-change call
             return;
         }
 
-        //set the start and end dates if appropriate, and if not already
-        //set.  Leave them alone if already set to something.
+        // set the start and end dates if appropriate, and if not already
+        // set.  Leave them alone if already set to something.
         if (isFinal(newVal)) {
             long end = getEndDate();
-            if (end<=0) {
+            if (end <= 0) {
                 setEndDate(ar.nowTime);
             }
             long begin = getStartDate();
-            if (begin<=0) {
+            if (begin <= 0) {
                 setStartDate(ar.nowTime);
             }
             setPercentComplete(100);
 
-            //if it was not final before, and now it is final, then notify
+            // if it was not final before, and now it is final, then notify
             if (!isFinal(prevState)) {
                 setSendEmail();
             }
-        }
-        else if (isStarted(newVal)) {
+        } else if (isStarted(newVal)) {
             long begin = getStartDate();
-            if (begin<=0) {
+            if (begin <= 0) {
                 setStartDate(ar.nowTime);
             }
-            //since it is NOT final, clear the end date
+            // since it is NOT final, clear the end date
             setEndDate(0);
-            //if it was not final before, and now it is final, then notify
+            // if it was not final before, and now it is final, then notify
             if (!isStarted(prevState)) {
                 setSendEmail();
             }
-        }
-        else {
-            //neither started nor final, so clear both dates
+        } else {
+            // neither started nor final, so clear both dates
             setStartDate(0);
             setEndDate(0);
             setPercentComplete(0);
@@ -153,8 +146,7 @@ public class GoalRecord extends BaseRecord {
 
         NGWorkspace ngw = getWorkspace();
         if (ngw == null) {
-            throw WeaverException.newBasic(
-                    "handleStateChangeEvent needs a NGWorkspace parameter");
+            throw WeaverException.newBasic("handleStateChangeEvent needs a NGWorkspace parameter");
         }
 
         List<GoalRecord> goalList = ngw.getAllGoals();
@@ -241,8 +233,6 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-
-
     public String getFreePass() throws Exception {
         return getScalar("freepass");
     }
@@ -252,33 +242,32 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * A user is allowed to specify what percentage that the task is complete.
-     * This is rolled up into the values of the parent tasks
+     * A user is allowed to specify what percentage that the task is complete. This is rolled up
+     * into the values of the parent tasks
      */
     public int getPercentComplete() throws Exception {
         String stateVal = getScalar("percent");
         return safeConvertInt(stateVal);
     }
 
-
     /**
-     * A user is allowed to specify what percentage that the task is complete.
-     * The value must be 0 at the lowest, and 100 at the highest.
+     * A user is allowed to specify what percentage that the task is complete. The value must be 0
+     * at the lowest, and 100 at the highest.
      */
     public void setPercentComplete(int newVal) throws Exception {
         if (newVal < 0 || newVal > 100) {
             throw WeaverException.newBasic(
                     "Percent complete value must be between 0% and 100%, instead received "
-                            + newVal + "%");
+                            + newVal
+                            + "%");
         }
         setScalar("percent", Integer.toString(newVal));
     }
 
     /**
-     * Given a user profile, this will check to see if this task is assigned to
-     * ANY of that user's current ids. Tasks can be assigned to openids and to
-     * email addresses, and this will find both cases. In the future we
-     * anticipate multiple openids and multiple email addresses and this
+     * Given a user profile, this will check to see if this task is assigned to ANY of that user's
+     * current ids. Tasks can be assigned to openids and to email addresses, and this will find both
+     * cases. In the future we anticipate multiple openids and multiple email addresses and this
      * patterns will handle that when it occurs.
      */
     public boolean isAssignee(UserRef user) throws Exception {
@@ -320,8 +309,7 @@ public class GoalRecord extends BaseRecord {
         writeLinks(ar, assignees);
     }
 
-    private void writeLinks(AuthRequest ar, List<String> assignees)
-            throws Exception {
+    private void writeLinks(AuthRequest ar, List<String> assignees) throws Exception {
         if (assignees == null || assignees.size() == 0) {
             // nobody is assigned to this task
             return;
@@ -350,8 +338,8 @@ public class GoalRecord extends BaseRecord {
         return list;
     }
 
-    public List<HistoryRecord> getTaskHistoryRange(NGWorkspace ngc,
-            long startTime, long endTime) throws Exception {
+    public List<HistoryRecord> getTaskHistoryRange(NGWorkspace ngc, long startTime, long endTime)
+            throws Exception {
         List<HistoryRecord> list = new ArrayList<HistoryRecord>();
         String myid = getId();
         for (HistoryRecord history : ngc.getAllHistory()) {
@@ -368,8 +356,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     static class TaskRankComparator implements Comparator<GoalRecord> {
-        public TaskRankComparator() {
-        }
+        public TaskRankComparator() {}
 
         @Override
         public int compare(GoalRecord o1, GoalRecord o2) {
@@ -389,9 +376,7 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-    /**
-     * get the id of the task in the other workspace that this task was moved to.
-     */
+    /** get the id of the task in the other workspace that this task was moved to. */
     public String getMovedToTaskId() throws Exception {
         return getScalar("MovedToId");
     }
@@ -404,25 +389,21 @@ public class GoalRecord extends BaseRecord {
         setScalar("sub", newVal);
     }
 
-    
     public List<String> getAssigneeList() {
         String rawList = getScalar("assignee");
-        if (rawList==null || rawList.length()==0) {
+        if (rawList == null || rawList.length() == 0) {
             return new ArrayList<String>();
         }
         return UtilityMethods.splitString(rawList, ',');
     }
-    
-    
-    
+
     public void setAssigneeList(List<String> newList) {
-        setScalar("assignee", UtilityMethods.joinStrings(newList));        
+        setScalar("assignee", UtilityMethods.joinStrings(newList));
     }
+
     public void clearAssigneeList() {
         setScalar("assignee", null);
     }
-
-    
 
     public String getModifiedBy() {
         return getAttribute("modifiedBy");
@@ -430,7 +411,8 @@ public class GoalRecord extends BaseRecord {
 
     public void setModifiedBy(String modifiedBy) {
         if (modifiedBy != null && !UserManager.isValidEmailAddress(modifiedBy)) {
-            throw new IllegalArgumentException("Invalid email address for modifiedBy: " + modifiedBy);
+            throw new IllegalArgumentException(
+                    "Invalid email address for modifiedBy: " + modifiedBy);
         }
         setAttribute("modifiedBy", modifiedBy);
     }
@@ -449,27 +431,22 @@ public class GoalRecord extends BaseRecord {
         return ((NGSection) getParent()).parent;
     }
 
-    /**
-     * use setLastState instead
-     */
+    /** use setLastState instead */
     public void setLastState(String newVal) throws Exception {
         setScalar("LastState", newVal);
     }
 
-    /**
-     * use getLastState instead
-     */
+    /** use getLastState instead */
     public String getLastState() throws Exception {
         return getScalar("LastState");
     }
 
     /**
-     * the universal id is a globally unique ID for this action item, composed of the
-     * id for the server, the workspace, and the action item. This is set at the point
-     * where the action item is created and remains with the note as it is carried
-     * around the system as long as it is moved as a clone from a workspace to a
-     * clone of a workspace. If it is copied or moved to another workspace for any
-     * other reason, then the universal ID should be reset.
+     * the universal id is a globally unique ID for this action item, composed of the id for the
+     * server, the workspace, and the action item. This is set at the point where the action item is
+     * created and remains with the note as it is carried around the system as long as it is moved
+     * as a clone from a workspace to a clone of a workspace. If it is copied or moved to another
+     * workspace for any other reason, then the universal ID should be reset.
      */
     public String getUniversalId() throws Exception {
         return getScalar("universalid");
@@ -487,8 +464,7 @@ public class GoalRecord extends BaseRecord {
         GoalRecord parentTask = ngw.getGoalOrNull(getParentGoalId());
         int state = getState();
 
-        if (state == BaseRecord.STATE_COMPLETE
-                || state == BaseRecord.STATE_SKIPPED) {
+        if (state == BaseRecord.STATE_COMPLETE || state == BaseRecord.STATE_SKIPPED) {
             boolean completeParentTask = true;
             // change the state of the parent task to completed state if there
             // no pending activities for that parent task.
@@ -521,8 +497,7 @@ public class GoalRecord extends BaseRecord {
 
         // cant start the next step when the current task in not skipped//
         // completed.
-        if (getState() != BaseRecord.STATE_COMPLETE
-                && getState() != BaseRecord.STATE_SKIPPED) {
+        if (getState() != BaseRecord.STATE_COMPLETE && getState() != BaseRecord.STATE_SKIPPED) {
             return;
         }
 
@@ -564,8 +539,7 @@ public class GoalRecord extends BaseRecord {
     public void completeAllSubTasks() throws Exception {
         int state = getState();
 
-        if (state == BaseRecord.STATE_COMPLETE
-                || state == BaseRecord.STATE_SKIPPED) {
+        if (state == BaseRecord.STATE_COMPLETE || state == BaseRecord.STATE_SKIPPED) {
             List<GoalRecord> subTasks = getSubGoals();
             // change the state of the existing incomplete tasks based on main
             // task state.
@@ -591,139 +565,132 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * This value, if set, is the GMT time that the wait period is scheduled
-     * to end.  If the action item is discovered in wait mode after this time, then
-     * it should be reset to active mode.  A setting of zero or negative
-     * indicates that this wakup is disabled.
+     * This value, if set, is the GMT time that the wait period is scheduled to end. If the action
+     * item is discovered in wait mode after this time, then it should be reset to active mode. A
+     * setting of zero or negative indicates that this wakup is disabled.
      */
     public void setWaitEnd(long timeout) {
         setScalar("waitEnd", Long.toString(timeout));
     }
+
     public long getWaitEnd() {
         return safeConvertLong(getScalar("waitEnd"));
     }
 
     /**
-     * WaitPeriod is an expression that specifies what the normal wait
-     * delay will be: day(1), week(1), month(1) or something like that.
-     * An empty string (or null) indicates that there is no specified
-     * normal waiting period.
+     * WaitPeriod is an expression that specifies what the normal wait delay will be: day(1),
+     * week(1), month(1) or something like that. An empty string (or null) indicates that there is
+     * no specified normal waiting period.
      */
     public void setWaitPeriod(String period) {
         setScalar("waitPeriod", period);
     }
+
     public String getWaitPeriod() {
         return getScalar("waitPeriod");
     }
 
     /**
-     * Passive is a setting that says that the action item was not defined
-     * in this particular replicant of the workspace, and so it should
-     * only display the status, and not allow any means to change
-     * the state.
+     * Passive is a setting that says that the action item was not defined in this particular
+     * replicant of the workspace, and so it should only display the status, and not allow any means
+     * to change the state.
      *
-     * Default (if the setting has not been set) is false.
+     * <p>Default (if the setting has not been set) is false.
      */
     public void setPassive(boolean isPassive) {
         if (isPassive) {
             setAttribute("passive", "true");
-        }
-        else {
+        } else {
             setAttribute("passive", null);
         }
     }
+
     public boolean isPassive() {
         String pVal = getAttribute("passive");
-        if (pVal==null) {
+        if (pVal == null) {
             return false;
         }
         return "true".equals(pVal);
     }
 
     /**
-     * RemoteUpdateURL is a URL that is provided during synchronization
-     * for passive tasks that provides a place to redirect to in order
-     * to allow the user to manipulate the state of the task on the
-     * original site.
+     * RemoteUpdateURL is a URL that is provided during synchronization for passive tasks that
+     * provides a place to redirect to in order to allow the user to manipulate the state of the
+     * task on the original site.
      */
     public void setRemoteUpdateURL(String url) {
         setScalar("remoteUpdateURL", url);
     }
+
     public String getRemoteUpdateURL() {
         return getScalar("remoteUpdateURL");
     }
 
-    /**
-     * RemoteProjectName is the name of the
-     * project that this action item is defined in
-     */
+    /** RemoteProjectName is the name of the project that this action item is defined in */
     public void setRemoteProjectName(String url) {
         setScalar("remoteProjectName", url);
     }
+
     public String getRemoteProjectName() {
         return getScalar("remoteProjectName");
     }
 
     /**
-     * RemoteSiteURL is the URL to get information about the
-     * site that this action item is defined in
+     * RemoteSiteURL is the URL to get information about the site that this action item is defined
+     * in
      */
     public void setRemoteSiteURL(String url) {
         setScalar("remoteSiteURL", url);
     }
+
     public String getRemoteSiteURL() {
         return getScalar("remoteSiteURL");
     }
 
-    /**
-     * RemoteSiteName is the name of the
-     * site that this action item is defined in
-     */
+    /** RemoteSiteName is the name of the site that this action item is defined in */
     public void setRemoteSiteName(String url) {
         setScalar("remoteSiteName", url);
     }
+
     public String getRemoteSiteName() {
         return getScalar("remoteSiteName");
     }
 
     /**
-     * SnoozeTime is the time, in the future, to wake the
-     * task back up out of WAITING state, and into active
-     * state.  This is NOT a duration.   Instead it is an
-     * absolute time that the activity will wake up.
-     * Any time in the past is the same as not being set.
+     * SnoozeTime is the time, in the future, to wake the task back up out of WAITING state, and
+     * into active state. This is NOT a duration. Instead it is an absolute time that the activity
+     * will wake up. Any time in the past is the same as not being set.
      */
     public void setSnoozeTime(long time) {
         setScalar("snooze", Long.toString(time));
     }
+
     public long getSnoozeTime() {
         return safeConvertLong(getScalar("snooze"));
     }
 
     /**
-     * How is the action item proceeding and is it likely
-     * to be completed on time.
-     * The values are "good", "ok", "bad"
+     * How is the action item proceeding and is it likely to be completed on time. The values are
+     * "good", "ok", "bad"
      */
     public void setProspects(String pros) {
         setScalar("prospects", pros);
     }
+
     public String getProspects() {
         return getScalar("prospects");
     }
+
     public String getTaskArea() {
         return getScalar("taskArea");
     }
 
-    /**
-     * get the labels on a document -- only labels valid in the project,
-     * and no duplicates
-     */
+    /** get the labels on a document -- only labels valid in the project, and no duplicates */
     public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngw.getLabelRecordOrNull(name);
-            if (aLabel!=null) {
+            if (aLabel != null) {
                 if (!res.contains(aLabel)) {
                     res.add(aLabel);
                 }
@@ -732,36 +699,33 @@ public class GoalRecord extends BaseRecord {
         return res;
     }
 
-    /**
-     * set the list of labels on a document
-     */
+    /** set the list of labels on a document */
     public void setLabels(List<NGLabel> values) throws Exception {
         List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
             labelNames.add(aLable.getName());
         }
-        //Since this is a 'set' type vector, always sort them so that they are
-        //stored in a consistent way ... so files are more easily compared
+        // Since this is a 'set' type vector, always sort them so that they are
+        // stored in a consistent way ... so files are more easily compared
         Collections.sort(labelNames);
         setVector("labels", labelNames);
     }
 
     /**
-     * Documents that are linked to this action item
-     * This is an array of string, each string value is
-     * a universalid of a document
+     * Documents that are linked to this action item This is an array of string, each string value
+     * is a universalid of a document
      */
     public void setDocLinks(List<String> newVal) {
         setVector("docLinks", newVal);
     }
+
     public List<String> getDocLinks() {
         return getVector("docLinks");
     }
 
-
     /**
-     * This is a version that can be included in lists of action items,
-     * such as those linked to an agenda item.
+     * This is a version that can be included in lists of action items, such as those linked to an
+     * agenda item.
      */
     public JSONObject getMinimalJSON() throws Exception {
         JSONObject oneAI = new JSONObject();
@@ -777,13 +741,13 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("description", getDescription());
         thisGoal.put("modifiedtime", getModifiedDate());
         thisGoal.put("modifieduser", getModifiedBy());
-        thisGoal.put("status",    getStatus());
-        thisGoal.put("priority",  getPriority());
-        thisGoal.put("duedate",   getDueDate());
+        thisGoal.put("status", getStatus());
+        thisGoal.put("priority", getPriority());
+        thisGoal.put("duedate", getDueDate());
         thisGoal.put("startdate", getStartDate());
-        thisGoal.put("enddate",   getEndDate());
-        thisGoal.put("duration",  getDuration());
-        thisGoal.put("rank",      getRank());
+        thisGoal.put("enddate", getEndDate());
+        thisGoal.put("duration", getDuration());
+        thisGoal.put("rank", getRank());
         thisGoal.put("prospects", getProspects());
         thisGoal.put("needEmail", needSendEmail());
         extractScalarString(thisGoal, "taskArea");
@@ -810,11 +774,11 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("siteKey", site.getKey());
 
         JSONObject labelMap = new JSONObject();
-        for (NGLabel lRec : getLabels(ngw) ) {
+        for (NGLabel lRec : getLabels(ngw)) {
             labelMap.put(lRec.getName(), true);
         }
-        thisGoal.put("labelMap",  labelMap);
-        thisGoal.put("docLinks",  constructJSONArray(getDocLinks()));
+        thisGoal.put("labelMap", labelMap);
+        thisGoal.put("docLinks", constructJSONArray(getDocLinks()));
 
         extractScalarString(thisGoal, "checklist");
         extractAttributeLong(thisGoal, "waitUntil");
@@ -822,30 +786,44 @@ public class GoalRecord extends BaseRecord {
 
         return thisGoal;
     }
-    public JSONObject getJSON4Goal(NGWorkspace ngw, String baseURL, License license) throws Exception {
-        if (license==null) {
+
+    public JSONObject getJSON4Goal(NGWorkspace ngw, String baseURL, License license)
+            throws Exception {
+        if (license == null) {
             throw WeaverException.newBasic("getJSON4Goal needs a license object");
         }
         JSONObject thisGoal = getJSON4Goal(ngw);
         LicenseForUser lfu = LicenseForUser.getUserLicense(license);
         String siteRoot = baseURL + "api/" + ngw.getSiteKey() + "/$/?lic=" + lfu.getId();
         String uiUrl = getRemoteUpdateURL();
-        if (uiUrl==null || uiUrl.length()==0) {
-            uiUrl = baseURL + "t/" + ngw.getSiteKey() + "/" + ngw.getKey()
-                + "/task" + getId() + ".htm";
+        if (uiUrl == null || uiUrl.length() == 0) {
+            uiUrl =
+                    baseURL
+                            + "t/"
+                            + ngw.getSiteKey()
+                            + "/"
+                            + ngw.getKey()
+                            + "/task"
+                            + getId()
+                            + ".htm";
         }
         thisGoal.put("ui", uiUrl);
         thisGoal.put("siteinfo", siteRoot);
         return thisGoal;
     }
 
-    //TODO: looks like this can be used to update a JSON from the UI
-    public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngw, AuthRequest ar) throws Exception {
+    // TODO: looks like this can be used to update a JSON from the UI
+    public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngw, AuthRequest ar)
+            throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
-            //just checking, this should never happen
-            throw WeaverException.newBasic("Error trying to update the record for a action item with UID ("
-                    +getUniversalId()+") with post from action item with UID ("+universalid+")");
+            // just checking, this should never happen
+            throw WeaverException.newBasic(
+                    "Error trying to update the record for a action item with UID ("
+                            + getUniversalId()
+                            + ") with post from action item with UID ("
+                            + universalid
+                            + ")");
         }
         if (goalObj.has("synopsis")) {
             setSynopsis(goalObj.optString("synopsis"));
@@ -905,21 +883,21 @@ public class GoalRecord extends BaseRecord {
             int numPeopleBefore = assigneeRole.getDirectPlayers().size();
             assigneeRole.clear();
             int lastPerson = peopleList.length();
-            for (int i=0; i<lastPerson; i++) {
+            for (int i = 0; i < lastPerson; i++) {
                 JSONObject person = peopleList.getJSONObject(i);
                 if (!person.has("uid")) {
-                    continue;  //ignore any entry without a UID
+                    continue; // ignore any entry without a UID
                 }
                 assigneeRole.addPlayer(AddressListEntry.fromJSON(person));
             }
             int numPeopleAfter = assigneeRole.getDirectPlayers().size();
             if (numPeopleBefore != numPeopleAfter) {
-                //if the assignee number changes, send email in 5 minutes
+                // if the assignee number changes, send email in 5 minutes
                 setSendEmail();
             }
-        }
-        else if (goalObj.has("assignee")) {
-            throw WeaverException.newBasic("Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
+        } else if (goalObj.has("assignee")) {
+            throw WeaverException.newBasic(
+                    "Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
         }
 
         if (goalObj.has("labelMap")) {
@@ -936,65 +914,68 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("docLinks")) {
             setDocLinks(constructVector(goalObj.getJSONArray("docLinks")));
         }
-        updateScalarString( "taskArea",  goalObj);
-        updateScalarString( "checklist", goalObj);
+        updateScalarString("taskArea", goalObj);
+        updateScalarString("checklist", goalObj);
         updateAttributeLong("waitUntil", goalObj);
-        updateVectorString( "waitFor",   goalObj);
+        updateVectorString("waitFor", goalObj);
     }
 
-    //This used to be a time scheduled to send the email, but it was only lbeing used
-    //as a boolean, so now the API is a boolean.
-    public boolean needSendEmail()  throws Exception {
-        return getAttributeLong("emailSendTime")>0;
+    // This used to be a time scheduled to send the email, but it was only lbeing used
+    // as a boolean, so now the API is a boolean.
+    public boolean needSendEmail() throws Exception {
+        return getAttributeLong("emailSendTime") > 0;
     }
+
     public void setSendEmail() throws Exception {
         setAttributeLong("emailSendTime", System.currentTimeMillis());
     }
+
     public void clearSendEmail() throws Exception {
         setAttributeLong("emailSendTime", 0);
     }
+
     public long getEmailSendTime() throws Exception {
         return getAttributeLong("emailSendTime");
     }
 
-
-
     ////////////////////////// EMAIL /////////////////////////////
 
-    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile) throws Exception {
+    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailSender mailFile)
+            throws Exception {
         try {
             if (!needSendEmail()) {
-                throw WeaverException.newBasic("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
+                throw WeaverException.newBasic(
+                        "Program Logic Error: attempt to send email on action item when no schedule for sending is set");
             }
             boolean isStarted = isStarted(getState());
 
             NGRole assigneeRole = getAssigneeRole();
             List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngw);
-            if (players.size()==0 && !isStarted) {
+            if (players.size() == 0 && !isStarted) {
                 System.out.println("no assignee yet, and not started .... so wait");
                 clearSendEmail();
                 return;
             }
 
-            //add the creator to recipients
+            // add the creator to recipients
             String creator = this.getCreator();
             UserProfile creatorProfile = null;
-            if (creator==null || creator.length()==0) {
-                //if action item not set correctly, then use the owner of the page as the 'from' person
+            if (creator == null || creator.length() == 0) {
+                // if action item not set correctly, then use the owner of the page as the 'from'
+                // person
                 NGRole owners = ngw.getSecondaryRole();
                 List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngw);
-                if (ownerList.size()==0) {
-                    throw WeaverException.newBasic("Action Item has no requester, and the Workspace has no owner");
+                if (ownerList.size() == 0) {
+                    throw WeaverException.newBasic(
+                            "Action Item has no requester, and the Workspace has no owner");
                 }
                 creatorProfile = ownerList.get(0).getUserProfile();
-            }
-            else {
+            } else {
                 AddressListEntry commenter = AddressListEntry.findOrCreate(creator);
                 creatorProfile = commenter.getUserProfile();
             }
 
-
-            //add the creator to recipients
+            // add the creator to recipients
             boolean found = false;
             for (AddressListEntry ale : players) {
                 if (ale.hasAnyId(creator)) {
@@ -1011,35 +992,40 @@ public class GoalRecord extends BaseRecord {
             for (OptOutAddr ooa : sendTo) {
                 UserManager.getStaticUserManager();
                 UserProfile toProfile = UserManager.lookupUserByAnyId(ooa.getEmail());
-                if (toProfile!=null) {
+                if (toProfile != null) {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
                 constructEmailRecordOneUser(ar, ngw, ooa, creatorProfile, mailFile);
             }
-            System.out.println("Marking ActionItem as SENT: "+getSynopsis());
+            System.out.println("Marking ActionItem as SENT: " + getSynopsis());
             clearSendEmail();
-        }
-        catch (Exception e) {
-            throw WeaverException.newWrap("Unable to send email for Action Item: %s", e, getSynopsis());
+        } catch (Exception e) {
+            throw WeaverException.newWrap(
+                    "Unable to send email for Action Item: %s", e, getSynopsis());
         }
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, OptOutAddr ooa,
-            UserProfile requesterProfile, EmailSender mailFile) throws Exception  {
+    private void constructEmailRecordOneUser(
+            AuthRequest ar,
+            NGWorkspace ngw,
+            OptOutAddr ooa,
+            UserProfile requesterProfile,
+            EmailSender mailFile)
+            throws Exception {
         if (!ooa.hasEmailAddress()) {
-            return;  //ignore users without email addresses
+            return; // ignore users without email addresses
         }
 
-        //note that assignee means two different things in this next line
+        // note that assignee means two different things in this next line
         boolean recipientIsAssignedTask = isAssignee(ooa.getAssignee());
 
-
-
-        if (requesterProfile==null) {
-            System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
+        if (requesterProfile == null) {
+            System.out.println(
+                    "DATA PROBLEM: action item came from a person without a profile ("
+                            + getCreator()
+                            + ") ignoring");
             return;
         }
-
 
         JSONObject data = new JSONObject();
 
@@ -1048,13 +1034,13 @@ public class GoalRecord extends BaseRecord {
         clone.retPath = ar.baseURL;
 
         data.put("baseURL", ar.baseURL);
-        data.put("actionItemURL", ar.baseURL + clone.getResourceURL(ngw, "task"+getId()+".htm"));
+        data.put(
+                "actionItemURL", ar.baseURL + clone.getResourceURL(ngw, "task" + getId() + ".htm"));
         if (ooa.isUserWithProfile()) {
             UserProfile recipient = ooa.getAssignee().getUserProfile();
             LicenseForUser lfu = new LicenseForUser(recipient);
             data.put("actionItem", this.getJSON4Goal(ngw, ar.baseURL, lfu));
-        }
-        else {
+        } else {
             data.put("actionItem", this.getJSON4Goal(ngw));
         }
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
@@ -1071,17 +1057,22 @@ public class GoalRecord extends BaseRecord {
 
         String stateNameStr = stateName(getState());
         String overdueStr = "";
-        if (!BaseRecord.isFinal(getState()) && this.getDueDate()<ar.nowTime && this.getDueDate()>0) {
-            //if it is not finished and past due date, then say that
+        if (!BaseRecord.isFinal(getState())
+                && this.getDueDate() < ar.nowTime
+                && this.getDueDate() > 0) {
+            // if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
 
         ArrayList<File> attachments = new ArrayList<File>();
-        if (this.getDueDate()>0) {
+        if (this.getDueDate() > 0) {
             File weFolder = ngw.getContainingFolder();
             File cogFolder = new File(weFolder, ".cog");
-            File icsFile = new File(cogFolder, "actitem"+this.getId()+".ics");
-            File icsFileTmp = new File(cogFolder, "meet"+this.getId()+".ics~tmp"+System.currentTimeMillis());
+            File icsFile = new File(cogFolder, "actitem" + this.getId() + ".ics");
+            File icsFileTmp =
+                    new File(
+                            cogFolder,
+                            "meet" + this.getId() + ".ics~tmp" + System.currentTimeMillis());
             FileOutputStream fos = new FileOutputStream(icsFileTmp);
             Writer w = new OutputStreamWriter(fos, "UTF-8");
             streamICSFile(ar, w, ngw);
@@ -1092,12 +1083,14 @@ public class GoalRecord extends BaseRecord {
             icsFileTmp.renameTo(icsFile);
             attachments.add(icsFile);
         }
-        
+
         MailInst mailMsg = ngw.createMailInst();
-        mailMsg.setSubject("Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr);
+        mailMsg.setSubject(
+                "Action Item: " + getSynopsis() + " (" + stateNameStr + ") " + overdueStr);
         mailMsg.setBodyText(body.toString());
 
-        mailFile.createEmailRecordInDB(mailMsg, requesterProfile.getAddressListEntry(), ooa.getEmail());
+        mailFile.createEmailRecordInDB(
+                mailMsg, requesterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
@@ -1106,49 +1099,59 @@ public class GoalRecord extends BaseRecord {
         w.write("VERSION:2.0\n");
         w.write("PRODID:-//example/Weaver//NONSGML v1.0//EN\n");
         w.write("BEGIN:VEVENT\n");
-        w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
-        w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
-        if (creatorUser!=null) {
-            w.write("ORGANIZER:CN="+creatorUser.getName()+":MAILTO:"+creatorUser.getAddressListEntry().getEmail()+"\n");
+        w.write("UID:" + ngw.getSiteKey() + ngw.getKey() + getId() + "\n");
+        w.write("DTSTAMP:" + getSpecialICSFormat(System.currentTimeMillis()) + "\n");
+        if (creatorUser != null) {
+            w.write(
+                    "ORGANIZER:CN="
+                            + creatorUser.getName()
+                            + ":MAILTO:"
+                            + creatorUser.getAddressListEntry().getEmail()
+                            + "\n");
         }
-        w.write("DTSTART:"+getSpecialICSFormat(getDueDate())+"\n");
-        w.write("DTEND:"+getSpecialICSFormat(getDueDate()+(30*60*1000))+"\n");
-        w.write("SUMMARY:"+getSynopsis()+"\n");
-        w.write("DESCRIPTION:"+specialEncode(this.getSynopsis()+"-"+this.getDescription())+"\n");
+        w.write("DTSTART:" + getSpecialICSFormat(getDueDate()) + "\n");
+        w.write("DTEND:" + getSpecialICSFormat(getDueDate() + (30 * 60 * 1000)) + "\n");
+        w.write("SUMMARY:" + getSynopsis() + "\n");
+        w.write(
+                "DESCRIPTION:"
+                        + specialEncode(this.getSynopsis() + "-" + this.getDescription())
+                        + "\n");
         w.write("END:VEVENT\n");
         w.write("END:VCALENDAR\n");
         w.flush();
     }
+
     private String getSpecialICSFormat(long date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         return formatter.format(new Date(date));
     }
+
     private String specialEncode(String input) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<input.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
-            if (ch=='\n') {
+            if (ch == '\n') {
                 sb.append("\\n");
-            }
-            else if (ch<' ') {
-                //do nothing
-            }
-            else {
+            } else if (ch < ' ') {
+                // do nothing
+            } else {
                 sb.append(ch);
             }
         }
         return sb.toString();
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngw,
-            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
-        //don't send email if there is no assignee.  Wait till there is an assignee
+    public void gatherUnsentScheduledNotification(
+            NGWorkspace ngw, ArrayList<ScheduledNotification> resList, long timeout)
+            throws Exception {
+        // don't send email if there is no assignee.  Wait till there is an assignee
         if (needSendEmail()) {
             resList.add(new GScheduledNotification(ngw, this));
         }
     }
-    public String getAllSearchableText() throws Exception  {
+
+    public String getAllSearchableText() throws Exception {
         return this.getSynopsis() + "\n" + this.getDescription();
     }
 
@@ -1156,20 +1159,22 @@ public class GoalRecord extends BaseRecord {
         private NGWorkspace ngw;
         private GoalRecord goal;
 
-        public GScheduledNotification( NGWorkspace _ngp, GoalRecord _goal) {
-            ngw  = _ngp;
+        public GScheduledNotification(NGWorkspace _ngp, GoalRecord _goal) {
+            ngw = _ngp;
             goal = _goal;
         }
+
         @Override
         public boolean needsSendingBefore(long timeout) throws Exception {
             if (!goal.needSendEmail()) {
                 return false;
             }
-            if (getEmailSendTime()>timeout) {
+            if (getEmailSendTime() > timeout) {
                 return false;
             }
             return true;
         }
+
         @Override
         public long futureTimeToSend() throws Exception {
             if (!goal.needSendEmail()) {
@@ -1188,9 +1193,7 @@ public class GoalRecord extends BaseRecord {
 
         @Override
         public String selfDescription() throws Exception {
-            return "(ActionItem) "+getSynopsis();
+            return "(ActionItem) " + getSynopsis();
         }
-        
     }
-
 }

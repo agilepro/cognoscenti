@@ -24,10 +24,8 @@ import java.io.InputStream;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 public class Page {
 
@@ -45,12 +43,11 @@ public class Page {
 
     private static Log log = LogFactory.getLog(Page.class.getName());
 
-    private final static String defaultEncoding = "UTF-8";
+    private static final String defaultEncoding = "UTF-8";
 
     public static final int MAX_DOWNLOAD_SIZE = 1048576;
 
-    public boolean load(final InputStream in, final int totalsize,
-            final boolean isBinary) {
+    public boolean load(final InputStream in, final int totalsize, final boolean isBinary) {
         if (totalsize > 0) {
             this.bBuf = ByteBuffer.allocate(totalsize + 1024);
         } else {
@@ -109,6 +106,7 @@ public class Page {
     public void setTitle(String title) {
         this.title = title;
     }
+
     // Image or other non-textual pages
     public boolean isBinary() {
         return binaryData != null;
@@ -117,5 +115,4 @@ public class Page {
     public byte[] getBinaryData() {
         return binaryData;
     }
-
 }
