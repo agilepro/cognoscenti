@@ -61,9 +61,6 @@ public class TopicRecord extends CommentContainer {
     // this value will not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000;
 
-    private int repliesMade = -1;
-    private int repliesNeeded = -1;
-
     public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
 

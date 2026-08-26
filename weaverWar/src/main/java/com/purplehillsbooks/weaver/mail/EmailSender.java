@@ -21,7 +21,6 @@
 package com.purplehillsbooks.weaver.mail;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthDummy;
@@ -239,14 +238,14 @@ public class EmailSender extends TimerTask {
                 // System.out.println("EmailSender completed:
                 // "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
-                WeaverException.traceException(e, "Weaver EmailSender Run Method");
+                WeaverException.traceException(System.out, e, "Weaver EmailSender Run Method");
                 if (WeaverException.contains(e, "InterruptedException")) {
                     throw WeaverException.newWrap(
                             "Got InterruptedException at the root level of EmailSender.", e);
                 }
                 Exception failure =
                         WeaverException.newWrap("EmailSender-TimerTask failed in run method.", e);
-                JSONException.traceException(
+                WeaverException.traceException(
                         System.out, failure, "EmailSender-TimerTask failed in run method.");
                 threadLastCheckException = failure;
             } finally {
@@ -270,7 +269,7 @@ public class EmailSender extends TimerTask {
                 totalTime = 0;
             }
         } catch (Throwable t) {
-            JSONException.traceException(t, "Weaver EmailSender Run CRASH");
+            WeaverException.traceException(System.out, t, "Weaver EmailSender Run CRASH");
         }
     }
 
@@ -281,14 +280,14 @@ public class EmailSender extends TimerTask {
             try {
                 sendAllMailFromDB();
             } catch (Exception e) {
-                if (JSONException.containsMessage(e, "Couldn't connect to host")) {
+                if (WeaverException.containsMessage(e, "Couldn't connect to host")) {
                     // avoid dumping the entire exception to the log file when
                     // the problem is that the email server is down or not reachable
                     System.out.println(
                             "EmailSender.handleGlobalEmail unable to connect to email server at "
                                     + emailProperties.getProperty("mail.smtp.host"));
                 } else {
-                    JSONException.traceException(
+                    WeaverException.traceException(
                             System.out, e, "FATAL ERROR EmailSender.handleGlobalEmail");
                 }
             }

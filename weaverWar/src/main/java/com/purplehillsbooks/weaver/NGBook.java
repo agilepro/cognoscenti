@@ -21,9 +21,9 @@
 package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.json.JsonUtil;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import java.io.File;
 import java.util.ArrayList;
@@ -849,7 +849,7 @@ public class NGBook extends ContainerCommon {
                     siteStats.gatherFromWorkspace(ngw);
                     siteStats.numWorkspaces++;
                 } catch (Exception e) {
-                    JSONException.traceException(
+                    WeaverException.traceException(
                             System.out, e, "Ignoring stats for this in Site " + this.getKey());
                 }
             }

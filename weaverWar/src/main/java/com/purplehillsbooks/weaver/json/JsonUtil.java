@@ -1,4 +1,4 @@
-package com.purplehillsbooks.weaver;
+package com.purplehillsbooks.weaver.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JacksonException;
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.weaver.SearchManager;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.AvoidCloseWriter;
 import java.io.File;
@@ -129,7 +130,7 @@ public class JsonUtil {
         }
     }
 
-    public static <T extends Object> void writeJson(Writer w, T contents) throws Exception {
+    public static void writeJson(Writer w, Object contents) throws Exception {
         ObjectMapper mapper = getMapper();
         AvoidCloseWriter acw = new AvoidCloseWriter(w);
         mapper.writeValue(acw, contents);
@@ -137,7 +138,7 @@ public class JsonUtil {
 
     private JsonUtil() {}
 
-    public static <T extends Object> String convertToJsonString(T contents) throws Exception {
+    public static String convertToJsonString(Object contents) throws Exception {
         try {
             ObjectMapper mapper = getMapper();
             return mapper.writeValueAsString(contents);

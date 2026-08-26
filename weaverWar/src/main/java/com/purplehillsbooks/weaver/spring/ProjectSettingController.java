@@ -641,7 +641,7 @@ public class ProjectSettingController extends BaseController {
                                     + roleSymbol);
                 }
                 CustomRole role = ngc.getRoleOrFail(roleSymbol);
-                String priorLinkedRole = role.getLinkedRole();
+                role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
                 roleChanged = true;
                 if (ngc instanceof NGWorkspace) {

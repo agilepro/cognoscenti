@@ -97,7 +97,7 @@ public class MeetingRecord extends DOMFace {
         return getAttributeLong("duration");
     }
 
-    public void setDuration(long newVal) throws Exception {
+    public void setDuration(long newVal) {
         setAttributeLong("duration", newVal);
     }
 

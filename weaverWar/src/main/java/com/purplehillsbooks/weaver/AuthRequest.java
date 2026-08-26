@@ -445,10 +445,8 @@ public class AuthRequest {
      * <p>Note: if handling a request that has been pre-approved for anonymous use (like using a
      * magic number of something) then use setUserForOneRequest() with the pre-approving authority
      * to make it appear logged in.
-     *
-     * @throws Exception
      */
-    public boolean isLoggedIn() throws Exception {
+    public boolean isLoggedIn() {
         // logic is simple now, but might get more complex in future
         return (user != null);
     }

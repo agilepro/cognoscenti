@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver.mail;
 
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.weaver.AuthDummy;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -621,7 +620,8 @@ class Outliner extends HTMLEditorKit.ParserCallback {
             out.write(text);
             out.flush();
         } catch (IOException ioe) {
-            JSONException.traceException(
+            WeaverException.traceException(
+                    System.out,
                     ioe,
                     "Outliner.handleText extended from HTMLEditorKit.ParserCallback.handleText");
             /* Ignore this Exception */

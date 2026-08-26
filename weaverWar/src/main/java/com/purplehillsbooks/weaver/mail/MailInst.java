@@ -451,7 +451,7 @@ public class MailInst extends JSONWrapper {
                                 + "): ";
                 setExceptionMessage(me, context);
                 setLastSentDate(sendStart);
-                JSONException.traceException(System.out, me, context);
+                WeaverException.traceException(System.out, me, context);
                 incrementFailCount();
                 if (getFailCount() > 3) {
                     setStatus(MailInst.FAILED);
@@ -463,7 +463,7 @@ public class MailInst extends JSONWrapper {
                                 + eee
                                 + " @ "
                                 + SectionUtil.currentTimestampString());
-                JSONException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
+                WeaverException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
             }
             return false;
         } finally {
@@ -472,7 +472,7 @@ public class MailInst extends JSONWrapper {
                     transport.close();
                 } catch (Exception ce) {
                     /* ignore this exception */
-                    JSONException.traceException(
+                    WeaverException.traceException(
                             System.out,
                             ce,
                             "transport.close() threw an exception in a finally block!  Ignored!");

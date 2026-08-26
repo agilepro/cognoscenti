@@ -21,7 +21,6 @@
 package com.purplehillsbooks.weaver;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -283,7 +282,8 @@ public class UserManager {
                         System.out.println("USER1: " + up.getJSON().toString(2));
                         System.out.println("USER2: " + otherProfile.getJSON().toString(2));
                     } catch (Exception e) {
-                        JSONException.traceException(
+                        WeaverException.traceException(
+                                System.out,
                                 e,
                                 "USERS: failed to report problem with email address ("
                                         + idval

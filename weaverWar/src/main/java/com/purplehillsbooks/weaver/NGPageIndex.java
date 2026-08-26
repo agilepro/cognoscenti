@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
@@ -497,7 +496,8 @@ public class NGPageIndex {
                                 + " had lock stolen "
                                 + lockAge
                                 + "ms ago!");
-                JSONException.traceException(
+                WeaverException.traceException(
+                        System.out,
                         new Exception("OFFENDING THREAD tried to hold lock too long"),
                         "    LOCKVICTIM: tid="
                                 + thisThread
@@ -576,7 +576,7 @@ public class NGPageIndex {
                     "\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"
                             + SectionUtil.currentTimestampString());
             PrintStream ps = new PrintStream(System.out);
-            JSONException.traceException(ps, e, "THREAD LOCK VIOLATION");
+            WeaverException.traceException(ps, e, "THREAD LOCK VIOLATION");
             System.out.println("~~~~~~ THIS IS PROGRAM LOGIC ERROR ~~~~~~~\n\n");
             throw e;
         }

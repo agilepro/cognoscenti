@@ -4,7 +4,6 @@ import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.WikiConverterBasic;
 import com.x5.template.Chunk;
 import com.x5.template.filters.BasicFilter;
-import com.x5.template.filters.ChunkFilter;
 import com.x5.template.filters.FilterArgs;
 import java.io.StringWriter;
 
@@ -15,7 +14,7 @@ import java.io.StringWriter;
  *
  * <p>usage: {$ value | markdown}
  */
-public class ChunkFilterMarkdown extends BasicFilter implements ChunkFilter {
+public class ChunkFilterMarkdown extends BasicFilter {
     AuthRequest dest;
 
     public ChunkFilterMarkdown() {}

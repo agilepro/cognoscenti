@@ -8,7 +8,6 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.util.List;
 
 /**
  * Tests the basic building of a site from scratch using just the data layer confirming that all
@@ -181,17 +180,6 @@ public class TestBuildSite implements TestSet {
             throw WeaverException.newBasic(
                     id + " Test object was null, further testing must be aborted.");
         }
-    }
-
-    private void testStringArray(String id, List<String> testVal, String expectedVal)
-            throws Exception {
-        assertNotNull(id, testVal);
-        StringBuilder sb = new StringBuilder();
-        for (String val : testVal) {
-            sb.append(val);
-            sb.append("|");
-        }
-        testString(id, sb.toString(), expectedVal);
     }
 
     private void testLong(String id, long testVal, long expectedVal) throws Exception {

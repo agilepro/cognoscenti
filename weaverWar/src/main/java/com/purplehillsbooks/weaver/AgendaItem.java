@@ -90,7 +90,7 @@ public class AgendaItem extends CommentContainer {
         return safeConvertLong(getAttribute("duration"));
     }
 
-    public void setDuration(long newVal) throws Exception {
+    public void setDuration(long newVal) {
         setAttribute("duration", Long.toString(newVal));
     }
 

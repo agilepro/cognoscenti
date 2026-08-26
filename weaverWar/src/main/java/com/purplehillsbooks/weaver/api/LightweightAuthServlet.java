@@ -17,19 +17,20 @@
 package com.purplehillsbooks.weaver.api;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.json.JsonUtil;
 import com.purplehillsbooks.weaver.util.APIClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.Writer;
 import java.net.URI;
+import java.util.Map;
 
 /**
  * This servlet implements the Lightweight Authentication Protocol which consists of two operations,
@@ -108,7 +109,7 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
             jo.write(w);
             w.flush();
         } catch (Exception e) {
-            JSONException.traceException(
+            WeaverException.traceException(
                     System.out, e, "COG-LAuth FAILURE LightweightAuthServlet handling GET request");
         }
     }
@@ -205,13 +206,11 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
             }
         } catch (Exception e) {
             try {
-                JSONObject err =
-                        JSONException.convertToJSON(e, "COG-LAuth FAILURE handling " + pathInfo);
-                JSONException.traceConvertedException(System.out, err);
-                if (w != null) {
-                    err.write(w, 2, 0);
-                    w.flush();
-                }
+                Map<String, Object> mapForResult = WeaverException.getJsonMapForLog(e);
+                WeaverException.traceException(
+                        System.out, e, "COG-LAuth FAILURE handling " + pathInfo);
+                JsonUtil.writeJson(w, mapForResult);
+                w.flush();
             } catch (Exception eeee) {
                 // can't seem to do anything to let the client know.
                 System.out.println("COG-LAuth FAILURE sending exception to client: " + eeee);

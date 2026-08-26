@@ -27,7 +27,6 @@ import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.DOMFace;
-import com.purplehillsbooks.weaver.JsonUtil;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGContainer;
 import com.purplehillsbooks.weaver.NGPageIndex;
@@ -36,6 +35,8 @@ import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.exception.ServletExit;
 import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.json.JsonUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -98,9 +99,9 @@ public class BaseController {
             ar.req.setAttribute("log_number", exceptionNO);
             showDisplayException(ar, extd);
         } catch (Exception e) {
-            JSONException.traceException(
+            WeaverException.traceException(
                     System.out, e, "%%%%%% Exception while reporting exception in BaseController");
-            JSONException.traceException(
+            WeaverException.traceException(
                     System.out, extd, "%%%%%% Exception that was being reported");
         }
     }
@@ -115,7 +116,7 @@ public class BaseController {
         } catch (Exception e) {
             System.out.println("\n\nFAILURE DISPLAYING SIMPLE PAGE: DisplayWarning.jsp is broken!");
             System.out.println("MESSAGE: " + why);
-            WeaverException.traceException(e, "EXCEPTION ON DisplayWarning.jsp");
+            WeaverException.traceException(System.out, e, "EXCEPTION ON DisplayWarning.jsp");
         }
     }
 

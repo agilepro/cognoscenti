@@ -4,7 +4,6 @@
 %><%@page import="com.purplehillsbooks.weaver.AuthRequest"
 %><%@page import="com.purplehillsbooks.weaver.GoalRecord"
 %><%@page import="com.purplehillsbooks.weaver.HistoryRecord"
-%><%@page import="com.purplehillsbooks.weaver.LeafletResponseRecord"
 %><%@page import="com.purplehillsbooks.weaver.License"
 %><%@page import="com.purplehillsbooks.weaver.LicensedURL"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailSender"

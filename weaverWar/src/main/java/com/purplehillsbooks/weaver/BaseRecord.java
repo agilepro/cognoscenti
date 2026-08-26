@@ -58,7 +58,7 @@ public class BaseRecord extends DOMFace {
         super(nDoc, nEle, p);
     }
 
-    public String getId() throws Exception {
+    public String getId() {
         return getAttribute("id");
     }
 
@@ -74,33 +74,33 @@ public class BaseRecord extends DOMFace {
         setAttribute("id", newVal);
     }
 
-    public String getSynopsis() throws Exception {
+    public String getSynopsis() {
         return getScalar("synopsis");
     }
 
-    public void setSynopsis(String newVal) throws Exception {
+    public void setSynopsis(String newVal) {
         if (newVal == null) {
             newVal = "";
         }
         setScalar("synopsis", newVal);
     }
 
-    public String getDescription() throws Exception {
+    public String getDescription() {
         return getScalar("description");
     }
 
-    public void setDescription(String newVal) throws Exception {
+    public void setDescription(String newVal) {
         if (newVal == null) {
             newVal = "";
         }
         setScalar("description", newVal);
     }
 
-    public String getActionScripts() throws Exception {
+    public String getActionScripts() {
         return getScalar("actionScripts");
     }
 
-    public void setActionScripts(String newVal) throws Exception {
+    public void setActionScripts(String newVal) {
         if (newVal == null) {
             newVal = "";
         }
@@ -111,7 +111,7 @@ public class BaseRecord extends DOMFace {
         return getScalarLong("dueDate");
     }
 
-    public void setDueDate(long newVal) throws Exception {
+    public void setDueDate(long newVal) throws Exception{
         setScalarLong("dueDate", newVal);
     }
 
@@ -131,11 +131,11 @@ public class BaseRecord extends DOMFace {
         setScalarLong("endDate", newVal);
     }
 
-    public int getPriority() throws Exception {
+    public int getPriority() {
         return getScalarInt("priority");
     }
 
-    public void setPriority(int newVal) throws Exception {
+    public void setPriority(int newVal) {
         setScalar("priority", Integer.toString(newVal));
     }
 
@@ -143,7 +143,7 @@ public class BaseRecord extends DOMFace {
         return getScalarLong("duration");
     }
 
-    public void setDuration(long newVal) throws Exception {
+    public void setDuration(long newVal) {
         setScalarLong("duration", newVal);
     }
 

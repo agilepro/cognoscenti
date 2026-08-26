@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
 import com.purplehillsbooks.weaver.exception.WeaverException;
@@ -192,8 +191,10 @@ public class RoleInvitation extends JSONWrapper {
                     ri.sendEmail(ar);
                 } catch (Exception e) {
                     ri.setStatus(STATUS_FAILED);
-                    JSONException.traceException(
-                            e, "Weaver role invitation failed, giving up " + ri.getEmail());
+                    WeaverException.traceException(
+                            System.out,
+                            e,
+                            "Weaver role invitation failed, giving up " + ri.getEmail());
                     return;
                 }
             }
