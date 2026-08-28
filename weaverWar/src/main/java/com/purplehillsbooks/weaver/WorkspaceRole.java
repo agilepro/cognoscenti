@@ -54,6 +54,11 @@ public class WorkspaceRole extends CustomRole {
     private void assertPlayerAcceptible(AddressListEntry newMember) throws Exception {
         if (def.canEdit) {
             UserProfile uProf = newMember.getUserProfile();
+            if (null == uProf) {
+                throw WeaverException.newBasic(
+                        "User (%s) does not have a profile, and can NOT play update role (%s)",
+                        newMember.getEmail(), getName());
+            }
             if (site.isUnpaidUser(uProf)) {
                 throw WeaverException.newBasic(
                         "Role (%s) is an update role, and can not be played by a basic user (%s)",

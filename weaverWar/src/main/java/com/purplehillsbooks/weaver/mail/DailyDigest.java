@@ -127,6 +127,7 @@ public class DailyDigest {
             NGPageIndex.clearLocksHeldByThisThread();
             logFile.writeToFile(dailyDigestFile);
         }
+        System.out.println("DAILYDIGEST: completed at " + SectionUtil.currentTimestampString());
     }
 
     private static void handleOneUser(

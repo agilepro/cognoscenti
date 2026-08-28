@@ -221,9 +221,11 @@ public class EmailSender extends TimerTask {
             long startTime = System.currentTimeMillis();
             ar.nowTime = startTime;
             System.out.println(
-                    "EmailSender started on thread: "
+                    "EmailSender run: tid="
+                            + Thread.currentThread().threadId() 
+                            + " ("
                             + Thread.currentThread().getName()
-                            + " -- "
+                            + ") "
                             + SectionUtil.currentTimestampString());
 
             // make sure that this method doesn't throw any exception
