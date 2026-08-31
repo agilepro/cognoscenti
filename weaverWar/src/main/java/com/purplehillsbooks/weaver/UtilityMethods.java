@@ -24,6 +24,8 @@ import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import java.io.Writer;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class UtilityMethods {
 
     public static String urlEncode(String s) {
         try {
-            return UtilityMethods.urlEncode(s);
+            return URLEncoder.encode(s, StandardCharsets.UTF_8);
         } catch (Exception e) {
             // this should never happen, because UTF-8 is always supported
             return s;
