@@ -249,7 +249,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         UserProfile up = UserManager.getUserProfileByKey(userKey);
         if (up==null) {
             Thread.sleep(3000);
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                 "Can not find a user with key = '%s'.  This page requires a valid key.", 
                 userKey);
         }

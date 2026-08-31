@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.List;
 
 /** Implements the process and task formatting */
@@ -32,9 +32,9 @@ public class SectionTask extends SectionUtil implements SectionFormat {
         return "Process";
     }
 
-    public static List<GoalRecord> getAllTasks(NGSection sec) throws Exception {
+    public static List<GoalRecord> getAllTasks(NGSection sec) {
         if (sec == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "trying to get tasks from a null section does not make sense");
         }
 
@@ -62,7 +62,7 @@ public class SectionTask extends SectionUtil implements SectionFormat {
      * Walk through whatever elements this owns and put all the four digit IDs into the vector so
      * that we can generate another ID and assure it does not duplication any id found here.
      */
-    public void findIDs(List<String> v, NGSection sec) throws Exception {
+    public void findIDs(List<String> v, NGSection sec) {
         for (GoalRecord tr : getAllTasks(sec)) {
             v.add(tr.getId());
         }

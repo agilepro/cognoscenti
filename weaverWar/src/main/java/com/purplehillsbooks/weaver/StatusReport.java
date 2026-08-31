@@ -34,31 +34,31 @@ public class StatusReport extends DOMFace {
         super(nDoc, nEle, p);
     }
 
-    public String getId() throws Exception {
+    public String getId() {
         return getAttribute("id");
     }
 
-    public void setId(String newVal) throws Exception {
+    public void setId(String newVal) {
         setAttribute("id", newVal);
     }
 
-    public String getName() throws Exception {
+    public String getName() {
         return getScalar("name");
     }
 
-    public void setName(String newVal) throws Exception {
+    public void setName(String newVal) {
         setScalar("name", newVal);
     }
 
-    public String getDescription() throws Exception {
+    public String getDescription() {
         return getScalar("desc");
     }
 
-    public void setDescription(String newVal) throws Exception {
+    public void setDescription(String newVal) {
         setScalar("desc", newVal);
     }
 
-    private List<ProjectLink> getProjects() throws Exception {
+    private List<ProjectLink> getProjects() {
         return getChildren("projLink", ProjectLink.class);
     }
 

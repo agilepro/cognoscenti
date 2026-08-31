@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,16 +51,16 @@ public class WorkspaceRole extends CustomRole {
     }
 
     // performs the check that if the role is edit role, the user must be full(paid)
-    private void assertPlayerAcceptible(AddressListEntry newMember) throws Exception {
+    private void assertPlayerAcceptible(AddressListEntry newMember) {
         if (def.canEdit) {
             UserProfile uProf = newMember.getUserProfile();
             if (null == uProf) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "User (%s) does not have a profile, and can NOT play update role (%s)",
                         newMember.getEmail(), getName());
             }
             if (site.isUnpaidUser(uProf)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Role (%s) is an update role, and can not be played by a basic user (%s)",
                         getName(), newMember.getEmail());
             }
@@ -110,11 +110,11 @@ public class WorkspaceRole extends CustomRole {
         setAttribute("linkedRole", linkedRole);
     }
 
-    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
+    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) {
         return getDirectPlayers();
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception {
+    public List<AddressListEntry> getDirectPlayers() {
         RoleTerm term = getCurrentTerm();
         if (term == null) {
             return getNonTermList();
@@ -129,7 +129,7 @@ public class WorkspaceRole extends CustomRole {
         return null;
     }
 
-    private List<AddressListEntry> getNonTermList() throws Exception {
+    private List<AddressListEntry> getNonTermList() {
         List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
@@ -142,7 +142,7 @@ public class WorkspaceRole extends CustomRole {
         return list;
     }
 
-    public void addPlayer(AddressListEntry newMember) throws Exception {
+    public void addPlayer(AddressListEntry newMember) {
         assertPlayerAcceptible(newMember);
         super.addPlayer(newMember);
     }
@@ -164,15 +164,15 @@ public class WorkspaceRole extends CustomRole {
         }
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) {
         return isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
 
-    public boolean isPlayer(UserRef user) throws Exception {
+    public boolean isPlayer(UserRef user) {
         return isPlayerOfAddressList(user, getDirectPlayers());
     }
 
-    public String whichIDForUser(UserRef user) throws Exception {
+    public String whichIDForUser(UserRef user) {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
 
@@ -184,7 +184,7 @@ public class WorkspaceRole extends CustomRole {
         setAttribute("color", color);
     }
 
-    public RoleTerm getCurrentTerm() throws Exception {
+    public RoleTerm getCurrentTerm() {
         long nowTime = System.currentTimeMillis();
         for (RoleTerm rt : getAllTerms()) {
             if (rt.isComplete() && rt.includesDate(nowTime)) {
@@ -194,10 +194,9 @@ public class WorkspaceRole extends CustomRole {
         return null;
     }
 
-    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list)
-            throws Exception {
+    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) {
         if (user == null) {
-            throw WeaverException.newBasic("isPlayerOfAddressList called with null user object.");
+            throw CommonException.newBasic("isPlayerOfAddressList called with null user object.");
         }
         for (AddressListEntry alr : list) {
             if (user.hasAnyId(alr.getInitialId())) {
@@ -207,8 +206,7 @@ public class WorkspaceRole extends CustomRole {
         return false;
     }
 
-    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list)
-            throws Exception {
+    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list) {
         for (AddressListEntry alr : list) {
             String thisID = alr.getInitialId();
             if (uRef.hasAnyId(thisID)) {
@@ -257,7 +255,7 @@ public class WorkspaceRole extends CustomRole {
         return true;
     }
 
-    public List<RoleTerm> getAllTerms() throws Exception {
+    public List<RoleTerm> getAllTerms() {
         List<RoleTerm> list = this.getChildren("terms", RoleTerm.class);
         return list;
     }
@@ -266,7 +264,7 @@ public class WorkspaceRole extends CustomRole {
      * getJSON is for normal lists of roles, the current players, and such. Does not include all the
      * historical detail.
      */
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         jObj.put("symbol", getSymbol());
         jObj.put("name", getName());
@@ -334,7 +332,7 @@ public class WorkspaceRole extends CustomRole {
         return jObj;
     }
 
-    public void updateFromJSON(JSONObject roleInfo) throws Exception {
+    public void updateFromJSON(JSONObject roleInfo) {
         updateAttributeString("color", roleInfo);
         updateAttributeString("linkedRole", roleInfo);
         updateAttributeInt("termLength", roleInfo);

@@ -31,27 +31,27 @@ import com.purplehillsbooks.json.JSONObject;
  */
 public interface License {
 
-    public String getId() throws Exception;
+    public String getId();
 
-    public String getNotes() throws Exception;
+    public String getNotes();
 
-    public void setNotes(String newVal) throws Exception;
+    public void setNotes(String newVal);
 
-    public String getCreator() throws Exception;
+    public String getCreator();
 
-    public void setCreator(String newVal) throws Exception;
+    public void setCreator(String newVal);
 
-    public long getTimeout() throws Exception;
+    public long getTimeout();
 
-    public void setTimeout(long timeout) throws Exception;
+    public void setTimeout(long timeout);
 
-    public String getRole() throws Exception;
+    public String getRole();
 
-    public void setRole(String newRole) throws Exception;
+    public void setRole(String newRole);
 
-    public boolean isReadOnly() throws Exception;
+    public boolean isReadOnly();
 
-    public void setReadOnly(boolean isReadOnly) throws Exception;
+    public void setReadOnly(boolean isReadOnly);
 
-    public JSONObject getJSON() throws Exception;
+    public JSONObject getJSON();
 }

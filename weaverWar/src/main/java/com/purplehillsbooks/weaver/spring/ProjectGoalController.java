@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -35,7 +36,6 @@ import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.TaskArea;
 import com.purplehillsbooks.weaver.UtilityMethods;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -116,7 +116,7 @@ public class ProjectGoalController extends BaseController {
                 return;
             }
             if (goal.isPassive()) {
-                throw WeaverException.newBasic("Passive goals are not supported any more");
+                throw CommonException.newBasic("Passive goals are not supported any more");
             }
             boolean isLoggedIn = ar.isLoggedIn();
 
@@ -140,7 +140,7 @@ public class ProjectGoalController extends BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to action item page of workspace (%s) in site (%s).",
                             e, pageId, siteId));
         }
@@ -199,7 +199,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = gr.getJSON4Goal(ngw);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to fetch Action Item (" + gid + ")", ex);
+            Exception ee = CommonException.newWrap("Unable to fetch Action Item (" + gid + ")", ex);
             streamException(ee, ar);
         }
     }
@@ -283,7 +283,7 @@ public class ProjectGoalController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update Action Item (" + gid + ")", ex);
+                    CommonException.newWrap("Unable to update Action Item (" + gid + ")", ex);
             streamException(ee, ar);
         }
     }
@@ -333,7 +333,7 @@ public class ProjectGoalController extends BaseController {
             repo.put("list", responseList);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update multiple Action Items", ex);
+            Exception ee = CommonException.newWrap("Unable to update multiple Action Items", ex);
             streamException(ee, ar);
         }
     }
@@ -363,7 +363,7 @@ public class ProjectGoalController extends BaseController {
             }
             sendJsonArray(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get history for Action Item.", ex);
+            Exception ee = CommonException.newWrap("Unable to get history for Action Item.", ex);
             streamException(ee, ar);
         }
     }
@@ -406,7 +406,7 @@ public class ProjectGoalController extends BaseController {
             } else {
                 int didVal = DOMFace.safeConvertInt(did);
                 if (didVal <= 0) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Don't understand the decision number: (%s)", didVal);
                 }
                 dr = ngw.findDecisionOrFail(didVal);
@@ -426,7 +426,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = dr.getJSON4Decision(ngw, ar);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update Decision (" + did + ")", ex);
+            Exception ee = CommonException.newWrap("Unable to update Decision (" + did + ")", ex);
             streamException(ee, ar);
         }
     }
@@ -459,7 +459,7 @@ public class ProjectGoalController extends BaseController {
             repo.put("taskAreas", shareList);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get the list of task areas ", ex);
+            Exception ee = CommonException.newWrap("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -497,7 +497,7 @@ public class ProjectGoalController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to get change the order of task areas ", ex);
+                    CommonException.newWrap("Unable to get change the order of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -537,7 +537,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject repo = ta.getMinJSON();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get the list of task areas ", ex);
+            Exception ee = CommonException.newWrap("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
         }
     }
@@ -575,7 +575,7 @@ public class ProjectGoalController extends BaseController {
             // this is not so great generating HTML output for calendar, but what else?
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to generate a calendar entry for workspace (%s) in site (%s)",
                             e, pageId, siteId));
         }
@@ -607,7 +607,7 @@ public class ProjectGoalController extends BaseController {
 
             GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
             if (oldGoal == null) {
-                throw WeaverException.newBasic("Unable to find a action item with id=%s", goalId);
+                throw CommonException.newBasic("Unable to find a action item with id=%s", goalId);
             }
 
             JSONObject goalJSON = oldGoal.getJSON4Goal(fromWS);
@@ -642,7 +642,7 @@ public class ProjectGoalController extends BaseController {
 
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to move the action item", ex);
+            Exception ee = CommonException.newWrap("Unable to move the action item", ex);
             streamException(ee, ar);
         }
     }

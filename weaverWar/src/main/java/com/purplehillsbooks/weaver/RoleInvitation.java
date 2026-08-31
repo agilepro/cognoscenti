@@ -20,13 +20,12 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.JSONWrapper;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class RoleInvitation extends JSONWrapper {
@@ -107,11 +106,11 @@ public class RoleInvitation extends JSONWrapper {
     public void sendEmail(AuthRequest ar) throws Exception {
 
         if (!STATUS_NEW.equals(kernel.getString("status"))) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: send is being called when the invite is not in NEW status");
         }
         if (!kernel.has("ss")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "RoleInvitation.sendEmail requires a 'ss' field in the record to work.");
         }
         String ss = kernel.getString("ss");
@@ -136,7 +135,7 @@ public class RoleInvitation extends JSONWrapper {
         jo.put("return", returnUrl);
         jo.put("ss", ss);
 
-        String url = "?openid.mode=apiSendInvite&ss=" + URLEncoder.encode(ss, "UTF-8");
+        String url = "?openid.mode=apiSendInvite&ss=" + UtilityMethods.urlEncode(ss);
 
         JSONObject res = LightweightAuthServlet.postToTrustedProvider(url, jo);
         if (res.has("result") && "ok".equals(res.getString("result"))) {
@@ -191,7 +190,7 @@ public class RoleInvitation extends JSONWrapper {
                     ri.sendEmail(ar);
                 } catch (Exception e) {
                     ri.setStatus(STATUS_FAILED);
-                    WeaverException.traceException(
+                    CommonException.traceException(
                             System.out,
                             e,
                             "Weaver role invitation failed, giving up " + ri.getEmail());

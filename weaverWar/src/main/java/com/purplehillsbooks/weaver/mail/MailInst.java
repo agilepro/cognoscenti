@@ -1,5 +1,6 @@
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -10,7 +11,6 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import jakarta.activation.DataHandler;
 import jakarta.mail.Address;
@@ -155,7 +155,7 @@ public class MailInst extends JSONWrapper {
      */
     public void setAddressee(String val) throws Exception {
         if (val.contains(" ")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "MailInst.setAddressee requires a single email address without spaces");
         }
         kernel.put("Addressee", val);
@@ -176,7 +176,7 @@ public class MailInst extends JSONWrapper {
         // This is an attempt to keep them from ever being used in this class.
         // Can probable remove after 2018 is over
         if (val.indexOf(AddressListEntry.LAQUO) >= 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "MailInst.setFromAddress requires a straight SMTP email address and should not have LAQUO in it");
         }
         kernel.put("From", val);
@@ -420,7 +420,7 @@ public class MailInst extends JSONWrapper {
             try {
                 addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
             } catch (Exception ex) {
-                throw WeaverException.newWrap(
+                throw CommonException.newWrap(
                         "Error while attempting to send email to (%s)", ex, addressee);
             }
 
@@ -451,7 +451,7 @@ public class MailInst extends JSONWrapper {
                                 + "): ";
                 setExceptionMessage(me, context);
                 setLastSentDate(sendStart);
-                WeaverException.traceException(System.out, me, context);
+                CommonException.traceException(System.out, me, context);
                 incrementFailCount();
                 if (getFailCount() > 3) {
                     setStatus(MailInst.FAILED);
@@ -463,7 +463,7 @@ public class MailInst extends JSONWrapper {
                                 + eee
                                 + " @ "
                                 + SectionUtil.currentTimestampString());
-                WeaverException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
+                CommonException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
             }
             return false;
         } finally {
@@ -472,7 +472,7 @@ public class MailInst extends JSONWrapper {
                     transport.close();
                 } catch (Exception ce) {
                     /* ignore this exception */
-                    WeaverException.traceException(
+                    CommonException.traceException(
                             System.out,
                             ce,
                             "transport.close() threw an exception in a finally block!  Ignored!");

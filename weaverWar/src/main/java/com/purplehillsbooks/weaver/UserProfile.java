@@ -20,10 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -51,7 +50,7 @@ public class UserProfile implements UserRef {
 
     public UserProfile(String preferredEmail) throws Exception {
         if (preferredEmail.contains(" ")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "UserProfile constructor requires a single email address without spaces: (%s)",
                     preferredEmail);
         }
@@ -193,7 +192,7 @@ public class UserProfile implements UserRef {
     private void convertOldWSSettings(JSONObject fullJO) throws Exception {
 
         if (fullJO.has("wsSettings")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "program logic error: convertOldWSSettings should be called only on objects with wsSettings");
         }
         System.out.println(
@@ -240,7 +239,7 @@ public class UserProfile implements UserRef {
 
     private JSONObject assureSettings(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|") < 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User profile workspace settings requires a combined key of the form: (site) | (workspace), got: %s",
                     siteWorkspaceCombo);
         }
@@ -305,13 +304,13 @@ public class UserProfile implements UserRef {
      */
     public void addId(String newEmailAddress) throws Exception {
         if (newEmailAddress.indexOf(" ") >= 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "an email with a space in it was passed to UserProfile.addID: ("
                             + newEmailAddress
                             + ")");
         }
         if (!looksLikeEmail(newEmailAddress)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Attempt to set non-email address on user: ("
                             + newEmailAddress
                             + ").   Only email addresses are allowed");
@@ -507,7 +506,7 @@ public class UserProfile implements UserRef {
 
     /** Make a link to this to provide information about the person */
     public String getLinkUrl() throws Exception {
-        return "v/FindPerson.htm?uid=" + URLEncoder.encode(getKey(), "UTF-8");
+        return "v/FindPerson.htm?uid=" + UtilityMethods.urlEncode(getKey());
     }
 
     /**
@@ -537,7 +536,7 @@ public class UserProfile implements UserRef {
         if (cleanName.length() > 28) {
             cleanName = cleanName.substring(0, 28);
         }
-        String olink = "v/FindPerson.htm?uid=" + URLEncoder.encode(getKey(), "UTF-8");
+        String olink = "v/FindPerson.htm?uid=" + UtilityMethods.urlEncode(getKey());
         if (makeItALink) {
             ar.write("<a href=\"");
             ar.write(ar.retPath);
@@ -616,7 +615,7 @@ public class UserProfile implements UserRef {
     /** Create a watch on a page. if none exists at this time. */
     public void assureWatch(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|") < 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "assureWatch requires a combined key of the form: (site) | (workspace)");
         }
         if (!isWatch(siteWorkspaceCombo)) {
@@ -768,7 +767,7 @@ public class UserProfile implements UserRef {
         return idArray;
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         jObj.put("uid", getUniversalId());
@@ -776,7 +775,7 @@ public class UserProfile implements UserRef {
         return jObj;
     }
 
-    public JSONObject getFullJSON() throws Exception {
+    public JSONObject getFullJSON() {
         JSONObject jObj = getJSON();
         jObj.put("lastLogin", lastLogin);
         jObj.put("lastLoginId", getLastLoginId());
@@ -808,7 +807,7 @@ public class UserProfile implements UserRef {
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("removeId")) {
             if (emailAddresses.size() <= 1) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Can not remove an id from user who only has less than two ids!");
             }
             this.removeId(input.getString("removeId"));

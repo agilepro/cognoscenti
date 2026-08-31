@@ -1,8 +1,8 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -122,11 +122,11 @@ public class MeetingRecord extends DOMFace {
         // check that all strings look like email addresses
         for (String one : newSet) {
             if (one == null || one.length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Participant list cannot contain null or empty values");
             }
             if (!UserManager.isValidEmailAddress(one)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Participant list cannot contain invalid email addresses: %s", one);
             }
         }
@@ -151,7 +151,7 @@ public class MeetingRecord extends DOMFace {
         }
     }
 
-    public List<AgendaItem> getAgendaItems() throws Exception {
+    public List<AgendaItem> getAgendaItems() {
         List<AgendaItem> ret = getChildren("agenda", AgendaItem.class);
         for (AgendaItem ai : ret) {
             ai.setMeeting(this);
@@ -167,12 +167,12 @@ public class MeetingRecord extends DOMFace {
 
     public AgendaItem findAgendaItem(String id) throws Exception {
         if (id == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: Attempt to find an agenda item with a null id");
         }
         AgendaItem ai = findAgendaItemOrNull(id);
         if (ai == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Agenda Item with that id (%s) does not exist in this meeting.", id);
         }
         return ai;
@@ -308,7 +308,7 @@ public class MeetingRecord extends DOMFace {
         }
 
         // oh no, there are no roles at all.  Give up
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "Workspace (%s) does not appear to have any roles and at least one is required to have a meeting.",
                 ngw.getFullName());
     }
@@ -380,7 +380,7 @@ public class MeetingRecord extends DOMFace {
             }
         }
         if (!found) {
-            throw WeaverException.newBasic("Unable to find an agenda item with the id: %s", itemId);
+            throw CommonException.newBasic("Unable to find an agenda item with the id: %s", itemId);
         }
     }
 
@@ -412,7 +412,7 @@ public class MeetingRecord extends DOMFace {
             long time = cmdInput.getLong("time");
             MeetingProposeTime mpt = findProposedTime("timeSlots", time);
             if (mpt == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "This meeting does not have a proposed time of %s", Long.toString(time));
             }
             String user = cmdInput.getString("user");
@@ -433,7 +433,7 @@ public class MeetingRecord extends DOMFace {
             String user = cmdInput.getString("user");
             this.removeUserFromAllSlots("timeSlots", user);
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "actOnProposedTime does not understand the command: %s", action);
         }
     }
@@ -1115,13 +1115,13 @@ public class MeetingRecord extends DOMFace {
             emg.setMeetingId(getId());
             String meetingOwner = getOwner();
             if (meetingOwner == null || meetingOwner.length() == 0) {
-                throw WeaverException.newBasic("The owner of the meeting has not been set.");
+                throw CommonException.newBasic("The owner of the meeting has not been set.");
             }
             emg.setOwner(meetingOwner);
             emg.constructEmailRecords(ar, ngw, mailFile);
             setReminderSent(ar.nowTime);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to send reminder email for meeting (%s) in workspace (%s)",
                     e, getName(), ngw.getFullName());
         }
@@ -1312,13 +1312,13 @@ public class MeetingRecord extends DOMFace {
         @Override
         public void sendIt(AuthRequest ar, EmailSender mailFile) throws Exception {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Attempting to send email reminder when not in planning state.  State=%s",
                         meet.getState());
             }
 
             if (!needsSendingBefore(ar.nowTime)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
                                 + SectionUtil.getNicePrintDate(futureTimeToSend())
                                 + ") is still in the future!");

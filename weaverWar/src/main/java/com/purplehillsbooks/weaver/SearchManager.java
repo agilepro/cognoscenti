@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.streams.StreamHelper;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -218,7 +218,7 @@ public class SearchManager {
                 // exploring the reasons that IndexWriter construction might fail
                 iWriter = new IndexWriter(dirStore, config);
             } catch (Exception e) {
-                throw WeaverException.newWrap("Unable to initialize the IndexWriter", e);
+                throw CommonException.newWrap("Unable to initialize the IndexWriter", e);
             }
 
             try {

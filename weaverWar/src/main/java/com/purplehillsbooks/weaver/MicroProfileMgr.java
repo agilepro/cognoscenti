@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -89,7 +89,7 @@ public class MicroProfileMgr {
 
     private static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception {
         if (profileFile == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
         List<MicroProfileRecord> vc =
@@ -120,25 +120,24 @@ public class MicroProfileMgr {
 
     public static synchronized void save() throws Exception {
         if (profileFile == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to write micro profile information to disk.  The micro profile file name is not set.");
         }
         profileFile.save();
     }
 
     /** find a MicroProfileRecord, or create one */
-    public static MicroProfileRecord findOrCreateMicroProfile(String emailId, String displayName)
-            throws Exception {
+    public static MicroProfileRecord findOrCreateMicroProfile(String emailId, String displayName) {
         if (emailId == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "createMicroProfileRecord was passed a null emailId parameter");
         }
         if (profileFile == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         if (!MicroProfileRecord.validEmailAddress(emailId)) {
-            throw WeaverException.newBasic("This does not look like an email address: %s", emailId);
+            throw CommonException.newBasic("This does not look like an email address: %s", emailId);
         }
 
         MicroProfileRecord profileRecord = findMicroProfileById(emailId);
@@ -159,11 +158,11 @@ public class MicroProfileMgr {
 
     public static synchronized boolean removeMicroProfileRecord(String id) throws Exception {
         if (id == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "removeMicroProfileRecord was passed a null emailId parameter");
         }
         if (profileFile == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
         List<MicroProfileRecord> vc =
@@ -178,7 +177,7 @@ public class MicroProfileMgr {
         return false;
     }
 
-    public static synchronized void setDisplayName(String id, String displayName) throws Exception {
+    public static synchronized void setDisplayName(String id, String displayName) {
         MicroProfileRecord child = findOrCreateMicroProfile(id, displayName);
         child.setDisplayName(displayName);
     }

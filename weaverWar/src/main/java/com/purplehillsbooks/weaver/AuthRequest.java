@@ -20,10 +20,10 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.HTMLWriter;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.exception.ServletExit;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.Cookie;
@@ -38,7 +38,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -306,7 +305,7 @@ public class AuthRequest {
 
             servletPath = req.getServletPath();
             if (servletPath == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Servlet path is missing.  That should be impossible.");
             }
 
@@ -398,7 +397,7 @@ public class AuthRequest {
 
     public void setPageAccessLevels(NGContainer newNgp) throws Exception {
         if (newNgp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "setPageAccessLevels was called with a null parameter.  That should not happen");
         }
         // record the fact that workspace was visited in this session
@@ -464,7 +463,7 @@ public class AuthRequest {
 
     public UserPage getUserPage() throws Exception {
         if (user == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to get user page, you don't appear to be logged in");
         }
         return cog.getUserManager().findOrCreateUserPage(user.getKey());
@@ -566,12 +565,10 @@ public class AuthRequest {
         if (!cog.isInitialized()) {
             if (canRedirect) {
                 String configDest =
-                        retPath
-                                + "init/config.htm?go="
-                                + URLEncoder.encode(getRequestURL(), "UTF-8");
+                        retPath + "init/config.htm?go=" + UtilityMethods.urlEncode(getRequestURL());
                 resp.sendRedirect(configDest);
             }
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Server is not initialized", cog.initializer.lastFailureMsg);
         }
 
@@ -585,19 +582,19 @@ public class AuthRequest {
             String loginUrl =
                     getSystemProperty("identityProvider")
                             + "?openid.mode=quick&go="
-                            + URLEncoder.encode(go, "UTF-8");
+                            + UtilityMethods.urlEncode(go);
             resp.sendRedirect(loginUrl);
             throw new ServletExit();
         }
 
         // even in redirect case, we need to throw exception to stop the processing
         // of the calling code.
-        throw WeaverException.newBasic("User is not logged in. Can't %s", opDescription);
+        throw CommonException.newBasic("User is not logged in. Can't %s", opDescription);
     }
 
     public void assertAdmin(String opDescription) throws Exception {
         if (ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         assertLoggedIn(opDescription);
@@ -605,7 +602,7 @@ public class AuthRequest {
             return;
         }
         if (!ngp.primaryOrSecondaryPermission(getUserProfile())) {
-            throw WeaverException.newBasic("Admin privilege is required to %s", opDescription);
+            throw CommonException.newBasic("Admin privilege is required to %s", opDescription);
         }
     }
 
@@ -623,17 +620,17 @@ public class AuthRequest {
 
     public void assertAccessWorkspace(String opDescription) throws Exception {
         if (ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "'assertAccessWorkspace' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGWorkspace)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: MEMBERSHIP applies only to workspaces and not to Sites.");
         }
         NGWorkspace ngw = (NGWorkspace) ngp;
 
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User is not logged in, not a role of workspace. %s", opDescription);
         }
 
@@ -649,22 +646,22 @@ public class AuthRequest {
 
         // check the container rules on who can be a member
         if (!ngw.canAccessWorkspace(user)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User is not a member of this workspace. %s", opDescription);
         }
     }
 
     public void assertExecutive(String opDescription) throws Exception {
         if (ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "'assertExecutive' is being called, but no page has been associated with the AuthRequest object");
         }
         if (!(ngp instanceof NGBook)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: EXECUTIVE applies only to sites and not to workspaces.");
         }
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User is not logged in, not an executive of site. %s", opDescription);
         }
         NGBook ngb = (NGBook) ngp;
@@ -674,14 +671,14 @@ public class AuthRequest {
         }
 
         if (!ngb.isSiteExecutive(user)) {
-            throw WeaverException.newBasic("User is not executive of this site. %s", opDescription);
+            throw CommonException.newBasic("User is not executive of this site. %s", opDescription);
         }
     }
 
     public void assertSuperAdmin(String opDescription) throws Exception {
         assertLoggedIn(opDescription);
         if (!isSuperAdmin()) {
-            throw WeaverException.newBasic("User is not a a super-admin. %s", opDescription);
+            throw CommonException.newBasic("User is not a a super-admin. %s", opDescription);
         }
     }
 
@@ -720,20 +717,20 @@ public class AuthRequest {
 
     public void assertNotReadOnly(String opDescription) throws Exception {
         if (!isLoggedIn()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "You are not logged in and can not update information. %s", opDescription);
         }
         if (isSuperAdmin()) {
             return;
         }
         if (ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program logic error workspace not set. %s", opDescription);
         }
         if (ngp instanceof NGBook) {
             NGBook site = ((NGBook) ngp);
             if (site.isUnpaidUser(user)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "As a basic user you can not update site. %s", opDescription);
             }
         } else if (ngp instanceof NGWorkspace) {
@@ -741,7 +738,7 @@ public class AuthRequest {
             ngw.assertUpdateWorkspace(user, opDescription);
         }
         if (isReadOnly()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "With read only access you can not update workspace. %s", opDescription);
         }
     }
@@ -757,7 +754,7 @@ public class AuthRequest {
             return true;
         }
         if (!(ngp instanceof NGBook)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: canAccessSite is called when not manipulating a site.");
         }
         return (ngp.primaryOrSecondaryPermission(user));
@@ -857,7 +854,7 @@ public class AuthRequest {
     public void assertNotPost() throws Exception {
         String method = req.getMethod();
         if ("post".equalsIgnoreCase(method)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "this page is being displayed as the result of a POST request, "
                             + "and internal guidelines are that pages should be displayed only in response to GET methods.");
         }
@@ -1087,7 +1084,7 @@ public class AuthRequest {
             return;
         }
 
-        String encoded = URLEncoder.encode(data, "UTF-8");
+        String encoded = UtilityMethods.urlEncode(data);
 
         // here is the problem: URL encoding says that spaces can be encoded using
         // a plus (+) character. But, strangely, sometimes this does not work, either
@@ -1156,13 +1153,19 @@ public class AuthRequest {
      * look and see if it is an attribute of the reuqest that was put there by code doing a server
      * side redirect to the JSP file. If that is not there either, then return the default instead.
      */
-    public String defParam(String paramName, String defaultValue) throws Exception {
+    public String defParam(String paramName, String defaultValue) {
         String val = req.getParameter(paramName);
         if (val != null) {
             // this next line should not be needed, but I have seen this hack recommended
             // in many forums. See setTomcatKludge() above.
             if (needTomcatKludge) {
-                val = new String(val.getBytes("iso-8859-1"), "UTF-8");
+                try {
+                    val = new String(val.getBytes("iso-8859-1"), "UTF-8");
+                } catch (Exception e) {
+                    // ignore, UTF-8 is ALWAYS supported, so this should never happen
+                    CommonException.traceException(
+                            System.out, e, "Impossible exception constructing string");
+                }
             }
             return val;
         }
@@ -1186,20 +1189,20 @@ public class AuthRequest {
      * URLs constricted for redirecting to other pages, this error will not occur. Therefor, there
      * is no need to localize this exception.
      */
-    public String reqParam(String paramName) throws Exception {
+    public String reqParam(String paramName) {
         String val = defParam(paramName, null);
         if (val == null || val.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "A parameter named '%s' is required for page '%s'.",
                     paramName, getRequestURL());
         }
         return val;
     }
 
-    public long reqParamLong(String paramName) throws Exception {
+    public long reqParamLong(String paramName) {
         String val = defParam(paramName, null);
         if (val == null || val.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "A parameter named '%s' is required for page '%s'.",
                     paramName, getRequestURL());
         }
@@ -1210,18 +1213,18 @@ public class AuthRequest {
      * set parameter on the request object, if there is one. AuthDummy does this a little
      * differently
      */
-    public void setParam(String paramName, String paramValue) throws Exception {
+    public void setParam(String paramName, String paramValue) {
         if (req == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Calling setParam on an AuthRequest, but the "
                             + "request object is null!?!?!?");
         }
         req.setAttribute(paramName, paramValue);
     }
 
-    public void setParam(String paramName, long paramValue) throws Exception {
+    public void setParam(String paramName, long paramValue) {
         if (req == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Calling setParam on an AuthRequest, but the "
                             + "request object is null!?!?!?");
         }
@@ -1232,7 +1235,7 @@ public class AuthRequest {
      * Get a parameter with multiple values. Returns an array of strings. if there are no values it
      * returns an empty array of strings.
      */
-    public String[] multiParam(String paramName) throws Exception {
+    public String[] multiParam(String paramName) {
         String[] val = req.getParameterValues(paramName);
         if (val == null) {
             return new String[0];
@@ -1252,7 +1255,7 @@ public class AuthRequest {
         ngsession.addHonoraryMember(ngp.getKey());
     }
 
-    public boolean isSuperAdmin() throws Exception {
+    public boolean isSuperAdmin() {
         if (user == null) {
             // not logged in, so of course you are not super admin
             return false;
@@ -1260,7 +1263,7 @@ public class AuthRequest {
         return isSuperAdmin(user.getKey());
     }
 
-    public boolean isSuperAdmin(String key) throws Exception {
+    public boolean isSuperAdmin(String key) {
         if (key == null) {
             return false;
         }
@@ -1274,58 +1277,58 @@ public class AuthRequest {
 
     // ADDRESSES
 
-    public String getWorkspaceBaseURL(NGContainer ngc) throws Exception {
+    public String getWorkspaceBaseURL(NGContainer ngc) {
         if (ngc instanceof NGWorkspace) {
             return "t/"
-                    + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
+                    + UtilityMethods.urlEncode(((NGWorkspace) ngc).getSiteKey())
                     + "/"
                     + ngc.getKey()
                     + "/";
         }
 
         // for site go to the workspace list
-        return "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8") + "/$/";
+        return "t/" + UtilityMethods.urlEncode(ngc.getKey()) + "/$/";
     }
 
-    public String getResourceURL(NGPageIndex ngpi, String resource) throws Exception {
+    public String getResourceURL(NGPageIndex ngpi, String resource) {
         if (!ngpi.isWorkspace()) {
-            return "t/" + ngpi.containerKey + "/$/" + resource;
+            return "t/" + UtilityMethods.urlEncode(ngpi.containerKey) + "/$/" + resource;
         }
         return "t/"
-                + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")
+                + UtilityMethods.urlEncode(ngpi.wsSiteKey)
                 + "/"
-                + ngpi.containerKey
+                + UtilityMethods.urlEncode(ngpi.containerKey)
                 + "/"
                 + resource;
     }
 
-    public String getResourceURL(NGContainer ngc, String resource) throws Exception {
+    public String getResourceURL(NGContainer ngc, String resource) {
         return getWorkspaceBaseURL(ngc) + resource;
     }
 
-    public String getDefaultURL(NGContainer ngc) throws Exception {
+    public String getDefaultURL(NGContainer ngc) {
         if (ngc instanceof NGWorkspace) {
             return "t/"
-                    + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")
+                    + UtilityMethods.urlEncode(((NGWorkspace) ngc).getSiteKey())
                     + "/"
-                    + ngc.getKey()
+                    + UtilityMethods.urlEncode(ngc.getKey())
                     + "/FrontPage.htm";
         }
 
         // for site go to the workspace list
-        return "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8") + "/$/SiteWorkspaces.htm";
+        return "t/" + UtilityMethods.urlEncode(ngc.getKey()) + "/$/SiteWorkspaces.htm";
     }
 
-    public String getDefaultURL(NGPageIndex ngpi) throws Exception {
+    public String getDefaultURL(NGPageIndex ngpi) {
         if (ngpi.isWorkspace()) {
             return "t/"
-                    + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")
+                    + UtilityMethods.urlEncode(ngpi.wsSiteKey)
                     + "/"
-                    + ngpi.containerKey
+                    + UtilityMethods.urlEncode(ngpi.containerKey)
                     + "/FrontPage.htm";
         }
         // for site go to the workspace list
-        return "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8") + "/$/SiteWorkspaces.htm";
+        return "t/" + UtilityMethods.urlEncode(ngpi.containerKey) + "/$/SiteWorkspaces.htm";
     }
 
     public String getResourceURL(NGContainer ngp, TopicRecord note) throws Exception {
@@ -1339,13 +1342,13 @@ public class AuthRequest {
     public void invokeJSP(String JSPName) throws Exception {
         try {
             if (!JSPName.startsWith("/spring")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "invokeJSP has been called with something OTHER than spring!!!");
             }
             JSPName = "/spring2" + JSPName.substring(7);
             nestingCount++;
             if (nestingCount > 10) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
             }
             String relPath = getRelPathFromCtx();
@@ -1355,7 +1358,7 @@ public class AuthRequest {
             if (rd == null) {
                 // at one point we needed a retPath in here, but now we
                 // don't need it, and I am not sure why....
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
@@ -1367,7 +1370,7 @@ public class AuthRequest {
             w = saveWriter;
             flush();
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to invoke JSP '%s'", e, JSPName);
+            throw CommonException.newWrap("Unable to invoke JSP '%s'", e, JSPName);
         } finally {
             nestingCount--;
         }
@@ -1377,7 +1380,7 @@ public class AuthRequest {
         try {
             nestingCount++;
             if (nestingCount > 10) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Nesting count for JSP has exceeded limit of 10 for %s", JSPName);
             }
             String relPath = getRelPathFromCtx();
@@ -1387,7 +1390,7 @@ public class AuthRequest {
             if (rd == null) {
                 // at one point we needed a retPath in here, but now we
                 // don't need it, and I am not sure why....
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Unable to construct a RequestDispatcher for JSP %s", JSPName);
             }
             Writer saveWriter = w;
@@ -1399,7 +1402,7 @@ public class AuthRequest {
             w = saveWriter;
             flush();
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to invoke RAW JSP '%s'", e, JSPName);
+            throw CommonException.newWrap("Unable to invoke RAW JSP '%s'", e, JSPName);
         } finally {
             nestingCount--;
         }
@@ -1608,11 +1611,11 @@ public class AuthRequest {
 
     public void assertNotFrozen(NGContainer ngc) throws Exception {
         if (ngc == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         if (ngc.isFrozen()) {
-            throw WeaverException.newBasic("Workspace is frozen");
+            throw CommonException.newBasic("Workspace is frozen");
         }
     }
 
@@ -1694,7 +1697,7 @@ public class AuthRequest {
             } else if (ngp instanceof NGBook) {
                 site = (NGBook) ngp;
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "No idea what ngp is at this attempt to findChunkTemplate");
             }
 
@@ -1726,7 +1729,7 @@ public class AuthRequest {
             return stdTemplate;
         }
 
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "The standard chunk template '%s' does not exist!", templateName);
     }
 }

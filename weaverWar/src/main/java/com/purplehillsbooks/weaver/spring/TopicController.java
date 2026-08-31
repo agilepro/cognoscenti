@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AccessControl;
@@ -29,7 +30,6 @@ import com.purplehillsbooks.weaver.HistoryRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -79,7 +79,7 @@ public class TopicController extends BaseController {
             boolean specialAccess = AccessControl.canAccessTopic(ar, ngw, topic);
             showJSPDepending(ar, ngw, "NoteZoom.jsp", specialAccess);
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Failed to open topic page %s in the workspace %s in site %s.",
                     ex, topicId, pageId, siteId);
         }
@@ -121,7 +121,7 @@ public class TopicController extends BaseController {
 
             sendJsonArray(ar, topicList);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to fetch the list of topics", ex);
+            Exception ee = CommonException.newWrap("Unable to fetch the list of topics", ex);
             streamException(ee, ar);
         }
     }
@@ -152,7 +152,7 @@ public class TopicController extends BaseController {
             repo.put("topics", allTopics);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to retrieve discussion topic list", ex);
+            Exception ee = CommonException.newWrap("Unable to retrieve discussion topic list", ex);
             streamException(ee, ar);
         }
     }
@@ -177,7 +177,7 @@ public class TopicController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to get discussion topic (%s) contents from site/workspace: %s/%s",
                             ex, topicId, siteId, pageId);
             streamException(ee, ar);
@@ -207,7 +207,7 @@ public class TopicController extends BaseController {
             releaseLock();
             sendJsonArray(ar, noteArray);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get history for note.", ex);
+            Exception ee = CommonException.newWrap("Unable to get history for note.", ex);
             streamException(ee, ar);
         }
     }
@@ -240,7 +240,7 @@ public class TopicController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to merge-update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
@@ -291,7 +291,7 @@ public class TopicController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update topic (" + nid + ") contents", ex);
+                    CommonException.newWrap("Unable to update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -348,7 +348,7 @@ public class TopicController extends BaseController {
             ar.flush();
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to HTML update topic (" + nid + ") contents", ex);
             streamException(ee, ar);
         }
@@ -417,7 +417,7 @@ public class TopicController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to subscribe to topic " + nid + " contents", ex);
             streamException(ee, ar);
         }
@@ -461,7 +461,7 @@ public class TopicController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to subscribe to topic " + nid + " contents", ex);
             streamException(ee, ar);
         }

@@ -1,9 +1,9 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -123,7 +123,7 @@ public class CommentRecord extends DOMFace {
      * A comment can have a list of users to be notified, and in effect added to the list of people
      * who are notified about a topic or meeting agenda item.
      */
-    public NGRole getNotifyRole() throws Exception {
+    public NGRole getNotifyRole() {
         return requireChild("subscriberRole", CustomRole.class);
     }
 
@@ -180,7 +180,7 @@ public class CommentRecord extends DOMFace {
         return getAttributeLong("postTime");
     }
 
-    public void setPostTime(long newVal) throws Exception {
+    public void setPostTime(long newVal) {
         setAttributeLong("postTime", newVal);
     }
 
@@ -226,15 +226,15 @@ public class CommentRecord extends DOMFace {
         return dueDate;
     }
 
-    public void setDueDate(long newVal) throws Exception {
+    public void setDueDate(long newVal) {
         setAttributeLong("dueDate", newVal);
     }
 
-    public List<ResponseRecord> getResponses() throws Exception {
+    public List<ResponseRecord> getResponses() {
         return getChildren("response", ResponseRecord.class);
     }
 
-    public ResponseRecord getResponse(UserRef user) throws Exception {
+    public ResponseRecord getResponse(UserRef user) {
         for (ResponseRecord rr : getResponses()) {
             if (user.hasAnyId(rr.getUserId())) {
                 return rr;
@@ -243,7 +243,7 @@ public class CommentRecord extends DOMFace {
         return null;
     }
 
-    public ResponseRecord getOrCreateResponse(UserRef user) throws Exception {
+    public ResponseRecord getOrCreateResponse(UserRef user) {
         ResponseRecord rr = getResponse(user);
         if (rr == null) {
             rr = createChild("response", ResponseRecord.class);
@@ -252,7 +252,7 @@ public class CommentRecord extends DOMFace {
         return rr;
     }
 
-    public void removeResponse(UserRef user) throws Exception {
+    public void removeResponse(UserRef user) {
         this.removeChildrenByNameAttrVal("response", "uid", user.getUniversalId());
     }
 
@@ -437,15 +437,15 @@ public class CommentRecord extends DOMFace {
         setAttributeBool("closeEmailSent", newVal);
     }
 
-    public List<String> getDocList() throws Exception {
+    public List<String> getDocList() {
         return getVector("docList");
     }
 
-    public void setDocList(List<String> newVal) throws Exception {
+    public void setDocList(List<String> newVal) {
         setVector("docList", newVal);
     }
 
-    public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) throws Exception {
+    public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) {
         return ngw.getListedAttachments(getDocList());
     }
 
@@ -509,7 +509,7 @@ public class CommentRecord extends DOMFace {
             setPostTime(ar.nowTime);
             noteOrMeet.markTimestamp(ar.nowTime);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to compose email for comment #%d in %s in workspace %s",
                     e, this.getTime(), noteOrMeet.selfDescription(), ngw.getFullName());
         }
@@ -558,7 +558,7 @@ public class CommentRecord extends DOMFace {
 
         // this is needed for the HTML conversion.
         if (ngw == null) {
-            throw WeaverException.newBasic("constructEmailRecordOneUser requires NGP non null");
+            throw CommonException.newBasic("constructEmailRecordOneUser requires NGP non null");
         }
         clone.ngp = ngw;
 
@@ -606,7 +606,7 @@ public class CommentRecord extends DOMFace {
                 mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         AddressListEntry ale = getUser();
         UserProfile up = ale.getUserProfile();
         String userKey = up.getKey();
@@ -639,7 +639,7 @@ public class CommentRecord extends DOMFace {
         return commInfo;
     }
 
-    public JSONObject getCompleteJSON() throws Exception {
+    public JSONObject getCompleteJSON() {
         JSONObject commInfo = getJSON();
         commInfo.put("containerName", containerName);
         commInfo.put("body", getContent());
@@ -655,7 +655,7 @@ public class CommentRecord extends DOMFace {
         return commInfo;
     }
 
-    public JSONObject getJSONWithDocs(NGWorkspace ngw) throws Exception {
+    public JSONObject getJSONWithDocs(NGWorkspace ngw) {
         JSONObject commInfo = getCompleteJSON();
         JSONArray fullDocArray = new JSONArray();
         for (AttachmentRecord doc : getAttachedDocs(ngw)) {
@@ -665,7 +665,7 @@ public class CommentRecord extends DOMFace {
         return commInfo;
     }
 
-    public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
+    public void updateFromJSON(JSONObject input, AuthRequest ar) {
         NGWorkspace ngw = (NGWorkspace) ar.ngp;
 
         if (input.has("body")) {
@@ -749,7 +749,7 @@ public class CommentRecord extends DOMFace {
             } else {
                 // the state should have been set at the same time, so this should never
                 // happen, but testing here to make sure.
-                throw WeaverException.newBasic("No able to resendEmail in state = " + getState());
+                throw CommonException.newBasic("No able to resendEmail in state = " + getState());
             }
         }
     }

@@ -5,10 +5,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,7 @@ public class RoleDefinitionFile {
     public RoleDefinition findRoleDefOrFail(String symbol) {
         RoleDefinition rd = findRoleDef(symbol);
         if (rd == null) {
-            throw WeaverException.newBasic("There is no role definition named (%s)", symbol);
+            throw CommonException.newBasic("There is no role definition named (%s)", symbol);
         }
         return rd;
     }

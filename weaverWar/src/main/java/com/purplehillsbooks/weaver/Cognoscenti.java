@@ -1,8 +1,8 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.api.IconServlet;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailListener;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.rest.ServerInitializer;
@@ -281,10 +281,10 @@ public class Cognoscenti {
     public void assertInitialized() throws Exception {
         if (!isInitialized()) {
             if (initializer.lastFailureMsg != null) {
-                throw WeaverException.newWrap(
+                throw CommonException.newWrap(
                         "Weaver server has not initialized correctly", initializer.lastFailureMsg);
             }
-            throw WeaverException.newBasic("Weaver server has never been initialized");
+            throw CommonException.newBasic("Weaver server has never been initialized");
         }
     }
 
@@ -317,7 +317,7 @@ public class Cognoscenti {
         assertInitialized();
         if (key == null) {
             // this programming mistake should never happen
-            throw WeaverException.newBasic("null value passed as key to getSiteByKey");
+            throw CommonException.newBasic("null value passed as key to getSiteByKey");
         }
         return keyToSites.get(key);
     }
@@ -325,7 +325,7 @@ public class Cognoscenti {
     public NGPageIndex getSiteByKeyOrFail(String key) throws Exception {
         NGPageIndex ngpi = getSiteByKey(key);
         if (ngpi == null) {
-            throw WeaverException.newBasic("No site is found with the id %s", key);
+            throw CommonException.newBasic("No site is found with the id %s", key);
         }
         return ngpi;
     }
@@ -333,12 +333,12 @@ public class Cognoscenti {
     public NGPageIndex getWSBySiteAndKey(String siteKey, String key) throws Exception {
         if (siteKey == null) {
             // this programming mistake should never happen
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "null value passed as siteKey to getWorkspaceBySiteAndKey");
         }
         if (key == null) {
             // this programming mistake should never happen
-            throw WeaverException.newBasic("null value passed as key to getWorkspaceBySiteAndKey");
+            throw CommonException.newBasic("null value passed as key to getWorkspaceBySiteAndKey");
         }
         assertInitialized();
         String realKey = siteKey + "|" + key;
@@ -348,7 +348,7 @@ public class Cognoscenti {
     public NGPageIndex getWSBySiteAndKeyOrFail(String siteKey, String key) throws Exception {
         NGPageIndex ngpi = getWSBySiteAndKey(siteKey, key);
         if (ngpi == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to find a workspace with the site (%s) and key (%s)", siteKey, key);
         }
         return ngpi;
@@ -373,7 +373,7 @@ public class Cognoscenti {
     public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
         NGPageIndex ngpi = getWSByCombinedKey(combinedKey);
         if (ngpi == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to find a workspace with the combined key (%s)", combinedKey);
         }
         return ngpi;
@@ -402,7 +402,7 @@ public class Cognoscenti {
 
         NGTerm term = NGTerm.findTerm(pageName);
         if (term == null) {
-            throw WeaverException.newBasic("No workspace can be found for %s", pageName);
+            throw CommonException.newBasic("No workspace can be found for %s", pageName);
         }
         return term.targetLeaves;
     }
@@ -590,7 +590,7 @@ public class Cognoscenti {
     private void reportUnparseableFile(File badFile, Exception eig) {
         AuthRequest dummy = AuthDummy.serverBackgroundRequest();
         Exception wrapper =
-                WeaverException.newWrap(
+                CommonException.newWrap(
                         "Failure reading file during Initialization: " + badFile.toString(), eig);
         dummy.logException("Initialization Loop Continuing After Failure", wrapper);
     }
@@ -661,7 +661,7 @@ public class Cognoscenti {
 
         NGPageIndex bIndex = new NGPageIndex(ngb);
         if (bIndex.containerType == 0) {
-            throw WeaverException.newBasic("uninitialized ngpi.containerType in makeIndex");
+            throw CommonException.newBasic("uninitialized ngpi.containerType in makeIndex");
         }
         allContainers.add(bIndex);
         keyToSites.put(key, bIndex);
@@ -704,7 +704,7 @@ public class Cognoscenti {
 
         NGPageIndex bIndex = new NGPageIndex(ngw);
         if (bIndex.containerType == 0) {
-            throw WeaverException.newBasic("uninitialized ngpi.containerType in makeIndex");
+            throw CommonException.newBasic("uninitialized ngpi.containerType in makeIndex");
         }
         allContainers.add(bIndex);
         keyToWorkspace.put(workspaceKey, bIndex);
@@ -789,7 +789,7 @@ public class Cognoscenti {
 
     public NGPageIndex getParentWorkspace(NGPageIndex child) throws Exception {
         if (!child.isWorkspace()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "You can only get a parent of a workspace, but this is not workspace: %s",
                     child.containerKey);
         }
@@ -799,7 +799,7 @@ public class Cognoscenti {
         }
         String siteKey = child.wsSiteKey;
         if (siteKey == null || siteKey.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not get parent of a workspace is not in a site: %s", child.containerKey);
         }
         if (searchKey != null && searchKey.length() > 0) {
@@ -814,7 +814,7 @@ public class Cognoscenti {
 
     public List<NGPageIndex> getChildWorkspaces(NGPageIndex parent) throws Exception {
         if (!parent.isWorkspace()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "You can only get children of a workspace, but this is not workspace: %s",
                     parent.containerKey);
         }
@@ -822,7 +822,7 @@ public class Cognoscenti {
         String searchKey = parent.containerKey;
         String siteKey = parent.wsSiteKey;
         if (siteKey == null || siteKey.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not get children of a workspace that is not in a site: %s",
                     parent.containerKey);
         }

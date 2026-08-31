@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.io.File;
 import java.util.List;
 import org.w3c.dom.Document;
@@ -53,51 +53,51 @@ public abstract class NGContainer extends DOMFile {
      *
      * <p>Every role must have a unique name within the container.
      */
-    public abstract List<CustomRole> getAllRoles() throws Exception;
+    public abstract List<CustomRole> getAllRoles();
 
     /**
      * Finds and returns the role with the specified name, or null if that role can not be found.
      */
-    public abstract CustomRole getRole(String name) throws Exception;
+    public abstract CustomRole getRole(String name);
 
     /**
      * Finds and returns the role with the specified name. This is 'Failure' version should be used
      * when you know that the role should exist if not found, this will throw a standard message
      * announcing that.
      */
-    public abstract CustomRole getRoleOrFail(String name) throws Exception;
+    public abstract CustomRole getRoleOrFail(String name);
 
-    public abstract CustomRole createRole(String roleName, String description) throws Exception;
+    public abstract CustomRole createRole(String roleName, String description);
 
-    public abstract void deleteRole(String name) throws Exception;
+    public abstract void deleteRole(String name);
 
-    public abstract void addPlayerToRole(String roleName, String newMember) throws Exception;
+    public abstract void addPlayerToRole(String roleName, String newMember);
 
-    public abstract List<NGRole> findRolesOfPlayer(UserRef user) throws Exception;
+    public abstract List<NGRole> findRolesOfPlayer(UserRef user);
 
     ////////////// Other container bookkeeping methods ////////////////////
 
-    public abstract License getLicense(String id) throws Exception;
+    public abstract License getLicense(String id);
 
     public abstract String getFullName();
 
-    public abstract String getUniqueOnPage() throws Exception;
+    public abstract String getUniqueOnPage();
 
     public abstract boolean isDeleted();
 
-    public abstract long getLastModifyTime() throws Exception;
+    public abstract long getLastModifyTime();
 
     public abstract String getContainerName();
 
     /** Primary level permissions are for "participants" of the container. */
-    public boolean primaryPermission(UserRef user) throws Exception {
+    public boolean primaryPermission(UserRef user) {
         if (user == null) {
             return false;
         }
         return getPrimaryRole().isExpandedPlayer(user, this);
     }
 
-    public abstract NGRole getPrimaryRole() throws Exception;
+    public abstract NGRole getPrimaryRole();
 
     /*
      * If you are in the secondary role, you automatically get included in the primary
@@ -114,7 +114,7 @@ public abstract class NGContainer extends DOMFile {
             return true;
         }
         if (this instanceof NGWorkspace) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "NGWorkspace overrides this, so this should never happen");
         }
         return false;
@@ -124,14 +124,14 @@ public abstract class NGContainer extends DOMFile {
      * Secondary level permissions are "owner" permissions for people who own or are majorly
      * responsible for the container.
      */
-    public boolean secondaryPermission(UserRef user) throws Exception {
+    public boolean secondaryPermission(UserRef user) {
         if (user == null) {
-            throw WeaverException.newBasic("secondaryPermission called with null user object.");
+            throw CommonException.newBasic("secondaryPermission called with null user object.");
         }
         return getSecondaryRole().isExpandedPlayer(user, this);
     }
 
-    public abstract NGRole getSecondaryRole() throws Exception;
+    public abstract NGRole getSecondaryRole();
 
     /**
      * The purpose of this, is to generate a unique magic number for any given email id for this

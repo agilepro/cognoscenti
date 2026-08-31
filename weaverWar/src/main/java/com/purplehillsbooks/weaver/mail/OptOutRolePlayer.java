@@ -20,13 +20,13 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
+import com.purplehillsbooks.weaver.UtilityMethods;
 
 /**
  * This is for email messages which are sent to the Super Admin and you really can't opt out of that
@@ -53,7 +53,7 @@ public class OptOutRolePlayer extends OptOutAddr {
     public void writeUnsubscribeLink(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
         if (emailId == null || emailId.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "There is a problem with this addressee, the email field is blank????");
         }
 
@@ -109,13 +109,13 @@ public class OptOutRolePlayer extends OptOutAddr {
                         + "t/EmailAdjustment.htm?pageId="
                         + containerID
                         + "&siteId="
-                        + URLEncoder.encode(ngw.getSiteKey(), "UTF-8")
+                        + UtilityMethods.urlEncode(ngw.getSiteKey())
                         + "&role="
-                        + URLEncoder.encode(roleName, "UTF-8")
+                        + UtilityMethods.urlEncode(roleName)
                         + "&email="
-                        + URLEncoder.encode(emailId, "UTF-8")
+                        + UtilityMethods.urlEncode(emailId)
                         + "&mn="
-                        + URLEncoder.encode(ngw.emailDependentMagicNumber(emailId), "UTF-8"));
+                        + UtilityMethods.urlEncode(ngw.emailDependentMagicNumber(emailId)));
         jo.put("roleName", roleName);
         jo.put("wsBaseURL", ar.baseURL + ar.getWorkspaceBaseURL(ngw));
         jo.put("wsName", ngpi.containerName);

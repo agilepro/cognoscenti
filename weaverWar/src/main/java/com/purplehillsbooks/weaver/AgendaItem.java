@@ -1,8 +1,8 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class AgendaItem extends CommentContainer {
         return getScalar("subject");
     }
 
-    public void setSubject(String newVal) throws Exception {
+    public void setSubject(String newVal) {
         setScalar("subject", newVal);
     }
 
@@ -82,7 +82,7 @@ public class AgendaItem extends CommentContainer {
         return getScalar("desc");
     }
 
-    public void setDesc(String newVal) throws Exception {
+    public void setDesc(String newVal) {
         setScalar("desc", newVal);
     }
 
@@ -102,7 +102,7 @@ public class AgendaItem extends CommentContainer {
         return getAttributeInt("position");
     }
 
-    public void setPosition(int newVal) throws Exception {
+    public void setPosition(int newVal) {
         setAttributeInt("position", newVal);
     }
 
@@ -114,7 +114,7 @@ public class AgendaItem extends CommentContainer {
         return getAttributeInt("number");
     }
 
-    public void setNumber(int newVal) throws Exception {
+    public void setNumber(int newVal) {
         setAttributeInt("number", newVal);
     }
 
@@ -135,11 +135,11 @@ public class AgendaItem extends CommentContainer {
         return this.getVector("topics");
     }
 
-    public void setLinkedTopics(List<String> newVal) throws Exception {
+    public void setLinkedTopics(List<String> newVal) {
         setVector("topics", newVal);
     }
 
-    public void addTopic(NGWorkspace ngw, String id) throws Exception {
+    public void addTopic(NGWorkspace ngw, String id) {
         TopicRecord aRec = ngw.getDiscussionTopic(id);
         if (aRec == null) {
             // nonsense value, so ignore
@@ -156,7 +156,7 @@ public class AgendaItem extends CommentContainer {
         addVectorValue("topics", aRec.getUniversalId());
     }
 
-    public void removeTopic(NGWorkspace ngw, String id) throws Exception {
+    public void removeTopic(NGWorkspace ngw, String id) {
         TopicRecord aRec = ngw.getDiscussionTopic(id);
         if (aRec == null) {
             // nonsense value, so ignore
@@ -175,7 +175,7 @@ public class AgendaItem extends CommentContainer {
         return getAttributeInt("status");
     }
 
-    public void setStatus(int newVal) throws Exception {
+    public void setStatus(int newVal) {
         setAttributeInt("status", newVal);
     }
 
@@ -183,7 +183,7 @@ public class AgendaItem extends CommentContainer {
         return getAttributeBool("readyToGo");
     }
 
-    public void setReadyToGo(boolean newVal) throws Exception {
+    public void setReadyToGo(boolean newVal) {
         setAttributeBool("readyToGo", newVal);
     }
 
@@ -197,31 +197,31 @@ public class AgendaItem extends CommentContainer {
         return getAttributeBool("proposed");
     }
 
-    public List<String> getActionItems() throws Exception {
+    public List<String> getActionItems() {
         return getVector("actionId");
     }
 
-    public void addActionItemId(String goalId) throws Exception {
+    public void addActionItemId(String goalId) {
         this.addVectorValue("actionId", goalId);
     }
 
-    public void setActionItems(List<String> newVal) throws Exception {
+    public void setActionItems(List<String> newVal) {
         setVector("actionId", newVal);
     }
 
-    public List<String> getDocList() throws Exception {
+    public List<String> getDocList() {
         return getVector("docList");
     }
 
-    public void addDocId(String goalId) throws Exception {
+    public void addDocId(String goalId) {
         this.addVectorValue("docList", goalId);
     }
 
-    public void setDocList(List<String> newVal) throws Exception {
+    public void setDocList(List<String> newVal) {
         setVector("docList", newVal);
     }
 
-    public List<String> getDocListIncludeComments() throws Exception {
+    public List<String> getDocListIncludeComments() {
         List<String> allDocList = new ArrayList<String>();
         for (String docId : getDocList()) {
             if (!allDocList.contains(docId)) {
@@ -238,7 +238,7 @@ public class AgendaItem extends CommentContainer {
         return allDocList;
     }
 
-    public List<AddressListEntry> getPresenters() throws Exception {
+    public List<AddressListEntry> getPresenters() {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (String email : getVector("presenters")) {
             res.add(AddressListEntry.findOrCreate(email));
@@ -246,11 +246,11 @@ public class AgendaItem extends CommentContainer {
         return res;
     }
 
-    public void setPresenters(List<String> newVal) throws Exception {
+    public void setPresenters(List<String> newVal) {
         // check that this is a list of email addresses.
         for (String email : newVal) {
             if (!UserManager.isValidEmailAddress(email)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Presenter must be a proper email address: %s", email);
             }
         }
@@ -285,8 +285,7 @@ public class AgendaItem extends CommentContainer {
 
     /** full JSON representation including all comments, etc. */
     public JSONObject getJSON(
-            AuthRequest ar, NGWorkspace ngw, MeetingRecord meet, boolean allComments)
-            throws Exception {
+            AuthRequest ar, NGWorkspace ngw, MeetingRecord meet, boolean allComments) {
 
         JSONObject aiInfo = new JSONObject();
         extractScalarString(aiInfo, "subject");

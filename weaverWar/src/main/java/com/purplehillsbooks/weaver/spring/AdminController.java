@@ -20,11 +20,11 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -62,7 +62,7 @@ public class AdminController extends BaseController {
             JSONObject repo = ngw.getConfigJSON();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update project information.", ex);
+            Exception ee = CommonException.newWrap("Unable to update project information.", ex);
             streamException(ee, ar);
         }
     }
@@ -100,7 +100,7 @@ public class AdminController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable change workspace name for '%s'", ex, pageId);
+                    CommonException.newWrap("Unable change workspace name for '%s'", ex, pageId);
             streamException(ee, ar);
         }
     }
@@ -116,10 +116,10 @@ public class AdminController extends BaseController {
             HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "deleteWorkspaceName is no longer implemented, no longer needed");
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to save new name.", ex);
+            Exception ee = CommonException.newWrap("Unable to save new name.", ex);
             streamException(ee, ar);
         }
     }
@@ -149,7 +149,7 @@ public class AdminController extends BaseController {
             JSONObject repo = site.getConfigJSON();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update site information.", ex);
+            Exception ee = CommonException.newWrap("Unable to update site information.", ex);
             streamException(ee, ar);
         }
     }

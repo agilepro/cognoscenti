@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver.util;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import jakarta.activation.FileTypeMap;
 import jakarta.activation.MimetypesFileTypeMap;
 import java.io.File;
@@ -118,7 +118,7 @@ public class MimeTypes {
             extensionMap = tprops;
             javaSysMimeMap = MimetypesFileTypeMap.getDefaultFileTypeMap();
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to initialize the Mime-Type mapping class from the file '%s'.",
                     e, mapFile.getAbsoluteFile());
         }

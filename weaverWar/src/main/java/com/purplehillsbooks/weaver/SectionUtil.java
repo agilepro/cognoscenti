@@ -20,10 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -66,7 +65,7 @@ public class SectionUtil {
 
         String encoded = null;
         try {
-            encoded = URLEncoder.encode(in, "UTF-8");
+            encoded = UtilityMethods.urlEncode(in);
         } catch (Exception uee) {
             // it really is not conceivable that UTF-8 is not a
             // supported encoding.  Just not possible.
@@ -412,7 +411,7 @@ public class SectionUtil {
             return cal.getTimeInMillis();
         }
         if (slash1 == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error parsing date value.  Date must be in the format of MM/DD/YYYY.  No month value found");
         }
         month = DOMFace.safeConvertInt(dateImage.substring(0, slash1)) - 1;
@@ -425,7 +424,7 @@ public class SectionUtil {
             return cal.getTimeInMillis();
         }
         if (slash2 == slash1 + 1) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error parsing date value.  Date must be in the format of MM/DD/YYYY. No day value found.");
         }
         day = DOMFace.safeConvertInt(dateImage.substring(slash1 + 1, slash2));
@@ -447,13 +446,13 @@ public class SectionUtil {
      * Walk through whatever elements this owns and put all the four digit IDs into the vector so
      * that we can generate another ID and assure it does not duplication any id found here.
      */
-    public void findIDs(List<String> v, NGSection sec) throws Exception {
+    public void findIDs(List<String> v, NGSection sec) {
         // default behavior ... do nothing
     }
 
     public TopicRecord convertToLeaflet(NGSection noteSection, NGSection wikiSection)
             throws Exception {
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "convertToLeaflet is not implemented on this section format");
     }
 

@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -80,7 +80,7 @@ public class ProcessRecord extends BaseRecord {
      * context path
      *
      * <p>public LicensedURL getWfxmlLink(AuthRequest ar) throws Exception { NGContainer ngp =
-     * ar.ngp; if (ngp==null) { throw WeaverException.newBasic("the NGWorkspace must be loaded into
+     * ar.ngp; if (ngp==null) { throw CommonException.newBasic("the NGWorkspace must be loaded into
      * the AuthRequest for getWfxmlLink to work"); } return new LicensedURL( ar.baseURL + "p/" +
      * ngp.getKey() + "/process.xml", ngp.getKey(), accessLicense().getId()); }
      */
@@ -111,7 +111,7 @@ public class ProcessRecord extends BaseRecord {
 
     public void setLicensedParents(LicensedURL[] parentProcesses) throws Exception {
         if (parentProcesses == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "null value passed to setLicensedParents, this should never happen");
         }
 
@@ -128,7 +128,7 @@ public class ProcessRecord extends BaseRecord {
 
     public void addLicensedParent(LicensedURL newParent) throws Exception {
         if (newParent == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "null value passed to addLicensedParent, this should never happen");
         }
 

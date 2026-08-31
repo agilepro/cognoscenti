@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutSuperAdmin;
 import java.io.File;
@@ -101,7 +101,7 @@ public class UserManager {
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
         if (!userFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "The user folder does not exist.  To protect against errors you need to create the folder: %s",
                     userFolder.getAbsolutePath());
         }
@@ -282,7 +282,7 @@ public class UserManager {
                         System.out.println("USER1: " + up.getJSON().toString(2));
                         System.out.println("USER2: " + otherProfile.getJSON().toString(2));
                     } catch (Exception e) {
-                        WeaverException.traceException(
+                        CommonException.traceException(
                                 System.out,
                                 e,
                                 "USERS: failed to report problem with email address ("
@@ -322,10 +322,10 @@ public class UserManager {
         return userHashByKey.get(key);
     }
 
-    public static synchronized UserProfile getUserProfileOrFail(String key) throws Exception {
+    public static synchronized UserProfile getUserProfileOrFail(String key) {
         UserProfile up = getUserProfileByKey(key);
         if (up == null) {
-            throw WeaverException.newBasic("Can not find a user profile for the key: %s", key);
+            throw CommonException.newBasic("Can not find a user profile for the key: %s", key);
         }
         return up;
     }
@@ -385,7 +385,7 @@ public class UserManager {
     public synchronized UserProfile createUserWithId(String newId) throws Exception {
         System.out.println("GLOBAL USERS: adding a user with id: " + newId);
         if (lookupUserByAnyId(newId) != null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not create a new user profile using an address that some other profile already has: "
                             + newId);
         }
@@ -448,7 +448,7 @@ public class UserManager {
             }
         }
         if (sendTo.size() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Either there is no Super Admin in the System or system doesn't have profile for super admin.");
         }
         return sendTo;
@@ -456,7 +456,7 @@ public class UserManager {
 
     public synchronized UserPage findOrCreateUserPage(String userKey) throws Exception {
         if (userKey == null || userKey.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program logic error: findOrCreateUserPage needs a non-null user key");
         }
         File userFolder = cog.getConfig().getUserFolderOrFail();

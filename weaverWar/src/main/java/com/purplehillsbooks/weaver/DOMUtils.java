@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.xml.Mel;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -310,7 +310,7 @@ public class DOMUtils {
             }
             return nodeList;
         } catch (Exception e) {
-            throw WeaverException.newWrap("Error while searching data file for node (%s)", e, expr);
+            throw CommonException.newWrap("Error while searching data file for node (%s)", e, expr);
         }
     }
 

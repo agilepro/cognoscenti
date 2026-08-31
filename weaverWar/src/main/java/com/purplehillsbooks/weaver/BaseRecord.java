@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -62,13 +62,13 @@ public class BaseRecord extends DOMFace {
         return getAttribute("id");
     }
 
-    public void setId(String newVal) throws Exception {
+    public void setId(String newVal) {
         if (newVal.length() != 4) {
-            throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
+            throw CommonException.newBasic("Id is not allowed:  %s", newVal);
         }
         for (int i = 0; i < 4; i++) {
             if (newVal.charAt(i) < '0' || newVal.charAt(i) > '9') {
-                throw WeaverException.newBasic("Id is not allowed:  %s", newVal);
+                throw CommonException.newBasic("Id is not allowed:  %s", newVal);
             }
         }
         setAttribute("id", newVal);
@@ -111,7 +111,7 @@ public class BaseRecord extends DOMFace {
         return getScalarLong("dueDate");
     }
 
-    public void setDueDate(long newVal) throws Exception{
+    public void setDueDate(long newVal) throws Exception {
         setScalarLong("dueDate", newVal);
     }
 
@@ -139,7 +139,7 @@ public class BaseRecord extends DOMFace {
         setScalar("priority", Integer.toString(newVal));
     }
 
-    public long getDuration() throws Exception {
+    public long getDuration() {
         return getScalarLong("duration");
     }
 
@@ -268,13 +268,13 @@ public class BaseRecord extends DOMFace {
      * record are immediately reflected into the document. Older files will have inappropriately
      * formed licenses, and existing must be converted to the appropriate form.
      */
-    public LicenseRecord accessLicense() throws Exception {
+    public LicenseRecord accessLicense() {
         assureLicenseIsCorrectFormat();
         return getChild("license", LicenseRecord.class);
     }
 
     // TODO: can be removed when oldest data page is after Feb 2010
-    private void assureLicenseIsCorrectFormat() throws Exception {
+    private void assureLicenseIsCorrectFormat() {
         // this is special code for converting and upgrading files to a new format
         // this use of DOM Utils should be eliminated after migrating all existing documents.
         Element licEle = DOMUtils.getChildElement(fEle, "license");

@@ -1,10 +1,10 @@
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AuthRequest;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.x5.template.Chunk;
 import com.x5.template.ContentSource;
 import com.x5.template.Theme;
@@ -103,7 +103,7 @@ public class ChunkTemplate {
     public static void streamIt(Writer w, File templateFile, JSONObject data, Calendar cal)
             throws Exception {
         if (!templateFile.exists()) {
-            throw WeaverException.newBasic("The template file is missing: %s", templateFile);
+            throw CommonException.newBasic("The template file is missing: %s", templateFile);
         }
         String fileName = templateFile.getName();
         if (fileName.toLowerCase().endsWith(".chtml")) {

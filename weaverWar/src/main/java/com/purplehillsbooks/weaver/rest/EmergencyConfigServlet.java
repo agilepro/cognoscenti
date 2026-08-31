@@ -20,14 +20,13 @@
 
 package com.purplehillsbooks.weaver.rest;
 
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
 import com.purplehillsbooks.temps.TemplateJSONRetriever;
 import com.purplehillsbooks.temps.TemplateStreamer;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.HttpServletResponseWithoutBug;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -166,7 +165,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
             if (go == null) {
                 // accessing without a go parameter might be an attempt to crawl all the pages
                 // and this is simply an error.
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Emergency config page needs a 'go' parameter, none found.");
             }
 
@@ -235,11 +234,12 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
         Exception ex = cog.initializer.lastFailureMsg;
 
         if (ex != null) {
-            jo.put("exception", JSONException.convertToJSON(ex, ""));
+            jo.put("exception", CommonException.getJsonMapForLog(ex));
         } else {
             jo.put(
                     "exception",
-                    JSONException.convertToJSON(new Exception("No exception recorded."), ""));
+                    CommonException.getJsonMapForLog(
+                            CommonException.newBasic("No exception recorded.")));
         }
 
         jo.put("serverState", cog.initializer.getServerStateString());
@@ -343,7 +343,7 @@ public class EmergencyConfigServlet extends jakarta.servlet.http.HttpServlet {
 
         String option = req.getParameter("option");
         if (option == null) {
-            throw WeaverException.newBasic("Post to config servlet must have an option parameter");
+            throw CommonException.newBasic("Post to config servlet must have an option parameter");
         }
 
         if (option.equals("Pause the Server")) {

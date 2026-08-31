@@ -1,6 +1,6 @@
 <%@page errorPage="/spring2/jsp/error.jsp"
 %><%@page import="com.purplehillsbooks.weaver.mail.EmailListener"
-%><%@page import="com.purplehillsbooks.weaver.exception.WeaverException"
+%><%@page import="com.purplehillsbooks.exception.CommonException"
 %><%@page import="java.util.Set"
 %><%@ include file="/include.jsp"
 %><%
@@ -79,7 +79,7 @@ myApp.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td>Last Email Error</td>
                 <td><pre><% if (EmailSender.lastEmailSendFailure!=null) { 
-                    WeaverException.traceException(out,EmailSender.lastEmailSendFailure, "EMAIL FAILURE"); }
+                    CommonException.traceException(out,EmailSender.lastEmailSendFailure, "EMAIL FAILURE"); }
                 %></pre></td>
             </tr>
         </table>

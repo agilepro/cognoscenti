@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,11 +36,11 @@ public class NGSection extends DOMFace {
         // make sure that these members are present, a lot of logic requres them
         // to be there.
         if (e == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "someone created a section object, but passed null for element");
         }
         if (p == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "someone created a section object, but passed null for page object");
         }
 
@@ -50,7 +50,7 @@ public class NGSection extends DOMFace {
         if (sectionName == null || sectionName.length() == 0) {
             // Sections must be constructed with a name value specified in advance.
             // because sections are identified by name.  Only one section per name allowed.
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Section tag MUST have an attribute 'name' with a valid value.");
         }
         def = SectionDef.getDefByName(sectionName);
@@ -62,11 +62,11 @@ public class NGSection extends DOMFace {
         // just checking here for correctness
         String myName = getAttribute("name");
         if (myName == null) {
-            throw WeaverException.newBasic("Somehow the name is null on this section");
+            throw CommonException.newBasic("Somehow the name is null on this section");
         }
         String defName = def.getTypeName();
         if (!myName.equals(defName)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Was not able to find the right definition for '"
                             + myName
                             + "' and got '"
@@ -78,7 +78,7 @@ public class NGSection extends DOMFace {
     public String getName() throws Exception {
         String name = getAttribute("name");
         if (name == null) {
-            throw WeaverException.newBasic("Somehow the name is null on this section");
+            throw CommonException.newBasic("Somehow the name is null on this section");
         }
         assertNameIsConsistent();
         return name;
@@ -107,7 +107,7 @@ public class NGSection extends DOMFace {
     /** Set the 'value' of this section as text. Only for simple wiki value sections */
     public void setText(String textValue, AuthRequest ar) throws Exception {
         if (fEle == null) {
-            throw WeaverException.newBasic("Why is the fEle variable null?????");
+            throw CommonException.newBasic("Why is the fEle variable null?????");
         }
 
         setScalar("wiki", textValue);
@@ -147,7 +147,7 @@ public class NGSection extends DOMFace {
      * What through whatever elements this owns and put all the four digit IDs into the vector so
      * that we can generate another ID and assure it does not duplication any id found here.
      */
-    public void findIDs(List<String> v) throws Exception {
+    public void findIDs(List<String> v) {
         def.format.findIDs(v, this);
     }
 }

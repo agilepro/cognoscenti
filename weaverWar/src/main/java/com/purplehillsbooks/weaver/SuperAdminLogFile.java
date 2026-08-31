@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.io.File;
 import org.w3c.dom.Document;
 
@@ -38,13 +38,13 @@ public class SuperAdminLogFile extends DOMFile {
         requireChild("events", DOMFace.class);
     }
 
-    public static SuperAdminLogFile getInstance(Cognoscenti cog) throws Exception {
+    public static SuperAdminLogFile getInstance(Cognoscenti cog) {
         File superAdminFile = new File(cog.getConfig().getUserFolderOrFail(), "SuperAdminInfo.xml");
         try {
             Document newDoc = readOrCreateFile(superAdminFile, "super-admin");
             return new SuperAdminLogFile(superAdminFile, newDoc);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to load the SuperAdminLogFile from %s",
                     e, superAdminFile.getAbsolutePath());
         }
@@ -54,7 +54,7 @@ public class SuperAdminLogFile extends DOMFile {
             throws Exception {
 
         if (objectId == null || modUser == null || context == null || context.equals("")) {
-            throw WeaverException.newBasic("parameter is required to log an event for Super Admin");
+            throw CommonException.newBasic("parameter is required to log an event for Super Admin");
         }
 
         AdminEvent newEvent = getEventsParent().createChild("event", AdminEvent.class);
@@ -71,11 +71,11 @@ public class SuperAdminLogFile extends DOMFile {
         save();
     }
 
-    public long getLastNotificationSentTime() throws Exception {
+    public long getLastNotificationSentTime() {
         return getScalarLong("lastnotificationsenttime");
     }
 
-    public String getSendLog() throws Exception {
+    public String getSendLog() {
         return getScalar("lastSendLog");
     }
 
@@ -96,11 +96,11 @@ public class SuperAdminLogFile extends DOMFile {
     }
 
     public void setEmailListenerProblem(Throwable ex) throws Exception {
-        setScalar("emailListenerProblem", WeaverException.getFullMessage(ex));
+        setScalar("emailListenerProblem", CommonException.getFullMessage(ex));
         save();
     }
 
-    public boolean getEmailListenerWorking() throws Exception {
+    public boolean getEmailListenerWorking() {
         boolean emailListenerPropertiesFlag = false;
         String flag = getScalar("emailListenerPropertiesFlag");
         if (flag != null && flag.length() > 0 && "true".equals(flag)) {

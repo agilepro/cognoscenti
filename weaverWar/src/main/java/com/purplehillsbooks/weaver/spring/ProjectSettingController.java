@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AccessControl;
@@ -39,7 +40,6 @@ import com.purplehillsbooks.weaver.RoleRequestRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.WorkspaceRole;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailGenerator;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -351,7 +351,7 @@ public class ProjectSettingController extends BaseController {
                 ngw.getMuteRole().removePlayerCompletely(up);
                 ngw.save(); // just save flag, don't mark workspace as changed
             } else {
-                throw WeaverException.newBasic("Unable to understand the operation %s", op);
+                throw CommonException.newBasic("Unable to understand the operation %s", op);
             }
 
             JSONObject repo = new JSONObject();
@@ -359,7 +359,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to update the user setting for `%s` on workspace `%s`",
                             ex, op, pageId);
             streamException(ee, ar);
@@ -387,7 +387,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to update user setting for workspace " + pageId, ex);
             streamException(ee, ar);
         }
@@ -461,7 +461,7 @@ public class ProjectSettingController extends BaseController {
                     rrr.setCompleted(true);
                 }
             } else {
-                throw WeaverException.newBasic("Unable to understand the operation %s", op);
+                throw CommonException.newBasic("Unable to understand the operation %s", op);
             }
 
             ngw.getSite().flushUserCache(); // calculate the users again
@@ -475,7 +475,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to update the user setting for "
                                     + op
                                     + " on role "
@@ -492,7 +492,7 @@ public class ProjectSettingController extends BaseController {
         Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
         if (up == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: only logged in users can request to join a role, and got such a request when there appears to be nobody logged in");
         }
 
@@ -558,7 +558,7 @@ public class ProjectSettingController extends BaseController {
             boolean canAccess = AccessControl.canAccessRoleRequest(ar, ngw, rrr);
 
             if (!canAccess) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Unable to access that RoleRequestRecord.  You might need to be logged in.");
             }
 
@@ -571,7 +571,7 @@ public class ProjectSettingController extends BaseController {
                 rrr.setState("Rejected");
                 rrr.setCompleted(true);
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "roleRequestResolution doesn't understand the request for %s", op);
             }
 
@@ -587,7 +587,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to update the user setting for "
                                     + op
                                     + " on role "
@@ -709,7 +709,7 @@ public class ProjectSettingController extends BaseController {
             }
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to '" + op + "' the role.", ex);
+            Exception ee = CommonException.newWrap("Unable to '" + op + "' the role.", ex);
             streamException(ee, ar);
         }
     }
@@ -731,7 +731,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, res);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to get roleDefinitions from the workspace.", ex);
             streamException(ee, ar);
         }
@@ -752,7 +752,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, res);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to get all labels from the workspace.", ex);
+                    CommonException.newWrap("Unable to get all labels from the workspace.", ex);
             streamException(ee, ar);
         }
     }
@@ -775,7 +775,7 @@ public class ProjectSettingController extends BaseController {
 
             NGRole role = ngc.getRole(roleName);
             if (role == null) {
-                throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
+                throw CommonException.newBasic("Can not file a role named '%s'", roleName);
             }
             boolean isPlayer = role.isExpandedPlayer(ar.getUserProfile(), ngc);
 
@@ -783,7 +783,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to determine if user is player of role '" + roleName, ex);
             streamException(ee, ar);
         }
@@ -808,7 +808,7 @@ public class ProjectSettingController extends BaseController {
 
             NGRole role = ngc.getRole(roleName);
             if (role == null) {
-                throw WeaverException.newBasic("Can not file a role named '%s'", roleName);
+                throw CommonException.newBasic("Can not file a role named '%s'", roleName);
             }
             ar.getCogInstance().getUserManager();
             AddressListEntry ale = UserManager.findUserByAnyIdOrFail(uid).getAddressListEntry();
@@ -819,7 +819,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to assure user is player of role `%s`", ex, roleName);
             streamException(ee, ar);
         }
@@ -883,7 +883,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = eGen.getJSON(ar, ngw);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update Email Generator " + id, ex);
+            Exception ee = CommonException.newWrap("Unable to update Email Generator " + id, ex);
             streamException(ee, ar);
         }
     }
@@ -937,7 +937,7 @@ public class ProjectSettingController extends BaseController {
 
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to render the email message " + id, ex);
+            Exception ee = CommonException.newWrap("Unable to render the email message " + id, ex);
             streamException(ee, ar);
         }
     }
@@ -963,7 +963,7 @@ public class ProjectSettingController extends BaseController {
 
             sendJson(ar, ret);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to supply all labels.", ex);
+            Exception ee = CommonException.newWrap("Unable to supply all labels.", ex);
             streamException(ee, ar);
         }
     }
@@ -991,7 +991,7 @@ public class ProjectSettingController extends BaseController {
                 NGLabel other = ngw.getLabelRecordOrNull(editedName);
                 if (label == null) {
                     if (other != null) {
-                        throw WeaverException.newBasic(
+                        throw CommonException.newBasic(
                                 "Cannot create label '%s' because a label already exists with that name.",
                                 editedName);
                     }
@@ -999,7 +999,7 @@ public class ProjectSettingController extends BaseController {
                 } else {
                     if (!editedName.equals(labelName)) {
                         if (other != null) {
-                            throw WeaverException.newBasic(
+                            throw CommonException.newBasic(
                                     "Cannot change label '%s' to '%s' because a label already exists with that name.",
                                     labelName, editedName);
                         }
@@ -1017,7 +1017,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = label.getJSON();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to modify " + op + " label.", ex);
+            Exception ee = CommonException.newWrap("Unable to modify " + op + " label.", ex);
             streamException(ee, ar);
         }
     }
@@ -1060,7 +1060,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("list", newLabelsCreated);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to modify " + op + " label.", ex);
+            Exception ee = CommonException.newWrap("Unable to modify " + op + " label.", ex);
             streamException(ee, ar);
         }
     }
@@ -1085,7 +1085,7 @@ public class ProjectSettingController extends BaseController {
 
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -1110,7 +1110,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("invitations", shareList);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get the list of invitations ", ex);
+            Exception ee = CommonException.newWrap("Unable to get the list of invitations ", ex);
             streamException(ee, ar);
         }
     }
@@ -1132,7 +1132,7 @@ public class ProjectSettingController extends BaseController {
 
             // posted object MUST have a ss field in it to work
             if (!posted.has("ss")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
             }
 
@@ -1154,7 +1154,7 @@ public class ProjectSettingController extends BaseController {
                 }
             }
             if (!found) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Can not find a role named '"
                                 + roleName
                                 + "' in the workspace "
@@ -1169,7 +1169,7 @@ public class ProjectSettingController extends BaseController {
             ngw.saveFile(ar, "Created a inviation to join workspace");
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update an invitation", ex);
+            Exception ee = CommonException.newWrap("Unable to update an invitation", ex);
             streamException(ee, ar);
         }
     }

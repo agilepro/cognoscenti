@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.List;
 
 public class SectionForNotes extends SectionUtil implements SectionFormat {
@@ -89,7 +89,7 @@ public class SectionForNotes extends SectionUtil implements SectionFormat {
         SectionDef def = wikiSection.def;
         SectionFormat sf = def.format;
         if (sf != this) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Method convertToLeaflet must be called on the format object for the section being converted");
         }
         for (TopicRecord cr : getAllNotesInSection(wikiSection)) {

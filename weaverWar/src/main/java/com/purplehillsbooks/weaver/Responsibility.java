@@ -48,7 +48,7 @@ public class Responsibility extends DOMFace {
         setAttribute("key", newKey);
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "key");
         extractScalarString(jObj, "text");

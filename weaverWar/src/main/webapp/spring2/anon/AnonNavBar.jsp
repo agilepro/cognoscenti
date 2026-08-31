@@ -1,7 +1,7 @@
 <%
     String identityProvider = ar.getSystemProperty("identityProvider");
     String otherPath = ar.getCompleteURL();
-    String loginLink = identityProvider+"?openid.mode=quick&go="+URLEncoder.encode(otherPath, "UTF-8");
+    String loginLink = identityProvider+"?openid.mode=quick&go="+UtilityMethods.urlEncode(otherPath);
 %> 
 
 

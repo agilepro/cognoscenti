@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -28,7 +29,6 @@ import com.purplehillsbooks.weaver.AttachmentRecord;
 import com.purplehillsbooks.weaver.AttachmentVersion;
 import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class EmailRecord extends DOMFace {
         setAttribute("fromAddress", fromAddress);
     }
 
-    public List<OptOutAddr> getAddressees() throws Exception {
+    public List<OptOutAddr> getAddressees() {
         List<DOMFace> children = getChildren("to", DOMFace.class);
 
         ArrayList<OptOutAddr> res = new ArrayList<OptOutAddr>();
@@ -233,7 +233,7 @@ public class EmailRecord extends DOMFace {
     }
 
     public void setExceptionMessage(Exception e) {
-        setScalar("exception", WeaverException.getFullMessage(e));
+        setScalar("exception", CommonException.getFullMessage(e));
     }
 
     public List<String> getAttachmentIds() {
@@ -287,7 +287,7 @@ public class EmailRecord extends DOMFace {
      */
     public File getAttachPath(String attId) throws Exception {
         if (attachmentPaths == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "EmailRecord object has not been prepared for sending, and so can not return attachment paths.");
         }
         return attachmentPaths.get(attId);
@@ -300,7 +300,7 @@ public class EmailRecord extends DOMFace {
      */
     public MemFile getAttachContents(String attId) throws Exception {
         if (attachmentContents == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "EmailRecord object has not been prepared for sending, and so can not return attachment contents.");
         }
         MemFile mf = attachmentContents.get(attId);
@@ -310,7 +310,7 @@ public class EmailRecord extends DOMFace {
         return mf;
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject obj = new JSONObject();
         obj.put("from", getFromAddress());
         obj.put("subject", getSubject());

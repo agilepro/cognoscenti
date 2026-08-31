@@ -50,7 +50,7 @@ public class LabelRecord extends DOMFace implements NGLabel {
         setAttribute("color", color);
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         jObj.put("color", getColor());

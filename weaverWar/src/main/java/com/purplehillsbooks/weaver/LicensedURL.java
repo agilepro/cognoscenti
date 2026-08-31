@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 
 /**
  * This convenience class carries a URL, a username and a token, with the idea that you will use the
@@ -61,13 +61,13 @@ public class LicensedURL {
     }
 
     /** Adds the standard license parameter to the end of the URL. */
-    public String getCombinedRepresentation() throws Exception {
+    public String getCombinedRepresentation() {
         if (url == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "LicensedURL has a null url value, that is not allowed.");
         }
         if (url.length() < 6) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "getCombinedRepresentation does not know how to handle url: " + url);
         }
         int pos = url.indexOf('?');
@@ -91,11 +91,11 @@ public class LicensedURL {
      */
     public String getCombinedRepresentationOLD() throws Exception {
         if (url == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "LicensedURL has a null url value, that is not allowed.");
         }
         if (url.length() < 6) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "getCombinedRepresentation does not know how to handle url: " + url);
         }
         StringBuilder res = new StringBuilder();
@@ -107,7 +107,7 @@ public class LicensedURL {
             res.append("https://");
             pos = 8;
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "getCobinedSub can only handle complete http URLs at this point.  Does not know how to handle "
                             + url);
         }
@@ -129,7 +129,7 @@ public class LicensedURL {
             pos = newVal.indexOf("?lic=");
         }
         if (pos < 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "can not parse this combined URL because no 'lic' parameter found");
         }
         int endPos = newVal.indexOf('&', pos + 5);
@@ -159,7 +159,7 @@ public class LicensedURL {
             res.append("https://");
             pos = 8;
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "setCombinedSub can only handle complete http URLs at this point.  Does not know how to handle "
                             + newVal);
         }

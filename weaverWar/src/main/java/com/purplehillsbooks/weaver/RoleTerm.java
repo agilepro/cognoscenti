@@ -67,7 +67,7 @@ public class RoleTerm extends DOMFace {
         setAttribute("key", newKey);
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception {
+    public List<AddressListEntry> getDirectPlayers() {
         ArrayList<AddressListEntry> playerList = new ArrayList<AddressListEntry>();
         List<String> players = getVector("players");
         for (String player : players) {
@@ -79,11 +79,11 @@ public class RoleTerm extends DOMFace {
         return playerList;
     }
 
-    public void addPlayer(AddressListEntry newMember) throws Exception {
+    public void addPlayer(AddressListEntry newMember) {
         addVectorValue("players", newMember.getUniversalId());
     }
 
-    public void removePlayer(AddressListEntry oldMember) throws Exception {
+    public void removePlayer(AddressListEntry oldMember) {
         String whichId = oldMember.getUniversalId();
         UserProfile up = oldMember.getUserProfile();
         List<Element> children = getNamedChildrenVector("players");
@@ -97,7 +97,7 @@ public class RoleTerm extends DOMFace {
         }
     }
 
-    public void removePlayerCompletely(UserRef user) throws Exception {
+    public void removePlayerCompletely(UserRef user) {
         List<String> oldPlayers = getVector("players");
         List<String> newPlayers = new ArrayList<String>();
         for (String memberID : oldPlayers) {
@@ -123,7 +123,7 @@ public class RoleTerm extends DOMFace {
         return (testDate >= termStart && testDate < termEnd);
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "key");
         extractAttributeString(jObj, "state");
@@ -145,7 +145,7 @@ public class RoleTerm extends DOMFace {
         return jObj;
     }
 
-    public void updateFromJSON(JSONObject termInfo) throws Exception {
+    public void updateFromJSON(JSONObject termInfo) {
         updateAttributeString("state", termInfo);
         updateAttributeLong("termStart", termInfo);
         updateAttributeLong("termEnd", termInfo);

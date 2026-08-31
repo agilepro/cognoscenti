@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -82,11 +82,11 @@ public class CustomRole extends DOMFace implements NGRole {
         setAttribute("linkedRole", linkedRole);
     }
 
-    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
+    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) {
         return getDirectPlayers();
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception {
+    public List<AddressListEntry> getDirectPlayers() {
         RoleTerm term = getCurrentTerm();
         if (term == null) {
             return getNonTermList();
@@ -94,7 +94,7 @@ public class CustomRole extends DOMFace implements NGRole {
         return term.getDirectPlayers();
     }
 
-    private List<AddressListEntry> getNonTermList() throws Exception {
+    private List<AddressListEntry> getNonTermList() {
         List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
@@ -109,7 +109,7 @@ public class CustomRole extends DOMFace implements NGRole {
         return list;
     }
 
-    public void addPlayer(AddressListEntry newMember) throws Exception {
+    public void addPlayer(AddressListEntry newMember) {
         RoleTerm term = getCurrentTerm();
         if (term == null) {
             addVectorValue("member", newMember.getUniversalId());
@@ -118,7 +118,7 @@ public class CustomRole extends DOMFace implements NGRole {
         }
     }
 
-    public void removePlayer(AddressListEntry oldMember) throws Exception {
+    public void removePlayer(AddressListEntry oldMember) {
         RoleTerm term = getCurrentTerm();
         if (term == null) {
             String whichId = oldMember.getUniversalId();
@@ -132,7 +132,7 @@ public class CustomRole extends DOMFace implements NGRole {
         }
     }
 
-    public void removePlayerCompletely(UserRef user) throws Exception {
+    public void removePlayerCompletely(UserRef user) {
         RoleTerm term = getCurrentTerm();
         if (term != null) {
             term.removePlayerCompletely(user);
@@ -165,15 +165,15 @@ public class CustomRole extends DOMFace implements NGRole {
         }
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) {
         return isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
 
-    public boolean isPlayer(UserRef user) throws Exception {
+    public boolean isPlayer(UserRef user) {
         return isPlayerOfAddressList(user, getDirectPlayers());
     }
 
-    public String whichIDForUser(UserRef user) throws Exception {
+    public String whichIDForUser(UserRef user) {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
 
@@ -193,7 +193,7 @@ public class CustomRole extends DOMFace implements NGRole {
         setAttribute("color", color);
     }
 
-    public RoleTerm getCurrentTerm() throws Exception {
+    public RoleTerm getCurrentTerm() {
         long nowTime = System.currentTimeMillis();
         for (RoleTerm rt : getAllTerms()) {
             if (rt.isComplete() && rt.includesDate(nowTime)) {
@@ -203,10 +203,9 @@ public class CustomRole extends DOMFace implements NGRole {
         return null;
     }
 
-    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list)
-            throws Exception {
+    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) {
         if (user == null) {
-            throw WeaverException.newBasic("isPlayerOfAddressList called with null user object.");
+            throw CommonException.newBasic("isPlayerOfAddressList called with null user object.");
         }
         for (AddressListEntry alr : list) {
             if (user.hasAnyId(alr.getInitialId())) {
@@ -216,8 +215,7 @@ public class CustomRole extends DOMFace implements NGRole {
         return false;
     }
 
-    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list)
-            throws Exception {
+    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list) {
         for (AddressListEntry alr : list) {
             String thisID = alr.getInitialId();
             if (uRef.hasAnyId(thisID)) {
@@ -227,7 +225,7 @@ public class CustomRole extends DOMFace implements NGRole {
         return null;
     }
 
-    public void addPlayerIfNotPresent(AddressListEntry newMember) throws Exception {
+    public void addPlayerIfNotPresent(AddressListEntry newMember) {
         for (AddressListEntry one : getDirectPlayers()) {
             if (one.equals(newMember)) {
                 return;
@@ -236,7 +234,7 @@ public class CustomRole extends DOMFace implements NGRole {
         addPlayer(newMember);
     }
 
-    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) {
         for (AddressListEntry ale : addressList) {
             addPlayerIfNotPresent(ale);
         }
@@ -281,7 +279,7 @@ public class CustomRole extends DOMFace implements NGRole {
         return true;
     }
 
-    public List<RoleTerm> getAllTerms() throws Exception {
+    public List<RoleTerm> getAllTerms() {
         List<RoleTerm> list = this.getChildren("terms", RoleTerm.class);
         return list;
     }
@@ -290,7 +288,7 @@ public class CustomRole extends DOMFace implements NGRole {
      * getJSON is for normal lists of roles, the current players, and such. Does not include all the
      * historical detail.
      */
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         jObj.put("symbol", getSymbol());
         jObj.put("name", getName());
@@ -356,7 +354,8 @@ public class CustomRole extends DOMFace implements NGRole {
         return jObj;
     }
 
-    public void updateFromJSON(JSONObject roleInfo) throws Exception {
+    @Override
+    public void updateFromJSON(JSONObject roleInfo) {
         updateAttributeString("color", roleInfo);
         updateAttributeString("linkedRole", roleInfo);
         updateScalarString("description", roleInfo);

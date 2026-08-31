@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
@@ -33,7 +34,6 @@ import com.purplehillsbooks.weaver.SearchResultRecord;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class MainTabsViewControler extends BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to open draft topics page of workspace %s in site %s.",
                             ex, pageId, siteId));
         }
@@ -150,7 +150,7 @@ public class MainTabsViewControler extends BaseController {
             String jspName = ar.reqParam("jsp");
             UserProfile user = ar.getUserProfile();
             if (user == null) {
-                throw WeaverException.newBasic("User is not logged in or has no user profile");
+                throw CommonException.newBasic("User is not logged in or has no user profile");
             }
             UserPage userPage = user.getUserPage();
             JSONArray learningPathList = userPage.getLearningPathForUser(jspName);
@@ -160,7 +160,7 @@ public class MainTabsViewControler extends BaseController {
 
             sendJson(ar, res);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get learning path", ex);
+            Exception ee = CommonException.newWrap("Unable to get learning path", ex);
             streamException(ee, ar);
         }
     }
@@ -184,7 +184,7 @@ public class MainTabsViewControler extends BaseController {
             res.put("list", LearningPath.getLearningForPage(jspName));
             sendJson(ar, res);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to set learning path to done", ex);
+            Exception ee = CommonException.newWrap("Unable to set learning path to done", ex);
             streamException(ee, ar);
         }
     }
@@ -199,7 +199,7 @@ public class MainTabsViewControler extends BaseController {
         try {
             UserProfile user = ar.getUserProfile();
             if (user == null) {
-                throw WeaverException.newBasic("User is not logged in or has no user profile");
+                throw CommonException.newBasic("User is not logged in or has no user profile");
             }
             JSONObject postedObject = this.getPostedObject(ar);
             String jspName = postedObject.getString("jsp");
@@ -214,7 +214,7 @@ public class MainTabsViewControler extends BaseController {
             res.put("list", userPage.getLearningPathForUser(jspName));
             sendJson(ar, res);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to set learning path to done", ex);
+            Exception ee = CommonException.newWrap("Unable to set learning path to done", ex);
             streamException(ee, ar);
         }
     }
@@ -234,7 +234,7 @@ public class MainTabsViewControler extends BaseController {
             streamJSPAnon(ar, "Index.jsp"); /*needtest*/
             return;
         } catch (Exception e) {
-            showDisplayException(ar, WeaverException.newWrap("Failed to open welcome page.", e));
+            showDisplayException(ar, CommonException.newWrap("Failed to open welcome page.", e));
         }
     }
 
@@ -249,7 +249,7 @@ public class MainTabsViewControler extends BaseController {
             streamJSP(ar, "EmailAdjustment.jsp");
         } catch (Exception e) {
             showDisplayException(
-                    ar, WeaverException.newWrap("Unable to stream EmailAdjustment page", e));
+                    ar, CommonException.newWrap("Unable to stream EmailAdjustment page", e));
         }
     }
 
@@ -271,7 +271,7 @@ public class MainTabsViewControler extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             String expectedMn = ngw.emailDependentMagicNumber(email);
             if (!expectedMn.equals(mn)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Something is wrong, improper request for email address %s", email);
             }
 
@@ -282,13 +282,13 @@ public class MainTabsViewControler extends BaseController {
                 specRole.removePlayer(AddressListEntry.findOrCreate(email));
                 ngw.getSite().flushUserCache();
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "emailAdjustmentActionForm does not understand the cmd %s", cmd);
             }
 
             response.sendRedirect(go);
         } catch (Exception ex) {
-            throw WeaverException.newWrap("Unable to process EmailAdjustmentAction.form", ex);
+            throw CommonException.newWrap("Unable to process EmailAdjustmentAction.form", ex);
         }
     }
 
@@ -312,7 +312,7 @@ public class MainTabsViewControler extends BaseController {
             results.put("result", "ok");
             sendJson(ar, results);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to remove user from role.", ex);
+            Exception ee = CommonException.newWrap("Unable to remove user from role.", ex);
             streamException(ee, ar);
         }
     }
@@ -355,7 +355,7 @@ public class MainTabsViewControler extends BaseController {
             }
             sendJsonArray(ar, resultList);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to search for topics.", ex);
+            Exception ee = CommonException.newWrap("Unable to search for topics.", ex);
             streamException(ee, ar);
         }
     }
@@ -419,13 +419,13 @@ public class MainTabsViewControler extends BaseController {
             gr.updateGoalFromJSON(goalInfo, ngw, ar);
             gr.setCreator(ar.getBestUserId());
             if (gr.getCreator() == null || gr.getCreator().length() == 0) {
-                throw WeaverException.newBasic("can not set the creator");
+                throw CommonException.newBasic("can not set the creator");
             }
             JSONObject repo = gr.getJSON4Goal(ngw);
             saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to create Action Item .", ex);
+            Exception ee = CommonException.newWrap("Unable to create Action Item .", ex);
             streamException(ee, ar);
         }
     }
@@ -452,7 +452,7 @@ public class MainTabsViewControler extends BaseController {
             }
             response.sendRedirect(go);
         } catch (Exception ex) {
-            throw WeaverException.newWrap("Unable to set your required user full name", ex);
+            throw CommonException.newWrap("Unable to set your required user full name", ex);
         }
     }
 }

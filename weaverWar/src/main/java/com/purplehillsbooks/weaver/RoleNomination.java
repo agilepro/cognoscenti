@@ -41,7 +41,7 @@ public class RoleNomination extends DOMFace {
         return getAttribute("owner");
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "owner");
         extractScalarEmail(jObj, "nominee");

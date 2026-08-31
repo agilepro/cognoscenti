@@ -50,11 +50,11 @@ public class ResponseRecord extends DOMFace {
         return getAttributeLong("time");
     }
 
-    public void setTime(long newVal) throws Exception {
+    public void setTime(long newVal) {
         setAttributeLong("time", newVal);
     }
 
-    public boolean getEmailSent() throws Exception {
+    public boolean getEmailSent() {
         if (getAttributeBool("emailSent")) {
             return true;
         }
@@ -76,7 +76,7 @@ public class ResponseRecord extends DOMFace {
         return false;
     }
 
-    public void setEmailSent(boolean newVal) throws Exception {
+    public void setEmailSent(boolean newVal) {
         setAttributeBool("emailSent", newVal);
     }
 
@@ -198,7 +198,7 @@ public class ResponseRecord extends DOMFace {
                 mailMsg, commenterProfile.getAddressListEntry(), ooa.getEmail());
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jo = new JSONObject();
         AddressListEntry ale = AddressListEntry.findOrCreate(getUserId());
         jo.put("alt", ale.getJSON());
@@ -214,7 +214,7 @@ public class ResponseRecord extends DOMFace {
         return jo;
     }
 
-    public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
+    public void updateFromJSON(JSONObject input, AuthRequest ar) {
         // can not change the user id since that is the key field.
         // user name and key is not stored here either
         if (input.has("body")) {

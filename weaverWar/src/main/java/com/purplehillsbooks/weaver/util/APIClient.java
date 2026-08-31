@@ -1,10 +1,10 @@
 package com.purplehillsbooks.weaver.util;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -59,7 +59,7 @@ public class APIClient {
                 return resp;
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to call the server site located at %s", e, url);
+            throw CommonException.newWrap("Unable to call the server site located at %s", e, url);
         }
     }
 
@@ -117,12 +117,12 @@ public class APIClient {
 
             // we got an error code that we really can not handle, so just report
             // it here and give up
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Received response code %s unable to handle response.",
                     Integer.toString(returnCode));
 
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to call the server site located at %s", e, url);
+            throw CommonException.newWrap("Unable to call the server site located at %s", e, url);
         }
     }
 }

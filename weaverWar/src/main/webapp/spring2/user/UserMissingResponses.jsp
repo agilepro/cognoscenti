@@ -6,7 +6,7 @@
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
     if (uProf == null) {
-        throw WeaverException.newBasic("Can not find that user profile to display.");
+        throw CommonException.newBasic("Can not find that user profile to display.");
     }
     NGPageIndex.clearLocksHeldByThisThread();
     UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
@@ -15,7 +15,7 @@
     UserProfile  operatingUser =ar.getUserProfile();
     if (operatingUser==null) {
         //this should never happen, and if it does it is not the users fault
-        throw WeaverException.newBasic("user profile setting is null.  No one appears to be logged in.");
+        throw CommonException.newBasic("user profile setting is null.  No one appears to be logged in.");
     }
 
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());

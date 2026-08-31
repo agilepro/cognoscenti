@@ -3,7 +3,7 @@
  */
 package com.purplehillsbooks.weaver.util;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -29,7 +29,7 @@ public class Thumbnail {
         try {
             scalePhoto(fis, mainOut, thumbWidth, thumbHeight, quality);
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to read file %s", e, inFileName);
+            throw CommonException.newWrap("Unable to read file %s", e, inFileName);
         } finally {
             fis.close();
         }
@@ -43,17 +43,17 @@ public class Thumbnail {
             int quality)
             throws Exception {
         if (thumbWidth < 0) {
-            throw WeaverException.newBasic("a width of '%s' makes no sense", thumbWidth);
+            throw CommonException.newBasic("a width of '%s' makes no sense", thumbWidth);
         }
         if (thumbHeight < 0) {
-            throw WeaverException.newBasic("a height of '%s' makes no sense", thumbHeight);
+            throw CommonException.newBasic("a height of '%s' makes no sense", thumbHeight);
         }
         try {
             // load image from INFILE
             BufferedImage image = javax.imageio.ImageIO.read(inStream);
 
             if (image == null) {
-                throw WeaverException.newBasic("Unable to read the the input stream");
+                throw CommonException.newBasic("Unable to read the the input stream");
             }
 
             // determine thumbnail size from WIDTH and HEIGHT
@@ -61,7 +61,7 @@ public class Thumbnail {
             int imageWidth = image.getWidth(null);
             int imageHeight = image.getHeight(null);
             if (imageWidth < 0 || imageHeight < 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Image appears damaged with width of '%s' and height of '%s'",
                         imageWidth, imageHeight);
             }
@@ -98,7 +98,7 @@ public class Thumbnail {
 
             out.close();
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to resize image to %s by %s", e, thumbWidth, thumbHeight);
         }
     }
@@ -225,18 +225,18 @@ public class Thumbnail {
     public static void main(String[] args) throws Exception {
         try {
             if (args.length > 4 || args.length < 2) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Usage: java Thumbnail INFILE OUTFILE [WIDTH] [QUALITY]");
             }
             String inFileName = args[0];
             File inFile = new File(inFileName);
             if (!inFile.exists()) {
-                throw WeaverException.newBasic("File '%s' does not exist.", inFileName);
+                throw CommonException.newBasic("File '%s' does not exist.", inFileName);
             }
             String outFileName = args[1];
             File outFile = new File(outFileName);
             if (outFile.exists()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "File '%s' already exists -- this program does not write over existing files.  Remove it first.",
                         outFileName);
             }

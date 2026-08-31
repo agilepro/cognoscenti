@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.StreamHelper;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,7 +77,7 @@ public class ConfigFile {
             rootPath = newRoot;
             if (!rootPath.exists()) {
                 // this is just paranoia, should never happen
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Something is very wrong with the server ... "
                                 + "the root of the application is not being retrieved correctly from the "
                                 + "servlet contxt object.  Something is wrong with the TomCat server.");
@@ -85,7 +85,7 @@ public class ConfigFile {
             webInfPath = new File(rootPath, "WEB-INF");
             if (!webInfPath.exists()) {
                 // this is just paranoia, should never happen
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Something is very wrong with the server ... "
                                 + "the WEB-INF folder is not being found from the "
                                 + "servlet contxt object.  Something is wrong with the TomCat server.");
@@ -126,7 +126,7 @@ public class ConfigFile {
             initializeFromPath();
             MimeTypes.initialize(webInfPath);
         } catch (Exception e) {
-            throw WeaverException.newWrap("Failure during basic initialization of the server", e);
+            throw CommonException.newWrap("Failure during basic initialization of the server", e);
         }
     }
 
@@ -154,7 +154,7 @@ public class ConfigFile {
         if (props == null) {
             // this will only happen if the server is not initializing classes
             // in the right order so no reason to translate.
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Weaver has not been initialized and can not provide properties");
         }
         return props;
@@ -184,7 +184,7 @@ public class ConfigFile {
     /** Set a ConfigFile property. Pass a null to clear a setting. */
     public void setProperty(String name, String value) throws Exception {
         if (props == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Weaver has not been initialized and can not set properties");
         }
         if (value == null) {
@@ -196,7 +196,7 @@ public class ConfigFile {
 
     public void save() throws Exception {
         if (props == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Weaver has not been initialized and can not save a config file");
         }
         saveConfigFile(props);
@@ -204,11 +204,11 @@ public class ConfigFile {
 
     private void saveConfigFile(Properties nProp) throws Exception {
         if (nProp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Call was made to 'saveConfigFile' with null properties object");
         }
         if (configFile == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not save properties when config file path has not been initialized.");
         }
         FileOutputStream fos = new FileOutputStream(configFile);
@@ -224,10 +224,10 @@ public class ConfigFile {
     public File getFolderOrFail(String folderPath) throws Exception {
         File root = new File(folderPath);
         if (!root.exists()) {
-            throw WeaverException.newBasic("Folder does not exist %s", folderPath);
+            throw CommonException.newBasic("Folder does not exist %s", folderPath);
         }
         if (!root.isDirectory()) {
-            throw WeaverException.newBasic("Path does not identify a folder: %s", folderPath);
+            throw CommonException.newBasic("Path does not identify a folder: %s", folderPath);
         }
         return root;
     }
@@ -240,11 +240,11 @@ public class ConfigFile {
 
         String baseURL = props.getProperty("baseURL");
         if (baseURL == null) {
-            throw WeaverException.newBasic("System is improperly configured: baseURL is not set");
+            throw CommonException.newBasic("System is improperly configured: baseURL is not set");
         }
         String identityProvider = props.getProperty("identityProvider");
         if (identityProvider == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "System is improperly configured: identityProvider is not set");
         }
     }
@@ -253,7 +253,7 @@ public class ConfigFile {
      * Either return the valid File object to the path to the folder containing user data, or fail
      * throwing an exception that the server is not correctly configured.
      */
-    public File getUserFolderOrFail() throws Exception {
+    public File getUserFolderOrFail() {
         return getGenericFolderOrFail("userFolder", "user");
     }
 
@@ -291,8 +291,7 @@ public class ConfigFile {
         return allSiteFiles;
     }
 
-    private File getGenericFolderOrFail(String propertyName, String subFolderName)
-            throws Exception {
+    private File getGenericFolderOrFail(String propertyName, String subFolderName) {
         String getFolder = props.getProperty(propertyName);
         File genFolderPath = null;
         if (getFolder == null || getFolder.length() == 0) {
@@ -305,17 +304,17 @@ public class ConfigFile {
             genFolderPath.mkdirs();
         }
         if (!genFolderPath.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "For some reason can not find or create the folder: %s", genFolderPath);
         }
         if (!genFolderPath.isDirectory()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Path exists but is not a folder: %s", genFolderPath.getAbsolutePath());
         }
         return genFolderPath;
     }
 
-    private File getParentFolderOrFail() throws Exception {
+    private File getParentFolderOrFail() {
         String parent = props.getProperty("dataContainer");
         if (parent == null || parent.length() == 0) {
             // seems like a reasonable default to try out, pretty safe
@@ -328,7 +327,7 @@ public class ConfigFile {
             parentPath.mkdirs();
         }
         if (!parentPath.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "For some reason can not find or create the data container: " + parent);
         }
         return parentPath;

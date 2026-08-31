@@ -1,5 +1,6 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
@@ -27,14 +28,18 @@ public class SiteUsers {
         kernel = jo;
     }
 
-    public static SiteUsers readUsers(File folder) throws Exception {
-        File usersFilePath = new File(folder, "users.json");
-        System.out.println("SITEUSERS: Reading: " + usersFilePath.getAbsolutePath());
-        JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
-        SiteUsers su = new SiteUsers(jo);
-        su.folder = folder;
-        su.patchUpUserKeys();
-        return su;
+    public static SiteUsers readUsers(File folder) {
+        try {
+            File usersFilePath = new File(folder, "users.json");
+            System.out.println("SITEUSERS: Reading: " + usersFilePath.getAbsolutePath());
+            JSONObject jo = JSONObject.readFileIfExists(usersFilePath);
+            SiteUsers su = new SiteUsers(jo);
+            su.folder = folder;
+            su.patchUpUserKeys();
+            return su;
+        } catch (Exception ex) {
+            throw CommonException.newWrap("Failure reading users.json file", ex);
+        }
     }
 
     public void writeUsers(File folder) throws Exception {
@@ -129,11 +134,11 @@ public class SiteUsers {
         return count;
     }
 
-    public boolean isSiteUser(UserProfile uProf) throws Exception {
+    public boolean isSiteUser(UserProfile uProf) {
         return kernel.has(uProf.getKey());
     }
 
-    public boolean isPaid(UserProfile uProf) throws Exception {
+    public boolean isPaid(UserProfile uProf) {
         if (uProf == null) {
             return false;
         }
@@ -141,7 +146,7 @@ public class SiteUsers {
         return !userInfo.optBoolean("readOnly", false);
     }
 
-    public void setPaid(UserProfile uProf, boolean paid) throws Exception {
+    public void setPaid(UserProfile uProf, boolean paid) {
         JSONObject userInfo = kernel.requireJSONObject(uProf.getKey());
         userInfo.put("readOnly", !paid);
         if (!userInfo.has("name")) {

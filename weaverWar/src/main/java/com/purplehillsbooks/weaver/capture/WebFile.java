@@ -4,9 +4,9 @@
 
 package com.purplehillsbooks.weaver.capture;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class WebFile {
             sortAndNumber();
             save();
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to download web page from (%s)", e, url);
+            throw CommonException.newWrap("Unable to download web page from (%s)", e, url);
         }
     }
 
@@ -156,7 +156,7 @@ public class WebFile {
             }
         }
         if (entireBlock == null) {
-            throw WeaverException.newBasic("Can not find section %d in this web file", secNum);
+            throw CommonException.newBasic("Can not find section %d in this web file", secNum);
         }
 
         JSONObject total = new JSONObject();

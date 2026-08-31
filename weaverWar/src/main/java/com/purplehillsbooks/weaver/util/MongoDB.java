@@ -8,10 +8,10 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.UpdateResult;
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import org.bson.Document;
 
 /** Isolate the arcane Mongo specific classes here if possible */
@@ -103,7 +103,7 @@ public class MongoDB {
                 cursor.close();
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to read Mongo DB query (%s)", e, query.toString(2));
         }
     }

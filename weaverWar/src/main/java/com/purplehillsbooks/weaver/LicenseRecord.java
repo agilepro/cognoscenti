@@ -36,42 +36,42 @@ public class LicenseRecord extends DOMFace implements License {
         super(d, e, p);
     }
 
-    public String getId() throws Exception {
+    public String getId() {
         return getAttribute("id");
     }
 
-    public void setId(String newVal) throws Exception {
+    public void setId(String newVal) {
         setAttribute("id", newVal);
     }
 
-    public String getNotes() throws Exception {
+    public String getNotes() {
         return getScalar("notes");
     }
 
-    public void setNotes(String newVal) throws Exception {
+    public void setNotes(String newVal) {
         if (newVal == null) {
             newVal = "";
         }
         setScalar("notes", newVal);
     }
 
-    public String getCreator() throws Exception {
+    public String getCreator() {
         return getScalar("creator");
     }
 
-    public void setCreator(String newVal) throws Exception {
+    public void setCreator(String newVal) {
         setScalar("creator", newVal);
     }
 
-    public long getTimeout() throws Exception {
+    public long getTimeout() {
         return safeConvertLong(getScalar("timeout"));
     }
 
-    public void setTimeout(long timeout) throws Exception {
+    public void setTimeout(long timeout) {
         setScalar("timeout", Long.toString(timeout));
     }
 
-    public String getRole() throws Exception {
+    public String getRole() {
         String ret = getScalar("role");
         if (ret == null || ret.length() == 0) {
             // default on the fly to Members
@@ -80,16 +80,16 @@ public class LicenseRecord extends DOMFace implements License {
         return ret;
     }
 
-    public void setRole(String newRole) throws Exception {
+    public void setRole(String newRole) {
         setScalar("role", newRole);
     }
 
-    public boolean isReadOnly() throws Exception {
+    public boolean isReadOnly() {
         String readOnly = getAttribute("readOnly");
         return readOnly != null && "yes".equals(readOnly);
     }
 
-    public void setReadOnly(boolean isReadOnly) throws Exception {
+    public void setReadOnly(boolean isReadOnly) {
         if (isReadOnly) {
             setAttribute("readOnly", "yes");
         } else {
@@ -97,7 +97,7 @@ public class LicenseRecord extends DOMFace implements License {
         }
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject licenseInfo = new JSONObject();
         licenseInfo.put("id", getId());
         licenseInfo.put("timeout", getTimeout());

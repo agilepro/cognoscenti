@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
@@ -28,7 +29,6 @@ import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -107,7 +107,7 @@ public class CreateProjectController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to create workspace in Site: %s", ex, siteId);
+                    CommonException.newWrap("Unable to create workspace in Site: %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -161,7 +161,7 @@ public class CreateProjectController extends BaseController {
             throws Exception {
         UserProfile uProf = ar.getUserProfile();
         if (!site.primaryOrSecondaryPermission(uProf)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User does not have permission to create a workspace in site '%s'",
                     site.getFullName());
         }
@@ -196,7 +196,7 @@ public class CreateProjectController extends BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap("Unable to display the Register New Site page", ex));
+                    CommonException.newWrap("Unable to display the Register New Site page", ex));
         }
     }
 
@@ -211,7 +211,7 @@ public class CreateProjectController extends BaseController {
             UserProfile uProf = ar.getUserProfile();
             if (uProf == null) {
                 // this should be impossible
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Inconsistancy: user logged in but does not have a profile: %s",
                         ar.getBestUserId());
             }
@@ -220,7 +220,7 @@ public class CreateProjectController extends BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap("Unable to display the Register New Site page", ex));
+                    CommonException.newWrap("Unable to display the Register New Site page", ex));
         }
     }
 }

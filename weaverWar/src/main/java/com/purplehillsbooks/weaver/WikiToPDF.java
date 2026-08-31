@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.pdflayout.elements.Frame;
 import com.purplehillsbooks.pdflayout.elements.Orientation;
 import com.purplehillsbooks.pdflayout.elements.PDFDoc;
@@ -27,7 +28,6 @@ import com.purplehillsbooks.pdflayout.elements.PageFormat;
 import com.purplehillsbooks.pdflayout.elements.Paragraph;
 import com.purplehillsbooks.pdflayout.shape.Stroke;
 import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.awt.Color;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -294,7 +294,7 @@ public class WikiToPDF {
             mf.outToOutputStream(out);
             out.flush();
         } catch (Exception e) {
-            throw WeaverException.newWrap("Failure while generating PDF file", e);
+            throw CommonException.newWrap("Failure while generating PDF file", e);
         }
     }
 

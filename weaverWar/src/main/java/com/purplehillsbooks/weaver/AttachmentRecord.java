@@ -20,15 +20,14 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.capture.WebFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,7 +45,7 @@ public class AttachmentRecord extends CommentContainer {
         super(doc, definingElement, attachmentContainer);
     }
 
-    public void setContainer(NGWorkspace newCon) throws Exception {
+    public void setContainer(NGWorkspace newCon) {
         container = newCon;
     }
 
@@ -162,14 +161,14 @@ public class AttachmentRecord extends CommentContainer {
         // consistency check, the display name and file name (in case of file)
         // must not have any slash characters in them
         if (newDisplayName.indexOf("/") > 0 || newDisplayName.indexOf("\\") > 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Display name for  a workspace must not have any slashes %s", newDisplayName);
         }
 
         // also, display name needs to be unique within the workspace
         AttachmentRecord otherFileWithSameName = container.findAttachmentByName(newDisplayName);
         if (otherFileWithSameName != null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can't rename this attachment because there is another attachment named %s  in this workspace.",
                     otherFileWithSameName.getDisplayName());
         }
@@ -182,7 +181,7 @@ public class AttachmentRecord extends CommentContainer {
      * returns true if the name supplied is considered equivalent to the name of this attachment.
      * This comparison will take into account any limitations on what names are allowed to be.
      */
-    public boolean equivalentName(String name) throws Exception {
+    public boolean equivalentName(String name) {
         if (name == null) {
             return false;
         }
@@ -230,7 +229,7 @@ public class AttachmentRecord extends CommentContainer {
 
     public WebFile getWebFile() throws Exception {
         if (!isURL()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Attempt to download web page, but this is not a web page attachment (%s)",
                     getId());
         }
@@ -358,16 +357,16 @@ public class AttachmentRecord extends CommentContainer {
      * Get a list of all the versions of this attachment that exist. The container is needed so that
      * each attachment can caluculate its own name properly.
      */
-    public List<AttachmentVersion> getVersions(NGWorkspace ngc) throws Exception {
+    public List<AttachmentVersion> getVersions(NGWorkspace ngc) {
         if (!(ngc instanceof NGWorkspace)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Problem: workspace Attachment should only belong to NGWorkspace, "
                             + "but somehow got a different kind of container.");
         }
 
         File workspaceFolder = ngc.containingFolder;
         if (workspaceFolder == null) {
-            throw WeaverException.newBasic("NGWorkspace container has no containing folder????");
+            throw CommonException.newBasic("NGWorkspace container has no containing folder????");
         }
 
         List<AttachmentVersion> list = AttachmentVersion.getDocVersions(workspaceFolder, this);
@@ -383,7 +382,7 @@ public class AttachmentRecord extends CommentContainer {
      *
      * <p>Can return null if the file has been found missing, and there are no committed versions.
      */
-    public AttachmentVersion getLatestVersion(NGWorkspace ngc) throws Exception {
+    public AttachmentVersion getLatestVersion(NGWorkspace ngc) {
 
         // code must determine HERE what kind of versioning system is being used
         // currently we only have the simple versioning system.
@@ -473,12 +472,12 @@ public class AttachmentRecord extends CommentContainer {
             NGWorkspace ngw, InputStream contents, String userId, long timeStamp) throws Exception {
 
         if (!(ngw instanceof NGWorkspace)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Problem: workspace Attachment should only belong to NGWorkspace, but somehow got a different kind of container.");
         }
         File workspaceFolder = ngw.containingFolder;
         if (workspaceFolder == null) {
-            throw WeaverException.newBasic("NGWorkspace container has no containing folder????");
+            throw CommonException.newBasic("NGWorkspace container has no containing folder????");
         }
 
         // in case the attachment is deleted, undelete it for this new version
@@ -573,7 +572,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /** return the size of the file in bytes */
-    public long getFileSize(NGWorkspace ngw) throws Exception {
+    public long getFileSize(NGWorkspace ngw) {
         if (!"FILE".equals(getType()) || isDeleted()) {
             return -1;
         }
@@ -600,13 +599,13 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /** get the labels on a document -- only labels valid in the workspace, and no duplicates */
-    public List<NGLabel> getLabels() throws Exception {
+    public List<NGLabel> getLabels() {
         if (container == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "call to getLabels must be made AFTER the container is set.");
         }
         if (!(container instanceof NGWorkspace)) {
-            throw WeaverException.newBasic("Container must be a Workspace style container.");
+            throw CommonException.newBasic("Container must be a Workspace style container.");
         }
         NGWorkspace ngw = container;
         List<NGLabel> res = new ArrayList<NGLabel>();
@@ -756,7 +755,7 @@ public class AttachmentRecord extends CommentContainer {
         return true;
     }
 
-    public JSONObject getLinkableJSON() throws Exception {
+    public JSONObject getLinkableJSON() {
         JSONObject thisDoc = new JSONObject();
         thisDoc.put("id", this.getId());
         thisDoc.put("name", this.getNiceName());
@@ -764,7 +763,7 @@ public class AttachmentRecord extends CommentContainer {
         return thisDoc;
     }
 
-    public JSONObject getMinJSON(NGWorkspace ngw) throws Exception {
+    public JSONObject getMinJSON(NGWorkspace ngw) {
         JSONObject thisDoc = getLinkableJSON();
         thisDoc.put("description", getDescription());
         thisDoc.put("attType", getType());
@@ -863,7 +862,7 @@ public class AttachmentRecord extends CommentContainer {
                         + "doc"
                         + getId()
                         + "/"
-                        + URLEncoder.encode(getNiceName(), "UTF-8")
+                        + UtilityMethods.urlEncode(getNiceName())
                         + "?lic="
                         + license.getId();
         thisDoc.put("content", contentUrl);
@@ -900,7 +899,7 @@ public class AttachmentRecord extends CommentContainer {
         String universalid = docInfo.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             // just checking, this should never happen
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error trying to update the record for an action item with UID (%s) with post from action item with UID (%s)",
                     getUniversalId(), universalid);
         }
@@ -915,7 +914,7 @@ public class AttachmentRecord extends CommentContainer {
                     // TODO: better handling duplicate here
                     // This just throws up hands and gives up, and you will get the same next
                     // time.  Better to rename this to a unique name.
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Unable to change name '%s' because another document already exists with that name.",
                             newName);
                 }
@@ -968,7 +967,7 @@ public class AttachmentRecord extends CommentContainer {
         OptOutAddr.appendUsersFromRole(ngw, "MembersRole", sendTo);
     }
 
-    public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+    public String getEmailURL(AuthRequest ar, NGWorkspace ngw) {
         return ar.getResourceURL(ngw, "DocDetail.htm?aid=" + this.getId());
     }
 

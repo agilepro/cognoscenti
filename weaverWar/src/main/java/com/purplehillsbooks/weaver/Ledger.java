@@ -1,10 +1,9 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -115,7 +114,7 @@ public class Ledger {
 
     public static List<Long> getAllMonthsInRange(long startDate, long endDate) throws Exception {
         if (startDate > endDate) {
-            throw WeaverException.newBasic("end date must be after the start date");
+            throw CommonException.newBasic("end date must be after the start date");
         }
         long timestamp = getFirstOfMonth(startDate);
         List<Long> res = new ArrayList<>();
@@ -124,7 +123,7 @@ public class Ledger {
             res.add(timestamp);
             long nextMonth = getNextMonth(timestamp);
             if (timestamp >= nextMonth) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "getNextMonth(%s) returned %s", timestamp, nextMonth);
             }
             timestamp = nextMonth;
@@ -184,7 +183,7 @@ public class Ledger {
 
     public void createPayment(long timestamp, double amount, String detail) throws Exception {
         if (detail == null || detail.isEmpty()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "'detail' is missing.  Please always include detail with a payment");
         }
         timestamp = getBeginningOfDay(timestamp);
@@ -278,16 +277,16 @@ public class Ledger {
 
     public void assertValid(int year, int month) throws Exception {
         if (year < 2020) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "No charges are allowed of years less than 2020, value %d not allowed", year);
         }
         if (year > LAST_POSSIBLE_YEAR) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "No charges are allowed of years greater than %d, value %d not allowed",
                     LAST_POSSIBLE_YEAR, year);
         }
         if (month < 1 || month > 12) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Month value (%d) not a valid month value (1 thru 12)", month);
         }
     }

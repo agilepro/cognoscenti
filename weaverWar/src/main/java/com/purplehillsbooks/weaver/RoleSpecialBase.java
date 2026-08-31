@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.List;
 
 /**
@@ -54,23 +54,23 @@ public abstract class RoleSpecialBase implements NGRole {
                 "The '" + getName() + "' role can not have the description set to something else");
     }
 
-    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception {
+    public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) {
         return getDirectPlayers();
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception {
+    public List<AddressListEntry> getDirectPlayers() {
         throw new RuntimeException("SpecialRoleBase does not implement getDirectPlayers");
     }
 
-    public void addPlayer(AddressListEntry newMember) throws Exception {
+    public void addPlayer(AddressListEntry newMember) {
         throw new RuntimeException("SpecialRoleBase does not implement addPlayer");
     }
 
-    public void removePlayer(AddressListEntry oldMember) throws Exception {
+    public void removePlayer(AddressListEntry oldMember) {
         throw new RuntimeException("SpecialRoleBase does not implement removePlayer");
     }
 
-    public void removePlayerCompletely(UserRef oldMember) throws Exception {
+    public void removePlayerCompletely(UserRef oldMember) {
         throw new RuntimeException("SpecialRoleBase does not implement removePlayer");
     }
 
@@ -79,18 +79,18 @@ public abstract class RoleSpecialBase implements NGRole {
                 "not implemented yet ... and you probably don't want to do this to this role");
     }
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception {
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) {
         if (user == null) {
-            throw WeaverException.newBasic("isExpandedPlayer called with null user object.");
+            throw CommonException.newBasic("isExpandedPlayer called with null user object.");
         }
         return CustomRole.isPlayerOfAddressList(user, getExpandedPlayers(ngp));
     }
 
-    public boolean isPlayer(UserRef user) throws Exception {
+    public boolean isPlayer(UserRef user) {
         return CustomRole.isPlayerOfAddressList(user, getDirectPlayers());
     }
 
-    public String whichIDForUser(UserRef user) throws Exception {
+    public String whichIDForUser(UserRef user) {
         return CustomRole.whichIDForUserOfAddressList(user, getDirectPlayers());
     }
 
@@ -110,7 +110,7 @@ public abstract class RoleSpecialBase implements NGRole {
     }
 
     public void addPlayerIfNotPresent(AddressListEntry member) throws Exception {
-        throw WeaverException.newBasic("addPlayerIfNotPresent not implemented");
+        throw CommonException.newBasic("addPlayerIfNotPresent not implemented");
     }
 
     public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {

@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.NullWriter;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Properties;
@@ -51,7 +51,7 @@ public class AuthDummy extends AuthRequest {
 
     public static void initializeDummyRequest(Cognoscenti cog) throws Exception {
         if (!cog.getConfig().isInitialized()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "ConfigFile class must be initialized before AuthDummy!");
         }
         Writer wr = new NullWriter();
@@ -85,7 +85,7 @@ public class AuthDummy extends AuthRequest {
 
     @SuppressWarnings("unused")
     private void resolveUser() throws Exception {
-        throw WeaverException.newBasic("Not implemented on dummy auth request object: resolveUser");
+        throw CommonException.newBasic("Not implemented on dummy auth request object: resolveUser");
     }
 
     public void setPageAccessLevelsWithoutVisit(NGContainer newNgp) throws Exception {
@@ -103,7 +103,7 @@ public class AuthDummy extends AuthRequest {
      */
     public void setLoggedInUser(
             UserProfile newUser, String loginId, String autoLogin, String openId) throws Exception {
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "Not implemented on dummy auth request object: setLoggedInUser");
     }
 
@@ -117,7 +117,7 @@ public class AuthDummy extends AuthRequest {
     }
 
     public String getFormerId() throws Exception {
-        throw WeaverException.newBasic("Not implemented on dummy auth request object: getFormerId");
+        throw CommonException.newBasic("Not implemented on dummy auth request object: getFormerId");
     }
 
     public String getRequestURL() {
@@ -136,7 +136,7 @@ public class AuthDummy extends AuthRequest {
      * Get a paramter value from the local properties object on Dummy request Note that reqParam
      * depends upon defParam, so reqParam is not reimplemented for the dummyAuth class..
      */
-    public String defParam(String paramName, String defaultValue) throws Exception {
+    public String defParam(String paramName, String defaultValue) {
         String val = localProperties.getProperty(paramName);
         if (val != null) {
             return val;
@@ -145,13 +145,13 @@ public class AuthDummy extends AuthRequest {
     }
 
     /** Get a required parameter from the local properties on the DummyAuth request */
-    public String reqParam(String paramName) throws Exception {
+    public String reqParam(String paramName) {
         String val = defParam(paramName, null);
         if (val == null || val.length() == 0) {
             // The exception that is thrown will not be seen by users.  Once all of the pages
             // have proper URLs constricted for redirecting to other pages, this error will
             // not occur.  Therefor, there is no need to localize this exception.
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Required parameter '%s' is missing from %s", paramName, getRequestURL());
         }
         return val;
@@ -160,7 +160,7 @@ public class AuthDummy extends AuthRequest {
     /** This is where the DummyAuth stores the parameters to the request */
     Properties localProperties = new Properties();
 
-    public void setParam(String paramName, String paramValue) throws Exception {
+    public void setParam(String paramName, String paramValue) {
         localProperties.setProperty(paramName, paramValue);
     }
 
@@ -175,6 +175,6 @@ public class AuthDummy extends AuthRequest {
 
     public void invokeJSP(String JSPName) throws Exception {
         // there is no real request object, so calling JSP is difficult
-        throw WeaverException.newBasic("Dummy Auth objects are not able to actually call JSP");
+        throw CommonException.newBasic("Dummy Auth objects are not able to actually call JSP");
     }
 }

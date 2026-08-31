@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -31,7 +32,6 @@ import com.purplehillsbooks.weaver.SiteReqFile;
 import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -62,7 +62,7 @@ public class SuperAdminController extends BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to open administration page (%s) for user (%s).",
                             e, jspName, ar.getBestUserId()));
         }
@@ -152,7 +152,7 @@ public class SuperAdminController extends BaseController {
             SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
             SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
             if (siteRequest == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Could not find any site request with id=%s", requestId);
             }
 
@@ -170,7 +170,7 @@ public class SuperAdminController extends BaseController {
             } else if ("Denied".equals(newStatus)) {
                 ha.completeSiteRequest(siteRequest, false);
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Unrecognized new status (" + newStatus + ") in acceptOrDenySite.json");
             }
             siteReqFile.save();
@@ -179,7 +179,7 @@ public class SuperAdminController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception e) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update site request (%s)", e, requestId);
+                    CommonException.newWrap("Unable to update site request (%s)", e, requestId);
             streamException(ee, ar);
         }
     }
@@ -206,7 +206,7 @@ public class SuperAdminController extends BaseController {
             sendJson(ar, requestInfo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to update site request (" + requestId + ")", ex);
             streamException(ee, ar);
         }
@@ -233,10 +233,10 @@ public class SuperAdminController extends BaseController {
                 ErrorLog eLog = ErrorLog.getLogForDate(logDate, cog);
                 ErrorLogDetails det = eLog.getDetails(errNo);
                 if (det == null) {
-                    throw WeaverException.newBasic("Unable to find an error with number %s", errNo);
+                    throw CommonException.newBasic("Unable to find an error with number %s", errNo);
                 }
                 if (errNo != det.getErrorNo()) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "For some reason looked for error "
                                     + errNo
                                     + " but got error "
@@ -249,7 +249,7 @@ public class SuperAdminController extends BaseController {
             }
             sendJson(ar, result);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to create or update comment", ex);
+            Exception ee = CommonException.newWrap("Unable to create or update comment", ex);
             streamException(ee, ar);
         }
     }
@@ -285,7 +285,7 @@ public class SuperAdminController extends BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap("Unable to perform SiteMerge with site %s", e, siteId));
+                    CommonException.newWrap("Unable to perform SiteMerge with site %s", e, siteId));
         }
     }
 
@@ -296,14 +296,14 @@ public class SuperAdminController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             if (!ar.isSuperAdmin()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Super admin email list is accessible only by administrator.");
             }
             JSONObject posted = this.getPostedObject(ar);
             JSONObject repo = EmailSender.querySuperAdminEmail(posted);
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -318,7 +318,7 @@ public class SuperAdminController extends BaseController {
             UserProfile uProf = UserManager.findUserByAnyIdOrFail(email);
             sendJson(ar, uProf.getJSON());
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to lookup or find that user", ex);
+            Exception ee = CommonException.newWrap("Unable to lookup or find that user", ex);
             streamException(ee, ar);
         }
     }

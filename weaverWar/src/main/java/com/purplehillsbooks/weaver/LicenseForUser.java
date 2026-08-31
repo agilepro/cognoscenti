@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * A license is also known as a "free pass".
@@ -39,9 +39,9 @@ public class LicenseForUser implements License {
 
     public UserProfile uProf;
 
-    public LicenseForUser(UserProfile up) throws Exception {
+    public LicenseForUser(UserProfile up) {
         if (up == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: Unable to create a LicenseForUser on a null user profile");
         }
         uProf = up;
@@ -54,60 +54,60 @@ public class LicenseForUser implements License {
 
         UserProfile up = UserManager.lookupUserByAnyId(other.getCreator());
         if (up == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Attempt to use a user license for a user that does not exist");
         }
         return new LicenseForUser(up);
     }
 
-    public String getId() throws Exception {
+    public String getId() {
         String token = uProf.getLicenseToken();
         return uProf.getKey() + "!" + token;
     }
 
-    public String getNotes() throws Exception {
+    public String getNotes() {
         return "This license for the user: " + uProf.getName();
     }
 
-    public void setNotes(String newVal) throws Exception {
+    public void setNotes(String newVal) {
         // ignore this
     }
 
-    public String getCreator() throws Exception {
+    public String getCreator() {
         return uProf.getUniversalId();
     }
 
-    public void setCreator(String newVal) throws Exception {
+    public void setCreator(String newVal) {
         // ignore this
     }
 
-    public long getTimeout() throws Exception {
+    public long getTimeout() {
         return System.currentTimeMillis() + 86000000;
     }
 
-    public void setTimeout(long timeout) throws Exception {
+    public void setTimeout(long timeout) {
         // ignore this
     }
 
-    public String getRole() throws Exception {
+    public String getRole() {
         // TODO: we have to return somthing.
         // Member is pretty general.
         return "MembersRole";
     }
 
-    public void setRole(String newRole) throws Exception {
+    public void setRole(String newRole) {
         // ignore this
     }
 
-    public boolean isReadOnly() throws Exception {
+    public boolean isReadOnly() {
         return false;
     }
 
-    public void setReadOnly(boolean isReadOnly) throws Exception {
+    public void setReadOnly(boolean isReadOnly) {
         // ignore this
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject licenseInfo = new JSONObject();
         licenseInfo.put("id", getId());
         licenseInfo.put("timeout", getTimeout());

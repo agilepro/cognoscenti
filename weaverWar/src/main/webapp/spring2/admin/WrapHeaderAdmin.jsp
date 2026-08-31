@@ -111,7 +111,7 @@
                     </a>
                     <ul class="dropdown-menu">
 <% if (uProf==null) { %>
-                        <li><a class="dropdown-item" href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
+                        <li><a class="dropdown-item" href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=UtilityMethods.urlEncode(currentPageURL)%>">
                 Log In</a></li>
 <% } else { %>
                         <li><a class="dropdown-item" onclick='logOutPage()'>Log Out</a></li>

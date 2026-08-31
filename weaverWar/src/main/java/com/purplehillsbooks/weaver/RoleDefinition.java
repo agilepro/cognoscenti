@@ -68,7 +68,7 @@ public class RoleDefinition {
      * getJSON is for normal lists of roles, the current players, and such. Does not include all the
      * historical detail.
      */
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         normalize();
         JSONObject jObj = new JSONObject();
         jObj.put("symbol", symbol);

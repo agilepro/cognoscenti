@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +135,7 @@ public class SectionDef {
             initialize();
         }
         if (defName == null || defName.length() == 0) {
-            throw WeaverException.newBasic("Must pass a non-null name to getDefByName");
+            throw CommonException.newBasic("Must pass a non-null name to getDefByName");
         }
         for (SectionDef sd : allDefs) {
             if (sd.getTypeName().equals(defName)) {
@@ -143,6 +143,6 @@ public class SectionDef {
             }
         }
 
-        throw WeaverException.newBasic("Unable to find a section with the name: %s", defName);
+        throw CommonException.newBasic("Unable to find a section with the name: %s", defName);
     }
 }

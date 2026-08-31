@@ -20,10 +20,10 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
@@ -62,7 +62,7 @@ public class GoalRecord extends BaseRecord {
 
     public void setCreator(String newVal) throws Exception {
         if (newVal == null || newVal.length() == 0) {
-            throw WeaverException.newBasic("Why is the creator being set to null string?");
+            throw CommonException.newBasic("Why is the creator being set to null string?");
         }
         setScalar("creator", newVal);
     }
@@ -146,12 +146,12 @@ public class GoalRecord extends BaseRecord {
 
         NGWorkspace ngw = getWorkspace();
         if (ngw == null) {
-            throw WeaverException.newBasic("handleStateChangeEvent needs a NGWorkspace parameter");
+            throw CommonException.newBasic("handleStateChangeEvent needs a NGWorkspace parameter");
         }
 
         List<GoalRecord> goalList = ngw.getAllGoals();
         if (goalList == null || goalList.size() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to find any action items on the workspace : " + ngw.getKey());
         }
 
@@ -256,7 +256,7 @@ public class GoalRecord extends BaseRecord {
      */
     public void setPercentComplete(int newVal) throws Exception {
         if (newVal < 0 || newVal > 100) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Percent complete value must be between 0% and 100%, instead received "
                             + newVal
                             + "%");
@@ -270,7 +270,7 @@ public class GoalRecord extends BaseRecord {
      * cases. In the future we anticipate multiple openids and multiple email addresses and this
      * patterns will handle that when it occurs.
      */
-    public boolean isAssignee(UserRef user) throws Exception {
+    public boolean isAssignee(UserRef user) {
         NGRole ass = getAssigneeRole();
         return ass.isPlayer(user);
     }
@@ -448,11 +448,11 @@ public class GoalRecord extends BaseRecord {
      * as a clone from a workspace to a clone of a workspace. If it is copied or moved to another
      * workspace for any other reason, then the universal ID should be reset.
      */
-    public String getUniversalId() throws Exception {
+    public String getUniversalId() {
         return getScalar("universalid");
     }
 
-    public void setUniversalId(String newID) throws Exception {
+    public void setUniversalId(String newID) {
         setScalar("universalid", newID);
     }
 
@@ -727,7 +727,7 @@ public class GoalRecord extends BaseRecord {
      * This is a version that can be included in lists of action items, such as those linked to an
      * agenda item.
      */
-    public JSONObject getMinimalJSON() throws Exception {
+    public JSONObject getMinimalJSON() {
         JSONObject oneAI = new JSONObject();
         oneAI.put("synopsis", this.getSynopsis());
         oneAI.put("id", this.getId());
@@ -790,7 +790,7 @@ public class GoalRecord extends BaseRecord {
     public JSONObject getJSON4Goal(NGWorkspace ngw, String baseURL, License license)
             throws Exception {
         if (license == null) {
-            throw WeaverException.newBasic("getJSON4Goal needs a license object");
+            throw CommonException.newBasic("getJSON4Goal needs a license object");
         }
         JSONObject thisGoal = getJSON4Goal(ngw);
         LicenseForUser lfu = LicenseForUser.getUserLicense(license);
@@ -818,7 +818,7 @@ public class GoalRecord extends BaseRecord {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             // just checking, this should never happen
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error trying to update the record for a action item with UID ("
                             + getUniversalId()
                             + ") with post from action item with UID ("
@@ -896,7 +896,7 @@ public class GoalRecord extends BaseRecord {
                 setSendEmail();
             }
         } else if (goalObj.has("assignee")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
         }
 
@@ -944,7 +944,7 @@ public class GoalRecord extends BaseRecord {
             throws Exception {
         try {
             if (!needSendEmail()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Program Logic Error: attempt to send email on action item when no schedule for sending is set");
             }
             boolean isStarted = isStarted(getState());
@@ -966,7 +966,7 @@ public class GoalRecord extends BaseRecord {
                 NGRole owners = ngw.getSecondaryRole();
                 List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngw);
                 if (ownerList.size() == 0) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Action Item has no requester, and the Workspace has no owner");
                 }
                 creatorProfile = ownerList.get(0).getUserProfile();
@@ -1000,7 +1000,7 @@ public class GoalRecord extends BaseRecord {
             System.out.println("Marking ActionItem as SENT: " + getSynopsis());
             clearSendEmail();
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to send email for Action Item: %s", e, getSynopsis());
         }
     }

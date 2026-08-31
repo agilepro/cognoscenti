@@ -20,6 +20,8 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -38,14 +40,12 @@ import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.SiteUsers;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.WorkspaceStats;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -104,7 +104,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, newSiteRequest.getJSON());
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to a request a site", ex);
+            Exception ee = CommonException.newWrap("Unable to a request a site", ex);
             streamException(ee, ar);
         }
     }
@@ -118,25 +118,25 @@ public class SiteController extends BaseController {
 
             ar.assertLoggedIn("Must be logged in to take ownership of a site.");
             if (!ar.isSuperAdmin()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Must be super admin in to take ownership of a site.");
             }
             UserProfile uProf = ar.getUserProfile();
             JSONObject incoming = getPostedObject(ar);
             if (!incoming.has("key")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Must specify 'key' of the site you want to take ownership of");
             }
             String siteKey = incoming.getString("key");
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteById(siteKey);
             if (site == null) {
-                throw WeaverException.newBasic("Unable to find a site with the key: %s", siteKey);
+                throw CommonException.newBasic("Unable to find a site with the key: %s", siteKey);
             }
             CustomRole owners = (CustomRole) site.getSecondaryRole();
             owners.addPlayerIfNotPresent(uProf.getAddressListEntry());
             if (!owners.isPlayer(uProf)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Failure to add to owners role this user: %s", uProf.getUniversalId());
             }
             site.saveFile(ar, "adding super admin to site owners");
@@ -144,7 +144,7 @@ public class SiteController extends BaseController {
             JSONObject jo = site.getConfigJSON();
             sendJson(ar, jo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to take ownership of the site.", ex);
+            Exception ee = CommonException.newWrap("Unable to take ownership of the site.", ex);
             streamException(ee, ar);
         }
     }
@@ -158,11 +158,11 @@ public class SiteController extends BaseController {
         try {
             ar.assertLoggedIn("Must be logged to garbage collect a site.");
             if (!ar.isSuperAdmin()) {
-                throw WeaverException.newBasic("Must be super admin to garbage collect a site.");
+                throw CommonException.newBasic("Must be super admin to garbage collect a site.");
             }
             JSONObject incoming = getPostedObject(ar);
             if (!incoming.has("key")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Must specify 'key' of the site you want to garbage collect");
             }
             siteKey = incoming.getString("key");
@@ -175,7 +175,7 @@ public class SiteController extends BaseController {
                 File cogFolder = folder.getParentFile();
                 File siteFolder = cogFolder.getParentFile();
                 if (!siteKey.equalsIgnoreCase(siteFolder.getName())) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Something strange: expected site named (%s) but folder is (%s)",
                             siteKey, siteFolder);
                 }
@@ -186,7 +186,7 @@ public class SiteController extends BaseController {
                 cog.eliminateIndexForSite(site);
                 deleteRecursive(siteFolder);
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Site '"
                                 + siteKey
                                 + "' must be deleted before it can be garbage collected");
@@ -199,7 +199,7 @@ public class SiteController extends BaseController {
             sendJson(ar, jo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to garbage collect the site " + siteKey, ex);
+                    CommonException.newWrap("Unable to garbage collect the site " + siteKey, ex);
             streamException(ee, ar);
         }
     }
@@ -212,11 +212,11 @@ public class SiteController extends BaseController {
                 }
             }
             if (!f.delete()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Delete command returned false for file: (%s)", f.getAbsolutePath());
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Failed to delete the folder: %s", e, f.getAbsolutePath());
         }
     }
@@ -245,7 +245,7 @@ public class SiteController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             showJSPExecutives(ar, siteId, "SiteUsers.jsp");
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to handle SiteUsers.htm for site '%s'", ex, siteId);
         }
     }
@@ -264,13 +264,12 @@ public class SiteController extends BaseController {
             if (uProf != null) {
                 if (!userKey.equals(uProf.getKey())) {
                     ar.resp.sendRedirect(
-                            "SiteUserInfo.htm?userKey="
-                                    + URLEncoder.encode(uProf.getKey(), "UTF-8"));
+                            "SiteUserInfo.htm?userKey=" + UtilityMethods.urlEncode(uProf.getKey()));
                 }
             }
             showJSPExecutives(ar, siteId, "SiteUserInfo.jsp");
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to handle SiteUserInfo.htm for site '%s'", ex, siteId);
         }
     }
@@ -332,7 +331,7 @@ public class SiteController extends BaseController {
             sendJson(ar, jo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to replace users in site (" + siteId + ")", ex);
+                    CommonException.newWrap("Unable to replace users in site (" + siteId + ")", ex);
             streamException(ee, ar);
         }
     }
@@ -352,7 +351,7 @@ public class SiteController extends BaseController {
             UserProfile user = UserManager.findUserByAnyIdOrFail(uid);
             SiteUsers siteUsers = site.getUserMap();
             if (!siteUsers.isSiteUser(user)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "User (%s) is not a member of site (%s)", uid, siteId);
             }
             JSONObject repo = user.getFullJSON();
@@ -360,7 +359,7 @@ public class SiteController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to findUserProfile in site (" + siteId + ")", ex);
             streamException(ee, ar);
         }
@@ -392,7 +391,7 @@ public class SiteController extends BaseController {
                 um.saveUserProfiles();
             }
             if (user.getKey() == null || user.getKey().isEmpty()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "User profile for (%s) has no key, cannot proceed.", userID);
             }
             SiteUsers siteUsers = site.getUserMap();
@@ -404,14 +403,14 @@ public class SiteController extends BaseController {
                 siteUsers.setPaid(user, true);
                 siteUsers.writeUsers(siteUsers.folder);
                 if (!siteUsers.isPaid(user)) {
-                    throw WeaverException.newBasic("Failed to set user as paid: %s", userID);
+                    throw CommonException.newBasic("Failed to set user as paid: %s", userID);
                 }
             }
             if (setUnPaid) {
                 siteUsers.setPaid(user, false);
                 siteUsers.writeUsers(siteUsers.folder);
                 if (siteUsers.isPaid(user)) {
-                    throw WeaverException.newBasic("Failed to clear user as unpaid: %s", userID);
+                    throw CommonException.newBasic("Failed to clear user as unpaid: %s", userID);
                 }
             }
             repo.put("isPaid", siteUsers.isPaid(user));
@@ -420,7 +419,7 @@ public class SiteController extends BaseController {
 
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to assureUserProfile in site (" + siteId + ")", ex);
             streamException(ee, ar);
         }
@@ -448,7 +447,7 @@ public class SiteController extends BaseController {
             sendJson(ar, user.getFullJSON());
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to updateUserProfile in site (" + siteId + ")", ex);
             streamException(ee, ar);
         }
@@ -513,7 +512,7 @@ public class SiteController extends BaseController {
                     // check to see if removed
                     roleObj = ngw.getRole(roleName);
                     if (roleObj.isExpandedPlayer(user, ngw)) {
-                        throw WeaverException.newBasic("The user did not actually get removed");
+                        throw CommonException.newBasic("The user did not actually get removed");
                     }
 
                     ngw.save();
@@ -542,7 +541,7 @@ public class SiteController extends BaseController {
             sendJson(ar, user.getFullJSON());
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to manageUserRoles in site (" + siteId + ")", ex);
             streamException(ee, ar);
         }
@@ -571,7 +570,7 @@ public class SiteController extends BaseController {
             JSONObject repo = eGen.getJSON();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update Email Generator " + id, ex);
+            Exception ee = CommonException.newWrap("Unable to update Email Generator " + id, ex);
             streamException(ee, ar);
         }
     }
@@ -585,7 +584,7 @@ public class SiteController extends BaseController {
         try {
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic("Must be logged in to get users");
+                throw CommonException.newBasic("Must be logged in to get users");
             }
 
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
@@ -600,7 +599,7 @@ public class SiteController extends BaseController {
             result.put("people", peopleList);
             sendJson(ar, result);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to generate people information.", ex);
+            Exception ee = CommonException.newWrap("Unable to generate people information.", ex);
             streamException(ee, ar);
         }
     }
@@ -614,7 +613,7 @@ public class SiteController extends BaseController {
         try {
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic("Must be logged in to get users");
+                throw CommonException.newBasic("Must be logged in to get users");
             }
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
 
@@ -630,7 +629,7 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to generate site statistics for %s", ex, siteId);
             streamException(ee, ar);
         }
@@ -645,7 +644,7 @@ public class SiteController extends BaseController {
         try {
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic("Must be logged in to get users");
+                throw CommonException.newBasic("Must be logged in to get users");
             }
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteByIdOrFail(siteId);
@@ -653,7 +652,7 @@ public class SiteController extends BaseController {
             sendJson(ar, userMap.getJson());
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to get user map for site %s", ex, siteId);
+                    CommonException.newWrap("Unable to get user map for site %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -667,13 +666,13 @@ public class SiteController extends BaseController {
         try {
             ar = AuthRequest.getOrCreate(request, response);
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic("Must be logged in to get users");
+                throw CommonException.newBasic("Must be logged in to get users");
             }
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteByIdOrFail(siteId);
             ar.setPageAccessLevels(site);
             if (!ar.isAdmin()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Must be administrator of site to update the permissions");
             }
             JSONObject userMapDelta = getPostedObject(ar);
@@ -681,7 +680,7 @@ public class SiteController extends BaseController {
             sendJson(ar, userMap.getJson());
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update user map for site %s", ex, siteId);
+                    CommonException.newWrap("Unable to update user map for site %s", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -703,7 +702,7 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to garbage collect for site '%s'", ex, siteId);
+                    CommonException.newWrap("Unable to garbage collect for site '%s'", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -720,7 +719,7 @@ public class SiteController extends BaseController {
             StreamHelper.copyFileToOutput(templateFile, ar.resp.out);
             ar.resp.out.flush();
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to put the chunk template.", ex);
+            Exception ee = CommonException.newWrap("Unable to put the chunk template.", ex);
             streamException(ee, ar);
         }
     }
@@ -746,7 +745,7 @@ public class SiteController extends BaseController {
                 ar.flush();
             }
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to put the chunk template.", ex);
+            Exception ee = CommonException.newWrap("Unable to put the chunk template.", ex);
             streamException(ee, ar);
         }
     }
@@ -765,7 +764,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -790,7 +789,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, ledger.generateJson());
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to calculate site charges", ex);
+            Exception ee = CommonException.newWrap("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }
@@ -812,7 +811,7 @@ public class SiteController extends BaseController {
             double amount = posted.getDouble("amount");
             String detail = posted.getString("detail");
             if (detail == null || detail.isEmpty()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Field 'detail' is empty.  When setting a payment include detail about the payment.");
             }
 
@@ -827,7 +826,7 @@ public class SiteController extends BaseController {
             sendJson(ar, jo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to create payment record for site " + siteId, ex);
             streamException(ee, ar);
         }
@@ -855,7 +854,7 @@ public class SiteController extends BaseController {
 
             sendJson(ar, rslt);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to calculate site charges", ex);
+            Exception ee = CommonException.newWrap("Unable to calculate site charges", ex);
             streamException(ee, ar);
         }
     }

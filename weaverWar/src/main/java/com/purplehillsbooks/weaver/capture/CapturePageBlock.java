@@ -1,8 +1,8 @@
 package com.purplehillsbooks.weaver.capture;
 
 import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.nodes.Attribute;
@@ -124,7 +124,7 @@ public class CapturePageBlock {
         textItems.add(sbt);
 
         wr.write("<a href=\"" + thePage.cleanerUrl + "?path=");
-        wr.write(URLEncoder.encode(url, "UTF-8"));
+        wr.write(UtilityMethods.urlEncode(url));
         wr.write("\">");
         HTMLWriter.writeHtml(wr, val);
         wr.write("</a>");

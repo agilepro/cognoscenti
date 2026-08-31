@@ -84,7 +84,7 @@ public class MeetingProposeTime extends DOMFace {
     }
 
     /** A small object suitable for lists of meetings */
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject proposalInfo = new JSONObject();
 
         proposalInfo.put("proposedTime", getProposedTime());

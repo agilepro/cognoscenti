@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
         return "Assigned to the goal " + taskName();
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception {
+    public List<AddressListEntry> getDirectPlayers() {
         List<AddressListEntry> list = new ArrayList<AddressListEntry>();
         for (String assignee : getAssigneeList()) {
             if (assignee.length() > 0) {
@@ -60,7 +60,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
     }
 
     @Override
-    public void addPlayer(AddressListEntry newMember) throws Exception {
+    public void addPlayer(AddressListEntry newMember) {
         List<AddressListEntry> current = getDirectPlayers();
         List<String> newList = new ArrayList<String>();
         for (AddressListEntry one : current) {
@@ -75,21 +75,21 @@ public class RoleGoalAssignee extends RoleSpecialBase {
     }
 
     @Override
-    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) {
         for (AddressListEntry ale : addressList) {
             addPlayer(ale);
         }
     }
 
     @Override
-    public void removePlayer(AddressListEntry oldMember) throws Exception {
+    public void removePlayer(AddressListEntry oldMember) {
         // in this case the methods are the same as the one below
         // however this is an interface method to implement
         removePlayerCompletely(oldMember);
     }
 
     @Override
-    public void removePlayerCompletely(UserRef user) throws Exception {
+    public void removePlayerCompletely(UserRef user) {
         List<AddressListEntry> current = getDirectPlayers();
         List<String> newList = new ArrayList<String>();
         boolean changed = false;
@@ -139,7 +139,7 @@ public class RoleGoalAssignee extends RoleSpecialBase {
 
     @Override
     public JSONObject getJSON() throws Exception {
-        throw WeaverException.newBasic("getJSON has not been implemented on RoleGoalAssignee");
+        throw CommonException.newBasic("getJSON has not been implemented on RoleGoalAssignee");
     }
 
     public void countIdentifiersInRole(StringCounter sc) {

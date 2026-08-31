@@ -16,11 +16,11 @@
 
 package com.purplehillsbooks.weaver.api;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.StreamHelper;
 import com.purplehillsbooks.weaver.ConfigFile;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -66,7 +66,7 @@ public class IconServlet extends jakarta.servlet.http.HttpServlet {
     private File findMatchingImage(String fileName) throws Exception {
         if (!fileName.endsWith(".jpg")) {
             // only allow requests that end in jpg to make this safer
-            throw WeaverException.newBasic("Icon file must be a '.jpg' file, not %s", fileName);
+            throw CommonException.newBasic("Icon file must be a '.jpg' file, not %s", fileName);
         }
         String firstChar = fileName.substring(0, 1).toLowerCase();
 
@@ -121,7 +121,7 @@ public class IconServlet extends jakarta.servlet.http.HttpServlet {
             int pos = path.indexOf("/icon/");
             if (pos < 0) {
                 // if this happens the servlet is mapped to the wrong path
-                throw WeaverException.newBasic("path does not have 'icon'");
+                throw CommonException.newBasic("path does not have 'icon'");
             }
 
             File imgFile = findMatchingImage(path.substring(pos + 6));

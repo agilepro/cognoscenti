@@ -20,11 +20,10 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -112,12 +111,12 @@ public class AddressListEntry implements UserRef {
         return new AddressListEntry(user);
     }
 
-    public static AddressListEntry findByAnyIdOrFail(String addr) throws Exception {
+    public static AddressListEntry findByAnyIdOrFail(String addr) {
         AddressListEntry ale = findByAnyId(addr);
         if (ale != null) {
             return ale;
         }
-        throw WeaverException.newBasic("Unable to find a user with id (%s)", addr);
+        throw CommonException.newBasic("Unable to find a user with id (%s)", addr);
     }
 
     public static AddressListEntry findOrCreate(String addr) {
@@ -132,10 +131,8 @@ public class AddressListEntry implements UserRef {
      * This constructor is used when you have two values, one universal id, and a name. First the
      * uid will be used to try and find the user object. If found, then the name is ignored. If not
      * found, then the name is remembered.
-     *
-     * @throws Exception
      */
-    public AddressListEntry(String uid, String name) throws Exception {
+    public AddressListEntry(String uid, String name) {
         this(uid);
         if (user == null && name != null && name.length() > 0) {
 
@@ -292,9 +289,9 @@ public class AddressListEntry implements UserRef {
     /** Make a link to this to provide information about the person */
     public String getLinkUrl() throws Exception {
         if (user != null) {
-            return "v/FindPerson.htm?uid=" + URLEncoder.encode(user.getKey(), "UTF-8");
+            return "v/FindPerson.htm?uid=" + UtilityMethods.urlEncode(user.getKey());
         } else {
-            return "v/FindPerson.htm?uid=" + URLEncoder.encode(rawAddress, "UTF-8");
+            return "v/FindPerson.htm?uid=" + UtilityMethods.urlEncode(rawAddress);
         }
     }
 
@@ -385,7 +382,7 @@ public class AddressListEntry implements UserRef {
      * In some cases we use email addresses with laquo and raquo demarking the name. This cleans
      * that up, and uses angle brackets instead.
      */
-    public static String cleanQuotes(String eAddress) throws Exception {
+    public static String cleanQuotes(String eAddress) {
 
         // clean out legacy use of LAQUO and RAQUO to delimit user names.
         // hopefully not doing this any more anywhere.
@@ -393,15 +390,15 @@ public class AddressListEntry implements UserRef {
         int braketEnd = eAddress.lastIndexOf(RAQUO);
         if (braketStart >= 0 && braketEnd >= 0) {
             if (braketStart < 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Got an address with only an end raquo char -- the address should have both start and end, or none");
             }
             if (braketEnd < 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Got an address with only a start laquo char -- the address should have both start and end, or none");
             }
             if (braketEnd <= braketStart) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Got an address with laquo and raquo in the wrong order");
             }
             eAddress =
@@ -424,7 +421,7 @@ public class AddressListEntry implements UserRef {
      * Given a string with email addresses (or openids) separated by either commas semicolons, or
      * carriage returns, this will parse the list, and return a vector of AddressListEntry objects.
      */
-    public static List<AddressListEntry> parseEmailList(String addressList) throws Exception {
+    public static List<AddressListEntry> parseEmailList(String addressList) {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
 
         int start = 0;
@@ -471,7 +468,7 @@ public class AddressListEntry implements UserRef {
     }
 
     /** Takes an array of user object, each user object with key, uid, and name */
-    public static List<String> uidListfromJSONArray(JSONArray inputArray) throws Exception {
+    public static List<String> uidListfromJSONArray(JSONArray inputArray) {
         List<String> uids = new ArrayList<String>();
         for (JSONObject oneEntry : inputArray.getJSONObjectList()) {
             String email = oneEntry.getString("uid");
@@ -484,7 +481,7 @@ public class AddressListEntry implements UserRef {
         return uids;
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jObj = new JSONObject();
         jObj.put("uid", getUniversalId());
         String name = getName();
@@ -501,7 +498,7 @@ public class AddressListEntry implements UserRef {
         return jObj;
     }
 
-    public static AddressListEntry fromJSON(JSONObject jObj) throws Exception {
+    public static AddressListEntry fromJSON(JSONObject jObj) {
         if (jObj.has("name")) {
             String name = jObj.optString("name");
             if (jObj.has("uid")) {
@@ -513,11 +510,11 @@ public class AddressListEntry implements UserRef {
         if (jObj.has("uid")) {
             return new AddressListEntry(jObj.getString("uid"));
         }
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
     }
 
-    public static JSONArray getJSONArrayFromIds(List<String> idList) throws Exception {
+    public static JSONArray getJSONArrayFromIds(List<String> idList) {
         JSONArray array = new JSONArray();
         for (String id : idList) {
             AddressListEntry ale = new AddressListEntry(id);
@@ -526,7 +523,7 @@ public class AddressListEntry implements UserRef {
         return array;
     }
 
-    public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {
+    public static JSONArray getJSONArray(List<AddressListEntry> addressList) {
         JSONArray array = new JSONArray();
         for (AddressListEntry ale : addressList) {
             array.put(ale.getJSON());
@@ -535,7 +532,7 @@ public class AddressListEntry implements UserRef {
     }
 
     public static void addIfNotPresent(
-            List<AddressListEntry> addressList, AddressListEntry newMember) throws Exception {
+            List<AddressListEntry> addressList, AddressListEntry newMember) {
         for (AddressListEntry one : addressList) {
             if (one.equals(newMember)) {
                 return;
@@ -545,8 +542,7 @@ public class AddressListEntry implements UserRef {
     }
 
     public static void addAllIfNotPresent(
-            List<AddressListEntry> addressList, List<AddressListEntry> newMembers)
-            throws Exception {
+            List<AddressListEntry> addressList, List<AddressListEntry> newMembers) {
         for (AddressListEntry one : newMembers) {
             addIfNotPresent(addressList, one);
         }

@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AddressListEntry;
@@ -33,7 +34,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import java.io.File;
 import java.io.FileInputStream;
@@ -153,7 +153,7 @@ public class EmailSender extends TimerTask {
         File configFile = cog.getConfig().getFile("EmailNotification.properties");
 
         if (!configFile.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Email config file does not exist: %s", configFile.getAbsolutePath());
         }
         FileInputStream fis = new FileInputStream(configFile);
@@ -222,7 +222,7 @@ public class EmailSender extends TimerTask {
             ar.nowTime = startTime;
             System.out.println(
                     "EmailSender run: tid="
-                            + Thread.currentThread().threadId() 
+                            + Thread.currentThread().threadId()
                             + " ("
                             + Thread.currentThread().getName()
                             + ") "
@@ -240,14 +240,14 @@ public class EmailSender extends TimerTask {
                 // System.out.println("EmailSender completed:
                 // "+SectionUtil.getDateAndTime(System.currentTimeMillis()));
             } catch (Exception e) {
-                WeaverException.traceException(System.out, e, "Weaver EmailSender Run Method");
-                if (WeaverException.contains(e, "InterruptedException")) {
-                    throw WeaverException.newWrap(
+                CommonException.traceException(System.out, e, "Weaver EmailSender Run Method");
+                if (containsSymbol(e, "InterruptedException")) {
+                    throw CommonException.newWrap(
                             "Got InterruptedException at the root level of EmailSender.", e);
                 }
                 Exception failure =
-                        WeaverException.newWrap("EmailSender-TimerTask failed in run method.", e);
-                WeaverException.traceException(
+                        CommonException.newWrap("EmailSender-TimerTask failed in run method.", e);
+                CommonException.traceException(
                         System.out, failure, "EmailSender-TimerTask failed in run method.");
                 threadLastCheckException = failure;
             } finally {
@@ -271,8 +271,23 @@ public class EmailSender extends TimerTask {
                 totalTime = 0;
             }
         } catch (Throwable t) {
-            WeaverException.traceException(System.out, t, "Weaver EmailSender Run CRASH");
+            CommonException.traceException(System.out, t, "Weaver EmailSender Run CRASH");
         }
+    }
+
+    public static boolean containsSymbol(Throwable ex, String string) {
+        Throwable runner = ex;
+        while (runner != null) {
+            String msg = runner.getMessage();
+            if (msg != null && !msg.contains(string)) {
+                return true;
+            }
+            if (runner.toString().contains(string)) {
+                return true;
+            }
+            runner = runner.getCause();
+        }
+        return false;
     }
 
     Object globalEmailFileLock = Integer.valueOf(999);
@@ -282,14 +297,14 @@ public class EmailSender extends TimerTask {
             try {
                 sendAllMailFromDB();
             } catch (Exception e) {
-                if (WeaverException.containsMessage(e, "Couldn't connect to host")) {
+                if (CommonException.containsMessage(e, "Couldn't connect to host")) {
                     // avoid dumping the entire exception to the log file when
                     // the problem is that the email server is down or not reachable
                     System.out.println(
                             "EmailSender.handleGlobalEmail unable to connect to email server at "
                                     + emailProperties.getProperty("mail.smtp.host"));
                 } else {
-                    WeaverException.traceException(
+                    CommonException.traceException(
                             System.out, e, "FATAL ERROR EmailSender.handleGlobalEmail");
                 }
             }
@@ -528,7 +543,7 @@ public class EmailSender extends TimerTask {
                 singletonSender.createEmailRecordInDB(msgCopy, from, ooa.getEmail());
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Failure while composing an email message for the global archive", e);
         }
     }
@@ -576,10 +591,10 @@ public class EmailSender extends TimerTask {
 
         String proto = getProperty("mail.transport.protocol");
         if (proto == null || proto.length() == 0) {
-            throw WeaverException.newBasic("Email config file is missing the protocol setting");
+            throw CommonException.newBasic("Email config file is missing the protocol setting");
         }
         if (!proto.equals("smtp") && !proto.equals("none")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Email is not configured correctly, must be SMTP or NONE, but got %s", proto);
         }
         String auth = getProperty("mail.smtp.auth");
@@ -587,16 +602,16 @@ public class EmailSender extends TimerTask {
             // in this case you need both a user name and a password
             String user = getProperty("mail.smtp.user");
             if (user == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "When mail.smtp.auth=true you need to specify a user name:  mail.smtp.user");
             }
             String password = getProperty("mail.smtp.password");
             if (password == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "When mail.smtp.auth=true you need to specify a password:  mail.smtp.password");
             }
         } else if (!"false".equals(auth)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "mail.smtp.auth must be set to 'true' or 'false' - value (%s) is not allowed.",
                     auth);
         }
@@ -615,19 +630,19 @@ public class EmailSender extends TimerTask {
             MailInst emailRec, AddressListEntry from, String addressee) throws Exception {
         try {
             if (emailRec.getSubject() == null || emailRec.getSubject().length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "createEmailRecord requires a non null 'subject' parameter");
             }
             if (emailRec.getBodyText() == null || emailRec.getBodyText().length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "createEmailRecord requires a non null 'body' parameter");
             }
             if (addressee == null || addressee.length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "createEmailRecord requires a non empty 'addresses' parameter");
             }
             if (from == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "createEmailRecord requires a non null 'from' parameter");
             }
 
@@ -638,7 +653,7 @@ public class EmailSender extends TimerTask {
             updateEmailInDB(emailRec);
             return emailRec;
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to compose email record from '%s' on: %s", e, from, addressee);
         }
     }
@@ -741,7 +756,7 @@ public class EmailSender extends TimerTask {
         String userKey = query.optString("userKey", null);
         String userEmail = query.optString("userEmail", null);
         if (userKey == null && userEmail == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Must specify either a 'userKey' or a 'userEmail' for the user being searched in queryUserEmail");
         }
 

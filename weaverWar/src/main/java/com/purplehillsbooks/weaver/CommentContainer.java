@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Document;
@@ -40,7 +40,7 @@ public abstract class CommentContainer extends DOMFace {
     }
 
     // subclasses must implement this
-    public List<CommentRecord> getComments() throws Exception {
+    public List<CommentRecord> getComments() {
         List<CommentRecord> chilluns = getChildren("comment", CommentRecord.class);
         for (CommentRecord comm : chilluns) {
             addContainerFields(comm);
@@ -64,7 +64,7 @@ public abstract class CommentContainer extends DOMFace {
         // as an email has been supplied
         UserProfile user = ar.getPossibleUser();
         if (user == null) {
-            throw WeaverException.newBasic("Unable to create a comment anonymously");
+            throw CommonException.newBasic("Unable to create a comment anonymously");
         }
         newCR.setUser(user);
         addContainerFields(newCR);
@@ -78,11 +78,11 @@ public abstract class CommentContainer extends DOMFace {
         }
     }
 
-    public abstract void addContainerFields(CommentRecord cr) throws Exception;
+    public abstract void addContainerFields(CommentRecord cr);
 
     /////////////////////////// JSON ///////////////////////////////
 
-    public JSONArray getAllComments(NGWorkspace ngw) throws Exception {
+    public JSONArray getAllComments(NGWorkspace ngw) {
         JSONArray allCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
             allCmts.put(cr.getJSONWithDocs(ngw));
@@ -90,7 +90,7 @@ public abstract class CommentContainer extends DOMFace {
         return allCmts;
     }
 
-    public JSONArray getIncludedComments(NGWorkspace ngw) throws Exception {
+    public JSONArray getIncludedComments(NGWorkspace ngw) {
         JSONArray includedCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
             if (cr.getAttributeBool("includeInMinutes")) {
@@ -101,8 +101,7 @@ public abstract class CommentContainer extends DOMFace {
     }
 
     public void addJSONComments(
-            AuthRequest ar, JSONObject thisContainer, boolean allComments, NGWorkspace ngw)
-            throws Exception {
+            AuthRequest ar, JSONObject thisContainer, boolean allComments, NGWorkspace ngw) {
         if (allComments) {
             thisContainer.put("comments", getAllComments(ngw));
         } else {
@@ -122,8 +121,7 @@ public abstract class CommentContainer extends DOMFace {
         return ret;
     }
 
-    private JSONArray getCommentJSONTimeFrame(AuthRequest ar, long startTime, long endTime)
-            throws Exception {
+    private JSONArray getCommentJSONTimeFrame(AuthRequest ar, long startTime, long endTime) {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
@@ -142,8 +140,7 @@ public abstract class CommentContainer extends DOMFace {
     }
 
     public void addJSONComments(
-            AuthRequest ar, JSONObject thisContainer, long startTime, long endTime)
-            throws Exception {
+            AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) {
         thisContainer.put("comments", getCommentJSONTimeFrame(ar, startTime, endTime));
     }
 
@@ -160,7 +157,7 @@ public abstract class CommentContainer extends DOMFace {
     private void updateAllComments(JSONArray allComments, AuthRequest ar) throws Exception {
         UserProfile uProf = ar.getPossibleUser();
         if (uProf == null) {
-            throw WeaverException.newBasic("Attempt to update comments without having a user set");
+            throw CommonException.newBasic("Attempt to update comments without having a user set");
         }
         for (int i = 0; i < allComments.length(); i++) {
             JSONObject oneComment = allComments.getJSONObject(i);

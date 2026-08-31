@@ -16,14 +16,14 @@
 
 package com.purplehillsbooks.weaver.api;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
 import com.purplehillsbooks.weaver.util.APIClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -109,7 +109,7 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
             jo.write(w);
             w.flush();
         } catch (Exception e) {
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out, e, "COG-LAuth FAILURE LightweightAuthServlet handling GET request");
         }
     }
@@ -201,13 +201,13 @@ public class LightweightAuthServlet extends jakarta.servlet.http.HttpServlet {
                 response.write(w, 2, 0);
                 w.flush();
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Lightweight Auth Servlet can not handle address: %s", pathInfo);
             }
         } catch (Exception e) {
             try {
-                Map<String, Object> mapForResult = WeaverException.getJsonMapForLog(e);
-                WeaverException.traceException(
+                Map<String, Object> mapForResult = CommonException.getJsonMapForLog(e);
+                CommonException.traceException(
                         System.out, e, "COG-LAuth FAILURE handling " + pathInfo);
                 JsonUtil.writeJson(w, mapForResult);
                 w.flush();

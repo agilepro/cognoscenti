@@ -219,7 +219,7 @@ public class SiteMailGenerator extends DOMFace {
         ChunkTemplate.streamAuthRequest(ar.w, ar, baseName, data, ooa.getCalendar());
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject obj = new JSONObject();
         this.extractAttributeString(obj, "id");
         this.extractAttributeString(obj, "subject");

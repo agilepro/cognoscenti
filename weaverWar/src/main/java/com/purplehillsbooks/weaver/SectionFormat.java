@@ -38,7 +38,7 @@ public interface SectionFormat {
      * Walk through whatever elements this owns and put all the four digit IDs into the vector so
      * that we can generate another ID and assure it does not duplication any id found here.
      */
-    public void findIDs(List<String> v, NGSection sec) throws Exception;
+    public void findIDs(List<String> v, NGSection sec);
 
     /**
      * In an attempt to convert all the older display section formats to a common Topic format, this

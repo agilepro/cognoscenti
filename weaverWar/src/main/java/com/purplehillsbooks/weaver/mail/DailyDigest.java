@@ -1,5 +1,6 @@
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
@@ -21,7 +22,6 @@ import com.purplehillsbooks.weaver.SiteRequest;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserCache;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -122,7 +122,7 @@ public class DailyDigest {
             cog.getUserManager().saveUserProfiles();
 
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to compose and send daily digets", e);
+            throw CommonException.newWrap("Unable to compose and send daily digets", e);
         } finally {
             NGPageIndex.clearLocksHeldByThisThread();
             logFile.writeToFile(dailyDigestFile);
@@ -397,7 +397,7 @@ public class DailyDigest {
 
         for (NGPageIndex ngpi : containers) {
             if (ngpi == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "How did I get a null value by iterating a List collection?");
             }
             if (!ngpi.isWorkspace()) {
@@ -473,7 +473,7 @@ public class DailyDigest {
                 clone.write("</tbody>");
                 clone.write("</table>");
             } catch (Exception e) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Error while processing container: %s", e, ngpi.containerName);
             } finally {
                 NGPageIndex.clearLocksHeldByThisThread();

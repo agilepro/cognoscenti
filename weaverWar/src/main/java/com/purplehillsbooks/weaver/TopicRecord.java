@@ -20,17 +20,16 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.ChunkTemplate;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
 import com.purplehillsbooks.weaver.mail.OptOutTopicSubscriber;
 import com.purplehillsbooks.weaver.mail.ScheduledNotification;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -469,7 +468,7 @@ public class TopicRecord extends CommentContainer {
         return allDocList;
     }
 
-    public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) throws Exception {
+    public List<AttachmentRecord> getAttachedDocs(NGWorkspace ngw) {
         return ngw.getListedAttachments(getDocList());
     }
 
@@ -504,7 +503,7 @@ public class TopicRecord extends CommentContainer {
     }
 
     /** get the labels on a document -- only labels valid in the workspace, and no duplicates */
-    public List<NGLabel> getLabels(NGWorkspace ngw) throws Exception {
+    public List<NGLabel> getLabels(NGWorkspace ngw) {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngw.getLabelRecordOrNull(name);
@@ -601,7 +600,7 @@ public class TopicRecord extends CommentContainer {
         return allMeetings;
     }
 
-    public NGRole getSubscriberRole() throws Exception {
+    public NGRole getSubscriberRole() {
         return requireChild("subscriberRole", CustomRole.class);
     }
 
@@ -664,7 +663,7 @@ public class TopicRecord extends CommentContainer {
                         + "?"
                         + AccessControl.getAccessTopicParams(ngw, this)
                         + "&emailId="
-                        + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
+                        + UtilityMethods.urlEncode(ooa.getEmail()));
         data.put("topic", this.getJSONWithMarkdown(ngw));
         data.put("wsBaseURL", ar.baseURL + clone.getWorkspaceBaseURL(ngw));
         data.put("wsName", ngw.getFullName());
@@ -686,7 +685,7 @@ public class TopicRecord extends CommentContainer {
 
     /////////////////////////// JSON ///////////////////////////////
 
-    public JSONObject getLinkableJSON() throws Exception {
+    public JSONObject getLinkableJSON() {
         JSONObject thisNote = new JSONObject();
         extractAttributeString(thisNote, "id");
         extractScalarString(thisNote, "subject");
@@ -694,7 +693,7 @@ public class TopicRecord extends CommentContainer {
         return thisNote;
     }
 
-    public JSONObject getJSON(NGWorkspace ngw) throws Exception {
+    public JSONObject getJSON(NGWorkspace ngw) {
         JSONObject thisNote = getLinkableJSON();
         thisNote.put("modTime", getLastEdited());
         thisNote.put("modUser", getModUser().getJSON());
@@ -773,7 +772,7 @@ public class TopicRecord extends CommentContainer {
         String universalid = noteObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             // just checking, this should never happen
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error trying to update the record for a note with UID (%s) with post from topic with UID (%s)",
                     getUniversalId(), universalid);
         }

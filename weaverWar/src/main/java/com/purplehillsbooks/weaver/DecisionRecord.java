@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -157,7 +157,7 @@ public class DecisionRecord extends DOMFace {
         String universalid = decisionObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             // just checking, this should never happen
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Error trying to update the record for a decision with UID (%s) with post from decision with UID %s)",
                     getUniversalId(), universalid);
         }

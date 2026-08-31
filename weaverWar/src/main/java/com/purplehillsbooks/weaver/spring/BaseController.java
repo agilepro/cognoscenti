@@ -20,8 +20,9 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.weaver.AuthRequest;
@@ -33,15 +34,13 @@ import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.exception.ServletExit;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URLEncoder;
+import java.util.Map;
 import java.util.Properties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,9 +98,9 @@ public class BaseController {
             ar.req.setAttribute("log_number", exceptionNO);
             showDisplayException(ar, extd);
         } catch (Exception e) {
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out, e, "%%%%%% Exception while reporting exception in BaseController");
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out, extd, "%%%%%% Exception that was being reported");
         }
     }
@@ -116,21 +115,21 @@ public class BaseController {
         } catch (Exception e) {
             System.out.println("\n\nFAILURE DISPLAYING SIMPLE PAGE: DisplayWarning.jsp is broken!");
             System.out.println("MESSAGE: " + why);
-            WeaverException.traceException(System.out, e, "EXCEPTION ON DisplayWarning.jsp");
+            CommonException.traceException(System.out, e, "EXCEPTION ON DisplayWarning.jsp");
         }
     }
 
     protected static void showDisplayException(AuthRequest ar, Exception e) {
         try {
-            showDisplayWarning(ar, WeaverException.getFullMessage(e));
+            showDisplayWarning(ar, CommonException.getFullMessage(e));
         } catch (Exception eeee) {
             // this should really really NEVER happen!!!
             // but if it does, we want to make sure to stop exceptions here
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out,
                     eeee,
                     "FATAL ERROR 1: showDisplayException reason unable to display");
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out,
                     e,
                     "FATAL ERROR 2: showDisplayException error it was trying to display");
@@ -187,7 +186,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: the method warnNoAccess was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
@@ -223,7 +222,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
@@ -271,7 +270,7 @@ public class BaseController {
         try {
             // just to make sure there are no DOUBLE pages being sent
             if (ar.req.getAttribute("wrappedJSP") != null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "wrappedJSP has already been set to ("
                                 + ar.req.getAttribute("wrappedJSP")
                                 + ") when trying to set it to ("
@@ -279,11 +278,11 @@ public class BaseController {
                                 + ")");
             }
             if (!jspName.endsWith(".jsp")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Program Logic Error: streamJSP* called without JSP in name");
             }
             if (jspName.endsWith(".jsp.jsp")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Program Logic Error: streamJSP* called with double JSP in name");
             }
 
@@ -306,7 +305,7 @@ public class BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare page (%s) at level (%s)", e, jspName, accessLevel));
         }
     }
@@ -362,7 +361,7 @@ public class BaseController {
         NGWorkspace ngw =
                 ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
         if (!siteId.equals(ngw.getSiteKey())) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Improperly formed web page address, the workspace %s does not belong to the site %s.",
                     pageId, siteId);
         }
@@ -404,7 +403,7 @@ public class BaseController {
                 warnNoAccess(ar);
             }
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to prepare jsp/depending view of %s for workspace: %s/%s",
                     ex, jspName, ngw.getKey(), ngw.getSiteKey());
         }
@@ -420,7 +419,7 @@ public class BaseController {
                 warnNoAccess(ar);
             }
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to prepare site/depending view of %s", ex, jspName);
         }
     }
@@ -433,7 +432,7 @@ public class BaseController {
                 streamJSPUser(ar, jspName);
             }
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to prepare user/depending view of %s", ex, jspName);
         }
     }
@@ -449,7 +448,7 @@ public class BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare JSP view of %s for page (%s) in (%s)",
                             ex, jspName, pageId, siteId));
         }
@@ -469,7 +468,7 @@ public class BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare JSP view of %s for page (%s) in (%s)",
                             ex, jspName, pageId, siteId));
         }
@@ -489,7 +488,7 @@ public class BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare JSP view of %s for site (%s)", ex, jspName, siteId));
         }
     }
@@ -505,7 +504,7 @@ public class BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare JSP view of %s for page (%s) in (%s)",
                             ex, jspName, pageId, siteId));
         }
@@ -521,7 +520,7 @@ public class BaseController {
         } catch (Exception ex) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare JSP view of %s for site (%s)", ex, jspName, siteId));
         }
     }
@@ -540,7 +539,7 @@ public class BaseController {
         String loginUrl =
                 ar.getSystemProperty("identityProvider")
                         + "?openid.mode=quick&go="
-                        + URLEncoder.encode(go, "UTF-8");
+                        + UtilityMethods.urlEncode(go);
         ar.resp.sendRedirect(loginUrl);
         return;
     }
@@ -554,7 +553,7 @@ public class BaseController {
             sb.append(joinChar);
             sb.append(key);
             sb.append("=");
-            sb.append(URLEncoder.encode(val, "UTF-8"));
+            sb.append(UtilityMethods.urlEncode(val));
         }
         ar.resp.sendRedirect(sb.toString());
     }
@@ -647,16 +646,18 @@ public class BaseController {
 
             ar.logException("EXCEPTION (BaseController)", e);
 
-            JSONObject errorResponse =
-                    JSONException.convertToJSON(
-                            e, "BaseController Exception tid=" + Thread.currentThread().threadId());
+            Map<String, Object> errorResponse = CommonException.getJsonMapForLog(e);
 
             ar.resp.setStatus(400);
             if (ar.resp.getStatus() != 400) {
                 System.out.println("UNABLE TO SET STATUS TO 400!");
             }
             ar.resp.setContentType("application/json");
-            errorResponse.write(ar.resp.writer, 2, 0);
+            CommonException.traceException(
+                    ar.resp.writer,
+                    e,
+                    "BaseController Exception tid=" + Thread.currentThread().threadId());
+            JsonUtil.writeJson(ar.resp.writer, errorResponse);
             ar.flush();
         } catch (Exception eeeee) {
             // nothing we can do here...
@@ -745,11 +746,11 @@ public class BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             if (!viewName.endsWith(".jsp")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "gotta have a .jsp on the end of the name -- this is temporary message for conversion");
             }
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "In order to see this section, you need to be logged in.");
             }
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
@@ -759,7 +760,7 @@ public class BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare page (%s) for user (%s)", e, viewName, userKey));
         }
     }
@@ -777,7 +778,7 @@ public class BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to prepare page (%s) for user (%s)", e, jspName, userKey));
         }
     }

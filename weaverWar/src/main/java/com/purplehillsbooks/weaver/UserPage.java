@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +91,7 @@ public class UserPage extends ContainerCommon {
     }
 
     /** Get a four digit numeric id which is unique on the page. */
-    public String getUniqueOnPage() throws Exception {
+    public String getUniqueOnPage() {
         if (existingIds == null) {
             existingIds = new ArrayList<String>();
 
@@ -111,16 +111,16 @@ public class UserPage extends ContainerCommon {
         return requireChild("pageInfo", DOMFace.class);
     }
 
-    public NGRole getPrimaryRole() throws Exception {
+    public NGRole getPrimaryRole() {
         return getRoleOrFail("Principal");
     }
 
-    public NGRole getSecondaryRole() throws Exception {
+    public NGRole getSecondaryRole() {
         return getRoleOrFail("Colleagues");
     }
 
     public void saveContent(AuthRequest ar, String comment) throws Exception {
-        throw WeaverException.newBasic("saveContent not implemented on UserPage");
+        throw CommonException.newBasic("saveContent not implemented on UserPage");
     }
 
     public String getFullName() {
@@ -131,7 +131,7 @@ public class UserPage extends ContainerCommon {
         throw new RuntimeException("isDeleted not implemented on UserPage");
     }
 
-    public long getLastModifyTime() throws Exception {
+    public long getLastModifyTime() {
         return userInfo.getModTime();
     }
 
@@ -140,11 +140,11 @@ public class UserPage extends ContainerCommon {
     }
 
     public String getTaskLink(AuthRequest ar, String taskId) throws Exception {
-        throw WeaverException.newBasic("Not Implemented");
+        throw CommonException.newBasic("Not Implemented");
     }
 
     public String getReminderLink(AuthRequest ar, String reminderId) throws Exception {
-        throw WeaverException.newBasic("Not Implemented");
+        throw CommonException.newBasic("Not Implemented");
     }
 
     public boolean isFrozen() throws Exception {
@@ -160,7 +160,7 @@ public class UserPage extends ContainerCommon {
         return role;
     }
 
-    public List<StatusReport> getStatusReports() throws Exception {
+    public List<StatusReport> getStatusReports() {
 
         if (statusReps == null) {
             statusReps = requireChild("StatusReps", DOMFace.class);
@@ -180,7 +180,7 @@ public class UserPage extends ContainerCommon {
             }
         }
 
-        throw WeaverException.newBasic("Unable to find a status report with id (%s)", id);
+        throw CommonException.newBasic("Unable to find a status report with id (%s)", id);
     }
 
     public StatusReport createStatusReport() throws Exception {
@@ -269,7 +269,7 @@ public class UserPage extends ContainerCommon {
 
         for (ProfileRef tr : getProfileRefs()) {
             if (urlAddress.equals(tr.getAddress())) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "The reference address already exists: %s", urlAddress);
             }
         }
@@ -299,7 +299,7 @@ public class UserPage extends ContainerCommon {
 
         NGPageIndex.assertNoLocksOnThread();
         if (up == null) {
-            throw WeaverException.newBasic("getTaskListJSON requires a UserProfile but got a null");
+            throw CommonException.newBasic("getTaskListJSON requires a UserProfile but got a null");
         }
         JSONArray list = new JSONArray();
 

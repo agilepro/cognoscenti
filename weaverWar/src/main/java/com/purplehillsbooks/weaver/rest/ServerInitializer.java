@@ -20,10 +20,10 @@
 
 package com.purplehillsbooks.weaver.rest;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.SectionUtil;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -206,7 +206,7 @@ public class ServerInitializer extends TimerTask {
             serverInitState = STATE_FAILED;
             try {
                 System.out.println("ServerInitializer: (FAILED) because " + e.toString());
-                WeaverException.traceException(System.out, e, "ServerInitializer: (FAILED)");
+                CommonException.traceException(System.out, e, "ServerInitializer: (FAILED)");
                 if (timerForOtherTasks != null) {
                     timerForOtherTasks.cancel();
                 }

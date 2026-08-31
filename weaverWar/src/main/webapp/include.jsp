@@ -12,7 +12,7 @@
 %><%@page import="com.purplehillsbooks.weaver.DecisionRecord"
 %><%@page import="com.purplehillsbooks.weaver.DOMFace"
 %><%@page import="com.purplehillsbooks.weaver.exception.ProgramLogicError"
-%><%@page import="com.purplehillsbooks.weaver.exception.WeaverException"
+%><%@page import="com.purplehillsbooks.exception.CommonException"
 %><%@page import="com.purplehillsbooks.weaver.GoalRecord"
 %><%@page import="com.purplehillsbooks.weaver.HistoryRecord"
 %><%@page import="com.purplehillsbooks.weaver.LicensedURL"

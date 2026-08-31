@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.AgendaItem;
@@ -30,7 +31,6 @@ import com.purplehillsbooks.weaver.DOMFace;
 import com.purplehillsbooks.weaver.MeetingRecord;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.TopicRecord;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.xml.Mel;
@@ -97,7 +97,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to get comment (" + cid + ") contents", ex);
+                    CommonException.newWrap("Unable to get comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -124,7 +124,7 @@ public class CommentController extends BaseController {
             jo.put("list", allComments);
             sendJson(ar, jo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get list of all comments", ex);
+            Exception ee = CommonException.newWrap("Unable to get list of all comments", ex);
             streamException(ee, ar);
         }
     }
@@ -167,7 +167,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update comment (" + cid + ") contents", ex);
+                    CommonException.newWrap("Unable to update comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -195,16 +195,16 @@ public class CommentController extends BaseController {
             long msgId = Mel.safeConvertLong(ar.reqParam("msg"));
             MailInst mail = EmailSender.findEmailById(msgId);
             if (mail == null) {
-                throw WeaverException.newBasic("Can't find an email message for %s", msgId);
+                throw CommonException.newBasic("Can't find an email message for %s", msgId);
             }
             if (cid != mail.getCommentId()) {
-                throw WeaverException.newBasic("Comment and email message id do not match");
+                throw CommonException.newBasic("Comment and email message id do not match");
             }
 
             JSONObject repo = null;
             String meetingId = ngw.findMeetingIdForComment(cid);
             if (postObject.has("deleteMe")) {
-                throw WeaverException.newBasic("delete is not allowed anonymously");
+                throw CommonException.newBasic("delete is not allowed anonymously");
             } else {
                 CommentRecord cmt = ngw.getCommentOrFail(cid);
                 cmt.updateFromJSON(postObject, ar);
@@ -223,7 +223,7 @@ public class CommentController extends BaseController {
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap("Unable to update comment (" + cid + ") contents", ex);
+                    CommonException.newWrap("Unable to update comment (" + cid + ") contents", ex);
             streamException(ee, ar);
         }
     }
@@ -267,12 +267,12 @@ public class CommentController extends BaseController {
             if ("comment".equals(command)) {
                 repo = handleComment(ar, ngw, postObject);
             } else {
-                throw WeaverException.newBasic("Unrecognized command: %s", command);
+                throw CommonException.newBasic("Unrecognized command: %s", command);
             }
             sendJson(ar, repo);
         } catch (Exception ex) {
             Exception ee =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Unable to fetch "
                                     + command
                                     + " info from workspace "
@@ -313,7 +313,7 @@ public class CommentController extends BaseController {
             throws Exception {
 
         if (postObject == null) {
-            throw WeaverException.newBasic("Creating a comment requires a POST of JSON parameters");
+            throw CommonException.newBasic("Creating a comment requires a POST of JSON parameters");
         }
 
         char containerType = postObject.getString("containerType").charAt(0);
@@ -322,7 +322,7 @@ public class CommentController extends BaseController {
         if ('M' == containerType) {
             int pos = containerID.indexOf(":");
             if (pos < 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Meeting ID must contain a colon.  Got: %s", containerID);
             }
             String meetID = containerID.substring(0, pos);
@@ -338,7 +338,7 @@ public class CommentController extends BaseController {
             AttachmentRecord att = ngw.findAttachmentByIDOrFail(containerID);
             cr = att.addComment(ar);
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "CreateComment is unable to understand the containerType: %s", containerType);
         }
         return cr;

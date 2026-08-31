@@ -20,7 +20,6 @@
 
 package com.purplehillsbooks.weaver;
 
-import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.w3c.dom.Document;
@@ -67,7 +66,7 @@ public class MicroProfileRecord extends DOMFace {
      */
     public static void writeSpecificLink(
             AuthRequest ar, String cleanName, String id, boolean makeItALink) throws Exception {
-        String olink = "v/FindPerson.htm?uid=" + URLEncoder.encode(id, "UTF-8");
+        String olink = "v/FindPerson.htm?uid=" + UtilityMethods.urlEncode(id);
         if (cleanName.length() > 28) {
             cleanName = cleanName.substring(0, 28);
         }

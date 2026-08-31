@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -201,7 +201,7 @@ public class NGPageIndex {
      */
     public static List<NGPageIndex> getContainersForTag(String tag) throws Exception {
         if (tag == null) {
-            throw WeaverException.newBasic("null value tag given to getPagesForTag");
+            throw CommonException.newBasic("null value tag given to getPagesForTag");
         }
         NGTerm tagTerm = NGTerm.findTagIfExists(tag);
         if (tagTerm == null) {
@@ -233,7 +233,7 @@ public class NGPageIndex {
         } else if (containerType == CONTAINER_TYPE_SITE) {
             return NGBook.readSiteByKey(containerKey);
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unspecified or illegal containerType value: %s", containerType);
         }
     }
@@ -247,7 +247,7 @@ public class NGPageIndex {
         if (val != null) {
             return val;
         }
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "Unable to locate the container object for '%s'.  The index entry for %s' exists, but appears to be invalid.",
                 containerName, containerKey);
     }
@@ -472,7 +472,7 @@ public class NGPageIndex {
             }
             ngpiList.add(this);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Failed to set up the lock for Edit of (%s) tid=%s",
                     e, this.containerKey, thisThread);
         }
@@ -496,7 +496,7 @@ public class NGPageIndex {
                                 + " had lock stolen "
                                 + lockAge
                                 + "ms ago!");
-                WeaverException.traceException(
+                CommonException.traceException(
                         System.out,
                         new Exception("OFFENDING THREAD tried to hold lock too long"),
                         "    LOCKVICTIM: tid="
@@ -576,7 +576,7 @@ public class NGPageIndex {
                     "\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"
                             + SectionUtil.currentTimestampString());
             PrintStream ps = new PrintStream(System.out);
-            WeaverException.traceException(ps, e, "THREAD LOCK VIOLATION");
+            CommonException.traceException(ps, e, "THREAD LOCK VIOLATION");
             System.out.println("~~~~~~ THIS IS PROGRAM LOGIC ERROR ~~~~~~~\n\n");
             throw e;
         }
@@ -650,11 +650,11 @@ public class NGPageIndex {
         // consistency check, either the nameTerms or refTerms vectors must
         // be missing or empty.
         if (nameTerms != null && nameTerms.size() > 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program logic is asking for building nameTerms links when it already has some.");
         }
         if (refTerms != null && refTerms.size() > 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program logic is asking for building refTerms links when it already has some.");
         }
 
@@ -666,7 +666,7 @@ public class NGPageIndex {
         } else if (container instanceof NGBook) {
             containerType = CONTAINER_TYPE_SITE;
         } else {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: don't know what kind of container this is: %s",
                     containerPath);
         }
@@ -733,11 +733,11 @@ public class NGPageIndex {
         }
         NGTerm term = NGTerm.findTerm(combinedKey);
         if (term == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not find page because the key given does not contain any alphanum characters and can not be used to find any page.");
         }
         if (isInVector(term.targetLeaves)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Here is the duplication problem, targetLeaves already has a reference to this key, but 'this' does not know about it.");
         }
         term.targetLeaves.add(this);
@@ -748,7 +748,7 @@ public class NGPageIndex {
         if (term != null) {
             if (!nameTermsTmp.contains(term)) {
                 if (isInVector(term.targetLeaves)) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Here is the duplication problem, targetLeaves already has a reference to this key, but 'this' does not know about it.");
                 }
                 term.targetLeaves.add(this);
@@ -793,7 +793,7 @@ public class NGPageIndex {
             if (!refTermTmp.contains(term)) {
                 refTermTmp.add(term);
                 if (isInVector(term.sourceLeaves)) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Problem with source leaves while trying to link");
                 }
                 term.sourceLeaves.add(this);

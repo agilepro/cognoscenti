@@ -26,9 +26,9 @@
 		<dependency>
 		    <groupId>com.purplehillsbooks.purple</groupId>
 		    <artifactId>purple</artifactId>
-		    <version>3.2</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/purple-3.2.jar</systemPath>
+		    <version>4.1</version>
+		    <!--scope>system</scope>
+		    <systemPath>${project.basedir}/lib/purple-3.2.jar</systemPath-->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->

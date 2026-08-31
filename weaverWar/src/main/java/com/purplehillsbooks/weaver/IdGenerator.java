@@ -59,7 +59,7 @@ public class IdGenerator {
      * four digit ids in the current context (on a page, or for a user page, whatever) Generated
      * four digit value will be random, and will not be oneof the values in the vector.
      */
-    public static synchronized String generateFourDigit(List<String> existingIds) throws Exception {
+    public static synchronized String generateFourDigit(List<String> existingIds) {
         int seed = (int) (System.currentTimeMillis() % 10000);
         int spin = seed;
         String id = fourDigitConvert(seed);

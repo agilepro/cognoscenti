@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.util.MimeTypes;
 import java.io.File;
 import java.io.FileInputStream;
@@ -123,7 +123,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
      * that we can generate another ID and assure it does not duplication any id found here.
      */
     @Override
-    public void findIDs(List<String> v, NGSection sec) throws Exception {
+    public void findIDs(List<String> v, NGSection sec) {
         // legacy upgrade...there are some old attachments sections that are to be automatically
         // deleted or migrated during schema migration.  Unfortunately, there are some calls to
         // get unique ids during schema migration, and possibly before this section has had a
@@ -144,7 +144,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
     public static void serveUpFileNewUI(
             AuthRequest ar, NGWorkspace ngw, String fileName, int version) throws Exception {
         if (ngw == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "SectionAttachments can serve upthe attachment only when the workspace is known.");
         }
         try {
@@ -166,7 +166,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
             File attachmentFile = attachmentVersion.getLocalFile();
 
             if (!attachmentFile.exists()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Attachment '%s' does not exist.", attachmentFile.getAbsolutePath());
             }
 
@@ -180,7 +180,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
             // Someone might be trying all the possible file names just to
             // see what is here.  A three second sleep makes that more difficult.
             Thread.sleep(3000);
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to serve up a file named '%s' from workspace '%s'",
                     e, fileName, ngw.getFullName());
         }
@@ -200,7 +200,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
             att = ngw.findAttachmentByNameOrFail(fileName);
 
             if (!att.hasContents()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Can only serve up attachments of type FILE, this attachment appears to be of type '%s'",
                         att.getType());
             }
@@ -219,9 +219,9 @@ public class SectionAttachments extends SectionUtil implements SectionFormat {
                 return attachmentVersion;
             }
 
-            throw WeaverException.newBasic("Attachment does not have ANY versions");
+            throw CommonException.newBasic("Attachment does not have ANY versions");
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to get contents of version %s file named '%s' from workspace '%s'",
                     e, version, fileName, ngw.getFullName());
         }

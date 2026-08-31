@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.AuthDummy;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
@@ -32,7 +33,6 @@ import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.SuperAdminLogFile;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.MongoDB;
 import jakarta.mail.Address;
 import jakarta.mail.Authenticator;
@@ -180,7 +180,7 @@ public class EmailListener extends TimerTask {
             }
             lastException = e;
             Exception failure =
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failure in the EmailListener TimerTask run method.", e);
             ar.logException("EMAIL LISTENER PROBLEM: ", failure);
             threadLastCheckException = failure;
@@ -222,27 +222,27 @@ public class EmailListener extends TimerTask {
     public Session getSession() throws Exception {
         try {
             if (emailProperties == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Email Configuration not initialized from: %s",
                         emailPropFile.getAbsolutePath());
             }
 
             String user = emailProperties.getProperty("mail.pop3.user");
             if (user == null || user.length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "In order to read email, there must be a setting for 'mail.pop3.user' in %s.",
                         emailPropFile.getAbsolutePath());
             }
             String pwd = emailProperties.getProperty("mail.pop3.password");
             if (pwd == null || pwd.length() == 0) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "In order to read email, there must be a setting for 'mail.pop3.password' in %s.",
                         emailPropFile.getAbsolutePath());
             }
 
             return Session.getInstance(emailProperties, new EmailAuthenticator(user, pwd));
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to get the user session", e);
+            throw CommonException.newWrap("Unable to get the user session", e);
         }
     }
 
@@ -255,7 +255,7 @@ public class EmailListener extends TimerTask {
             return session.getStore("pop3");
 
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to initialize the POP3 store", e);
+            throw CommonException.newWrap("Unable to initialize the POP3 store", e);
         }
     }
 
@@ -269,7 +269,7 @@ public class EmailListener extends TimerTask {
             Folder popFolder = store.getFolder("INBOX");
             popFolder.open(Folder.READ_WRITE);
             if (!popFolder.isOpen()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "for some reason the 'INBOX' folder was not opened.");
             }
 
@@ -278,7 +278,7 @@ public class EmailListener extends TimerTask {
             return popFolder;
 
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to connect to mail server", e);
+            throw CommonException.newWrap("Unable to connect to mail server", e);
         } finally {
             // close the store.
             // but wait!  Won't that close the folder?
@@ -304,7 +304,7 @@ public class EmailListener extends TimerTask {
             popFolder = connectToMailServer();
 
             if (!popFolder.isOpen()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "for some reason the 'INBOX' folder was not opened.");
             }
             Message[] messages = popFolder.getMessages();
@@ -375,7 +375,7 @@ public class EmailListener extends TimerTask {
             lastFolderRead = System.currentTimeMillis();
 
         } catch (Exception e) {
-            throw WeaverException.newWrap("Failure while reading the POP3 mail server", e);
+            throw CommonException.newWrap("Failure while reading the POP3 mail server", e);
         } finally {
             try {
                 if (popFolder != null) {
@@ -545,7 +545,7 @@ public class EmailListener extends TimerTask {
             // May be in this case we should also send reply to sender stating that 'topic could not
             // be
             // created due to some reason'.
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to process email message subject=%s", e, msg.getSubject());
         } finally {
             NGPageIndex.clearLocksHeldByThisThread();
@@ -562,7 +562,7 @@ public class EmailListener extends TimerTask {
     private Properties setEmailProperties(File emailPropFile) throws Exception {
 
         if (!emailPropFile.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Email configuration not initialized: %s", emailPropFile.getAbsolutePath());
         }
 
@@ -620,7 +620,7 @@ class Outliner extends HTMLEditorKit.ParserCallback {
             out.write(text);
             out.flush();
         } catch (IOException ioe) {
-            WeaverException.traceException(
+            CommonException.traceException(
                     System.out,
                     ioe,
                     "Outliner.handleText extended from HTMLEditorKit.ParserCallback.handleText");

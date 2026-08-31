@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -88,24 +88,23 @@ public class AttachmentVersion {
      * versioning system together in one maintainable place. Other versioning system should have a
      * static member like this as well to find the the versions in their way.
      */
-    public static List<AttachmentVersion> getDocVersions(File wsFolder, AttachmentRecord att)
-            throws Exception {
+    public static List<AttachmentVersion> getDocVersions(File wsFolder, AttachmentRecord att) {
         if (wsFolder == null) {
-            throw WeaverException.newBasic("null workspace folder sent to getDocVersions");
+            throw CommonException.newBasic("null workspace folder sent to getDocVersions");
         }
         if (att == null) {
-            throw WeaverException.newBasic("null attachment object sent to getDocVersions");
+            throw CommonException.newBasic("null attachment object sent to getDocVersions");
         }
         String attachName = att.getNiceName();
         String attachmentId = att.getId();
         if (attachName == null) {
-            throw WeaverException.newBasic("null attachment Name sent to getDocVersions");
+            throw CommonException.newBasic("null attachment Name sent to getDocVersions");
         }
         if (attachmentId == null) {
-            throw WeaverException.newBasic("null attachment Id sent to getDocVersions");
+            throw CommonException.newBasic("null attachment Id sent to getDocVersions");
         }
         if (!wsFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "getDocVersions needs to be passed a valid workspace folder.  This does not exist: "
                             + wsFolder.toString());
         }
@@ -117,7 +116,7 @@ public class AttachmentVersion {
     }
 
     private static AttachmentVersion fillListReturnHighestInternalVersion(
-            List<AttachmentVersion> list, File wsFolder, AttachmentRecord att) throws Exception {
+            List<AttachmentVersion> list, File wsFolder, AttachmentRecord att) {
         String attachmentId = att.getId();
         File cogfolder = new File(wsFolder, ".cog");
         if (!cogfolder.exists()) {
@@ -217,7 +216,7 @@ public class AttachmentVersion {
             String newSubFileName = "att" + attachmentId + "-" + newSubVersion + fileExtension;
             File newCogFile = new File(cogFolder, newSubFileName);
             if (!tempCogFile.renameTo(newCogFile)) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Failure renaming the file name from %s to %s", tempCogFile, newCogFile);
             }
 
@@ -226,8 +225,7 @@ public class AttachmentVersion {
     }
 
     /** Use the public static methods above to construct the file. */
-    public AttachmentVersion(AttachmentRecord att, File versionFile, int newNumber)
-            throws Exception {
+    public AttachmentVersion(AttachmentRecord att, File versionFile, int newNumber) {
         attachment = att;
         actualFile = versionFile;
         number = newNumber;
@@ -258,7 +256,7 @@ public class AttachmentVersion {
             actualFile.delete();
         }
         if (actualFile.exists()) {
-            throw WeaverException.newBasic("Attempted, and unable to delete file %s", actualFile);
+            throw CommonException.newBasic("Attempted, and unable to delete file %s", actualFile);
         }
     }
 

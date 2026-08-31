@@ -4,7 +4,7 @@
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
     if (uProf == null) {
-        throw WeaverException.newBasic("Can not find that user profile to display.");
+        throw CommonException.newBasic("Can not find that user profile to display.");
     }
     
     UserPage uPage = uProf.getUserPage();

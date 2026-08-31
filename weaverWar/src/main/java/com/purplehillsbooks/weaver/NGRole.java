@@ -86,10 +86,10 @@ public interface NGRole extends NGLabel {
      * This returns the list of direct players of this role, which can be user references, or role
      * references.
      */
-    public List<AddressListEntry> getDirectPlayers() throws Exception;
+    public List<AddressListEntry> getDirectPlayers();
 
     /** Adds the specified user or role reference to be a direct member of this role */
-    public void addPlayer(AddressListEntry newMember) throws Exception;
+    public void addPlayer(AddressListEntry newMember);
 
     /**
      * Removes the specified user or role reference if there is a direct member of this role by that
@@ -103,24 +103,24 @@ public interface NGRole extends NGLabel {
      * because some IDs are case independent, you should first call whichIDForUser() to find out the
      * exact ID of a user, and then use that exact ID for the remove.
      */
-    public void removePlayer(AddressListEntry oldMember) throws Exception;
+    public void removePlayer(AddressListEntry oldMember);
 
     /** Searches the role and removes all ids which belong to a particular user */
-    public void removePlayerCompletely(UserRef user) throws Exception;
+    public void removePlayerCompletely(UserRef user);
 
     /** Remove all direct players of this role. */
     public void clear();
 
-    public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception;
+    public boolean isExpandedPlayer(UserRef user, NGContainer ngp);
 
-    public boolean isPlayer(UserRef user) throws Exception;
+    public boolean isPlayer(UserRef user);
 
     /**
      * A user with multiple IDs may be a member of this role on the basis of any of the ids. This
      * method returns the first id in the role that belongs to the specified user profile. Returns
      * null if the user is not a member of this role.
      */
-    public String whichIDForUser(UserRef user) throws Exception;
+    public String whichIDForUser(UserRef user);
 
     /**
      * A descriptive statement to the users about the requirements of becoming a member of this
@@ -135,7 +135,7 @@ public interface NGRole extends NGLabel {
 
     public void addPlayerIfNotPresent(AddressListEntry member) throws Exception;
 
-    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception;
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList);
 
     public List<AddressListEntry> getMatchedFragment(String frag) throws Exception;
 

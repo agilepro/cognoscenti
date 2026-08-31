@@ -20,9 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.StreamHelper;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -126,9 +125,9 @@ public class ErrorLog extends DOMFile {
         errorLogDetails.setURI(errorURL);
 
         if (msg != null && msg.length() > 0) {
-            errorLogDetails.setErrorMessage(msg + "\n" + WeaverException.getFullMessage(ex));
+            errorLogDetails.setErrorMessage(msg + "\n" + CommonException.getFullMessage(ex));
         } else {
-            errorLogDetails.setErrorMessage(WeaverException.getFullMessage(ex));
+            errorLogDetails.setErrorMessage(CommonException.getFullMessage(ex));
         }
         errorLogDetails.setErrorDetails(convertStackTraceToString(ex));
 
@@ -150,7 +149,7 @@ public class ErrorLog extends DOMFile {
     }
 
     private static String convertStackTraceToString(Throwable exception) throws Exception {
-        return JSONException.convertToJSON(new Exception(exception), "ErrorLog").toString(2);
+        return CommonException.getJsonForLog(exception);
     }
 
     public synchronized long logException(
@@ -180,12 +179,12 @@ public class ErrorLog extends DOMFile {
                                 + ", now="
                                 + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
             }
-            if (WeaverException.containsMessage(ex, "Must be logged in")) {
+            if (CommonException.containsMessage(ex, "Must be logged in")) {
                 // suppress the logging of the entire stack trace just for not logged in.
                 System.out.println(msg);
-                System.out.println(WeaverException.getFullMessage(ex));
+                System.out.println(CommonException.getFullMessage(ex));
             } else {
-                WeaverException.traceException(System.out, ex, msg);
+                CommonException.traceException(System.out, ex, msg);
             }
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);

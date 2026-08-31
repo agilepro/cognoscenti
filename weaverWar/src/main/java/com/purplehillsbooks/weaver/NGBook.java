@@ -20,10 +20,10 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import java.io.File;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class NGBook extends ContainerCommon {
             File cogFolder = theFile.getParentFile();
             siteFolder = cogFolder.getParentFile();
         } else {
-            throw WeaverException.newBasic("Unable to open site file with path: %s", theFile);
+            throw CommonException.newBasic("Unable to open site file with path: %s", theFile);
         }
 
         // migration code, make sure there is a stored value for key
@@ -83,7 +83,7 @@ public class NGBook extends ContainerCommon {
                 key = fileName.substring(0, fileName.length() - 5);
                 siteInfoRec.setScalar("key", key);
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Site is missing key, and unable to generate one: %s",
                         theFile.getAbsolutePath());
             }
@@ -141,17 +141,17 @@ public class NGBook extends ContainerCommon {
     public static NGBook readSiteByKey(String key) throws Exception {
         if (keyToSite == null) {
             // this should never happen, but if it does....
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "in readSiteByKey called before the site index initialzed.");
         }
         if (key == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: Site key of null is no longer allowed.");
         }
 
         NGBook retVal = keyToSite.get(key);
         if (retVal == null) {
-            throw WeaverException.newBasic("Unable to find a book with the key %s", key);
+            throw CommonException.newBasic("Unable to find a book with the key %s", key);
         }
         return retVal;
     }
@@ -163,21 +163,21 @@ public class NGBook extends ContainerCommon {
     public static NGBook forceRereadSiteFile(String key, Cognoscenti cog) throws Exception {
         if (keyToSite == null) {
             // this should never happen, but if it does....
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "in readSiteByKey called before the site index initialzed.");
         }
         if (key == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: Site key of null is no longer allowed.");
         }
 
         NGBook site = keyToSite.get(key);
         if (site == null) {
-            throw WeaverException.newBasic("Unable to find a book with the key %s", key);
+            throw CommonException.newBasic("Unable to find a book with the key %s", key);
         }
         File siteFile = site.getFilePath();
         if (siteFile == null) {
-            throw WeaverException.newBasic("Site does not have a file???");
+            throw CommonException.newBasic("Site does not have a file???");
         }
         // throw it out of the cache
         unregisterSite(key);
@@ -189,7 +189,7 @@ public class NGBook extends ContainerCommon {
     public static NGBook readSiteAbsolutePath(Cognoscenti cog, File theFile) throws Exception {
         try {
             if (!theFile.exists()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "The file '%s' does not exist, so it can not be read.",
                         theFile.getAbsolutePath());
             }
@@ -213,7 +213,7 @@ public class NGBook extends ContainerCommon {
             }
             return newSite;
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to read the file %s", e, theFile.getAbsolutePath());
         }
     }
@@ -231,11 +231,11 @@ public class NGBook extends ContainerCommon {
 
     public static void registerSite(NGBook foundSite) throws Exception {
         if (allSites == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not register a site when the NGBook class has not completed initialization.  (allSites is null)");
         }
         if (keyToSite == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not register a site when the NGBook class has not completed initialization.  (keyToSite is null)");
         }
         allSites.add(foundSite);
@@ -245,11 +245,11 @@ public class NGBook extends ContainerCommon {
     /** Erase the memory of a particular site Used when deleting a site */
     public static void unregisterSite(String siteKey) throws Exception {
         if (allSites == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not unregister a site when the NGBook class has not completed initialization.  (allSites is null)");
         }
         if (keyToSite == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not unregister a site when the NGBook class has not completed initialization.  (keyToSite is null)");
         }
         NGBook fSite = keyToSite.get(siteKey);
@@ -296,13 +296,13 @@ public class NGBook extends ContainerCommon {
 
         File domFolder = allSiteFiles.get(0);
         if (!domFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Config setting 'libFolder' is not correct, first value must be an existing folder: (%s)",
                     domFolder);
         }
         File newSiteFolder = new File(domFolder, key);
         if (newSiteFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can't create site because folder already exists: (%s)", newSiteFolder);
         }
         newSiteFolder.mkdirs();
@@ -312,7 +312,7 @@ public class NGBook extends ContainerCommon {
 
         File theFile = new File(cogFolder, "SiteInfo.xml");
         if (theFile.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to create new site, a site with ID (%s) already exists.", key);
         }
 
@@ -335,31 +335,31 @@ public class NGBook extends ContainerCommon {
 
         for (NGPageIndex ngpi : cog.getNonDelWorkspacesInSite(site.getKey())) {
             // for now, just avoid the project with projects.
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Remove all the projects from site '%s' before trying to destroy it: %s",
                     site.getKey(), ngpi.containerKey);
         }
 
         File siteFolder = site.getSiteRootFolder();
         if (siteFolder == null) {
-            throw WeaverException.newBasic("Something is wrong, the site folder is null");
+            throw CommonException.newBasic("Something is wrong, the site folder is null");
         }
         if (!siteFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Something is wrong, the parent of the site folder does not exist: %s",
                     siteFolder.getAbsolutePath());
         }
 
         File parent = siteFolder.getParentFile();
         if (parent == null || !parent.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Something is wrong, the parent of the site folder does not exist: %s",
                     siteFolder.toString());
         }
 
         // be extra careful that this parent is the expected parent, don't delete anything otherwise
         if (!NGBook.isLibFolder(parent, cog)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Something is wrong, the parent of the site folder is not configured as valid library folder: %s",
                     siteFolder.toString());
         }
@@ -385,7 +385,7 @@ public class NGBook extends ContainerCommon {
         }
 
         if (!folder.delete()) {
-            throw WeaverException.newBasic("Unable to delete folder: %s", folder.getAbsolutePath());
+            throw CommonException.newBasic("Unable to delete folder: %s", folder.getAbsolutePath());
         }
     }
 
@@ -394,7 +394,7 @@ public class NGBook extends ContainerCommon {
         // where is the site going to go?
         List<String> libFolders = cog.getConfig().getArrayProperty("libFolder");
         if (libFolders.size() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "You must have a setting for 'libFolder' in order to create a new site.");
         }
 
@@ -417,12 +417,12 @@ public class NGBook extends ContainerCommon {
      * Walk through whatever elements this owns and put all the four digit IDs into the vector so
      * that we can generate another ID and assure it does not duplication any id found here.
      */
-    public void findIDs(List<String> v) throws Exception {
+    public void findIDs(List<String> v) {
         // no objects with IDs
     }
 
     @Override
-    public String getUniqueOnPage() throws Exception {
+    public String getUniqueOnPage() {
         if (existingIds == null) {
             existingIds = new ArrayList<String>();
             findIDs(existingIds);
@@ -490,7 +490,7 @@ public class NGBook extends ContainerCommon {
             setLastModify(ar);
             save();
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to write the site file to '%s'.", e, getFilePath().getAbsolutePath());
         }
     }
@@ -519,7 +519,7 @@ public class NGBook extends ContainerCommon {
     }
 
     @Override
-    public long getLastModifyTime() throws Exception {
+    public long getLastModifyTime() {
         return siteInfoRec.getModTime();
     }
 
@@ -529,7 +529,7 @@ public class NGBook extends ContainerCommon {
     }
 
     public void changeVisibility(String oid, AuthRequest ar) throws Exception {
-        throw WeaverException.newBasic(
+        throw CommonException.newBasic(
                 "Can not change the visibility of a note on a book, because there are no notes on books");
     }
 
@@ -569,11 +569,11 @@ public class NGBook extends ContainerCommon {
     private File newWorkspaceFolderOrFail(String workspaceKey) throws Exception {
         File rootFolder = getSiteRootFolder();
         if (rootFolder == null) {
-            throw WeaverException.newBasic("Site Root folder is missing from configuration");
+            throw CommonException.newBasic("Site Root folder is missing from configuration");
         }
         File newFolder = new File(rootFolder, workspaceKey);
         if (newFolder.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not create workspace, that name that already exists: %s", newFolder);
         }
 
@@ -631,7 +631,7 @@ public class NGBook extends ContainerCommon {
     }
 
     /** Whether to show or hide experimental features. */
-    public boolean getShowExperimental() throws Exception {
+    public boolean getShowExperimental() {
         return siteInfoRec.getAttributeBool("showExperimental");
     }
 
@@ -649,7 +649,7 @@ public class NGBook extends ContainerCommon {
             siteInfoRec.setModUser(modUser);
             save();
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to write the site file to '%s'.", e, getFilePath().getAbsolutePath());
         }
     }
@@ -657,7 +657,7 @@ public class NGBook extends ContainerCommon {
     private void assertPermissionToCreateProject(AuthRequest ar) throws Exception {
         if (ar.isLoggedIn()) {
             if (!isSiteExecutive(ar.getUserProfile())) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Must be an executive of the site to create new projects");
             }
             return;
@@ -665,16 +665,16 @@ public class NGBook extends ContainerCommon {
 
         String licVal = ar.reqParam("lic");
         if (licVal == null || licVal.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Have to be logged in, or have a licensed link, "
                             + "to create a new workspace");
         }
         License lic = this.getLicense(licVal);
         if (lic == null) {
-            throw WeaverException.newBasic("Specified license (" + lic + ") not found");
+            throw CommonException.newBasic("Specified license (" + lic + ") not found");
         }
         if (ar.nowTime > lic.getTimeout()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Specified license (%s) is no longer valid.  You will need an updated licensed link to create a new workspace.",
                     lic);
         }
@@ -689,11 +689,11 @@ public class NGBook extends ContainerCommon {
     public NGWorkspace createWorkspaceByKey(AuthRequest ar, String workspaceKey) throws Exception {
         assertPermissionToCreateProject(ar);
         if (workspaceKey.indexOf('/') >= 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Expecting a key value, but got something with a slash in it: " + workspaceKey);
         }
         if (workspaceKey.endsWith(".sp")) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "this has changed, and the key should no longer end with .sp: " + workspaceKey);
         }
 
@@ -706,7 +706,7 @@ public class NGBook extends ContainerCommon {
     private NGWorkspace createProjectAtPath(
             UserProfile up, File newFilePath, String newKey, long nowTime) throws Exception {
         if (newFilePath.exists()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Somehow the file given already exists: %s", newFilePath.getAbsolutePath());
         }
 
@@ -735,7 +735,7 @@ public class NGBook extends ContainerCommon {
 
     /** Sites have a set of licenses */
     @Override
-    public List<License> getLicenses() throws Exception {
+    public List<License> getLicenses() {
         List<LicenseRecord> vc = siteInfoRec.getChildren("license", LicenseRecord.class);
         List<License> v = new ArrayList<License>();
         for (License child : vc) {
@@ -849,7 +849,7 @@ public class NGBook extends ContainerCommon {
                     siteStats.gatherFromWorkspace(ngw);
                     siteStats.numWorkspaces++;
                 } catch (Exception e) {
-                    WeaverException.traceException(
+                    CommonException.traceException(
                             System.out, e, "Ignoring stats for this in Site " + this.getKey());
                 }
             }
@@ -866,7 +866,7 @@ public class NGBook extends ContainerCommon {
             saveStatsFile(siteStats);
             return siteStats;
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to recalculate stats for site: %s", e, this.getKey());
         }
     }
@@ -1043,7 +1043,7 @@ public class NGBook extends ContainerCommon {
             }
             return fileContents;
         } catch (Exception e) {
-            throw WeaverException.newWrap("Unable to read all the site layout drip feed", e);
+            throw CommonException.newWrap("Unable to read all the site layout drip feed", e);
         }
     }
 
@@ -1153,16 +1153,16 @@ public class NGBook extends ContainerCommon {
 
     public boolean isUnpaidUser(String userId) throws Exception {
         if (userId == null || userId.length() == 0) {
-            throw WeaverException.newBasic("isUnpaidUser requires a non-empty parameter");
+            throw CommonException.newBasic("isUnpaidUser requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
         AddressListEntry ale = AddressListEntry.findOrCreate(userId);
         return !siteUsers.isPaid(ale.getUserProfile());
     }
 
-    public boolean isUnpaidUser(UserProfile uProf) throws Exception {
+    public boolean isUnpaidUser(UserProfile uProf) {
         if (uProf == null) {
-            throw WeaverException.newBasic("isUnpaidUser requires a non-empty parameter");
+            throw CommonException.newBasic("isUnpaidUser requires a non-empty parameter");
         }
         SiteUsers siteUsers = getUserMap();
         return !siteUsers.isPaid(uProf);
@@ -1170,7 +1170,7 @@ public class NGBook extends ContainerCommon {
 
     private SiteUsers siteUsers = null;
 
-    public SiteUsers getUserMap() throws Exception {
+    public SiteUsers getUserMap() {
         if (siteUsers != null) {
             return siteUsers;
         }
@@ -1201,14 +1201,14 @@ public class NGBook extends ContainerCommon {
 
     public void assertSiteOwner(UserRef user, String descript) throws Exception {
         if (!isSiteOwner(user)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User %s is not an owner of the site. %s", user.getUniversalId(), descript);
         }
     }
 
     public void assertSiteExecutive(UserRef user, String descript) throws Exception {
         if (!isSiteOwner(user)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User %s is not an executive of the site. %s", user.getUniversalId(), descript);
         }
     }
@@ -1219,7 +1219,7 @@ public class NGBook extends ContainerCommon {
             Ledger ledger = Ledger.readLedger(sitefolder);
             return ledger;
         } catch (Exception e) {
-            throw WeaverException.newWrap("Failure getting ledger for site (%s)", e, this.getKey());
+            throw CommonException.newWrap("Failure getting ledger for site (%s)", e, this.getKey());
         }
     }
 
@@ -1254,7 +1254,7 @@ public class NGBook extends ContainerCommon {
         return roleDefinitionFile.findRoleDef(symbol);
     }
 
-    public RoleDefinition findRoleDefOrFail(String symbol) throws Exception {
+    public RoleDefinition findRoleDefOrFail(String symbol) {
         return roleDefinitionFile.findRoleDefOrFail(symbol);
     }
 }

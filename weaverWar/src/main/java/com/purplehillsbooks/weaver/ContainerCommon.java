@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ public abstract class ContainerCommon extends NGContainer {
     }
 
     // these are methods that the extending classes need to implement so that this class will work
-    public abstract String getUniqueOnPage() throws Exception;
+    public abstract String getUniqueOnPage();
 
     protected abstract DOMFace getRoleParent() throws Exception;
 
@@ -114,12 +114,12 @@ public abstract class ContainerCommon extends NGContainer {
 
     //////////////////// ROLES ///////////////////////
 
-    public List<CustomRole> getAllRoles() throws Exception {
+    public List<CustomRole> getAllRoles() {
         return roleParent.getChildren("role", CustomRole.class);
     }
 
     /** Gets a role by either the name or the symbol */
-    public CustomRole getRole(String roleSymbol) throws Exception {
+    public CustomRole getRole(String roleSymbol) {
         for (CustomRole role : getAllRoles()) {
             if (roleSymbol.equals(role.getSymbol())) {
                 return role;
@@ -133,24 +133,24 @@ public abstract class ContainerCommon extends NGContainer {
         return null;
     }
 
-    public CustomRole getRoleOrFail(String roleSymbol) throws Exception {
+    public CustomRole getRoleOrFail(String roleSymbol) {
         CustomRole ret = getRole(roleSymbol);
         if (ret == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Unable to locate a role with name '%s' on '%s'.", roleSymbol, getFullName());
         }
         return ret;
     }
 
-    public CustomRole createRole(String roleSymbol, String description) throws Exception {
+    public CustomRole createRole(String roleSymbol, String description) {
         if (roleSymbol == null || roleSymbol.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "The name of a role can not be empty when creating the role.");
         }
 
         NGRole existing = getRole(roleSymbol);
         if (existing != null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Can not create a new role, because there is already a role named '%s'",
                     roleSymbol);
         }
@@ -160,7 +160,7 @@ public abstract class ContainerCommon extends NGContainer {
         return newRole;
     }
 
-    public void deleteRole(String roleSymbol) throws Exception {
+    public void deleteRole(String roleSymbol) {
         NGRole role = getRole(roleSymbol);
         if (role != null) {
             roleParent.removeChild((DOMFace) role);
@@ -168,12 +168,12 @@ public abstract class ContainerCommon extends NGContainer {
     }
 
     /** just a shortcut for getRole(roleSymbol).addPlayer(newMember) */
-    public void addPlayerToRole(String roleSymbol, String newMember) throws Exception {
+    public void addPlayerToRole(String roleSymbol, String newMember) {
         NGRole role = getRoleOrFail(roleSymbol);
         role.addPlayer(AddressListEntry.findOrCreate(newMember));
     }
 
-    public List<NGRole> findRolesOfPlayer(UserRef user) throws Exception {
+    public List<NGRole> findRolesOfPlayer(UserRef user) {
         List<NGRole> res = new ArrayList<NGRole>();
         if (user == null) {
             return res;
@@ -295,7 +295,7 @@ public abstract class ContainerCommon extends NGContainer {
     }
 
     /** Pages have a set of licenses */
-    public List<License> getLicenses() throws Exception {
+    public List<License> getLicenses() {
         List<LicenseRecord> vc = infoParent.getChildren("license", LicenseRecord.class);
         List<License> v = new ArrayList<License>();
         for (License child : vc) {
@@ -304,7 +304,7 @@ public abstract class ContainerCommon extends NGContainer {
         return v;
     }
 
-    public License getLicense(String id) throws Exception {
+    public License getLicense(String id) {
         if (id == null || id.length() == 0) {
             // silently ignore the null by returning null
             return null;
@@ -320,7 +320,7 @@ public abstract class ContainerCommon extends NGContainer {
             String token = id.substring(bangPos + 1);
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
             if (!token.equals(up.getLicenseToken())) {
-                throw WeaverException.newBasic("License token does not match for user: %s", token);
+                throw CommonException.newBasic("License token does not match for user: %s", token);
             }
             return new LicenseForUser(up);
         }

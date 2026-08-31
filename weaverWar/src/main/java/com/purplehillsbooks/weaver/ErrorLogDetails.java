@@ -134,7 +134,7 @@ public class ErrorLogDetails extends DOMFace {
         }
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject jo = new JSONObject();
         jo.put("errNo", this.getErrorNo());
         jo.put("message", this.getErrorMessage());

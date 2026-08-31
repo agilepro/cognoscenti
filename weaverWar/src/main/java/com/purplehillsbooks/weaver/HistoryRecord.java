@@ -20,9 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -139,13 +138,13 @@ public class HistoryRecord extends DOMFace {
 
     public void setId(String id) throws Exception {
         if (id.length() != 4) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Invalid id, must be a exactly four digits and no other characters");
         }
 
         for (int i = 0; i < 4; i++) {
             if (id.charAt(i) < '0' || id.charAt(i) > '9') {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Invalid id, must be a exactly four digits and no other characters");
             }
         }
@@ -198,7 +197,7 @@ public class HistoryRecord extends DOMFace {
 
     public void setContextType(int contextTypeVal) throws Exception {
         if (contextTypeVal < 0 || contextTypeVal > 8) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Program Logic Error: history context type must be from 0 to 8.");
         }
         setScalar("contextType", Integer.toString(contextTypeVal));
@@ -255,7 +254,7 @@ public class HistoryRecord extends DOMFace {
 
     public void setResponsible(String resp) throws Exception {
         if (resp != null && !UserManager.isValidEmailAddress(resp)) {
-            throw WeaverException.newBasic("Invalid email address for responsible: %s", resp);
+            throw CommonException.newBasic("Invalid email address for responsible: %s", resp);
         }
         setScalar("responsible", resp);
     }
@@ -396,7 +395,7 @@ public class HistoryRecord extends DOMFace {
                 messageID = "history.container.";
                 break;
             default:
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "HistoryRecord.getCombinedKey does "
                                 + "not know how to handle a context type value: %s ",
                         ctx);
@@ -821,7 +820,7 @@ public class HistoryRecord extends DOMFace {
             AuthRequest ar, NGWorkspace ngw, int contextType, String contextKey) throws Exception {
 
         // always encode to avoid problems with injection
-        String objectKey = URLEncoder.encode(contextKey, "UTF-8");
+        String objectKey = UtilityMethods.urlEncode(contextKey);
 
         if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
             return ar.getResourceURL(ngw, "task" + objectKey + ".htm");

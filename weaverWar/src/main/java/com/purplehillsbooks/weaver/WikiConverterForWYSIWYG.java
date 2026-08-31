@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.MemFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.List;
 
 /**
@@ -46,7 +46,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter {
      */
     public static String makeHtmlString(AuthRequest destination, String tv) throws Exception {
         if (destination.ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "makeHtmlString requires the AuthRequest to have a ngp object");
         }
         MemFile htmlChunk = new MemFile();
@@ -74,7 +74,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter {
 
     public void outputProperLink(String linkContentText) throws Exception {
         if (ar.ngp == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "outputProperLink requires the AuthRequest to have a ngp object");
         }
         linkContentText = linkContentText.trim();

@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 import com.purplehillsbooks.weaver.AddressListEntry;
@@ -31,8 +32,7 @@ import com.purplehillsbooks.weaver.NGRole;
 import com.purplehillsbooks.weaver.NGWorkspace;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -84,7 +84,7 @@ public class OptOutAddr {
     public void assertValidEmail() throws Exception {
         String useraddress = assignee.getEmail();
         if (useraddress == null || useraddress.length() == 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Email address is missing from the assignee for opt out");
         }
     }
@@ -195,7 +195,7 @@ public class OptOutAddr {
                             + "&userKey="
                             + up.getKey()
                             + "&emailId="
-                            + URLEncoder.encode(emailId, "UTF-8"));
+                            + UtilityMethods.urlEncode(emailId));
             jo.put("accessCode", up.getAccessCode());
             jo.put("userKey", up.getKey());
             jo.put("userId", up.getUniversalId());
@@ -225,7 +225,7 @@ public class OptOutAddr {
                 }
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to append users from the role (%s) in workspace (%s)",
                     e, roleName, ngc.getFullName());
         }
@@ -247,7 +247,7 @@ public class OptOutAddr {
                 }
             }
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to append users from the role (%s) in workspace (%s)",
                     e, roleName, ngw.getFullName());
         }

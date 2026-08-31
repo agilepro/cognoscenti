@@ -1,10 +1,9 @@
 package com.purplehillsbooks.weaver.test;
 
+import com.purplehillsbooks.exception.CommonException;
+import com.purplehillsbooks.jack.JsonUtil;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.weaver.capture.WebFile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import com.purplehillsbooks.weaver.json.JsonUtil;
-
 import java.io.File;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class TestParser {
     public void testit() throws Exception {
         File sample1 = new File("src/test/resource/webPage3737.json");
         if (!sample1.exists()) {
-            throw WeaverException.newBasic("cant find: %s", sample1.getAbsolutePath());
+            throw CommonException.newBasic("cant find: %s", sample1.getAbsolutePath());
         }
         System.out.println("SAMPLE1 at: " + sample1.getAbsolutePath());
         WebFile wf = WebFile.readOrCreate(sample1, "nowhere");

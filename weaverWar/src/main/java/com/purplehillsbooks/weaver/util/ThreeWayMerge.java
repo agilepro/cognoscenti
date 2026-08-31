@@ -1,6 +1,6 @@
 package com.purplehillsbooks.weaver.util;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 
 /**
  * Three way merge.
@@ -475,7 +475,7 @@ public class ThreeWayMerge {
                             + neuStr
                             + ")"
                             + e.toString());
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Merge failed on case: (" + curStr + ")(" + oldStr + ")(" + neuStr + ")", e);
         }
     }
@@ -484,7 +484,7 @@ public class ThreeWayMerge {
             throws Exception {
         String actual = ThreeWayMerge.mergeThem(curStr, oldStr, neuStr);
         if (!actual.equals(result)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "MERGE FAIL:  got (" + actual + ") instead of expected (" + result + ")");
         }
         System.out.println(

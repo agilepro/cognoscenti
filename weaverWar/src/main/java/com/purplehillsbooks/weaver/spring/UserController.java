@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.StreamHelper;
@@ -38,7 +39,6 @@ import com.purplehillsbooks.weaver.UserCacheMgr;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -202,7 +202,7 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             if (!ar.isLoggedIn()) {
-                throw WeaverException.newBasic("Must be logged in.");
+                throw CommonException.newBasic("Must be logged in.");
             }
             String address = ar.reqParam("address");
             String act = ar.reqParam("act");
@@ -216,13 +216,13 @@ public class UserController extends BaseController {
                 uPage.deleteProfileRef(address);
                 ar.write("Remote profile deleted " + address);
             } else {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "RemoteProfileAction does not understand the act " + act);
             }
             uPage.save();
             ar.flush();
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get update from remote profile.", ex);
+            Exception ee = CommonException.newWrap("Unable to get update from remote profile.", ex);
             streamException(ee, ar);
         }
     }
@@ -241,7 +241,7 @@ public class UserController extends BaseController {
 
             if (!userEditing.getKey().equals(userBeingEdited.getKey())) {
                 if (!ar.isSuperAdmin()) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "User "
                                     + userEditing.getName()
                                     + " is not allowed to edit the profile of user "
@@ -256,7 +256,7 @@ public class UserController extends BaseController {
             JSONObject userObj = userBeingEdited.getFullJSON();
             sendJson(ar, userObj);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update user " + userKey, ex);
+            Exception ee = CommonException.newWrap("Unable to update user " + userKey, ex);
             streamException(ee, ar);
         }
     }
@@ -276,7 +276,7 @@ public class UserController extends BaseController {
             String requestId = ar.reqParam("requestId");
             RoleRequestRecord roleRequestRecord = ngw.getRoleRequestRecordById(requestId);
             if (roleRequestRecord == null) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Unable to find a role request record with id=" + requestId);
             }
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngw, roleRequestRecord);
@@ -297,7 +297,7 @@ public class UserController extends BaseController {
             streamJSP(ar, "RoleRequest.jsp");
         } catch (Exception e) {
             showDisplayException(
-                    ar, WeaverException.newWrap("Failure approving or rejecting through email", e));
+                    ar, CommonException.newWrap("Failure approving or rejecting through email", e));
         }
     }
 
@@ -316,7 +316,7 @@ public class UserController extends BaseController {
 
             sendJson(ar, received);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to update micro profile.", ex);
+            Exception ee = CommonException.newWrap("Unable to update micro profile.", ex);
             streamException(ee, ar);
         }
     }
@@ -374,7 +374,7 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             showDisplayException(
                     ar,
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to open notification settings page for user (%s)",
                             e, ar.getBestUserId()));
         }
@@ -426,7 +426,7 @@ public class UserController extends BaseController {
             }
             sendJsonArray(ar, resultList);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to search for notes.", ex);
+            Exception ee = CommonException.newWrap("Unable to search for notes.", ex);
             streamException(ee, ar);
         }
     }
@@ -467,7 +467,7 @@ public class UserController extends BaseController {
             }
             showJSPDependingUser(ar, "PersonShow.jsp");
         } catch (Exception ex) {
-            throw WeaverException.newWrap("Failure trying to find user", ex);
+            throw CommonException.newWrap("Failure trying to find user", ex);
         }
     }
 
@@ -506,7 +506,7 @@ public class UserController extends BaseController {
             streamJSPAnon(ar, "PersonMissing.jsp");
             return;
         } catch (Exception ex) {
-            showDisplayException(ar, WeaverException.newWrap("Failure trying to find user", ex));
+            showDisplayException(ar, CommonException.newWrap("Failure trying to find user", ex));
         }
     }
 
@@ -629,7 +629,7 @@ public class UserController extends BaseController {
             Cognoscenti cog = ar.getCogInstance();
             UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
             if (!user.equals(ar.getUserProfile()) && !ar.isSuperAdmin()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "User email list is accessible only from the user themselves, or administrator.");
             }
             JSONObject posted = this.getPostedObject(ar);
@@ -640,7 +640,7 @@ public class UserController extends BaseController {
 
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -659,7 +659,7 @@ public class UserController extends BaseController {
             JSONObject repo = user.getFacilitatorFields();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -686,7 +686,7 @@ public class UserController extends BaseController {
             JSONObject repo = user.getFacilitatorFields();
             sendJson(ar, repo);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get email", ex);
+            Exception ee = CommonException.newWrap("Unable to get email", ex);
             streamException(ee, ar);
         }
     }
@@ -744,7 +744,7 @@ public class UserController extends BaseController {
         try {
             sendJson(ar, getMailProblems(ar));
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get mail blockers", ex);
+            Exception ee = CommonException.newWrap("Unable to get mail blockers", ex);
             streamException(ee, ar);
         }
     }
@@ -787,7 +787,7 @@ public class UserController extends BaseController {
 
             sendJson(ar, res);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to get mail blockers", ex);
+            Exception ee = CommonException.newWrap("Unable to get mail blockers", ex);
             streamException(ee, ar);
         }
     }
@@ -801,7 +801,7 @@ public class UserController extends BaseController {
         try {
             UserProfile user = ar.getUserProfile();
             if (user == null) {
-                throw WeaverException.newBasic("User is not logged in or has no user profile");
+                throw CommonException.newBasic("User is not logged in or has no user profile");
             }
             UserPage userPage = user.getUserPage();
             userPage.clearAllLearning();
@@ -811,7 +811,7 @@ public class UserController extends BaseController {
             res.put("status", "cleared");
             sendJson(ar, res);
         } catch (Exception ex) {
-            Exception ee = WeaverException.newWrap("Unable to clear all learning flags", ex);
+            Exception ee = CommonException.newWrap("Unable to clear all learning flags", ex);
             streamException(ee, ar);
         }
     }
@@ -827,14 +827,14 @@ public class UserController extends BaseController {
         try {
             System.out.println("USER_PUT: " + ar.getCompleteURL());
             if (!tempName.startsWith("~tmp")) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Temporary file name (%s) is not valid for use as temp file.  Must request a temp file name from the system.",
                         tempName);
             }
             File userfolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
             File tempFile = new File(userfolder, tempName);
             if (tempFile.exists()) {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "Temporary file (%s) already exists.  Should only be used once.", tempName);
             }
             InputStream is = ar.req.getInputStream();
@@ -855,7 +855,7 @@ public class UserController extends BaseController {
                             "WAITING " + count + " FOR PUT FILE: " + tempFile.toString());
                     Thread.sleep(200);
                 }
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "PUT temp file failed.  Can't see it in file system: %s", tempFile);
             }
             System.out.println("    PUT: file written: " + tempFile.getAbsolutePath());
@@ -864,7 +864,7 @@ public class UserController extends BaseController {
             result.write(ar.resp.getWriter(), 2, 0);
         } catch (Exception e) {
             Exception ctx =
-                    WeaverException.newWrap("Unable to handle PUT to %s", e, ar.getCompleteURL());
+                    CommonException.newWrap("Unable to handle PUT to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -904,7 +904,7 @@ public class UserController extends BaseController {
                 File tempFile2 = new File(userfolder, tempFileName + "~2");
 
                 if (!tempFile.exists()) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Can not fine temporary file (%s), can not make an icon from that",
                             tempFileName);
                 }
@@ -912,7 +912,7 @@ public class UserController extends BaseController {
                 Thumbnail.makeSquareFile(tempFile, tempFile2, 100);
                 tempFile.delete();
                 if (tempFile2.length() > 999999) {
-                    throw WeaverException.newBasic(
+                    throw CommonException.newBasic(
                             "Temporary file (%s) is more than 1MB in size, and can not be used as an icon.",
                             tempFileName);
                 }
@@ -930,10 +930,10 @@ public class UserController extends BaseController {
                 return;
             }
 
-            throw WeaverException.newBasic("UserPostOps does not understand operation: %s", op);
+            throw CommonException.newBasic("UserPostOps does not understand operation: %s", op);
         } catch (Exception e) {
             streamException(
-                    WeaverException.newWrap(
+                    CommonException.newWrap(
                             "Failed to handle post operation for user (%s).", e, userKey),
                     ar);
         }

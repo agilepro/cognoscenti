@@ -39,7 +39,7 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     /*
      * Folders is no longer a valid sectoin format
      */
-    public void findIDs(List<String> v, NGSection sec) throws Exception {
+    public void findIDs(List<String> v, NGSection sec) {
         // no content, nothing to check
     }
 }

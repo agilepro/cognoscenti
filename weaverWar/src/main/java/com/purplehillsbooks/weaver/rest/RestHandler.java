@@ -20,10 +20,10 @@
 
 package com.purplehillsbooks.weaver.rest;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGWorkspace;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /** */
 public class RestHandler {
@@ -51,25 +51,25 @@ public class RestHandler {
         String path = ar.req.getPathInfo();
         // TEST: check to see that the servlet path starts with /
         if (!path.startsWith("/")) {
-            throw WeaverException.newBasic("Path should start with / but instead it is: " + path);
+            throw CommonException.newBasic("Path should start with / but instead it is: " + path);
         }
 
         int slashPos = path.indexOf("/", 1);
         if (slashPos < 1) {
-            throw WeaverException.newBasic("could not find a second slash in: " + path);
+            throw CommonException.newBasic("could not find a second slash in: " + path);
         }
         siteId = path.substring(1, slashPos);
         prjSite = ar.getCogInstance().getSiteByIdOrFail(siteId);
         int nextSlashPos = path.indexOf("/", slashPos + 1);
         if (nextSlashPos < 0) {
-            throw WeaverException.newBasic("could not find a third slash in: " + path);
+            throw CommonException.newBasic("could not find a third slash in: " + path);
         }
         workspaceKey = path.substring(slashPos + 1, nextSlashPos);
         ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspaceKey).getWorkspace();
 
         resource = path.substring(nextSlashPos + 1);
         if (!"case.xml".equals(resource)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "the only resource supported is case.xml, but got: " + resource);
         }
     }

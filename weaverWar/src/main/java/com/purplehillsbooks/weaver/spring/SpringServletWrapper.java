@@ -20,18 +20,18 @@
 
 package com.purplehillsbooks.weaver.spring;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.streams.SSLPatch;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.SectionUtil;
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -81,11 +81,11 @@ public class SpringServletWrapper extends HttpServlet {
                     String configDest =
                             ar.retPath
                                     + "init/config.htm?go="
-                                    + URLEncoder.encode(requestAddr, "UTF-8");
+                                    + UtilityMethods.urlEncode(requestAddr);
                     resp.sendRedirect(configDest);
                     return;
                 } catch (Exception e) {
-                    throw WeaverException.newWrap(
+                    throw CommonException.newWrap(
                             "Error while attempting to redirect to the configuration page", e);
                 }
             }

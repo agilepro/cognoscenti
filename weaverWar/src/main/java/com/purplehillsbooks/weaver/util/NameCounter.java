@@ -1,7 +1,7 @@
 package com.purplehillsbooks.weaver.util;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -25,7 +25,7 @@ public class NameCounter extends Hashtable<String, Integer> {
             Collections.sort(sortedKeys);
             return sortedKeys;
         } catch (Exception e) {
-            throw WeaverException.newWrap("Failure creating a sorted Enumeration object", e);
+            throw CommonException.newWrap("Failure creating a sorted Enumeration object", e);
         }
     }
 

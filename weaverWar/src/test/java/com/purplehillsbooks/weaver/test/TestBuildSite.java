@@ -1,5 +1,6 @@
 package com.purplehillsbooks.weaver.test;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.testframe.TestDriver;
 import com.purplehillsbooks.testframe.TestRecorder;
 import com.purplehillsbooks.testframe.TestSet;
@@ -7,7 +8,6 @@ import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGBook;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.NGRole;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 
 /**
  * Tests the basic building of a site from scratch using just the data layer confirming that all
@@ -51,14 +51,14 @@ public class TestBuildSite implements TestSet {
         // a special symbol ''
         int pos = name.indexOf("!@#$%^&*");
         if (pos < 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Strange.  Found a site with the key '"
                             + siteKey
                             + "' but the name does not have special punctuation in it, so please delete this manually");
         }
 
         if (testSiteCon.isWorkspace()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Strange.  Found a site with the key '"
                             + siteKey
                             + "' but it is not a NGBook .... don't know what to do with it.");
@@ -177,7 +177,7 @@ public class TestBuildSite implements TestSet {
 
     private void assertNotNull(String id, Object testVal) throws Exception {
         if (null == testVal) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     id + " Test object was null, further testing must be aborted.");
         }
     }

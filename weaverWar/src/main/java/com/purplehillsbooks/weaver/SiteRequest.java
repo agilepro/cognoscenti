@@ -20,8 +20,8 @@
 
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.mail.EmailSender;
 import com.purplehillsbooks.weaver.mail.MailInst;
 import com.purplehillsbooks.weaver.mail.OptOutAddr;
@@ -143,22 +143,22 @@ public class SiteRequest {
 
     public void validateValues() throws Exception {
         if (getSiteName().length() < 4) {
-            throw WeaverException.newBasic("New site must have a name with 4 or more letters");
+            throw CommonException.newBasic("New site must have a name with 4 or more letters");
         }
         String siteId = getSiteId();
         if (siteId == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 12) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "SiteId must be four to twelve charcters/numbers long.  Received (%s)", siteId);
         }
 
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw WeaverException.newBasic(
+                throw CommonException.newBasic(
                         "AccountId must have only letters and numbers - no spaces or punctuation.  Received (%s)",
                         siteId);
             }
@@ -168,7 +168,7 @@ public class SiteRequest {
     public void assertSiteNotExist(Cognoscenti cog) throws Exception {
         NGContainer site = cog.getSiteById(getSiteId());
         if (site != null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "Sorry, there already exists a site with that ID (%s).  Please try again with a different ID.",
                     getSiteId());
         }

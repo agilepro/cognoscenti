@@ -1,7 +1,7 @@
 package com.purplehillsbooks.weaver;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import com.purplehillsbooks.weaver.util.NameCounter;
 import java.io.File;
 import java.util.ArrayList;
@@ -144,7 +144,7 @@ public class WorkspaceStats {
                 numActive++;
             }
         } catch (Exception ex) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to gather stats for workspace: %s", ex, ngw.getFullName());
         }
     }

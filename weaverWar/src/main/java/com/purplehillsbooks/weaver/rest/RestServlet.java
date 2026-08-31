@@ -20,9 +20,9 @@
 
 package com.purplehillsbooks.weaver.rest;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.AuthRequest;
 import com.purplehillsbooks.weaver.NGPageIndex;
-import com.purplehillsbooks.weaver.exception.WeaverException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -58,7 +58,7 @@ public class RestServlet extends jakarta.servlet.http.HttpServlet {
         try {
             NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
-                throw WeaverException.newWrap(
+                throw CommonException.newWrap(
                         "not initialized", ar.getCogInstance().initializer.lastFailureMsg);
             }
 

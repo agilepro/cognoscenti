@@ -20,7 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.exception.CommonException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -62,7 +62,7 @@ public class DOMFile extends DOMFace {
             }
             return userDoc;
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to read or create an XML file: %s", e, path.getAbsolutePath());
         }
     }
@@ -72,7 +72,7 @@ public class DOMFile extends DOMFace {
             reformatXML();
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
@@ -81,7 +81,7 @@ public class DOMFile extends DOMFace {
         try {
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
@@ -91,17 +91,17 @@ public class DOMFile extends DOMFace {
             associatedFile = newFile;
             DOMUtils.writeDomToFile(fDoc, associatedFile);
         } catch (Exception e) {
-            throw WeaverException.newWrap(
+            throw CommonException.newWrap(
                     "Unable to save file: %s", e, associatedFile.getAbsolutePath());
         }
     }
 
-    public void reformatXML() throws Exception {
+    public void reformatXML() {
         Element root = fDoc.getDocumentElement();
         indentChildren(root, "\n");
     }
 
-    private void indentChildren(Element parent, String indent) throws Exception {
+    private void indentChildren(Element parent, String indent) {
         NodeList childNdList = parent.getChildNodes();
         String newIndent = indent + "  ";
 
@@ -162,12 +162,12 @@ public class DOMFile extends DOMFace {
         }
 
         if (parent.hasChildNodes()) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "just cleaned out child nodes, but there seems to still be one.");
         }
         childNdList = parent.getChildNodes();
         if (childNdList.getLength() > 0) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "just cleaned out child nodes, but there seems to still be one in childlist.");
         }
 

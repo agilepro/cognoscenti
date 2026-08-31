@@ -20,8 +20,7 @@
 
 package com.purplehillsbooks.weaver;
 
-import com.purplehillsbooks.weaver.exception.WeaverException;
-import java.net.URLEncoder;
+import com.purplehillsbooks.exception.CommonException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -103,7 +102,7 @@ public class AccessControl {
     public static String getAccessDocParams(NGContainer ngc, AttachmentRecord attachRec)
             throws Exception {
         String resourceId = "doc:" + attachRec.getId() + ":" + ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngc.emailDependentMagicNumber(resourceId));
         return "mndoc=" + encodedValue;
     }
 
@@ -152,13 +151,13 @@ public class AccessControl {
     public static boolean isMagicNumber(
             AuthRequest ar, NGContainer ngc, GoalRecord gr, String mntask) throws Exception {
         String resourceId = "goal:" + gr.getId() + ":" + ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngc.emailDependentMagicNumber(resourceId));
         return mntask.equals(encodedValue);
     }
 
     public static String getAccessGoalParams(NGContainer ngc, GoalRecord gr) throws Exception {
         String resourceId = "goal:" + gr.getId() + ":" + ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngc.emailDependentMagicNumber(resourceId));
         return "mntask=" + encodedValue;
     }
 
@@ -215,7 +214,7 @@ public class AccessControl {
     public static void assertAccessTopic(AuthRequest ar, NGWorkspace ngc, TopicRecord topicRec)
             throws Exception {
         if (!canAccessTopic(ar, ngc, topicRec)) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "User %s is not able to access topic %s", ar.getBestUserId(), topicRec.getId());
         }
     }
@@ -229,8 +228,8 @@ public class AccessControl {
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
 
         if (ar.isLoggedIn()) {
-            throw WeaverException.newBasic(
-                    "PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
+            throw CommonException.newBasic(
+                    "PROGRAM LOGIC ERROR: assureTemporaryProfile should be called only when NOT logged in.");
         }
         String emailId = ar.defParam("emailId", null);
         if (emailId == null) {
@@ -243,13 +242,13 @@ public class AccessControl {
             licensedUser = userManager.createUserWithId(emailId);
         }
         if (licensedUser == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "For some reason the user manager did not create the profile.");
         }
         ar.setPossibleUser(licensedUser);
         UserProfile up = ar.getPossibleUser();
         if (up == null) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "something wrong, user profile is null after setUserForOneRequest ");
         }
 
@@ -259,7 +258,7 @@ public class AccessControl {
     public static String getAccessTopicParams(NGContainer ngc, TopicRecord topicRec)
             throws Exception {
         String resourceId = "topic:" + topicRec.getId() + ":" + ngc.getKey();
-        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngc.emailDependentMagicNumber(resourceId));
         return "mnnote=" + encodedValue;
     }
 
@@ -296,7 +295,7 @@ public class AccessControl {
             NGWorkspace ngw, RoleRequestRecord roleRequestRecord) throws Exception {
         String accessDocParam = "mnrolerequest=";
         String resourceId = "rolerequest:" + ngw.getKey() + ":" + roleRequestRecord.getRequestId();
-        String encodedValue = URLEncoder.encode(ngw.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngw.emailDependentMagicNumber(resourceId));
         accessDocParam += encodedValue;
         return accessDocParam;
     }
@@ -349,7 +348,7 @@ public class AccessControl {
         String resourceId =
                 "accountrequest:" + userPage.getKey() + ":" + accountDetails.getRequestId();
         String encodedValue =
-                URLEncoder.encode(userPage.emailDependentMagicNumber(resourceId), "UTF-8");
+                UtilityMethods.urlEncode(userPage.emailDependentMagicNumber(resourceId));
         accessDocParam += encodedValue;
         return accessDocParam;
     }
@@ -421,7 +420,7 @@ public class AccessControl {
 
     public static String getAccessMeetParams(NGWorkspace ngw, MeetingRecord meet) throws Exception {
         String resourceId = "meet:" + meet.getId() + ":" + ngw.getKey();
-        String encodedValue = URLEncoder.encode(ngw.emailDependentMagicNumber(resourceId), "UTF-8");
+        String encodedValue = UtilityMethods.urlEncode(ngw.emailDependentMagicNumber(resourceId));
         return "mnm=" + encodedValue;
     }
 }

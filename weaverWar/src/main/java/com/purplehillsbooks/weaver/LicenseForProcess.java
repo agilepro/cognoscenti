@@ -41,53 +41,53 @@ public class LicenseForProcess implements License {
         proc = newProc;
     }
 
-    public String getId() throws Exception {
+    public String getId() {
         return proc.accessLicense().getId();
     }
 
-    public String getNotes() throws Exception {
+    public String getNotes() {
         return "This license automatically created for the process.";
     }
 
-    public void setNotes(String newVal) throws Exception {
+    public void setNotes(String newVal) {
         // ignore this
     }
 
-    public String getCreator() throws Exception {
+    public String getCreator() {
         return "* Process *";
     }
 
-    public void setCreator(String newVal) throws Exception {
+    public void setCreator(String newVal) {
         // ignore this
     }
 
-    public long getTimeout() throws Exception {
+    public long getTimeout() {
         return System.currentTimeMillis() + 86000000;
     }
 
-    public void setTimeout(long timeout) throws Exception {
+    public void setTimeout(long timeout) {
         // ignore this
     }
 
-    public String getRole() throws Exception {
+    public String getRole() {
         // we have to return somthing.
         // Member is pretty general.
         return "Member";
     }
 
-    public void setRole(String newRole) throws Exception {
+    public void setRole(String newRole) {
         // ignore this
     }
 
-    public boolean isReadOnly() throws Exception {
+    public boolean isReadOnly() {
         return false;
     }
 
-    public void setReadOnly(boolean isReadOnly) throws Exception {
+    public void setReadOnly(boolean isReadOnly) {
         // ignore this
     }
 
-    public JSONObject getJSON() throws Exception {
+    public JSONObject getJSON() {
         JSONObject licenseInfo = new JSONObject();
         licenseInfo.put("id", getId());
         licenseInfo.put("timeout", getTimeout());

@@ -20,6 +20,7 @@
 
 package com.purplehillsbooks.weaver.mail;
 
+import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -38,12 +39,11 @@ import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.TopicRecord;
 import com.purplehillsbooks.weaver.UserManager;
 import com.purplehillsbooks.weaver.UserProfile;
-import com.purplehillsbooks.weaver.exception.WeaverException;
+import com.purplehillsbooks.weaver.UtilityMethods;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -216,7 +216,7 @@ public class EmailGenerator extends DOMFace {
     public void scheduleEmail(AuthRequest ar) throws Exception {
         long aboutFifteenMinutesAgo = ar.nowTime - 15 * 60000;
         if (getScheduleTime() < aboutFifteenMinutesAgo) {
-            throw WeaverException.newBasic(
+            throw CommonException.newBasic(
                     "To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: %s",
                     SectionUtil.getNicePrintDate(getScheduleTime()));
         }
@@ -525,7 +525,7 @@ public class EmailGenerator extends DOMFace {
             sb.append("&");
             sb.append(AccessControl.getAccessDocParams(ngw, att));
             sb.append("&emailId=");
-            sb.append(URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            sb.append(UtilityMethods.urlEncode(ale.getEmail()));
             oneAtt.put("url", sb.toString());
             oneAtt.put("name", att.getNiceName());
             attachArray.put(oneAtt);
@@ -539,7 +539,7 @@ public class EmailGenerator extends DOMFace {
                             + "?"
                             + AccessControl.getAccessTopicParams(ngw, selectedNote)
                             + "&emailId="
-                            + URLEncoder.encode(ale.getEmail(), "UTF-8");
+                            + UtilityMethods.urlEncode(ale.getEmail());
             data.put("commentContainer", selectedNote.getGlobalContainerKey(ngw));
             data.put("noteUrl", licensedUrl);
             data.put("noteName", selectedNote.getSubject());
@@ -566,7 +566,7 @@ public class EmailGenerator extends DOMFace {
                                             + "&"
                                             + AccessControl.getAccessMeetParams(ngw, meeting))
                             + "&emailId="
-                            + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+                            + UtilityMethods.urlEncode(ale.getEmail()));
             meetingObj.put("isScheduled", meeting.isScheduled());
             data.put("meeting", meetingObj);
 
