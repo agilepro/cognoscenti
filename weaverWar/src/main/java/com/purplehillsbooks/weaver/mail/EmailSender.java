@@ -163,6 +163,17 @@ public class EmailSender extends TimerTask {
         // Some settings should not be settings, and should instead be fixed to
         // these values.   we always generate UTF-8 html
         props.put("mail.contenttype", "text/html;charset=UTF-8");
+
+        // default it infinite timeout which means the mail can be stuck forever
+        // if somehow the connection is dropped in the right way.
+        // we don't care, if the mail fails to send, we will get it next time around.
+        props.put("mail.smtp.connectiontimeout", "20000");
+        props.put("mail.smtp.timeout", "30000");
+        props.put("mail.smtp.writetimeout", "30000");
+        props.put("mail.smtps.connectiontimeout", "20000");
+        props.put("mail.smtps.timeout", "30000");
+        props.put("mail.smtps.writetimeout", "30000");
+
         emailProperties = props;
 
         if ("true".equals(emailProperties.getProperty("traceProperties"))) {
@@ -185,8 +196,8 @@ public class EmailSender extends TimerTask {
         // As long as the server is up, the mail should
         // always be sent within 20 minutes of the time it was scheduled to go.
 
-        // second parameter is the "delay" of 60 seconds.
-        // The first mailing will be tested one minute from now,
+        // second parameter is the "delay" of 30 seconds.
+        // The first mailing will be tested 30 seconds from now,
         // and every 30 seconds after that.
         timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
     }
@@ -279,7 +290,7 @@ public class EmailSender extends TimerTask {
         Throwable runner = ex;
         while (runner != null) {
             String msg = runner.getMessage();
-            if (msg != null && !msg.contains(string)) {
+            if (msg != null && msg.contains(string)) {
                 return true;
             }
             if (runner.toString().contains(string)) {
@@ -347,13 +358,30 @@ public class EmailSender extends TimerTask {
             if (inst.sendPreparedMessageImmediately(emailProperties)) {
                 updateEmailInDB(inst);
             } else {
-                // this will be retried later
+                // The send method records the fail count and the exception on the record, but
+                // those live only in memory until written back.  Without this write the retry
+                // count never climbs, the FAILED status is never reached, and the reason the
+                // message failed is lost instead of being visible in the admin pages.
                 System.out.println(
                         "MAIL DB FAILURE: email '"
                                 + inst.getCreateDate()
                                 + "' to '"
                                 + inst.getAddressee()
-                                + "' failed to send, will try again later.");
+                                + "' failed to send on attempt "
+                                + inst.getFailCount()
+                                + " of "
+                                + MailInst.MAX_SEND_ATTEMPTS
+                                + ", status is now '"
+                                + inst.getStatus()
+                                + "'.");
+                try {
+                    updateEmailInDB(inst);
+                } catch (Exception dbe) {
+                    // Losing the failure record is not a reason to abandon the rest of the
+                    // messages in this batch, so complain and carry on with the next one.
+                    CommonException.traceException(
+                            System.out, dbe, "Unable to record the send failure in the database");
+                }
                 allSentOK = false;
             }
         }

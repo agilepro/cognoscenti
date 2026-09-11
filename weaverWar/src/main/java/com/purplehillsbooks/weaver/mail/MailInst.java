@@ -48,6 +48,14 @@ public class MailInst extends JSONWrapper {
     public static final String SUPPRESS = "Suppressed";
     public static final String RECEIVED = "Received";
 
+    /**
+     * How many times to attempt a single message before marking it FAILED and giving up. The
+     * EmailSender retries every 30 seconds, so this is about five minutes of trying, which is long
+     * enough to ride out a mail server restart but short enough to stop hammering an address that
+     * is simply never going to work.
+     */
+    public static final int MAX_SEND_ATTEMPTS = 10;
+
     public MailInst() throws Exception {
         super(new JSONObject());
         // this is the ID of the message, each message has a unique create time, which is
@@ -453,7 +461,7 @@ public class MailInst extends JSONWrapper {
                 setLastSentDate(sendStart);
                 CommonException.traceException(System.out, me, context);
                 incrementFailCount();
-                if (getFailCount() > 3) {
+                if (getFailCount() >= MAX_SEND_ATTEMPTS) {
                     setStatus(MailInst.FAILED);
                 }
                 setSMTPCallDuration(System.currentTimeMillis() - sendStart);

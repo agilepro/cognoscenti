@@ -24,6 +24,8 @@ import com.purplehillsbooks.exception.CommonException;
 import com.purplehillsbooks.weaver.Cognoscenti;
 import com.purplehillsbooks.weaver.NGPageIndex;
 import com.purplehillsbooks.weaver.SectionUtil;
+import com.purplehillsbooks.weaver.mail.EmailSender;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -101,6 +103,24 @@ public class ServerInitializer extends TimerTask {
     public Exception lastFailureMsg = null;
     public long lastInitAttemptTime = 0;
 
+    /**
+     * The name given to the background timer thread. The watchdog below looks the thread up by this
+     * name, so the two must agree, and that is why it is a constant.
+     */
+    public static final String BACKGROUND_TIMER_NAME = "Main Cog Background Timer";
+
+    /**
+     * How long the EmailSender may go without completing a scan before we declare it stuck. It is
+     * scheduled every 30 seconds, so ten minutes means twenty consecutive missed cycles, which is
+     * well beyond anything a slow scan could explain.
+     */
+    private static final long EMAIL_STALL_LIMIT = 10 * 60 * 1000;
+
+    /** Once the alarm has been raised, wait this long before raising it again. */
+    private static final long EMAIL_STALL_REPEAT = 30 * 60 * 1000;
+
+    private long lastStallReport = 0;
+
     private Timer timerForOtherTasks = null;
     private static Timer timerForInit = new Timer("Initialization Timer", true);
 
@@ -163,6 +183,11 @@ public class ServerInitializer extends TimerTask {
         // System.out.println("ServerInitializer started on thread:
         // "+Thread.currentThread().getName() +
         // " -- " + SectionUtil.currentTimestampString());
+
+        // this runs on the initialization timer, which is a different thread from the
+        // background timer, so it still ticks when the background timer is wedged.
+        checkEmailSenderHealth();
+
         // any non-FAILED state, there is nothing to do, so exit quick as possible
         // this get hit every 30 seconds or so while running.
         if (serverInitState != STATE_FAILED) {
@@ -187,7 +212,7 @@ public class ServerInitializer extends TimerTask {
             if (timerForOtherTasks != null) {
                 timerForOtherTasks.cancel();
             }
-            timerForOtherTasks = new Timer("Main Cog Background Timer", true);
+            timerForOtherTasks = new Timer(BACKGROUND_TIMER_NAME, true);
 
             // start by clearing everything ... in case there is mess left over.
             cog.clearAllStaticVariables();
@@ -219,6 +244,83 @@ public class ServerInitializer extends TimerTask {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         System.out.println("COG SERVER INIT - Concluding state " + getServerStateString());
+    }
+
+    /**
+     * The EmailSender is the only task on the background timer, and a java.util.Timer is a single
+     * thread that runs its tasks one after another. If one call to run() blocks forever, the timer
+     * never fires again, and the only visible symptom is that email quietly stops going out until
+     * somebody reboots the server. From the outside that is indistinguishable from the timer thread
+     * having died.
+     *
+     * <p>This cannot repair the situation, but it notices it and puts the stack trace of the stuck
+     * thread into the log, which is the one piece of evidence needed to tell the two cases apart
+     * and to identify the call that is blocking.
+     */
+    private void checkEmailSenderHealth() {
+        try {
+            if (serverInitState != STATE_RUNNING) {
+                // when the server is not running the sender is not expected to do anything
+                lastStallReport = 0;
+                return;
+            }
+            long lastScan = EmailSender.lastEmailProcessTime;
+            if (lastScan == 0) {
+                // the sender has not completed its first scan yet, nothing to compare against
+                return;
+            }
+            long nowTime = System.currentTimeMillis();
+            long silence = nowTime - lastScan;
+            if (silence < EMAIL_STALL_LIMIT) {
+                // healthy, so reset and be ready to report the next stall immediately
+                lastStallReport = 0;
+                return;
+            }
+            if (lastStallReport != 0 && nowTime - lastStallReport < EMAIL_STALL_REPEAT) {
+                // already complained recently, don't fill the log with it every 30 seconds
+                return;
+            }
+            lastStallReport = nowTime;
+
+            System.out.println(
+                    "\n\n~~~~~~ EMAIL SENDER STALLED ~~~~~~ "
+                            + SectionUtil.currentTimestampString());
+            System.out.println(
+                    "    No EmailSender scan has completed for "
+                            + (silence / 1000)
+                            + " seconds.  Last completed scan was at "
+                            + SectionUtil.getDateAndTime(lastScan));
+
+            boolean foundTimer = false;
+            for (Map.Entry<Thread, StackTraceElement[]> entry :
+                    Thread.getAllStackTraces().entrySet()) {
+                Thread t = entry.getKey();
+                if (!BACKGROUND_TIMER_NAME.equals(t.getName())) {
+                    continue;
+                }
+                foundTimer = true;
+                System.out.println(
+                        "    THREAD: "
+                                + t.getName()
+                                + " tid="
+                                + t.threadId()
+                                + " state="
+                                + t.getState());
+                for (StackTraceElement frame : entry.getValue()) {
+                    System.out.println("        at " + frame.toString());
+                }
+            }
+            if (!foundTimer) {
+                System.out.println(
+                        "    The background timer thread does not exist.  It died, rather than "
+                                + "being blocked, so look for an error thrown out of a TimerTask "
+                                + "or for a call to Timer.cancel().");
+            }
+            System.out.println("~~~~~~ END EMAIL SENDER STALL REPORT ~~~~~~\n\n");
+        } catch (Exception e) {
+            // a watchdog must never be the reason the initialization timer stops working
+            CommonException.traceException(System.out, e, "EmailSender watchdog");
+        }
     }
 
     public void shutDown() {

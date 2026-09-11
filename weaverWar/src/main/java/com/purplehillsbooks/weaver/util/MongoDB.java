@@ -17,7 +17,14 @@ import org.bson.Document;
 /** Isolate the arcane Mongo specific classes here if possible */
 public class MongoDB {
 
-    public final String uri = "mongodb://localhost:27017";
+    // The socket read timeout defaults to zero, which means infinite.  The EmailSender calls
+    // into here from the single background timer thread, so a connection that goes half-open
+    // (mongod restarted, network stack confused) would block that thread forever, and all
+    // email sending stops until the server is rebooted.  Always bound the waits.
+    public final String uri =
+            "mongodb://localhost:27017/?socketTimeoutMS=30000"
+                    + "&connectTimeoutMS=10000"
+                    + "&serverSelectionTimeoutMS=10000";
     MongoClient mongoClient;
     MongoDatabase db;
     MongoCollection<org.bson.Document> emaildb;
