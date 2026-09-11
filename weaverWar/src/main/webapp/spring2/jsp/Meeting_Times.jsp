@@ -106,20 +106,20 @@
           <span class="col-1 ms-0"  ng-repeat="time in meeting.timeSlots">
           <span class="nav-item dropdown" ng-show="timeSlotResponders.length>1">
             <button class="btn-wide btn-comment btn-raised btn votingButton" type="button" data-toggle="dropdown"> select
-              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[player.uid]==1" title="Conflict for that time" style="color:red;">
                 <span class="fa fa-minus-circle"></span>
                 <span class="fa fa-minus-circle"></span>
               </span>
-              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[player.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
                 <span class="fa fa-question-circle"></span>
               </span>
-              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==3" title="No response given">
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[player.uid]==3" title="No response given">
                 <span class="text-secondary opacity-50 fa fa-question-circle"></span>
               </span>
-              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[player.uid]==4" title="ok time for me" style="color:green;">
                 <span class="fa fa-plus-circle"></span>
               </span>
-              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[resp.uid]==5" title="good time for me" style="color:green;">
+              <span class="dropdown-item d-flex justify-content-center" ng-show="time.people[player.uid]==5" title="good time for me" style="color:green;">
                 <span class="fa fa-plus-circle"></span>
                 <span class="fa fa-plus-circle"></span>
               </span>
@@ -127,24 +127,24 @@
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu" style="margin-top:-5px;">
               <li role="presentation">
-                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 5)">
+                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, player.uid, 5)">
                   <i class="fa fa-plus-circle" style="color:green"></i>
                   <i class="fa fa-plus-circle" style="color:green"></i>
                   Good Time</a></li>
               <li role="presentation">
-                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 4)">
+                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, player.uid, 4)">
                   <i class="fa fa-plus-circle" style="color:green"></i>
                   OK Time</a></li>
               <li role="presentation">
-                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 3)">
+                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, player.uid, 3)">
                   <i class="text-secondary opacity-50 fa fa-question-circle"></i>
                   No Response</a></li>
               <li role="presentation">
-                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 2)">
+                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, player.uid, 2)">
                   <i class="fa fa-question-circle" style="color:red"></i>
                   Uncertain</a></li>
               <li role="presentation">
-                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 1)">
+                  <a class="dropdown-item" role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, player.uid, 1)">
                   <i class="fa fa-minus-circle" style="color:red"></i>
                   <i class="fa fa-minus-circle" style="color:red"></i>
                   Conflict at that Time</a></li>

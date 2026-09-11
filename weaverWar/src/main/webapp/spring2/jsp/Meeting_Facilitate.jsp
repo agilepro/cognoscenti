@@ -10,7 +10,7 @@
                     <span ng-hide="sim.item.timerRunning" style="padding:5px">
                         <button class="btn btn-comment btn-success " ng-click="agendaStartButton(sim.item)"><i class="fa fa-clock-o"></i> Start</button>
                         Elapsed: {{sim.item.timerTotal| minutes}}
-                        Remaining: {{sim.item.duration - item.timerTotal| minutes}}
+                        Remaining: {{sim.item.timerRemaining| minutes}}
                     </span>
                     <span ng-show="sim.item.timerRunning" ng-style="timerStyleComplete(sim.item)">
                         <span>Running</span>
