@@ -50,18 +50,19 @@
 
   <div class="boxer">
     <div>{$cmnt.body|markdown}</div>
+    <hr/>
 
-    <table>
       {% loop in $cmnt.responses as $response %}
-      <tr>
-        <td>{$response.userName}</td>
-        <td>{$response.choice}</td>
-        <td>{$response.body|markdown}</td>
-      </tr>
+      <div>
+        <b>{$response.userName}</b>
+        ({$response.choice})
+        {$response.body|markdown}
+      </div>
       {% onEmpty %}
       {% endloop %}
     </table>
-    <div>{$cmnt.outcome}</div>
+    <hr/>
+    <div>{$cmnt.outcome|markdown}</div>
   </div>
 </td>
 </tr>
