@@ -45,7 +45,6 @@ ul.doc{
     box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     font-weight: 600;
-
     li{
         margin-left: 20px;
     }
@@ -64,4 +63,13 @@ ul.action{
         margin-left: 20px;
     }
 
+}
+.boxer{
+    list-style-type: square;
+    width: 500px;
+    padding: 7px 10px;
+    margin-left: -10px;
+    border: 2px rgba(59, 69, 126, 0.38) solid;
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }

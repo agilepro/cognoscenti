@@ -47,23 +47,28 @@
 {% loop in $agItem.comments as $cmnt %}
 <tr><td></td>
 <td>
-<hr>
-<div>{$cmnt.html2}</div>
-<table>
-{% loop in $cmnt.responses as $response %}
-<tr>
-<td>{$response.userName}</td>
-<td>{$response.choice}</td>
-<td>{$response.html}</td>
-</tr>
-{% onEmpty %}
-{% endloop %}
-</table>
-<div>{$cmnt.outcome}</div>
+
+  <div class="boxer">
+    <div>{$cmnt.body|markdown}</div>
+
+    <table>
+      {% loop in $cmnt.responses as $response %}
+      <tr>
+        <td>{$response.userName}</td>
+        <td>{$response.choice}</td>
+        <td>{$response.body|markdown}</td>
+      </tr>
+      {% onEmpty %}
+      {% endloop %}
+    </table>
+    <div>{$cmnt.outcome}</div>
+  </div>
 </td>
 </tr>
+
 {% onEmpty %}
 {% endloop %}
+
 
 {% endif %}
 {% endif %}
