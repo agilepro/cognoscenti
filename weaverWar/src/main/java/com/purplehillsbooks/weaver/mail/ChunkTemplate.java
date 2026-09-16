@@ -175,7 +175,7 @@ public class ChunkTemplate {
      *
      * @param str the template that is to be interpreted
      * @param data is JSON structured field values
-     * @param cal is teh calendar to use for date conversions
+     * @param cal is the calendar to use for date conversions
      * @return the resulting string with the data substituted in
      */
     public static String stringIt(String str, JSONObject data, Calendar cal) throws Exception {
